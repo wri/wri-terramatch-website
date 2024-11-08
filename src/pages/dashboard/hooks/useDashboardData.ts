@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
@@ -27,7 +28,7 @@ import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
-
+  const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -108,16 +109,17 @@ export const useDashboardData = (filters: any) => {
     { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
+  const shouldSendQueryParamsForCentroids = !(filters.uuid && user?.primaryRole === "government");
 
   const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: queryParams
+    queryParams: shouldSendQueryParamsForCentroids ? queryParams : undefined
   });
   const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
     {
       queryParams: queryParams
     },
     {
-      enabled: !!filters.uuid
+      enabled: !!filters.uuid && isUserAllowed?.allowed === true && user?.primaryRole !== "government"
     }
   );
 

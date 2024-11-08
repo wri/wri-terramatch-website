@@ -48,6 +48,7 @@ interface ContentOverviewProps<TData> {
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
   bbox?: BBox | undefined;
+  isUserAllowed?: boolean;
   projectCounts?: {
     total_enterprise_count: number;
     total_non_profit_count: number;
@@ -65,7 +66,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     dataHectaresUnderRestoration,
     showImagesButton,
     bbox: initialBbox,
-    projectCounts
+    projectCounts,
+    isUserAllowed = true
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -229,6 +231,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           className="border-0 px-4 py-6"
           classNameSubTitle="mt-4"
           gap={8}
+          isUserAllowed={isUserAllowed}
           subtitleMore={true}
           title={t("Hectares Under Restoration")}
           variantSubTitle="text-14-light"
@@ -273,6 +276,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           className="border-0 px-4 py-6"
           classNameSubTitle="mt-4"
           gap={6}
+          isUserAllowed={isUserAllowed}
           subtitleMore={true}
           title={t(titleTable)}
           tooltip={textTooltipTable}

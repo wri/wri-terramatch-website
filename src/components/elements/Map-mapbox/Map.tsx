@@ -227,11 +227,7 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (
-      map?.current &&
-      ((isDashboard && (!_.isEmpty(polygonsData) || !_.isEmpty(centroids))) ||
-        (!isDashboard && !_.isEmpty(polygonsData)))
-    ) {
+    if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
       const currentMap = map.current as mapboxgl.Map;
 
       const setupMap = () => {

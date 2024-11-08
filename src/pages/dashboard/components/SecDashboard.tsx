@@ -41,7 +41,7 @@ const SecDashboard = ({
   classNameBody,
   classNameHeader,
   classNameTitle,
-  tooltipGraphic = false,
+  isProjectView = false,
   variantTitle,
   tooltip,
   isTableProject,
@@ -56,7 +56,7 @@ const SecDashboard = ({
   classNameBody?: string;
   classNameHeader?: string;
   classNameTitle?: string;
-  tooltipGraphic?: boolean;
+  isProjectView?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
   isTableProject?: boolean;
@@ -104,7 +104,7 @@ const SecDashboard = ({
       return;
     }
     if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
-      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, isProjectView);
       setTreesPlantedByYear(data);
     }
     if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
@@ -163,7 +163,7 @@ const SecDashboard = ({
               src="/images/treeBackground.svg"
               id="treeBackground"
               alt="secondValue"
-              className="absolute right-0 z-10 h-9 w-[316px]"
+              className="z-1 absolute right-0 h-9 w-[316px]"
             />
           </div>
         </When>

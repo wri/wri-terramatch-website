@@ -50,10 +50,9 @@ const Sidebar = () => {
 
         <Tooltip content={t("COMING SOON")} placement="right">
           <a
-            className={classNames("flex cursor-pointer flex-col items-center gap-1", {
+            className={classNames("flex cursor-not-allowed flex-col items-center gap-1 opacity-50", {
               "text-white": router.asPath.includes("/dashboard/project-insights")
             })}
-            href="/dashboard/project-insights"
           >
             <Icon name={IconNames.DASHBOARD_AIRTABLE} className="h-8 w-8" />
             <Text variant={"text-8"} className="text-center">
@@ -63,7 +62,7 @@ const Sidebar = () => {
           </a>
         </Tooltip>
 
-        <Tooltip content={t("ABOUT US")} placement="right">
+        <Tooltip content={t("LEARN MORE")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
               "text-white": router.asPath.includes("/dashboard/about-us")
@@ -71,7 +70,7 @@ const Sidebar = () => {
             href="/dashboard/about-us"
           >
             <Icon name={IconNames.ABOUT_US} className="h-8 w-8" />
-            <Text variant={"text-8"}>{t("ABOUT US")}</Text>
+            <Text variant={"text-8"}>{t("LEARN MORE")}</Text>
           </a>
         </Tooltip>
       </div>

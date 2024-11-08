@@ -4,10 +4,16 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  JOBS_CREATED_CHART_TYPE,
+  NO_DATA_INFORMATION,
+  ORGANIZATIONS_TYPES
+} from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
@@ -73,7 +79,8 @@ const Dashboard = () => {
     activeProjects,
     polygonsData,
     countryBbox,
-    projectBbox
+    projectBbox,
+    isUserAllowed
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
@@ -274,30 +281,35 @@ const Dashboard = () => {
               />
             </div>
           </When>
-          <div className="grid w-full grid-cols-3 gap-4">
-            {dashboardHeader.map((item, index) => (
-              <div key={index} className="rounded-lg bg-white px-4 py-3">
-                <Text variant="text-12-light" className="text-darkCustom opacity-60">
-                  {t(item.label)}
-                </Text>
-
-                <div className="flex items-center gap-2">
-                  <Text variant="text-20" className="text-darkCustom" as="span">
-                    {t(item.value)}
+          <BlurContainer
+            isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
+            textInformation={NO_DATA_INFORMATION}
+          >
+            <div className="grid w-full grid-cols-3 gap-4">
+              {dashboardHeader.map((item, index) => (
+                <div key={index} className="rounded-lg bg-white px-4 py-3">
+                  <Text variant="text-12-light" className="text-darkCustom opacity-60">
+                    {t(item.label)}
                   </Text>
-                  <ToolTip
-                    title={t(item.label)}
-                    content={t(item.tooltip)}
-                    placement="top"
-                    width="w-56 lg:w-64"
-                    trigger="click"
-                  >
-                    <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
-                  </ToolTip>
+
+                  <div className="flex items-center gap-2">
+                    <Text variant="text-20" className="text-darkCustom" as="span">
+                      {t(item.value)}
+                    </Text>
+                    <ToolTip
+                      title={t(item.label)}
+                      content={t(item.tooltip)}
+                      placement="top"
+                      width="w-56 lg:w-64"
+                      trigger="click"
+                    >
+                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+                    </ToolTip>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </BlurContainer>
           <When condition={filters.uuid}>
             <PageCard className="border-0 px-4 py-6" gap={8}>
               <div className="flex items-center">
@@ -339,6 +351,7 @@ const Dashboard = () => {
             classNameSubTitle="mt-4"
             gap={8}
             subtitleMore={true}
+            isUserAllowed={isUserAllowed?.allowed}
             title={t("Trees Restored")}
             tooltip={t(TREES_RESTORED_SECTION_TOOLTIP)}
             widthTooltip="w-52 lg:w-64"
@@ -361,7 +374,7 @@ const Dashboard = () => {
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
-              tooltipGraphic={true}
+              isProjectView={!!filters.uuid}
               data={{}}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.multiLineChart}
@@ -383,6 +396,7 @@ const Dashboard = () => {
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
             gap={8}
+            isUserAllowed={isUserAllowed?.allowed}
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
@@ -486,6 +500,7 @@ const Dashboard = () => {
             ? ACTIVE_PROJECTS_TOOLTIP
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
+        isUserAllowed={isUserAllowed?.allowed}
         polygonsData={polygonsData}
         bbox={filters.uuid ? projectBbox : countryBbox}
         projectCounts={projectCounts}
