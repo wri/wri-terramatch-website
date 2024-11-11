@@ -10,7 +10,7 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMapAreaContext } from "@/context/mapArea.provider";
+// import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
@@ -48,10 +48,10 @@ const PolygonItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
-  const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+  // const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
+  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
         uuid: uuid
@@ -62,10 +62,10 @@ const PolygonItem = ({
     }
   );
 
-  useEffect(() => {
-    refetch();
-    setShouldRefetchValidation(false);
-  }, [shouldRefetchValidation]);
+  // useEffect(() => {
+  //   refetch();
+  //   setShouldRefetchValidation(false);
+  // }, [shouldRefetchValidation]);
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);

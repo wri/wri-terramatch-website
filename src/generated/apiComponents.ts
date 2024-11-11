@@ -30933,6 +30933,94 @@ export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundVa
   );
 };
 
+export type GetV2TerrafundValidationCriteriaDataUuidQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundValidationCriteriaDataUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundValidationCriteriaDataUuidResponse = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: {
+      [key: string]: void;
+    };
+  }[];
+}[];
+
+export type GetV2TerrafundValidationCriteriaDataUuidVariables = {
+  queryParams: GetV2TerrafundValidationCriteriaDataUuidQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundValidationCriteriaDataUuid = (
+  variables: GetV2TerrafundValidationCriteriaDataUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundValidationCriteriaDataUuidResponse,
+    GetV2TerrafundValidationCriteriaDataUuidError,
+    undefined,
+    {},
+    GetV2TerrafundValidationCriteriaDataUuidQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/criteria-data/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundValidationCriteriaDataUuid = <TData = GetV2TerrafundValidationCriteriaDataUuidResponse>(
+  variables: GetV2TerrafundValidationCriteriaDataUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2TerrafundValidationCriteriaDataUuidResponse,
+      GetV2TerrafundValidationCriteriaDataUuidError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2TerrafundValidationCriteriaDataUuidResponse,
+    GetV2TerrafundValidationCriteriaDataUuidError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/terrafund/validation/criteria-data/{uuid}",
+      operationId: "getV2TerrafundValidationCriteriaDataUuid",
+      variables
+    }),
+    ({ signal }) => fetchGetV2TerrafundValidationCriteriaDataUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type PostV2TerrafundValidationSitePolygonsQueryParams = {
   /**
    * The UUID of the polygon
@@ -36693,6 +36781,11 @@ export type QueryOperation =
       path: "/v2/terrafund/validation/criteria-data";
       operationId: "getV2TerrafundValidationCriteriaData";
       variables: GetV2TerrafundValidationCriteriaDataVariables;
+    }
+  | {
+      path: "/v2/terrafund/validation/criteria-data/{uuid}";
+      operationId: "getV2TerrafundValidationCriteriaDataUuid";
+      variables: GetV2TerrafundValidationCriteriaDataUuidVariables;
     }
   | {
       path: "/v2/terrafund/validation/site";

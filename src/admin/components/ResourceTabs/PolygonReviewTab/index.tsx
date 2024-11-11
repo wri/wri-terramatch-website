@@ -42,6 +42,7 @@ import {
   useGetV2MODELUUIDFiles,
   useGetV2SitesSiteBbox,
   useGetV2SitesSitePolygon
+  // useGetV2TerrafundValidationCriteriaDataUuid
 } from "@/generated/apiComponents";
 import {
   PolygonBboxResponse,
@@ -158,7 +159,11 @@ const PolygonReviewTab: FC<IProps> = props => {
       site: record.uuid
     }
   });
-
+  // const { data: criteriaList } = useGetV2TerrafundValidationCriteriaDataUuid({
+  //   queryParams: {
+  //     uuid: record.uuid
+  //   }
+  // });
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
   });
