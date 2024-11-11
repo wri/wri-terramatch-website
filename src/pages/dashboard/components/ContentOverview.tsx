@@ -121,9 +121,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
 
           <TooltipGridMap label="Angola" learnMore={true} />
-          <div className="absolute left-6 top-6 z-10 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
-            <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
-          </div>
 
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
@@ -206,9 +203,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             bbox={currentBbox}
             selectedCountry={selectedCountry}
           />
-          <div className="absolute left-6 top-6 rounded-lg bg-[#1F121259] px-2 py-1 text-center text-white backdrop-blur-md">
-            <Text variant="text-12-light">{t("PROGRAMME VIEW")}</Text>
-          </div>
 
           <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
