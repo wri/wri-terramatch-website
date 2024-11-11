@@ -347,7 +347,7 @@ const Dashboard = () => {
             gap={8}
             subtitleMore={true}
             isUserAllowed={isUserAllowed?.allowed}
-            title={t("Trees Restored")}
+            title={t("TREES RESTORED")}
             widthTooltip="w-52 lg:w-64"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"

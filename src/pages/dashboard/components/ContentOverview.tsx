@@ -232,7 +232,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           gap={8}
           isUserAllowed={isUserAllowed}
           subtitleMore={true}
-          title={t("Hectares Under Restoration")}
+          title={t("HECTARES UNDER RESTORATION")}
           variantSubTitle="text-14-light"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
