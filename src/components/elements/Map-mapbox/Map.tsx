@@ -16,6 +16,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -167,6 +168,8 @@ export const MapContainer = ({
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
+  const dashboardContext = useDashboardContext();
+  const { setFilters, dashboardCountries } = dashboardContext ?? {};
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
@@ -246,7 +249,9 @@ export const MapContainer = ({
             editPolygonSelected,
             setEditPolygon,
             draw.current,
-            isDashboard
+            isDashboard,
+            setFilters,
+            dashboardCountries
           );
         }
       };
