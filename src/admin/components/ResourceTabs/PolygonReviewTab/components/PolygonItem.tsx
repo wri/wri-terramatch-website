@@ -53,11 +53,7 @@ const PolygonItem = ({
 
   useEffect(() => {
     //TODO: handle refreshes
-    if (
-      (polygonMap as any).hasOwn(uuid) &&
-      polygonMap[uuid].criteria_list &&
-      polygonMap[uuid].criteria_list.length > 0
-    ) {
+    if (polygonMap && polygonMap[uuid] && polygonMap[uuid].criteria_list && polygonMap[uuid].criteria_list.length > 0) {
       const criteriaData = polygonMap[uuid];
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
