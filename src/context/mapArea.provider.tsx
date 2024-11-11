@@ -1,6 +1,9 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-import { fetchGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
+import {
+  fetchGetV2DashboardViewProjectUuid,
+  fetchGetV2TerrafundValidationCriteriaData
+} from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 import Log from "@/utils/log";
 
@@ -48,6 +51,10 @@ type MapAreaType = {
   setPreviewVersion: (value: boolean) => void;
   statusSelectedPolygon: string;
   setStatusSelectedPolygon: (value: string) => void;
+  polygonMap: Record<string, any>;
+  setPolygonMap: (value: Record<string, any>) => void;
+  polygonListOrder: string[];
+  setPolygonListOrder: (value: string[]) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -88,7 +95,11 @@ const defaultValue: MapAreaType = {
   previewVersion: false,
   setPreviewVersion: () => {},
   statusSelectedPolygon: "",
-  setStatusSelectedPolygon: () => {}
+  setStatusSelectedPolygon: () => {},
+  polygonMap: {},
+  setPolygonMap: () => {},
+  polygonListOrder: [],
+  setPolygonListOrder: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -108,6 +119,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
+  const [polygonMap, setPolygonMap] = useState<Record<string, any>>({});
+  const [polygonListOrder, setPolygonListOrder] = useState<string[]>([]);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -139,6 +152,36 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsMonitoring(false);
     }
   };
+
+  useEffect(() => {
+    console.log("MapAreaProvider");
+    console.log("polygonMap", polygonMap);
+    const loadCriteria = async () => {
+      let firstNotLoaded: string | null = null;
+      for (const uuid of polygonListOrder) {
+        if (firstNotLoaded == null || Object.keys(polygonMap[uuid]).length === 0) {
+          firstNotLoaded = uuid;
+          break;
+        }
+      }
+      if (firstNotLoaded !== null) {
+        const response = await fetchGetV2TerrafundValidationCriteriaData({
+          queryParams: {
+            uuid: firstNotLoaded,
+            where: "new"
+          } as any
+        });
+        setPolygonMap({
+          ...polygonMap,
+          [firstNotLoaded]: response
+        });
+      }
+    };
+    const hasEmptyCriteria = Object.keys(polygonMap).some(uuid => Object.keys(polygonMap[uuid]).length === 0);
+    if (hasEmptyCriteria) {
+      loadCriteria();
+    }
+  }, [polygonMap]);
 
   const contextValue: MapAreaType = {
     isMonitoring,
@@ -173,7 +216,11 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     previewVersion,
     setPreviewVersion,
     setStatusSelectedPolygon,
-    statusSelectedPolygon
+    statusSelectedPolygon,
+    polygonMap,
+    setPolygonMap,
+    setPolygonListOrder,
+    polygonListOrder
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

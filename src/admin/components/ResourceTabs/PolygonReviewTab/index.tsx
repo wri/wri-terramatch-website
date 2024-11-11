@@ -139,6 +139,7 @@ const ContentForApproval = ({
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
+  const { setPolygonMap, setPolygonListOrder } = useMapAreaContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
@@ -185,6 +186,13 @@ const PolygonReviewTab: FC<IProps> = props => {
       setSitePolygonData(result as any);
       if (offset + limit > count!) {
         setProgress(count!);
+        const keys = result.map((polygon: any) => polygon.poly_id);
+        setPolygonListOrder(keys);
+        const polygonMap: Record<string, any> = {};
+        for (const key of keys) {
+          polygonMap[key] = {};
+        }
+        setPolygonMap(polygonMap);
         break;
       }
       offset += limit;
