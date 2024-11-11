@@ -74,7 +74,7 @@ const Homepage = () => {
                   organizations that grow trees, their financial and government partners, and the wider public – can
                   access data and insights about projects that are tracked through&nbsp;
                   <a
-                    href="https://www.terramatch.org/"
+                    href="https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework"
                     target="_blank"
                     className="text-14-bold underline underline-offset-4"
                     rel="noreferrer"
