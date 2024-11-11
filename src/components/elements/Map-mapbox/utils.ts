@@ -172,7 +172,9 @@ const handleLayerClick = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   layerName?: string,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any
 ) => {
   removePopups("POLYGON");
   const { lngLat, features } = e;
@@ -205,7 +207,9 @@ const handleLayerClick = (
     const addPopupToMap = () => {
       newPopup.addTo(map);
     };
-    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName }));
+    root.render(
+      createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName, setFilters, dashboardCountries })
+    );
   } else {
     newPopup.addTo(map);
     root.render(createElement(PopupComponent, commonProps));
@@ -411,7 +415,9 @@ export const addPopupsToMap = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -425,7 +431,9 @@ export const addPopupsToMap = (
         editPolygon,
         setEditPolygon,
         draw,
-        isDashboard
+        isDashboard,
+        setFilters,
+        dashboardCountries
       );
     });
   }
@@ -442,7 +450,9 @@ export const addPopupToLayer = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -473,7 +483,9 @@ export const addPopupToLayer = (
         editPolygon,
         setEditPolygon,
         name,
-        isDashboard
+        isDashboard,
+        setFilters,
+        dashboardCountries
       );
     };
     targetLayers.forEach(targetLayer => {

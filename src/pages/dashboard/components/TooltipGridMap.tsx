@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
@@ -11,7 +10,7 @@ export interface TooltipItemProps {
 
 export interface TooltipGridProps {
   label: string;
-  learnMore?: boolean;
+  learnMore?: any;
   isoCountry?: string;
   items?: TooltipItemProps[];
 }
@@ -48,12 +47,9 @@ const TooltipGridMap = (props: TooltipGridProps) => {
               </div>
             ))}
         </div>
-
-        <When condition={learnMore}>
-          <Text className="mt-1 text-start text-primary underline" variant="text-12-bold">
-            {t("Learn More")}
-          </Text>
-        </When>
+        <Text onClick={() => learnMore()} className="mt-1 text-start text-primary underline" variant="text-12-bold">
+          {t("Learn More")}
+        </Text>
       </div>
     </div>
   );
