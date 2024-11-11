@@ -22,7 +22,7 @@ const BlurContainer = (props: BlurContainerProps) => {
       <div className="absolute h-full w-full rounded-lg bg-white bg-opacity-20 backdrop-blur-md" />
       <div className={classNames({ "opacity-70": disabled })}>{children}</div>
       <When condition={disabled}>
-        <div className="absolute top-0 z-10 h-full w-full" />
+        <div className="absolute top-0 z-auto h-full w-full" />
       </When>
     </div>
   );

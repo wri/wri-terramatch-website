@@ -36,15 +36,10 @@ import {
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
-  TREES_RESTORED_SECTION_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
 } from "./constants/tooltips";
-import {
-  JOBS_CREATED_SECTION_TOOLTIP,
-  NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
-  NUMBER_OF_TREES_PLANTED_TOOLTIP
-} from "./constants/tooltips";
+import { NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS, NUMBER_OF_TREES_PLANTED_TOOLTIP } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
 
@@ -353,7 +348,6 @@ const Dashboard = () => {
             subtitleMore={true}
             isUserAllowed={isUserAllowed?.allowed}
             title={t("Trees Restored")}
-            tooltip={t(TREES_RESTORED_SECTION_TOOLTIP)}
             widthTooltip="w-52 lg:w-64"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"
@@ -403,7 +397,6 @@ const Dashboard = () => {
             tooltipTrigger="click"
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-            tooltip={t(JOBS_CREATED_SECTION_TOOLTIP)}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}

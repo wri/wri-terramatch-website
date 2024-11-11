@@ -72,11 +72,12 @@ const PageCard = ({
         <When condition={!!title || !!headerChildren}>
           <div className="flex flex-wrap justify-between">
             <When condition={!!title}>
-              <Text variant="text-24-bold" className="flex flex-1 items-baseline text-darkCustom">
+              <Text variant="text-24-bold" className="flex flex-1 items-baseline uppercase text-darkCustom">
                 {title}
                 <When condition={!!tooltip}>
                   &nbsp;
                   <ToolTip
+                    className="normal-case"
                     content={tooltip || ""}
                     width={widthTooltip || "w-44 lg:w-52"}
                     title={title}

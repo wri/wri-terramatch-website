@@ -1,5 +1,7 @@
+import { useT } from "@transifex/react";
 import { useEffect, useRef } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -9,6 +11,8 @@ const Homepage = () => {
   const first = useRef<HTMLDivElement>(null);
   const second = useRef<HTMLDivElement>(null);
   const third = useRef<HTMLDivElement>(null);
+
+  const t = useT();
 
   useEffect(() => {
     const elements = [first, second, third];
@@ -95,6 +99,13 @@ const Homepage = () => {
                   Please note that the dashboard is pre-filtered upon page load to display only projects from the
                   TerraFund Landscapes programme. Each project reports 12 times over six years.
                 </Text>
+                <Button
+                  variant="about-us"
+                  className="mt-6"
+                  onClick={() => (window.location.href = "/dashboard?programmes=terrafund-landscapes")}
+                >
+                  {t("Access the Dashboards")}
+                </Button>
               </div>
             </div>
             <div className="w-2/5 pr-5">
