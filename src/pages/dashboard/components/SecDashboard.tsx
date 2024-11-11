@@ -27,9 +27,9 @@ import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
 import SimpleBarChart from "../charts/SimpleBarChart";
-import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashboard from "./GraphicIconDashboard";
+import { DashboardDataProps } from "./ObjectiveSec";
 import ObjectiveSec from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
@@ -262,7 +262,7 @@ const SecDashboard = ({
                   />
                   <Text
                     variant="text-14"
-                    className="mt-1 cursor-pointer pt-2 pl-4 text-primary underline"
+                    className="mt-1 cursor-pointer pl-4 pt-2 text-primary underline"
                     onClick={handleViewAllClick}
                   >
                     {t("VIEW ALL PROJECTS")}
