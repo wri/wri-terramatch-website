@@ -4,7 +4,32 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
-import { DashboardDataProps } from "../project/index.page";
+export interface DashboardTableDataProps {
+  label: string;
+  valueText: string;
+  value: number;
+}
+
+export interface GraphicLegendProps {
+  label: string;
+  value: string;
+  color: string;
+}
+export interface DashboardDataProps {
+  value?: number;
+  unit?: string;
+  secondValue?: string;
+  graphic?: string;
+  tableData?: DashboardTableDataProps[];
+  maxValue?: number;
+  totalSection?: { numberOfSites: number; totalHectaresRestored: number };
+  graphicLegend?: GraphicLegendProps[];
+  graphicTargetLandUseTypes?: DashboardTableDataProps[];
+  objetiveText?: string;
+  preferredLanguage?: string;
+  landTenure?: string;
+  totalValue?: number;
+}
 
 const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
   const t = useT();
