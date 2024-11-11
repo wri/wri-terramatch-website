@@ -26,6 +26,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
+  progressText?: string;
   mapFunctions: any;
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
@@ -41,6 +42,7 @@ const MapSidePanel = ({
   onSearch,
   onLoadMore,
   emptyText,
+  progressText,
   mapFunctions,
   checkedValues,
   onCheckboxChange,
@@ -210,6 +212,11 @@ const MapSidePanel = ({
         </div>
       </div>
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
+        {progressText && (
+          <Text variant="text-16-light" className="mt-8 text-white">
+            {progressText || t("Loading...")}
+          </Text>
+        )}
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
             {emptyText || t("No result")}

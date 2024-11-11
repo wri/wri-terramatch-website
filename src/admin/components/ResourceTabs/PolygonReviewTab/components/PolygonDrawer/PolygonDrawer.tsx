@@ -114,8 +114,9 @@ const PolygonDrawer = ({
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: polygonSelected
-      }
+        uuid: polygonSelected,
+        where: "PolygonDrawer"
+      } as any
     },
     {
       enabled: !!polygonSelected

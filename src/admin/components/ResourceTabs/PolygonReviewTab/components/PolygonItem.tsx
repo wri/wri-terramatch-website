@@ -54,8 +54,9 @@ const PolygonItem = ({
   const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: uuid
-      }
+        uuid: uuid,
+        where: "PolygonItem"
+      } as any
     },
     {
       enabled: !!uuid

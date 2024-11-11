@@ -32,8 +32,9 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: item.poly_id ?? item.id ?? ""
-      }
+        uuid: item.poly_id ?? item.id ?? "",
+        where: "CollapseRow"
+      } as any
     },
     {
       enabled: !!(item.poly_id ?? item.id)

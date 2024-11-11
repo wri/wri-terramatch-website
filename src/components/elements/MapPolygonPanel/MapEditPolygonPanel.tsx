@@ -64,8 +64,9 @@ const MapEditPolygonPanel = ({
   const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: {
-        uuid: editPolygon?.uuid
-      }
+        uuid: editPolygon?.uuid,
+        where: "MapEditPolygonPanel"
+      } as any
     },
     {
       enabled: !!editPolygon?.uuid

@@ -33,6 +33,8 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
+  fetchGetV2AdminSitesUUIDPolygons,
+  fetchGetV2AdminSitesUUIDPolygonsCount,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
@@ -40,8 +42,8 @@ import {
   fetchPutV2SitePolygonStatusBulk,
   GetV2MODELUUIDFilesResponse,
   useGetV2MODELUUIDFiles,
-  useGetV2SitesSiteBbox,
-  useGetV2SitesSitePolygon
+  useGetV2SitesSiteBbox
+  // useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import {
   PolygonBboxResponse,
@@ -145,19 +147,54 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
   const t = useT();
+  const [sitePolygonData, setSitePolygonData] = useState<SitePolygonsDataResponse | null>([]);
 
   const { openNotification } = useNotificationContext();
 
   const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
+    storePolygon(geojson, record, loadInBatches, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
-    pathParams: {
-      site: record.uuid
+
+  const loadInBatches = async () => {
+    const { count } = await fetchGetV2AdminSitesUUIDPolygonsCount({
+      pathParams: {
+        uuid: record.uuid
+      }
+    });
+    setTotal(count!);
+    let result: any[] = [];
+    const limit = 10;
+    let offset = 0;
+    while (offset < count!) {
+      const queryParams: any = {
+        limit: limit,
+        offset: offset
+      };
+      const partialResponse = (await fetchGetV2AdminSitesUUIDPolygons({
+        pathParams: {
+          uuid: record.uuid
+        },
+        queryParams
+      })) as any;
+      console.log("partialResponse", partialResponse);
+      result = result.concat(partialResponse);
+      setSitePolygonData(result as any);
+      if (offset + limit > count!) {
+        setProgress(count!);
+        break;
+      }
+      offset += limit;
+      setProgress(offset);
     }
-  });
+  };
+
+  useEffect(() => {
+    loadInBatches();
+  }, []);
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -202,7 +239,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     uuid: data.poly_id
   }));
 
-  const polygonDataMap = parsePolygonData(sitePolygonData);
+  const polygonDataMap = parsePolygonData(sitePolygonData as any);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -228,7 +265,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
       .then((response: DeletePolygonProps | undefined) => {
         if (response && response?.uuid) {
-          refetch?.();
+          loadInBatches?.();
           const { map } = mapFunctions;
           if (map?.current) {
             addSourcesToLayers(map.current, polygonDataMap, undefined);
@@ -305,7 +342,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       } else {
         openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       }
-      refetch();
+      loadInBatches();
       refetchSiteBbox();
       closeModal(ModalId.ADD_POLYGON);
       setPolygonLoaded(false);
@@ -381,7 +418,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               }
             });
             openNotification("success", "Success, Your Polygons were approved!", "");
-            refetch();
+            loadInBatches();
           } catch (error) {
             Log.error("Polygon approval error", error);
           }
@@ -564,8 +601,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   ];
 
+  console.log(`progress ${progress} total ${total}`);
+
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData as any} reloadSiteData={loadInBatches}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>
@@ -638,7 +677,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showLegend
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
-                sitePolygonData={sitePolygonData}
+                sitePolygonData={sitePolygonData as any}
                 modelFilesData={modelFilesData?.data}
               />
               <div className="mb-6">
@@ -710,7 +749,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               polygonFromMap={polygonFromMap}
               setPolygonFromMap={setPolygonFromMap}
               mapFunctions={mapFunctions}
-              refresh={refetch}
+              refresh={loadInBatches}
             />
           </Grid>
         </Grid>

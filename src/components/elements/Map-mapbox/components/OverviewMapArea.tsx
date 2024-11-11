@@ -10,9 +10,11 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2DashboardCountryCountry,
+  fetchGetV2SitesSiteBboxAndCount,
+  fetchGetV2TypeEntity,
   GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles,
-  useGetV2TypeEntity
+  useGetV2MODELUUIDFiles
+  // useGetV2TypeEntity
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -45,6 +47,8 @@ const OverviewMapArea = ({
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const [total, setTotal] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
   const {
@@ -63,14 +67,47 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const { data: entityData, refetch } = useGetV2TypeEntity({
-    queryParams: {
-      uuid: entityModel?.uuid,
-      type: type,
-      status: checkedValues.join(","),
-      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+  const loadInBatches = async () => {
+    const { count, bbox } = await fetchGetV2SitesSiteBboxAndCount({
+      pathParams: {
+        site: entityModel?.uuid
+      }
+    });
+    setTotal(count!);
+    if (!entityBbox) {
+      await callCountryBBox();
+      return;
     }
-  });
+    setEntityBbox(bbox as BBox);
+    const result = { polygonsData: [] };
+    const limit = 10;
+    let offset = 0;
+    while (offset < count!) {
+      const queryParams: any = {
+        uuid: entityModel?.uuid,
+        type: type,
+        status: checkedValues.join(","),
+        [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
+        limit: limit,
+        offset: offset
+      };
+      const partialResponse = (await fetchGetV2TypeEntity({
+        queryParams
+      })) as any;
+      result.polygonsData = result.polygonsData.concat(partialResponse.polygonsData);
+      setResultValues(result);
+      if (offset + limit > count!) {
+        setProgress(count!);
+        break;
+      }
+      offset += limit;
+      setProgress(offset);
+    }
+  };
+
+  useEffect(() => {
+    loadInBatches();
+  }, []);
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: type, uuid: entityModel?.uuid }
@@ -79,10 +116,6 @@ const OverviewMapArea = ({
   const setResultValues = (result: any) => {
     if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
-      setEntityBbox(result.bbox as BBox);
-      if (result.polygonsData?.length === 0) {
-        callCountryBBox();
-      }
     }
   };
   const callCountryBBox = async () => {
@@ -103,9 +136,6 @@ const OverviewMapArea = ({
       setShouldRefetchPolygonData(false);
     }
   }, [entityBbox, polygonsData]);
-  useEffect(() => {
-    setResultValues(entityData);
-  }, [entityData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
@@ -118,7 +148,7 @@ const OverviewMapArea = ({
   useEffect(() => {
     if (shouldRefetchPolygonData) {
       reloadSiteData?.();
-      refetch();
+      // refetch();
     }
   }, [shouldRefetchPolygonData]);
 
@@ -176,7 +206,7 @@ const OverviewMapArea = ({
           setStateViewPanel={setStateViewPanel}
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
-          recallEntityData={refetch}
+          recallEntityData={() => {}}
           polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
@@ -191,6 +221,7 @@ const OverviewMapArea = ({
               subtitle: t("Created {date}", { date: format(item.created_at) })
             })) || []) as any[]
           }
+          progressText={total && progress < total && t("Loading {progress} of {total} polygons", { progress, total })}
           mapFunctions={mapFunctions}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
@@ -198,7 +229,7 @@ const OverviewMapArea = ({
           onCheckboxChange={handleCheckboxChange}
           setSortOrder={setSortOrder}
           type={type}
-          recallEntityData={refetch}
+          recallEntityData={() => {}}
         />
       )}
       <MapContainer

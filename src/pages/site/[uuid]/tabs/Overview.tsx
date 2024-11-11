@@ -33,8 +33,8 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
-  fetchPutV2SitePolygonStatusBulk,
-  useGetV2SitesSitePolygon
+  fetchPutV2SitePolygonStatusBulk
+  // useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
@@ -98,11 +98,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
-    pathParams: {
-      site: site.uuid
-    }
-  });
+  // const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
+  //   pathParams: {
+  //     site: site.uuid
+  //   }
+  // });
   useEffect(() => {
     setSiteData(site);
     if (site.project?.uuid) {
@@ -388,7 +388,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider sitePolygonData={[]} reloadSiteData={() => {}}>
       <PageBody>
         <PageRow>
           <PageCard
