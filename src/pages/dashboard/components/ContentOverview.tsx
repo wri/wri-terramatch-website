@@ -23,7 +23,6 @@ import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import {
-  HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP,
   MAP_TOOLTIP,
   RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
   TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
@@ -233,9 +232,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           gap={8}
           isUserAllowed={isUserAllowed}
           subtitleMore={true}
-          title={t("Hectares Under Restoration")}
+          title={t("HECTARES UNDER RESTORATION")}
           variantSubTitle="text-14-light"
-          tooltip={t(HECTARES_UNDER_RESTORATION_SECTION_TOOLTIP)}
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
             `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
