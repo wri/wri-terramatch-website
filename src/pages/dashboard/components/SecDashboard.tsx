@@ -17,7 +17,8 @@ import {
   DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
-  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART,
+  DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED
 } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
@@ -273,10 +274,23 @@ const SecDashboard = ({
           </When>
         </When>
         <When condition={chartType === CHART_TYPES.barChart}>
-          <GraphicIconDashboard
-            data={data?.graphicTargetLandUseTypes ?? []}
-            maxValue={data?.totalSection?.totalHectaresRestored ?? 0}
-          />
+          <BlurContainer
+            isBlur={data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0}
+            textInformation={noDataInformation}
+          >
+            <GraphicIconDashboard
+              data={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes
+                  : data?.graphicTargetLandUseTypes ?? []
+              }
+              maxValue={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? 90
+                  : data?.totalSection?.totalHectaresRestored ?? 0
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={!!data?.objetiveText}>
           <ObjectiveSec data={data} />

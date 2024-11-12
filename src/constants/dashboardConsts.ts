@@ -122,3 +122,53 @@ export const DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART = [
   { label: "direct-seeding", value: 8.6 },
   { label: "assisted-natural-regeneration", value: 5.6 }
 ];
+
+export const DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED = {
+  graphicTargetLandUseTypes: [
+    {
+      label: "Agroforest",
+      value: 60,
+      valueText: "212 ha 60%"
+    },
+    {
+      label: "Natural Forest",
+      value: 25,
+      valueText: "205 ha 30%"
+    },
+    {
+      label: "Mangrove",
+      value: 2,
+      valueText: "158 ha 2%"
+    },
+    {
+      label: "Woodlot / Plantation",
+      value: 6,
+      valueText: "127 ha 5%"
+    },
+    {
+      label: "Open Natural Ecosystem",
+      value: 3,
+      valueText: "89 ha 3%"
+    },
+    {
+      label: "Riparian Area / Wetland",
+      value: 1,
+      valueText: "76 ha <1%"
+    },
+    {
+      label: "Urban Forest",
+      value: 1,
+      valueText: "43 ha <1%"
+    },
+    {
+      label: "Silvopasture",
+      value: 1,
+      valueText: "34 ha <1%"
+    },
+    {
+      label: "Peatland",
+      value: 1,
+      valueText: "11 ha <1%"
+    }
+  ]
+};
