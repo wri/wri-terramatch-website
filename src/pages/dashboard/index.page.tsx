@@ -92,7 +92,7 @@ const Dashboard = () => {
         return (
           <div className="flex items-center gap-2">
             <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
-            <Text variant="text-12-light">{value[0]}</Text>
+            <Text variant="text-14">{value[0]}</Text>
           </div>
         );
       },
@@ -416,13 +416,13 @@ const Dashboard = () => {
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
               />
             </div>
-            <div className="grid w-full grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
               />
@@ -431,7 +431,7 @@ const Dashboard = () => {
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
               />

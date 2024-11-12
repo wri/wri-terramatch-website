@@ -284,7 +284,7 @@ export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
 
 export const getBarColorRestoration = (name: string) => {
   if (name.includes("Tree Planting")) return "#7BBD31";
-  if (name.includes("direct seeding")) return "#27A9E0";
+  if (name.includes("Direct Seeding")) return "#27A9E0";
   return "#13487A";
 };
 
