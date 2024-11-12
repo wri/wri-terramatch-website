@@ -305,7 +305,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   options={dashboardCountries.map((country: CountriesProps) => ({
                     title: country.data.label,
                     value: country.id,
-                    prefix: <img src={country.data.icon} alt="flag" className="h-4" />
+                    prefix: <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] object-cover" />
                   }))}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[3]"
