@@ -191,7 +191,8 @@ const AttributeInformation = ({
               await refetch();
 
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: selectedPolygon.primary_uuid as string }
+                pathParams: { uuid: selectedPolygon.primary_uuid as string },
+                queryParams: { where: "AttributeInformation" }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               setSelectedPolygonData(polygonActive);

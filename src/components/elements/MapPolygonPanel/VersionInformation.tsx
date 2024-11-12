@@ -54,7 +54,8 @@ const VersionInformation = ({
       await refetchPolygonVersions?.();
       await recallEntityData?.();
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: editPolygon?.primary_uuid as string }
+        pathParams: { uuid: editPolygon?.primary_uuid as string },
+        queryParams: { where: "VersionInformation" }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
       setEditPolygon({
@@ -128,7 +129,8 @@ const VersionInformation = ({
       await Promise.all(uploadPromises);
       await refetchPolygonVersions?.();
       const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: editPolygon?.primary_uuid as string }
+        pathParams: { uuid: editPolygon?.primary_uuid as string },
+        queryParams: { where: "VersionInformation2" }
       })) as SitePolygon[];
       const polygonActive = polygonVersionData?.find(item => item.is_active);
       setEditPolygon({
@@ -208,7 +210,8 @@ const VersionInformation = ({
 
   const createNewVersion = async () => {
     const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-      pathParams: { uuid: editPolygon.primary_uuid as string }
+      pathParams: { uuid: editPolygon.primary_uuid as string },
+      queryParams: { where: "VersionInformation3" }
     })) as SitePolygon[];
     const polygonActive = polygonVersionData?.find(item => item.is_active);
     const polygonUuid = selectedPolyVersion?.uuid ?? polygonActive?.uuid;

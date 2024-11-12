@@ -53,7 +53,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
 
   const { data: polygonVersions, refetch: refetchPolygonVersions } = useGetV2SitePolygonUuidVersions(
     {
-      pathParams: { uuid: polygon?.primary_uuid as string }
+      pathParams: { uuid: polygon?.primary_uuid as string },
+      queryParams: { where: "SiteArea" }
     },
     {
       enabled: !!polygon?.primary_uuid

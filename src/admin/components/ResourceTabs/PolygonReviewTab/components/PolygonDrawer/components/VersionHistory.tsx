@@ -121,7 +121,8 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refreshPolygonList?.();
       const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: polygonSelectedPrimaryUuid as string }
+        pathParams: { uuid: polygonSelectedPrimaryUuid as string },
+        queryParams: { where: "VersionHistory" }
       })) as SitePolygon[];
       const polygonActive = polygonVersionData?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
@@ -165,7 +166,8 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refetch();
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon.primary_uuid as string }
+        pathParams: { uuid: selectedPolygon.primary_uuid as string },
+        queryParams: { where: "VersionHistory2" }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);

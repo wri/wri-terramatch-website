@@ -67,7 +67,8 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       setShouldRefetchPolygonVersions(true);
 
       const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: editPolygon?.primary_uuid as string }
+        pathParams: { uuid: editPolygon?.primary_uuid as string },
+        queryParams: { where: "CheckIndividualPolygonControl" }
       })) as SitePolygonsDataResponse;
       const polygonActive = polygonVersionData?.find(item => item.is_active);
       setEditPolygon({

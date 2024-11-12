@@ -483,7 +483,8 @@ export const MapContainer = ({
               await reloadSiteData?.();
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+                pathParams: { uuid: selectedPolygon?.primary_uuid as string },
+                queryParams: { where: "Map" }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });

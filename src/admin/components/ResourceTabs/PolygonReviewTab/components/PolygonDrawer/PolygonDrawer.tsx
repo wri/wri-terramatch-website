@@ -139,8 +139,14 @@ const PolygonDrawer = ({
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
+      if (!selectedPolygon?.primary_uuid) {
+        return;
+      }
+      console.log("selectedPolygon", selectedPolygon);
+      console.log("selectedPolygon", selectedPolygon?.primary_uuid);
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+        pathParams: { uuid: selectedPolygon?.primary_uuid as string },
+        queryParams: { where: "PolygonDrawer" }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
@@ -233,7 +239,8 @@ const PolygonDrawer = ({
     isLoading: isLoadingVersions
   } = useGetV2SitePolygonUuidVersions(
     {
-      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
+      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string },
+      queryParams: { where: "PolygonDrawer" }
     },
     {
       enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid || !!polygonFromMap?.uuid
