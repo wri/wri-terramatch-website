@@ -19,11 +19,11 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
         return { color: "bg-green-60", icon: "IC_NATURAL_FOREST" };
       case "Mangrove":
         return { color: "bg-green-35", icon: "IC_MANGROVE" };
-      case "Woodlot / Plantation":
+      case "Woodlot or Plantation":
         return { color: "bg-yellow-600", icon: "IC_WOODLOT" };
       case "Open Natural Ecosystem":
         return { color: "bg-green-40", icon: "IC_OPEN_NATURAL_ECOSYSTEM" };
-      case "Riparian Area / Wetland":
+      case "Riparian Area or Wetland":
         return { color: "bg-primary-350", icon: "IC_RIPARIAN_AREA" };
       case "Urban Forest":
         return { color: "bg-blueCustom", icon: "IC_URBAN_FOREST" };
