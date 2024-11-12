@@ -128,7 +128,7 @@ const Homepage = () => {
       </div>
 
       <div
-        className="flex flex-col bg-tree bg-cover px-13 pb-8 pt-13 transition-all duration-500 ease-in-out"
+        className="flex flex-col bg-tree bg-cover px-13 pb-9 pt-13 transition-all duration-500 ease-in-out"
         ref={first}
       >
         <Text variant="text-40-bold" className="leading-[normal] text-darkCustom-150">
@@ -210,14 +210,14 @@ const Homepage = () => {
             </Text>
           </div>
         </div>
-        <div className="flex w-fit items-center gap-1 rounded-full bg-yellow px-3 py-1.5 opacity-0 transition-all duration-500 ease-in-out">
+        <div className="flex w-fit items-center gap-1 gap-2 rounded-full bg-yellow px-3 py-1.5 transition-all duration-500 ease-in-out">
           <Icon name={IconNames.ORANGE_DOTS} className="h-5 w-5" />
           <div>
-            <Text variant="text-14-semibold">
+            <Text variant="text-14">
               Are you interested in becoming a funder, a restoration champion, or getting involved in another way? If
               so, or if you have any other questions,
             </Text>
-            <Text variant="text-14-semibold">
+            <Text variant="text-14">
               please email our support team at{" "}
               <a
                 href="mailto:info@terramatch.org"

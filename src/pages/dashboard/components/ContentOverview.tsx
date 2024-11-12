@@ -273,7 +273,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           title={t(titleTable)}
           tooltip={textTooltipTable}
           tooltipTrigger="click"
-          iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
           headerChildren={
             <Button
               variant="white-border"
