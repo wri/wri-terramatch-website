@@ -50,6 +50,7 @@ export interface TableProps<TData>
   invertSelectPagination?: boolean;
   visibleRows?: number;
   onRowClick?: (row: TData) => void;
+  contentClassName?: string;
 }
 
 export interface TableState {
@@ -81,6 +82,7 @@ function Table<TData extends RowData>({
   hasPagination = false,
   visibleRows = 10,
   onRowClick,
+  contentClassName,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -130,7 +132,7 @@ function Table<TData extends RowData>({
   }, [data, visibleRows]);
 
   return (
-    <div className={classNames("w-full", variant.className)}>
+    <div className={classNames("w-full", variant.className, contentClassName)}>
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
