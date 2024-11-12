@@ -91,6 +91,12 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = fals
     return dataPoint;
   });
 
+  const hasValuesOver100 = formattedData.some(point =>
+    Object.entries(point)
+      .filter(([key]) => key !== "time")
+      .some(([_, value]) => value && +value > 100)
+  );
+
   const availableColors = Object.fromEntries(Object.entries(COLORS).filter(([key]) => dataMap.has(key)));
 
   return (
@@ -113,7 +119,7 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = fals
           tickLine={false}
           axisLine={false}
           tick={props => <CustomYAxisTick {...props} isAbsoluteData={isAbsoluteData} />}
-          domain={isAbsoluteData ? [0, 100] : ["auto", "auto"]}
+          domain={isAbsoluteData && !hasValuesOver100 ? [0, 100] : ["auto", "auto"]}
         />
         <Tooltip
           content={props => <CustomTooltip {...props} isAbsoluteData={isAbsoluteData} />}
