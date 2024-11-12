@@ -79,7 +79,7 @@ const Dashboard = () => {
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
+  const dataToggleGraphic = ["Table", "Graph"];
 
   useEffect(() => {
     refetchTotalSectionHeader();
@@ -92,7 +92,7 @@ const Dashboard = () => {
         return (
           <div className="flex items-center gap-2">
             <img src={value[1]} alt="flag" className="h-3" />
-            <Text variant="text-12-light">{value[0]}</Text>
+            <Text variant="text-14">{value[0]}</Text>
           </div>
         );
       },
@@ -416,7 +416,7 @@ const Dashboard = () => {
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
               />
             </div>
-            <div className="grid w-full grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={{}}

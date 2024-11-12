@@ -14,13 +14,13 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
   return (
     <ul style={{ listStyle: "none", padding: "0 0 0 30px", margin: 0, display: "flex", justifyContent: "center" }}>
       {payload.map((entry: any, index: number) => (
-        <li key={`item-${index}`} style={{ display: "flex", alignItems: "center" }}>
+        <li key={`item-${index}`} style={{ display: "flex", alignItems: "baseline" }}>
           <svg width="12" height="10" style={{ marginRight: "7px" }}>
             <circle cx="5" cy="5" r="5" fill={entry.color} />
           </svg>
-          <span style={{ color: "black", display: "flex", flexDirection: "column" }}>
-            <span>{entry.value}</span>
-            <span style={{ fontSize: "0.8em", color: "#666" }}>
+          <span style={{ display: "flex", flexDirection: "column" }}>
+            <span className="text-12-light">{entry.value}</span>
+            <span className="text-12-light text-darkCustom text-opacity-70">
               {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentage(totals[entry.value], totalJobs)}%)`}
             </span>
           </span>

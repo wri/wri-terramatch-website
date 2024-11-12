@@ -32,11 +32,11 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }
 
   return (
     <div className="border-gray-300 custom-tooltip rounded-lg border bg-white p-2">
-      <p className="text-xs font-bold text-black">{`${year} - ${formatMonth(Number(month))}`}</p>
+      <p className="text-12-bold font-bold text-black">{`${year} - ${formatMonth(Number(month))}`}</p>
       {orderedPayload.map((item: any, index: number) => (
-        <p key={index} className="text-xs">
-          <span className="text-xs font-normal text-black">{item.name}: </span>
-          <span className="text-xs font-bold text-black">
+        <p key={index} className="text-12">
+          <span className="text-12 font-normal text-black">{item.name}: </span>
+          <span className="text-12-bold font-bold text-black">
             {isAbsoluteData ? `${item.value.toFixed(2)}%` : item.value.toLocaleString()}
           </span>
         </p>
@@ -51,7 +51,7 @@ const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="middle" fill="#353535" className="text-10-light text-darkCustom">
+      <text x={0} y={0} dy={16} textAnchor="middle" fill="#353535" className="text-12 text-darkCustom">
         {shouldDisplayYear ? year : ""}
       </text>
     </g>
@@ -63,7 +63,7 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload, isAbsoluteData }) => {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={4} textAnchor="end" fill="#353535" className="text-10-light text-darkCustom">
+      <text x={0} y={0} dy={4} textAnchor="end" fill="#353535" className="text-12 text-darkCustom">
         {formattedValue}
       </text>
     </g>
