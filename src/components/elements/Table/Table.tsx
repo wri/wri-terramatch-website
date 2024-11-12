@@ -26,6 +26,13 @@ import Pagination from "@/components/extensive/Pagination";
 
 import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
 
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue> {
+    width?: string;
+  }
+}
+
 export interface TableProps<TData>
   extends DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>,
     PropsWithChildren {
@@ -152,6 +159,7 @@ function Table<TData extends RowData>({
                             classNames({ "cursor-pointer": header.column.getCanSort() })
                           )}
                           align="left"
+                          style={{ width: header.column.columnDef.meta?.width }}
                         >
                           <div
                             className="flex items-center"

@@ -39,27 +39,18 @@ const ProjectList = () => {
   const columns = [
     {
       header: "Project",
-      accessorKey: "project"
+      accessorKey: "project",
+      meta: { width: "23%" }
     },
     {
       header: "Organization",
-      accessorKey: "organization"
+      accessorKey: "organization",
+      meta: { width: "19%" }
     },
     {
       header: "Programme",
       accessorKey: "programme",
-      cell: (props: any) => {
-        const value = props.getValue();
-        return value === "TerraFund Top 100" ? (
-          <Text variant="text-14-light">
-            TerraFund
-            <br />
-            Top 100
-          </Text>
-        ) : (
-          <Text variant="text-14-light">{value}</Text>
-        );
-      }
+      meta: { width: "14%" }
     },
     {
       header: "Country",
@@ -72,7 +63,8 @@ const ProjectList = () => {
             <Text variant="text-14-light">{label}</Text>
           </div>
         );
-      }
+      },
+      meta: { width: "14%" }
     },
     {
       header: "Trees Planted",
