@@ -26,6 +26,14 @@ import Pagination from "@/components/extensive/Pagination";
 
 import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
 
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue> {
+    width?: string;
+    align?: "left" | "center" | "right";
+  }
+}
+
 export interface TableProps<TData>
   extends DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>,
     PropsWithChildren {
@@ -42,6 +50,7 @@ export interface TableProps<TData>
   invertSelectPagination?: boolean;
   visibleRows?: number;
   onRowClick?: (row: TData) => void;
+  contentClassName?: string;
 }
 
 export interface TableState {
@@ -73,6 +82,7 @@ function Table<TData extends RowData>({
   hasPagination = false,
   visibleRows = 10,
   onRowClick,
+  contentClassName,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -122,7 +132,7 @@ function Table<TData extends RowData>({
   }, [data, visibleRows]);
 
   return (
-    <div className={classNames("w-full", variant.className)}>
+    <div className={classNames("w-full", variant.className, contentClassName)}>
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
@@ -152,6 +162,7 @@ function Table<TData extends RowData>({
                             classNames({ "cursor-pointer": header.column.getCanSort() })
                           )}
                           align="left"
+                          style={{ width: header.column.columnDef.meta?.width }}
                         >
                           <div
                             className="flex items-center"
@@ -172,7 +183,7 @@ function Table<TData extends RowData>({
                                     header.column.getIsSorted() as string
                                   ] ?? IconNames.SORT
                                 }
-                                className="ml-2 inline fill-neutral-900"
+                                className="min-w-3.5 lg:min-w-4 ml-2 inline h-4 w-3.5 fill-neutral-900"
                                 width={11}
                                 height={14}
                               />

@@ -14,6 +14,14 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue> {
+    width?: string;
+    align?: "left" | "center" | "right";
+  }
+}
+
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   fields: FormField[];
