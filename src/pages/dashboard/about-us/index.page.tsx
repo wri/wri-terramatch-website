@@ -104,7 +104,7 @@ const Homepage = () => {
                   className="mt-6"
                   onClick={() => (window.location.href = "/dashboard?programmes=terrafund-landscapes")}
                 >
-                  {t("Access the Dashboards")}
+                  {t("Open Dashboard")}
                 </Button>
               </div>
             </div>

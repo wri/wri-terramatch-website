@@ -248,7 +248,7 @@ const Dashboard = () => {
     total_non_profit_count: totalSectionHeader?.total_non_profit_count
   };
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0 && !filters.uuid}>
@@ -298,7 +298,7 @@ const Dashboard = () => {
                       width="w-56 lg:w-64"
                       trigger="click"
                     >
-                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+                      <Icon name={IconNames.IC_INFO} className="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5" />
                     </ToolTip>
                   </div>
                 </div>
