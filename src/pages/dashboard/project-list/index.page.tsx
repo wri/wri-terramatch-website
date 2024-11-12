@@ -68,7 +68,7 @@ const ProjectList = () => {
         const { label, image } = props.getValue();
         return (
           <div className="flex items-center gap-2">
-            <img src={image} alt="flas" className="h-6 w-8 object-cover" />
+            <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
             <Text variant="text-14-light">{label}</Text>
           </div>
         );

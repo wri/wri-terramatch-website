@@ -91,7 +91,7 @@ const Dashboard = () => {
         const value = props.getValue().split("_");
         return (
           <div className="flex items-center gap-2">
-            <img src={value[1]} alt="flag" className="h-3 w-5 object-cover" />
+            <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
             <Text variant="text-12-light">{value[0]}</Text>
           </div>
         );
@@ -256,7 +256,7 @@ const Dashboard = () => {
               <Text variant="text-14-light" className="uppercase text-black ">
                 {t("results for:")}
               </Text>
-              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 object-cover" />
+              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <Text variant="text-24-semibold" className="text-black">
                 {t(filters.country?.data.label)}
               </Text>
