@@ -20,7 +20,7 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
           </svg>
           <span style={{ display: "flex", flexDirection: "column" }}>
             <span className="text-12-light">{entry.value}</span>
-            <span className="text-12-light text-darkCustom text-opacity-70">
+            <span className="text-12-light text-darkCustom">
               {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentage(totals[entry.value], totalJobs)}%)`}
             </span>
           </span>
