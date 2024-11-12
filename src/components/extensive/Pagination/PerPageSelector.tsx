@@ -69,7 +69,13 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                         variant={props.variantText ?? "text-14"}
                         className={tw(
                           "cursor-pointer border-b border-neutral-100 bg-white px-4 py-3 last:border-none hover:bg-primary-100",
-                          isSelected ? "!font-bold" : "!font-light"
+                          isSelected
+                            ? props.variant?.textNumberNoSelected
+                              ? props.variant?.textNumberNoSelected
+                              : "!font-bold"
+                            : props.variant?.textNumberSelected
+                            ? props.variant?.textNumberSelected
+                            : "!font-light"
                         )}
                       >
                         {option}
@@ -79,7 +85,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                 </Listbox.Options>
               </Transition>
               <div className="flex h-full flex-1 items-center justify-center">
-                <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
+                <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="line-clamp-1 w-fit uppercase">
                   {value}
                 </Text>
               </div>
