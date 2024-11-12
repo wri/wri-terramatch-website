@@ -85,7 +85,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                 </Listbox.Options>
               </Transition>
               <div className="flex h-full flex-1 items-center justify-center">
-                <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="line-clamp-1 w-fit uppercase">
+                <Text variant={props.variantText ?? "text-bold-subtitle-500"} className="w-fit uppercase line-clamp-1">
                   {value}
                 </Text>
               </div>
