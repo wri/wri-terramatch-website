@@ -50,7 +50,7 @@ const ProjectList = () => {
     {
       header: "Programme",
       accessorKey: "programme",
-      meta: { width: "14%" }
+      meta: { width: "13%" }
     },
     {
       header: "Country",
@@ -64,7 +64,7 @@ const ProjectList = () => {
           </div>
         );
       },
-      meta: { width: "14%" }
+      meta: { width: "13%" }
     },
     {
       header: "Trees Planted",
