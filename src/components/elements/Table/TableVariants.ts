@@ -94,10 +94,10 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   tableWrapper: "border border-neutral-200 rounded-lg overflow-hidden",
   trHeader: "bg-neutral-150",
   thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-12-semibold whitespace-normal px-2 border-t-0",
+    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
+  tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
   thead: "bg-blueCustom-100"
 };
 
@@ -128,10 +128,10 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[284px] wide:max-h-[304px]",
   trHeader: "bg-neutral-150 sticky top-0 z-auto",
-  thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
+  thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-14 px-3 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
+  tdBody: "text-14-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
   thead: "bg-blueCustom-100 "
 };
 
