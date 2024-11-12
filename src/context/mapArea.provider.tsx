@@ -159,7 +159,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     const loadCriteria = async () => {
       let firstNotLoaded: string | null = null;
       for (const uuid of polygonListOrder) {
-        if (firstNotLoaded == null || Object.keys(polygonMap[uuid]).length === 0) {
+        if (firstNotLoaded == null && Object.keys(polygonMap[uuid]).length === 0) {
           firstNotLoaded = uuid;
           break;
         }
@@ -177,7 +177,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
         });
       }
     };
-    const hasEmptyCriteria = Object.keys(polygonMap).some(uuid => Object.keys(polygonMap[uuid]).length === 0);
+    const hasEmptyCriteria = polygonListOrder.some(uuid => Object.keys(polygonMap[uuid]).length === 0);
     if (hasEmptyCriteria) {
       loadCriteria();
     }
