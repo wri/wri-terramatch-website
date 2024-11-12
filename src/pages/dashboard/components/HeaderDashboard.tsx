@@ -344,7 +344,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               >
                 {t("Clear Filters")}
               </button>
-              <When condition={isProjectListPage}>
+              <When condition={isProjectListPage && isHomepage}>
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
