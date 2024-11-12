@@ -132,9 +132,9 @@ const ProjectList = () => {
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
         variant={VARIANT_TABLE_DASHBOARD}
-        contentClassName="h-[calc(100%_-_4rem)] max-h-[calc(100%_-_4rem)] !px-0 overflow-auto"
-        className="!overflow-visible"
+        contentClassName="h-full max-h-full overflow-auto pr-2"
         hasPagination={true}
+        classNameWrapper="!overflow-visible"
         invertSelectPagination={true}
         onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
           setFilters(prevValues => ({
