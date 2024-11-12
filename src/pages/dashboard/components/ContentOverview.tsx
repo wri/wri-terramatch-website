@@ -115,7 +115,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               showLegend={false}
               mapFunctions={modalMapFunctions}
               isDashboard={"modal"}
-              className="custom-popup-close-button"
+              className="custom-popup-close-button !h-full"
               centroids={centroids}
               showPopups={true}
               polygonsData={polygonsData as Record<string, string[]>}

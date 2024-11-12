@@ -19,7 +19,7 @@ const LoadingContainerOpacity = ({
   return (
     <Fragment>
       {wrapInPaper ? (
-        <Paper className={`relative ${className}`}>
+        <Paper className={`relative h-full w-full ${className}`}>
           {children}
           {loading && (
             <>
@@ -31,7 +31,7 @@ const LoadingContainerOpacity = ({
           )}
         </Paper>
       ) : (
-        <div className={`relative ${className}`}>
+        <div className={`relative h-full w-full ${className}`}>
           {children}
           {loading && (
             <>
