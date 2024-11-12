@@ -26,7 +26,7 @@ const Sidebar = () => {
                 router.asPath.includes("/dashboard") &&
                 !router.asPath.includes("/dashboard/project-list") &&
                 !router.asPath.includes("/dashboard/project-insights") &&
-                !router.asPath.includes("/dashboard/about-us")
+                !router.asPath.includes("/dashboard/learn-more")
             })}
             href="/dashboard"
           >
@@ -65,9 +65,9 @@ const Sidebar = () => {
         <Tooltip content={t("LEARN MORE")} placement="right">
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1", {
-              "text-white": router.asPath.includes("/dashboard/about-us")
+              "text-white": router.asPath.includes("/dashboard/learn-more")
             })}
-            href="/dashboard/about-us"
+            href="/dashboard/learn-more"
           >
             <Icon name={IconNames.ABOUT_US} className="h-8 w-8" />
             <Text variant={"text-8"}>{t("LEARN MORE")}</Text>

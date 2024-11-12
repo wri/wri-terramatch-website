@@ -56,7 +56,7 @@ const TabCarouselAboutUs = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTab(prevTab => (prevTab === aboutUs.length - 1 ? 0 : prevTab + 1));
-    }, 15000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [aboutUs.length]);
 

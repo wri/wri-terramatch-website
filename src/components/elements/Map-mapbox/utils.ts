@@ -206,19 +206,31 @@ const handleLayerClick = (
   if (isDashboard) {
     const addPopupToMap = () => {
       newPopup.addTo(map);
+      removePopups("POLYGON");
+      popupAttachedMap["POLYGON"].push(newPopup);
+    };
+    const removePopupFromMap = () => {
+      newPopup.remove();
     };
     root.render(
-      createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName, setFilters, dashboardCountries })
+      createElement(PopupComponent, {
+        ...commonProps,
+        addPopupToMap,
+        layerName,
+        setFilters,
+        dashboardCountries,
+        removePopupFromMap
+      })
     );
   } else {
     newPopup.addTo(map);
+    popupAttachedMap["POLYGON"].push(newPopup);
     root.render(createElement(PopupComponent, commonProps));
   }
-
-  popupAttachedMap["POLYGON"].push(newPopup);
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
+  if (!popupAttachedMap[key]) return;
   popupAttachedMap[key].forEach(popup => {
     popup.remove();
   });
@@ -537,7 +549,7 @@ export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
   layer: LayerType,
-  zoomFilter: number | undefined,
+  zoomFilterValue: number | undefined,
   existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
@@ -570,9 +582,12 @@ export const addGeojsonSourceToLayer = (
       addLayerGeojsonStyle(map, name, name, style, index);
     });
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    if (existsPolygons && zoomFilter !== undefined) {
+    if (existsPolygons && zoomFilterValue !== undefined) {
       layerIds.forEach(layerId => {
-        map.setFilter(layerId, ["<=", ["zoom"], zoomFilter + 1]);
+        let existingFilter = map.getFilter(layerId) || ["all"];
+        let zoomFilter = ["<=", ["zoom"], zoomFilterValue + 1];
+        let combinedFilter = ["all", existingFilter, zoomFilter];
+        map.setFilter(layerId, combinedFilter);
       });
     }
   }
