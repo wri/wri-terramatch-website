@@ -422,7 +422,7 @@ const Dashboard = () => {
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
               />
@@ -431,7 +431,7 @@ const Dashboard = () => {
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
               />

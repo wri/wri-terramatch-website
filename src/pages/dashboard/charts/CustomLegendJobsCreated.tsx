@@ -12,7 +12,7 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
   if (!payload) return null;
 
   return (
-    <ul style={{ listStyle: "none", padding: "0 0 0 30px", margin: 0, display: "flex", justifyContent: "center" }}>
+    <ul style={{ listStyle: "none" }} className="margin-0 flex justify-center pl-[42px] lg:justify-between">
       {payload.map((entry: any, index: number) => (
         <li key={`item-${index}`} style={{ display: "flex", alignItems: "baseline" }}>
           <svg width="12" height="10" style={{ marginRight: "7px" }}>
@@ -20,7 +20,7 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
           </svg>
           <span style={{ display: "flex", flexDirection: "column" }}>
             <span className="text-12-light">{entry.value}</span>
-            <span className="text-12-light text-darkCustom text-opacity-70">
+            <span className="text-12-light text-darkCustom">
               {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentage(totals[entry.value], totalJobs)}%)`}
             </span>
           </span>
