@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Generic/LoadingContainerOpacity Default 1`] = `
+<div
+  className="relative h-full w-full undefined"
+>
+  <div>
+    Child component
+  </div>
+  <div
+    className="pointer-events-none absolute inset-0 bg-black opacity-25"
+  />
+  <div
+    className="absolute inset-0 flex items-center justify-center"
+  >
+    <div
+      className="flex h-32 items-center justify-center undefined"
+    >
+      <div
+        style={
+          Object {
+            "height": 40,
+            "width": 40,
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
