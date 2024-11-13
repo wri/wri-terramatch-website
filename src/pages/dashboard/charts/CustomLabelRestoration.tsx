@@ -12,7 +12,7 @@ export const CustomLabel: React.FC<any> = props => {
       fill={isSmallBar ? "#000000" : "white"}
       textAnchor="middle"
       dominantBaseline={isSmallBar ? "bottom" : "middle"}
-      className="text-sm font-medium"
+      className="text-12"
     >
       {`${value.toFixed(0)} ha`}
     </text>

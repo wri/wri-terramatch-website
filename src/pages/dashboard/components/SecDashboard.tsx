@@ -17,7 +17,8 @@ import {
   DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
-  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART,
+  DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED
 } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
@@ -47,7 +48,8 @@ const SecDashboard = ({
   isTableProject,
   data,
   dataForChart,
-  chartType
+  chartType,
+  isUserAllowed
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -63,6 +65,7 @@ const SecDashboard = ({
   tooltip?: string;
   dataForChart?: any;
   chartType?: string;
+  isUserAllowed?: boolean;
 }) => {
   const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
@@ -169,8 +172,9 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
           <BlurContainer
-            isBlur={isEmptyChartData(chartType ?? "", treesPlantedByYear)}
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(chartType ?? "", treesPlantedByYear)}
             textInformation={noDataInformation}
+            className="ml-[20px] lg:ml-[15px]"
           >
             <MultiLineChart
               data={
@@ -184,7 +188,7 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
           <BlurContainer
-            isBlur={isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
             textInformation={noDataInformation}
           >
             <GroupedBarChart
@@ -198,7 +202,7 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <BlurContainer
-            isBlur={isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
             textInformation={noDataInformation}
           >
             <DoughnutChart
@@ -212,8 +216,9 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
           <BlurContainer
-            isBlur={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
             textInformation={noDataInformation}
+            className="ml-[40px] lg:ml-[35px]"
           >
             <SimpleBarChart
               data={
@@ -273,10 +278,26 @@ const SecDashboard = ({
           </When>
         </When>
         <When condition={chartType === CHART_TYPES.barChart}>
-          <GraphicIconDashboard
-            data={data?.graphicTargetLandUseTypes ?? []}
-            maxValue={data?.totalSection?.totalHectaresRestored ?? 0}
-          />
+          <BlurContainer
+            isBlur={
+              (isUserAllowed ?? false) &&
+              (data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0)
+            }
+            textInformation={noDataInformation}
+          >
+            <GraphicIconDashboard
+              data={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes
+                  : data?.graphicTargetLandUseTypes ?? []
+              }
+              maxValue={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? 90
+                  : data?.totalSection?.totalHectaresRestored ?? 0
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={!!data?.objetiveText}>
           <ObjectiveSec data={data} />

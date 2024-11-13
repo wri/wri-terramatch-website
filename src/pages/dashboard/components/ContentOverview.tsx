@@ -253,6 +253,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
@@ -260,20 +261,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="pl-12"
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={{}}
+            classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
             chartType={CHART_TYPES.barChart}
             data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
         </PageCard>
 
@@ -304,7 +309,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           }
         >
           <Table
-            visibleRows={5}
+            visibleRows={50}
             columns={columns}
             data={data}
             onRowClick={row => {
@@ -314,6 +319,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                 uuid: row.uuid
               }));
             }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           />
         </PageCard>

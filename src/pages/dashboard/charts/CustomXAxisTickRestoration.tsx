@@ -29,7 +29,7 @@ export const CustomXAxisTick: React.FC<any> = props => {
           dy={index * lineHeight}
           textAnchor="middle"
           fill="#374151"
-          className="text-sm"
+          className="text-12"
         >
           {line}
         </text>
