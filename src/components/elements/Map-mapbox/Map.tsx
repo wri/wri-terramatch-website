@@ -253,7 +253,8 @@ export const MapContainer = ({
             isDashboard,
             setFilters,
             dashboardCountries,
-            setLoader
+            setLoader,
+            selectedCountry
           );
         }
       };

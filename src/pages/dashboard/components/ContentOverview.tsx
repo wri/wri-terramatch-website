@@ -91,13 +91,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   useEffect(() => {
     setModalLoading("modalExpand", modalMapLoaded);
   }, [modalMapLoaded]);
-
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const modalBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+
+    const clampedSwLng = clamp(sw.lng, -180, 180);
+    const clampedSwLat = clamp(sw.lat, -90, 90);
+    const clampedNeLng = clamp(ne.lng, -180, 180);
+    const clampedNeLat = clamp(ne.lat, -90, 90);
+
+    const modalBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
     setCurrentBbox(modalBbox);
   };
 
@@ -106,7 +112,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     const bounds = (map.current as mapboxgl.Map).getBounds();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const dashboardBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+
+    const clampedSwLng = clamp(sw.lng, -180, 180);
+    const clampedSwLat = clamp(sw.lat, -90, 90);
+    const clampedNeLng = clamp(ne.lng, -180, 180);
+    const clampedNeLat = clamp(ne.lat, -90, 90);
+
+    const dashboardBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
     const handleModalClose = (modalId: any) => {
       handleCloseModal();
       closeModal(modalId);
