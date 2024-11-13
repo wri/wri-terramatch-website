@@ -50,6 +50,10 @@ input[type=number]::-webkit-outer-spin-button {
   @apply rounded-bl-lg
 }
 
+.custom-popup-close-button .mapboxgl-popup-content{
+  width: max-content;
+}
+
 strong {
   font-size: inherit
 }
