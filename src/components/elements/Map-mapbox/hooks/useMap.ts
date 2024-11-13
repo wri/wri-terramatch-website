@@ -12,7 +12,7 @@ import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.5;
 const MAPBOX_TOKEN =
-  process.env.REACT_APP_MAPBOX_TOKEN ||
+  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
   "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 
 export const useMap = (onSave?: (geojson: any, record: any) => void) => {

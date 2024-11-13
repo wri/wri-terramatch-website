@@ -28,7 +28,11 @@ const TooltipGridMap = (props: TooltipGridProps) => {
       <div className="min-w-40 flex flex-col gap-1">
         <div className="mb-1 flex items-center gap-2">
           {isoCountry && (
-            <img src={`/flags/${isoCountry?.toLowerCase()}.svg`} alt="flag" className="h-4 w-6 object-cover" />
+            <img
+              src={`/flags/${isoCountry?.toLowerCase()}.svg`}
+              alt="flag"
+              className="h-4 w-6 min-w-[24px] object-cover"
+            />
           )}
           <Text className="text-start text-darkCustom" variant="text-12-bold">
             {t(label)}

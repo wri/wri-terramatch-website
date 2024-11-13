@@ -50,13 +50,13 @@ const TabCarouselAboutUs = () => {
         `In early 2025, more features will come. Impact stories, taken from narrative reports, will give color and context to the numerical data on project profiles. And the Project Insights section will contain additional analyses showing trends and insights across the portfolio, tapping into the rich data housed on TerraMatch.
         <div style="margin-top: 8px">If you have questions or would like to provide feedback, please email our support team at <a href="mailto:info@terramatch.org" target="_blank" style="font-size: inherit" rel="noreferrer">info@terramatch.org</a>.</div>`
       ),
-      url: "/images/about-us-4.png"
+      url: "/images/about-us-5.png"
     }
   ];
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTab(prevTab => (prevTab === aboutUs.length - 1 ? 0 : prevTab + 1));
-    }, 3000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [aboutUs.length]);
 
@@ -110,11 +110,7 @@ const TabCarouselAboutUs = () => {
                 {t("Open Dashboard")}
               </Button>
             </div>
-            <img
-              src={aboutUs.url}
-              alt={aboutUs.title || ""}
-              className="h-[40vh] w-[39%] rounded-2xl bg-neutral-40 object-contain"
-            />
+            <img src={aboutUs.url} alt={aboutUs.title || ""} className="w-[39%] rounded-2xl object-contain" />
           </div>
         )}
         items={aboutUs}

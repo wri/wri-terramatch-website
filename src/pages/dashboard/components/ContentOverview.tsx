@@ -35,6 +35,7 @@ import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
 interface RowData {
+  country_slug: undefined;
   uuid: string;
 }
 
@@ -73,7 +74,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
-  const { filters, setFilters } = useDashboardContext();
+  const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
@@ -183,12 +184,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             invertSelectPagination={true}
             initialTableState={{ pagination: { pageSize: 10 } }}
             onRowClick={row => {
-              if (row.uuid === undefined) return;
               closeModal("modalExpand");
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
             }}
           />
         </div>
@@ -229,7 +242,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               setLoader={setDashboardMapLoaded}
             />
           </LoadingContainerOpacity>
-          <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
@@ -265,6 +278,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
@@ -272,20 +286,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="pl-12"
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={{}}
+            classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
             chartType={CHART_TYPES.barChart}
             data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
         </PageCard>
 
@@ -316,16 +334,31 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           }
         >
           <Table
-            visibleRows={5}
+            visibleRows={50}
             columns={columns}
             data={data}
             onRowClick={row => {
-              if (row.uuid === undefined) return;
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
             }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           />
         </PageCard>

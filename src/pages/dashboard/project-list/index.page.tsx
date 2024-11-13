@@ -39,27 +39,18 @@ const ProjectList = () => {
   const columns = [
     {
       header: "Project",
-      accessorKey: "project"
+      accessorKey: "project",
+      meta: { width: "23%" }
     },
     {
       header: "Organization",
-      accessorKey: "organization"
+      accessorKey: "organization",
+      meta: { width: "19%" }
     },
     {
       header: "Programme",
       accessorKey: "programme",
-      cell: (props: any) => {
-        const value = props.getValue();
-        return value === "TerraFund Top 100" ? (
-          <Text variant="text-14-light">
-            TerraFund
-            <br />
-            Top 100
-          </Text>
-        ) : (
-          <Text variant="text-14-light">{value}</Text>
-        );
-      }
+      meta: { width: "13%" }
     },
     {
       header: "Country",
@@ -68,11 +59,12 @@ const ProjectList = () => {
         const { label, image } = props.getValue();
         return (
           <div className="flex items-center gap-2">
-            <img src={image} alt="flas" className="h-6 w-8 object-cover" />
+            <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
             <Text variant="text-14-light">{label}</Text>
           </div>
         );
-      }
+      },
+      meta: { width: "13%" }
     },
     {
       header: "Trees Planted",
@@ -140,8 +132,9 @@ const ProjectList = () => {
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
         variant={VARIANT_TABLE_DASHBOARD}
-        classNameWrapper="max-h-[calc(100%_-_4rem)] h-[calc(100%_-_4rem)] !px-0"
+        contentClassName="h-full max-h-full overflow-auto pr-2"
         hasPagination={true}
+        classNameWrapper="!overflow-visible"
         invertSelectPagination={true}
         onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
           setFilters(prevValues => ({

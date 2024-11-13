@@ -24,7 +24,7 @@ export const CustomLegendVolunteers: React.FC<CustomLegendProps> = ({ payload, t
             </svg>
             <span style={{ display: "flex", flexDirection: "column" }}>
               <span className="text-12-light">{entry.value}</span>
-              <span className="text-12-light text-darkCustom text-opacity-70">
+              <span className="text-12-light text-darkCustom">
                 {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentageVolunteers(
                   totals[entry.value],
                   totalVolunteers

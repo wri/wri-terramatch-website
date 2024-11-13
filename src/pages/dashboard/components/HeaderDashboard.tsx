@@ -144,7 +144,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
-      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
+      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : ["terrafund-landscapes"],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
@@ -209,7 +209,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
+        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -223,11 +223,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
+          <Text variant="text-20" as={"span"} className="absolute top-1 text-white lg:top-2">
+            &nbsp;&nbsp;&nbsp;&nbsp;{t("BETA")}
+          </Text>
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
             <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.programmes.length}
                   showClear
@@ -251,7 +254,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   containerClassName="z-[5]"
                 />
               </BlurContainer>
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.landscapes.length}
                   showClear
@@ -275,7 +278,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   containerClassName="z-[4]"
                 />
               </BlurContainer>
-              <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
+              <BlurContainer className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.country.id}
                   showClear
@@ -305,13 +308,15 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   options={dashboardCountries.map((country: CountriesProps) => ({
                     title: country.data.label,
                     value: country.id,
-                    prefix: <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] object-cover" />
+                    prefix: (
+                      <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
+                    )
                   }))}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[3]"
                 />
               </BlurContainer>
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.organizations.length}
                   showSelectAll
@@ -344,7 +349,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               >
                 {t("Clear Filters")}
               </button>
-              <When condition={isProjectListPage}>
+              <When condition={isProjectListPage && isHomepage}>
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}

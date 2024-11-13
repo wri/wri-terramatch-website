@@ -26,11 +26,11 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
         return { color: "bg-green-60", icon: "IC_NATURAL_FOREST" };
       case "Mangrove":
         return { color: "bg-green-35", icon: "IC_MANGROVE" };
-      case "Woodlot / Plantation":
+      case "Woodlot or Plantation":
         return { color: "bg-yellow-600", icon: "IC_WOODLOT" };
       case "Open Natural Ecosystem":
         return { color: "bg-green-40", icon: "IC_OPEN_NATURAL_ECOSYSTEM" };
-      case "Riparian Area / Wetland":
+      case "Riparian Area or Wetland":
         return { color: "bg-primary-350", icon: "IC_RIPARIAN_AREA" };
       case "Urban Forest":
         return { color: "bg-blueCustom", icon: "IC_URBAN_FOREST" };
@@ -65,7 +65,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
             return (
               <div
                 className={classNames(
-                  "relative h-9 w-0 lg:h-10",
+                  "relative h-9 w-0 hover:border hover:border-white lg:h-10",
                   colorIconLabel(item.label).color,
                   index === 0 && "rounded-l",
                   index === data.length - 1 && "rounded-r"
@@ -87,7 +87,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
               transform: "translateX(-50%)"
             }}
           >
-            <span className="text-12-light text-darkCustom">{`${t(tooltip.label)} `}</span>
+            <span className="text-12-light text-darkCustom">{t(tooltip.label)}</span>
             <span className="text-12-bold text-darkCustom">{t(tooltip.text)}</span>
           </div>
         )}
@@ -95,7 +95,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
           {data.map((item, index) => {
             const percentage = getPercentage(item.value, maxValue);
             return (
-              <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
+              <div key={index} className={`${index + 1 !== data.length ? "border-b" : ""} w-full border-grey-350 py-2`}>
                 <div className="mb-1 flex w-full justify-between">
                   <div className="flex gap-1">
                     <Icon name={IconNames[colorIconLabel(item.label).icon]} />
@@ -113,7 +113,10 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                   onMouseLeave={handleMouseLeave}
                 >
                   <div
-                    className={classNames("relative h-4 w-0 rounded lg:h-5", colorIconLabel(item.label).color)}
+                    className={classNames(
+                      "relative h-4 w-0 rounded hover:border hover:border-white lg:h-5",
+                      colorIconLabel(item.label).color
+                    )}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
