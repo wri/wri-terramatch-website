@@ -424,7 +424,9 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
     case CHART_TYPES.doughnutChart:
       return data?.chartData?.every((item: any) => item.value === 0);
     case CHART_TYPES.simpleBarChart:
-      return data?.length === 0;
+      if (data.length === 0) return true;
+      if (data.length > 0) return data?.every((item: any) => item.value === 0);
+      return false;
     default:
       return false;
   }
