@@ -372,7 +372,7 @@ export const parseHectaresUnderRestorationData = (
         .filter(key => !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key))
         .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
     }
-  ];
+  ].filter(item => item.value > 0);
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => ({
