@@ -121,6 +121,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
+  setLoader?: (value: boolean) => void;
 }
 
 export const MapContainer = ({
@@ -161,7 +162,7 @@ export const MapContainer = ({
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -247,7 +248,8 @@ export const MapContainer = ({
             draw.current,
             isDashboard,
             setFilters,
-            dashboardCountries
+            dashboardCountries,
+            setLoader
           );
         }
       };

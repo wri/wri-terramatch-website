@@ -174,12 +174,12 @@ const handleLayerClick = (
   layerName?: string,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void
 ) => {
   removePopups("POLYGON");
   const { lngLat, features } = e;
   const feature = features?.[0];
-
   if (!feature) {
     Log.warn("No feature found in click event");
     return;
@@ -204,10 +204,12 @@ const handleLayerClick = (
     setEditPolygon
   };
   if (isDashboard) {
+    setLoader?.(true);
     const addPopupToMap = () => {
       newPopup.addTo(map);
       removePopups("POLYGON");
       popupAttachedMap["POLYGON"].push(newPopup);
+      setLoader?.(false);
     };
     const removePopupFromMap = () => {
       newPopup.remove();
@@ -429,7 +431,8 @@ export const addPopupsToMap = (
   draw: MapboxDraw,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -445,7 +448,8 @@ export const addPopupsToMap = (
         draw,
         isDashboard,
         setFilters,
-        dashboardCountries
+        dashboardCountries,
+        setLoader
       );
     });
   }
@@ -464,7 +468,8 @@ export const addPopupToLayer = (
   draw: MapboxDraw,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -473,7 +478,7 @@ export const addPopupToLayer = (
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
     if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-      targetLayers = [targetLayers[0]];
+      targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
     }
     const clickHandler = (e: any) => {
       const currentMode = draw?.getMode();
@@ -497,7 +502,8 @@ export const addPopupToLayer = (
         name,
         isDashboard,
         setFilters,
-        dashboardCountries
+        dashboardCountries,
+        setLoader
       );
     };
     targetLayers.forEach(targetLayer => {
