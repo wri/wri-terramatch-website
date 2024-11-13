@@ -127,7 +127,6 @@ const Dashboard = () => {
       accessorKey: "project",
       enableSorting: false,
       cell: (props: any) => {
-        console.log(props.getValue(), "props.getValue()");
         const value = props.getValue().split("_");
         return <span className="two-line-text text-14-light">{value}</span>;
       }
