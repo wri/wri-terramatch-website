@@ -363,16 +363,19 @@ const Dashboard = () => {
               data={numberTreesPlanted}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.treesPlantedBarChart}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
               isProjectView={!!filters.uuid}
+              classNameBody="ml-[-20px] lg:ml-[-15px]"
               data={{}}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.multiLineChart}
               tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <When condition={!filters.uuid}>
               <SecDashboard
@@ -382,6 +385,7 @@ const Dashboard = () => {
                 data={topProject}
                 isTableProject={true}
                 tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </When>
           </PageCard>
@@ -407,6 +411,7 @@ const Dashboard = () => {
                 data={{ value: jobsCreatedData?.total_pt }}
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
@@ -414,6 +419,7 @@ const Dashboard = () => {
                 className="pl-12"
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
             <div className="grid w-full grid-cols-2">
@@ -425,6 +431,7 @@ const Dashboard = () => {
                 classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
@@ -434,12 +441,14 @@ const Dashboard = () => {
                 classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
             <SecDashboard
               title={t("Total Volunteers")}
               data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
               tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
@@ -450,6 +459,7 @@ const Dashboard = () => {
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
@@ -459,6 +469,7 @@ const Dashboard = () => {
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
           </PageCard>

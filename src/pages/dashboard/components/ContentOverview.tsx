@@ -240,6 +240,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
@@ -247,20 +248,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="pl-12"
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={{}}
+            classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
             chartType={CHART_TYPES.barChart}
             data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
         </PageCard>
 

@@ -17,6 +17,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
     x: 0,
     y: 0
   });
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
@@ -50,10 +51,12 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
       x: event.pageX,
       y: event.pageY
     });
+    setHoveredItem(label);
   };
 
   const handleMouseLeave = () => {
     setTooltip({ text: null, label: null, x: 0, y: 0 });
+    setHoveredItem(null);
   };
 
   return (
@@ -68,7 +71,8 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                   "relative h-9 w-0 lg:h-10",
                   colorIconLabel(item.label).color,
                   index === 0 && "rounded-l",
-                  index === data.length - 1 && "rounded-r"
+                  index === data.length - 1 && "rounded-r",
+                  hoveredItem === item.label && "border border-white"
                 )}
                 style={{ width: `${percentage}%` }}
                 key={index}
@@ -113,7 +117,11 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                   onMouseLeave={handleMouseLeave}
                 >
                   <div
-                    className={classNames("relative h-4 w-0 rounded lg:h-5", colorIconLabel(item.label).color)}
+                    className={classNames(
+                      "relative h-4 w-0 rounded lg:h-5",
+                      colorIconLabel(item.label).color,
+                      hoveredItem === item.label && "border border-white"
+                    )}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
