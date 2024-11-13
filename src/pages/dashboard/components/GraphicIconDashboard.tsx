@@ -17,7 +17,6 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
     x: 0,
     y: 0
   });
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
     switch (label) {
@@ -51,12 +50,10 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
       x: event.pageX,
       y: event.pageY
     });
-    setHoveredItem(label);
   };
 
   const handleMouseLeave = () => {
     setTooltip({ text: null, label: null, x: 0, y: 0 });
-    setHoveredItem(null);
   };
 
   return (
@@ -68,11 +65,10 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
             return (
               <div
                 className={classNames(
-                  "relative h-9 w-0 lg:h-10",
+                  "relative h-9 w-0 hover:border hover:border-white lg:h-10",
                   colorIconLabel(item.label).color,
                   index === 0 && "rounded-l",
-                  index === data.length - 1 && "rounded-r",
-                  hoveredItem === item.label && "border border-white"
+                  index === data.length - 1 && "rounded-r"
                 )}
                 style={{ width: `${percentage}%` }}
                 key={index}
@@ -91,7 +87,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
               transform: "translateX(-50%)"
             }}
           >
-            <span className="text-12-light text-darkCustom">{`${t(tooltip.label)} `}</span>
+            <span className="text-12-light text-darkCustom">{t(tooltip.label)}</span>
             <span className="text-12-bold text-darkCustom">{t(tooltip.text)}</span>
           </div>
         )}
@@ -99,7 +95,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
           {data.map((item, index) => {
             const percentage = getPercentage(item.value, maxValue);
             return (
-              <div key={index} className={`${index + 1 !== data.length && "border-b"} w-full border-grey-350 py-2`}>
+              <div key={index} className={`${index + 1 !== data.length ? "border-b" : ""} w-full border-grey-350 py-2`}>
                 <div className="mb-1 flex w-full justify-between">
                   <div className="flex gap-1">
                     <Icon name={IconNames[colorIconLabel(item.label).icon]} />
@@ -118,9 +114,8 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                 >
                   <div
                     className={classNames(
-                      "relative h-4 w-0 rounded lg:h-5",
-                      colorIconLabel(item.label).color,
-                      hoveredItem === item.label && "border border-white"
+                      "relative h-4 w-0 rounded hover:border hover:border-white lg:h-5",
+                      colorIconLabel(item.label).color
                     )}
                     style={{ width: `${percentage}%` }}
                   />
