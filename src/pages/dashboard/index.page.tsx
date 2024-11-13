@@ -184,6 +184,7 @@ const Dashboard = () => {
           total_jobs_created: number;
           hectares_restored: number;
         }) => ({
+          country_slug: item.country_slug,
           country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
           project: item.number_of_projects.toLocaleString(),
           treesPlanted: item.total_trees_planted.toLocaleString(),
