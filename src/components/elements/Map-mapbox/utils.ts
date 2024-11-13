@@ -221,7 +221,8 @@ const handleLayerClick = (
         layerName,
         setFilters,
         dashboardCountries,
-        removePopupFromMap
+        removePopupFromMap,
+        isDashboard
       })
     );
   } else {
@@ -432,7 +433,8 @@ export const addPopupsToMap = (
   isDashboard?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
-  setLoader?: (value: boolean) => void
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -449,7 +451,8 @@ export const addPopupsToMap = (
         isDashboard,
         setFilters,
         dashboardCountries,
-        setLoader
+        setLoader,
+        selectedCountry
       );
     });
   }
@@ -469,7 +472,8 @@ export const addPopupToLayer = (
   isDashboard?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
-  setLoader?: (value: boolean) => void
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -484,11 +488,9 @@ export const addPopupToLayer = (
       const currentMode = draw?.getMode();
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
-      const zoomLevel = map.getZoom();
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
 
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
-
-      if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
+      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
         e,
