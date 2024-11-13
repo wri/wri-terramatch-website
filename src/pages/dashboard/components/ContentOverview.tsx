@@ -16,6 +16,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -74,6 +75,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const { openModal, closeModal } = useModalContext();
   const { filters, setFilters } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
+  const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
+  const [modalMapLoaded, setModalMapLoaded] = useState(false);
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
   }, [filters.country]);
@@ -106,20 +109,22 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       "modalExpand",
       <ModalExpand id="modalExpand" title={t("MAP")} closeModal={handleModalClose} popUpContent={MAP_TOOLTIP}>
         <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <MapContainer
-            id="modal"
-            showLegend={false}
-            mapFunctions={modalMapFunctions}
-            isDashboard={"modal"}
-            className="custom-popup-close-button"
-            centroids={centroids}
-            showPopups={true}
-            polygonsData={polygonsData as Record<string, string[]>}
-            showImagesButton={showImagesButton}
-            bbox={dashboardBbox}
-            selectedCountry={selectedCountry}
-          />
-
+          <LoadingContainerOpacity loading={modalMapLoaded}>
+            <MapContainer
+              id="modal"
+              showLegend={false}
+              mapFunctions={modalMapFunctions}
+              isDashboard={"modal"}
+              className="custom-popup-close-button !h-full"
+              centroids={centroids}
+              showPopups={true}
+              polygonsData={polygonsData as Record<string, string[]>}
+              showImagesButton={showImagesButton}
+              bbox={dashboardBbox}
+              selectedCountry={selectedCountry}
+              setLoader={setModalMapLoaded}
+            />
+          </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
 
           <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
@@ -190,20 +195,22 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               </Text>
             </div>
           </Button>
-          <MapContainer
-            id="dashboard"
-            showLegend={false}
-            mapFunctions={dashboardMapFunctions}
-            isDashboard={"dashboard"}
-            className="custom-popup-close-button"
-            centroids={centroids}
-            showPopups={true}
-            polygonsData={polygonsData as Record<string, string[]>}
-            showImagesButton={showImagesButton}
-            bbox={currentBbox}
-            selectedCountry={selectedCountry}
-          />
-
+          <LoadingContainerOpacity loading={dashboardMapLoaded}>
+            <MapContainer
+              id="dashboard"
+              showLegend={false}
+              mapFunctions={dashboardMapFunctions}
+              isDashboard={"dashboard"}
+              className="custom-popup-close-button"
+              centroids={centroids}
+              showPopups={true}
+              polygonsData={polygonsData as Record<string, string[]>}
+              showImagesButton={showImagesButton}
+              bbox={currentBbox}
+              selectedCountry={selectedCountry}
+              setLoader={setDashboardMapLoaded}
+            />
+          </LoadingContainerOpacity>
           <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
@@ -240,6 +247,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
             <SecDashboard
               title={t("Total Number Of Sites")}
@@ -247,20 +255,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="pl-12"
               classNameBody="w-full place-content-center"
               tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
+              isUserAllowed={isUserAllowed}
             />
           </div>
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={{}}
+            classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
             chartType={CHART_TYPES.barChart}
             data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
           />
         </PageCard>
 

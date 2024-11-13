@@ -189,6 +189,7 @@ export const layersList: LayerType[] = [
     geoserverLayerName: "",
     styles: [
       {
+        metadata: { type: "big-circle" },
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
@@ -216,6 +217,7 @@ export const layersList: LayerType[] = [
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer,
       {
+        metadata: { type: "big-circle" },
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
         paint: {

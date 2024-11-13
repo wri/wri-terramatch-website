@@ -352,12 +352,27 @@ export const parseHectaresUnderRestorationData = (
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
-  const restorationStrategiesRepresented = objectToArray(
-    hectaresUnderRestoration?.restoration_strategies_represented
-  ).map(item => ({
-    label: getRestorationStrategyOptions[item.label as keyof typeof getRestorationStrategyOptions] ?? item.label,
-    value: item.value
-  }));
+
+  const restorationStrategiesRepresented: ParsedDataItem[] = [
+    {
+      label: getRestorationStrategyOptions["direct-seeding"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["direct-seeding"] || 0
+    },
+    {
+      label: getRestorationStrategyOptions["assisted-natural-regeneration"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["assisted-natural-regeneration"] || 0
+    },
+    {
+      label: getRestorationStrategyOptions["tree-planting"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["tree-planting"] || 0
+    },
+    {
+      label: "Multiple Strategies",
+      value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
+        .filter(key => !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key))
+        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+    }
+  ].filter(item => item.value > 0);
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => ({
@@ -409,7 +424,9 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
     case CHART_TYPES.doughnutChart:
       return data?.chartData?.every((item: any) => item.value === 0);
     case CHART_TYPES.simpleBarChart:
-      return data?.length === 0;
+      if (data.length === 0) return true;
+      if (data.length > 0) return data?.every((item: any) => item.value === 0);
+      return false;
     default:
       return false;
   }
