@@ -73,11 +73,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-  const { openModal, closeModal } = useModalContext();
+  const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
+
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
   }, [filters.country]);
@@ -87,12 +88,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       setCurrentBbox(initialBbox);
     }
   }, [initialBbox]);
+
+  useEffect(() => {
+    setModalLoading("modalExpand", modalMapLoaded);
+  }, [modalMapLoaded]);
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const modalBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+
+    const clampedSwLng = clamp(sw.lng, -180, 180);
+    const clampedSwLat = clamp(sw.lat, -90, 90);
+    const clampedNeLng = clamp(ne.lng, -180, 180);
+    const clampedNeLat = clamp(ne.lat, -90, 90);
+
+    const modalBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
     setCurrentBbox(modalBbox);
   };
 
@@ -101,7 +113,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     const bounds = (map.current as mapboxgl.Map).getBounds();
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
-    const dashboardBbox: BBox = [sw.lng, sw.lat, ne.lng, ne.lat];
+
+    const clampedSwLng = clamp(sw.lng, -180, 180);
+    const clampedSwLat = clamp(sw.lat, -90, 90);
+    const clampedNeLng = clamp(ne.lng, -180, 180);
+    const clampedNeLat = clamp(ne.lat, -90, 90);
+
+    const dashboardBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
     const handleModalClose = (modalId: any) => {
       handleCloseModal();
       closeModal(modalId);
@@ -224,7 +242,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               setLoader={setDashboardMapLoaded}
             />
           </LoadingContainerOpacity>
-          <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
