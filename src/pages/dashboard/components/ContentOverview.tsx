@@ -72,11 +72,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-  const { openModal, closeModal } = useModalContext();
+  const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
+
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
   }, [filters.country]);
@@ -86,6 +87,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       setCurrentBbox(initialBbox);
     }
   }, [initialBbox]);
+
+  useEffect(() => {
+    setModalLoading("modalExpand", modalMapLoaded);
+  }, [modalMapLoaded]);
+
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();

@@ -4,6 +4,7 @@ type ModalType = {
   id: string;
   content: ReactNode;
   coverToolbar: boolean;
+  loading: boolean;
 };
 
 type ModalContextType = {
@@ -11,13 +12,15 @@ type ModalContextType = {
   setModalContent: (id: string, content: ReactNode) => void;
   openModal: (id: string, content: ReactNode, coverToolbar?: boolean) => void;
   closeModal: (id: string) => void;
+  setModalLoading: (id: string, loading: boolean) => void;
 };
 
 export const ModalContext = React.createContext<ModalContextType>({
   modals: [],
   setModalContent: () => {},
   openModal: () => {},
-  closeModal: () => {}
+  closeModal: () => {},
+  setModalLoading: () => {}
 });
 
 type ModalProviderProps = {
@@ -29,7 +32,7 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
 
   /** Opens the modal and sets the content. */
   const openModal = (id: string, content: ReactNode, coverToolbar = false) => {
-    setModals(prevModals => [...prevModals, { id, content, coverToolbar }]);
+    setModals(prevModals => [...prevModals, { id, content, coverToolbar, loading: false }]);
   };
 
   /** Resets and closes the modal. */
@@ -41,12 +44,17 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     setModals(prevModals => prevModals.map(modal => (modal.id === id ? { ...modal, content } : modal)));
   };
 
+  const setModalLoading = (id: string, loading: boolean) => {
+    setModals(prevModals => prevModals.map(modal => (modal.id === id ? { ...modal, loading } : modal)));
+  };
+
   const value = useMemo(
     () => ({
       modals,
       setModalContent,
       openModal,
-      closeModal
+      closeModal,
+      setModalLoading
     }),
     [modals]
   );
