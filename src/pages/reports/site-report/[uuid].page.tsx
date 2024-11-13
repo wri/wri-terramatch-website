@@ -152,6 +152,11 @@ const SiteReportDetailPage = () => {
                       <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
                     </GenericField>
                     <GenericField label={t("Non-Tree Species Planted")} frameworksShow={[Framework.HBF]}>
+                      <TextField
+                        className="mt-2"
+                        label={t("Total Non-Trees Planted")}
+                        value={siteReport.total_non_tree_species_planted_count}
+                      />
                       <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="non-tree" />
                     </GenericField>
                     <GenericField label={t("Disturbances")}>

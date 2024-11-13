@@ -136,7 +136,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             <TextField label={t("Trees Planted")} value={report.trees_planted_count} />
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TextField label={t("Trees Regenerating")} value={report.trees_regenerating_count} />
-              <TextField label={t("Non-Trees Planted")} value={report.workdays_non_tree_total} />
+              <TextField label={t("Non-Trees Planted")} value={report.non_tree_total} />
             </ContextCondition>
             <TextField
               frameworksHide={[Framework.HBF]}
