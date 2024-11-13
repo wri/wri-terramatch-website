@@ -35,6 +35,7 @@ import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
 interface RowData {
+  country_slug: undefined;
   uuid: string;
 }
 
@@ -73,7 +74,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal } = useModalContext();
-  const { filters, setFilters } = useDashboardContext();
+  const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
@@ -165,12 +166,24 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             invertSelectPagination={true}
             initialTableState={{ pagination: { pageSize: 10 } }}
             onRowClick={row => {
-              if (row.uuid === undefined) return;
               closeModal("modalExpand");
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
             }}
           />
         </div>
@@ -307,11 +320,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             columns={columns}
             data={data}
             onRowClick={row => {
-              if (row.uuid === undefined) return;
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
             }}
             classNameTableWrapper={
               filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
