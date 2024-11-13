@@ -125,7 +125,12 @@ const Dashboard = () => {
     {
       header: "Project",
       accessorKey: "project",
-      enableSorting: false
+      enableSorting: false,
+      cell: (props: any) => {
+        console.log(props.getValue(), "props.getValue()");
+        const value = props.getValue().split("_");
+        return <span className="two-line-text text-14-light">{value}</span>;
+      }
     },
     {
       header: "Trees Planted",
@@ -248,7 +253,7 @@ const Dashboard = () => {
     total_non_profit_count: totalSectionHeader?.total_non_profit_count
   };
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0 && !filters.uuid}>
