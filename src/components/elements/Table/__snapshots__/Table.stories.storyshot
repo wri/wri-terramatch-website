@@ -100,7 +100,9 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-spacing-y-4 border-separate"
       >
@@ -961,7 +963,9 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-spacing-y-4 border-separate"
       >
@@ -1822,7 +1826,9 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-spacing-y-4 border-separate"
       >
@@ -2683,7 +2689,9 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-collapse"
       >
@@ -4411,7 +4419,9 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-spacing-y-4 border-separate"
       >
@@ -5272,7 +5282,9 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
         Create
       </span>
     </button>
-    <div>
+    <div
+      className=""
+    >
       <table
         className="w-full border-spacing-y-4 border-separate"
       >
@@ -6137,7 +6149,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
         </span>
       </button>
       <div
-        className="border border-neutral-200 rounded-lg overflow-auto max-h-[534px] lg:max-h-[568px] wide:max-h-[608px]"
+        className="border border-neutral-200 rounded-lg overflow-auto max-h-[285px] lg:max-h-[303px] wide:max-h-[321px]"
       >
         <table
           className="w-full border-collapse"
@@ -7870,7 +7882,9 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
           Create
         </span>
       </button>
-      <div>
+      <div
+        className=""
+      >
         <table
           className="w-full border-collapse w-full"
         >
@@ -9598,7 +9612,9 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
           Create
         </span>
       </button>
-      <div>
+      <div
+        className=""
+      >
         <table
           className="w-full border-collapse"
         >
