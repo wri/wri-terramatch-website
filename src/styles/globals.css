@@ -57,6 +57,7 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-popup-close-button .mapboxgl-popup{
   z-index: 2;
 }
+
 strong {
   font-size: inherit
 }
