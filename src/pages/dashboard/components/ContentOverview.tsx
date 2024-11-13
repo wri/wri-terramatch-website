@@ -217,7 +217,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               setLoader={setDashboardMapLoaded}
             />
           </LoadingContainerOpacity>
-          <div className="absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
