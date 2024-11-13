@@ -369,6 +369,7 @@ const Dashboard = () => {
               type="toggle"
               secondOptionsData={dataToggle}
               isProjectView={!!filters.uuid}
+              classNameBody="ml-[-20px] lg:ml-[-15px]"
               data={{}}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.multiLineChart}

@@ -172,6 +172,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={isEmptyChartData(chartType ?? "", treesPlantedByYear)}
             textInformation={noDataInformation}
+            className="ml-[20px] lg:ml-[15px]"
           >
             <MultiLineChart
               data={
@@ -215,6 +216,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
             textInformation={noDataInformation}
+            className="ml-[40px] lg:ml-[35px]"
           >
             <SimpleBarChart
               data={

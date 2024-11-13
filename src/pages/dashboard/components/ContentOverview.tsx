@@ -252,6 +252,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           <SecDashboard
             title={t("Restoration Strategies Represented")}
             data={{}}
+            classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
