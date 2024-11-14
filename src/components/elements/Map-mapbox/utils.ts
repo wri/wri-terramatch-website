@@ -6,6 +6,7 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
@@ -24,9 +25,6 @@ import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { getPulsingDot } from "./pulsing.dot";
-
-const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
-const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
 type EditPolygon = {
   isOpen: boolean;
@@ -512,8 +510,8 @@ export const addPopupToLayer = (
 };
 
 const getGeoserverURL = (layerName: string) => {
-  return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+  return `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=${geoserverWorkspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
 export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   const { name, styles } = layer;
