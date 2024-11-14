@@ -138,6 +138,9 @@ const PolygonDrawer = ({
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
+      if (!selectedPolygon?.primary_uuid) {
+        return;
+      }
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon?.primary_uuid as string }
       })) as SitePolygonsDataResponse;

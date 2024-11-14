@@ -11,7 +11,6 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -48,30 +47,16 @@ const PolygonItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
-  const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+  const { polygonMap } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: uuid
-      }
-    },
-    {
-      enabled: !!uuid
-    }
-  );
-
-  useEffect(() => {
-    refetch();
-    setShouldRefetchValidation(false);
-  }, [shouldRefetchValidation]);
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
+    const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
@@ -79,7 +64,7 @@ const PolygonItem = ({
     } else {
       setValidationStatus(undefined);
     }
-  }, [criteriaData, setValidationStatus]);
+  }, [polygonMap]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);

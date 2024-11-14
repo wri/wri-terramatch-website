@@ -291,7 +291,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           }
         >
           <Table
-            visibleRows={5}
+            visibleRows={50}
             columns={columns}
             data={data}
             onRowClick={row => {
@@ -301,6 +301,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                 uuid: row.uuid
               }));
             }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           />
         </PageCard>

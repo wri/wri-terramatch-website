@@ -40,8 +40,7 @@ import {
   fetchPutV2SitePolygonStatusBulk,
   GetV2MODELUUIDFilesResponse,
   useGetV2MODELUUIDFiles,
-  useGetV2SitesSiteBbox,
-  useGetV2SitesSitePolygon
+  useGetV2SitesSiteBbox
 } from "@/generated/apiComponents";
 import {
   PolygonBboxResponse,
@@ -49,6 +48,7 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
+import useLoadSitesSitePolygon from "@/hooks/paginated/useLoadSitePolygons";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -142,7 +142,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
+  const { setSelectedPolygonsInCheckbox, setPolygonMap, setPolygonData } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
@@ -153,11 +153,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
-    pathParams: {
-      site: record.uuid
-    }
-  });
+  const { data: sitePolygonData, refetch, polygonMap, loading } = useLoadSitesSitePolygon(record.uuid);
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -268,6 +264,15 @@ const PolygonReviewTab: FC<IProps> = props => {
       setErrorMessage(null);
     }
   }, [errorMessage]);
+
+  useEffect(() => {
+    //TODO: JORGE HERE
+    console.log("loading", loading);
+    setPolygonMap(polygonMap);
+    setPolygonData(sitePolygonData);
+    console.log("polygonMap", polygonMap);
+    console.log("sitePolygonData", sitePolygonData);
+  }, [loading]);
 
   const uploadFiles = async () => {
     const uploadPromises = [];
