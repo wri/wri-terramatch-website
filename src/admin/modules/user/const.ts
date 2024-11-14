@@ -15,6 +15,10 @@ export const userPrimaryRoleChoices = [
     name: "HBF Admin"
   },
   {
+    id: "admin-epa-ghana-pilot",
+    name: "EPA Ghana Pilot Admin"
+  },
+  {
     id: "admin-super",
     name: "Super Admin"
   },

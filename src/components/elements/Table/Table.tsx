@@ -51,6 +51,7 @@ export interface TableProps<TData>
   visibleRows?: number;
   onRowClick?: (row: TData) => void;
   contentClassName?: string;
+  classNameTableWrapper?: string;
 }
 
 export interface TableState {
@@ -77,6 +78,7 @@ function Table<TData extends RowData>({
   initialTableState,
   variant = VARIANT_TABLE_PRIMARY,
   children,
+  classNameTableWrapper,
   isLoading,
   invertSelectPagination = false,
   hasPagination = false,
@@ -145,7 +147,7 @@ function Table<TData extends RowData>({
           />
         </When>
         {children}
-        <div className={variant.tableWrapper}>
+        <div className={classNames(variant.tableWrapper, classNameTableWrapper)}>
           <table {...props} className={classNames(className, "w-full", variant.table)}>
             <thead className={variant.thead}>
               {getHeaderGroups().map(headerGroup => (

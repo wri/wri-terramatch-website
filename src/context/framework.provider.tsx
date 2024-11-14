@@ -7,6 +7,7 @@ export enum Framework {
   TF_LANDSCAPES = "terrafund-landscapes",
   ENTERPRISES = "enterprises",
   HBF = "hbf",
+  EPA_GHANA_PILOT = "epa-ghana-pilot",
 
   UNDEFINED = "undefined"
 }

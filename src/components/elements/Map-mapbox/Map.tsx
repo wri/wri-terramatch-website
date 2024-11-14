@@ -14,7 +14,6 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
-import { mapboxToken } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -75,8 +74,6 @@ import {
   zoomToBbox
 } from "./utils";
 
-mapboxgl.accessToken = mapboxToken;
-
 interface LegendItem {
   color: string;
   text: string;
@@ -124,6 +121,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
+  setLoader?: (value: boolean) => void;
 }
 
 export const MapContainer = ({
@@ -164,7 +162,7 @@ export const MapContainer = ({
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -250,7 +248,9 @@ export const MapContainer = ({
             draw.current,
             isDashboard,
             setFilters,
-            dashboardCountries
+            dashboardCountries,
+            setLoader,
+            selectedCountry
           );
         }
       };
