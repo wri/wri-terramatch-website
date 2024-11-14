@@ -87,7 +87,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
               transform: "translateX(-50%)"
             }}
           >
-            <span className="text-12-light text-darkCustom">{t(tooltip.label)}</span>
+            <span className="text-12-light text-darkCustom">{`${t(tooltip.label)} `}</span>
             <span className="text-12-bold text-darkCustom">{t(tooltip.text)}</span>
           </div>
         )}
