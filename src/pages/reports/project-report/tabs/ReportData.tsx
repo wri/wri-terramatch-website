@@ -75,6 +75,9 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Workdays")} value={report.workdays_total} />
               <TextField label={t("Workdays Paid")} value={report.workdays_paid} />
               <TextField label={t("Workdays Volunteer")} value={report.workdays_volunteer} />
+              <TextField label={t("Unique Restoration Partners")} value={report.total_unique_restoration_partners} />
+              <TextField label={t("Direct Restoration Partners")} value={report.direct_restoration_partners} />
+              <TextField label={t("Indirect Restoration Partners")} value={report.indirect_restoration_partners} />
             </ContextCondition>
             <ContextCondition frameworksHide={[Framework.PPC]}>
               <TextField label={t("Jobs Created")} value={report.total_jobs_created} />

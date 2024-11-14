@@ -3,6 +3,7 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
@@ -15,7 +16,11 @@ interface SiteReportHeaderProps {
 const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
   const t = useT();
 
-  const { handleExport } = useGetExportEntityHandler("site-reports", report.uuid, report.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
+    "site-reports",
+    report.uuid,
+    `${report.site.name} - ${report.report_title}`
+  );
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "site-reports",
     entityUUID: report.uuid,
@@ -36,6 +41,7 @@ const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
         <When condition={!report.nothing_to_report}>
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
+            <InlineLoader loading={exportLoader} />
           </Button>
         </When>
         <Button onClick={handleEdit}>{t("Edit")}</Button>

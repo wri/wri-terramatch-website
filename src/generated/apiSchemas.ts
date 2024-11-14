@@ -4638,7 +4638,19 @@ export type V2WorkdayRead = {
   collection?: string;
   readable_collection?: string;
   demographics?: {
-    type?: "gender" | "age" | "ethnicity";
+    type?: "gender" | "age" | "ethnicity" | "caste";
+    subtype?: string;
+    name?: string;
+    amount?: number;
+  }[];
+};
+
+export type V2RestorationPartnerRead = {
+  uuid?: string;
+  collection?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity" | "caste";
     subtype?: string;
     name?: string;
     amount?: number;
@@ -22196,8 +22208,8 @@ export type V2ProjectInviteCreate = {
   email_address?: string;
 };
 
-export type WorkdayDemographic = {
-  type?: "gender" | "age" | "ethnicity";
+export type Demographic = {
+  type?: "gender" | "age" | "ethnicity" | "caste";
   subtype?: string;
   name?: string;
   amount?: number;
@@ -22285,21 +22297,9 @@ export type DashboardVolunteersSurvivalRateResponse = {
      */
     non_youth_volunteers?: number;
     /**
-     * Survival rate for non-profit entities.
-     */
-    non_profit_survival_rate?: number;
-    /**
-     * Survival rate for enterprise entities.
-     */
-    enterprise_survival_rate?: number;
-    /**
      * number of sites.
      */
     number_of_sites?: number;
-    /**
-     * number of nurseries.
-     */
-    number_of_nurseries?: number;
   };
 };
 
@@ -22325,21 +22325,9 @@ export type DashboardVolundteersSurvivalRateData = {
    */
   non_youth_volunteers?: number;
   /**
-   * Survival rate for non-profit entities.
-   */
-  non_profit_survival_rate?: number;
-  /**
-   * Survival rate for enterprise entities.
-   */
-  enterprise_survival_rate?: number;
-  /**
    * number of sites.
    */
   number_of_sites?: number;
-  /**
-   * number of nurseries.
-   */
-  number_of_nurseries?: number;
 };
 
 export type AuditStatusCreateRequest = {
@@ -22614,8 +22602,6 @@ export type DashboardPolygonResponse = {
 export type DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
-    forProfitJobsCreated?: number;
-    nonProfitJobsCreated?: number;
     total_ft?: number;
     total_pt?: number;
     total_men?: number;
@@ -22635,8 +22621,6 @@ export type DashboardJobsCreatedResponse = {
 
 export type DashboardJobsCreatedData = {
   totalJobsCreated?: number;
-  forProfitJobsCreated?: number;
-  nonProfitJobsCreated?: number;
   total_ft?: number;
   total_pt?: number;
   total_men?: number;
@@ -22708,9 +22692,6 @@ export type DashboardTreeRestorationGoalResponse = {
     treeSpeciesAmount?: number;
     treeSpeciesPercentage?: number;
   }[];
-  averageSurvivalRateTotal?: number;
-  averageSurvivalRateForProfit?: number;
-  averageSurvivalRateNonProfit?: number;
 };
 
 export type DashboardTreesUnderRestorationActual = {
@@ -22867,8 +22848,6 @@ export type DashboardActiveCountriesResponse = {
     number_of_projects?: number;
     total_trees_planted?: number;
     total_jobs_created?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
   }[];
 };
 
@@ -23570,4 +23549,15 @@ export type DashboardIndicatorHectaresRestorationData = {
      */
     ["urban-forest"]?: number;
   };
+};
+
+export type UserCreateComplete = {
+  token?: string;
+  password?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  role?: string;
 };

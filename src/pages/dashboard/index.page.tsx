@@ -3,13 +3,21 @@ import { useEffect } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  JOBS_CREATED_CHART_TYPE,
+  NO_DATA_INFORMATION,
+  ORGANIZATIONS_TYPES
+} from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
+  getCoverFileUrl,
   getFrameworkName,
   parseDataToObjetive,
   parseHectaresUnderRestorationData
@@ -28,15 +36,10 @@ import {
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
-  TREES_RESTORED_SECTION_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
 } from "./constants/tooltips";
-import {
-  JOBS_CREATED_SECTION_TOOLTIP,
-  NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
-  NUMBER_OF_TREES_PLANTED_TOOLTIP
-} from "./constants/tooltips";
+import { NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS, NUMBER_OF_TREES_PLANTED_TOOLTIP } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
 
@@ -67,18 +70,20 @@ const Dashboard = () => {
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
-    polygonsData,
     activeCountries,
-    activeProjects
+    activeProjects,
+    polygonsData,
+    countryBbox,
+    projectBbox,
+    isUserAllowed
   } = useDashboardData(filters);
 
   const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graphic"];
+  const dataToggleGraphic = ["Table", "Graph"];
 
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
-
   const COLUMN_ACTIVE_PROGRAMME = [
     {
       header: "Country",
@@ -86,8 +91,8 @@ const Dashboard = () => {
         const value = props.getValue().split("_");
         return (
           <div className="flex items-center gap-2">
-            <img src={value[1]} alt="flag" className="h-3" />
-            <Text variant="text-12-light">{value[0]}</Text>
+            <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
+            <Text variant="text-14">{value[0]}</Text>
           </div>
         );
       },
@@ -120,7 +125,11 @@ const Dashboard = () => {
     {
       header: "Project",
       accessorKey: "project",
-      enableSorting: false
+      enableSorting: false,
+      cell: (props: any) => {
+        const value = props.getValue().split("_");
+        return <span className="two-line-text text-14-light">{value}</span>;
+      }
     },
     {
       header: "Trees Planted",
@@ -164,8 +173,8 @@ const Dashboard = () => {
     }
   ];
 
-  const DATA_ACTIVE_PROGRAMME = activeCountries?.data
-    ? activeCountries.data.map(
+  const DATA_ACTIVE_PROGRAMME = Array.isArray(activeCountries?.data)
+    ? activeCountries?.data.map(
         (item: {
           country: string;
           country_slug: string;
@@ -174,6 +183,7 @@ const Dashboard = () => {
           total_jobs_created: number;
           hectares_restored: number;
         }) => ({
+          country_slug: item.country_slug,
           country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
           project: item.number_of_projects.toLocaleString(),
           treesPlanted: item.total_trees_planted.toLocaleString(),
@@ -238,9 +248,12 @@ const Dashboard = () => {
     ];
     return { type, chartData, total: data.total_volunteers };
   };
-
+  const projectCounts = {
+    total_enterprise_count: totalSectionHeader?.total_enterprise_count,
+    total_non_profit_count: totalSectionHeader?.total_non_profit_count
+  };
   return (
-    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-auto bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={filters.country.id !== 0 && !filters.uuid}>
@@ -248,7 +261,7 @@ const Dashboard = () => {
               <Text variant="text-14-light" className="uppercase text-black ">
                 {t("results for:")}
               </Text>
-              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-8 object-cover" />
+              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <Text variant="text-24-semibold" className="text-black">
                 {t(filters.country?.data.label)}
               </Text>
@@ -257,52 +270,70 @@ const Dashboard = () => {
           <When condition={filters.uuid}>
             <div>
               <DashboardBreadcrumbs
-                framework={getFrameworkName(frameworks, dashboardProjectDetails?.framework) || ""}
-                countryId={dashboardProjectDetails?.country_id}
-                countryName={dashboardProjectDetails?.country}
-                countrySlug={dashboardProjectDetails?.country_slug}
-                projectName={dashboardProjectDetails?.name}
+                framework={getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework) || ""}
+                countryId={dashboardProjectDetails?.data?.country_id}
+                countryName={dashboardProjectDetails?.data?.country}
+                countrySlug={dashboardProjectDetails?.data?.country_slug}
+                projectName={dashboardProjectDetails?.data?.name}
                 className="pt-0"
                 textVariant="text-14"
                 clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
               />
             </div>
           </When>
-          <div className="grid w-full grid-cols-3 gap-4">
-            {dashboardHeader.map((item, index) => (
-              <div key={index} className="rounded-lg bg-white px-4 py-3">
-                <Text variant="text-12-light" className="text-darkCustom opacity-60">
-                  {t(item.label)}
-                </Text>
-
-                <div className="flex items-center gap-2">
-                  <Text variant="text-20" className="text-darkCustom" as="span">
-                    {t(item.value)}
+          <BlurContainer
+            isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
+            textInformation={NO_DATA_INFORMATION}
+          >
+            <div className="grid w-full grid-cols-3 gap-4">
+              {dashboardHeader.map((item, index) => (
+                <div key={index} className="rounded-lg bg-white px-4 py-3">
+                  <Text variant="text-12-light" className="text-darkCustom opacity-60">
+                    {t(item.label)}
                   </Text>
+
+                  <div className="flex items-center gap-2">
+                    <Text variant="text-20" className="text-darkCustom" as="span">
+                      {t(item.value)}
+                    </Text>
+                    <ToolTip
+                      title={t(item.label)}
+                      content={t(item.tooltip)}
+                      placement="top"
+                      width="w-56 lg:w-64"
+                      trigger="click"
+                    >
+                      <Icon name={IconNames.IC_INFO} className="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5" />
+                    </ToolTip>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </BlurContainer>
           <When condition={filters.uuid}>
             <PageCard className="border-0 px-4 py-6" gap={8}>
               <div className="flex items-center">
                 <img
-                  src="/images/_AJL2963.jpg"
+                  src={getCoverFileUrl(dashboardProjectDetails?.data?.file) ?? "/images/_AJL2963.jpg"}
                   alt="tree"
                   className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
                 />
                 <div>
-                  <Text variant="text-20-bold">{t(dashboardProjectDetails?.name)}</Text>
+                  <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
                   <Text variant="text-14-light" className="text-darkCustom">
-                    {t(`Operations: ${dashboardProjectDetails?.country}`)}
+                    {t(`Operations: ${dashboardProjectDetails?.data?.country}`)}
                     <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                    {t(`Registration: ${dashboardProjectDetails?.country}`)}
+                    {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
                     <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                     {t(
                       `Organization: ${
-                        ORGANIZATIONS_TYPES[dashboardProjectDetails?.organisation as keyof typeof ORGANIZATIONS_TYPES]
+                        ORGANIZATIONS_TYPES[
+                          dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
+                        ]
                       }`
                     )}
+                    <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                    {t(`Programme: ${getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework)}`)}
                   </Text>
                 </div>
               </div>
@@ -310,7 +341,7 @@ const Dashboard = () => {
                 title={t("Objective")}
                 classNameTitle="capitalize"
                 type="legend"
-                data={parseDataToObjetive(dashboardProjectDetails)}
+                data={parseDataToObjetive(dashboardProjectDetails?.data)}
                 variantTitle="text-18-semibold"
               />
             </PageCard>
@@ -320,8 +351,8 @@ const Dashboard = () => {
             classNameSubTitle="mt-4"
             gap={8}
             subtitleMore={true}
-            title={t("Trees Restored")}
-            tooltip={t(TREES_RESTORED_SECTION_TOOLTIP)}
+            isUserAllowed={isUserAllowed?.allowed}
+            title={t("TREES RESTORED")}
             widthTooltip="w-52 lg:w-64"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"
@@ -337,16 +368,19 @@ const Dashboard = () => {
               data={numberTreesPlanted}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.treesPlantedBarChart}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
               title={t("Number of Trees Planted by Year")}
               type="toggle"
               secondOptionsData={dataToggle}
-              tooltipGraphic={true}
+              isProjectView={!!filters.uuid}
+              classNameBody="ml-[-20px] lg:ml-[-15px]"
               data={{}}
               dataForChart={dashboardRestorationGoalData}
               chartType={CHART_TYPES.multiLineChart}
               tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <When condition={!filters.uuid}>
               <SecDashboard
@@ -356,6 +390,7 @@ const Dashboard = () => {
                 data={topProject}
                 isTableProject={true}
                 tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </When>
           </PageCard>
@@ -364,13 +399,13 @@ const Dashboard = () => {
             className="border-0 px-4 py-6"
             classNameSubTitle="mt-4"
             gap={8}
+            isUserAllowed={isUserAllowed?.allowed}
             title={t("JOBS CREATED")}
             variantSubTitle="text-14-light"
             subtitleMore={true}
             tooltipTrigger="click"
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-            tooltip={t(JOBS_CREATED_SECTION_TOOLTIP)}
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
@@ -378,42 +413,47 @@ const Dashboard = () => {
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
               <SecDashboard
                 title={t("New Part-Time Jobs")}
-                data={{ value: jobsCreatedData?.data?.total_pt }}
+                data={{ value: jobsCreatedData?.total_pt }}
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("New Full-Time Jobs")}
-                data={{ value: jobsCreatedData?.data?.total_ft }}
+                data={{ value: jobsCreatedData?.total_ft }}
                 className="pl-12"
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
-            <div className="grid w-full grid-cols-2 gap-12">
+            <div className="grid w-full grid-cols-2">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={{}}
-                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.gender)}
+                dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
                 data={{}}
-                dataForChart={parseJobCreatedByType(jobsCreatedData?.data, JOBS_CREATED_CHART_TYPE.age)}
+                dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
                 chartType="groupedBarChart"
-                classNameHeader="!justify-center"
+                classNameHeader="pl-[50px]"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
             <SecDashboard
               title={t("Total Volunteers")}
               data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
               tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <div className="grid w-full grid-cols-2 gap-12">
               <SecDashboard
@@ -424,6 +464,7 @@ const Dashboard = () => {
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
@@ -433,6 +474,7 @@ const Dashboard = () => {
                 classNameHeader="!justify-center"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
           </PageCard>
@@ -467,7 +509,10 @@ const Dashboard = () => {
             ? ACTIVE_PROJECTS_TOOLTIP
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
+        isUserAllowed={isUserAllowed?.allowed}
         polygonsData={polygonsData}
+        bbox={filters.uuid ? projectBbox : countryBbox}
+        projectCounts={projectCounts}
       />
     </div>
   );

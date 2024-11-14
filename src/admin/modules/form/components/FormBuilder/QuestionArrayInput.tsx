@@ -211,6 +211,7 @@ export const QuestionArrayInput = ({
                       )}
                       validate={minLength(1, "At least one Follow-up questions is required")}
                       isChildQuestion
+                      onDeleteQuestion={onDeleteQuestion}
                     >
                       <BooleanInput
                         source="show_on_parent_condition"

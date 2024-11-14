@@ -36,6 +36,11 @@ function ManagedProjects() {
   );
 }
 
+const renderFrameworks = (property: string) => (record: any) => {
+  const frameworks: string[] = (record[property] as string[]) ?? [];
+  return frameworks.length == 0 ? "No Frameworks" : frameworks.join(", ");
+};
+
 export const UserShow = () => (
   <Show
     actions={
@@ -57,6 +62,11 @@ export const UserShow = () => (
         <FunctionField render={(record: V2AdminOrganisationRead) => record.name || "No Organisation Name"} />
       </ReferenceField>
       <DateField label="Last date active" source="last_logged_in_at" />
+      <FunctionField
+        label="All Frameworks (includes frameworks through role and project associations)"
+        render={renderFrameworks("all_frameworks")}
+      />
+      <FunctionField label="Direct Frameworks" render={renderFrameworks("direct_frameworks")} />
       <ManagedProjects />
     </SimpleShowLayout>
   </Show>

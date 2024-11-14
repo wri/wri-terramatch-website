@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
@@ -9,19 +10,27 @@ import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { CHART_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
+  DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART,
+  DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED
+} from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
-import { getRestorationGoalDataForChart, getRestorationGoalResumeData } from "@/utils/dashboardUtils";
+import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
 import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
 import SimpleBarChart from "../charts/SimpleBarChart";
-import { DashboardDataProps } from "../project/index.page";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashboard from "./GraphicIconDashboard";
+import { DashboardDataProps } from "./ObjectiveSec";
 import ObjectiveSec from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
@@ -33,13 +42,14 @@ const SecDashboard = ({
   classNameBody,
   classNameHeader,
   classNameTitle,
-  tooltipGraphic = false,
+  isProjectView = false,
   variantTitle,
   tooltip,
   isTableProject,
   data,
   dataForChart,
-  chartType
+  chartType,
+  isUserAllowed
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -48,20 +58,26 @@ const SecDashboard = ({
   classNameBody?: string;
   classNameHeader?: string;
   classNameTitle?: string;
-  tooltipGraphic?: boolean;
+  isProjectView?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
   isTableProject?: boolean;
   tooltip?: string;
   dataForChart?: any;
   chartType?: string;
+  isUserAllowed?: boolean;
 }) => {
+  const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
   const [restorationGoalResume, setRestorationGoalResume] = useState<
     { name: string; value: number | undefined; color: string }[]
   >([]);
   const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
+
+  const noDataInformation = t(
+    "Data is still being collected and checked. This visual will remain empty until data is properly quality assured."
+  );
 
   const tableColumns = [
     {
@@ -76,6 +92,10 @@ const SecDashboard = ({
     }
   ];
 
+  const handleViewAllClick = () => {
+    router.push("/dashboard/project-list");
+  };
+
   useEffect(() => {
     if (data?.tableData) {
       setToggleValue(1);
@@ -83,8 +103,11 @@ const SecDashboard = ({
   }, []);
 
   useEffect(() => {
+    if (dataForChart && dataForChart?.message === "Job dispatched") {
+      return;
+    }
     if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
-      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1);
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, isProjectView);
       setTreesPlantedByYear(data);
     }
     if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
@@ -102,7 +125,7 @@ const SecDashboard = ({
           </Text>
           <When condition={!!tooltip}>
             <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
-              <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5" />
+              <Icon name={IconNames.IC_INFO} className="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
         </div>
@@ -131,7 +154,9 @@ const SecDashboard = ({
         </When>
       </div>
       <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
-        {data?.value && <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />}
+        {data?.value !== undefined && (
+          <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
+        )}
         <When condition={data?.totalValue}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
@@ -141,21 +166,68 @@ const SecDashboard = ({
               src="/images/treeBackground.svg"
               id="treeBackground"
               alt="secondValue"
-              className="absolute right-0 z-10 h-9 w-[316px]"
+              className="z-1 absolute right-0 h-9 w-[316px]"
             />
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
-          <MultiLineChart data={treesPlantedByYear} isAbsoluteData={toggleValue === 1} />
+          <BlurContainer
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(chartType ?? "", treesPlantedByYear)}
+            textInformation={noDataInformation}
+            className="ml-[20px] lg:ml-[15px]"
+          >
+            <MultiLineChart
+              data={
+                isEmptyChartData(chartType ?? "", treesPlantedByYear)
+                  ? DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART
+                  : treesPlantedByYear
+              }
+              isAbsoluteData={toggleValue === 1}
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
-          <GroupedBarChart data={dataForChart} />
+          <BlurContainer
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <GroupedBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
-          <DoughnutChart data={dataForChart} />
+          <BlurContainer
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
+            textInformation={noDataInformation}
+          >
+            <DoughnutChart
+              data={
+                isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
-          <SimpleBarChart data={dataForChart} />
+          <BlurContainer
+            isBlur={(isUserAllowed ?? false) && isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)}
+            textInformation={noDataInformation}
+            className="ml-[40px] lg:ml-[35px]"
+          >
+            <SimpleBarChart
+              data={
+                isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)
+                  ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+                  : dataForChart
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={data?.graphic}>
           <img src={data?.graphic} alt={data?.graphic} className="w-full" />
@@ -186,21 +258,46 @@ const SecDashboard = ({
           <When condition={toggleValue === 0}>
             <div className="w-full">
               {data && (
-                <Table
-                  data={data?.tableData ?? []}
-                  hasPagination={false}
-                  columns={tableColumns}
-                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                />
+                <>
+                  <Table
+                    data={data?.tableData ?? []}
+                    hasPagination={false}
+                    columns={tableColumns}
+                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  />
+                  <Text
+                    variant="text-14"
+                    className="mt-1 cursor-pointer pl-4 pt-2 text-primary underline"
+                    onClick={handleViewAllClick}
+                  >
+                    {t("VIEW ALL PROJECTS")}
+                  </Text>
+                </>
               )}
             </div>
           </When>
         </When>
         <When condition={chartType === CHART_TYPES.barChart}>
-          <GraphicIconDashboard
-            data={data?.graphicTargetLandUseTypes ?? []}
-            maxValue={data?.totalSection?.totalHectaresRestored ?? 0}
-          />
+          <BlurContainer
+            isBlur={
+              (isUserAllowed ?? false) &&
+              (data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0)
+            }
+            textInformation={noDataInformation}
+          >
+            <GraphicIconDashboard
+              data={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes
+                  : data?.graphicTargetLandUseTypes ?? []
+              }
+              maxValue={
+                data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0
+                  ? 90
+                  : data?.totalSection?.totalHectaresRestored ?? 0
+              }
+            />
+          </BlurContainer>
         </When>
         <When condition={!!data?.objetiveText}>
           <ObjectiveSec data={data} />

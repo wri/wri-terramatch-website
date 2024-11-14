@@ -18,9 +18,9 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
+import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
+import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import WorkdayCollapseGrid from "@/components/extensive/WorkdayCollapseGrid/WorkdayCollapseGrid";
-import { GRID_VARIANT_NARROW } from "@/components/extensive/WorkdayCollapseGrid/WorkdayVariant";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
@@ -100,7 +100,29 @@ export const getFormEntries = (
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: <WorkdayCollapseGrid demographics={workday?.demographics ?? []} variant={GRID_VARIANT_NARROW} />
+          value: (
+            <DemographicsCollapseGrid
+              demographics={workday?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              demographicalType="workdays"
+            />
+          )
+        });
+        break;
+      }
+
+      case FieldType.RestorationPartnersTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              demographics={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              demographicalType="restorationPartners"
+            />
+          )
         });
         break;
       }

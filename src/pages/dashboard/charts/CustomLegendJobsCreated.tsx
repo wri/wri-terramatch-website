@@ -12,15 +12,15 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
   if (!payload) return null;
 
   return (
-    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", justifyContent: "center" }}>
+    <ul style={{ listStyle: "none" }} className="margin-0 flex justify-between pl-[42px]">
       {payload.map((entry: any, index: number) => (
-        <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", marginRight: "20px" }}>
-          <svg width="10" height="10" style={{ marginRight: "5px" }}>
+        <li key={`item-${index}`} style={{ display: "flex", alignItems: "baseline" }}>
+          <svg width="12" height="10" style={{ marginRight: "7px" }}>
             <circle cx="5" cy="5" r="5" fill={entry.color} />
           </svg>
-          <span style={{ color: "black", display: "flex", flexDirection: "column" }}>
-            <span>{entry.value}</span>
-            <span style={{ fontSize: "0.8em", color: "#666" }}>
+          <span style={{ display: "flex", flexDirection: "column" }}>
+            <span className="text-12-light">{entry.value}</span>
+            <span className="text-12-light text-darkCustom">
               {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentage(totals[entry.value], totalJobs)}%)`}
             </span>
           </span>

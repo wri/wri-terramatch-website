@@ -8239,7 +8239,7 @@ export type GetV2WorkdaysENTITYUUIDResponse = {
     collection?: string;
     readable_collection?: string;
     demographics?: {
-      type?: "gender" | "age" | "ethnicity";
+      type?: "gender" | "age" | "ethnicity" | "caste";
       subtype?: string;
       name?: string;
       amount?: number;
@@ -8272,6 +8272,77 @@ export const useGetV2WorkdaysENTITYUUID = <TData = GetV2WorkdaysENTITYUUIDRespon
   return reactQuery.useQuery<GetV2WorkdaysENTITYUUIDResponse, GetV2WorkdaysENTITYUUIDError, TData>(
     queryKeyFn({ path: "/v2/workdays/{ENTITY}/{UUID}", operationId: "getV2WorkdaysENTITYUUID", variables }),
     ({ signal }) => fetchGetV2WorkdaysENTITYUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2RestorationPartnersENTITYUUIDPathParams = {
+  /**
+   * allowed values project-report
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type GetV2RestorationPartnersENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2RestorationPartnersENTITYUUIDResponse = {
+  data?: {
+    uuid?: string;
+    collection?: string;
+    readable_collection?: string;
+    demographics?: {
+      type?: "gender" | "age" | "ethnicity" | "caste";
+      subtype?: string;
+      name?: string;
+      amount?: number;
+    }[];
+  }[];
+};
+
+export type GetV2RestorationPartnersENTITYUUIDVariables = {
+  pathParams: GetV2RestorationPartnersENTITYUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2RestorationPartnersENTITYUUID = (
+  variables: GetV2RestorationPartnersENTITYUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2RestorationPartnersENTITYUUIDResponse,
+    GetV2RestorationPartnersENTITYUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2RestorationPartnersENTITYUUIDPathParams
+  >({ url: "/v2/restoration-partners/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2RestorationPartnersENTITYUUID = <TData = GetV2RestorationPartnersENTITYUUIDResponse>(
+  variables: GetV2RestorationPartnersENTITYUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2RestorationPartnersENTITYUUIDResponse,
+      GetV2RestorationPartnersENTITYUUIDError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2RestorationPartnersENTITYUUIDResponse,
+    GetV2RestorationPartnersENTITYUUIDError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/restoration-partners/{ENTITY}/{UUID}",
+      operationId: "getV2RestorationPartnersENTITYUUID",
+      variables
+    }),
+    ({ signal }) => fetchGetV2RestorationPartnersENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -28917,6 +28988,44 @@ export const usePatchAuthChange = (
   );
 };
 
+export type PutV2AuthCompleteSignupError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AuthCompleteSignupRequestBody = {
+  token?: string;
+  password?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  role?: string;
+};
+
+export type PutV2AuthCompleteSignupVariables = {
+  body?: PutV2AuthCompleteSignupRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2AuthCompleteSignup = (variables: PutV2AuthCompleteSignupVariables, signal?: AbortSignal) =>
+  apiFetch<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupRequestBody, {}, {}, {}>({
+    url: "/v2/auth/complete/signup",
+    method: "put",
+    ...variables,
+    signal
+  });
+
+export const usePutV2AuthCompleteSignup = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>(
+    (variables: PutV2AuthCompleteSignupVariables) => fetchPutV2AuthCompleteSignup({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostAuthResetError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostAuthResetRequestBody = {
@@ -33042,8 +33151,6 @@ export type GetV2DashboardJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
 export type GetV2DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
-    forProfitJobsCreated?: number;
-    nonProfitJobsCreated?: number;
     total_ft?: number;
     total_pt?: number;
     total_men?: number;
@@ -33217,9 +33324,6 @@ export type GetV2DashboardTreeRestorationGoalResponse = {
     treeSpeciesAmount?: number;
     treeSpeciesPercentage?: number;
   }[];
-  averageSurvivalRateTotal?: number;
-  averageSurvivalRateForProfit?: number;
-  averageSurvivalRateNonProfit?: number;
 };
 
 export type GetV2DashboardTreeRestorationGoalVariables = {
@@ -33814,21 +33918,9 @@ export type GetV2DashboardVolunteersSurvivalRateResponse = {
      */
     non_youth_volunteers?: number;
     /**
-     * Survival rate for non-profit entities.
-     */
-    non_profit_survival_rate?: number;
-    /**
-     * Survival rate for enterprise entities.
-     */
-    enterprise_survival_rate?: number;
-    /**
      * number of sites.
      */
     number_of_sites?: number;
-    /**
-     * number of nurseries.
-     */
-    number_of_nurseries?: number;
   };
 };
 
@@ -34087,8 +34179,6 @@ export type GetV2DashboardActiveCountriesResponse = {
     number_of_projects?: number;
     total_trees_planted?: number;
     total_jobs_created?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
   }[];
 };
 
@@ -36243,6 +36333,11 @@ export type QueryOperation =
       path: "/v2/workdays/{ENTITY}/{UUID}";
       operationId: "getV2WorkdaysENTITYUUID";
       variables: GetV2WorkdaysENTITYUUIDVariables;
+    }
+  | {
+      path: "/v2/restoration-partners/{ENTITY}/{UUID}";
+      operationId: "getV2RestorationPartnersENTITYUUID";
+      variables: GetV2RestorationPartnersENTITYUUIDVariables;
     }
   | {
       path: "/v2/stratas/{ENTITY}/{UUID}";

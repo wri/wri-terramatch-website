@@ -7,6 +7,7 @@ import { CustomBar } from "./CustomBarJobsCreated";
 import CustomLabel from "./CustomLabelRestoration";
 import CustomTooltip from "./CustomTooltip";
 import CustomXAxisTick from "./CustomXAxisTickRestoration";
+import CustomYAxisTick from "./CustomYAxisTickJobsCreated";
 
 type ResturationStrategy = {
   label: string;
@@ -15,13 +16,13 @@ type ResturationStrategy = {
 
 type FormattedData = {
   name: string;
-  value: number;
+  Value: number;
 };
 
 const SimpleBarChart = ({ data }: { data: ResturationStrategy[] }) => {
   const formattedData: FormattedData[] = data.map(item => ({
     name: item.label.split(",").join(" + ").replace(/-/g, " "),
-    value: item.value
+    Value: item.value
   }));
 
   return (
@@ -39,8 +40,8 @@ const SimpleBarChart = ({ data }: { data: ResturationStrategy[] }) => {
         >
           <CartesianGrid vertical={false} stroke="#E1E4E9" />
           <XAxis tickLine={false} axisLine={false} dataKey="name" height={20} interval={0} tick={<CustomXAxisTick />} />
-          <YAxis tickLine={false} axisLine={false} className="text-sm" tick={{ fill: "#374151" }} />
-          <Bar dataKey="value" label={<CustomLabel />} shape={(props: any) => <CustomBar {...props} />}>
+          <YAxis tickLine={false} axisLine={false} tick={props => <CustomYAxisTick {...props} />} />
+          <Bar dataKey="Value" label={<CustomLabel />} shape={(props: any) => <CustomBar {...props} />}>
             {formattedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getBarColorRestoration(entry.name)} />
             ))}

@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
+  useGetV2DashboardCountryCountry,
+  useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
@@ -13,67 +16,73 @@ import {
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
-  useGetV2DashboardViewProjectList,
+  useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
+import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
+import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
+
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
+  const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
+  const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
-      value: "0"
+      value: "0",
+      tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
-      value: "0 ha"
+      value: "0 ha",
+      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
-      value: "0"
+      value: "0",
+      tooltip: JOBS_CREATED_TOOLTIP
     }
   ]);
-  const projectUuid = filters.project?.project_uuid;
-  const queryParamsCountryProject: any = (country?: string, project?: string) => {
-    if (country) {
-      return { country: country };
-    } else if (project) {
-      return { uuid: project };
-    } else {
-      return {};
-    }
-  };
-  const { data: listViewProjects } = useGetV2DashboardViewProjectList<any>({});
-  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
-  });
-  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>({
-    queryParams: queryParamsCountryProject(filters.country.country_slug, projectUuid)
-  });
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({
     value: 0,
     totalValue: 0
   });
+  const { data: countryBbox } = useGetV2DashboardCountryCountry(
+    {
+      pathParams: { country: filters.country.country_slug }
+    },
+    {
+      enabled: !!filters.country.country_slug
+    }
+  );
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
       programmes: filters.programmes,
       country: filters.country.country_slug,
-      "organisations.type": filters.organizations,
+      organisationType: filters.organizations,
       landscapes: filters.landscapes,
-      "v2_projects.uuid": filters.uuid
+      projectUuid: filters.uuid
     };
     setUpdateFilters(parsedFilters);
   }, [filters]);
-
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+  const { data: isUserAllowed } = useGetV2DashboardViewProjectUuid<any>(
+    {
+      pathParams: { uuid: filters.uuid }
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
 
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
-      "v2_projects.uuid": ""
+      projectUuid: ""
     };
     return createQueryParams(modifiedFilters);
   }, [updateFilters]);
@@ -100,8 +109,21 @@ export const useDashboardData = (filters: any) => {
     { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
+  const shouldSendQueryParamsForCentroids = !(filters.uuid && user?.primaryRole === "government");
 
-  const filteredProjects = activeProjects?.data.filter((project: { name: string | null }) =>
+  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
+    queryParams: shouldSendQueryParamsForCentroids ? queryParams : undefined
+  });
+  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters.uuid && isUserAllowed?.allowed === true && user?.primaryRole !== "government"
+    }
+  );
+
+  const filteredProjects = activeProjects?.data?.filter((project: { name: string | null }) =>
     project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
@@ -121,11 +143,18 @@ export const useDashboardData = (filters: any) => {
     { pathParams: { project: filters.uuid } },
     { enabled: !!filters.uuid }
   );
-
+  const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
+    {
+      queryParams: queryParams
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
   useEffect(() => {
-    if (topData?.data) {
-      const projects = topData.data.top_projects_most_planted_trees.slice(0, 5);
-      const tableData = projects.map((project: { organization: string; project: string; trees_planted: number }) => ({
+    if (topData?.top_projects_most_planted_trees) {
+      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+      const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
         value: project.trees_planted
@@ -142,9 +171,22 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (totalSectionHeader) {
       setDashboardHeader(prev => [
-        { ...prev[0], value: totalSectionHeader.total_trees_restored.toLocaleString() },
-        { ...prev[1], value: `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha` },
-        { ...prev[2], value: totalSectionHeader.total_entries.toLocaleString() }
+        {
+          ...prev[0],
+          value: totalSectionHeader.total_trees_restored
+            ? totalSectionHeader.total_trees_restored.toLocaleString()
+            : "-"
+        },
+        {
+          ...prev[1],
+          value: totalSectionHeader.total_hectares_restored
+            ? `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+            : "-"
+        },
+        {
+          ...prev[2],
+          value: totalSectionHeader.total_entries ? totalSectionHeader.total_entries.toLocaleString() : "-"
+        }
       ]);
       setNumberTreesPlanted({
         value: totalSectionHeader.total_trees_restored,
@@ -152,6 +194,13 @@ export const useDashboardData = (filters: any) => {
       });
     }
   }, [totalSectionHeader]);
+  useEffect(() => {
+    if (countryBbox && Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
+      setCountryBboxParsed(countryBbox.bbox[1] as unknown as BBox);
+    } else {
+      setCountryBboxParsed(undefined);
+    }
+  }, [countryBbox]);
 
   return {
     dashboardHeader,
@@ -167,7 +216,9 @@ export const useDashboardData = (filters: any) => {
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    listViewProjects,
-    polygonsData: polygonsData?.data ?? {}
+    polygonsData: polygonsData?.data ?? {},
+    countryBbox: countryBboxParsed,
+    isUserAllowed,
+    projectBbox: projectBbox?.bbox
   };
 };
