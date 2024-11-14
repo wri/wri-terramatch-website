@@ -108,6 +108,7 @@ export type UserRead = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -603,6 +604,7 @@ export type UserReadAll = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -1891,6 +1893,7 @@ export type V2AdminOrganisationRead = {
   status?: string;
   readable_status?: string;
   type?: string;
+  is_test?: boolean;
   private?: boolean;
   name?: string;
   phone?: string;
@@ -2554,6 +2557,7 @@ export type V2MonitoringOrganisationRead = {
 export type V2AdminOrganisationUpdate = {
   type?: string;
   private?: boolean;
+  is_test?: boolean;
   name?: string;
   phone?: string;
   founding_date?: string;
@@ -4083,6 +4087,7 @@ export type V2NurseryLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -4716,6 +4721,7 @@ export type V2InvasivePaginated = {
 export type ProjectLiteRead = {
   id?: string;
   uuid?: string;
+  is_test?: boolean;
   status?: string;
   name?: string;
   organisation?: {
@@ -5203,6 +5209,7 @@ export type ProjectLiteRead = {
 export type ProjectFullRead = {
   id?: string;
   uuid?: string;
+  is_test?: boolean;
   status?: string;
   organisation?: {
     uuid?: string;
@@ -6045,6 +6052,7 @@ export type ProjectFullRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -8521,6 +8529,7 @@ export type ApplicationRead = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -9527,6 +9536,7 @@ export type SiteReportLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -10016,6 +10026,7 @@ export type SiteReportLiteRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -10996,6 +11007,7 @@ export type SiteReportPaginated = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -11485,6 +11497,7 @@ export type SiteReportPaginated = {
       project?: {
         id?: string;
         uuid?: string;
+        is_test?: boolean;
         status?: string;
         name?: string;
         organisation?: {
@@ -12477,6 +12490,7 @@ export type NurseryReportLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -12966,6 +12980,7 @@ export type NurseryReportLiteRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -13945,6 +13960,7 @@ export type NurseryReportPaginated = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -14434,6 +14450,7 @@ export type NurseryReportPaginated = {
       project?: {
         id?: string;
         uuid?: string;
+        is_test?: boolean;
         status?: string;
         name?: string;
         organisation?: {
@@ -15963,6 +15980,7 @@ export type NurseryLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -16458,6 +16476,7 @@ export type SiteLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -16958,6 +16977,7 @@ export type NurseryReportRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -17469,6 +17489,7 @@ export type NurseryReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -17963,6 +17984,7 @@ export type NurseryReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -18932,6 +18954,7 @@ export type SiteReportRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -19439,6 +19462,7 @@ export type SiteReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -19933,6 +19957,7 @@ export type SiteReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -21589,6 +21614,7 @@ export type ProjectReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -22768,14 +22794,10 @@ export type DashboardActiveProjectsListViewResponse = {
     trees_under_restoration?: number;
     jobs_created?: number;
     volunteers?: number;
-    beneficiaries?: number;
-    survival_rate?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
     project_country?: string;
     country_slug?: string;
-    number_of_trees_goal?: number;
-    date_added?: string;
+    hectares_under_restoration?: number;
+    programme?: string;
   }[];
   current_page?: number;
   per_page?: number;
@@ -23560,4 +23582,8 @@ export type UserCreateComplete = {
   job_role?: string;
   phone_number?: string;
   role?: string;
+};
+
+export type V2AdminProjectUpdate = {
+  is_test?: boolean;
 };
