@@ -18,7 +18,6 @@ import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   useGetV2SitePolygonUuidVersions,
-  useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -88,14 +87,13 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, polygonMap } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
-      reloadCriteriaValidation();
       setCheckPolygonValidation(false);
       openNotification(
         "success",
@@ -111,16 +109,6 @@ const PolygonDrawer = ({
     }
   });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
-  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: polygonSelected
-      }
-    },
-    {
-      enabled: !!polygonSelected
-    }
-  );
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
     onSuccess: async (data: ClippedPolygonResponse) => {
@@ -167,7 +155,7 @@ const PolygonDrawer = ({
     if (checkPolygonValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
-      reloadCriteriaValidation();
+      // reloadCriteriaValidation this refetch was here
     }
   }, [checkPolygonValidation]);
 
@@ -176,13 +164,15 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
+    console.log("polygon selected changed", polygonSelected);
+    const criteriaData = polygonMap[polygonSelected];
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(true);
     } else {
       setValidationStatus(false);
     }
-  }, [criteriaData]);
+  }, [polygonMap, polygonSelected]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {

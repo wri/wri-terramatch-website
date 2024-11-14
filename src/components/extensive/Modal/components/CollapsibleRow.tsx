@@ -7,7 +7,7 @@ import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/Ch
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -28,27 +28,19 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: item.poly_id ?? item.id ?? ""
-      }
-    },
-    {
-      enabled: !!(item.poly_id ?? item.id)
-    }
-  );
-
+  const { polygonMap } = useMapAreaContext(); // TODO: review this if is changing
+  const [criteriaData, setCriteriaData] = useState<any>(null);
   useEffect(() => {
-    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaData));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
+    const criteriaDataPolygon = polygonMap[item.poly_id ?? item.id];
+    setCriteriaData(criteriaDataPolygon);
+    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
+      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
       setIsChecked(true);
     } else {
       setIsChecked(item.checked ?? false);
     }
-  }, [criteriaData, item.checked]);
+  }, [polygonMap, item.checked]);
 
   const canBeApproved = item.canBeApproved ?? isValidCriteriaData(criteriaData);
 

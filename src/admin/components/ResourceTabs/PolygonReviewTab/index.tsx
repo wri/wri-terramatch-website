@@ -142,7 +142,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { setSelectedPolygonsInCheckbox, setPolygonMap, setPolygonData } = useMapAreaContext();
+  const {
+    setSelectedPolygonsInCheckbox,
+    setPolygonMap,
+    setPolygonData,
+    polygonMap: polygonsCriteriaData,
+    polygonData: polygonList
+  } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
@@ -488,6 +494,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "white-page-admin",
           onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
         }}
+        polygonsCriteriaData={polygonsCriteriaData}
+        polygonList={polygonList}
       />
     );
   };

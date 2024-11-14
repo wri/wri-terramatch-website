@@ -1,11 +1,10 @@
 import { t } from "@transifex/native";
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 
 import Button from "../Button/Button";
@@ -42,8 +41,7 @@ const MapEditPolygonPanel = ({
     setSelectedPolyVersion,
     setOpenModalConfirmation,
     setPreviewVersion,
-    shouldRefetchValidation,
-    setShouldRefetchValidation,
+    polygonMap,
     setHasOverlaps
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;
@@ -61,17 +59,7 @@ const MapEditPolygonPanel = ({
     recallEntityData?.();
   };
 
-  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: editPolygon?.uuid
-      }
-    },
-    {
-      enabled: !!editPolygon?.uuid
-    }
-  );
-
+  const [criteriaData, setCriteriaData] = useState<any>(null);
   const hasOverlaps = (polygonValidation: V2TerrafundCriteriaData) => {
     if (polygonValidation.criteria_list) {
       for (const criteria of polygonValidation.criteria_list) {
@@ -84,17 +72,12 @@ const MapEditPolygonPanel = ({
   };
 
   useEffect(() => {
-    if (criteriaData) {
-      setHasOverlaps(hasOverlaps(criteriaData));
+    const criteriaDataPolygon = polygonMap[editPolygon?.uuid ?? ""];
+    if (criteriaDataPolygon) {
+      setHasOverlaps(hasOverlaps(criteriaDataPolygon));
+      setCriteriaData(criteriaDataPolygon);
     }
-  }, [criteriaData]);
-
-  useEffect(() => {
-    if (shouldRefetchValidation) {
-      reloadCriteriaValidation();
-      setShouldRefetchValidation(false);
-    }
-  }, [shouldRefetchValidation]);
+  }, [polygonMap]);
 
   return (
     <>

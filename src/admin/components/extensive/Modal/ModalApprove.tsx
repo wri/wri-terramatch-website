@@ -11,7 +11,6 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import { GetV2TerrafundValidationSiteResponse } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
@@ -24,6 +23,8 @@ export interface ModalApproveProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
+  polygonsCriteriaData: any;
+  polygonList: any;
 }
 
 export interface DisplayedPolygonType {
@@ -62,6 +63,8 @@ const ModalApprove: FC<ModalApproveProps> = ({
   status,
   site,
   onClose,
+  polygonsCriteriaData,
+  polygonList,
   ...rest
 }) => {
   // const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid }, queryParams: { where: 'ModalApprove' } });
@@ -70,7 +73,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
   //   queryParams: { uuid: site.uuid }
   // });
 
-  const { polygonMap: polygonsCriteriaData, polygonData: polygonList } = useMapAreaContext();
+  // const { polygonMap: polygonsCriteriaData, polygonData: polygonList } = useMapAreaContext();
 
   //TODO: JORGE HERE
   console.log("returnObject1", polygonList);
@@ -82,9 +85,9 @@ const ModalApprove: FC<ModalApproveProps> = ({
     if (!polygonList || !polygonsCriteriaData) {
       return;
     }
-    setPolygonsSelected(polygonList.map(_ => false));
+    setPolygonsSelected(polygonList.map((_: any) => false));
     setDisplayedPolygons(
-      polygonList.map(polygon => {
+      polygonList.map((polygon: any) => {
         const criteria = polygonsCriteriaData[polygon.poly_id];
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
