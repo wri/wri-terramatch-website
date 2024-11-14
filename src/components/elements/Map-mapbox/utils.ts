@@ -174,12 +174,12 @@ const handleLayerClick = (
   layerName?: string,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void
 ) => {
   removePopups("POLYGON");
   const { lngLat, features } = e;
   const feature = features?.[0];
-
   if (!feature) {
     Log.warn("No feature found in click event");
     return;
@@ -204,10 +204,12 @@ const handleLayerClick = (
     setEditPolygon
   };
   if (isDashboard) {
+    setLoader?.(true);
     const addPopupToMap = () => {
       newPopup.addTo(map);
       removePopups("POLYGON");
       popupAttachedMap["POLYGON"].push(newPopup);
+      setLoader?.(false);
     };
     const removePopupFromMap = () => {
       newPopup.remove();
@@ -219,7 +221,8 @@ const handleLayerClick = (
         layerName,
         setFilters,
         dashboardCountries,
-        removePopupFromMap
+        removePopupFromMap,
+        isDashboard
       })
     );
   } else {
@@ -429,7 +432,9 @@ export const addPopupsToMap = (
   draw: MapboxDraw,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -445,7 +450,9 @@ export const addPopupsToMap = (
         draw,
         isDashboard,
         setFilters,
-        dashboardCountries
+        dashboardCountries,
+        setLoader,
+        selectedCountry
       );
     });
   }
@@ -464,7 +471,9 @@ export const addPopupToLayer = (
   draw: MapboxDraw,
   isDashboard?: string | undefined,
   setFilters?: any,
-  dashboardCountries?: any
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -473,17 +482,15 @@ export const addPopupToLayer = (
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
     if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-      targetLayers = [targetLayers[0]];
+      targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
     }
     const clickHandler = (e: any) => {
       const currentMode = draw?.getMode();
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
-      const zoomLevel = map.getZoom();
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
 
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
-
-      if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
+      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
         e,
@@ -497,7 +504,8 @@ export const addPopupToLayer = (
         name,
         isDashboard,
         setFilters,
-        dashboardCountries
+        dashboardCountries,
+        setLoader
       );
     };
     targetLayers.forEach(targetLayer => {

@@ -101,7 +101,7 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = fals
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formattedData}>
+      <LineChart data={formattedData} margin={{ right: 15 }}>
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis
           dataKey="time"
