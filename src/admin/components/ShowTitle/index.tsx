@@ -1,9 +1,10 @@
+import { Chip } from "@mui/material";
 import { Link, RaRecord, useRecordContext, useResourceContext, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+
 interface IProps {
   moduleName?: string;
   getTitle: (record: RaRecord) => string;
@@ -12,8 +13,15 @@ interface IProps {
 const ShowTitle = (props: IProps) => {
   const record = useRecordContext();
   const { isLoading } = useShowContext();
-  const title = props.getTitle(record);
+  const titleText = props.getTitle(record);
   const resource = useResourceContext();
+
+  const title = titleText && (
+    <>
+      {titleText}
+      {record?.is_test && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
+    </>
+  );
 
   return (
     <If condition={isLoading}>
