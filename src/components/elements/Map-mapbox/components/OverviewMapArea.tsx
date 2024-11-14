@@ -18,7 +18,7 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { storePolygon } from "../utils";
+import { parsePolygonData, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -124,13 +124,7 @@ const OverviewMapArea = ({
 
   useEffect(() => {
     if (polygonsData?.length > 0) {
-      const dataMap = ((polygonsData ?? []) as SitePolygonsDataResponse).reduce((acc: any, data: any) => {
-        if (!acc[data.status]) {
-          acc[data.status] = [];
-        }
-        acc[data.status].push(data.poly_id);
-        return acc;
-      }, {});
+      const dataMap = parsePolygonData(polygonsData);
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({
