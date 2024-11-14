@@ -144,7 +144,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
-      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
+      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : ["terrafund-landscapes"],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
@@ -209,7 +209,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
+        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -223,6 +223,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
+          <Text variant="text-20" as={"span"} className="absolute top-1 text-white lg:top-2">
+            &nbsp;&nbsp;&nbsp;&nbsp;{t("BETA")}
+          </Text>
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
