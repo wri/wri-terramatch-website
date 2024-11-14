@@ -20,19 +20,60 @@ const f = ts.factory;
 
 dotenv.config();
 
+// constants/environment.ts can't be imported here, so the bits that are relevant are adopted to this file
+const ENVIRONMENT_NAMES = ["local", "dev", "test", "staging", "prod"] as const;
+type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
+
+type Environment = {
+  apiBaseUrl: string;
+  userServiceUrl: string;
+};
+
+const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
+  local: {
+    apiBaseUrl: "http://localhost:8080",
+    userServiceUrl: "http://localhost:4010"
+  },
+  dev: {
+    apiBaseUrl: "https://api-dev.terramatch.org",
+    userServiceUrl: "https://api-dev.terramatch.org"
+  },
+  test: {
+    apiBaseUrl: "https://api-test.terramatch.org",
+    userServiceUrl: "https://api-test.terramatch.org"
+  },
+  staging: {
+    apiBaseUrl: "https://api-staging.terramatch.org",
+    userServiceUrl: "https://api-staging.terramatch.org"
+  },
+  prod: {
+    apiBaseUrl: "https://api.terramatch.org",
+    userServiceUrl: "https://api.terramatch.org"
+  }
+};
+
+const declaredEnv = (process.env.NEXT_PUBLIC_TARGET_ENV ?? "local") as EnvironmentName;
+if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
+  throw `Environment name is not valid! [${declaredEnv}]`;
+}
+
+const DEFAULTS = ENVIRONMENTS[declaredEnv];
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
+const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
+
 // The services defined in the v3 Node BE codebase. Although the URL path for APIs in the v3 space
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
 // isolate the generated API integration by service to make it easier for a developer to find where
 // the associated BE code is for a given FE API integration.
 const SERVICES = {
-  "user-service": process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL
+  "user-service": userServiceUrl
 };
 
 const config: Record<string, Config> = {
   api: {
     from: {
       source: "url",
-      url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/documentation/v2/raw`
+      url: `${apiBaseUrl}/documentation/v2/raw`
     },
     outputDir: "src/generated",
     to: async context => {
