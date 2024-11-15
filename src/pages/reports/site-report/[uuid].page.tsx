@@ -127,6 +127,10 @@ const SiteReportDetailPage = () => {
               <PageRow>
                 <PageColumn>
                   <PageCard title={t("Reported Data")} gap={8}>
+                    <ContextCondition frameworksShow={[Framework.HBF]}>
+                      <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
+                      <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
+                    </ContextCondition>
                     <ContextCondition frameworksShow={[Framework.PPC]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
@@ -139,7 +143,7 @@ const SiteReportDetailPage = () => {
                       />
                       <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
                     </GenericField>
-                    <GenericField label={t("Direct Seeding")}>
+                    <GenericField label={t("Direct Seeding")} frameworksHide={[Framework.HBF]}>
                       <TextField
                         className="mt-2"
                         label={t("Total Direct Seedings")}
@@ -147,11 +151,55 @@ const SiteReportDetailPage = () => {
                       />
                       <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
                     </GenericField>
+                    <GenericField label={t("Non-Tree Species Planted")} frameworksShow={[Framework.HBF]}>
+                      <TextField
+                        className="mt-2"
+                        label={t("Total Non-Trees Planted")}
+                        value={siteReport.total_non_tree_species_planted_count}
+                      />
+                      <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="non-tree" />
+                    </GenericField>
                     <GenericField label={t("Disturbances")}>
                       <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
                     </GenericField>
-                    <LongTextField frameworksHide={[Framework.PPC]} title={t("Site Changes")}>
+                    <LongTextField frameworksHide={[Framework.PPC, Framework.HBF]} title={t("Site Changes")}>
                       {siteReport.polygon_status}
+                    </LongTextField>
+                  </PageCard>
+                </PageColumn>
+              </PageRow>
+              <PageRow frameworksShow={[Framework.HBF]}>
+                <PageColumn>
+                  <PageCard title={t("Invasive Species Management")}>
+                    <LongTextField title={t("Information invasive species and are restored")}>
+                      {siteReport.invasive_species_management}
+                    </LongTextField>
+                    <LongTextField title={t("Post Invasive removal plan")}>
+                      {siteReport.invasive_species_removed}
+                    </LongTextField>
+                  </PageCard>
+                </PageColumn>
+              </PageRow>
+              <PageRow frameworksShow={[Framework.HBF]}>
+                <PageColumn>
+                  <PageCard title={t("Soil + Water Management")}>
+                    <LongTextField title={t("Soil and Water-Based Restoration Description")}>
+                      {siteReport.soil_water_restoration_description}
+                    </LongTextField>
+                    <LongTextField title={t("Water + Soil Conservation Structures Created")}>
+                      {siteReport.water_structures}
+                    </LongTextField>
+                  </PageCard>
+                </PageColumn>
+              </PageRow>
+              <PageRow frameworksShow={[Framework.HBF]}>
+                <PageColumn>
+                  <PageCard title={t("Site Socioeconomic Impact")}>
+                    <LongTextField title={t("Site Community Partners Description")}>
+                      {siteReport.site_community_partners_description}
+                    </LongTextField>
+                    <LongTextField title={t("Site Income Generating Activities")}>
+                      {siteReport.site_community_partners_income_increase_description}
                     </LongTextField>
                   </PageCard>
                 </PageColumn>
