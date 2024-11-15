@@ -87,7 +87,12 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, polygonMap } = contextMapArea;
+  const {
+    statusSelectedPolygon,
+    setStatusSelectedPolygon,
+    setShouldRefetchValidation,
+    polygonCriteriaMap: polygonMap
+  } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);

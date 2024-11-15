@@ -6,24 +6,22 @@ import {
   fetchGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 
-interface LoadSitePolygonsHook {
+interface LoadCriteriaSiteHook {
   data: any[];
   loading: boolean;
   total: number;
   progress: number;
-  polygonListOrder: Record<string, any>;
-  polygonMap: Record<string, any>;
+  polygonCriteriaMap: Record<string, any>;
   refetch: () => void;
   fetchCriteriaData: (uuid: string) => void;
 }
 
-const useLoadSitePolygons = (site_uuid: string): LoadSitePolygonsHook => {
+const useLoadCriteriaSite = (site_uuid: string): LoadCriteriaSiteHook => {
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
-  const [polygonListOrder, setPolygonListOrder] = useState<Record<string, any>>({});
-  const [polygonMap, setPolygonMap] = useState<Record<string, any>>({});
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, any>>({});
 
   const loadInBatches = async () => {
     setLoading(true);
@@ -59,8 +57,6 @@ const useLoadSitePolygons = (site_uuid: string): LoadSitePolygonsHook => {
       }
       offset += limit;
     }
-    const keys = result.map((polygon: any) => polygon.poly_id);
-    setPolygonListOrder(keys);
     setLoading(false);
   };
 
@@ -68,8 +64,7 @@ const useLoadSitePolygons = (site_uuid: string): LoadSitePolygonsHook => {
     setProgress(0);
     setTotal(0);
     setData([]);
-    setPolygonListOrder({});
-    setPolygonMap({});
+    setPolygonCriteriaMap({});
     loadInBatches();
   };
 
@@ -79,7 +74,7 @@ const useLoadSitePolygons = (site_uuid: string): LoadSitePolygonsHook => {
         uuid: uuid
       }
     });
-    setPolygonMap(prev => {
+    setPolygonCriteriaMap(prev => {
       const newMap = { ...prev };
       newMap[uuid] = criteriaData;
       return newMap;
@@ -95,11 +90,10 @@ const useLoadSitePolygons = (site_uuid: string): LoadSitePolygonsHook => {
     loading,
     total,
     progress,
-    polygonListOrder,
-    polygonMap,
+    polygonCriteriaMap,
     refetch,
     fetchCriteriaData
   };
 };
 
-export default useLoadSitePolygons;
+export default useLoadCriteriaSite;

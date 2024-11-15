@@ -62,7 +62,7 @@ const MapMenuPanelItem = ({
   const [showWarning, setShowWarning] = useState(false);
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { polygonMap } = useMapAreaContext();
+  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
   useEffect(() => {
     const criteriaDataPolygon = polygonMap[poly_id];

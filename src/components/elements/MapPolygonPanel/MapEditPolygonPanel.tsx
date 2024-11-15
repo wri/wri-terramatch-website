@@ -41,7 +41,7 @@ const MapEditPolygonPanel = ({
     setSelectedPolyVersion,
     setOpenModalConfirmation,
     setPreviewVersion,
-    polygonMap,
+    polygonCriteriaMap: polygonMap,
     setHasOverlaps
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;

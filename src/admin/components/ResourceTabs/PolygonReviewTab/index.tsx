@@ -48,7 +48,7 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
-import useLoadSitesSitePolygon from "@/hooks/paginated/useLoadSitePolygons";
+import useLoadCriteriaSiteData from "@/hooks/paginated/useLoadCriteriaSite";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -144,9 +144,9 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { showLoader, hideLoader } = useLoading();
   const {
     setSelectedPolygonsInCheckbox,
-    setPolygonMap,
+    setPolygonCriteriaMap,
     setPolygonData,
-    polygonMap: polygonsCriteriaData,
+    polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
@@ -159,7 +159,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch, polygonMap, loading } = useLoadSitesSitePolygon(record.uuid);
+  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSiteData(record.uuid);
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -274,9 +274,9 @@ const PolygonReviewTab: FC<IProps> = props => {
   useEffect(() => {
     //TODO: JORGE HERE
     console.log("loading", loading);
-    setPolygonMap(polygonMap);
+    setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(sitePolygonData);
-    console.log("polygonMap", polygonMap);
+    console.log("polygonMap", polygonCriteriaMap);
     console.log("sitePolygonData", sitePolygonData);
   }, [loading]);
 

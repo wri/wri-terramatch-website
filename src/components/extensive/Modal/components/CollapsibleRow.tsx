@@ -28,7 +28,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const { polygonMap } = useMapAreaContext(); // TODO: review this if is changing
+  const { polygonCriteriaMap: polygonMap } = useMapAreaContext(); // TODO: review this if is changing
   const [criteriaData, setCriteriaData] = useState<any>(null);
   useEffect(() => {
     const criteriaDataPolygon = polygonMap[item.poly_id ?? item.id];

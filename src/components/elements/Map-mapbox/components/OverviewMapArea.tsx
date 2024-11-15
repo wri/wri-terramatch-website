@@ -77,6 +77,7 @@ const OverviewMapArea = ({
   });
 
   const setResultValues = (result: any) => {
+    console.log("Result for entity", result);
     if (result?.polygonsData) {
       setPolygonsData(result.polygonsData);
       setEntityBbox(result.bbox as BBox);

@@ -47,7 +47,7 @@ const PolygonItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
-  const { polygonMap } = useMapAreaContext();
+  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
 
