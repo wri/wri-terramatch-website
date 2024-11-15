@@ -25,7 +25,7 @@ type Item = {
 export const DashboardPopup = (event: any) => {
   const isoCountry = event?.feature?.properties?.iso;
   const itemUuid = event?.feature?.properties?.uuid;
-  const { addPopupToMap, layerName, setFilters, dashboardCountries, removePopupFromMap } = event;
+  const { addPopupToMap, layerName, setFilters, dashboardCountries, removePopupFromMap, isDashboard } = event;
 
   const [items, setItems] = useState<Item[]>([]);
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
@@ -136,7 +136,7 @@ export const DashboardPopup = (event: any) => {
       <QueryClientProvider client={client}>
         <TooltipGridMap
           label={label}
-          learnMore={layerName !== LAYERS_NAMES.POLYGON_GEOMETRY ? learnMoreEvent : null}
+          learnMore={layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null}
           isoCountry={isoCountry}
           items={items}
         />

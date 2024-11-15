@@ -6149,7 +6149,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
         </span>
       </button>
       <div
-        className="border border-neutral-200 rounded-lg overflow-auto max-h-[285px] lg:max-h-[303px] wide:max-h-[321px]"
+        className="border border-neutral-200 rounded-lg overflow-auto max-h-[260px] lg:max-h-[303px] wide:max-h-[321px]"
       >
         <table
           className="w-full border-collapse"
@@ -6158,7 +6158,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
             className="bg-blueCustom-100 "
           >
             <tr
-              className="bg-neutral-150 sticky top-0 z-auto"
+              className="bg-neutral-150 sticky top-0 z-[1]"
             >
               <th
                 align="left"

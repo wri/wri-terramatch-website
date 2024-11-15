@@ -3,6 +3,7 @@ export type UserRole =
   | "admin-ppc"
   | "admin-terrafund"
   | "admin-hbf"
+  | "admin-epa-ghana-pilot"
   | "project-developer"
   | "project-manager";
 

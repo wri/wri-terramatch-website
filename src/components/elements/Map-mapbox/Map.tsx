@@ -74,10 +74,6 @@ import {
   zoomToBbox
 } from "./utils";
 
-mapboxgl.accessToken =
-  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
-  "pk.eyJ1IjoiM3NpZGVkY3ViZSIsImEiOiJjam55amZrdjIwaWY3M3FueDAzZ3ZjeGR2In0.DhSsxs-8XhbTgoVmFcs94Q";
-
 interface LegendItem {
   color: string;
   text: string;
@@ -125,6 +121,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
+  setLoader?: (value: boolean) => void;
 }
 
 export const MapContainer = ({
@@ -165,7 +162,7 @@ export const MapContainer = ({
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -251,7 +248,9 @@ export const MapContainer = ({
             draw.current,
             isDashboard,
             setFilters,
-            dashboardCountries
+            dashboardCountries,
+            setLoader,
+            selectedCountry
           );
         }
       };

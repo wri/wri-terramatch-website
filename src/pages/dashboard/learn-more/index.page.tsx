@@ -243,13 +243,17 @@ const Homepage = () => {
         <div className="w-2/5 pr-5">
           <div className="grid h-fit w-full grid-cols-2 gap-4">
             <img
-              src="/images/upcoming-opportunities-explainer.webp"
+              src="/images/learn-more-data-1.jpg"
               alt="tree"
-              className="h-full w-full rounded-2xl object-cover"
+              className="h-full max-h-[170px]  w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
             />
-            <img src="/images/usign-platform.png" alt="tree" className="h-full w-full rounded-2xl object-cover" />
             <img
-              src="/images/priceless-planet-coalition-explainer.webp"
+              src="/images/learn-more-data-3.jpg"
+              alt="tree"
+              className="h-full max-h-[170px]  w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
+            />
+            <img
+              src="/images/learn-more-data-2.jpg"
               alt="tree"
               className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] "
             />
