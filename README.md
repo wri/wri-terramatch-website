@@ -42,7 +42,7 @@ yarn generate:services
 ```
 
 When adding a new **service** app to the v3 API:
-* In your local .env, define the service URL 
+* In `constants.environment.ts, define the service URL for all ENVIRONMENTS.
 * In `openapi-codegen.config.ts`, add the new service name to the `SERVICES` object (e.g. `foo-service`). 
 * This will generate a new target, which needs to be added to `package.json`:
   * Under scripts, add `"generate:fooService": "npm run generate:fooService"`
