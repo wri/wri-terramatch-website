@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import {
-  fetchGetV2SitesUUIDPolygons,
-  fetchGetV2SitesUUIDPolygonsCount,
+  fetchGetV2EntityPolygons,
+  fetchGetV2EntityPolygonsCount,
   fetchGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 
@@ -16,18 +16,25 @@ interface LoadCriteriaSiteHook {
   fetchCriteriaData: (uuid: string) => void;
 }
 
-const useLoadCriteriaSite = (site_uuid: string): LoadCriteriaSiteHook => {
+const useLoadCriteriaSite = (
+  entity_uuid: string,
+  entity_type: string,
+  statuses: any = null,
+  sortOrder: string = "created_at"
+): LoadCriteriaSiteHook => {
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, any>>({});
-
   const loadInBatches = async () => {
     setLoading(true);
-    const { count } = await fetchGetV2SitesUUIDPolygonsCount({
-      pathParams: {
-        uuid: site_uuid
+    const { count } = await fetchGetV2EntityPolygonsCount({
+      queryParams: {
+        uuid: entity_uuid,
+        type: entity_type,
+        status: statuses ?? "",
+        [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
       }
     });
     setTotal(count!);
@@ -37,12 +44,13 @@ const useLoadCriteriaSite = (site_uuid: string): LoadCriteriaSiteHook => {
     while (offset < count!) {
       const queryParams: any = {
         limit: limit,
-        offset: offset
+        offset: offset,
+        uuid: entity_uuid,
+        type: entity_type,
+        status: statuses ?? "",
+        [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
       };
-      const partialResponse = (await fetchGetV2SitesUUIDPolygons({
-        pathParams: {
-          uuid: site_uuid
-        },
+      const partialResponse = (await fetchGetV2EntityPolygons({
         queryParams
       })) as any;
       for (const polygon of partialResponse) {

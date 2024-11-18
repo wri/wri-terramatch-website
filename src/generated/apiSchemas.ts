@@ -23074,6 +23074,66 @@ export type EntityTypeResponse = {
   bbox?: number[];
 };
 
+export type EntityPolygonResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+  }[];
+};
+
 export type AuditStatusUpdateRequest = {
   type?: string;
   comment?: string;

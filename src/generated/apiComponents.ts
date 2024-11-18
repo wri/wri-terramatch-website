@@ -36760,10 +36760,6 @@ export type GetV2TypeEntityResponse = {
     is_active?: boolean;
     version_name?: string;
   }[];
-  /**
-   * Bounding box of the entity
-   */
-  bbox?: number[];
 };
 
 export type GetV2TypeEntityVariables = {
@@ -36795,6 +36791,194 @@ export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
   return reactQuery.useQuery<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>(
     queryKeyFn({ path: "/v2/type-entity", operationId: "getV2TypeEntity", variables }),
     ({ signal }) => fetchGetV2TypeEntity({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2EntityPolygonsCountQueryParams = {
+  /**
+   * UUID of the entity
+   */
+  uuid: string;
+  /**
+   * type of the entity
+   */
+  type: string;
+  /**
+   * Comma-separated list of status values to filter by
+   */
+  status?: string;
+  /**
+   * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
+   */
+  sort?: string;
+};
+
+export type GetV2EntityPolygonsCountError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2EntityPolygonsCountResponse = {
+  count?: number;
+};
+
+export type GetV2EntityPolygonsCountVariables = {
+  queryParams: GetV2EntityPolygonsCountQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const fetchGetV2EntityPolygonsCount = (variables: GetV2EntityPolygonsCountVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2EntityPolygonsCountResponse,
+    GetV2EntityPolygonsCountError,
+    undefined,
+    {},
+    GetV2EntityPolygonsCountQueryParams,
+    {}
+  >({ url: "/v2/entity/polygons/count", method: "get", ...variables, signal });
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const useGetV2EntityPolygonsCount = <TData = GetV2EntityPolygonsCountResponse>(
+  variables: GetV2EntityPolygonsCountVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2EntityPolygonsCountResponse, GetV2EntityPolygonsCountError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2EntityPolygonsCountResponse, GetV2EntityPolygonsCountError, TData>(
+    queryKeyFn({ path: "/v2/entity/polygons/count", operationId: "getV2EntityPolygonsCount", variables }),
+    ({ signal }) => fetchGetV2EntityPolygonsCount({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2EntityPolygonsQueryParams = {
+  /**
+   * UUID of the entity
+   */
+  uuid: string;
+  /**
+   * type of the entity
+   */
+  type: string;
+  /**
+   * Comma-separated list of status values to filter by
+   */
+  status?: string;
+  /**
+   * Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+   */
+  sort?: string;
+};
+
+export type GetV2EntityPolygonsError = Fetcher.ErrorWrapper<{
+  status: 500;
+  payload: {
+    /**
+     * Error message
+     */
+    error?: string;
+  };
+}>;
+
+export type GetV2EntityPolygonsResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+  }[];
+};
+
+export type GetV2EntityPolygonsVariables = {
+  queryParams: GetV2EntityPolygonsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const fetchGetV2EntityPolygons = (variables: GetV2EntityPolygonsVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, undefined, {}, GetV2EntityPolygonsQueryParams, {}>({
+    url: "/v2/entity/polygons",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+/**
+ * Determine the type of entity based on UUID.
+ */
+export const useGetV2EntityPolygons = <TData = GetV2EntityPolygonsResponse>(
+  variables: GetV2EntityPolygonsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, TData>(
+    queryKeyFn({ path: "/v2/entity/polygons", operationId: "getV2EntityPolygons", variables }),
+    ({ signal }) => fetchGetV2EntityPolygons({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -38422,6 +38606,16 @@ export type QueryOperation =
       path: "/v2/type-entity";
       operationId: "getV2TypeEntity";
       variables: GetV2TypeEntityVariables;
+    }
+  | {
+      path: "/v2/entity/polygons/count";
+      operationId: "getV2EntityPolygonsCount";
+      variables: GetV2EntityPolygonsCountVariables;
+    }
+  | {
+      path: "/v2/entity/polygons";
+      operationId: "getV2EntityPolygons";
+      variables: GetV2EntityPolygonsVariables;
     }
   | {
       path: "/v2/projects/{UUID}/site-polygons/all";

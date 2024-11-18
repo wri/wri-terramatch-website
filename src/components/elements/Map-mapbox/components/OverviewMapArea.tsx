@@ -10,12 +10,15 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2DashboardCountryCountry,
+  fetchGetV2DashboardGetBboxProject,
+  fetchGetV2SitesSiteBbox,
   GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles,
-  useGetV2TypeEntity
+  useGetV2MODELUUIDFiles
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
 import { useDate } from "@/hooks/useDate";
+import { createQueryParams } from "@/utils/dashboardUtils";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
 import { parsePolygonData, storePolygon } from "../utils";
@@ -37,7 +40,6 @@ const OverviewMapArea = ({
 }: EntityAreaProps) => {
   const t = useT();
   const { format } = useDate();
-  const [polygonsData, setPolygonsData] = useState<any[]>([]);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
@@ -53,7 +55,8 @@ const OverviewMapArea = ({
     shouldRefetchPolygonData,
     setShouldRefetchPolygonData,
     setEditPolygon,
-    setSelectedPolygonsInCheckbox
+    setSelectedPolygonsInCheckbox,
+    setPolygonCriteriaMap
   } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
@@ -63,29 +66,52 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const { data: entityData, refetch } = useGetV2TypeEntity({
-    queryParams: {
-      uuid: entityModel?.uuid,
-      type: type,
-      status: checkedValues.join(","),
-      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-    }
-  });
+  // const { data: entityData, refetch } = useGetV2TypeEntity({
+  //   queryParams: {
+  //     uuid: entityModel?.uuid,
+  //     type: type,
+  //     status: checkedValues.join(","),
+  //     [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+  //   }
+  // });
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: type, uuid: entityModel?.uuid }
   });
+  const {
+    data: polygonsData,
+    refetch,
+    polygonCriteriaMap,
+    loading
+  } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
-  const setResultValues = (result: any) => {
-    console.log("Result for entity", result);
-    if (result?.polygonsData) {
-      setPolygonsData(result.polygonsData);
-      setEntityBbox(result.bbox as BBox);
-      if (result.polygonsData?.length === 0) {
-        callCountryBBox();
+  useEffect(() => {
+    console.log("Loadging", loading);
+    if (polygonsData.length > 0) {
+      callEntityBbox();
+    } else {
+      callCountryBBox();
+    }
+    setPolygonCriteriaMap(polygonCriteriaMap);
+  }, [loading]);
+  const callEntityBbox = async () => {
+    if (type === "sites") {
+      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
+      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
+        const bboxFormat = siteBbox.bbox as BBox;
+        setEntityBbox(bboxFormat);
+      }
+    } else {
+      const projectBbox = await fetchGetV2DashboardGetBboxProject({
+        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
+      });
+      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
+        const bboxFormat = projectBbox.bbox as BBox;
+        setEntityBbox(bboxFormat);
       }
     }
   };
+
   const callCountryBBox = async () => {
     let currentCountry = entityModel?.country;
     if (type === "sites") {
@@ -104,9 +130,6 @@ const OverviewMapArea = ({
       setShouldRefetchPolygonData(false);
     }
   }, [entityBbox, polygonsData]);
-  useEffect(() => {
-    setResultValues(entityData);
-  }, [entityData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;

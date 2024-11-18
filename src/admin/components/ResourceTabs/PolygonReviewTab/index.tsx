@@ -159,7 +159,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSiteData(record.uuid);
+  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSiteData(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
