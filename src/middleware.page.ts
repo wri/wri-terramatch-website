@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
 import { OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
@@ -15,6 +15,10 @@ export async function middleware(request: NextRequest) {
     const middlewareCache = request.cookies.get(MiddlewareCacheKey)?.value;
 
     if (!!accessToken && !!middlewareCache) {
+      // Skip middleware for dashboard routes to prevent redirect loop
+      if (request.nextUrl.pathname.startsWith("/dashboard")) {
+        return NextResponse.next();
+      }
       //If middleware result is cached bypass api call to improve performance
       matcher.when(middlewareCache.includes("admin"))?.redirect(middlewareCache);
       matcher.exact("/")?.redirect(middlewareCache);
@@ -63,7 +67,13 @@ export async function middleware(request: NextRequest) {
           () => {
             //Email is verified
             const userIsAdmin = isAdmin(user?.primaryRole as UserRole);
+            // Allow admin users to access dashboard routes
+            if (userIsAdmin && request.nextUrl.pathname.startsWith("/dashboard")) {
+              matcher.next();
+              return matcher.getResult();
+            }
 
+            // Default admin redirect for non-dashboard routes
             matcher.when(user != null && userIsAdmin)?.redirect(`/admin`, { cacheResponse: true });
 
             matcher

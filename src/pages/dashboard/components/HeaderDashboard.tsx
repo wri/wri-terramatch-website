@@ -144,12 +144,22 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
-      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : ["terrafund-landscapes"],
+      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
       uuid: (uuid as string) || ""
     };
+
+    if (
+      newFilters.programmes.length === 0 &&
+      newFilters.landscapes.length === 0 &&
+      !newFilters.country &&
+      newFilters.organizations.length === 0 &&
+      !newFilters.uuid
+    ) {
+      newFilters.programmes = ["terrafund-landscapes"];
+    }
 
     setFilters(newFilters);
   }, []);

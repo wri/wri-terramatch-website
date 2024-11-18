@@ -121,7 +121,10 @@ export class MiddlewareMatcher {
    * To get matcher result and return at the end of middleware function
    * @returns matcher result
    */
-  getResult() {
+  getResult(): Response {
+    if (!this.result) {
+      return NextResponse.next();
+    }
     return this.result;
   }
 }
