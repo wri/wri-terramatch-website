@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import {
-  fetchGetV2AdminSitesUUIDPolygons,
-  fetchGetV2AdminSitesUUIDPolygonsCount,
+  fetchGetV2SitesUUIDPolygons,
+  fetchGetV2SitesUUIDPolygonsCount,
   fetchGetV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
 
@@ -25,7 +25,7 @@ const useLoadCriteriaSite = (site_uuid: string): LoadCriteriaSiteHook => {
 
   const loadInBatches = async () => {
     setLoading(true);
-    const { count } = await fetchGetV2AdminSitesUUIDPolygonsCount({
+    const { count } = await fetchGetV2SitesUUIDPolygonsCount({
       pathParams: {
         uuid: site_uuid
       }
@@ -39,7 +39,7 @@ const useLoadCriteriaSite = (site_uuid: string): LoadCriteriaSiteHook => {
         limit: limit,
         offset: offset
       };
-      const partialResponse = (await fetchGetV2AdminSitesUUIDPolygons({
+      const partialResponse = (await fetchGetV2SitesUUIDPolygons({
         pathParams: {
           uuid: site_uuid
         },

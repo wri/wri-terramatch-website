@@ -1670,162 +1670,6 @@ export const useGetV2AdminSitesMulti = <TData = GetV2AdminSitesMultiResponse>(
   );
 };
 
-export type GetV2AdminSitesUUIDPolygonsPathParams = {
-  /**
-   * The UUID of the site
-   */
-  uuid: string;
-};
-
-export type GetV2AdminSitesUUIDPolygonsQueryParams = {
-  /**
-   * The maximum number of polygons to return
-   */
-  limit: number;
-  /**
-   * The number of polygons to skip
-   */
-  offset: string;
-};
-
-export type GetV2AdminSitesUUIDPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminSitesUUIDPolygonsResponse = {
-  id?: number;
-  uuid?: string;
-  primary_uuid?: string;
-  project_id?: string;
-  proj_name?: string;
-  org_name?: string;
-  poly_id?: string;
-  poly_name?: string;
-  site_id?: string;
-  site_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  created_by?: string;
-  last_modified_by?: string;
-  /**
-   * @format date-time
-   */
-  deleted_at?: string;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  status?: string;
-  source?: string;
-  country?: string;
-  is_active?: boolean;
-  version_name?: string;
-}[];
-
-export type GetV2AdminSitesUUIDPolygonsVariables = {
-  pathParams: GetV2AdminSitesUUIDPolygonsPathParams;
-  queryParams: GetV2AdminSitesUUIDPolygonsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminSitesUUIDPolygons = (
-  variables: GetV2AdminSitesUUIDPolygonsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminSitesUUIDPolygonsResponse,
-    GetV2AdminSitesUUIDPolygonsError,
-    undefined,
-    {},
-    GetV2AdminSitesUUIDPolygonsQueryParams,
-    GetV2AdminSitesUUIDPolygonsPathParams
-  >({ url: "/v2/admin/sites/{uuid}/polygons", method: "get", ...variables, signal });
-
-export const useGetV2AdminSitesUUIDPolygons = <TData = GetV2AdminSitesUUIDPolygonsResponse>(
-  variables: GetV2AdminSitesUUIDPolygonsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminSitesUUIDPolygonsResponse, GetV2AdminSitesUUIDPolygonsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminSitesUUIDPolygonsResponse, GetV2AdminSitesUUIDPolygonsError, TData>(
-    queryKeyFn({ path: "/v2/admin/sites/{UUID}/polygons", operationId: "getV2AdminSitesUUIDPolygons", variables }),
-    ({ signal }) => fetchGetV2AdminSitesUUIDPolygons({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminSitesUUIDPolygonsCountPathParams = {
-  /**
-   * The UUID of the site
-   */
-  uuid: string;
-};
-
-export type GetV2AdminSitesUUIDPolygonsCountError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminSitesUUIDPolygonsCountResponse = {
-  count?: number;
-};
-
-export type GetV2AdminSitesUUIDPolygonsCountVariables = {
-  pathParams: GetV2AdminSitesUUIDPolygonsCountPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminSitesUUIDPolygonsCount = (
-  variables: GetV2AdminSitesUUIDPolygonsCountVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminSitesUUIDPolygonsCountResponse,
-    GetV2AdminSitesUUIDPolygonsCountError,
-    undefined,
-    {},
-    {},
-    GetV2AdminSitesUUIDPolygonsCountPathParams
-  >({ url: "/v2/admin/sites/{uuid}/polygons/count", method: "get", ...variables, signal });
-
-export const useGetV2AdminSitesUUIDPolygonsCount = <TData = GetV2AdminSitesUUIDPolygonsCountResponse>(
-  variables: GetV2AdminSitesUUIDPolygonsCountVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminSitesUUIDPolygonsCountResponse, GetV2AdminSitesUUIDPolygonsCountError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminSitesUUIDPolygonsCountResponse, GetV2AdminSitesUUIDPolygonsCountError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/sites/{UUID}/polygons/count",
-      operationId: "getV2AdminSitesUUIDPolygonsCount",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminSitesUUIDPolygonsCount({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostUsersError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostUsersResponse = {
@@ -29851,6 +29695,155 @@ export const useGetV2SitesUUID = <TData = GetV2SitesUUIDResponse>(
   );
 };
 
+export type GetV2SitesUUIDPolygonsPathParams = {
+  /**
+   * The UUID of the site
+   */
+  uuid: string;
+};
+
+export type GetV2SitesUUIDPolygonsQueryParams = {
+  /**
+   * The maximum number of polygons to return
+   */
+  limit: number;
+  /**
+   * The number of polygons to skip
+   */
+  offset: string;
+};
+
+export type GetV2SitesUUIDPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitesUUIDPolygonsResponse = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  /**
+   * @format date
+   */
+  plantend?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  version_name?: string;
+}[];
+
+export type GetV2SitesUUIDPolygonsVariables = {
+  pathParams: GetV2SitesUUIDPolygonsPathParams;
+  queryParams: GetV2SitesUUIDPolygonsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitesUUIDPolygons = (variables: GetV2SitesUUIDPolygonsVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2SitesUUIDPolygonsResponse,
+    GetV2SitesUUIDPolygonsError,
+    undefined,
+    {},
+    GetV2SitesUUIDPolygonsQueryParams,
+    GetV2SitesUUIDPolygonsPathParams
+  >({ url: "/v2/sites/{uuid}/polygons", method: "get", ...variables, signal });
+
+export const useGetV2SitesUUIDPolygons = <TData = GetV2SitesUUIDPolygonsResponse>(
+  variables: GetV2SitesUUIDPolygonsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2SitesUUIDPolygonsResponse, GetV2SitesUUIDPolygonsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2SitesUUIDPolygonsResponse, GetV2SitesUUIDPolygonsError, TData>(
+    queryKeyFn({ path: "/v2/sites/{UUID}/polygons", operationId: "getV2SitesUUIDPolygons", variables }),
+    ({ signal }) => fetchGetV2SitesUUIDPolygons({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2SitesUUIDPolygonsCountPathParams = {
+  /**
+   * The UUID of the site
+   */
+  uuid: string;
+};
+
+export type GetV2SitesUUIDPolygonsCountError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SitesUUIDPolygonsCountResponse = {
+  count?: number;
+};
+
+export type GetV2SitesUUIDPolygonsCountVariables = {
+  pathParams: GetV2SitesUUIDPolygonsCountPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2SitesUUIDPolygonsCount = (
+  variables: GetV2SitesUUIDPolygonsCountVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2SitesUUIDPolygonsCountResponse,
+    GetV2SitesUUIDPolygonsCountError,
+    undefined,
+    {},
+    {},
+    GetV2SitesUUIDPolygonsCountPathParams
+  >({ url: "/v2/sites/{uuid}/polygons/count", method: "get", ...variables, signal });
+
+export const useGetV2SitesUUIDPolygonsCount = <TData = GetV2SitesUUIDPolygonsCountResponse>(
+  variables: GetV2SitesUUIDPolygonsCountVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2SitesUUIDPolygonsCountResponse, GetV2SitesUUIDPolygonsCountError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2SitesUUIDPolygonsCountResponse, GetV2SitesUUIDPolygonsCountError, TData>(
+    queryKeyFn({ path: "/v2/sites/{UUID}/polygons/count", operationId: "getV2SitesUUIDPolygonsCount", variables }),
+    ({ signal }) => fetchGetV2SitesUUIDPolygonsCount({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2SiteMonitoringsUUIDPathParams = {
   uuid: string;
 };
@@ -36392,16 +36385,6 @@ export type QueryOperation =
       variables: GetV2AdminSitesMultiVariables;
     }
   | {
-      path: "/v2/admin/sites/{UUID}/polygons";
-      operationId: "getV2AdminSitesUUIDPolygons";
-      variables: GetV2AdminSitesUUIDPolygonsVariables;
-    }
-  | {
-      path: "/v2/admin/sites/{UUID}/polygons/count";
-      operationId: "getV2AdminSitesUUIDPolygonsCount";
-      variables: GetV2AdminSitesUUIDPolygonsCountVariables;
-    }
-  | {
       path: "/v2/projects/{UUID}/partners";
       operationId: "getV2ProjectsUUIDPartners";
       variables: GetV2ProjectsUUIDPartnersVariables;
@@ -36805,6 +36788,16 @@ export type QueryOperation =
       path: "/v2/sites/{UUID}";
       operationId: "getV2SitesUUID";
       variables: GetV2SitesUUIDVariables;
+    }
+  | {
+      path: "/v2/sites/{UUID}/polygons";
+      operationId: "getV2SitesUUIDPolygons";
+      variables: GetV2SitesUUIDPolygonsVariables;
+    }
+  | {
+      path: "/v2/sites/{UUID}/polygons/count";
+      operationId: "getV2SitesUUIDPolygonsCount";
+      variables: GetV2SitesUUIDPolygonsCountVariables;
     }
   | {
       path: "/v2/site-monitorings/{UUID}";
