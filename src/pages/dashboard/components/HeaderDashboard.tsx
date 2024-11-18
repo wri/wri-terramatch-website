@@ -144,7 +144,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
-      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : ["terrafund-landscapes"],
+      programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
