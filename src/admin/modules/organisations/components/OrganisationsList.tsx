@@ -1,4 +1,5 @@
 import { Divider, Stack, Tab, Tabs } from "@mui/material";
+import { useT } from "@transifex/react";
 import { Fragment, useCallback, useState } from "react";
 import {
   Datagrid,
@@ -10,11 +11,9 @@ import {
   SelectInput,
   ShowButton,
   TextField,
-  useDataProvider,
   useListContext
 } from "react-admin";
 
-import { OrganisationDataProvider } from "@/admin/apiProvider/dataProviders/organisationDataProvider";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import FundingProgrammesArrayField from "@/admin/components/Fields/FundingProgrammesArrayField";
@@ -23,9 +22,11 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
+import { ToastType, useToastContext } from "@/context/toast.provider";
+import { fetchGetV2AdminOrganisationsExport } from "@/generated/apiComponents";
+import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
-import modules from "../..";
 import { useGetOrganisationsTotals } from "../hooks/useGetOrganisationsTotal";
 
 const tabs = [
@@ -109,13 +110,39 @@ const ApplicationDataGrid = () => {
 
 export const OrganisationsList = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const t = useT();
+  const { openToast } = useToastContext();
 
-  const organisationDataProvider = useDataProvider<OrganisationDataProvider>();
+  const onSuccess = (response: any) => {
+    console.log(response);
+    downloadFileBlob(response, "Organisations.csv");
+  };
+
+  const onError = () => {
+    setExporting(false);
+    openToast(t("Something went wrong!"), ToastType.ERROR);
+  };
 
   const handleExport = () => {
     setExporting(true);
-
-    organisationDataProvider.export(modules.organisation.ResourceName).finally(() => setExporting(false));
+    // setLoading(true);
+    fetchGetV2AdminOrganisationsExport({})
+      .then((response: any) => {
+        console.log(response);
+        // downloadFileBlob(response, "Organisations.csv");
+        if (response.message) {
+          return fetchGetV2AdminOrganisationsExport({});
+        } else {
+          return response;
+        }
+      })
+      .then((response: any) => {
+        onSuccess(response);
+      })
+      .catch(onError)
+      .finally(() => {
+        setExporting(false);
+      });
   };
 
   return (
