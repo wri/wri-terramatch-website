@@ -67,14 +67,23 @@ export async function middleware(request: NextRequest) {
           () => {
             //Email is verified
             const userIsAdmin = isAdmin(user?.primaryRole as UserRole);
-            // Allow admin users to access dashboard routes
-            if (userIsAdmin && request.nextUrl.pathname.startsWith("/dashboard")) {
+            const userIsFunderOrGovernment = user?.primaryRole === "funder" || user?.primaryRole === "government";
+
+            // Allow admin and funder/government users to access dashboard routes
+            if ((userIsAdmin || userIsFunderOrGovernment) && request.nextUrl.pathname.startsWith("/dashboard")) {
               matcher.next();
               return matcher.getResult();
             }
 
             // Default admin redirect for non-dashboard routes
             matcher.when(user != null && userIsAdmin)?.redirect(`/admin`, { cacheResponse: true });
+
+            // Special handling for funder and government roles
+            if (userIsFunderOrGovernment) {
+              // Redirect funder/government directly to dashboard regardless of organization
+              matcher.redirect(`/dashboard`, { cacheResponse: true });
+              return matcher.getResult();
+            }
 
             matcher
               .when(organisation != null && organisation.status !== "draft")
