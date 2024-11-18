@@ -3,7 +3,11 @@ import { useMemo } from "react";
 
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { Demographic, DemographicalType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import {
+  Demographic,
+  DemographicalType,
+  DemographicGridVariantProps
+} from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useGetV2RestorationPartnersENTITYUUID, useGetV2WorkdaysENTITYUUID } from "@/generated/apiComponents";
 
@@ -59,7 +63,8 @@ export default function useDemographicData(
   demographicalType: DemographicalType,
   uuid: string,
   collections: string[],
-  titlePrefix: string
+  titlePrefix: string,
+  variant?: DemographicGridVariantProps
 ) {
   const t = useT();
   const { framework } = useFrameworkContext();
@@ -84,7 +89,7 @@ export default function useDemographicData(
                     key={collection}
                     title={t(readable_collection)}
                     demographics={demographics ?? []}
-                    variant={GRID_VARIANT_DEFAULT}
+                    variant={variant ?? GRID_VARIANT_DEFAULT}
                     demographicalType={demographicalType}
                   />
                 ),

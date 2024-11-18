@@ -1,3 +1,5 @@
+import { apiBaseUrl } from "@/constants/environment";
+
 export function toDataURL(url: string): Promise<string> {
   var xhr = new XMLHttpRequest();
   return new Promise(r => {
@@ -16,7 +18,7 @@ export function toDataURL(url: string): Promise<string> {
 
 export function appendApiBaseUrl(url: string) {
   if (!url?.includes("https")) {
-    return process.env.NEXT_PUBLIC_API_BASE_URL + url;
+    return apiBaseUrl + url;
   }
 
   return url;
