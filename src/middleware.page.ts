@@ -19,6 +19,14 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
+    if (accessToken && middlewareCache) {
+      // Specific routes handling for cached middleware
+      if (request.nextUrl.pathname === "/" || request.nextUrl.pathname.startsWith("/auth")) {
+        matcher.redirect(middlewareCache);
+        return matcher.getResult();
+      }
+    }
+
     if (!accessToken) {
       matcher.startWith("/home")?.redirect("/");
       matcher.startWith("/auth")?.next();
@@ -74,15 +82,6 @@ export async function middleware(request: NextRequest) {
 
       // Default admin redirect for non-dashboard routes
       matcher.redirect(`/admin`, { cacheResponse: true });
-      return matcher.getResult();
-    }
-
-    // Only check cache for non-admin, non-funder/government users
-    if (middlewareCache) {
-      matcher.when(middlewareCache.includes("admin"))?.redirect(middlewareCache);
-      matcher.exact("/")?.redirect(middlewareCache);
-      matcher.startWith("/auth")?.redirect(middlewareCache);
-      matcher.next();
       return matcher.getResult();
     }
 
