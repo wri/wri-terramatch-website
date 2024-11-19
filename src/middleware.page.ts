@@ -41,8 +41,9 @@ export async function middleware(request: NextRequest) {
         matcher.startWith("/auth")?.next();
         matcher.exact("/")?.next();
 
-        // Commented for now as any unauthenticated user can access to the dashboard
-        // matcher.redirect("/auth/login");
+        if (!matcher.hasMatch()) {
+          matcher.redirect("/auth/login");
+        }
       },
       async () => {
         // The redux store isn't available yet at this point, so we do a quick manual users/me fetch
