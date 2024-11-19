@@ -27,6 +27,7 @@ export async function middleware(request: NextRequest) {
         matcher.redirect(middlewareCache);
         return matcher.getResult();
       }
+      return NextResponse.next();
     }
 
     if (!accessToken) {
