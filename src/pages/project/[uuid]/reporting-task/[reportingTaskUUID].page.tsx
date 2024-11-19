@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Case, Default, Switch } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -42,6 +42,8 @@ const StatusMapping: { [index: string]: Status } = {
   "needs-more-information": "warning"
 };
 
+const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
+
 const ReportingTaskPage = () => {
   const t = useT();
   const { format } = useDate();
@@ -50,26 +52,19 @@ const ReportingTaskPage = () => {
   const [tourEnabled, setTourEnabled] = useState(false);
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
+  const [reportsTableData, setReportsTableData] = useState([] as any);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
   const { data: reportingTaskData } = useGetV2TasksUUID({ pathParams: { uuid: reportingTaskUUID } });
   const reportingTask = reportingTaskData?.data as any;
 
-  const {
-    data: reportsData,
-    isLoading,
-    refetch
-  } = useGetV2TasksUUIDReports({ pathParams: { uuid: reportingTaskUUID } });
+  const { data: reportsData, isLoading } = useGetV2TasksUUIDReports({ pathParams: { uuid: reportingTaskUUID } });
   const { data: projectData } = useGetV2ProjectsUUID({
     pathParams: { uuid: projectUUID }
   });
   const project = (projectData?.data ?? {}) as any;
 
-  const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
-    onSuccess() {
-      refetch();
-    }
-  });
+  const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({});
 
   const reports = useMemo(() => {
     const reports =
@@ -112,6 +107,8 @@ const ReportingTaskPage = () => {
         return true;
       });
 
+    setReportsTableData(additional);
+
     return {
       mandatory,
       additional,
@@ -122,7 +119,7 @@ const ReportingTaskPage = () => {
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
-  const nothingToReportHandler = (entity: ReportsModelNames, uuid: string) => {
+  const nothingToReportHandler = (entity: ReportsModelNames, uuid: string, setIsEnabled: any) => {
     openModal(
       ModalId.CONFIRM_UPDATE,
       <Modal
@@ -141,6 +138,7 @@ const ReportingTaskPage = () => {
           onClick: () => {
             submitNothingToReport({ pathParams: { entity, uuid } });
             closeModal(ModalId.CONFIRM_UPDATE);
+            setIsEnabled(false);
           }
         }}
         secondaryButtonProps={{
@@ -189,20 +187,27 @@ const ReportingTaskPage = () => {
       enableSorting: false,
       cell: props => {
         const record = props.row.original as any;
+        console.log(record);
+        const [isEnabled, setIsEnabled] = useState(true);
+        const { index } = props.row;
+        const { status, type, completion, uuid } = record;
+
+        const shouldShowButton =
+          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
+          isEnabled &&
+          !(type === "project-report" || completion === 100);
+
+        const handleClick = useCallback(() => {
+          nothingToReportHandler(singularEntityNameToPlural(type) as ReportsModelNames, uuid, setIsEnabled);
+        }, [type, uuid, setIsEnabled]);
 
         return (
           <div className="flex justify-end gap-4">
-            {!(record.type === "project-report" || record.completion === 100) && (
-              <Button
-                id={`nothing-to-report-button-${props.row.index}`}
-                variant="secondary"
-                onClick={() =>
-                  nothingToReportHandler(singularEntityNameToPlural(record.type) as ReportsModelNames, record.uuid)
-                }
-              >
+            {shouldShowButton ? (
+              <Button id={`nothing-to-report-button-${index}`} variant="secondary" onClick={handleClick}>
                 {t("Nothing to report")}
               </Button>
-            )}
+            ) : null}
             <Switch>
               <Case
                 condition={
@@ -249,7 +254,7 @@ const ReportingTaskPage = () => {
           <PageSection>
             <PageCard title={t("Additional Reports")}>
               <Table
-                data={reports.additional}
+                data={reportsTableData}
                 columns={tableColumns}
                 onTableStateChange={state => setFilters(state.filters)}
                 hasPagination={true}
