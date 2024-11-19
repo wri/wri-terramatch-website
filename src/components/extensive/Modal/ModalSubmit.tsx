@@ -8,7 +8,6 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import CollapsibleRow from "./components/CollapsibleRow";
@@ -22,6 +21,8 @@ export interface ModalSubmitProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
+  polygonsCriteriaData?: any;
+  polygonList?: any;
 }
 
 const ModalSubmit: FC<ModalSubmitProps> = ({
@@ -37,20 +38,23 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   status,
   onClose,
   site,
+  polygonsCriteriaData,
+  polygonList,
   ...rest
 }) => {
   const t = useT();
-  const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
+  // const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
 
   useEffect(() => {
+    console.log("List plygon", polygonList);
     if (polygonList) {
-      setPolygonsSelected(polygonList.map(_ => false));
+      setPolygonsSelected(polygonList.map((_: any) => false));
     }
   }, [polygonList]);
   const handleSelectAll = (isChecked: boolean) => {
     if (polygonList) {
-      const newSelected = polygonList.map((polygon, index) => {
+      const newSelected = polygonList.map((polygon: any, index: number) => {
         if (isChecked) {
           return (
             polygonsSelected[index] ||
@@ -115,7 +119,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               {t("Submit")}
             </Text>
           </header>
-          {polygonList?.map((polygon, index: number) => (
+          {polygonList?.map((polygon: any, index: number) => (
             <CollapsibleRow
               key={polygon.id}
               type="modalSubmit"

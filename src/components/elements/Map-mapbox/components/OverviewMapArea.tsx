@@ -56,7 +56,8 @@ const OverviewMapArea = ({
     setShouldRefetchPolygonData,
     setEditPolygon,
     setSelectedPolygonsInCheckbox,
-    setPolygonCriteriaMap
+    setPolygonCriteriaMap,
+    setPolygonData
   } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
@@ -77,6 +78,8 @@ const OverviewMapArea = ({
   } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
   useEffect(() => {
+    setPolygonCriteriaMap(polygonCriteriaMap);
+    setPolygonData(polygonsData);
     if (loading) {
       return;
     }
@@ -85,7 +88,6 @@ const OverviewMapArea = ({
     } else {
       callCountryBBox();
     }
-    setPolygonCriteriaMap(polygonCriteriaMap);
   }, [loading]);
   useEffect(() => {
     refetch();

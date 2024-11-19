@@ -67,25 +67,56 @@ const ModalApprove: FC<ModalApproveProps> = ({
   polygonList,
   ...rest
 }) => {
-  // const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid }, queryParams: { where: 'ModalApprove' } });
-
-  // const { data: polygonsCriteriaData } = useGetV2TerrafundValidationSite({
-  //   queryParams: { uuid: site.uuid }
-  // });
-
-  // const { polygonMap: polygonsCriteriaData, polygonData: polygonList } = useMapAreaContext();
-
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-
+  const [criteriaDataParsed, setCriteriaDataParsed] = useState<any>(null);
   useEffect(() => {
     if (!polygonList || !polygonsCriteriaData) {
+      return;
+    }
+
+    const parsedData = polygonList.reduce((acc: Record<string, any>, polygon: any) => {
+      const criteria = polygonsCriteriaData[polygon.poly_id];
+      const polygonId = polygon.poly_id;
+      let isValid = true;
+      const nonValidCriteria: any[] = [];
+      const { criteria_list } = criteria;
+
+      if (!criteria_list || criteria_list.length === 0) {
+        isValid = false;
+      } else {
+        criteria_list.forEach((criteria: any) => {
+          if (criteria.valid === 0) {
+            isValid = false;
+            nonValidCriteria.push(criteria);
+          }
+        });
+      }
+
+      const checked = Array.isArray(criteria_list) && criteria_list.length > 0;
+
+      acc[polygonId] = {
+        polygonId,
+        isValid,
+        nonValidCriteria,
+        checked
+      };
+
+      return acc;
+    }, {});
+
+    setCriteriaDataParsed(parsedData);
+    setPolygonsSelected(polygonList.map((_: any) => false));
+  }, [polygonsCriteriaData, polygonList]);
+
+  useEffect(() => {
+    if (!polygonList || !criteriaDataParsed) {
       return;
     }
     setPolygonsSelected(polygonList.map((_: any) => false));
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const criteria = polygonsCriteriaData[polygon.poly_id];
+        const criteria = criteriaDataParsed[polygon.poly_id];
         const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
@@ -103,7 +134,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
         return returnObject;
       })
     );
-  }, [polygonList, polygonsCriteriaData]);
+  }, [polygonList, criteriaDataParsed]);
 
   const handleSelectAll = (isChecked: boolean) => {
     if (displayedPolygons) {
