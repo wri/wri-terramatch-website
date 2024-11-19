@@ -8,6 +8,7 @@ import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useMyUser } from "@/connections/User";
 import {
   CHART_TYPES,
   JOBS_CREATED_CHART_TYPE,
@@ -57,6 +58,7 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
+  const [, { user }] = useMyUser();
   const { filters, setFilters, frameworks } = useDashboardContext();
   const {
     dashboardHeader,
@@ -283,7 +285,7 @@ const Dashboard = () => {
           </When>
           <BlurContainer
             isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
-            textInformation={NO_DATA_INFORMATION}
+            textInformation={user !== undefined ? NO_DATA_INFORMATION : <></>}
           >
             <div className="grid w-full grid-cols-3 gap-4">
               {dashboardHeader.map((item, index) => (

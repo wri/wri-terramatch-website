@@ -6,6 +6,7 @@ type CallbackInterface = () => Response | null;
 export class MiddlewareMatcher {
   private request: NextRequest;
   private result?: Response | null;
+  private hasMatchOccurred: boolean = false;
 
   constructor(request: NextRequest) {
     this.request = request;
@@ -27,17 +28,20 @@ export class MiddlewareMatcher {
         this.cache(_url);
       }
 
+      this.hasMatchOccurred = true;
       return output;
     } else {
       return null;
     }
   }
+
   /**
    * Continue response without any change
    * @returns Next response
    */
   next() {
     this.setResult(() => NextResponse.next());
+    this.hasMatchOccurred = true;
     return this;
   }
 
@@ -94,6 +98,14 @@ export class MiddlewareMatcher {
    */
   notStartWith(url: string) {
     return this.when(this.request.nextUrl.pathname !== url);
+  }
+
+  /**
+   * Check if any matches have occurred
+   * @returns boolean indicating if any matches have occurred
+   */
+  hasMatch(): boolean {
+    return this.hasMatchOccurred;
   }
 
   /**
