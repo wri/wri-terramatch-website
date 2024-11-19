@@ -66,15 +66,6 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  // const { data: entityData, refetch } = useGetV2TypeEntity({
-  //   queryParams: {
-  //     uuid: entityModel?.uuid,
-  //     type: type,
-  //     status: checkedValues.join(","),
-  //     [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-  //   }
-  // });
-
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: type, uuid: entityModel?.uuid }
   });
@@ -86,7 +77,9 @@ const OverviewMapArea = ({
   } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
   useEffect(() => {
-    console.log("Loadging", loading);
+    if (loading) {
+      return;
+    }
     if (polygonsData.length > 0) {
       callEntityBbox();
     } else {
@@ -94,6 +87,9 @@ const OverviewMapArea = ({
     }
     setPolygonCriteriaMap(polygonCriteriaMap);
   }, [loading]);
+  useEffect(() => {
+    refetch();
+  }, [checkedValues, sortOrder]);
   const callEntityBbox = async () => {
     if (type === "sites") {
       const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });

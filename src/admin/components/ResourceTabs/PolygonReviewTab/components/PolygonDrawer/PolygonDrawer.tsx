@@ -169,7 +169,6 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
-    console.log("polygon selected changed", polygonSelected);
     const criteriaData = polygonMap[polygonSelected];
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));

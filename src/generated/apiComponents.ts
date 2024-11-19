@@ -36760,6 +36760,10 @@ export type GetV2TypeEntityResponse = {
     is_active?: boolean;
     version_name?: string;
   }[];
+  /**
+   * Bounding box of the entity
+   */
+  bbox?: number[];
 };
 
 export type GetV2TypeEntityVariables = {
@@ -36875,7 +36879,7 @@ export type GetV2EntityPolygonsQueryParams = {
    */
   status?: string;
   /**
-   * Sort criteria in the format `sort[field]=direction`, e.g. `sort[poly_name]=asc or sort[status]=desc`
+   * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
    */
   sort?: string;
 };

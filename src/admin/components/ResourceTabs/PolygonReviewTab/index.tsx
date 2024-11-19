@@ -272,12 +272,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [errorMessage]);
 
   useEffect(() => {
-    //TODO: JORGE HERE
-    console.log("loading", loading);
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(sitePolygonData);
-    console.log("polygonMap", polygonCriteriaMap);
-    console.log("sitePolygonData", sitePolygonData);
   }, [loading]);
 
   const uploadFiles = async () => {

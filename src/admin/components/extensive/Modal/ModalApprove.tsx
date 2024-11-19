@@ -75,9 +75,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
 
   // const { polygonMap: polygonsCriteriaData, polygonData: polygonList } = useMapAreaContext();
 
-  //TODO: JORGE HERE
-  console.log("returnObject1", polygonList);
-
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
 
@@ -103,7 +100,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
           failingCriterias,
           status: status as StatusEnum
         };
-        console.log("returnObject", returnObject);
         return returnObject;
       })
     );
