@@ -8,6 +8,7 @@ import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyFi
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import { useMyUser } from "@/connections/User";
 import { NO_DATA_INFORMATION } from "@/constants/dashboardConsts";
 import { withFrameworkShow } from "@/context/framework.provider";
 import { TextVariants } from "@/types/common";
@@ -55,6 +56,7 @@ const PageCard = ({
   const [collapseSubtile, setCollapseSubtile] = useState(true);
   const [subtitleText, setSubtitleText] = useState(subtitle);
   const t = useT();
+  const [, { user }] = useMyUser();
 
   const maxLength = 278;
 
@@ -68,7 +70,7 @@ const PageCard = ({
 
   return (
     <Paper {...props}>
-      <BlurContainer isBlur={!isUserAllowed} textInformation={NO_DATA_INFORMATION}>
+      <BlurContainer isBlur={!isUserAllowed} textInformation={user !== undefined ? NO_DATA_INFORMATION : <></>}>
         <When condition={!!title || !!headerChildren}>
           <div className="flex flex-wrap justify-between">
             <When condition={!!title}>

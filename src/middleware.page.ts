@@ -14,6 +14,10 @@ export async function middleware(request: NextRequest) {
     const accessToken = request.cookies.get("accessToken")?.value;
     const middlewareCache = request.cookies.get(MiddlewareCacheKey)?.value;
 
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
+      return NextResponse.next();
+    }
+
     if (!!accessToken && !!middlewareCache) {
       // Skip middleware for dashboard routes to prevent redirect loop
       if (request.nextUrl.pathname.startsWith("/dashboard")) {
@@ -37,7 +41,8 @@ export async function middleware(request: NextRequest) {
         matcher.startWith("/auth")?.next();
         matcher.exact("/")?.next();
 
-        matcher.redirect("/auth/login");
+        // Commented for now as any unauthenticated user can access to the dashboard
+        // matcher.redirect("/auth/login");
       },
       async () => {
         // The redux store isn't available yet at this point, so we do a quick manual users/me fetch
