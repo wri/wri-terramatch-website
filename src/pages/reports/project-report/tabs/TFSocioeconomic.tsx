@@ -105,7 +105,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               ]}
             />
           </PageCard>
-          <PageCard title={t("Community Partners")} gap={4} frameworksShow={[Framework.HBF]}>
+          <PageCard title={t("Community Partners - Direct")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Description of benefits to Community Partners")}>
               {report.beneficiaries_description}
             </LongTextField>
@@ -124,14 +124,11 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               value={report.beneficiaries_large_scale}
             />
           </PageCard>
-          <PageCard title={t("Other")} gap={4} frameworksShow={[Framework.HBF]}>
-            <LongTextField title={t("Income Generating Description")}>
-              {report.beneficiaries_income_increase_description}
+          <PageCard title={t("Community Partners - Indirect")} gap={4} frameworksShow={[Framework.HBF]}>
+            <LongTextField title={t("Description of Indirect Benefits")}>
+              {report.indirect_beneficiaries_description}
             </LongTextField>
-            <TextField label={t("People Trained")} value={report.people_knowledge_skills_increased} />
-            <LongTextField title={t("Training Description")}>
-              {report.beneficiaries_skills_knowledge_increase_description}
-            </LongTextField>
+            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirect_beneficiaries} />
           </PageCard>
           <PageCard title={t("Beneficiaries")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Beneficiaries Description")}>{report.beneficiaries_description}</LongTextField>
@@ -173,6 +170,15 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             <TextField label={t("Volunteer - Youth")} value={report.volunteer_youth} />
             <TextField label={t("Volunteer - ST/ST/OBC")} value={report.volunteer_scstobc} />
           </PageCard>
+          <PageCard title={t("Other")} gap={4} frameworksShow={[Framework.HBF]}>
+            <LongTextField title={t("Income Generating Description")}>
+              {report.beneficiaries_income_increase_description}
+            </LongTextField>
+            <LongTextField title={t("Training Description")}>
+              {report.beneficiaries_skills_knowledge_increase_description}
+            </LongTextField>
+            <TextField label={t("People Trained")} value={report.people_knowledge_skills_increased} />
+          </PageCard>
           <PageCard title={t("Job Details")} gap={4} frameworksHide={[Framework.HBF]}>
             <TextField label={t("Jobs Created")} value={report.total_jobs_created} />
             <TextField label={t("Full-time Jobs")} value={report.ft_total} />
@@ -184,12 +190,6 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               label={t("Beneficiaries Knowledge Increase")}
               value={report.beneficiaries_skills_knowledge_increase}
             />
-          </PageCard>
-          <PageCard title={t("Indirect Benefits")} gap={4} frameworksShow={[Framework.HBF]}>
-            <LongTextField title={t("Description of Indirect Benefits")}>
-              {report.indirect_beneficiaries_description}
-            </LongTextField>
-            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirect_beneficiaries} />
           </PageCard>
           <ContextCondition frameworksHide={[Framework.HBF]}>
             {report.socioeconomic_benefits && (
