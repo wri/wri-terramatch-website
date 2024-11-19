@@ -20,8 +20,10 @@ export async function middleware(request: NextRequest) {
     }
 
     if (accessToken && middlewareCache) {
-      // Specific routes handling for cached middleware
-      if (request.nextUrl.pathname === "/" || request.nextUrl.pathname.startsWith("/auth")) {
+      // Only redirect for specific routes when cached middleware exists
+      const shouldRedirect = request.nextUrl.pathname === "/" || request.nextUrl.pathname.startsWith("/auth");
+
+      if (shouldRedirect) {
         matcher.redirect(middlewareCache);
         return matcher.getResult();
       }
