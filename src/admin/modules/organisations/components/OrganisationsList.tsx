@@ -109,29 +109,24 @@ const ApplicationDataGrid = () => {
 };
 
 export const OrganisationsList = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const t = useT();
+  const [exporting, setExporting] = useState<boolean>(false);
   const { openToast } = useToastContext();
-
   const onSuccess = (response: any) => {
-    console.log(response);
-    downloadFileBlob(response, "Organisations.csv");
+    openToast(t("successfully exported"));
+    downloadFileBlob(response, `organisations.csv`);
   };
 
   const onError = () => {
-    setExporting(false);
     openToast(t("Something went wrong!"), ToastType.ERROR);
   };
 
   const handleExport = () => {
     setExporting(true);
-    // setLoading(true);
     fetchGetV2AdminOrganisationsExport({})
       .then((response: any) => {
-        console.log(response);
-        // downloadFileBlob(response, "Organisations.csv");
         if (response.message) {
-          return fetchGetV2AdminOrganisationsExport({});
+          return fetchGetV2AdminOrganisationsExport({ queryParams: { force: true } });
         } else {
           return response;
         }
