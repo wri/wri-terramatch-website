@@ -1,6 +1,6 @@
 import { Card, Typography } from "@mui/material";
 import { FC } from "react";
-import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import List from "@/components/extensive/List/List";
@@ -39,7 +39,7 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   return (
     <When condition={!ctx.isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Documents"} {...rest}>
+      <>
         {data?.data?.length === 0 ? (
           <Card sx={{ padding: 4 }}>
             <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
@@ -74,7 +74,7 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
             />
           </Card>
         )}
-      </TabbedShowLayout.Tab>
+      </>
     </When>
   );
 };

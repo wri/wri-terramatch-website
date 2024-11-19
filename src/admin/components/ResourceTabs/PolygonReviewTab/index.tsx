@@ -136,6 +136,7 @@ const ContentForApproval = ({
 );
 
 const PolygonReviewTab: FC<IProps> = props => {
+  console.log("MapAreaProvider: rendering");
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);

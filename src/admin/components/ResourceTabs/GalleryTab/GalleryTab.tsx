@@ -1,6 +1,6 @@
 import { t } from "@transifex/native";
 import { FC, useEffect, useState } from "react";
-import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -21,7 +21,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: EntityName;
 }
 
-const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
+const GalleryTab: FC<IProps> = ({ entity }) => {
   const ctx = useShowContext();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter] = useState<string>("all");
@@ -107,48 +107,46 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   return (
     <When condition={!ctx.isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
-        <div className="flex flex-col gap-8">
-          <div className="flex items-center justify-between">
-            <Text variant="text-24-bold">{t("All Images")}</Text>
-            <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
-              {t("UPLOAD IMAGES")}
-            </Button>
-          </div>
-          <ImageGallery
-            data={
-              data?.data?.map(file => ({
-                //@ts-ignore
-                uuid: file.uuid!,
-                fullImageUrl: file.file_url!,
-                thumbnailImageUrl: file.thumb_url!,
-                label: file.model_name!,
-                isPublic: file.is_public!,
-                isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
-                isCover: file.is_cover,
-                raw: file
-              })) || []
-            }
-            entity={resource}
-            entityData={ctx.record}
-            pageCount={data?.meta?.last_page || 1}
-            onGalleryStateChange={pagination => {
-              setPagination(pagination);
-            }}
-            onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
-            ItemComponent={ImageGalleryItem}
-            onChangeSearch={setSearchString}
-            onChangeGeotagged={setIsGeotagged}
-            reloadGalleryImages={refetch}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            setFilters={setFilters}
-            className="mt-3"
-            isAdmin={true}
-            isLoading={isLoading}
-          />
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <Text variant="text-24-bold">{t("All Images")}</Text>
+          <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
+            {t("UPLOAD IMAGES")}
+          </Button>
         </div>
-      </TabbedShowLayout.Tab>
+        <ImageGallery
+          data={
+            data?.data?.map(file => ({
+              //@ts-ignore
+              uuid: file.uuid!,
+              fullImageUrl: file.file_url!,
+              thumbnailImageUrl: file.thumb_url!,
+              label: file.model_name!,
+              isPublic: file.is_public!,
+              isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
+              isCover: file.is_cover,
+              raw: file
+            })) || []
+          }
+          entity={resource}
+          entityData={ctx.record}
+          pageCount={data?.meta?.last_page || 1}
+          onGalleryStateChange={pagination => {
+            setPagination(pagination);
+          }}
+          onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+          ItemComponent={ImageGalleryItem}
+          onChangeSearch={setSearchString}
+          onChangeGeotagged={setIsGeotagged}
+          reloadGalleryImages={refetch}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          setFilters={setFilters}
+          className="mt-3"
+          isAdmin={true}
+          isLoading={isLoading}
+        />
+      </div>
     </When>
   );
 };

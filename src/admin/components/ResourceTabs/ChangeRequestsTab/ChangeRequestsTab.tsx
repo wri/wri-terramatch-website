@@ -2,7 +2,7 @@ import { Check, PriorityHigh } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { Dispatch, FC, SetStateAction, useMemo, useState } from "react";
 import {
   FunctionField,
   Labeled,
@@ -12,7 +12,7 @@ import {
   useShowContext,
   WrapperField
 } from "react-admin";
-import { Else, If, Then, When } from "react-if";
+import { Else, If, Then } from "react-if";
 
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
@@ -28,9 +28,11 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity: EntityName;
   singularEntity: SingularEntityName;
+  activeTab: number;
+  setActiveTab: Dispatch<SetStateAction<number>>;
 }
 
-const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest }) => {
+const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, activeTab, setActiveTab, ...rest }) => {
   const ctx = useShowContext();
   const t = useT();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
@@ -73,14 +75,15 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const icon = status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
 
   return (
-    <When condition={!ctx.isLoading}>
+    <>
       <TabbedShowLayout.Tab
         style={{ flexDirection: "row", minHeight: "unset" }}
         icon={icon}
         label={label ?? "Change Requests"}
         {...rest}
+        onClick={() => setActiveTab(4)}
       >
-        <If condition={changeRequest != null}>
+        <If condition={changeRequest != null && activeTab === 4}>
           <Then>
             <Grid container spacing={2}>
               {formSteps && (
@@ -188,7 +191,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           form={form}
         />
       )}
-    </When>
+    </>
   );
 };
 
