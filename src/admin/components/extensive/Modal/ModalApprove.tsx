@@ -199,6 +199,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
               index={index}
               polygonsSelected={polygonsSelected}
               setPolygonsSelected={setPolygonsSelected}
+              criteriaData={item.id ? polygonsCriteriaData[item.id] : []}
             />
           ))}
         </div>

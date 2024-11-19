@@ -7,7 +7,6 @@ import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/Ch
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -20,19 +19,17 @@ interface UnifiedCollapsibleRowProps {
   index: number;
   polygonsSelected: boolean[];
   setPolygonsSelected: React.Dispatch<React.SetStateAction<boolean[]>>;
+  criteriaData?: any;
 }
 
 const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
-  const { type, item, index, polygonsSelected, setPolygonsSelected } = props;
+  const { type, item, index, polygonsSelected, setPolygonsSelected, criteriaData } = props;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const { polygonCriteriaMap: polygonMap } = useMapAreaContext(); // TODO: review this if is changing
-  const [criteriaData, setCriteriaData] = useState<any>(null);
   useEffect(() => {
-    const criteriaDataPolygon = polygonMap[item.poly_id ?? item.id];
-    setCriteriaData(criteriaDataPolygon);
+    const criteriaDataPolygon = criteriaData;
     if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaDataPolygon));
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
@@ -40,7 +37,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
     } else {
       setIsChecked(item.checked ?? false);
     }
-  }, [polygonMap, item.checked]);
+  }, [criteriaData, item.checked]);
 
   const canBeApproved = item.canBeApproved ?? isValidCriteriaData(criteriaData);
 
