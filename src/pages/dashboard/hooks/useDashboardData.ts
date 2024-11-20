@@ -32,17 +32,17 @@ export const useDashboardData = (filters: any) => {
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
-      value: "0",
+      value: "Loading...",
       tooltip: TREES_PLANTED_TOOLTIP
     },
     {
       label: "Hectares Under Restoration",
-      value: "0 ha",
+      value: "Loading...",
       tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
     },
     {
       label: "Jobs Created",
-      value: "0",
+      value: "Loading...",
       tooltip: JOBS_CREATED_TOOLTIP
     }
   ]);
@@ -93,7 +93,7 @@ export const useDashboardData = (filters: any) => {
     refetch: refetchTotalSectionHeader,
     isLoading
   } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters });
-  const { data: jobsCreatedData } = useGetV2DashboardJobsCreated<any>(
+  const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
     { enabled: !!filters }
   );
@@ -127,18 +127,20 @@ export const useDashboardData = (filters: any) => {
     project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
-  const { data: dashboardRestorationGoalData } =
+  const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
     useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
       queryParams: queryParams
     });
 
-  const { data: dashboardVolunteersSurvivalRate } = useGetV2DashboardVolunteersSurvivalRate<any>({
-    queryParams: queryParams
-  });
+  const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
+    useGetV2DashboardVolunteersSurvivalRate<any>({
+      queryParams: queryParams
+    });
 
-  const { data: hectaresUnderRestoration } = useGetV2DashboardIndicatorHectaresRestoration<any>({
-    queryParams: queryParams
-  });
+  const { data: hectaresUnderRestoration, isLoading: isLoadingHectaresUnderRestoration } =
+    useGetV2DashboardIndicatorHectaresRestoration<any>({
+      queryParams: queryParams
+    });
   const { data: dashboardProjectDetails } = useGetV2DashboardProjectDetailsProject<any>(
     { pathParams: { project: filters.uuid } },
     { enabled: !!filters.uuid }
@@ -210,6 +212,10 @@ export const useDashboardData = (filters: any) => {
     numberTreesPlanted,
     totalSectionHeader,
     hectaresUnderRestoration,
+    isLoadingJobsCreated,
+    isLoadingTreeRestorationGoal,
+    isLoadingVolunteers,
+    isLoadingHectaresUnderRestoration,
     dashboardProjectDetails,
     topProject,
     refetchTotalSectionHeader,

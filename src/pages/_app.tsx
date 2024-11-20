@@ -8,7 +8,6 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { Else, If, Then } from "react-if";
 import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
@@ -56,7 +55,39 @@ const _App = ({ Component, ...rest }: AppProps) => {
   setClientSideTranslations(props);
   setupYup(t);
 
-  if (isAdmin)
+  if (isOnDashboards) {
+    return (
+      <ReduxProvider store={store}>
+        <ToastProvider>
+          <WrappedQueryClientProvider>
+            <Hydrate state={pageProps.dehydratedState}>
+              <RouteHistoryProvider>
+                <LoadingProvider>
+                  <NotificationProvider>
+                    <ModalProvider>
+                      <NavbarProvider>
+                        <ModalRoot />
+                        <Toast />
+                        <DashboardAnalyticsWrapper>
+                          <DashboardLayout>
+                            <Component {...pageProps} />
+                          </DashboardLayout>
+                        </DashboardAnalyticsWrapper>
+                      </NavbarProvider>
+                    </ModalProvider>
+                  </NotificationProvider>
+                </LoadingProvider>
+              </RouteHistoryProvider>
+            </Hydrate>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </WrappedQueryClientProvider>
+        </ToastProvider>
+      </ReduxProvider>
+    );
+  }
+
+  // For admin pages (not dashboard)
+  if (isAdmin) {
     return (
       <ReduxProvider store={store}>
         <WrappedQueryClientProvider>
@@ -71,45 +102,35 @@ const _App = ({ Component, ...rest }: AppProps) => {
         </WrappedQueryClientProvider>
       </ReduxProvider>
     );
-  else
-    return (
-      <ReduxProvider store={store}>
-        <ToastProvider>
-          <WrappedQueryClientProvider>
-            <Hydrate state={pageProps.dehydratedState}>
-              <RouteHistoryProvider>
-                <LoadingProvider>
-                  <NotificationProvider>
-                    <ModalProvider>
-                      <NavbarProvider>
-                        <ModalRoot />
-                        <Toast />
-                        <If condition={isOnDashboards}>
-                          <Then>
-                            <DashboardAnalyticsWrapper>
-                              <DashboardLayout>
-                                <Component {...pageProps} />
-                              </DashboardLayout>
-                            </DashboardAnalyticsWrapper>
-                          </Then>
-                          <Else>
-                            <MainLayout>
-                              <Component {...pageProps} />
-                              <CookieBanner />
-                            </MainLayout>
-                          </Else>
-                        </If>
-                      </NavbarProvider>
-                    </ModalProvider>
-                  </NotificationProvider>
-                </LoadingProvider>
-              </RouteHistoryProvider>
-            </Hydrate>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </WrappedQueryClientProvider>
-        </ToastProvider>
-      </ReduxProvider>
-    );
+  }
+
+  return (
+    <ReduxProvider store={store}>
+      <ToastProvider>
+        <WrappedQueryClientProvider>
+          <Hydrate state={pageProps.dehydratedState}>
+            <RouteHistoryProvider>
+              <LoadingProvider>
+                <NotificationProvider>
+                  <ModalProvider>
+                    <NavbarProvider>
+                      <ModalRoot />
+                      <Toast />
+                      <MainLayout>
+                        <Component {...pageProps} />
+                        <CookieBanner />
+                      </MainLayout>
+                    </NavbarProvider>
+                  </ModalProvider>
+                </NotificationProvider>
+              </LoadingProvider>
+            </RouteHistoryProvider>
+          </Hydrate>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </WrappedQueryClientProvider>
+      </ToastProvider>
+    </ReduxProvider>
+  );
 };
 
 _App.getInitialProps = wrapper.getInitialAppProps(store => async (context: AppContext) => {
