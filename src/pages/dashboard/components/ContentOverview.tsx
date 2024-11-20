@@ -50,6 +50,7 @@ interface ContentOverviewProps<TData> {
   showImagesButton?: boolean;
   bbox?: BBox | undefined;
   isUserAllowed?: boolean;
+  isLoadingHectaresUnderRestoration?: boolean;
   projectCounts?: {
     total_enterprise_count: number;
     total_non_profit_count: number;
@@ -68,7 +69,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     showImagesButton,
     bbox: initialBbox,
     projectCounts,
-    isUserAllowed = true
+    isUserAllowed = true,
+    isLoadingHectaresUnderRestoration = false
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -297,6 +299,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
             isUserAllowed={isUserAllowed}
+            isLoading={isLoadingHectaresUnderRestoration}
           />
           <SecDashboard
             title={t("Target Land Use Types Represented")}
@@ -304,6 +307,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={dataHectaresUnderRestoration}
             tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
             isUserAllowed={isUserAllowed}
+            isLoading={isLoadingHectaresUnderRestoration}
           />
         </PageCard>
 
