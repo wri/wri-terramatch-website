@@ -48,7 +48,7 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
-import useLoadCriteriaSiteData from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -161,7 +161,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSiteData(record.uuid, "sites");
+  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSite(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }

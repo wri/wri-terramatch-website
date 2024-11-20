@@ -57,7 +57,9 @@ const OverviewMapArea = ({
     setEditPolygon,
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
-    setPolygonData
+    setPolygonData,
+    shouldRefetchValidation,
+    setShouldRefetchValidation
   } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
@@ -143,7 +145,12 @@ const OverviewMapArea = ({
       refetch();
     }
   }, [shouldRefetchPolygonData]);
-
+  useEffect(() => {
+    if (shouldRefetchValidation) {
+      refetch();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
   useEffect(() => {
     if (polygonsData?.length > 0) {
       const dataMap = parsePolygonData(polygonsData);
