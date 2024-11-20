@@ -147,7 +147,9 @@ const PolygonReviewTab: FC<IProps> = props => {
     setPolygonCriteriaMap,
     setPolygonData,
     polygonCriteriaMap: polygonsCriteriaData,
-    polygonData: polygonList
+    polygonData: polygonList,
+    shouldRefetchValidation,
+    setShouldRefetchValidation
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -275,7 +277,12 @@ const PolygonReviewTab: FC<IProps> = props => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(sitePolygonData);
   }, [loading]);
-
+  useEffect(() => {
+    if (shouldRefetchValidation) {
+      refetch();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
     showLoader();

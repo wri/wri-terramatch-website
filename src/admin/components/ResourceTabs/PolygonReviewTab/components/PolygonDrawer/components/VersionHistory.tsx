@@ -119,6 +119,7 @@ const VersionHistory = ({
       await Promise.all(uploadPromises);
       await refetch();
       await refreshSiteData?.();
+      console.log("Refreshsitedata from version history");
       await refreshPolygonList?.();
       const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: polygonSelectedPrimaryUuid as string }
@@ -163,6 +164,7 @@ const VersionHistory = ({
     onSuccess: async () => {
       await refreshPolygonList?.();
       await refreshSiteData?.();
+      console.log("Refreshsitedata from version history");
       await refetch();
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon.primary_uuid as string }
@@ -188,6 +190,7 @@ const VersionHistory = ({
       })) as SitePolygon;
       await refetch();
       await refreshSiteData?.();
+      console.log("Refreshsitedata from version history");
       await refreshPolygonList?.();
       setSelectedPolygonData(newVersion);
       setSelectedPolygonToDrawer?.({
@@ -223,6 +226,7 @@ const VersionHistory = ({
       await refetch();
       await refreshPolygonList?.();
       await refreshSiteData?.();
+      console.log("Refreshsitedata from version history");
       setSelectedPolygonData(selectPolygonVersion);
       const element = wrapperRef.current as HTMLElement;
       element.scrollTo({
@@ -300,8 +304,8 @@ const VersionHistory = ({
     if (polygonFromMap?.uuid) {
       setIsLoadingDropdown(true);
       const reloadVersionList = async () => {
-        await refreshPolygonList?.();
-        await refreshSiteData?.();
+        // await refreshPolygonList?.(); commented because this is now the complete refresh of the site data with criteria
+        // await refreshSiteData?.(); commented because this is now the complete refresh of the site data with criteria
         await refetch();
         setIsLoadingDropdown(false);
       };

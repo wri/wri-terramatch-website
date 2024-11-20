@@ -260,7 +260,6 @@ const PolygonDrawer = ({
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
-
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>

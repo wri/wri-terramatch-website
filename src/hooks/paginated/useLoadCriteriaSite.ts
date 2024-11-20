@@ -69,6 +69,7 @@ const useLoadCriteriaSite = (
   };
 
   const refetch = () => {
+    console.trace("Refetching");
     setProgress(0);
     setTotal(0);
     setData([]);
