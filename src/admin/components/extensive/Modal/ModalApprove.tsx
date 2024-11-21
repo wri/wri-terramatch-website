@@ -123,7 +123,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
         const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
         const status = polygon.status;
 
-        let returnObject = {
+        return {
           id: polygon.poly_id,
           checked: criteria?.checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
@@ -131,7 +131,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
           failingCriterias,
           status: status as StatusEnum
         };
-        return returnObject;
       })
     );
   }, [polygonList, criteriaDataParsed]);
