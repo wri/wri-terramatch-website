@@ -92,11 +92,16 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const [formattedArea, setFormattedArea] = useState<string>();
   const { data: sitePolygonData } = useGetV2TerrafundPolygonUuid<{
     site_polygon: SitePolygon;
-  }>({
-    pathParams: {
-      uuid: editPolygon.uuid ?? ""
+  }>(
+    {
+      pathParams: {
+        uuid: editPolygon.uuid ?? ""
+      }
+    },
+    {
+      enabled: !!editPolygon.uuid
     }
-  });
+  );
   const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);

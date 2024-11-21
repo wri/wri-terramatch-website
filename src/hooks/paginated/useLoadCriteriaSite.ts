@@ -14,6 +14,7 @@ interface LoadCriteriaSiteHook {
   polygonCriteriaMap: Record<string, any>;
   refetch: () => void;
   fetchCriteriaData: (uuid: string) => void;
+  loadCriteriaInOrder: () => void;
 }
 
 const useLoadCriteriaSite = (
@@ -27,6 +28,13 @@ const useLoadCriteriaSite = (
   const [total, setTotal] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, any>>({});
+  const loadCriteriaInOrder = async () => {
+    setLoading(true);
+    for (const polygon of data) {
+      await fetchCriteriaData(polygon.poly_id);
+    }
+    setLoading(false);
+  };
   const loadInBatches = async () => {
     setLoading(true);
     const { count } = await fetchGetV2EntityPolygonsCount({
@@ -39,7 +47,7 @@ const useLoadCriteriaSite = (
     });
     setTotal(count!);
     let result: any[] = [];
-    const limit = 3;
+    const limit = 5;
     let offset = 0;
     while (offset < count!) {
       const queryParams: any = {
@@ -101,7 +109,8 @@ const useLoadCriteriaSite = (
     progress,
     polygonCriteriaMap,
     refetch,
-    fetchCriteriaData
+    fetchCriteriaData,
+    loadCriteriaInOrder
   };
 };
 
