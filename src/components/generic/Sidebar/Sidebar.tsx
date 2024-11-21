@@ -8,9 +8,14 @@ import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant
 import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useLogin } from "@/connections/Login";
+import { useLogout } from "@/hooks/logout";
 
 const Sidebar = () => {
   const router = useRouter();
+  const logout = useLogout();
+  const [, { isLoggedIn }] = useLogin();
+
   const t = useT();
 
   return (
@@ -81,8 +86,8 @@ const Sidebar = () => {
           {
             id: "1",
             render: () => (
-              <Text variant="text-14" className="flex items-center">
-                {t("Sign out")}
+              <Text variant="text-14" className="flex cursor-pointer items-center" onClick={logout}>
+                {isLoggedIn ? t("Sign out") : t("Sign in")}
               </Text>
             )
           }
