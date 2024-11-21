@@ -232,7 +232,7 @@ export const MapContainer = ({
 
       const setupMap = () => {
         const zoomFilter = isDashboard ? 7 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter);
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard);
         setChangeStyle(true);
         setSourcesAdded(true);
 

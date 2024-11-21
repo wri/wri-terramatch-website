@@ -402,17 +402,18 @@ export const addSourcesToLayers = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
-  zoomFilter?: number | undefined
+  zoomFilter?: number | undefined,
+  isDashboard?: string | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
       if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
         addSourceToLayer(layer, map, polygonsData, zoomFilter);
       }
-      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
         addSourceToLayer(layer, map, undefined);
       }
-      if (layer.name === LAYERS_NAMES.CENTROIDS) {
+      if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });

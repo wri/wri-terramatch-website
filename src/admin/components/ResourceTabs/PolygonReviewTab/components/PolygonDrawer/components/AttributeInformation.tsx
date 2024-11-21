@@ -124,7 +124,6 @@ const AttributeInformation = ({
     setIsLoadingDropdown(true);
     const refreshEntity = async () => {
       if (selectedPolygon?.uuid) {
-        // await sitePolygonRefresh?.(); commented because this is now the complete refresh of the site data with criteria
         setIsLoadingDropdown(false);
       }
     };
@@ -215,7 +214,6 @@ const AttributeInformation = ({
         Log.error("Error creating polygon version:", error);
       }
     }
-    console.log("Selected Polygon", selectedPolygon);
     const response = (await fetchGetV2SitePolygonUuid({
       pathParams: { uuid: selectedPolygon.uuid as string }
     })) as SitePolygon;
