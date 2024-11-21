@@ -142,6 +142,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             />
           </PageCard>
           <PageCard
+            frameworksHide={[Framework.HBF]}
             title={t("Seedlings Data")}
             headerChildren={
               <Button
