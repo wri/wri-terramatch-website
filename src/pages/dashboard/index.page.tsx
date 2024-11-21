@@ -8,6 +8,7 @@ import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useMyUser } from "@/connections/User";
 import {
   CHART_TYPES,
   JOBS_CREATED_CHART_TYPE,
@@ -57,6 +58,7 @@ export interface GraphicLegendProps {
 
 const Dashboard = () => {
   const t = useT();
+  const [, { user }] = useMyUser();
   const { filters, setFilters, frameworks } = useDashboardContext();
   const {
     dashboardHeader,
@@ -66,6 +68,10 @@ const Dashboard = () => {
     totalSectionHeader,
     hectaresUnderRestoration,
     numberTreesPlanted,
+    isLoadingJobsCreated,
+    isLoadingHectaresUnderRestoration,
+    isLoadingTreeRestorationGoal,
+    isLoadingVolunteers,
     dashboardProjectDetails,
     topProject,
     refetchTotalSectionHeader,
@@ -283,7 +289,7 @@ const Dashboard = () => {
           </When>
           <BlurContainer
             isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
-            textInformation={NO_DATA_INFORMATION}
+            textInformation={user !== undefined ? NO_DATA_INFORMATION : <></>}
           >
             <div className="grid w-full grid-cols-3 gap-4">
               {dashboardHeader.map((item, index) => (
@@ -381,6 +387,7 @@ const Dashboard = () => {
               chartType={CHART_TYPES.multiLineChart}
               tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
+              isLoading={isLoadingTreeRestorationGoal}
             />
             <When condition={!filters.uuid}>
               <SecDashboard
@@ -437,6 +444,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
+                isLoading={isLoadingJobsCreated}
               />
               <SecDashboard
                 title={t("Jobs Created by Age")}
@@ -447,6 +455,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
+                isLoading={isLoadingJobsCreated}
               />
             </div>
             <SecDashboard
@@ -465,6 +474,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
+                isLoading={isLoadingVolunteers}
               />
               <SecDashboard
                 title={t("Volunteers Created by Age")}
@@ -475,6 +485,7 @@ const Dashboard = () => {
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
+                isLoading={isLoadingVolunteers}
               />
             </div>
           </PageCard>
@@ -510,6 +521,7 @@ const Dashboard = () => {
             : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
         )}
         isUserAllowed={isUserAllowed?.allowed}
+        isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
         bbox={filters.uuid ? projectBbox : countryBbox}
         projectCounts={projectCounts}

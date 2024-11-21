@@ -99,11 +99,7 @@ const Homepage = () => {
                   Please note that the dashboard is pre-filtered upon page load to display only projects from the
                   TerraFund Landscapes programme. Each project reports 12 times over six years.
                 </Text>
-                <Button
-                  variant="about-us"
-                  className="mt-6"
-                  onClick={() => (window.location.href = "/dashboard?programmes=terrafund-landscapes")}
-                >
+                <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
                   {t("Open Dashboard")}
                 </Button>
               </div>
@@ -165,7 +161,7 @@ const Homepage = () => {
             <Text variant="text-14-light" className="text-darkCustom-150">
               Access pre-filtered pages for each of TerraFund’s target landscapes here-{" "}
               <a
-                href="/"
+                href="/dashboard?landscapes=Ghana+Cocoa+Belt"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
@@ -173,7 +169,7 @@ const Homepage = () => {
               </a>
               ,{" "}
               <a
-                href="/"
+                href="/dashboard?landscapes=Greater+Rift+Valley+of+Kenya"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
@@ -181,7 +177,7 @@ const Homepage = () => {
               </a>
               , and{" "}
               <a
-                href="/"
+                href="/dashboard?landscapes=Lake+Kivu+%26+Rusizi+River+Basin"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
