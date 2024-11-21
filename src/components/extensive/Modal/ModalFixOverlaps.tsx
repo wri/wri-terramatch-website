@@ -64,7 +64,9 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   selectedUUIDs,
   ...rest
 }) => {
-  const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
+  const { data: polygonList } = useGetV2SitesSitePolygon({
+    pathParams: { site: site.uuid }
+  });
   const { data: polygonsCriteriaData } = useGetV2TerrafundValidationSite({
     queryParams: { uuid: site.uuid }
   });

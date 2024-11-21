@@ -88,7 +88,9 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     checkIsMonitoringPartner,
     setSiteData,
     setShouldRefetchPolygonData,
-    setSelectedPolygonsInCheckbox
+    setSelectedPolygonsInCheckbox,
+    polygonCriteriaMap: polygonsCriteriaData,
+    polygonData: polygonList
   } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -380,6 +382,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
         }}
         site={site}
+        polygonsCriteriaData={polygonsCriteriaData}
+        polygonList={polygonList}
       />,
       true
     );

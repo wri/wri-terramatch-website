@@ -33,7 +33,6 @@ const TooltipMap = (props: TooltipMapProps) => {
       uuid: polygon
     }
   });
-
   useEffect(() => {
     setPolygonData(sitePolygonData?.site_polygon);
   }, [sitePolygonData]);

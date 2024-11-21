@@ -11,7 +11,6 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -57,37 +56,24 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring, shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+  const { isMonitoring } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: poly_id
-      }
-    },
-    {
-      enabled: !!poly_id
-    }
-  );
+  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
   useEffect(() => {
-    refetch();
-    setShouldRefetchValidation(false);
-  }, [shouldRefetchValidation]);
-
-  useEffect(() => {
-    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaData));
-      setValidationStatus(isValidCriteriaData(criteriaData));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
+    const criteriaDataPolygon = polygonMap[poly_id];
+    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
+      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
+      setValidationStatus(isValidCriteriaData(criteriaDataPolygon));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
     } else {
       setValidationStatus(undefined);
     }
-  }, [criteriaData, setValidationStatus]);
+  }, [polygonMap, setValidationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(

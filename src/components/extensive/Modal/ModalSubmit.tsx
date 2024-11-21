@@ -3,18 +3,29 @@ import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import CollapsibleRow from "./components/CollapsibleRow";
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
+export interface DisplayedPolygonType {
+  id: string | undefined;
+  name: string | undefined;
+  checked: boolean | undefined;
+  canBeApproved: boolean | undefined;
+  failingCriterias: string[] | undefined;
+  status: StatusEnum | undefined;
+}
 export interface ModalSubmitProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -22,6 +33,8 @@ export interface ModalSubmitProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
+  polygonsCriteriaData?: any;
+  polygonList?: any;
 }
 
 const ModalSubmit: FC<ModalSubmitProps> = ({
@@ -37,20 +50,80 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   status,
   onClose,
   site,
+  polygonsCriteriaData,
+  polygonList,
   ...rest
 }) => {
   const t = useT();
-  const { data: polygonList } = useGetV2SitesSitePolygon({ pathParams: { site: site.uuid } });
+  const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-
+  const [criteriaDataParsed, setCriteriaDataParsed] = useState<any>(null);
   useEffect(() => {
-    if (polygonList) {
-      setPolygonsSelected(polygonList.map(_ => false));
+    if (!polygonList || !polygonsCriteriaData) {
+      return;
     }
-  }, [polygonList]);
+
+    const parsedData = polygonList.reduce((acc: Record<string, any>, polygon: any) => {
+      const criteria = polygonsCriteriaData[polygon.poly_id];
+      const polygonId = polygon.poly_id;
+      let isValid = true;
+      const nonValidCriteria: any[] = [];
+      const { criteria_list } = criteria;
+
+      if (!criteria_list || criteria_list.length === 0) {
+        isValid = false;
+      } else {
+        criteria_list.forEach((criteria: any) => {
+          if (criteria.valid === 0) {
+            isValid = false;
+            nonValidCriteria.push(criteria);
+          }
+        });
+      }
+
+      const checked = Array.isArray(criteria_list) && criteria_list.length > 0;
+
+      acc[polygonId] = {
+        polygonId,
+        isValid,
+        nonValidCriteria,
+        checked
+      };
+
+      return acc;
+    }, {});
+
+    setCriteriaDataParsed(parsedData);
+    setPolygonsSelected(polygonList.map((_: any) => false));
+  }, [polygonsCriteriaData, polygonList]);
+  useEffect(() => {
+    if (!polygonList || !criteriaDataParsed) {
+      return;
+    }
+    setPolygonsSelected(polygonList.map((_: any) => false));
+    setDisplayedPolygons(
+      polygonList.map((polygon: any) => {
+        const criteria = criteriaDataParsed[polygon.poly_id];
+        const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+        const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
+        const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
+        const status = polygon.status;
+
+        let returnObject = {
+          id: polygon.poly_id,
+          checked: criteria?.checked,
+          name: polygon.poly_name ?? "Unnamed Polygon",
+          failingCriterias,
+          status: status as StatusEnum
+        };
+        return returnObject;
+      })
+    );
+  }, [polygonList, criteriaDataParsed]);
+
   const handleSelectAll = (isChecked: boolean) => {
-    if (polygonList) {
-      const newSelected = polygonList.map((polygon, index) => {
+    if (displayedPolygons) {
+      const newSelected = displayedPolygons.map((polygon, index) => {
         if (isChecked) {
           return (
             polygonsSelected[index] ||
@@ -59,10 +132,9 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         }
         return false;
       });
-      setPolygonsSelected(newSelected);
+      setPolygonsSelected(newSelected as boolean[]);
     }
   };
-
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -115,19 +187,15 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               {t("Submit")}
             </Text>
           </header>
-          {polygonList?.map((polygon, index: number) => (
+          {displayedPolygons?.map((polygon: any, index: number) => (
             <CollapsibleRow
               key={polygon.id}
               type="modalSubmit"
               index={index}
-              item={{
-                id: polygon.poly_id,
-                name: polygon.poly_name,
-                status: polygon.status,
-                poly_id: polygon.poly_id
-              }}
+              item={polygon}
               polygonsSelected={polygonsSelected}
               setPolygonsSelected={setPolygonsSelected}
+              criteriaData={polygon.id ? polygonsCriteriaData[polygon.id] : []}
             />
           ))}
         </div>
