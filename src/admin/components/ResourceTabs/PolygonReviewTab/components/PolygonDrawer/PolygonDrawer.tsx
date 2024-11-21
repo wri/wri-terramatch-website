@@ -160,7 +160,6 @@ const PolygonDrawer = ({
     if (checkPolygonValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
-      // reloadCriteriaValidation this refetch was here
     }
   }, [checkPolygonValidation]);
 

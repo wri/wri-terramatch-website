@@ -36,8 +36,7 @@ function groupPolygonsByStatus(polygons: any[]) {
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
   const { data: getPolygonsToSite } = useGetV2SitesSitePolygon({
-    pathParams: { site: recordContext.uuid },
-    queryParams: { where: "ColoredChipFieldArray" }
+    pathParams: { site: recordContext.uuid }
   });
 
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {

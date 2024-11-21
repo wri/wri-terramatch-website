@@ -238,8 +238,7 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
     const { data: sitePolygonData } = useGetV2SitesSitePolygon({
       pathParams: {
         site: uuid
-      },
-      queryParams: { where: "FormSummaryRow" }
+      }
     });
     return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
