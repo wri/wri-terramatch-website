@@ -69,6 +69,26 @@ const HighLevelMetics: FC = () => {
               </Labeled>
             </When>
           </ContextCondition>
+          <ContextCondition frameworksShow={[Framework.PPC]}>
+            <When
+              condition={
+                resource === "projectReport" &&
+                record?.direct_restoration_partners !== undefined &&
+                record?.indirect_restoration_partners !== undefined
+              }
+            >
+              <Labeled label="Total Number of Restoration Partners (allowing double-counting)" sx={inlineLabelSx}>
+                <NumberField
+                  source="total_restoration_partners"
+                  record={{
+                    total_restoration_partners:
+                      (record.direct_restoration_partners || 0) + (record.indirect_restoration_partners || 0)
+                  }}
+                  emptyText="0"
+                />
+              </Labeled>
+            </When>
+          </ContextCondition>
         </Stack>
       </Box>
     </Card>
