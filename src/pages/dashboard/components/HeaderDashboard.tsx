@@ -223,8 +223,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
-          <Text variant="text-20" as={"span"} className="absolute top-1 text-white lg:top-2">
-            &nbsp;&nbsp;&nbsp;&nbsp;{t("BETA")}
+          <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
+            &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
