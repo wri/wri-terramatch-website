@@ -203,9 +203,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   return (
     <header
-      className={classNames("flex max-w-full justify-between gap-3 bg-cover ", {
-        "bg-dashboardHeader px-4 pb-4 pt-5": !isHomepage,
-        "bg-about-us-header bg-center px-14 py-10": isHomepage
+      className={classNames("flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover", {
+        "px-4 pb-4 pt-5": !isHomepage,
+        "bg-center px-14 py-10": isHomepage
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
