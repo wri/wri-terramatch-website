@@ -100,6 +100,29 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
               className="font-regular uppercase xl:w-full hover:opacity-50 text-darkCustom sm:mr-2"
             >
               <a
+                href="/dashboard"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="flex items-center"
+                >
+                  <span
+                    className="whitespace-nowrap text-darkCustom text-14-light"
+                    data-testid="txt"
+                  >
+                    Dashboards
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div>
+            <div
+              className="font-regular uppercase xl:w-full hover:opacity-50 text-darkCustom sm:mr-2"
+            >
+              <a
                 href="https://terramatchsupport.zendesk.com/"
                 onClick={[Function]}
                 onMouseEnter={[Function]}
