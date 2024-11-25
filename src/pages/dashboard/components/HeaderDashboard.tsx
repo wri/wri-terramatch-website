@@ -361,6 +361,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+                  disabled={searchTerm.length < 3}
+                  isDefaultOpen={true}
                   menu={optionMenu.map(
                     (option: {
                       id: number;
