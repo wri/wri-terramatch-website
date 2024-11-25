@@ -15109,6 +15109,71 @@ export const useGetV2AdminUsersMulti = <TData = GetV2AdminUsersMultiResponse>(
   );
 };
 
+export type PostV2AdminUsersCreateError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminUsersCreateResponse = {
+  uuid?: string;
+  status?: string;
+  readable_status?: string;
+  type?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
+  twitter?: string;
+  whatsapp_phone?: string;
+  date_added?: string;
+};
+
+export type PostV2AdminUsersCreateRequestBody = {
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  organisation?: string;
+  role?: string;
+  country?: string;
+  program?: string;
+  direct_frameworks?: boolean;
+};
+
+export type PostV2AdminUsersCreateVariables = {
+  body?: PostV2AdminUsersCreateRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2AdminUsersCreate = (variables: PostV2AdminUsersCreateVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2AdminUsersCreateResponse, PostV2AdminUsersCreateError, PostV2AdminUsersCreateRequestBody, {}, {}, {}>({
+    url: "/v2/admin/users/create",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostV2AdminUsersCreate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2AdminUsersCreateResponse,
+      PostV2AdminUsersCreateError,
+      PostV2AdminUsersCreateVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2AdminUsersCreateResponse,
+    PostV2AdminUsersCreateError,
+    PostV2AdminUsersCreateVariables
+  >(
+    (variables: PostV2AdminUsersCreateVariables) => fetchPostV2AdminUsersCreate({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type GetV2AdminUsersExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminUsersExportVariables = ApiContext["fetcherOptions"];

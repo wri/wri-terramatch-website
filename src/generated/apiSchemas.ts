@@ -22115,6 +22115,19 @@ export type UserCreate = {
   program?: string;
 };
 
+export type AdminUserCreate = {
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  organisation?: string;
+  role?: string;
+  country?: string;
+  program?: string;
+  direct_frameworks?: boolean;
+};
+
 export type UpdateRequestsPaginated = {
   data?: {
     uuid?: string;
