@@ -359,9 +359,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               </button>
               <When condition={isProjectListPage}>
                 <Menu
-                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
+                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
-                  disabled={searchTerm.length < 3}
+                  disabled={searchTerm.length < 3 || !optionMenu.length}
                   isDefaultOpen={true}
                   menu={optionMenu.map(
                     (option: {
