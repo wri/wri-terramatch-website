@@ -15,6 +15,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
@@ -44,7 +45,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
-  const { filters, setFilters, setSearchTerm, setFrameworks, setDashboardCountries } = useDashboardContext();
+  const { showLoader, hideLoader } = useLoading();
+  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries } =
+    useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const optionMenu = activeProjects
@@ -55,6 +58,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             organisation: string;
             name: string;
             programme: string;
+            uuid: string;
+            country_slug: string;
           },
           index: number
         ) => ({
@@ -62,7 +67,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           country: item?.project_country,
           organization: item?.organisation,
           project: item?.name,
-          programme: item?.programme
+          programme: item?.programme,
+          uuid: item?.uuid,
+          country_slug: item?.country_slug
         })
       )
     : [];
@@ -116,6 +123,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       organizations: [],
       uuid: ""
     });
+    setSearchTerm("");
   };
   useEffect(() => {
     const query: any = {
@@ -349,7 +357,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               >
                 {t("Clear Filters")}
               </button>
-              <When condition={isProjectListPage && isHomepage}>
+              <When condition={isProjectListPage}>
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
@@ -360,10 +368,29 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                       organization: string;
                       project: string;
                       programme: string;
+                      uuid: string;
+                      country_slug: string;
                     }) => ({
                       id: option.id,
                       render: () => (
-                        <span className="leading-[normal] tracking-[normal]">
+                        <span
+                          className="leading-[normal] tracking-[normal]"
+                          onClick={async () => {
+                            showLoader();
+                            setFilters(prevValues => ({
+                              ...prevValues,
+                              uuid: option.uuid as string,
+                              country:
+                                dashboardCountries?.find(country => country.country_slug === option?.country_slug) ||
+                                prevValues.country
+                            }));
+                            router.push({
+                              pathname: "/dashboard",
+                              query: { ...filters, country: option?.country_slug, uuid: option.uuid as string }
+                            });
+                            hideLoader();
+                          }}
+                        >
                           <Text variant="text-12-semibold" className="text-darkCustom" as="span">
                             {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
                           </Text>
@@ -380,6 +407,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                       onChange={e => setSearchTerm(e)}
                       placeholder="Search"
                       variant={FILTER_SEARCH_BOX_AIRTABLE}
+                      value={searchTerm}
                     />
                   </BlurContainer>
                 </Menu>
