@@ -16,7 +16,12 @@ import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { ResetPasswordDialog } from "@/admin/modules/user/components/ResetPasswordDialog";
-import { usePatchV2AdminUsersVerifyUUID, usePostAuthReset, usePostV2UsersResend } from "@/generated/apiComponents";
+import {
+  usePatchV2AdminUsersVerifyUUID,
+  usePostAuthReset,
+  usePostAuthSendLoginDetails,
+  usePostV2UsersResend
+} from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { userPrimaryRoleChoices } from "../const";
@@ -43,6 +48,13 @@ export const UserShowAside = () => {
   const { mutate: sendPasswordReset } = usePostAuthReset({
     onSuccess() {
       notify(`Reset password email has been sent successfully.`, { type: "success" });
+      refresh();
+    }
+  });
+
+  const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
+    onSuccess() {
+      notify(`Login details email has been sent successfully.`, { type: "success" });
       refresh();
     }
   });
@@ -87,6 +99,19 @@ export const UserShowAside = () => {
                 Create User
               </Button>
             </When>
+            <Button
+              variant="contained"
+              onClick={() =>
+                sendLoginDetails({
+                  body: {
+                    email_address: record?.email_address,
+                    callback_url: window.location.origin + "/auth/set-password/"
+                  }
+                })
+              }
+            >
+              Send Login Details
+            </Button>
             <Button
               variant="contained"
               onClick={() =>

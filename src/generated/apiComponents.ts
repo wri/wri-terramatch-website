@@ -30412,17 +30412,12 @@ export const useGetV2FormsOptionLabels = <TData = GetV2FormsOptionLabelsResponse
 
 export type PatchAuthChangeError = Fetcher.ErrorWrapper<undefined>;
 
-export type PatchAuthChangeRequestBody = {
-  token?: string;
-  password?: string;
-};
-
 export type PatchAuthChangeVariables = {
-  body?: PatchAuthChangeRequestBody;
+  body?: RequestBodies.PatchAuthChangeBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPatchAuthChange = (variables: PatchAuthChangeVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PatchAuthChangeError, PatchAuthChangeRequestBody, {}, {}, {}>({
+  apiFetch<Record<string, any>, PatchAuthChangeError, RequestBodies.PatchAuthChangeBody, {}, {}, {}>({
     url: "/auth/change",
     method: "patch",
     ...variables,
@@ -30482,17 +30477,12 @@ export const usePutV2AuthCompleteSignup = (
 
 export type PostAuthResetError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostAuthResetRequestBody = {
-  email_address?: string;
-  callback_url?: string;
-};
-
 export type PostAuthResetVariables = {
-  body?: PostAuthResetRequestBody;
+  body?: RequestBodies.PostAuthResetBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPostAuthReset = (variables: PostAuthResetVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PostAuthResetError, PostAuthResetRequestBody, {}, {}, {}>({
+  apiFetch<Record<string, any>, PostAuthResetError, RequestBodies.PostAuthResetBody, {}, {}, {}>({
     url: "/auth/reset",
     method: "post",
     ...variables,
@@ -30508,6 +30498,155 @@ export const usePostAuthReset = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<Record<string, any>, PostAuthResetError, PostAuthResetVariables>(
     (variables: PostAuthResetVariables) => fetchPostAuthReset({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostAuthSendLoginDetailsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostAuthSendLoginDetailsVariables = {
+  body?: RequestBodies.PostAuthResetBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostAuthSendLoginDetails = (variables: PostAuthSendLoginDetailsVariables, signal?: AbortSignal) =>
+  apiFetch<Record<string, any>, PostAuthSendLoginDetailsError, RequestBodies.PostAuthResetBody, {}, {}, {}>({
+    url: "/auth/send-login-details",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostAuthSendLoginDetails = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Record<string, any>,
+      PostAuthSendLoginDetailsError,
+      PostAuthSendLoginDetailsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Record<string, any>, PostAuthSendLoginDetailsError, PostAuthSendLoginDetailsVariables>(
+    (variables: PostAuthSendLoginDetailsVariables) =>
+      fetchPostAuthSendLoginDetails({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetAuthMailQueryParams = {
+  /**
+   * The reset token
+   */
+  token: string;
+};
+
+export type GetAuthMailError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example false
+         */
+        success?: boolean;
+        /**
+         * @example User not found
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example false
+         */
+        success?: boolean;
+        /**
+         * @example Internal Server Error
+         */
+        message?: string;
+      };
+    }
+>;
+
+export type GetAuthMailResponse = {
+  /**
+   * @example true
+   */
+  success?: boolean;
+  data?: {
+    /**
+     * The email address associated with the reset token, or null if the token is already used.
+     *
+     * @example user@example.com
+     */
+    email_address?: string | null;
+    /**
+     * Indicates whether the token has already been used. `true` if the token was used or does not exist, and `false` otherwise.
+     *
+     * @example false
+     */
+    token_used?: boolean;
+  };
+};
+
+export type GetAuthMailVariables = {
+  queryParams: GetAuthMailQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves the email address associated with a reset token. If the token has already been used or does not exist, indicates that the token is used.
+ */
+export const fetchGetAuthMail = (variables: GetAuthMailVariables, signal?: AbortSignal) =>
+  apiFetch<GetAuthMailResponse, GetAuthMailError, undefined, {}, GetAuthMailQueryParams, {}>({
+    url: "/auth/mail",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+/**
+ * Retrieves the email address associated with a reset token. If the token has already been used or does not exist, indicates that the token is used.
+ */
+export const useGetAuthMail = <TData = GetAuthMailResponse>(
+  variables: GetAuthMailVariables,
+  options?: Omit<reactQuery.UseQueryOptions<GetAuthMailResponse, GetAuthMailError, TData>, "queryKey" | "queryFn">
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetAuthMailResponse, GetAuthMailError, TData>(
+    queryKeyFn({ path: "/auth/mail", operationId: "getAuthMail", variables }),
+    ({ signal }) => fetchGetAuthMail({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostAuthStoreError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostAuthStoreVariables = {
+  body?: RequestBodies.PatchAuthChangeBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostAuthStore = (variables: PostAuthStoreVariables, signal?: AbortSignal) =>
+  apiFetch<Record<string, any>, PostAuthStoreError, RequestBodies.PatchAuthChangeBody, {}, {}, {}>({
+    url: "/auth/store",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export const usePostAuthStore = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<Record<string, any>, PostAuthStoreError, PostAuthStoreVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<Record<string, any>, PostAuthStoreError, PostAuthStoreVariables>(
+    (variables: PostAuthStoreVariables) => fetchPostAuthStore({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -38425,6 +38564,11 @@ export type QueryOperation =
       path: "/v2/forms/option-labels";
       operationId: "getV2FormsOptionLabels";
       variables: GetV2FormsOptionLabelsVariables;
+    }
+  | {
+      path: "/auth/mail";
+      operationId: "getAuthMail";
+      variables: GetAuthMailVariables;
     }
   | {
       path: "/v2/sites/{UUID}";
