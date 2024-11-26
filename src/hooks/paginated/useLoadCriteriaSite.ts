@@ -62,8 +62,10 @@ const useLoadCriteriaSite = (
         queryParams
       })) as any;
       for (const polygon of partialResponse) {
-        if (polygonCriteriaMap[polygon.poly_id] || ongoingRequests.has(polygon.poly_id)) {
-          return;
+        if ((statuses === "" || statuses === null) && sortOrder === "created_at") {
+          if (polygonCriteriaMap[polygon.poly_id] || ongoingRequests.has(polygon.poly_id)) {
+            return;
+          }
         }
         await fetchCriteriaData(polygon.poly_id);
       }
