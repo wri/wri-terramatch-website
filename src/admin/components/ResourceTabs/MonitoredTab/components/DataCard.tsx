@@ -6,6 +6,8 @@ import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_HALF_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import Table from "@/components/elements/Table/Table";
@@ -15,6 +17,8 @@ import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inp
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED } from "@/constants/dashboardConsts";
+import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import { OptionValue } from "@/types/common";
 
 interface TableData {
@@ -659,6 +663,7 @@ const toggleItems: TogglePropsItem[] = [
 const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   const [tabActive, setTabActive] = useState(0);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
+  const mapFunctions = useMap();
 
   const POLYGONS = [
     { title: "Agrariala Palma", value: "1" },
@@ -721,7 +726,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
             defaultValue={["1"]}
             onChange={() => {}}
           />
-          <div className="flex flex-col gap-3">
+          <div className="flex w-[25%] flex-col gap-3">
             <Text
               variant={"text-14-semibold"}
               className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
@@ -757,13 +762,18 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
             <img src="/images/monitoring-graph-4.png" alt="" className="w-[73%] object-contain" />
           </When>
           <When condition={selected.includes("6")}>
-            <img src="/images/monitoring-graph-5.png" alt="" className="w-[73%] object-contain" />
+            <div className="w-[73%]">
+              <GraphicIconDashboard
+                data={DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes}
+                maxValue={90}
+              />
+            </div>
           </When>
         </div>
       </When>
       <When condition={tabActive === 2}>
-        <div className="w-full">
-          <Table columns={TABLE_COLUMNS} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
+        <div className="h-[400px] w-full">
+          <MapContainer className="h-full" mapFunctions={mapFunctions} sitePolygonData={[]} />
         </div>
       </When>
     </div>
