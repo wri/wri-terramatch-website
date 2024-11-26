@@ -4,7 +4,7 @@ name: Build and Publish Storybook to GitHub Pages
 on:
   push:
     branches:
-      - 'task/TM-1493-github-storybook' # TODO update to 'staging' before PR
+      - 'staging'
 
 permissions:
   contents: read
