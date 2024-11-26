@@ -13,6 +13,7 @@ import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
 
 import DataCard, { DataStructure } from "./components/DataCard";
+import HeaderMonitoredTab from "./components/HeaderMonitoredTab";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -500,67 +501,69 @@ const MonitoredTab: FC<IProps> = ({ label, ...rest }) => {
 
   return (
     <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
-      <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4 py-1">
-        <div className="flex w-full min-w-0 gap-4">
-          <div
-            ref={labelsContainerRef}
-            className="scroll-indicator-hide flex w-[16%] min-w-0 flex-col items-center gap-2 overflow-auto"
-          >
-            {MonitoredCardData.map((data, index) => (
-              <button
-                key={data.label}
-                onClick={() => focusOnCard(index)}
-                ref={el => (cardLabelRefs.current[index] = el)}
-                className="w-full"
-              >
-                <Text
-                  variant="text-14-light"
-                  className={classNames("flex flex-wrap gap-1 rounded-lg p-2 text-start hover:bg-grey-100", {
-                    "text-primary": intersectingCard === data.label,
-                    "bg-blueCustom-10": intersectingCard === data.label
-                  })}
-                >
-                  {"Restoration by Land Use" === data.label ? (
-                    <>
-                      <span className="text-14-light">Restoration by</span>
-                      <span className="text-14-light">Land Use</span>
-                    </>
-                  ) : (
-                    data.label
-                  )}
-                </Text>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex max-w-[82%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
-            <div className="flex items-center justify-between pl-4 pr-2">
-              <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
-              <div className="flex gap-4">
-                <Toggle items={toggleItems} onChangeActiveIndex={setActiveIndex}></Toggle>
-                <Button
-                  variant="purple"
-                  onClick={() => {
-                    openRunAnalysis();
-                  }}
-                >
-                  <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
-                  Run Analysis
-                </Button>
-                <Button variant="white-border" className="!h-min !min-h-min !rounded-lg !py-1">
-                  <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
-                    <Icon name={IconNames.IC_FILTER} className="h-4 w-4" />
-                    Filter
-                  </div>
-                </Button>
-              </div>
-            </div>
-            <div className=" flex max-h-[85vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
+      <div className="w-full p-3">
+        <HeaderMonitoredTab />
+        <div className="flex max-h-[calc(98vh_-_32px)] w-full gap-4 py-1">
+          <div className="flex w-full min-w-0 gap-4">
+            <div
+              ref={labelsContainerRef}
+              className="scroll-indicator-hide flex w-[16%] min-w-0 flex-col items-center gap-2 overflow-auto"
+            >
               {MonitoredCardData.map((data, index) => (
-                <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
-                  <DataCard data={data} isCardsTable={activeIndex === 1} />
-                </div>
+                <button
+                  key={data.label}
+                  onClick={() => focusOnCard(index)}
+                  ref={el => (cardLabelRefs.current[index] = el)}
+                  className="w-full"
+                >
+                  <Text
+                    variant="text-14-light"
+                    className={classNames("flex flex-wrap gap-1 rounded-lg p-2 text-start hover:bg-grey-100", {
+                      "text-primary": intersectingCard === data.label,
+                      "bg-blueCustom-10": intersectingCard === data.label
+                    })}
+                  >
+                    {"Restoration by Land Use" === data.label ? (
+                      <>
+                        <span className="text-14-light">Restoration by</span>
+                        <span className="text-14-light">Land Use</span>
+                      </>
+                    ) : (
+                      data.label
+                    )}
+                  </Text>
+                </button>
               ))}
+            </div>
+            <div className="flex max-w-[82%] flex-col gap-5" style={{ width: widthValue * 5.25 }}>
+              <div className="flex items-center justify-between pl-4 pr-2">
+                <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
+                <div className="flex gap-4">
+                  <Toggle items={toggleItems} onChangeActiveIndex={setActiveIndex}></Toggle>
+                  <Button
+                    variant="purple"
+                    onClick={() => {
+                      openRunAnalysis();
+                    }}
+                  >
+                    <Icon name={IconNames.RUN_ALALYSIS} className="h-4 w-4" />
+                    Run Analysis
+                  </Button>
+                  <Button variant="white-border" className="!h-min !min-h-min !rounded-lg !py-1">
+                    <div className="text-14 flex h-min max-h-min items-center gap-2 normal-case text-black">
+                      <Icon name={IconNames.IC_FILTER} className="h-4 w-4" />
+                      Filter
+                    </div>
+                  </Button>
+                </div>
+              </div>
+              <div className=" flex max-h-[85vh] w-full flex-col gap-5 overflow-auto" ref={cardRefsContainer}>
+                {MonitoredCardData.map((data, index) => (
+                  <div key={data.label} data-index={index} ref={el => (cardRefs.current[index] = el)}>
+                    <DataCard data={data} isCardsTable={activeIndex === 1} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
