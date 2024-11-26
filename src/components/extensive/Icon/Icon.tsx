@@ -197,7 +197,8 @@ export enum IconNames {
   REQUEST_ACCOUNT = "request-account",
   PRE_FILTERED_PAGE = "pre-filtered-page",
   VISIT_DASHBOARD = "visit-dashboard",
-  ORANGE_DOTS = "orange-dots"
+  ORANGE_DOTS = "orange-dots",
+  IC_NOTIFICATION = "notification"
 }
 
 export interface IconProps {
