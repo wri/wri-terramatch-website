@@ -47,6 +47,7 @@ const OverviewMapArea = ({
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("created_at");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const [isInitialized, setIsInitialized] = useState(false);
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
   const {
@@ -91,8 +92,14 @@ const OverviewMapArea = ({
       callCountryBBox();
     }
   }, [loading]);
+
   useEffect(() => {
-    if (sortOrder !== "created_at" || checkedValues.length > 0) {
+    if (!isInitialized) {
+      setIsInitialized(true);
+      return;
+    }
+
+    if (checkedValues.length > 0 || sortOrder) {
       refetch();
     }
   }, [checkedValues, sortOrder]);
