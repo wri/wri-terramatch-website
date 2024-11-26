@@ -45,11 +45,6 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility
       },
       {
-        title: t("Dashboards"),
-        url: "/dashboard",
-        visibility: true
-      },
-      {
         title: t("Opportunities"),
         url: "/opportunities",
         visibility,
