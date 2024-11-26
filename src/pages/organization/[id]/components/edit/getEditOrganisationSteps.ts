@@ -589,7 +589,7 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           fieldProps: { type: "number" }
         },
         {
-          name: "tree_species",
+          name: "tree_species_historical",
           label: t("Tree Species Grown"),
           type: FieldType.TreeSpecies,
           validation: yup.array(
