@@ -8,6 +8,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2NurseriesUUID } from "@/generated/apiComponents";
@@ -35,7 +36,7 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
     }
   });
 
-  const { handleExport } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
@@ -87,6 +88,7 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
           <Else>
             <Button variant="secondary" onClick={handleExport}>
               {t("Export")}
+              <InlineLoader loading={exportLoader} />
             </Button>
             <Button onClick={handleEdit}>{t("Edit")}</Button>
           </Else>

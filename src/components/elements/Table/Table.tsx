@@ -32,6 +32,7 @@ declare module "@tanstack/react-table" {
     left?: string | number;
     align?: "left" | "center" | "right";
     data?: TData | TValue;
+    width?: string;
   }
 }
 
@@ -50,6 +51,9 @@ export interface TableProps<TData>
   isLoading?: boolean;
   invertSelectPagination?: boolean;
   visibleRows?: number;
+  onRowClick?: (row: TData) => void;
+  contentClassName?: string;
+  classNameTableWrapper?: string;
 }
 
 export interface TableState {
@@ -76,10 +80,13 @@ function Table<TData extends RowData>({
   initialTableState,
   variant = VARIANT_TABLE_PRIMARY,
   children,
+  classNameTableWrapper,
   isLoading,
   invertSelectPagination = false,
   hasPagination = false,
   visibleRows = 10,
+  onRowClick,
+  contentClassName,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -129,7 +136,7 @@ function Table<TData extends RowData>({
   }, [data, visibleRows]);
 
   return (
-    <div className={classNames("w-full", variant.className)}>
+    <div className={classNames("w-full", variant.className, contentClassName)}>
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
         <When condition={!!columnFilters && columnFilters.length > 0}>
           <TableFilter
@@ -142,7 +149,7 @@ function Table<TData extends RowData>({
           />
         </When>
         {children}
-        <div className={variant.tableWrapper}>
+        <div className={classNames(variant.tableWrapper, classNameTableWrapper)}>
           <table {...props} className={classNames(className, "w-full", variant.table)}>
             <thead className={variant.thead}>
               {getHeaderGroups().map(headerGroup => (
@@ -164,6 +171,7 @@ function Table<TData extends RowData>({
                             classNames({ [variant.thHeaderSticky || ""]: isSticky })
                           )}
                           align="left"
+                          style={{ width: header.column.columnDef.meta?.width }}
                         >
                           <div
                             className="flex items-center"
@@ -182,7 +190,7 @@ function Table<TData extends RowData>({
                                     header.column.getIsSorted() as string
                                   ] ?? IconNames.SORT
                                 }
-                                className="ml-2 inline fill-neutral-900"
+                                className="ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]"
                                 width={11}
                                 height={14}
                               />
@@ -214,7 +222,11 @@ function Table<TData extends RowData>({
                     </tr>
                   )}
                   {getRowModel().rows.map(row => (
-                    <tr key={row.id} className={classNames("rounded-lg", variant.trBody)}>
+                    <tr
+                      key={row.id}
+                      className={classNames("rounded-lg", variant.trBody)}
+                      onClick={() => onRowClick?.(row.original)}
+                    >
                       {row.getVisibleCells().map(cell => (
                         <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
                       ))}

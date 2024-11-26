@@ -98,10 +98,10 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   tableWrapper: "border border-neutral-200 rounded-lg overflow-hidden",
   trHeader: "bg-neutral-150",
   thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-12-semibold whitespace-normal px-2 border-t-0",
+    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
+  tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
   thead: "bg-blueCustom-100"
 };
 
@@ -130,12 +130,12 @@ export const VARIANT_TABLE_ORGANISATION = {
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   table: "border-collapse",
   name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[267px] lg:max-h-[284px] wide:max-h-[304px]",
-  trHeader: "bg-neutral-150 sticky top-0 z-auto",
-  thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[260px] lg:max-h-[303px] wide:max-h-[321px]",
+  trHeader: "bg-neutral-150 sticky top-0 z-[1]",
+  thHeader: "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-14 px-3 border-t-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
+  tdBody: "text-14-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
   thead: "bg-blueCustom-100 "
 };
 
@@ -156,10 +156,10 @@ export const VARIANT_TABLE_DASHBOARD = {
   className: "h-full",
   table: "border-collapse",
   name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto w-full h-full bg-white",
+  tableWrapper: "border border-neutral-200 rounded-lg w-full bg-white",
   trHeader: "bg-neutral-150 sticky top-0 z-[1]",
   thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-1.5 border-t-0 py-4",
+    "first:pl-4 first:rounded-tl-lg bg-neutral-150 first:pr-2 last:pl-2 last:pr-4 last:rounded-tr-lg border-neutral-200 text-14-semibold whitespace-normal px-1.5 py-4",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",

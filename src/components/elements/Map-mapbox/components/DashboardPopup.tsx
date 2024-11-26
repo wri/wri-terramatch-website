@@ -1,13 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Provider as ReduxProvider } from "react-redux";
 
 import { LAYERS_NAMES } from "@/constants/layers";
+import { CountriesProps } from "@/context/dashboard.provider";
 import {
   fetchGetV2DashboardPolygonDataUuid,
   fetchGetV2DashboardProjectDataUuid,
   fetchGetV2DashboardTotalSectionHeaderCountry
 } from "@/generated/apiComponents";
 import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
+import ApiSlice from "@/store/apiSlice";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
@@ -22,8 +25,7 @@ type Item = {
 export const DashboardPopup = (event: any) => {
   const isoCountry = event?.feature?.properties?.iso;
   const itemUuid = event?.feature?.properties?.uuid;
-
-  const { addPopupToMap, layerName } = event;
+  const { addPopupToMap, layerName, setFilters, dashboardCountries, removePopupFromMap, isDashboard } = event;
 
   const [items, setItems] = useState<Item[]>([]);
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
@@ -112,9 +114,33 @@ export const DashboardPopup = (event: any) => {
       fetchPolygonData();
     }
   }, [isoCountry, layerName, itemUuid]);
+  const learnMoreEvent = () => {
+    if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
+      const selectedCountry = dashboardCountries?.find(
+        (country: CountriesProps) => country.country_slug === isoCountry
+      );
+      if (selectedCountry) {
+        setFilters((prevValues: any) => ({
+          ...prevValues,
+          uuid: "",
+          country: selectedCountry
+        }));
+      }
+    } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+      setFilters((prevValues: any) => ({ ...prevValues, uuid: itemUuid }));
+    }
+    removePopupFromMap();
+  };
   return (
-    <QueryClientProvider client={client}>
-      <TooltipGridMap label={label} learnMore={true} isoCountry={isoCountry} items={items} />
-    </QueryClientProvider>
+    <ReduxProvider store={ApiSlice.redux}>
+      <QueryClientProvider client={client}>
+        <TooltipGridMap
+          label={label}
+          learnMore={layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null}
+          isoCountry={isoCountry}
+          items={items}
+        />
+      </QueryClientProvider>
+    </ReduxProvider>
   );
 };

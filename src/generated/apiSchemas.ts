@@ -108,6 +108,7 @@ export type UserRead = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -603,6 +604,7 @@ export type UserReadAll = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -1891,6 +1893,7 @@ export type V2AdminOrganisationRead = {
   status?: string;
   readable_status?: string;
   type?: string;
+  is_test?: boolean;
   private?: boolean;
   name?: string;
   phone?: string;
@@ -2554,6 +2557,7 @@ export type V2MonitoringOrganisationRead = {
 export type V2AdminOrganisationUpdate = {
   type?: string;
   private?: boolean;
+  is_test?: boolean;
   name?: string;
   phone?: string;
   founding_date?: string;
@@ -4083,6 +4087,7 @@ export type V2NurseryLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -4638,7 +4643,19 @@ export type V2WorkdayRead = {
   collection?: string;
   readable_collection?: string;
   demographics?: {
-    type?: "gender" | "age" | "ethnicity";
+    type?: "gender" | "age" | "ethnicity" | "caste";
+    subtype?: string;
+    name?: string;
+    amount?: number;
+  }[];
+};
+
+export type V2RestorationPartnerRead = {
+  uuid?: string;
+  collection?: string;
+  readable_collection?: string;
+  demographics?: {
+    type?: "gender" | "age" | "ethnicity" | "caste";
     subtype?: string;
     name?: string;
     amount?: number;
@@ -4704,6 +4721,7 @@ export type V2InvasivePaginated = {
 export type ProjectLiteRead = {
   id?: string;
   uuid?: string;
+  is_test?: boolean;
   status?: string;
   name?: string;
   organisation?: {
@@ -5191,6 +5209,7 @@ export type ProjectLiteRead = {
 export type ProjectFullRead = {
   id?: string;
   uuid?: string;
+  is_test?: boolean;
   status?: string;
   organisation?: {
     uuid?: string;
@@ -6033,6 +6052,7 @@ export type ProjectFullRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -8509,6 +8529,7 @@ export type ApplicationRead = {
     status?: string;
     readable_status?: string;
     type?: string;
+    is_test?: boolean;
     private?: boolean;
     name?: string;
     phone?: string;
@@ -9515,6 +9536,7 @@ export type SiteReportLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -10004,6 +10026,7 @@ export type SiteReportLiteRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -10984,6 +11007,7 @@ export type SiteReportPaginated = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -11473,6 +11497,7 @@ export type SiteReportPaginated = {
       project?: {
         id?: string;
         uuid?: string;
+        is_test?: boolean;
         status?: string;
         name?: string;
         organisation?: {
@@ -12465,6 +12490,7 @@ export type NurseryReportLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -12954,6 +12980,7 @@ export type NurseryReportLiteRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -13933,6 +13960,7 @@ export type NurseryReportPaginated = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -14422,6 +14450,7 @@ export type NurseryReportPaginated = {
       project?: {
         id?: string;
         uuid?: string;
+        is_test?: boolean;
         status?: string;
         name?: string;
         organisation?: {
@@ -15951,6 +15980,7 @@ export type NurseryLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -16446,6 +16476,7 @@ export type SiteLiteRead = {
   project?: {
     id?: string;
     uuid?: string;
+    is_test?: boolean;
     status?: string;
     name?: string;
     organisation?: {
@@ -16946,6 +16977,7 @@ export type NurseryReportRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -17457,6 +17489,7 @@ export type NurseryReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -17951,6 +17984,7 @@ export type NurseryReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -18920,6 +18954,7 @@ export type SiteReportRead = {
     project?: {
       id?: string;
       uuid?: string;
+      is_test?: boolean;
       status?: string;
       name?: string;
       organisation?: {
@@ -19427,6 +19462,7 @@ export type SiteReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -19921,6 +19957,7 @@ export type SiteReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -21577,6 +21614,7 @@ export type ProjectReportRead = {
       status?: string;
       readable_status?: string;
       type?: string;
+      is_test?: boolean;
       private?: boolean;
       name?: string;
       phone?: string;
@@ -22196,8 +22234,8 @@ export type V2ProjectInviteCreate = {
   email_address?: string;
 };
 
-export type WorkdayDemographic = {
-  type?: "gender" | "age" | "ethnicity";
+export type Demographic = {
+  type?: "gender" | "age" | "ethnicity" | "caste";
   subtype?: string;
   name?: string;
   amount?: number;
@@ -22285,21 +22323,9 @@ export type DashboardVolunteersSurvivalRateResponse = {
      */
     non_youth_volunteers?: number;
     /**
-     * Survival rate for non-profit entities.
-     */
-    non_profit_survival_rate?: number;
-    /**
-     * Survival rate for enterprise entities.
-     */
-    enterprise_survival_rate?: number;
-    /**
      * number of sites.
      */
     number_of_sites?: number;
-    /**
-     * number of nurseries.
-     */
-    number_of_nurseries?: number;
   };
 };
 
@@ -22325,21 +22351,9 @@ export type DashboardVolundteersSurvivalRateData = {
    */
   non_youth_volunteers?: number;
   /**
-   * Survival rate for non-profit entities.
-   */
-  non_profit_survival_rate?: number;
-  /**
-   * Survival rate for enterprise entities.
-   */
-  enterprise_survival_rate?: number;
-  /**
    * number of sites.
    */
   number_of_sites?: number;
-  /**
-   * number of nurseries.
-   */
-  number_of_nurseries?: number;
 };
 
 export type AuditStatusCreateRequest = {
@@ -22614,8 +22628,6 @@ export type DashboardPolygonResponse = {
 export type DashboardJobsCreatedResponse = {
   data?: {
     totalJobsCreated?: number;
-    forProfitJobsCreated?: number;
-    nonProfitJobsCreated?: number;
     total_ft?: number;
     total_pt?: number;
     total_men?: number;
@@ -22635,8 +22647,6 @@ export type DashboardJobsCreatedResponse = {
 
 export type DashboardJobsCreatedData = {
   totalJobsCreated?: number;
-  forProfitJobsCreated?: number;
-  nonProfitJobsCreated?: number;
   total_ft?: number;
   total_pt?: number;
   total_men?: number;
@@ -22708,9 +22718,6 @@ export type DashboardTreeRestorationGoalResponse = {
     treeSpeciesAmount?: number;
     treeSpeciesPercentage?: number;
   }[];
-  averageSurvivalRateTotal?: number;
-  averageSurvivalRateForProfit?: number;
-  averageSurvivalRateNonProfit?: number;
 };
 
 export type DashboardTreesUnderRestorationActual = {
@@ -22787,14 +22794,10 @@ export type DashboardActiveProjectsListViewResponse = {
     trees_under_restoration?: number;
     jobs_created?: number;
     volunteers?: number;
-    beneficiaries?: number;
-    survival_rate?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
     project_country?: string;
     country_slug?: string;
-    number_of_trees_goal?: number;
-    date_added?: string;
+    hectares_under_restoration?: number;
+    programme?: string;
   }[];
   current_page?: number;
   per_page?: number;
@@ -22867,8 +22870,6 @@ export type DashboardActiveCountriesResponse = {
     number_of_projects?: number;
     total_trees_planted?: number;
     total_jobs_created?: number;
-    number_of_sites?: number;
-    number_of_nurseries?: number;
   }[];
 };
 
@@ -22938,6 +22939,7 @@ export type DashboardProjectProfileData = {
 export type DashboardTopProjectsResponse = {
   data?: {
     top_projects_most_planted_trees?: {
+      organization?: string;
       project?: string;
       uuid?: string;
       trees_planted?: number;
@@ -22950,6 +22952,7 @@ export type DashboardTopProjectsResponse = {
 };
 
 export type DashboardTopPlantedTree = {
+  organization?: string;
   project?: string;
   uuid?: string;
   trees_planted?: number;
@@ -23069,6 +23072,66 @@ export type EntityTypeResponse = {
    * Bounding box of the entity
    */
   bbox?: number[];
+};
+
+export type EntityPolygonResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    /**
+     * @format date
+     */
+    plantend?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+  }[];
 };
 
 export type AuditStatusUpdateRequest = {
@@ -23568,4 +23631,19 @@ export type DashboardIndicatorHectaresRestorationData = {
      */
     ["urban-forest"]?: number;
   };
+};
+
+export type UserCreateComplete = {
+  token?: string;
+  password?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  job_role?: string;
+  phone_number?: string;
+  role?: string;
+};
+
+export type V2AdminProjectUpdate = {
+  is_test?: boolean;
 };

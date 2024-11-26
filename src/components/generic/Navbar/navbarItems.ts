@@ -28,6 +28,11 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         visibility: true
       },
       {
+        title: t("Dashboards"),
+        url: "/dashboard",
+        visibility: true
+      },
+      {
         title: t("Support"),
         url: zendeskSupportLink,
         visibility: true
@@ -38,6 +43,11 @@ export const getNavbarItems = (t: typeof useT, myOrg?: MyOrganisationConnection)
         title: t("Home"),
         url: "/home",
         visibility
+      },
+      {
+        title: t("Dashboards"),
+        url: "/dashboard",
+        visibility: true
       },
       {
         title: t("Opportunities"),

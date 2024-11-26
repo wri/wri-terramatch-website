@@ -3,8 +3,9 @@ import { ApiContext } from "./apiContext";
 import FormData from "form-data";
 import Log from "@/utils/log";
 import { resolveUrl as resolveV3Url } from "./v3/utils";
+import { apiBaseUrl } from "@/constants/environment";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
+const baseUrl = `${apiBaseUrl}/api`;
 
 export type ErrorWrapper<TError> =
   | TError

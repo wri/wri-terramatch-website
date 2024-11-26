@@ -9,6 +9,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -29,7 +30,7 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
   const { framework } = useFrameworkContext();
 
   const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
-  const { handleExport } = useGetExportEntityHandler("sites", site.uuid, site.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
@@ -93,6 +94,7 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
           <Else>
             <Button variant="secondary" onClick={handleExport}>
               {t("Export")}
+              <InlineLoader loading={exportLoader} />
             </Button>
             <Button onClick={handleEdit}>{t("Edit")}</Button>
           </Else>

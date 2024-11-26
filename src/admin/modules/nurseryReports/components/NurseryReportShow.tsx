@@ -9,6 +9,7 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import ShowTitle from "@/admin/components/ShowTitle";
+import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const NurseryReportShow: FC = () => {
   return (
@@ -17,13 +18,15 @@ const NurseryReportShow: FC = () => {
       actions={<ShowActions titleSource="title" resourceName="nursery report" />}
       className="-mt-[50px] bg-neutral-100"
     >
-      <TabbedShowLayout>
-        <InformationTab type="nursery-reports" />
-        <GalleryTab label="Nursery Report Gallery" entity="nursery-reports" />
-        <DocumentTab label="Nursery Report Documents" entity="nursery-reports" />
-        <ChangeRequestsTab entity="nursery-reports" singularEntity="nursery-report" />
-        <AuditLogTab entity={AuditLogButtonStates.NURSERY_REPORT} />
-      </TabbedShowLayout>
+      <RecordFrameworkProvider>
+        <TabbedShowLayout>
+          <InformationTab type="nursery-reports" />
+          <GalleryTab label="Nursery Report Gallery" entity="nursery-reports" />
+          <DocumentTab label="Nursery Report Documents" entity="nursery-reports" />
+          <ChangeRequestsTab entity="nursery-reports" singularEntity="nursery-report" />
+          <AuditLogTab entity={AuditLogButtonStates.NURSERY_REPORT} />
+        </TabbedShowLayout>
+      </RecordFrameworkProvider>
     </Show>
   );
 };

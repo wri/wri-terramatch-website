@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import { useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
+import { mapboxToken } from "@/constants/environment";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import { FeatureCollection } from "../GeoJSON";
@@ -11,9 +12,6 @@ import { MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.5;
-const MAPBOX_TOKEN =
-  process.env.REACT_APP_MAPBOX_TOKEN ||
-  "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 
 export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { record } = useShowContext();
@@ -40,7 +38,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
   };
-
   const initMap = (isDashboard?: string) => {
     if (map.current) return;
     const mapStyle = isDashboard ? MapStyle.Street : MapStyle.Satellite;
@@ -49,7 +46,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       container: mapContainer.current as HTMLDivElement,
       style: mapStyle,
       zoom: zoom,
-      accessToken: MAPBOX_TOKEN
+      accessToken: mapboxToken
     });
 
     draw.current = new MapboxDraw({
@@ -75,10 +72,20 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       }
       currentMap.addControl(currentDraw, "top-right");
     };
-
     if (map?.current && draw?.current) {
-      map.current.on("style.load", onLoad);
-      addControlToMap();
+      if (map.current.isStyleLoaded()) {
+        onLoad();
+        addControlToMap();
+      } else {
+        map.current.on("style.load", () => {
+          onLoad();
+        });
+        map.current.once("styledata", () => {
+          onLoad();
+        });
+        addControlToMap();
+      }
+
       map.current.on("draw.modechange", (event: any) => {
         if (event.mode === "simple_select") {
           setIsUserDrawingEnabled(false);

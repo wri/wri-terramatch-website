@@ -16,7 +16,7 @@ const ValueNumberDashboard = ({ value, unit, totalValue }: ValueNumberDashboardP
   return (
     <div className="flex items-baseline">
       <Text variant="text-32-bold" className="text-blueCustom">
-        {formatNumberUS(value)}
+        {value === 0 ? "-" : formatNumberUS(value)}
       </Text>
       <Text variant="text-32-bold" className="text-blueCustom">
         {t(unit)}

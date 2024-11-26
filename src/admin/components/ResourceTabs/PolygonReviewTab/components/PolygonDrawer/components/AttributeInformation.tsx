@@ -124,7 +124,6 @@ const AttributeInformation = ({
     setIsLoadingDropdown(true);
     const refreshEntity = async () => {
       if (selectedPolygon?.uuid) {
-        await sitePolygonRefresh?.();
         setIsLoadingDropdown(false);
       }
     };

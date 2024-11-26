@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { get } from "lodash";
 import {
+  Button,
   DeleteWithConfirmButton,
   DeleteWithConfirmButtonProps,
   EditButton,
@@ -24,6 +25,7 @@ interface IProps {
   hasDelete?: boolean;
   deleteProps?: DeleteWithConfirmButtonProps<any>;
   hasEdit?: boolean;
+  toggleTestStatus?: (record: any) => void;
 }
 
 const ShowActions = ({
@@ -33,6 +35,7 @@ const ShowActions = ({
   moduleName,
   hasDelete = true,
   hasEdit = true,
+  toggleTestStatus,
   deleteProps = {}
 }: IProps) => {
   const record = useRecordContext<any>();
@@ -58,20 +61,29 @@ const ShowActions = ({
         </Typography>
       </When>
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>
-        <When condition={record && hasDelete}>
+        {record && toggleTestStatus && (
+          <Button
+            label="Toggle Test"
+            className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
+            onClick={() => toggleTestStatus(record)}
+          >
+            <Icon className="h-5 w-5" name={record?.is_test ? IconNames.SORT_DOWN : IconNames.SORT_UP} />
+          </Button>
+        )}
+        {record && hasDelete && (
           <DeleteWithConfirmButton
             {...deleteProps}
             mutationMode="undoable"
             className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
             icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
-        </When>
-        <When condition={record && hasEdit}>
+        )}
+        {record && hasEdit && (
           <EditButton
             className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
             icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
           />
-        </When>
+        )}
       </TopToolbar>
     </Box>
   );

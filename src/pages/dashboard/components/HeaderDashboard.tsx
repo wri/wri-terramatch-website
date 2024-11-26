@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -14,6 +15,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 
@@ -25,17 +27,27 @@ interface HeaderDashboardProps {
   isProjectInsightsPage?: boolean;
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
+  isHomepage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
 }
 
 const HeaderDashboard = (props: HeaderDashboardProps) => {
-  const { isProjectInsightsPage, isProjectListPage, isProjectPage, dashboardCountries, setSelectedCountry } = props;
+  const {
+    isProjectInsightsPage,
+    isProjectListPage,
+    isProjectPage,
+    isHomepage,
+    dashboardCountries,
+    setSelectedCountry
+  } = props;
   const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
-  const { filters, setFilters, setSearchTerm, setFrameworks } = useDashboardContext();
+  const { showLoader, hideLoader } = useLoading();
+  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries } =
+    useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const optionMenu = activeProjects
@@ -46,6 +58,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             organisation: string;
             name: string;
             programme: string;
+            uuid: string;
+            country_slug: string;
           },
           index: number
         ) => ({
@@ -53,7 +67,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           country: item?.project_country,
           organization: item?.organisation,
           project: item?.name,
-          programme: item?.programme
+          programme: item?.programme,
+          uuid: item?.uuid,
+          country_slug: item?.country_slug
         })
       )
     : [];
@@ -70,9 +86,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   ];
 
   const landscapeOption = [
-    { title: "Kenya’s Greater Rift Valley", value: "kenya_greater_rift_valley" },
-    { title: "Ghana Cocoa Belt ", value: "ghana_cocoa_belt" },
-    { title: "Lake Kivu and Rusizi River Basin ", value: "lake_kivu_rusizi_river_basin" }
+    { title: "Greater Rift Valley of Kenya", value: "Greater Rift Valley of Kenya" },
+    { title: "Ghana Cocoa Belt ", value: "Ghana Cocoa Belt" },
+    { title: "Lake Kivu & Rusizi River Basin ", value: "Lake Kivu & Rusizi River Basin" }
   ];
 
   const { data: frameworks } = useGetV2DashboardFrameworks({
@@ -107,6 +123,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       organizations: [],
       uuid: ""
     });
+    setSearchTerm("");
   };
   useEffect(() => {
     const query: any = {
@@ -131,6 +148,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   }, [filters]);
 
   useEffect(() => {
+    setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, uuid } = router.query;
 
     const newFilters = {
@@ -185,13 +203,21 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isProjectListPage) {
       return "Project List";
     }
-    return "TerraMatch Insights";
+    if (isHomepage) {
+      return "Learn More";
+    }
+    return "TerraMatch Dashboards";
   };
 
   return (
-    <header className="flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover px-4 pb-4 pt-5">
+    <header
+      className={classNames("flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover", {
+        "px-4 pb-4 pt-5": !isHomepage,
+        "bg-center px-14 py-10": isHomepage
+      })}
+    >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="w-full whitespace-nowrap text-white">
+        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
           {t(getHeaderTitle())}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -205,11 +231,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
+          <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
+            &nbsp;&nbsp;{t("BETA")}
+          </Text>
         </Text>
-        <When condition={!isProjectInsightsPage}>
+        <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
             <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.programmes.length}
                   showClear
@@ -220,7 +249,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
                   value={filters.programmes}
-                  placeholder="Programme"
+                  placeholder="All Data"
+                  multipleText="Multiple programmes"
                   onChange={(value: OptionValue[]) => {
                     handleChange("programmes", value);
                   }}
@@ -232,7 +262,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   containerClassName="z-[5]"
                 />
               </BlurContainer>
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.landscapes.length}
                   showClear
@@ -242,7 +272,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   prefix={<Text variant="text-14-light">{t("Landscape:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Landscape"
+                  placeholder="All Data"
+                  multipleText="Multiple Landscapes"
                   value={filters.landscapes}
                   onChange={value => {
                     handleChange("landscapes", value);
@@ -255,14 +286,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   containerClassName="z-[4]"
                 />
               </BlurContainer>
-              <BlurContainer className="min-w-[190px]" disabled={isProjectPage}>
+              <BlurContainer className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.country.id}
                   showClear
                   prefix={<Text variant="text-14-light">{t("Country:")}</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Global"
+                  placeholder="All Data"
                   value={filters.country?.id ? [filters.country.id] : undefined}
                   onChange={value => {
                     handleChangeCountry(value);
@@ -285,23 +316,26 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   options={dashboardCountries.map((country: CountriesProps) => ({
                     title: country.data.label,
                     value: country.id,
-                    prefix: <img src={country.data.icon} alt="flag" className="h-4" />
+                    prefix: (
+                      <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
+                    )
                   }))}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[3]"
                 />
               </BlurContainer>
-              <BlurContainer disabled={isProjectPage}>
+              <BlurContainer className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.organizations.length}
                   showSelectAll
                   showLabelAsMultiple
                   showClear
-                  prefix={<Text variant="text-14-light">{t("Organization:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Organization Type:")}</Text>}
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="Organization Type"
+                  placeholder="All Data"
+                  multipleText="Multiple Organization Types"
                   value={filters.organizations}
                   onChange={value => {
                     handleChange("organizations", value);
@@ -325,8 +359,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               </button>
               <When condition={isProjectListPage}>
                 <Menu
-                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit h-[252px]"
+                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+                  disabled={searchTerm.length < 3 || !optionMenu.length}
+                  isDefaultOpen={true}
                   menu={optionMenu.map(
                     (option: {
                       id: number;
@@ -334,10 +370,29 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                       organization: string;
                       project: string;
                       programme: string;
+                      uuid: string;
+                      country_slug: string;
                     }) => ({
                       id: option.id,
                       render: () => (
-                        <span className="leading-[normal] tracking-[normal]">
+                        <span
+                          className="leading-[normal] tracking-[normal]"
+                          onClick={async () => {
+                            showLoader();
+                            setFilters(prevValues => ({
+                              ...prevValues,
+                              uuid: option.uuid as string,
+                              country:
+                                dashboardCountries?.find(country => country.country_slug === option?.country_slug) ||
+                                prevValues.country
+                            }));
+                            router.push({
+                              pathname: "/dashboard",
+                              query: { ...filters, country: option?.country_slug, uuid: option.uuid as string }
+                            });
+                            hideLoader();
+                          }}
+                        >
                           <Text variant="text-12-semibold" className="text-darkCustom" as="span">
                             {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
                           </Text>
@@ -354,6 +409,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                       onChange={e => setSearchTerm(e)}
                       placeholder="Search"
                       variant={FILTER_SEARCH_BOX_AIRTABLE}
+                      value={searchTerm}
                     />
                   </BlurContainer>
                 </Menu>

@@ -8,7 +8,6 @@ import App from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { Else, If, Then } from "react-if";
 import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
@@ -17,6 +16,7 @@ import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
 import { loadLogin } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
+import * as environment from "@/constants/environment";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -30,6 +30,11 @@ import { wrapper } from "@/store/store";
 import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
 
+if (typeof window !== "undefined") {
+  // Make some things available to the browser console for easy debugging.
+  (window as any).terramatch = { environment };
+}
+
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
@@ -42,32 +47,20 @@ const _App = ({ Component, ...rest }: AppProps) => {
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
 
-  const { store, props } = wrapper.useWrappedStore(rest);
+  const {
+    store,
+    props: { props, pageProps }
+  } = wrapper.useWrappedStore(rest);
 
   setClientSideTranslations(props);
   setupYup(t);
 
-  if (isAdmin)
-    return (
-      <ReduxProvider store={store}>
-        <WrappedQueryClientProvider>
-          <LoadingProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                <ModalRoot />
-                <Component {...props.pageProps} />
-              </ModalProvider>
-            </NotificationProvider>
-          </LoadingProvider>
-        </WrappedQueryClientProvider>
-      </ReduxProvider>
-    );
-  else
+  if (isOnDashboards) {
     return (
       <ReduxProvider store={store}>
         <ToastProvider>
           <WrappedQueryClientProvider>
-            <Hydrate state={props.pageProps.dehydratedState}>
+            <Hydrate state={pageProps.dehydratedState}>
               <RouteHistoryProvider>
                 <LoadingProvider>
                   <NotificationProvider>
@@ -75,21 +68,11 @@ const _App = ({ Component, ...rest }: AppProps) => {
                       <NavbarProvider>
                         <ModalRoot />
                         <Toast />
-                        <If condition={isOnDashboards}>
-                          <Then>
-                            <DashboardAnalyticsWrapper>
-                              <DashboardLayout>
-                                <Component {...props.pageProps} />
-                              </DashboardLayout>
-                            </DashboardAnalyticsWrapper>
-                          </Then>
-                          <Else>
-                            <MainLayout>
-                              <Component {...props.pageProps} />
-                              <CookieBanner />
-                            </MainLayout>
-                          </Else>
-                        </If>
+                        <DashboardAnalyticsWrapper>
+                          <DashboardLayout>
+                            <Component {...pageProps} />
+                          </DashboardLayout>
+                        </DashboardAnalyticsWrapper>
                       </NavbarProvider>
                     </ModalProvider>
                   </NotificationProvider>
@@ -101,6 +84,53 @@ const _App = ({ Component, ...rest }: AppProps) => {
         </ToastProvider>
       </ReduxProvider>
     );
+  }
+
+  // For admin pages (not dashboard)
+  if (isAdmin) {
+    return (
+      <ReduxProvider store={store}>
+        <WrappedQueryClientProvider>
+          <LoadingProvider>
+            <NotificationProvider>
+              <ModalProvider>
+                <ModalRoot />
+                <Component {...pageProps} />
+              </ModalProvider>
+            </NotificationProvider>
+          </LoadingProvider>
+        </WrappedQueryClientProvider>
+      </ReduxProvider>
+    );
+  }
+
+  return (
+    <ReduxProvider store={store}>
+      <ToastProvider>
+        <WrappedQueryClientProvider>
+          <Hydrate state={pageProps.dehydratedState}>
+            <RouteHistoryProvider>
+              <LoadingProvider>
+                <NotificationProvider>
+                  <ModalProvider>
+                    <NavbarProvider>
+                      <ModalRoot />
+                      <Toast />
+                      <MainLayout>
+                        <Component {...pageProps} />
+                        <CookieBanner />
+                      </MainLayout>
+                    </NavbarProvider>
+                  </ModalProvider>
+                </NotificationProvider>
+              </LoadingProvider>
+            </RouteHistoryProvider>
+          </Hydrate>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </WrappedQueryClientProvider>
+      </ToastProvider>
+    </ReduxProvider>
+  );
 };
 
 _App.getInitialProps = wrapper.getInitialAppProps(store => async (context: AppContext) => {

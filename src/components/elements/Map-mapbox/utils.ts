@@ -1,10 +1,12 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
 import * as turfHelper from "@turf/helpers";
+import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
@@ -23,9 +25,6 @@ import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { getPulsingDot } from "./pulsing.dot";
-
-const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
-const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
 type EditPolygon = {
   isOpen: boolean;
@@ -99,13 +98,27 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
 export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
 };
-
+const filterLayerByZoom = (map: mapboxgl.Map, name: string, styles: LayerWithStyle[], zoomFilter: number) => {
+  const zoomLevel = map.getZoom();
+  if (zoomLevel < zoomFilter) {
+    styles.forEach((_: LayerWithStyle, index: number) => {
+      const layerName = `${name}-${index}`;
+      map.setLayoutProperty(layerName, "visibility", "none");
+    });
+  } else {
+    styles.forEach((_: LayerWithStyle, index: number) => {
+      const layerName = `${name}-${index}`;
+      map.setLayoutProperty(layerName, "visibility", "visible");
+    });
+  }
+};
 const showPolygons = (
   styles: LayerWithStyle[],
   name: string,
   map: mapboxgl.Map,
   field: string,
-  parsedPolygonData: any
+  parsedPolygonData: any,
+  zoomFilter?: number | undefined
 ) => {
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
@@ -123,6 +136,11 @@ const showPolygons = (
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
+  if (zoomFilter) {
+    map.on("zoom", () => {
+      filterLayerByZoom(map, name, styles, zoomFilter);
+    });
+  }
 };
 
 let popup: mapboxgl.Popup | null = null;
@@ -131,9 +149,14 @@ let popupAttachedMap: Record<string, mapboxgl.Popup[]> = {
   MEDIA: []
 };
 
-export const loadLayersInMap = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined, layer: any) => {
+export const loadLayersInMap = (
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined,
+  layer: any,
+  zoomFilter?: number | undefined
+) => {
   if (map) {
-    showPolygons(layer.styles, layer.name, map, "uuid", polygonsData);
+    showPolygons(layer.styles, layer.name, map, "uuid", polygonsData, zoomFilter);
   }
 };
 
@@ -147,12 +170,14 @@ const handleLayerClick = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   layerName?: string,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void
 ) => {
   removePopups("POLYGON");
   const { lngLat, features } = e;
   const feature = features?.[0];
-
   if (!feature) {
     Log.warn("No feature found in click event");
     return;
@@ -177,19 +202,36 @@ const handleLayerClick = (
     setEditPolygon
   };
   if (isDashboard) {
+    setLoader?.(true);
     const addPopupToMap = () => {
       newPopup.addTo(map);
+      removePopups("POLYGON");
+      popupAttachedMap["POLYGON"].push(newPopup);
+      setLoader?.(false);
     };
-    root.render(createElement(PopupComponent, { ...commonProps, addPopupToMap, layerName }));
+    const removePopupFromMap = () => {
+      newPopup.remove();
+    };
+    root.render(
+      createElement(PopupComponent, {
+        ...commonProps,
+        addPopupToMap,
+        layerName,
+        setFilters,
+        dashboardCountries,
+        removePopupFromMap,
+        isDashboard
+      })
+    );
   } else {
     newPopup.addTo(map);
+    popupAttachedMap["POLYGON"].push(newPopup);
     root.render(createElement(PopupComponent, commonProps));
   }
-
-  popupAttachedMap["POLYGON"].push(newPopup);
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
+  if (!popupAttachedMap[key]) return;
   popupAttachedMap[key].forEach(popup => {
     popup.remove();
   });
@@ -359,18 +401,20 @@ export const addMediaSourceAndLayer = (
 export const addSourcesToLayers = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
-  centroids: DashboardGetProjectsData[] | undefined
+  centroids: DashboardGetProjectsData[] | undefined,
+  zoomFilter?: number | undefined,
+  isDashboard?: string | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
       if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-        addSourceToLayer(layer, map, polygonsData);
+        addSourceToLayer(layer, map, polygonsData, zoomFilter);
       }
-      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
         addSourceToLayer(layer, map, undefined);
       }
-      if (layer.name === LAYERS_NAMES.CENTROIDS) {
-        addGeojsonSourceToLayer(centroids, map, layer);
+      if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
+        addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });
   }
@@ -385,7 +429,11 @@ export const addPopupsToMap = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -399,11 +447,16 @@ export const addPopupsToMap = (
         editPolygon,
         setEditPolygon,
         draw,
-        isDashboard
+        isDashboard,
+        setFilters,
+        dashboardCountries,
+        setLoader,
+        selectedCountry
       );
     });
   }
 };
+const activeClickHandlers: Record<string, any> = {};
 
 export const addPopupToLayer = (
   map: mapboxgl.Map,
@@ -415,7 +468,11 @@ export const addPopupToLayer = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  setFilters?: any,
+  dashboardCountries?: any,
+  setLoader?: (value: boolean) => void,
+  selectedCountry?: string | null
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -423,43 +480,47 @@ export const addPopupToLayer = (
     let layers = map.getStyle().layers;
 
     let targetLayers = layers.filter(layer => layer.id.startsWith(name));
-    if (name === LAYERS_NAMES.CENTROIDS) {
-      targetLayers = [targetLayers[0]];
+    if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
+      targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
     }
+    const clickHandler = (e: any) => {
+      const currentMode = draw?.getMode();
+      if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
+
+      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
+
+      handleLayerClick(
+        e,
+        popupComponent,
+        map,
+        setPolygonFromMap,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon,
+        name,
+        isDashboard,
+        setFilters,
+        dashboardCountries,
+        setLoader
+      );
+    };
     targetLayers.forEach(targetLayer => {
-      if (!targetLayer?.id || !map.getLayer(targetLayer.id)) {
-        return;
+      if (activeClickHandlers[targetLayer.id]) {
+        map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+        delete activeClickHandlers[targetLayer.id];
       }
-      map.on("click", targetLayer.id, (e: any) => {
-        const currentMode = draw?.getMode();
-        if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
-
-        const zoomLevel = map.getZoom();
-
-        if (name === LAYERS_NAMES.WORLD_COUNTRIES && zoomLevel > 4.5) return;
-
-        if (name === LAYERS_NAMES.CENTROIDS && zoomLevel <= 4.5) return;
-
-        handleLayerClick(
-          e,
-          popupComponent,
-          map,
-          setPolygonFromMap,
-          sitePolygonData,
-          type,
-          editPolygon,
-          setEditPolygon,
-          name,
-          isDashboard
-        );
-      });
+      activeClickHandlers[targetLayer.id] = clickHandler;
+      map.on("click", targetLayer.id, clickHandler);
     });
   }
 };
 
 const getGeoserverURL = (layerName: string) => {
-  return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+  return `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=${geoserverWorkspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
 export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   const { name, styles } = layer;
@@ -494,7 +555,9 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
 export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
-  layer: LayerType
+  layer: LayerType,
+  zoomFilterValue: number | undefined,
+  existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
   if (map && centroids) {
@@ -516,7 +579,8 @@ export const addGeojsonSourceToLayer = (
           },
           properties: {
             uuid: centroid.uuid,
-            name: centroid.name
+            name: centroid.name,
+            type: centroid.type
           }
         }))
       }
@@ -524,12 +588,22 @@ export const addGeojsonSourceToLayer = (
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
+    const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
+    if (existsPolygons && zoomFilterValue !== undefined) {
+      layerIds.forEach(layerId => {
+        let existingFilter = map.getFilter(layerId) || ["all"];
+        let zoomFilter = ["<=", ["zoom"], zoomFilterValue + 1];
+        let combinedFilter = ["all", existingFilter, zoomFilter];
+        map.setFilter(layerId, combinedFilter);
+      });
+    }
   }
 };
 export const addSourceToLayer = (
   layer: LayerType,
   map: mapboxgl.Map,
-  polygonsData: Record<string, string[]> | undefined
+  polygonsData: Record<string, string[]> | undefined,
+  zoomFilter?: number | undefined
 ) => {
   const { name, geoserverLayerName, styles } = layer;
 
@@ -549,7 +623,7 @@ export const addSourceToLayer = (
       addLayerStyle(map, name, geoserverLayerName, style, index);
     });
     if (polygonsData) {
-      loadLayersInMap(map, polygonsData, layer);
+      loadLayersInMap(map, polygonsData, layer, zoomFilter);
     }
     if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
       addHoverEvent(layer, map);
@@ -620,21 +694,64 @@ export const addLayerGeojsonStyle = (
   );
   moveDeleteLayers(map);
 };
+export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
+  const filter = ["==", ["get", "iso"], country];
+  map.setFilter(layerName, filter);
+};
+export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
+  if (!country || !map) return;
+
+  const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+  const countryLayer = layersList.find(layer => layer.name === styleName);
+  if (!countryLayer) return;
+  const countryStyles = countryLayer.styles || [];
+  const sourceName = countryLayer.name;
+  const GEOSERVER_TILE_URL = getGeoserverURL(countryLayer.geoserverLayerName);
+
+  if (!map.getSource(sourceName)) {
+    map.addSource(sourceName, {
+      type: "vector",
+      tiles: [GEOSERVER_TILE_URL]
+    });
+  }
+  if (map.getLayer(sourceName)) {
+    map.removeLayer(sourceName);
+  }
+  const style = countryStyles[0];
+  map.addLayer({
+    ...style,
+    id: sourceName,
+    source: sourceName,
+    "source-layer": countryLayer.geoserverLayerName
+  } as mapboxgl.AnyLayer);
+  setFilterCountry(map, sourceName, country);
+};
+
+export const removeBorderCountry = (map: mapboxgl.Map) => {
+  const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+  if (map.getLayer(layerName)) {
+    map.removeLayer(layerName);
+  }
+  if (map.getSource(layerName)) {
+    map.removeSource(layerName);
+  }
+};
+
 export const addLayerStyle = (
   map: mapboxgl.Map,
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
-  index: number
+  index_suffix: number | string
 ) => {
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
-  if (map.getLayer(`${layerName}-${index}`)) {
-    map.removeLayer(`${layerName}-${index}`);
+  if (map.getLayer(`${layerName}-${index_suffix}`)) {
+    map.removeLayer(`${layerName}-${index_suffix}`);
   }
   map.addLayer(
     {
       ...style,
-      id: `${layerName}-${index}`,
+      id: `${layerName}-${index_suffix}`,
       source: sourceName,
       "source-layer": sourceName
     } as mapboxgl.AnyLayer,

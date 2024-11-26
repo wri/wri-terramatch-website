@@ -1,8 +1,11 @@
+import { useRouter } from "next/router";
+
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { getFrameworkName } from "@/utils/dashboardUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 
@@ -36,15 +39,18 @@ const ProjectList = () => {
   const columns = [
     {
       header: "Project",
-      accessorKey: "project"
+      accessorKey: "project",
+      meta: { width: "23%" }
     },
     {
       header: "Organization",
-      accessorKey: "organization"
+      accessorKey: "organization",
+      meta: { width: "19%" }
     },
     {
       header: "Programme",
-      accessorKey: "programme"
+      accessorKey: "programme",
+      meta: { width: "13%" }
     },
     {
       header: "Country",
@@ -53,11 +59,12 @@ const ProjectList = () => {
         const { label, image } = props.getValue();
         return (
           <div className="flex items-center gap-2">
-            <img src={image} alt="flas" className="h-6 w-8 object-cover" />
+            <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
             <Text variant="text-14-light">{label}</Text>
           </div>
         );
-      }
+      },
+      meta: { width: "13%" }
     },
     {
       header: "Trees Planted",
@@ -77,16 +84,17 @@ const ProjectList = () => {
       enableSorting: false,
       cell: () => {
         return (
-          <a href="/dashboard/project">
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </a>
+          <Icon
+            name={IconNames.IC_ARROW_COLLAPSE}
+            className="h-3 w-3 rotate-90 text-darkCustom hover:cursor-pointer hover:text-primary"
+          />
         );
       }
     }
   ];
 
-  const { filters } = useDashboardContext();
-
+  const router = useRouter();
+  const { filters, setFilters, dashboardCountries, frameworks } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const DATA_TABLE_PROJECT_LIST = activeProjects
@@ -105,8 +113,12 @@ const ProjectList = () => {
           uuid: item.uuid,
           project: item?.name,
           organization: item?.organisation,
-          programme: item?.programme,
-          country: { label: item?.project_country, image: `/flags/${item?.country_slug?.toLowerCase()}.svg` },
+          programme: getFrameworkName(frameworks, item?.programme),
+          country: {
+            country_slug: item?.country_slug,
+            label: item?.project_country,
+            image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
+          },
           treesPlanted: item.trees_under_restoration.toLocaleString(),
           restorationHectares: item.hectares_under_restoration.toLocaleString(),
           jobsCreated: item.jobs_created.toLocaleString()
@@ -120,9 +132,23 @@ const ProjectList = () => {
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
         variant={VARIANT_TABLE_DASHBOARD}
-        classNameWrapper="max-h-[calc(100%_-_4rem)] h-[calc(100%_-_4rem)] !px-0"
+        contentClassName="h-full max-h-full overflow-auto pr-2"
         hasPagination={true}
+        classNameWrapper="!overflow-visible"
         invertSelectPagination={true}
+        onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
+          setFilters(prevValues => ({
+            ...prevValues,
+            uuid: row.uuid as string,
+            country:
+              dashboardCountries?.find(country => country.country_slug === row?.country?.country_slug) ||
+              prevValues.country
+          }));
+          router.push({
+            pathname: "/dashboard",
+            query: { ...filters, country: row?.country?.country_slug, uuid: row.uuid as string }
+          });
+        }}
         initialTableState={{ pagination: { pageSize: 10 } }}
       />
     </div>

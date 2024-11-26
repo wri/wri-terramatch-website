@@ -26,7 +26,7 @@ function ManagedProjects() {
   return (
     <Labeled>
       <ArrayField source="managed_projects" label="Managed Projects">
-        <SingleFieldList className="pt-2 pb-2">
+        <SingleFieldList className="pb-2 pt-2">
           <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
             <TextField source="name" />
           </ReferenceField>
@@ -35,6 +35,11 @@ function ManagedProjects() {
     </Labeled>
   );
 }
+
+const renderFrameworks = (property: string) => (record: any) => {
+  const frameworks: string[] = (record[property] as string[]) ?? [];
+  return frameworks.length == 0 ? "No Frameworks" : frameworks.join(", ");
+};
 
 export const UserShow = () => (
   <Show
@@ -57,6 +62,11 @@ export const UserShow = () => (
         <FunctionField render={(record: V2AdminOrganisationRead) => record.name || "No Organisation Name"} />
       </ReferenceField>
       <DateField label="Last date active" source="last_logged_in_at" />
+      <FunctionField
+        label="All Frameworks (includes frameworks through role and project associations)"
+        render={renderFrameworks("all_frameworks")}
+      />
+      <FunctionField label="Direct Frameworks" render={renderFrameworks("direct_frameworks")} />
       <ManagedProjects />
     </SimpleShowLayout>
   </Show>

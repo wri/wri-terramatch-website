@@ -29,7 +29,26 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
     <PageBody>
       <PageRow>
         <PageColumn>
-          <PageCard title={t("Reported Data")} gap={8}>
+          <PageCard title={Framework.HBF ? t("General Report Updates") : t("Reported Data")} gap={8}>
+            <ContextCondition frameworksShow={[Framework.HBF]}>
+              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
+              <LongTextField title={t("Climate Resilience Progress")}>{report.resilience_progress}</LongTextField>
+              <LongTextField title={t("Response to Local Priorities")}>
+                {report.local_engagement_description}
+              </LongTextField>
+              <LongTextField title={t("Governance Progress")}>{report.local_governance}</LongTextField>
+              <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
+                {report.equitable_opportunities}
+              </LongTextField>
+              <LongTextField title={t("Top Three Successes")}>{report.top_three_successes}</LongTextField>
+              <LongTextField title={t("Challenges Faced")}>{report.challenges_faced}</LongTextField>
+              <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
+              <LongTextField title={t("Adaptative Management")}>{report.adaptive_management}</LongTextField>
+              <LongTextField title={t("Significant Change")}>{report.significant_change}</LongTextField>
+              <LongTextField title={t("Scalability Progress")}>{report.scalability_replicability}</LongTextField>
+              <LongTextField title={t("Convergence Schemes")}>{report.convergence_schemes}</LongTextField>
+            </ContextCondition>
             <ContextCondition frameworksShow={[Framework.PPC]}>
               <LongTextField title={t("Technical Narrative")}>{report.technical_narrative}</LongTextField>
               <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
@@ -75,12 +94,22 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Workdays")} value={report.workdays_total} />
               <TextField label={t("Workdays Paid")} value={report.workdays_paid} />
               <TextField label={t("Workdays Volunteer")} value={report.workdays_volunteer} />
+              <TextField label={t("Unique Restoration Partners")} value={report.total_unique_restoration_partners} />
+              <TextField label={t("Direct Restoration Partners")} value={report.direct_restoration_partners} />
+              <TextField label={t("Indirect Restoration Partners")} value={report.indirect_restoration_partners} />
             </ContextCondition>
-            <ContextCondition frameworksHide={[Framework.PPC]}>
+            <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
               <TextField label={t("Jobs Created")} value={report.total_jobs_created} />
+            </ContextCondition>
+            <ContextCondition frameworksShow={[Framework.HBF]}>
+              <TextField label={t("Direct Workdays")} value={report.workdays_direct_total} />
+              <TextField label={t("Convergence Workdays")} value={report.workdays_convergence_total} />
+              <TextField label={t("Volunteers")} value={report.volunteer_total} />
+              <TextField label={t("Community Partners")} value={report.total_community_partners} />
             </ContextCondition>
           </PageCard>
           <PageCard
+            frameworksHide={[Framework.HBF]}
             title={t("Images")}
             headerChildren={
               <Button
@@ -93,7 +122,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             }
           ></PageCard>
           <PageCard
-            title={t("Trees Data")}
+            title={Framework.HBF ? t("Saplings") : t("Trees Data")}
             headerChildren={
               <Button
                 as={Link}
@@ -105,9 +134,15 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             }
           >
             <TextField label={t("Trees Planted")} value={report.trees_planted_count} />
-            <TextField label={t("Number of Sites Reports")} value={report.site_reports_count} />
+            <TextField frameworksShow={[Framework.HBF]} label={t("Non-Trees Planted")} value={report.non_tree_total} />
+            <TextField
+              frameworksHide={[Framework.HBF]}
+              label={t("Number of Sites Reports")}
+              value={report.site_reports_count}
+            />
           </PageCard>
           <PageCard
+            frameworksHide={[Framework.HBF]}
             title={t("Seedlings Data")}
             headerChildren={
               <Button
@@ -130,8 +165,12 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               value={report.nursery_reports_count}
             />
           </PageCard>
+          <PageCard title={t("Convergence Details")} frameworksShow={[Framework.HBF]}>
+            <TextField label={t("Convergence Funds Raised")} value={report.convergence_amount} />
+            <LongTextField title={t("Convergence Description")}>{report.convergence_schemes}</LongTextField>
+          </PageCard>
           <PageCard title={t("Project Report Details")}>
-            <TextField label={t("Project Report name")} value={report.title} />
+            <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title} />
             <TextField label={t("Created by")} value={getFullName(report.created_by)} />
             <TextField label={t("Updated")} value={format(report.updated_at)} />
             <TextField label={t("Due date")} value={format(dueAt)} />

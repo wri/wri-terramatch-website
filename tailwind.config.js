@@ -37,7 +37,9 @@ module.exports = {
         imageOverlayGradient: "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%)",
         "square-pattern": "url('/icons/ic-bg.svg')",
         "back-map": "url('/icons/bg-map.svg')",
-        dash: "url('/icons/dash.svg')"
+        dash: "url('/icons/dash.svg')",
+        tree: "url('/images/tree.png')",
+        "about-us-header": "url(/images/about-us-header.png)"
       },
       gridTemplateColumns: {
         1: "repeat(1, minmax(0, 1fr))",
@@ -150,6 +152,7 @@ module.exports = {
         DEFAULT: "#353535",
         300: "#525866",
         200: "#84959D",
+        150: "#5D5D59",
         100: "#637579",
         60: "#35353599",
         50: "#697A7F",
@@ -194,7 +197,7 @@ module.exports = {
         DEFAULT: "#72D961",
         500: "#198E2B",
         400: "#1BA631",
-
+        200: "#0b463e",
         100: "#28C499",
         60: "#24555C",
         50: "rgba(40, 196, 153, 0.10)",
@@ -242,7 +245,10 @@ module.exports = {
       "5xl": "2.5rem", //40px
       //Wide extra
       "6xl": "2.75rem", //44px
-      "7xl": "3rem" //48px
+      "7xl": "3rem", //48px
+      "13xl": "4.5rem", //72px
+      "14xl": "4.75rem", //76px
+      "15xl": "5rem" //80px
     },
     listStyleType: {
       none: "none",

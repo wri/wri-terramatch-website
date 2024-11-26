@@ -67,7 +67,11 @@ export type TextVariantNew =
   | "text-40-light"
   | "text-40"
   | "text-40-semibold"
-  | "text-40-bold";
+  | "text-40-bold"
+  | "text-72-light"
+  | "text-72"
+  | "text-72-semibold"
+  | "text-72-bold";
 
 export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
 

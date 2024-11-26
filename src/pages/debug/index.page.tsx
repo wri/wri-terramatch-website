@@ -8,9 +8,10 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
+import { apiBaseUrl } from "@/constants/environment";
 import Log from "@/utils/log";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
+const baseUrl = `${apiBaseUrl}/api`;
 
 const DebugPage = () => {
   const { mutate: fetchAPI500 } = reactQuery.useMutation({

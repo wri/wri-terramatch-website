@@ -7,7 +7,6 @@ import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/Ch
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -20,30 +19,20 @@ interface UnifiedCollapsibleRowProps {
   index: number;
   polygonsSelected: boolean[];
   setPolygonsSelected: React.Dispatch<React.SetStateAction<boolean[]>>;
+  criteriaData?: any;
 }
 
 const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
-  const { type, item, index, polygonsSelected, setPolygonsSelected } = props;
+  const { type, item, index, polygonsSelected, setPolygonsSelected, criteriaData } = props;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: item.poly_id ?? item.id ?? ""
-      }
-    },
-    {
-      enabled: !!(item.poly_id ?? item.id)
-    }
-  );
-
   useEffect(() => {
-    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaData));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
+    const criteriaDataPolygon = criteriaData;
+    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
+      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
+      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
       setIsChecked(true);
     } else {
       setIsChecked(item.checked ?? false);
@@ -81,7 +70,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
               <Text variant="text-12"> {isChecked ? "Failed" : "Run Validation Check"}</Text>
             </When>
             <When condition={isChecked}>
-              <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+              <button className="min-h-3 min-w-3" onClick={() => setOpenCollapse(!openCollapse)}>
                 <Icon
                   name={IconNames.CHEVRON_DOWN_PA}
                   className={`h-3 w-3 text-black transition-transform duration-300 ${

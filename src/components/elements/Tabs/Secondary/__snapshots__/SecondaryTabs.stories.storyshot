@@ -10,11 +10,11 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
     role="tablist"
   >
     <div
-      className="justify-between lg:justify-start lg:gap-30 m-auto flex h-full items-center"
+      className="justify-between lg:justify-start lg:gap-30 flex h-full items-center m-auto"
     >
       <button
         aria-selected={true}
-        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-primary"
+        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-primary"
         data-headlessui-state="selected"
         id="headlessui-tabs-tab-:r35:"
         onClick={[Function]}
@@ -24,7 +24,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={0}
       >
         <p
-          className="whitespace-nowrap text-black text-16-bold"
+          className="whitespace-nowrap text-16-bold"
           data-testid="txt"
         >
           Overview
@@ -32,7 +32,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </button>
       <button
         aria-selected={false}
-        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
+        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:r36:"
         onClick={[Function]}
@@ -42,7 +42,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={-1}
       >
         <p
-          className="whitespace-nowrap text-black text-16-light"
+          className="whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Environmental Impact
@@ -50,7 +50,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </button>
       <button
         aria-selected={false}
-        className="mb-[-2px] h-full border-b-[3px] px-4 py-4  outline-none border-transparent"
+        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:r37:"
         onClick={[Function]}
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={-1}
       >
         <p
-          className="whitespace-nowrap text-black text-16-light"
+          className="whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Social Impact

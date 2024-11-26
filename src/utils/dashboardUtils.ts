@@ -1,4 +1,4 @@
-import { MONTHS } from "@/constants/dashboardConsts";
+import { CHART_TYPES, MONTHS } from "@/constants/dashboardConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -24,6 +24,24 @@ type Objetive = {
   objetiveText: string;
   preferredLanguage: string;
   landTenure: string;
+};
+
+type File = {
+  collection_name: string;
+  created_at: string;
+  description: string | null;
+  file_name: string;
+  is_cover: boolean;
+  is_public: boolean;
+  lat: number;
+  lng: number;
+  mime_type: string;
+  photographer: string | null;
+  size: number;
+  thumb_url: string;
+  title: string;
+  url: string;
+  uuid: string;
 };
 
 export interface ChartDataItem {
@@ -100,6 +118,29 @@ export interface HectaresUnderRestorationData {
   graphicTargetLandUseTypes: ParsedLandUseType[];
 }
 
+interface TreeSpeciesData {
+  treeSpeciesAmount: number;
+  treeSpeciesPercentage: number;
+  dueDate: string | number | Date;
+}
+
+interface RestorationData {
+  treesUnderRestorationActualTotal?: TreeSpeciesData[];
+  treesUnderRestorationActualForProfit?: TreeSpeciesData[];
+  treesUnderRestorationActualNonProfit?: TreeSpeciesData[];
+}
+
+interface ChartDataPoint {
+  time: Date;
+  value: number;
+  name: string;
+}
+
+interface ChartCategory {
+  name: string;
+  values: ChartDataPoint[];
+}
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -147,68 +188,60 @@ export const getRestorationGoalResumeData = (data: DashboardTreeRestorationGoalR
     { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
   ];
 };
-export const getRestorationGoalDataForChart = (data: any, isPercentage: boolean) => {
-  let chartData = [];
-  let totalSum = 0;
-  let enterpriseSum = 0;
-  let nonProfitSum = 0;
 
-  const totalData = {
-    name: "Total",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualTotal.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            totalSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
-          }
-        )
-      : data?.treesUnderRestorationActualTotal.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            totalSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: totalSum, name: "Total" };
-          }
-        )
+export const getRestorationGoalDataForChart = (
+  data: RestorationData,
+  isPercentage: boolean,
+  isProjectView: boolean
+): ChartCategory[] => {
+  const createChartPoints = (
+    sourceData: TreeSpeciesData[] | undefined,
+    categoryName: string
+  ): { sum: number; values: ChartDataPoint[] } => {
+    let sum = 0;
+    const values =
+      sourceData?.map(item => {
+        sum += isPercentage ? item.treeSpeciesPercentage : item.treeSpeciesAmount;
+        return {
+          time: new Date(item.dueDate),
+          value: sum,
+          name: categoryName
+        };
+      }) || [];
+
+    return { sum, values };
   };
 
-  chartData.push(totalData);
-
-  const enterpriseData = {
-    name: "Enterprise",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualForProfit.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            enterpriseSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
-          }
-        )
-      : data?.treesUnderRestorationActualForProfit.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            enterpriseSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: enterpriseSum, name: "Enterprise" };
-          }
-        )
+  const addCategoryToChart = (
+    chartData: ChartCategory[],
+    categoryName: string,
+    values: ChartDataPoint[],
+    sum: number
+  ): void => {
+    const shouldAdd = !isProjectView || (isProjectView && sum > 0);
+    if (shouldAdd) {
+      chartData.push({ name: categoryName, values });
+    }
   };
 
-  chartData.push(enterpriseData);
+  const chartData: ChartCategory[] = [];
 
-  const nonProfitData = {
-    name: "Non Profit",
-    values: isPercentage
-      ? data?.treesUnderRestorationActualNonProfit.map(
-          (item: { treeSpeciesPercentage: number; dueDate: string | number | Date }) => {
-            nonProfitSum += item.treeSpeciesPercentage;
-            return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
-          }
-        )
-      : data?.treesUnderRestorationActualNonProfit.map(
-          (item: { treeSpeciesAmount: number; dueDate: string | number | Date }) => {
-            nonProfitSum += item.treeSpeciesAmount;
-            return { time: new Date(item.dueDate), value: nonProfitSum, name: "Non Profit" };
-          }
-        )
-  };
+  if (!isProjectView) {
+    const { values } = createChartPoints(data.treesUnderRestorationActualTotal, "Total");
+    chartData.push({ name: "Total", values });
+  }
 
-  chartData.push(nonProfitData);
+  const { sum: enterpriseSum, values: enterpriseValues } = createChartPoints(
+    data.treesUnderRestorationActualForProfit,
+    "Enterprise"
+  );
+  addCategoryToChart(chartData, "Enterprise", enterpriseValues, enterpriseSum);
+
+  const { sum: nonProfitSum, values: nonProfitValues } = createChartPoints(
+    data.treesUnderRestorationActualNonProfit,
+    "Non Profit"
+  );
+  addCategoryToChart(chartData, "Non Profit", nonProfitValues, nonProfitSum);
 
   return chartData;
 };
@@ -251,7 +284,7 @@ export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
 
 export const getBarColorRestoration = (name: string) => {
   if (name.includes("Tree Planting")) return "#7BBD31";
-  if (name.includes("direct seeding")) return "#27A9E0";
+  if (name.includes("Direct Seeding")) return "#27A9E0";
   return "#13487A";
 };
 
@@ -319,12 +352,27 @@ export const parseHectaresUnderRestorationData = (
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
-  const restorationStrategiesRepresented = objectToArray(
-    hectaresUnderRestoration?.restoration_strategies_represented
-  ).map(item => ({
-    label: getRestorationStrategyOptions[item.label as keyof typeof getRestorationStrategyOptions] ?? item.label,
-    value: item.value
-  }));
+
+  const restorationStrategiesRepresented: ParsedDataItem[] = [
+    {
+      label: getRestorationStrategyOptions["direct-seeding"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["direct-seeding"] || 0
+    },
+    {
+      label: getRestorationStrategyOptions["assisted-natural-regeneration"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["assisted-natural-regeneration"] || 0
+    },
+    {
+      label: getRestorationStrategyOptions["tree-planting"],
+      value: hectaresUnderRestoration?.restoration_strategies_represented?.["tree-planting"] || 0
+    },
+    {
+      label: "Multiple Strategies",
+      value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
+        .filter(key => !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key))
+        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+    }
+  ].filter(item => item.value > 0);
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => ({
@@ -350,11 +398,42 @@ export const parseDataToObjetive = (data: InputData): Objetive => {
   return {
     objetiveText,
     preferredLanguage: "English",
-    landTenure: data?.landTenure ? data?.landTenure : "Unknown"
+    landTenure: data?.landTenure ? data?.landTenure : "Under Review"
   };
 };
 
 export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
   const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
   return framework ? framework.name : undefined;
+};
+
+export const isEmptyChartData = (chartType: string, data: any): boolean => {
+  if (!data) return false;
+  switch (chartType) {
+    case CHART_TYPES.multiLineChart:
+      return data?.every((item: any) => Array.isArray(item.values) && item.values.length === 0);
+    case CHART_TYPES.groupedBarChart:
+      if (data.chartData && data.type === "gender") {
+        return data?.chartData.every((item: any) => item.Women === 0 && item.Men === 0);
+      }
+      if (data.chartData && data.type === "age") {
+        return data?.chartData.every((item: any) => item.Youth === 0 && item["Non-Youth"] === 0);
+      }
+      if (data.length === 0) return true;
+      return false;
+    case CHART_TYPES.doughnutChart:
+      return data?.chartData?.every((item: any) => item.value === 0);
+    case CHART_TYPES.simpleBarChart:
+      if (data.length === 0) return true;
+      if (data.length > 0) return data?.every((item: any) => item.value === 0);
+      return false;
+    default:
+      return false;
+  }
+};
+
+export const getCoverFileUrl = (files: File[]): string | null => {
+  if (!files) return "/images/_AJL2963.jpg";
+  const coverFile = files.find(file => file.is_cover === true);
+  return coverFile ? coverFile.url : null;
 };

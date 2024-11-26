@@ -11,7 +11,6 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
   isValidCriteriaData,
@@ -48,30 +47,16 @@ const PolygonItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
-  const { shouldRefetchValidation, setShouldRefetchValidation } = useMapAreaContext();
+  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-  const { data: criteriaData, refetch } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: uuid
-      }
-    },
-    {
-      enabled: !!uuid
-    }
-  );
-
-  useEffect(() => {
-    refetch();
-    setShouldRefetchValidation(false);
-  }, [shouldRefetchValidation]);
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
+    const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(isValidCriteriaData(criteriaData));
@@ -79,7 +64,7 @@ const PolygonItem = ({
     } else {
       setValidationStatus(undefined);
     }
-  }, [criteriaData, setValidationStatus]);
+  }, [polygonMap]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);
@@ -106,7 +91,7 @@ const PolygonItem = ({
             <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
-            <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+            <button className="min-h-3 min-w-3" onClick={() => setOpenCollapse(!openCollapse)}>
               <Icon
                 name={IconNames.CHEVRON_DOWN_PA}
                 className={`h-3 w-3 text-black transition-transform duration-300 ${

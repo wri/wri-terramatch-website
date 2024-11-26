@@ -193,7 +193,11 @@ export enum IconNames {
   DASHBOARD = "dashboard",
   RUN_ALALYSIS = "run-analysis",
   MAP = "map",
-  TABLE = "table"
+  TABLE = "table",
+  REQUEST_ACCOUNT = "request-account",
+  PRE_FILTERED_PAGE = "pre-filtered-page",
+  VISIT_DASHBOARD = "visit-dashboard",
+  ORANGE_DOTS = "orange-dots"
 }
 
 export interface IconProps {

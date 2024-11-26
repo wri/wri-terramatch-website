@@ -196,23 +196,26 @@ const Polygons = (props: IPolygonProps) => {
         return prevCheckedUuids.filter((id: string) => id !== uuid);
       }
     };
-    setSelectedPolygonsInCheckbox(polygonsChecked);
+    const checkedUuids = polygonsChecked(selectedPolygonsInCheckbox);
+    setSelectedPolygonsInCheckbox(checkedUuids);
   };
 
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
-        <PolygonDrawer
-          polygonSelected={selectedPolygon?.uuid ?? ""}
-          isPolygonStatusOpen={isPolygonStatusOpen}
-          refresh={props?.refresh}
-          isOpenPolygonDrawer={isOpenPolygonDrawer}
-          setSelectedPolygonToDrawer={setSelectedPolygon as any}
-          selectedPolygonIndex={selectedPolygon?.id}
-          setPolygonFromMap={setPolygonFromMap}
-          polygonFromMap={polygonFromMap}
-          setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
-        />
+        {isOpenPolygonDrawer && (
+          <PolygonDrawer
+            polygonSelected={selectedPolygon?.uuid ?? ""}
+            isPolygonStatusOpen={isPolygonStatusOpen}
+            refresh={props?.refresh}
+            isOpenPolygonDrawer={isOpenPolygonDrawer}
+            setSelectedPolygonToDrawer={setSelectedPolygon as any}
+            selectedPolygonIndex={selectedPolygon?.id}
+            setPolygonFromMap={setPolygonFromMap}
+            polygonFromMap={polygonFromMap}
+            setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
+          />
+        )}
       </Drawer>
       <div className="mb-4 flex flex-col gap-1">
         <Text variant="text-16-bold" className="text-darkCustom">

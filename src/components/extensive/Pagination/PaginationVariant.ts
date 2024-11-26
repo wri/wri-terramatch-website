@@ -14,6 +14,8 @@ export interface VariantPagination {
   iconContentPagination?: string;
   contentPageSelector?: string;
   containerClassName?: string;
+  textNumberNoSelected?: string;
+  textNumberSelected?: string;
 }
 
 export const VARIANT_PAGINATION_DEFAULT: VariantPagination = {
@@ -39,7 +41,9 @@ export const VARIANT_PAGINATION_DASHBOARD: VariantPagination = {
   iconPagination: "h-3 w-3 !fill-black hover:!fill-primary cursor-pointer",
   iconContentPagination:
     "bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center",
-  contentPageSelector: "!gap-2 items-center"
+  contentPageSelector: "!gap-2 items-center",
+  textNumberNoSelected: "!font-bold",
+  textNumberSelected: "!font-normal"
 };
 
 export const VARIANT_PAGINATION_MONITORED: VariantPagination = {

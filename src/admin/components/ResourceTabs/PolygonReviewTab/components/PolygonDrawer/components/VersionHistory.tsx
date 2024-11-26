@@ -300,8 +300,6 @@ const VersionHistory = ({
     if (polygonFromMap?.uuid) {
       setIsLoadingDropdown(true);
       const reloadVersionList = async () => {
-        await refreshPolygonList?.();
-        await refreshSiteData?.();
         await refetch();
         setIsLoadingDropdown(false);
       };

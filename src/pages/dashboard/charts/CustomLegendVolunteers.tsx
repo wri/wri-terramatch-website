@@ -11,18 +11,21 @@ interface CustomLegendProps {
 export const CustomLegendVolunteers: React.FC<CustomLegendProps> = ({ payload, totals, totalVolunteers }) => {
   if (!payload) return null;
 
+  const hasValues = Object.values(totals).some(value => !!value);
+  if (!hasValues) return null;
+
   return (
-    <div>
+    <div className="pl-7">
       <ul className="m-0 flex list-none justify-center p-0">
         {payload.map((entry, index) => (
-          <li key={`item-${index}`} className="mr-5 flex items-center">
-            <svg width="10" height="10" className="mr-1">
+          <li key={`item-${index}`} style={{ display: "flex", alignItems: "baseline" }}>
+            <svg width="12" height="10" style={{ marginRight: "7px" }}>
               <circle cx="5" cy="5" r="5" fill={entry.color} />
             </svg>
-            <span className="flex flex-col text-black">
-              <span>{entry.value}</span>
-              <span className="text-gray-600 text-xs">
-                {`Total: ${totals[entry.value].toLocaleString()} (${getPercentageVolunteers(
+            <span style={{ display: "flex", flexDirection: "column" }}>
+              <span className="text-12-light">{entry.value}</span>
+              <span className="text-12-light text-darkCustom">
+                {`Total: ${totals[entry?.value]?.toLocaleString()} (${getPercentageVolunteers(
                   totals[entry.value],
                   totalVolunteers
                 )}%)`}

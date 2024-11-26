@@ -8,6 +8,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
@@ -17,16 +18,15 @@ import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface ProjectHeaderProps {
   project: any;
-  frameworkName?: string;
 }
 
-const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
+const ProjectHeader = ({ project }: ProjectHeaderProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
   const router = useRouter();
 
-  const { handleExport } = useGetExportEntityHandler("projects", project.uuid, project.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -87,6 +87,7 @@ const ProjectHeader = ({ project, frameworkName }: ProjectHeaderProps) => {
           <div className="flex gap-4">
             <Button variant="secondary" onClick={handleExport}>
               {t("Export")}
+              <InlineLoader loading={exportLoader} />
             </Button>
             <Button onClick={handleEdit}>{t("Edit")}</Button>
           </div>

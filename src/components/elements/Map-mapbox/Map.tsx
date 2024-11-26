@@ -16,6 +16,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
+import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -56,6 +57,7 @@ import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
+  addBorderCountry,
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
@@ -64,16 +66,13 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  removeBorderCountry,
   removeMediaLayer,
   removePopups,
   startDrawing,
   stopDrawing,
   zoomToBbox
 } from "./utils";
-
-mapboxgl.accessToken =
-  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ||
-  "pk.eyJ1IjoiM3NpZGVkY3ViZSIsImEiOiJjam55amZrdjIwaWY3M3FueDAzZ3ZjeGR2In0.DhSsxs-8XhbTgoVmFcs94Q";
 
 interface LegendItem {
   color: string;
@@ -119,6 +118,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
   showImagesButton?: boolean;
+  listViewProjects?: any;
+  role?: any;
+  selectedCountry?: string | null;
+  setLoader?: (value: boolean) => void;
 }
 
 export const MapContainer = ({
@@ -151,15 +154,19 @@ export const MapContainer = ({
   entityData,
   imageGalleryRef,
   centroids,
+  listViewProjects,
   showImagesButton,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
+  const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData } = props;
+  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
+  const dashboardContext = useDashboardContext();
+  const { setFilters, dashboardCountries } = dashboardContext ?? {};
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
@@ -220,11 +227,15 @@ export const MapContainer = ({
   }, [isUserDrawingEnabled]);
 
   useEffect(() => {
-    if (map?.current && !_.isEmpty(polygonsData)) {
+    if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
       const currentMap = map.current as mapboxgl.Map;
+
       const setupMap = () => {
-        addSourcesToLayers(currentMap, polygonsData, centroids);
+        const zoomFilter = isDashboard ? 7 : undefined;
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard);
         setChangeStyle(true);
+        setSourcesAdded(true);
+
         if (showPopups) {
           addPopupsToMap(
             currentMap,
@@ -235,18 +246,26 @@ export const MapContainer = ({
             editPolygonSelected,
             setEditPolygon,
             draw.current,
-            isDashboard
+            isDashboard,
+            setFilters,
+            dashboardCountries,
+            setLoader,
+            selectedCountry
           );
         }
       };
 
+      setSourcesAdded(false);
+
       if (currentMap.isStyleLoaded()) {
         setupMap();
       } else {
-        currentMap.once("styledata", setupMap);
+        currentMap.once("idle", () => {
+          setupMap();
+        });
       }
     }
-  }, [sitePolygonData, polygonsData, showPopups]);
+  }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
 
   useEffect(() => {
     if (currentStyle) {
@@ -265,7 +284,23 @@ export const MapContainer = ({
       zoomToBbox(bbox, map.current, hasControls);
     }
   }, [bbox]);
-
+  useEffect(() => {
+    if (!map.current || !sourcesAdded) return;
+    const setupBorders = () => {
+      if (selectedCountry) {
+        addBorderCountry(map.current, selectedCountry);
+      } else {
+        removeBorderCountry(map.current);
+      }
+    };
+    if (map.current.isStyleLoaded()) {
+      setupBorders();
+    } else {
+      map.current.once("render", () => {
+        setupBorders();
+      });
+    }
+  }, [selectedCountry, styleLoaded, sourcesAdded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
@@ -391,7 +426,7 @@ export const MapContainer = ({
   }
 
   useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded && map.current.isStyleLoaded()) {
+    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
       const newPolygonData = {
         [DELETED_POLYGONS]: selectedPolygonsInCheckbox
       };
@@ -401,7 +436,7 @@ export const MapContainer = ({
         newPolygonData
       );
     }
-  }, [selectedPolygonsInCheckbox]);
+  }, [selectedPolygonsInCheckbox, styleLoaded]);
 
   const handleEditPolygon = async () => {
     removePopups("POLYGON");

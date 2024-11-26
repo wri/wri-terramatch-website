@@ -86,6 +86,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               label={t("Esimtated Survival Rate")}
               value={project.survival_rate}
             />
+            <TextField label={t("Direct Seeding Survival Rate")} value={project.direct_seeding_survival_rate} />
             <ContextCondition frameworksHide={[Framework.PPC]}>
               <FieldsExpander title="Project Beneficiaries Breakdown">
                 <TextField label={t("Women")} value={project?.pct_beneficiaries_women} />

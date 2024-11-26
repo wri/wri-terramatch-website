@@ -41,6 +41,7 @@ export interface MenuProps {
   setSelectedOption?: any;
   classNameContentMenu?: string;
   selectedOption?: string;
+  disabled?: boolean;
 }
 
 const Menu = (props: MenuProps) => {
@@ -56,7 +57,8 @@ const Menu = (props: MenuProps) => {
     setSelectedOption,
     classNameContentMenu,
     selectedOption,
-    extraData
+    extraData,
+    disabled = false
   } = props;
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
@@ -184,6 +186,14 @@ const Menu = (props: MenuProps) => {
 
     return styles;
   };
+
+  if (disabled) {
+    return (
+      <div ref={menuContainerRef} className={classNames(className, "w-fit-content")}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div
