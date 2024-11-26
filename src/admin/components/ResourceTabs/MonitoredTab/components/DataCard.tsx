@@ -15,6 +15,7 @@ import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inp
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { OptionValue } from "@/types/common";
 
 interface TableData {
   polygonName: string;
@@ -62,7 +63,7 @@ const tableItemMenu = () => [
     )
   },
   {
-    id: "32",
+    id: "2",
     render: () => (
       <div className="flex items-center gap-2" onClick={() => {}}>
         <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
@@ -588,43 +589,43 @@ const TABLE_DATA = [
 const DROPDOWN_OPTIONS = [
   {
     title: "Tree Cover TTC",
-    value: "Tree Cover TTC"
+    value: "1"
   },
   {
     title: "Tree Cover Loss",
-    value: "Tree Cover Loss"
+    value: "2"
   },
   {
     title: "Tree Cover Loss from Fire",
-    value: "Tree Cover Loss from Fire"
+    value: "3"
   },
   {
-    title: "Restoration by  EcoRegion",
-    value: "Restoration by  EcoRegion"
+    title: "Hectares Under Restoration By WWF EcoRegion",
+    value: "4"
   },
   {
-    title: "Restoration by Strategy",
-    value: "Restoration by Strategy"
+    title: "Hectares Under Restoration By Strategy",
+    value: "5"
   },
   {
-    title: "Restoration by Land Use",
-    value: "Restoration by Land Use"
+    title: "Hectares Under Restoration By Target Land Use System",
+    value: "6"
   },
   {
     title: "Tree Count",
-    value: "Tree Count"
+    value: "7"
   },
   {
     title: "Early Tree Verificaiton",
-    value: "Early Tree Verificaiton"
+    value: "8"
   },
   {
     title: "Field Monitoring",
-    value: "Field Monitoring"
+    value: "9"
   },
   {
     title: "MSU Carbon",
-    value: "MSU Carbon"
+    value: "10"
   }
 ];
 
@@ -632,7 +633,7 @@ const toggleItems: TogglePropsItem[] = [
   {
     key: "dashboard",
     render: (
-      <Text variant="text-14" className="py-1">
+      <Text variant="text-14" className="py-0.5">
         Table
       </Text>
     )
@@ -640,7 +641,7 @@ const toggleItems: TogglePropsItem[] = [
   {
     key: "table",
     render: (
-      <Text variant="text-14" className="py-1">
+      <Text variant="text-14" className="py-0.5">
         Graph
       </Text>
     )
@@ -648,7 +649,7 @@ const toggleItems: TogglePropsItem[] = [
   {
     key: "table",
     render: (
-      <Text variant="text-14" className="py-1">
+      <Text variant="text-14" className="py-0.5">
         Map
       </Text>
     )
@@ -657,31 +658,38 @@ const toggleItems: TogglePropsItem[] = [
 
 const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   const [tabActive, setTabActive] = useState(0);
+  const [selected, setSelected] = useState<OptionValue[]>(["1"]);
 
-  // const dataLegend = [
-  //   { label: "Agrariala Palma", percentage: "1.0", color: "#AA57FD" },
-  //   { label: "Agraisa", percentage: "0.9", color: "#577EFD" },
-  //   { label: "Agrajaya Batitama", percentage: "0.8", color: "#57C2FD" },
-  //   { label: "Agoue Iboe", percentage: "0.7", color: "#75A338" },
-  //   { label: "Africas", percentage: "0.6", color: "#9F7830" },
-  //   { label: "AEK Torup", percentage: "0.5", color: "#7471AD" },
-  //   { label: "AEK Raso", percentage: "0.4", color: "#CB6527" },
-  //   { label: "AEK Nabara Selatan", percentage: "0.3", color: "#DDAB3B" },
-  //   { label: "Adison Thaochu A", percentage: "0.2", color: "#489B7B" },
-  //   { label: "ABA", percentage: "0.1", color: "#D54789" }
-  // ];
+  const POLYGONS = [
+    { title: "Agrariala Palma", value: "1" },
+    { title: "Agraisa", value: "2" },
+    { title: "Agrajaya Batitama", value: "3" },
+    { title: "Agoue Iboe", value: "4" },
+    { title: "Africas", value: "5" },
+    { title: "AEK Torup", value: "6" },
+    { title: "AEK Raso", value: "7" },
+    { title: "AEK Nabara Selatan", value: "8" },
+    { title: "Adison Thaochu A", value: "9" },
+    { title: "ABA", value: "10" }
+  ];
 
+  const indicatorDescription1 =
+    "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
+  const indicatorDescription2 =
+    "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
   return (
     <div
       {...rest}
       className="flex max-w-5xl flex-col gap-3 rounded-lg border border-grey-850 bg-white shadow-monitored"
     >
-      <div className="flex items-center justify-between px-4 pt-4">
+      <div className="flex items-center justify-between px-6 pt-6">
         <div className="flex items-center gap-2">
           <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
           <Dropdown
             options={DROPDOWN_OPTIONS}
-            onChange={() => {}}
+            onChange={option => {
+              setSelected(option);
+            }}
             variant={VARIANT_DROPDOWN_SIMPLE}
             inputVariant="text-14-semibold"
             defaultValue={[DROPDOWN_OPTIONS[0].value]}
@@ -689,21 +697,68 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
-          <Button variant="white-border" className="h-8 !w-8 p-0" onClick={() => {}}>
-            <Icon name={IconNames.DOWNLOAD} className="h-[10px] w-[10px]" />
-          </Button>
+          <When condition={tabActive === 0}>
+            <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
+            <Button variant="white-border" className="h-8 !w-8 p-0" onClick={() => {}}>
+              <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
+            </Button>
+          </When>
+
           <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} />
         </div>
       </div>
       <When condition={tabActive === 0}>
-        <div className="w-full px-4">
+        <div className="w-full px-6">
           <Table columns={TABLE_COLUMNS} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
         </div>
       </When>
       <When condition={tabActive === 1}>
-        <div className="w-full px-4 pb-4">
-          <Table columns={TABLE_COLUMNS} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
+        <div className="relative flex w-full gap-8 px-6 pb-6">
+          <Dropdown
+            containerClassName="absolute left-full -translate-x-full pr-6"
+            className="w-max"
+            options={POLYGONS}
+            defaultValue={["1"]}
+            onChange={() => {}}
+          />
+          <div className="flex flex-col gap-3">
+            <Text
+              variant={"text-14-semibold"}
+              className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
+            >
+              Indicator Description
+            </Text>
+            <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+              {indicatorDescription1}
+            </Text>
+            <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+              {indicatorDescription2}
+            </Text>
+          </div>
+          <When
+            condition={
+              selected.includes("1") ||
+              selected.includes("2") ||
+              selected.includes("7") ||
+              selected.includes("8") ||
+              selected.includes("9") ||
+              selected.includes("10")
+            }
+          >
+            <img src="/images/monitoring-graph-1.png" alt="" className="w-[73%] object-contain" />
+          </When>
+          <When condition={selected.includes("3")}>
+            <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+          </When>
+          <When condition={selected.includes("4")}>
+            <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
+          </When>
+          <When condition={selected.includes("5")}>
+            <img src="/images/monitoring-graph-4.png" alt="" className="w-[73%] object-contain" />
+          </When>
+          <When condition={selected.includes("6")}>
+            <img src="/images/monitoring-graph-5.png" alt="" className="w-[73%] object-contain" />
+          </When>
         </div>
       </When>
       <When condition={tabActive === 2}>
