@@ -92,7 +92,9 @@ const OverviewMapArea = ({
     }
   }, [loading]);
   useEffect(() => {
-    refetch();
+    if (sortOrder !== "created_at" || checkedValues.length > 0) {
+      refetch();
+    }
   }, [checkedValues, sortOrder]);
   const callEntityBbox = async () => {
     if (type === "sites") {

@@ -62,6 +62,9 @@ const useLoadCriteriaSite = (
         queryParams
       })) as any;
       for (const polygon of partialResponse) {
+        if (polygonCriteriaMap[polygon.poly_id] || ongoingRequests.has(polygon.poly_id)) {
+          return;
+        }
         await fetchCriteriaData(polygon.poly_id);
       }
       result = result.concat(partialResponse);
@@ -84,17 +87,23 @@ const useLoadCriteriaSite = (
     loadInBatches();
   };
 
+  const ongoingRequests = new Set<string>();
   const fetchCriteriaData = async (uuid: string) => {
-    const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
-      queryParams: {
-        uuid: uuid
-      }
-    });
-    setPolygonCriteriaMap(prev => {
-      const newMap = { ...prev };
-      newMap[uuid] = criteriaData;
-      return newMap;
-    });
+    try {
+      ongoingRequests.add(uuid);
+      const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
+        queryParams: {
+          uuid: uuid
+        }
+      });
+      setPolygonCriteriaMap(prev => {
+        const newMap = { ...prev };
+        newMap[uuid] = criteriaData;
+        return newMap;
+      });
+    } finally {
+      ongoingRequests.delete(uuid);
+    }
   };
 
   useEffect(() => {
