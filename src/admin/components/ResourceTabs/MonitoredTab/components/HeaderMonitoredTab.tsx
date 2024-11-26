@@ -3,8 +3,13 @@ import classNames from "classnames";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
+import { useModalContext } from "@/context/modal.provider";
 
 const HeaderMonitoredTab = () => {
+  const { openModal, closeModal } = useModalContext();
+
   const dataPolygonOverview = [
     {
       status: "Draft",
@@ -30,6 +35,31 @@ const HeaderMonitoredTab = () => {
     Submitted: "bg-primary hover:shadow-[#2398D833]",
     "Needs Info": "bg-tertiary-600 hover:shadow-[#ffe7d7]",
     Approved: "bg-success-600 hover:shadow-[#d4f3eb]"
+  };
+
+  const openRunAnalysis = () => {
+    openModal(
+      ModalId.MODAL_RUN_ANALYSIS,
+      <ModalRunAnalysis
+        title="Update Analysis "
+        content="Project Developers may submit one or all polygons for review."
+        primaryButtonText="Submit"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            closeModal(ModalId.MODAL_RUN_ANALYSIS);
+          }
+        }}
+        onClose={() => closeModal(ModalId.MODAL_RUN_ANALYSIS)}
+        secondaryButtonText="Cancel"
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.MODAL_RUN_ANALYSIS)
+        }}
+      />
+    );
   };
 
   return (
@@ -83,10 +113,16 @@ const HeaderMonitoredTab = () => {
         </div>
       </div>
       <div className="flex gap-4">
-        <button className="h-full text-darkCustom hover:text-primary">
-          <Icon name={IconNames.IC_NOTIFICATION} className="h-full " />
+        <button className="h-[40px] text-darkCustom hover:text-primary">
+          <Icon name={IconNames.IC_NOTIFICATION} className="h-[40px]  w-[40px]" />
         </button>
-        <Button variant="primary" className="!rounded-lg">
+        <Button
+          variant="primary"
+          className="!rounded-lg"
+          onClick={() => {
+            openRunAnalysis();
+          }}
+        >
           Update analysis
         </Button>
       </div>

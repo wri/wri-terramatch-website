@@ -2,9 +2,6 @@ import { FC } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
-import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -29,60 +26,6 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   onClose,
   ...rest
 }) => {
-  const columAnalysis = [
-    {
-      accessorKey: "polygonName",
-      header: "Polygon Name",
-      enableSorting: false
-    },
-    {
-      accessorKey: "dateOfLastAnalysis",
-      header: "Date of Last Analysis",
-      enableSorting: false
-    },
-    {
-      accessorKey: "run",
-      header: "Run Analysis",
-      enableSorting: false,
-      cell: () => <Checkbox name="Select All" onClick={() => {}} />
-    }
-  ];
-
-  const dataTable = [
-    {
-      polygonName: "Aerobic-agroforestry",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Arcos",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Bccp",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Blue-forest",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Durrell",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Ecofix",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Env-coffee-forest-forum",
-      dateOfLastAnalysis: "November 1, 2022"
-    },
-    {
-      polygonName: "Env-found-afr-sl",
-      dateOfLastAnalysis: "November 1, 2022"
-    }
-  ];
-
   return (
     <ModalBaseWithLogo {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -98,9 +41,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         <Text variant="text-12-light" className="mb-8">
           {content}
         </Text>
-        <div className="mb-8 flex items-center justify-between">
-          <Table columns={columAnalysis} data={dataTable} variant={VARIANT_TABLE_SITE_POLYGON_REVIEW} />
-        </div>
+        <div className="mb-8 flex items-center justify-between"></div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
