@@ -225,7 +225,9 @@ module.exports = {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       all: "0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 4px rgba(0, 0, 0, 0.06)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
-      none: "0 0 #0000"
+      none: "0 0 #0000",
+      "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      monitored: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
     },
     fontFamily: {
       primary: ["Inter"],
