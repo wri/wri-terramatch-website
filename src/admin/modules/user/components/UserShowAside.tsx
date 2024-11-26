@@ -1,11 +1,27 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
+import {
+  BooleanField,
+  RaRecord,
+  SelectField,
+  TextField,
+  useNotify,
+  useRedirect,
+  useRefresh,
+  useShowContext
+} from "react-admin";
+import { When } from "react-if";
 
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
+import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { ResetPasswordDialog } from "@/admin/modules/user/components/ResetPasswordDialog";
-import { usePatchV2AdminUsersVerifyUUID, usePostAuthReset, usePostV2UsersResend } from "@/generated/apiComponents";
+import {
+  usePatchV2AdminUsersVerifyUUID,
+  usePostAuthReset,
+  usePostAuthSendLoginDetails,
+  usePostV2UsersResend
+} from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { userPrimaryRoleChoices } from "../const";
@@ -13,6 +29,8 @@ import { userPrimaryRoleChoices } from "../const";
 export const UserShowAside = () => {
   const notify = useNotify();
   const refresh = useRefresh();
+  const redirect = useRedirect();
+  const { isSuperAdmin } = useGetUserRole();
 
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
@@ -34,12 +52,23 @@ export const UserShowAside = () => {
     }
   });
 
+  const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
+    onSuccess() {
+      notify(`Login details email has been sent successfully.`, { type: "success" });
+      refresh();
+    }
+  });
+
   const { mutate: verifyUser } = usePatchV2AdminUsersVerifyUUID({
     onSuccess() {
       notify(`User email has been verified successfully.`, { type: "success" });
       refresh();
     }
   });
+
+  const handleCreateUser = () => {
+    redirect("create", "user");
+  };
 
   return (
     <>
@@ -65,6 +94,24 @@ export const UserShowAside = () => {
         <Divider />
         <Box pt={2}>
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
+            <When condition={isSuperAdmin}>
+              <Button variant="contained" onClick={handleCreateUser}>
+                Create User
+              </Button>
+            </When>
+            <Button
+              variant="contained"
+              onClick={() =>
+                sendLoginDetails({
+                  body: {
+                    email_address: record?.email_address,
+                    callback_url: window.location.origin + "/auth/set-password/"
+                  }
+                })
+              }
+            >
+              Send Login Details
+            </Button>
             <Button
               variant="contained"
               onClick={() =>

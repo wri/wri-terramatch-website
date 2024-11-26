@@ -34,6 +34,7 @@ const App = () => {
               list={modules.user.List}
               show={modules.user.Show}
               edit={modules.user.Edit}
+              create={modules.user.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
             />
             <Resource
