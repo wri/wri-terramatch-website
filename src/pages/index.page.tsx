@@ -36,26 +36,6 @@ const LandingPage = () => {
         ctaText={t("Sign up")}
         ctaLink="auth/signup"
       />
-      <LandingPageSectionLayout preTitle={t("APPLY BY MAY 5")} title={""} className="bg-background">
-        <div className="mt-8 w-full max-w-[550px] space-y-8">
-          <Text variant="text-heading-100" containHtml className="px-8 text-center md:px-0">
-            {t(
-              "Applications are now live for TerraFund for AFR100: Landscapes. This program will fund locally led land restoration projects based in three African landscapes: the Ghana Cocoa Belt, the Greater Rusizi Basin of Burundi, the Democratic Republic of the Congo, and Rwanda, and the Great Rift Valley of Kenya.<br/><br/><br/>Register your account on TerraMatch today to submit your Expression of Interest (EOI). Applications must be submitted by May 5 to be considered for funding. Successful applicants will  be invited to submit a full Request for Proposal (RFP) application by may 15."
-            )}
-          </Text>
-          <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
-            <Button
-              variant="secondary"
-              as={Link}
-              href={t(
-                "https://terramatchsupport.zendesk.com/hc/en-us/categories/21188899997339-The-Land-Accelerator-in-Africa-Application-Hub"
-              )}
-            >
-              {t("Learn more")}
-            </Button>
-          </div>
-        </div>
-      </LandingPageSectionLayout>
       <LandingPageSectionLayout title={t("How TerraMatch Supports Restoration Project Developers:")}>
         <ExplainerSection
           className="mt-8 md:mt-15"
@@ -84,7 +64,6 @@ const LandingPage = () => {
           ]}
         />
       </LandingPageSectionLayout>
-
       <AlternatingSection
         title={t("TerraFund for AFR100: Top 100")}
         description={t(
@@ -140,7 +119,7 @@ const LandingPage = () => {
         }}
       />
       <TwoByOneSection.Container className="bg-black">
-        <TwoByOneSection.Top className="md:py-16 md:px-20">
+        <TwoByOneSection.Top className="md:px-20 md:py-16">
           <div className="relative">
             <Image
               alt="support"
@@ -152,7 +131,7 @@ const LandingPage = () => {
           </div>
         </TwoByOneSection.Top>
         <TwoByOneSection.Bottom>
-          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 py-9 px-12 md:gap-8">
+          <div className="box-content flex max-w-[514px] flex-col items-start justify-center gap-3 px-12 py-9 md:gap-8">
             <Text variant="text-heading-700" className="text-white">
               {t("Access Support Today")}
             </Text>
