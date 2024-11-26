@@ -136,7 +136,7 @@ type JobResult = {
   };
 };
 
-async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): Promise<JobResult> {
+async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries: number = 3): Promise<JobResult> {
   let response, error;
   try {
     const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -145,6 +145,12 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): P
 
     const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
     response = await fetch(url, { signal, headers });
+
+    if (response.status === 502 && retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+      return loadJob(signal, delayedJobId, retries - 1); // Retry
+    }
+
     if (!response.ok) {
       try {
         error = {
