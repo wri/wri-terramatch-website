@@ -7,11 +7,13 @@ import {
   fetchGetV2AdminUsersExport,
   fetchGetV2AdminUsersMulti,
   fetchGetV2AdminUsersUUID,
+  fetchPostV2AdminUsersCreate,
   fetchPutV2AdminUsersUUID,
   GetV2AdminUsersError,
   GetV2AdminUsersExportError,
   GetV2AdminUsersMultiError,
   GetV2AdminUsersUUIDError,
+  PostV2AdminUsersCreateError,
   PutV2AdminUsersUUIDError
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
@@ -34,6 +36,19 @@ const normalizeUserObject = (item: V2AdminUserRead) => ({
 });
 
 export const userDataProvider: UserDataProvider = {
+  //@ts-ignore
+  async create(__, params) {
+    try {
+      const response = await fetchPostV2AdminUsersCreate({
+        body: params.data
+      });
+
+      // @ts-expect-error
+      return { data: { ...response.data, id: response.id } };
+    } catch (err) {
+      throw getFormattedErrorForRA(err as PostV2AdminUsersCreateError);
+    }
+  },
   //@ts-ignore
   async getList(_, params) {
     try {
