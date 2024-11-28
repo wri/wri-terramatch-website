@@ -44,7 +44,7 @@ const HeaderMonitoredTab = () => {
       <ModalRunAnalysis
         title="Update Analysis "
         content="Project Developers may submit one or all polygons for review."
-        primaryButtonText="Submit"
+        primaryButtonText="Run"
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
