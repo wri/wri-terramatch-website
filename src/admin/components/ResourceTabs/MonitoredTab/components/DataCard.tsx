@@ -1,6 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import React, { useState } from "react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
@@ -26,28 +26,21 @@ interface TableData {
   size: string;
   siteName: string;
   status: string;
-  dateRun2024: string;
-  "2024-2015": string;
-  "2024-2016": string;
-  "2024-2017": string;
-  "2024-2018": string;
-  "2024-2019": string;
-  "2024-2020": string;
-  "2024-2021": string;
-  "2024-2022": string;
-  "2024-2023": string;
-  "2024-2024": string;
-  dateRun2025: string;
-  "2025-2016": string;
-  "2025-2017": string;
-  "2025-2018": string;
-  "2025-2019": string;
-  "2025-2020": string;
-  "2025-2021": string;
-  "2025-2022": string;
-  "2025-2023": string;
-  "2025-2024": string;
-  "2025-2025": string;
+  plantDate?: string;
+  baseline?: string;
+  treePlanting?: string;
+  regeneration?: string;
+  seeding?: string;
+  "2024-2015"?: string;
+  "2024-2016"?: string;
+  "2024-2017"?: string;
+  "2024-2018"?: string;
+  "2024-2019"?: string;
+  "2024-2020"?: string;
+  "2024-2021"?: string;
+  "2024-2022"?: string;
+  "2024-2023"?: string;
+  "2024-2024"?: string;
 }
 
 export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
@@ -82,15 +75,10 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
     id: "mainInfo",
     header: "",
     columns: [
-      { accessorKey: "polygonName", header: "Polygon Name", meta: { sticky: true, left: 0 } },
+      { accessorKey: "polygonName", header: "Polygon Name" },
       {
         accessorKey: "size",
-        header: "Size (ha)",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "Size (ha)"
       },
       { accessorKey: "siteName", header: "Site Name" },
       {
@@ -102,216 +90,62 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
             classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
           />
         )
+      },
+      {
+        accessorKey: "plantDate",
+        header: () => (
+          <>
+            Plant
+            <br />
+            Start Date
+          </>
+        )
       }
     ]
   },
   {
     id: "analysis2024",
-    header: "2024 Analysis",
+    header: "Analysis: April 25, 2024",
     columns: [
       {
-        accessorKey: "dateRun2024",
-        header: "Date Run",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
         accessorKey: "2024-2015",
-        header: "2015",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2015"
       },
       {
         accessorKey: "2024-2016",
-        header: "2016",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2016"
       },
       {
         accessorKey: "2024-2017",
-        header: "2017",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2017"
       },
       {
         accessorKey: "2024-2018",
-        header: "2018",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2018"
       },
       {
         accessorKey: "2024-2019",
-        header: "2019",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2019"
       },
       {
         accessorKey: "2024-2020",
-        header: "2020",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2020"
       },
       {
         accessorKey: "2024-2021",
-        header: "2021",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2021"
       },
       {
         accessorKey: "2024-2022",
-        header: "2022",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2022"
       },
       {
         accessorKey: "2024-2023",
-        header: "2023",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2023"
       },
       {
         accessorKey: "2024-2024",
-        header: "2024",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      }
-    ]
-  },
-  {
-    id: "analysis2025",
-    header: "2025 Analysis",
-    columns: [
-      {
-        accessorKey: "dateRun2025",
-        header: "Date Run",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2016",
-        header: "2016 ",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2017",
-        header: "2017",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2018",
-        header: "2018",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2019",
-        header: "2019",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2020",
-        header: "2020",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2021",
-        header: "2021",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2022",
-        header: "2022",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2023",
-        header: "2023",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2024",
-        header: "2024",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
-      },
-      {
-        accessorKey: "2025-2025",
-        header: "2025",
-        cell: (props: any) => (
-          <Text variant="text-10" className="text-right">
-            {props.getValue()}
-          </Text>
-        )
+        header: "2024"
       }
     ]
   },
@@ -335,14 +169,80 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   }
 ];
 
+const TABLE_COLUMNS_HECTARES: ColumnDef<RowData>[] = [
+  { accessorKey: "polygonName", header: "Polygon Name" },
+  {
+    accessorKey: "size",
+    header: "Size (ha)"
+  },
+  { accessorKey: "siteName", header: "Site Name" },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: (props: any) => (
+      <CustomChipField
+        label={props.getValue()}
+        classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+      />
+    )
+  },
+  {
+    accessorKey: "plantDate",
+    header: "Plant Start Date"
+  },
+  {
+    accessorKey: "baseline",
+    header: "Baseline"
+  },
+  {
+    accessorKey: "treePlanting",
+    header: "Tree Planting"
+  },
+  {
+    accessorKey: "regeneration",
+    header: () => (
+      <>
+        Asst. Nat.
+        <br />
+        Regeneration
+      </>
+    )
+  },
+  {
+    accessorKey: "seeding",
+    header: () => (
+      <>
+        Direct
+        <br />
+        Seeding
+      </>
+    )
+  },
+  {
+    accessorKey: "more",
+    header: "",
+    enableSorting: false,
+    cell: props => (
+      <Menu menu={tableItemMenu()} placement={MENU_PLACEMENT_LEFT_HALF_BOTTOM}>
+        <div className="rounded p-1 hover:bg-primary-200">
+          <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+        </div>
+      </Menu>
+    )
+  }
+];
+
 const TABLE_DATA = [
   {
     polygonName: "ABA",
     siteName: "Palm Oil",
     status: "Draft",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -352,25 +252,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "Adison Thaochu A",
     siteName: "Palm Oil",
     status: "Submitted",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -380,25 +273,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "AEK Nabara Selatan",
     siteName: "Palm Oil",
     status: "Needs Info",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -408,25 +294,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "AEK Raso",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -436,25 +315,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "AEK Torup",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -464,25 +336,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "Africas",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -492,25 +357,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "Agoue Iboe",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -520,25 +378,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "Agrajaya Baktitama",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -548,25 +399,18 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   },
   {
     polygonName: "Agralsa",
     siteName: "Palm Oil",
     status: "Approved",
     size: "7,473",
-    dateRun2024: "9/26/24",
-    dateRun2025: "10/25/24",
+    plantDate: "9/26/24",
+    baseline: "25/4/24",
+    treePlanting: "0.423",
+    regeneration: "0.120",
+    seeding: "0.120",
     "2024-2015": "0.423",
     "2024-2016": "0.120",
     "2024-2017": "0.655",
@@ -576,17 +420,7 @@ const TABLE_DATA = [
     "2024-2021": "0.151",
     "2024-2022": "0.385",
     "2024-2023": "0.457",
-    "2024-2024": "0.966",
-    "2025-2016": "0.966",
-    "2025-2017": "0.655",
-    "2025-2018": "0.208",
-    "2025-2019": "0.654",
-    "2025-2020": "0.466",
-    "2025-2021": "0.151",
-    "2025-2022": "0.385",
-    "2025-2023": "0.457",
-    "2025-2024": "0.966",
-    "2025-2025": "0.966"
+    "2024-2024": "0.966"
   }
 ];
 
@@ -685,7 +519,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       {...rest}
-      className="flex max-w-5xl flex-col gap-3 rounded-lg border border-grey-850 bg-white shadow-monitored"
+      className="flex flex-col gap-3 overflow-auto rounded-lg border border-grey-850 bg-white shadow-monitored"
     >
       <div className="flex items-center justify-between px-6 pt-6">
         <div className="flex items-center gap-2">
@@ -698,13 +532,14 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
             variant={VARIANT_DROPDOWN_SIMPLE}
             inputVariant="text-14-semibold"
             defaultValue={[DROPDOWN_OPTIONS[0].value]}
+            optionsClassName="w-max"
           />
         </div>
 
         <div className="flex items-center gap-2">
           <When condition={tabActive === 0}>
             <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
-            <Button variant="white-border" className="h-8 !w-8 p-0" onClick={() => {}}>
+            <Button variant="white-border" className="!h-[33px] !min-h-[33px] !w-8 p-0" onClick={() => {}}>
               <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
             </Button>
           </When>
@@ -714,7 +549,14 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
       </div>
       <When condition={tabActive === 0}>
         <div className="w-full px-6">
-          <Table columns={TABLE_COLUMNS} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
+          <If condition={selected < 4}>
+            <Then>
+              <Table columns={TABLE_COLUMNS} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
+            </Then>
+            <Else>
+              <Table columns={TABLE_COLUMNS_HECTARES} data={TABLE_DATA} variant={VARIANT_TABLE_MONITORED} />
+            </Else>
+          </If>
         </div>
       </When>
       <When condition={tabActive === 1}>
@@ -743,7 +585,6 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           <When
             condition={
               selected.includes("1") ||
-              selected.includes("2") ||
               selected.includes("7") ||
               selected.includes("8") ||
               selected.includes("9") ||
@@ -752,7 +593,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           >
             <img src="/images/monitoring-graph-1.png" alt="" className="w-[73%] object-contain" />
           </When>
-          <When condition={selected.includes("3")}>
+          <When condition={selected.includes("3") || selected.includes("2")}>
             <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
           </When>
           <When condition={selected.includes("4")}>

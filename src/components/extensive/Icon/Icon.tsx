@@ -198,7 +198,8 @@ export enum IconNames {
   PRE_FILTERED_PAGE = "pre-filtered-page",
   VISIT_DASHBOARD = "visit-dashboard",
   ORANGE_DOTS = "orange-dots",
-  IC_NOTIFICATION = "notification"
+  IC_NOTIFICATION = "notification",
+  IC_LOADING = "loading"
 }
 
 export interface IconProps {

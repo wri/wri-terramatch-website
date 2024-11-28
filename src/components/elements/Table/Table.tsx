@@ -190,7 +190,10 @@ function Table<TData extends RowData>({
                                     header.column.getIsSorted() as string
                                   ] ?? IconNames.SORT
                                 }
-                                className="ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]"
+                                className={classNames(
+                                  "ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
+                                  variant.iconSort
+                                )}
                                 width={11}
                                 height={14}
                               />
