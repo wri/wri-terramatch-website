@@ -49,5 +49,6 @@ export const ModalId = {
   SHAPE_PROPERTIES_MODAL: "ShapePropertiesModal",
   WELCOME_MODAL: "WelcomeModal",
   WARNING: "Warning",
-  MODAL_RUN_ANALYSIS: "ModalRunAnalysis"
+  MODAL_RUN_ANALYSIS: "ModalRunAnalysis",
+  MODAL_NOTES: "ModalNotes"
 };

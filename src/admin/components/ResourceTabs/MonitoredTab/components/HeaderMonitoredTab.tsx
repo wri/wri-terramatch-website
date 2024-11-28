@@ -4,6 +4,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalNotes from "@/components/extensive/Modal/ModalNotes";
 import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -62,6 +63,27 @@ const HeaderMonitoredTab = () => {
     );
   };
 
+  const openNotes = () => {
+    openModal(
+      ModalId.MODAL_NOTES,
+      <ModalNotes
+        title="Notes"
+        content="Baseline Analysis Underway: There are 200 approved polygons for this project 
+that are ready for analysis and 90 that have been analyzed already. Update the 
+graphs and tables below by clicking update analysis button to your right. "
+        primaryButtonText="Close"
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => {
+            closeModal(ModalId.MODAL_NOTES);
+          }
+        }}
+        onClose={() => closeModal(ModalId.MODAL_NOTES)}
+      />
+    );
+  };
+
   return (
     <div className="flex w-full items-center justify-between rounded-xl px-6 py-3 shadow-monitored">
       <div className="flex items-baseline gap-9">
@@ -113,7 +135,12 @@ const HeaderMonitoredTab = () => {
         </div>
       </div>
       <div className="flex gap-4">
-        <button className="h-[40px] text-darkCustom hover:text-primary">
+        <button
+          className="h-[40px] text-darkCustom hover:text-primary"
+          onClick={() => {
+            openNotes();
+          }}
+        >
           <Icon name={IconNames.IC_NOTIFICATION} className="h-[40px]  w-[40px]" />
         </button>
         <Button
