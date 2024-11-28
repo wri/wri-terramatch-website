@@ -1,4 +1,5 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
+import classNames from "classnames";
 import React, { useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -16,6 +17,7 @@ import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSea
 import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
+import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED } from "@/constants/dashboardConsts";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
@@ -615,44 +617,28 @@ const TABLE_DATA = [
 
 const DROPDOWN_OPTIONS = [
   {
-    title: "Tree Cover TTC",
+    title: "Tree Cover Loss",
     value: "1"
   },
   {
-    title: "Tree Cover Loss",
+    title: "Tree Cover Loss from Fire",
     value: "2"
   },
   {
-    title: "Tree Cover Loss from Fire",
+    title: "Hectares Under Restoration By WWF EcoRegion",
     value: "3"
   },
   {
-    title: "Hectares Under Restoration By WWF EcoRegion",
+    title: "Hectares Under Restoration By Strategy",
     value: "4"
   },
   {
-    title: "Hectares Under Restoration By Strategy",
+    title: "Hectares Under Restoration By Target Land Use System",
     value: "5"
   },
   {
-    title: "Hectares Under Restoration By Target Land Use System",
-    value: "6"
-  },
-  {
     title: "Tree Count",
-    value: "7"
-  },
-  {
-    title: "Early Tree Verificaiton",
-    value: "8"
-  },
-  {
-    title: "Field Monitoring",
-    value: "9"
-  },
-  {
-    title: "MSU Carbon",
-    value: "10"
+    value: "6"
   }
 ];
 
@@ -705,6 +691,42 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
     "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
   const indicatorDescription2 =
     "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
+
+  const noDataGraph = (
+    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
+      <Text variant={"text-32-semibold"} className="text-blueCustom">
+        No Data to Display
+      </Text>
+      <div className="flex items-center gap-1">
+        <Text variant={"text-14"} className="text-darkCustom">
+          RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+        </Text>
+        <Tooltip content={"Tooltip"}>
+          <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
+        </Tooltip>
+      </div>
+    </div>
+  );
+
+  const noDataMap = (
+    <div className="absolute top-0 h-full w-full p-6">
+      <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
+        <div className="absolute top-6 left-6  h-[calc(100%_-_48px)] w-[calc(100%_-_48px)] rounded-xl bg-white bg-opacity-50 backdrop-blur" />
+        <Text variant={"text-32-semibold"} className="z-10 text-white">
+          No Data to Display
+        </Text>
+        <div className="flex items-center gap-1">
+          <Text variant={"text-14"} className="z-10 text-white">
+            RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+          </Text>
+          <Tooltip content={"Tooltip"}>
+            <Icon name={IconNames.IC_INFO} className="fill-white" />
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="-mr-4 h-[calc(100vh-200px)] overflow-auto pr-4">
       <div {...rest} className="rounded-lg border border-grey-850 bg-white shadow-monitored">
@@ -737,7 +759,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
         </div>
         <When condition={tabActive === 0}>
           <div className="relative w-full px-6 pb-6">
-            <If condition={(selected as unknown as number) < 4}>
+            <If condition={selected.includes("1") || selected.includes("2")}>
               <Then>
                 <Table
                   columns={TABLE_COLUMNS}
@@ -760,9 +782,11 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           </div>
         </When>
         <When condition={tabActive === 1}>
-          <div className="relative flex w-full gap-8 px-6 pb-6">
+          <div className="relative flex w-full gap-8 px-6 pb-6 pt-2">
             <Dropdown
-              containerClassName="absolute left-full -translate-x-full pr-6"
+              containerClassName={classNames("absolute left-full -translate-x-full pr-6", {
+                hidden: selected.includes("6")
+              })}
               className="w-max"
               options={POLYGONS}
               defaultValue={["1"]}
@@ -782,27 +806,19 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
                 {indicatorDescription2}
               </Text>
             </div>
-            <When
-              condition={
-                selected.includes("1") ||
-                selected.includes("7") ||
-                selected.includes("8") ||
-                selected.includes("9") ||
-                selected.includes("10")
-              }
-            >
+            <When condition={selected.includes("1")}>
               <img src="/images/monitoring-graph-1.png" alt="" className="w-[73%] object-contain" />
             </When>
-            <When condition={selected.includes("3") || selected.includes("2")}>
+            <When condition={selected.includes("2") || selected.includes("2")}>
               <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
             </When>
-            <When condition={selected.includes("4")}>
+            <When condition={selected.includes("3")}>
               <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
             </When>
-            <When condition={selected.includes("5")}>
+            <When condition={selected.includes("4")}>
               <img src="/images/monitoring-graph-4.png" alt="" className="w-[73%] object-contain" />
             </When>
-            <When condition={selected.includes("6")}>
+            <When condition={selected.includes("5")}>
               <div className="w-[73%]">
                 <GraphicIconDashboard
                   data={DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes}
@@ -810,11 +826,18 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
                 />
               </div>
             </When>
+            <When condition={selected.includes("6")}>{noDataGraph}</When>
           </div>
         </When>
         <When condition={tabActive === 2}>
-          <div className="h-[400px] w-full">
-            <MapContainer className="h-full" mapFunctions={mapFunctions} sitePolygonData={[]} />
+          <div className="relative h-[400px] w-full">
+            <MapContainer
+              className="h-full"
+              mapFunctions={mapFunctions}
+              sitePolygonData={[]}
+              hasControls={!selected.includes("6")}
+            />
+            <When condition={selected.includes("6")}>{noDataMap}</When>
           </div>
         </When>
       </div>
