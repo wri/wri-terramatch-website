@@ -1,5 +1,9 @@
 export const LABEL_LEGEND = [
   {
+    label: "Total",
+    color: "bg-blueCustom-900"
+  },
+  {
     label: "Non-Profit",
     color: "bg-secondary-600"
   },
