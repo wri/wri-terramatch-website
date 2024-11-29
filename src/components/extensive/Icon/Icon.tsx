@@ -199,7 +199,8 @@ export enum IconNames {
   VISIT_DASHBOARD = "visit-dashboard",
   ORANGE_DOTS = "orange-dots",
   IC_NOTIFICATION = "notification",
-  IC_LOADING = "loading"
+  IC_LOADING = "loading",
+  IC_INFO_WHITE_BLACK = "ic-info-white-black"
 }
 
 export interface IconProps {

@@ -709,19 +709,38 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   );
 
   const noDataMap = (
-    <div className="absolute top-0 h-full w-full p-6">
-      <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-        <div className="absolute top-6 left-6  h-[calc(100%_-_48px)] w-[calc(100%_-_48px)] rounded-xl bg-white bg-opacity-50 backdrop-blur" />
-        <Text variant={"text-32-semibold"} className="z-10 text-white">
-          No Data to Display
+    <div className="absolute top-0 flex h-full w-full">
+      <div className="relative flex w-[23vw] flex-col gap-3 p-6">
+        <div className="absolute top-0 left-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
+        <Text
+          variant={"text-14-semibold"}
+          className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
+        >
+          Indicator Description
         </Text>
-        <div className="flex items-center gap-1">
-          <Text variant={"text-14"} className="z-10 text-white">
-            RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+        <div className="z-[5] flex min-h-0 flex-col gap-3 overflow-auto pr-1">
+          <Text variant={"text-14-light"} className="text-white" containHtml>
+            {indicatorDescription1}
           </Text>
-          <Tooltip content={"Tooltip"}>
-            <Icon name={IconNames.IC_INFO} className="fill-white" />
-          </Tooltip>
+          <Text variant={"text-14-light"} className="text-white" containHtml>
+            {indicatorDescription2}
+          </Text>
+        </div>
+      </div>
+      <div className="w-full p-6">
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
+          <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
+          <Text variant={"text-32-semibold"} className="z-10 text-white">
+            No Data to Display
+          </Text>
+          <div className="flex items-center gap-1">
+            <Text variant={"text-14"} className="z-10 text-white">
+              RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+            </Text>
+            <Tooltip content={"Tooltip"}>
+              <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
+            </Tooltip>
+          </div>
         </div>
       </div>
     </div>
@@ -792,19 +811,21 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               defaultValue={["1"]}
               onChange={() => {}}
             />
-            <div className="flex w-[25%] flex-col gap-3">
+            <div className="sticky top-[77px] flex h-[calc(100vh-305px)] w-1/4 min-w-[25%] flex-col gap-3">
               <Text
                 variant={"text-14-semibold"}
                 className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
               >
                 Indicator Description
               </Text>
-              <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
-                {indicatorDescription1}
-              </Text>
-              <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
-                {indicatorDescription2}
-              </Text>
+              <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
+                <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+                  {indicatorDescription1}
+                </Text>
+                <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+                  {indicatorDescription2}
+                </Text>
+              </div>
             </div>
             <When condition={selected.includes("1")}>
               <img src="/images/monitoring-graph-1.png" alt="" className="w-[73%] object-contain" />
@@ -836,6 +857,9 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               mapFunctions={mapFunctions}
               sitePolygonData={[]}
               hasControls={!selected.includes("6")}
+              showLegend
+              legendPosition="bottom-right"
+              showViewGallery={false}
             />
             <When condition={selected.includes("6")}>{noDataMap}</When>
           </div>
