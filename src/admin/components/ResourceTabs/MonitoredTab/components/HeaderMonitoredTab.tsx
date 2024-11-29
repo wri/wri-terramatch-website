@@ -1,6 +1,5 @@
-import classNames from "classnames";
-
 import Button from "@/components/elements/Button/Button";
+import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -30,13 +29,6 @@ const HeaderMonitoredTab = () => {
       count: 22.5
     }
   ];
-
-  const colorBg: { [key: string]: string } = {
-    Draft: "bg-neutral-500 hover:shadow-[#E3E3E3]",
-    Submitted: "bg-primary hover:shadow-[#2398D833]",
-    "Needs Info": "bg-tertiary-600 hover:shadow-[#ffe7d7]",
-    Approved: "bg-success-600 hover:shadow-[#d4f3eb]"
-  };
 
   const openRunAnalysis = () => {
     openModal(
@@ -100,20 +92,8 @@ graphs and tables below by clicking update analysis button to your right. "
               </Text>
             </div>
           </div>
-          <div className="flex w-[35vw] gap-1 pt-2 lg:gap-[6px]">
-            {dataPolygonOverview.map((item, index) => (
-              <div key={index} style={{ width: `${item.count}%` }}>
-                <div
-                  className={classNames(
-                    "h-[6px] w-full cursor-pointer rounded-sm hover:shadow-item-monitored lg:h-[8px] wide:h-[10px]",
-                    colorBg[item.status]
-                  )}
-                />
-                <Text variant="text-12" className="pt-1 text-darkCustom-300">
-                  {item.status}
-                </Text>
-              </div>
-            ))}
+          <div className="w-[35vw] pt-2">
+            <LinearProgressBarMonitored data={dataPolygonOverview} />
           </div>
         </div>
         <div className="flex gap-4">
