@@ -357,11 +357,14 @@ export const parseHectaresUnderRestorationData = (
   ].filter(item => item.value > 0);
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
-    item => ({
-      label: getLandUseTypeTitle(item.label),
-      value: item.value,
-      valueText: formatValueText(item.value)
-    })
+    item => {
+      const adjustedValue = total_hectares_restored < item.value ? total_hectares_restored : item.value;
+      return {
+        label: getLandUseTypeTitle(item.label),
+        value: adjustedValue,
+        valueText: formatValueText(adjustedValue)
+      };
+    }
   );
 
   return {

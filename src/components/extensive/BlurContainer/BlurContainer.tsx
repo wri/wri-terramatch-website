@@ -35,7 +35,7 @@ const BlurContainer = ({ isBlur, textInformation, children, className, ...props 
     <div className={tw("relative w-full text-black", className)}>
       <div
         className={`absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-xl ${
-          isBlur ? "z-[1] bg-[#9d9a9a29] backdrop-blur-sm" : ""
+          isBlur ? "z-[2] bg-[#9d9a9a29] backdrop-blur-sm" : ""
         }`}
       >
         <When condition={isBlur && !!textInformation}>
