@@ -81,14 +81,18 @@ graphs and tables below by clicking update analysis button to your right. "
       <div className="flex items-baseline gap-9">
         <div className="w-[35vw]">
           <div className="flex items-center justify-between">
-            <Text variant="text-14-semibold">Polygon Overview</Text>
+            <Text variant="text-14-semibold" className="flex items-center gap-1">
+              Polygon Overview
+              <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
+            </Text>
             <div className="flex items-center gap-1">
               <Text as="span" variant="text-12" className="text-darkCustom-300">
                 Analyzed:
               </Text>
               <Icon name={IconNames.IC_LOADING} className="h-4 w-4 text-success-600" />
-              <Text as="span" variant="text-12-bold" className="text-darkCustom-300">
+              <Text as="span" variant="text-12-bold" className="flex gap-1 text-darkCustom-300">
                 Baseline
+                <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
               </Text>
             </div>
           </div>
