@@ -4,9 +4,7 @@ import Text from "../Text/Text";
 
 export interface TooltipLineProgressBarMonitoredProps {
   value: string;
-  max: number;
   label: string;
-  monitored: { count: number; status: string }[];
 }
 
 const TooltipLineProgressBarMonitored = ({ value, label }: TooltipLineProgressBarMonitoredProps) => {

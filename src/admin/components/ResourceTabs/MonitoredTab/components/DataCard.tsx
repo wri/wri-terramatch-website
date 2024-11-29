@@ -786,7 +786,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           <div className="flex items-center gap-2">
             <When condition={tabActive === 0}>
               <FilterSearchBox placeholder="Search" onChange={() => {}} variant={FILTER_SEARCH_MONITORING} />
-              <Button variant="white-border" className="!h-[33px] !min-h-[33px] !w-8 p-0" onClick={() => {}}>
+              <Button variant="white-border" className="!h-[32px] !min-h-[32px] !w-8 p-0" onClick={() => {}}>
                 <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
               </Button>
             </When>
@@ -870,12 +870,12 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
           </div>
         </When>
         <When condition={tabActive === 2}>
-          <div className="relative h-[400px] w-full">
+          <div className="relative h-[calc(100vh-295px)] w-full">
             <div className="absolute top-6 left-1/2 z-10">
               <TooltipMapMonitoring />
             </div>
             <MapContainer
-              className="h-full"
+              className="!h-full"
               mapFunctions={mapFunctions}
               sitePolygonData={[]}
               hasControls={!selected.includes("6")}
