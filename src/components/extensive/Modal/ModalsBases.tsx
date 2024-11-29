@@ -33,6 +33,11 @@ export const ModalBaseWithClose = createModalComponent(commonBaseClasses + " max
 
 export const ModalBaseWithLogo = createModalComponent(commonBaseClasses + " h-[95%] w-[776px]", "margin-4 z-50");
 
+export const ModalBaseWithLogoAuto = createModalComponent(
+  commonBaseClasses + " h-auto w-[700px] !max-h-max",
+  "margin-4 z-50"
+);
+
 export const ModalBaseWithMap = createModalComponent(
   commonBaseClasses + " h-[504px] w-[80vw] overflow-hidden wide:h-[700px]",
   "margin-4 z-50"

@@ -85,8 +85,14 @@ const Dashboard = () => {
     isUserAllowed
   } = useDashboardData(filters);
 
-  const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graph"];
+  const dataToggle = [
+    { tooltip: { key: "Absolute", render: "Absolute" } },
+    { tooltip: { key: "Relative", render: "Relative" } }
+  ];
+  const dataToggleGraphic = [
+    { tooltip: { key: "Table", render: "Table" } },
+    { tooltip: { key: "Graph", render: "Graph" } }
+  ];
 
   useEffect(() => {
     refetchTotalSectionHeader();

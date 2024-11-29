@@ -9,7 +9,7 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
-import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
+import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -122,6 +122,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   setLoader?: (value: boolean) => void;
+  showViewGallery?: boolean;
+  legendPosition?: ControlMapPosition;
 }
 
 export const MapContainer = ({
@@ -156,6 +158,8 @@ export const MapContainer = ({
   centroids,
   listViewProjects,
   showImagesButton,
+  showViewGallery = true,
+  legendPosition,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -602,7 +606,7 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <When condition={!formMap}>
+        <When condition={!formMap && showViewGallery}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <When condition={showImagesButton}>
               <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
@@ -618,7 +622,7 @@ export const MapContainer = ({
         </When>
       </When>
       <When condition={showLegend}>
-        <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+        <ControlGroup position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}>
           <FilterControl />
         </ControlGroup>
       </When>

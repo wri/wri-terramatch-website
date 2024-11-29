@@ -9,14 +9,19 @@
     display: none;
   }
 
+  .scroll-indicator-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
   ::-webkit-scrollbar {
     width: 5px;
-    height: 5PX;
+    height: 5px;
     margin-left: 5px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #AEAEAE;
+    background-color: #aeaeae;
     border-radius: 10px;
     padding-left: 5px;
   }
@@ -31,46 +36,46 @@
 
   /* Heading */
   .text-heading-2000 {
-    @apply text-5xl font-bold font-primary wide:text-7xl;
+    @apply font-primary text-5xl font-bold wide:text-7xl;
     letter-spacing: normal;
   }
 
   .text-heading-1000 {
-    @apply text-4xl font-bold font-primary wide:text-6xl;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     letter-spacing: normal;
   }
 
   .text-bold-headline-1000 {
-    @apply text-4xl font-bold font-primary wide:text-6xl;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     letter-spacing: normal;
   }
 
   .text-bold-headline-800 {
-    @apply text-3xl font-bold font-primary wide:text-5xl;
+    @apply font-primary text-3xl font-bold wide:text-5xl;
     letter-spacing: normal;
   }
 
   .text-heading-700 {
-    @apply text-4xl font-bold font-primary wide:text-6xl;
+    @apply font-primary text-4xl font-bold wide:text-6xl;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
   }
 
   .text-heading-600 {
-    @apply text-3xl font-bold font-primary wide:text-5xl;
+    @apply font-primary text-3xl font-bold wide:text-5xl;
     letter-spacing: normal;
   }
 
   .text-heading-500 {
-    @apply text-2xl font-bold font-primary wide:text-4xl;
+    @apply font-primary text-2xl font-bold wide:text-4xl;
     line-height: 2rem;
     /* 32px */
     letter-spacing: 1.12408px;
   }
 
   .text-bold-subtitle-400 {
-    @apply text-lg font-bold font-primary wide:text-2xl;
+    @apply font-primary text-lg font-bold wide:text-2xl;
   }
 
   .text-bold-subtitle-500 {
@@ -78,116 +83,116 @@
   }
 
   .text-bold-subtitle-600 {
-    @apply text-2xl font-bold font-primary wide:text-4xl;
+    @apply font-primary text-2xl font-bold wide:text-4xl;
   }
 
   .text-light-subtitle-400 {
-    @apply font-light leading-normal text-md wide:text-xl;
+    @apply text-md font-light leading-normal wide:text-xl;
   }
 
   .text-normal-subtitle-400 {
-    @apply font-normal leading-normal text-md wide:text-xl;
+    @apply text-md font-normal leading-normal wide:text-xl;
   }
 
   .text-bold-subtitle-400 {
-    @apply font-bold leading-normal text-md wide:text-xl;
+    @apply text-md font-bold leading-normal wide:text-xl;
   }
 
   .text-heading-400 {
-    @apply text-xl font-light font-primary wide:text-3xl;
+    @apply font-primary text-xl font-light wide:text-3xl;
     line-height: 1.5rem;
     /* 32px */
   }
 
   .text-heading-300 {
-    @apply text-lg font-bold font-primary wide:text-2xl;
+    @apply font-primary text-lg font-bold wide:text-2xl;
     line-height: 1.625rem;
     /* 26px */
     letter-spacing: 0.4px;
   }
 
   .text-heading-200 {
-    @apply font-bold font-primary text-md wide:text-xl;
+    @apply font-primary text-md font-bold wide:text-xl;
     letter-spacing: normal;
   }
 
   .text-heading-100 {
-    @apply font-light font-primary text-md wide:text-xl;
+    @apply font-primary text-md font-light wide:text-xl;
     letter-spacing: 0.45px;
   }
 
   /* Caption */
   .text-bold-caption-200 {
-    @apply text-sm font-bold leading-normal font-primary wide:text-md;
+    @apply font-primary text-sm font-bold leading-normal wide:text-md;
     font-style: normal;
   }
 
   .text-light-caption-200 {
-    @apply text-sm font-normal leading-normal font-primary wide:text-md;
+    @apply font-primary text-sm font-normal leading-normal wide:text-md;
     font-style: normal;
   }
 
   .text-bold-caption-100 {
-    @apply text-xs font-bold leading-normal font-primary wide:text-base;
+    @apply font-primary text-xs font-bold leading-normal wide:text-base;
     font-style: normal;
   }
 
   /* Body */
   .text-body-1200 {
-    @apply text-base font-bold font-primary wide:text-lg;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1.375rem;
     /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-1100 {
-    @apply text-base font-bold font-secondary wide:text-lg;
+    @apply font-secondary text-base font-bold wide:text-lg;
     line-height: 1.5rem;
     /* 24px */
   }
 
   .text-body-1000 {
-    @apply text-base font-normal font-secondary wide:text-lg;
+    @apply font-secondary text-base font-normal wide:text-lg;
     line-height: 1.5rem;
     /* 24px */
   }
 
   .text-body-900 {
-    @apply text-base font-bold font-primary wide:text-lg;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1.375rem;
     /* 22px */
     letter-spacing: 0.666667px;
   }
 
   .text-body-800 {
-    @apply text-base font-normal font-primary wide:text-lg;
+    @apply font-primary text-base font-normal wide:text-lg;
     line-height: 1.5rem;
     /* 24px */
   }
 
   .text-body-700 {
-    @apply text-base font-light font-primary wide:text-lg;
+    @apply font-primary text-base font-light wide:text-lg;
     letter-spacing: 0.666667px;
   }
 
   .text-body-600 {
-    @apply text-base font-light font-primary wide:text-lg;
+    @apply font-primary text-base font-light wide:text-lg;
     line-height: 1.375rem;
     /* 22px */
   }
 
   .text-body-500 {
-    @apply text-sm font-bold font-primary wide:text-md;
+    @apply font-primary text-sm font-bold wide:text-md;
     letter-spacing: normal;
   }
 
   .text-body-400 {
-    @apply text-sm font-normal font-primary wide:text-md;
+    @apply font-primary text-sm font-normal wide:text-md;
     letter-spacing: normal;
   }
 
   .text-body-300 {
-    @apply text-sm font-light font-primary wide:text-md;
+    @apply font-primary text-sm font-light wide:text-md;
     letter-spacing: normal;
   }
 
@@ -200,25 +205,25 @@
   }
 
   .text-body-200 {
-    @apply text-sm font-normal font-secondary wide:text-md;
+    @apply font-secondary text-sm font-normal wide:text-md;
     line-height: 1.188rem;
     /* 19px */
   }
 
   .text-body-100 {
-    @apply text-xs font-bold font-primary wide:text-base;
+    @apply font-primary text-xs font-bold wide:text-base;
     line-height: 1.188rem;
     /* 19px */
   }
 
   /* Button */
   .text-button-700 {
-    @apply text-sm font-bold font-primary text-primary wide:text-md;
+    @apply font-primary text-sm font-bold text-primary wide:text-md;
     line-height: 170%;
   }
 
   .text-button-400 {
-    @apply text-base font-bold font-primary wide:text-lg;
+    @apply font-primary text-base font-bold wide:text-lg;
     line-height: 1rem;
     /* 16px */
     letter-spacing: 2px;
@@ -226,19 +231,19 @@
   }
 
   .text-button-300 {
-    @apply text-sm font-bold font-primary wide:text-md;
+    @apply font-primary text-sm font-bold wide:text-md;
     line-height: 1rem;
     /* 16px */
     text-transform: uppercase;
   }
 
   .text-button-200 {
-    @apply text-sm font-light font-primary wide:text-md;
+    @apply font-primary text-sm font-light wide:text-md;
     letter-spacing: normal;
   }
 
   .text-button-100 {
-    @apply text-xs font-bold font-primary wide:text-base;
+    @apply font-primary text-xs font-bold wide:text-base;
     line-height: 1.188rem;
     /* 19px */
   }
@@ -246,7 +251,7 @@
   /* Swiper */
   .swiper-button-next,
   .swiper-button-prev {
-    @apply flex items-center justify-center border border-white border-solid rounded-full bg-primary;
+    @apply flex items-center justify-center rounded-full border border-solid border-white bg-primary;
   }
 
   .swiper-button-next:after,
@@ -254,23 +259,23 @@
     content: "" !important;
   }
 
-  .test .swiper-button-next{
+  .test .swiper-button-next {
     right: var(--swiper-navigation-sides-offset, 55px);
     top: calc(100% - 20px);
-    @apply bg-[#00000025] border-transparent
+    @apply border-transparent bg-[#00000025];
   }
 
-  .test .swiper-button-next svg{
+  .test .swiper-button-next svg {
     scale: 1.2;
   }
 
-  .test .swiper-button-prev{
+  .test .swiper-button-prev {
     left: var(--swiper-navigation-sides-offset, 55px);
     top: calc(100% - 20px);
-    @apply bg-[#00000025] border-transparent
+    @apply border-transparent bg-[#00000025];
   }
 
-  .test .swiper-button-prev svg{
+  .test .swiper-button-prev svg {
     scale: 1.2;
   }
 
@@ -289,34 +294,34 @@
 
   .border-medium {
     border-width: 1.6px;
-    @apply border-opacity-25 border-neutral-500;
+    @apply border-neutral-500 border-opacity-25;
   }
 
   /* With-inner-html */
-  .with-inner-html>* {
+  .with-inner-html > * {
     font-family: inherit;
     font-size: inherit;
     font-style: inherit;
   }
 
-  .with-inner-html>*:not(strong, b) {
+  .with-inner-html > *:not(strong, b) {
     font-weight: inherit;
   }
 
   .with-inner-html a {
-    @apply underline text-primary;
+    @apply text-primary underline;
   }
 
   .with-inner-html h1 {
-    @apply mb-2 text-bold-headline-1000;
+    @apply text-bold-headline-1000 mb-2;
   }
 
   .with-inner-html h2 {
-    @apply mb-4 text-bold-subtitle-500;
+    @apply text-bold-subtitle-500 mb-4;
   }
 
   .with-inner-html p {
-    @apply mb-8 text-light-body-300;
+    @apply text-light-body-300 mb-8;
   }
 
   .with-inner-html p:last-child {
@@ -332,16 +337,16 @@
     @apply space-y-3;
   }
 
-  .with-inner-html ul>li {
+  .with-inner-html ul > li {
     @apply flex gap-3;
   }
 
-  .with-inner-html ul>li::before {
+  .with-inner-html ul > li::before {
     content: "●";
     @apply text-xl leading-none text-secondary wide:text-3xl;
   }
 
-  .with-inner-html ol>li {
+  .with-inner-html ol > li {
     @apply ml-3 list-decimal;
   }
 
@@ -431,7 +436,6 @@
     letter-spacing: normal;
   }
 
-
   /* Text 14px */
   .text-14-light {
     @apply text-sm font-normal lg:text-base wide:text-md;
@@ -476,22 +480,22 @@
 
   /* Text 18px */
   .text-18-light {
-    @apply font-normal text-md lg:text-lg wide:text-xl;
+    @apply text-md font-normal lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 
   .text-18 {
-    @apply font-medium text-md lg:text-lg wide:text-xl;
+    @apply text-md font-medium lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 
   .text-18-semibold {
-    @apply font-semibold text-md lg:text-lg wide:text-xl;
+    @apply text-md font-semibold lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 
   .text-18-bold {
-    @apply font-bold text-md lg:text-lg wide:text-xl;
+    @apply text-md font-bold lg:text-lg wide:text-xl;
     letter-spacing: normal;
   }
 
@@ -581,19 +585,19 @@
 
   /* Text 32px */
   .text-32-light {
-    @apply font-normal text-3xx lg:text-5xl wide:text-6xl;
+    @apply text-3xx font-normal lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32 {
-    @apply font-medium text-3xx lg:text-5xl wide:text-6xl;
+    @apply text-3xx font-medium lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32-semibold {
-    @apply font-semibold text-3xx lg:text-5xl wide:text-6xl;
+    @apply text-3xx font-semibold lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
   .text-32-bold {
-    @apply font-bold text-3xx lg:text-5xl wide:text-6xl;
+    @apply text-3xx font-bold lg:text-5xl wide:text-6xl;
     letter-spacing: normal;
   }
 
@@ -655,7 +659,6 @@
   }
 }
 
-
 /* Override swiper button hidden to hide button instead to fix Carousel when buttonsOutside is enabled */
 .swiper-button-lock {
   display: unset !important;
@@ -666,7 +669,7 @@
 .mapboxgl-map {
   border-radius: 10px;
 }
-.one-line-text{
+.one-line-text {
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;

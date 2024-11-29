@@ -11,7 +11,9 @@ export interface RadioGroupProps extends InputWrapperProps {
   onChange?: (value: OptionValueWithBoolean) => void;
   contentClassName?: string;
   radioClassName?: string;
+  contentRadioClassName?: string;
   variantTextRadio?: TextVariants;
+  classNameRadio?: string;
   labelRadio?: string;
 }
 
@@ -21,7 +23,9 @@ const RadioGroup = ({
   options,
   contentClassName,
   radioClassName,
+  contentRadioClassName,
   variantTextRadio,
+  classNameRadio,
   ...inputWrapperProps
 }: RadioGroupProps) => {
   return (
@@ -30,12 +34,12 @@ const RadioGroup = ({
         {options.map(option => (
           <HeadlessRadioGroup.Option key={option.title} value={option.value}>
             {({ checked }) => (
-              <div className={classNames("rounded-lg border border-neutral-400 px-3 py-2", radioClassName)}>
+              <div className={classNames("rounded-lg border border-neutral-400 px-3 py-2", contentRadioClassName)}>
                 <Radio
                   label={option.title}
                   checked={checked}
                   onChange={() => onChange && onChange(option.value)}
-                  className="flex flex-row-reverse items-center justify-end gap-3 "
+                  className={classNames("flex flex-row-reverse items-center justify-end gap-3 ", classNameRadio)}
                   variantText={variantTextRadio}
                   labelRadio={radioClassName}
                 />

@@ -150,6 +150,7 @@ module.exports = {
       },
       darkCustom: {
         DEFAULT: "#353535",
+        300: "#525866",
         200: "#84959D",
         150: "#5D5D59",
         100: "#637579",
@@ -164,7 +165,10 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
-        100: "#8096D3"
+        500: "#4249E6",
+        100: "#8096D3",
+        60: "#ddddfb",
+        50: "#ededfd"
       },
       grey: {
         100: "#F4F4F4",
@@ -178,6 +182,7 @@ module.exports = {
         740: "#E0E0E0",
         750: "#E6EAEB",
         800: "#E9EDF0",
+        850: "#F0F3FA",
         900: "#F6FAFD",
         950: "#ebebeb",
         1000: "#DFE3E8"
@@ -220,7 +225,14 @@ module.exports = {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       all: "0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 4px rgba(0, 0, 0, 0.06)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
-      none: "0 0 #0000"
+      none: "0 0 #0000",
+      "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
+    },
+    dropShadow: {
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
     },
     fontFamily: {
       primary: ["Inter"],

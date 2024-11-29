@@ -108,12 +108,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
             >
               or
             </p>
-            <p
-              className="max-w-[210px] text-center text-12-light"
-              data-testid="txt"
-            >
-              Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
-            </p>
+            Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
           </div>
         </div>
       </div>
