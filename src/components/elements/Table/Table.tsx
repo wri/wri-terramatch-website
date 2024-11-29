@@ -33,6 +33,8 @@ declare module "@tanstack/react-table" {
     align?: "left" | "center" | "right";
     data?: TData | TValue;
     width?: string;
+    className?: string;
+    style?: React.CSSProperties;
   }
 }
 
@@ -168,10 +170,17 @@ function Table<TData extends RowData>({
 
                             classNames({ "cursor-pointer": header.column.getCanSort() }),
                             classNames({ [variant.thHeaderSort || ""]: !header.column.getCanSort() }),
-                            classNames({ [variant.thHeaderSticky || ""]: isSticky })
+                            classNames({ [variant.thHeaderSticky || ""]: isSticky }),
+                            classNames({
+                              [header.column.columnDef.meta?.className || ""]: header.column.columnDef.meta?.className
+                            })
                           )}
                           align="left"
-                          style={{ width: header.column.columnDef.meta?.width }}
+                          style={
+                            header.column.columnDef.meta?.style
+                              ? header.column.columnDef.meta?.style
+                              : { width: header.column.columnDef.meta?.width }
+                          }
                         >
                           <div
                             className="flex items-center"
