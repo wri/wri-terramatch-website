@@ -52,6 +52,9 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
+const topHeaderFirstTable = window.innerWidth > 1900 ? "108px" : "102px";
+const topHeaderSecondTable = window.innerWidth > 1900 ? "75px" : `70px`;
+
 const tableItemMenu = () => [
   {
     id: "1",
@@ -76,20 +79,24 @@ const tableItemMenu = () => [
 const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
     id: "mainInfo",
-    meta: { style: { top: "70px", borderBottomWidth: 0, borderRightWidth: 0 } },
+    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
     header: "",
     columns: [
-      { accessorKey: "polygonName", header: "Polygon Name", meta: { style: { top: "102px", borderRadius: "0" } } },
+      {
+        accessorKey: "polygonName",
+        header: "Polygon Name",
+        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+      },
       {
         accessorKey: "size",
         header: "Size (ha)",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
-      { accessorKey: "siteName", header: "Site Name", meta: { style: { top: "102px" } } },
+      { accessorKey: "siteName", header: "Site Name", meta: { style: { top: `${topHeaderFirstTable}` } } },
       {
         accessorKey: "status",
         header: "Status",
-        meta: { style: { top: "102px" } },
+        meta: { style: { top: `${topHeaderFirstTable}` } },
         cell: (props: any) => (
           <CustomChipField
             label={props.getValue()}
@@ -106,71 +113,71 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
             Start Date
           </>
         ),
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       }
     ]
   },
   {
     id: "analysis2024",
     header: "Analysis: April 25, 2024",
-    meta: { style: { top: "70px", borderBottomWidth: 0 } },
+    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
     columns: [
       {
         accessorKey: "2024-2015",
         header: "2015",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2016",
         header: "2016",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2017",
         header: "2017",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2018",
         header: "2018",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2019",
         header: "2019",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2020",
         header: "2020",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2021",
         header: "2021",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2022",
         header: "2022",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2023",
         header: "2023",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
         accessorKey: "2024-2024",
         header: "2024",
-        meta: { style: { top: "102px" } }
+        meta: { style: { top: `${topHeaderFirstTable}` } }
       }
     ]
   },
   {
     id: "moreInfo",
     header: " ",
-    meta: { style: { top: "70px", borderBottomWidth: 0 } },
+    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
     columns: [
       {
         accessorKey: "more",
@@ -183,7 +190,7 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
             </div>
           </Menu>
         ),
-        meta: { style: { top: "102px", borderRadius: "0" } }
+        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
       }
     ]
   }
@@ -871,7 +878,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
         </When>
         <When condition={tabActive === 2}>
           <div className="relative h-[calc(100vh-295px)] w-full">
-            <div className="absolute top-6 left-1/2 z-10">
+            <div className="absolute left-1/2 top-6 z-10">
               <TooltipMapMonitoring />
             </div>
             <MapContainer
