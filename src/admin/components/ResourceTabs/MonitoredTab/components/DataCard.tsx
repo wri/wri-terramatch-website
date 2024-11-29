@@ -828,7 +828,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               </div>
             </div>
             <When condition={selected.includes("1")}>
-              <img src="/images/monitoring-graph-1.png" alt="" className="w-[73%] object-contain" />
+              <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
             </When>
             <When condition={selected.includes("2") || selected.includes("2")}>
               <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
@@ -857,7 +857,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               mapFunctions={mapFunctions}
               sitePolygonData={[]}
               hasControls={!selected.includes("6")}
-              showLegend
+              showLegend={!selected.includes("6")}
               legendPosition="bottom-right"
               showViewGallery={false}
             />
