@@ -28,7 +28,7 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
   const openTooltip = (e: React.MouseEvent<HTMLDivElement>, item: dataProps) => {
     setStatusHover(item.status);
     setIsHover(true);
-    setPosition({ top: e.pageY - 65, left: e.pageX });
+    setPosition({ top: e.pageY - 70, left: e.pageX });
   };
 
   const exitTooltip = () => {
