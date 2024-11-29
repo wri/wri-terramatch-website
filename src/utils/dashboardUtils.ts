@@ -26,24 +26,6 @@ type Objetive = {
   landTenure: string;
 };
 
-type File = {
-  collection_name: string;
-  created_at: string;
-  description: string | null;
-  file_name: string;
-  is_cover: boolean;
-  is_public: boolean;
-  lat: number;
-  lng: number;
-  mime_type: string;
-  photographer: string | null;
-  size: number;
-  thumb_url: string;
-  title: string;
-  url: string;
-  uuid: string;
-};
-
 export interface ChartDataItem {
   name: string;
   [key: string]: number | string;
@@ -430,10 +412,4 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
     default:
       return false;
   }
-};
-
-export const getCoverFileUrl = (files: File[]): string | null => {
-  if (!files) return "/images/_AJL2963.jpg";
-  const coverFile = files.find(file => file.is_cover === true);
-  return coverFile ? coverFile.url : null;
 };
