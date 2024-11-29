@@ -75,17 +75,20 @@ const tableItemMenu = () => [
 const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
     id: "mainInfo",
+    meta: { style: { top: "70px", borderBottomWidth: 0, borderRightWidth: 0 } },
     header: "",
     columns: [
-      { accessorKey: "polygonName", header: "Polygon Name" },
+      { accessorKey: "polygonName", header: "Polygon Name", meta: { style: { top: "102px", borderRadius: "0" } } },
       {
         accessorKey: "size",
-        header: "Size (ha)"
+        header: "Size (ha)",
+        meta: { style: { top: "102px" } }
       },
-      { accessorKey: "siteName", header: "Site Name" },
+      { accessorKey: "siteName", header: "Site Name", meta: { style: { top: "102px" } } },
       {
         accessorKey: "status",
         header: "Status",
+        meta: { style: { top: "102px" } },
         cell: (props: any) => (
           <CustomChipField
             label={props.getValue()}
@@ -101,59 +104,72 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
             <br />
             Start Date
           </>
-        )
+        ),
+        meta: { style: { top: "102px" } }
       }
     ]
   },
   {
     id: "analysis2024",
     header: "Analysis: April 25, 2024",
+    meta: { style: { top: "70px", borderBottomWidth: 0 } },
     columns: [
       {
         accessorKey: "2024-2015",
-        header: "2015"
+        header: "2015",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2016",
-        header: "2016"
+        header: "2016",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2017",
-        header: "2017"
+        header: "2017",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2018",
-        header: "2018"
+        header: "2018",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2019",
-        header: "2019"
+        header: "2019",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2020",
-        header: "2020"
+        header: "2020",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2021",
-        header: "2021"
+        header: "2021",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2022",
-        header: "2022"
+        header: "2022",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2023",
-        header: "2023"
+        header: "2023",
+        meta: { style: { top: "102px" } }
       },
       {
         accessorKey: "2024-2024",
-        header: "2024"
+        header: "2024",
+        meta: { style: { top: "102px" } }
       }
     ]
   },
   {
     id: "moreInfo",
-    header: "",
+    header: " ",
+    meta: { style: { top: "70px", borderBottomWidth: 0 } },
     columns: [
       {
         accessorKey: "more",
@@ -165,7 +181,8 @@ const TABLE_COLUMNS: ColumnDef<RowData>[] = [
               <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
             </div>
           </Menu>
-        )
+        ),
+        meta: { style: { top: "102px", borderRadius: "0" } }
       }
     ]
   }
@@ -711,7 +728,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   const noDataMap = (
     <div className="absolute top-0 flex h-full w-full">
       <div className="relative flex w-[23vw] flex-col gap-3 p-6">
-        <div className="absolute top-0 left-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
+        <div className="absolute left-0 top-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
         <Text
           variant={"text-14-semibold"}
           className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
@@ -729,7 +746,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
       </div>
       <div className="w-full p-6">
         <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-          <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
+          <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
           <Text variant={"text-32-semibold"} className="z-10 text-white">
             No Data to Display
           </Text>
@@ -747,9 +764,9 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   );
 
   return (
-    <div className="-mr-4 h-[calc(100vh-200px)] overflow-auto pr-4">
-      <div {...rest} className="rounded-lg border border-grey-850 bg-white shadow-monitored">
-        <div className="sticky top-0 z-[10] flex items-center justify-between bg-white px-6 pb-3 pt-6">
+    <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
+      <div className="sticky top-[0px] z-[10] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
+        <div className="sticky top-[0px] z-[10] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
           <div className="flex items-center gap-2">
             <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
             <Dropdown
@@ -786,6 +803,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
                   variant={VARIANT_TABLE_MONITORED}
                   classNameWrapper="!overflow-visible"
                   visibleRows={50}
+                  border={1}
                 />
               </Then>
               <Else>
@@ -811,7 +829,7 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
               defaultValue={["1"]}
               onChange={() => {}}
             />
-            <div className="sticky top-[77px] flex h-[calc(100vh-305px)] w-1/4 min-w-[25%] flex-col gap-3">
+            <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
               <Text
                 variant={"text-14-semibold"}
                 className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"

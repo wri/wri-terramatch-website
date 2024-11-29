@@ -227,8 +227,12 @@ module.exports = {
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
       none: "0 0 #0000",
       "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
-      monitored: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-      "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px"
+      monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
+    },
+    dropShadow: {
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
     },
     fontFamily: {
       primary: ["Inter"],

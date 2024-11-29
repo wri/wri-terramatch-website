@@ -48,6 +48,8 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         </Text>
         <div className="mb-8 flex flex-col gap-4">
           <Input
+            type="text"
+            name="projectName"
             placeholder="Project Name"
             label="Project Name"
             variant="default"
