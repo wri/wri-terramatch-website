@@ -40,6 +40,10 @@ export const ORGANIZATIONS_TYPES = {
 
 export const NO_DATA_INFORMATION = "No data available";
 
+export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+
+export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
+
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",
