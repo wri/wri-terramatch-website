@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useEffect } from "react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -19,7 +19,6 @@ import {
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
-  getCoverFileUrl,
   getFrameworkName,
   parseDataToObjetive,
   parseHectaresUnderRestorationData
@@ -74,6 +73,7 @@ const Dashboard = () => {
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
     dashboardProjectDetails,
+    isLoadingProjectDetails = false,
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
@@ -320,11 +320,20 @@ const Dashboard = () => {
           <When condition={filters.uuid}>
             <PageCard className="border-0 px-4 py-6" gap={8}>
               <div className="flex items-center">
-                <img
-                  src={getCoverFileUrl(dashboardProjectDetails?.data?.file) ?? "/images/_AJL2963.jpg"}
-                  alt="tree"
-                  className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
-                />
+                <If condition={isLoadingProjectDetails}>
+                  <Then>
+                    <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
+                      <Text variant="text-20-bold">{t("Loading...")}</Text>
+                    </div>
+                  </Then>
+                  <Else>
+                    <img
+                      src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
+                      alt="tree"
+                      className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
+                    />
+                  </Else>
+                </If>
                 <div>
                   <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
                   <Text variant="text-14-light" className="text-darkCustom">
