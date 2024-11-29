@@ -56,7 +56,7 @@ const Toggle = (props: ToggleProps) => {
           transform: `translateX(calc(${buttonRefs.current[activeIndex]?.offsetLeft || 0}px - 4px))`
         }}
       />
-      {items.map((tab, index) => (
+      {items.map((tab: TogglePropsItem, index) => (
         <button
           key={tab.key}
           ref={el => (buttonRefs.current[index] = el)}
