@@ -18,6 +18,7 @@ import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inp
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
+import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED } from "@/constants/dashboardConsts";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
@@ -870,6 +871,9 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
         </When>
         <When condition={tabActive === 2}>
           <div className="relative h-[400px] w-full">
+            <div className="absolute top-6 left-1/2 z-10">
+              <TooltipMapMonitoring />
+            </div>
             <MapContainer
               className="h-full"
               mapFunctions={mapFunctions}
