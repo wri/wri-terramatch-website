@@ -90,7 +90,7 @@ graphs and tables below by clicking update analysis button to your right. "
                 Analyzed:
               </Text>
               <Icon name={IconNames.IC_LOADING} className="h-4 w-4 text-success-600" />
-              <Text as="span" variant="text-12-bold" className="flex gap-1 text-darkCustom-300">
+              <Text as="span" variant="text-12-bold" className="flex items-center gap-1 text-darkCustom-300">
                 Baseline
                 <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
               </Text>
