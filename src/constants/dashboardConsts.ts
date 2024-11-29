@@ -38,7 +38,7 @@ export const ORGANIZATIONS_TYPES = {
   "for-profit-organization": "Enterprise"
 };
 
-export const NO_DATA_INFORMATION = "No data available";
+export const NO_DATA_INFORMATION = "No data available. You may not have permission to view the project profile.";
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
