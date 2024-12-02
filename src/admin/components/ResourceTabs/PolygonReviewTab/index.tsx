@@ -12,6 +12,7 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
+  countStatuses,
   downloadSiteGeoJsonPolygons,
   parsePolygonData,
   storePolygon
@@ -188,26 +189,6 @@ const PolygonReviewTab: FC<IProps> = props => {
       .join(", ");
   };
 
-  const dataPolygonOverview = [
-    {
-      status: "Draft",
-      count: 12.5,
-      color: "bg-grey-200"
-    },
-    {
-      status: "Submitted",
-      count: 42.5
-    },
-    {
-      status: "Needs Info",
-      count: 22.5
-    },
-    {
-      status: "Approved",
-      count: 22.5
-    }
-  ];
-
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
     "polygon-name": data.poly_name ?? `Unnamed Polygon`,
     "restoration-practice": parseText(data.practice ?? ""),
@@ -227,6 +208,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   }));
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
+
+  const dataPolygonOverview = countStatuses(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -614,7 +597,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
                     <Text variant="text-14-bold" className="text-black">
-                      Needs More Info
+                      {record?.readable_status}
                     </Text>
                   </div>
                   <div className="w-full">

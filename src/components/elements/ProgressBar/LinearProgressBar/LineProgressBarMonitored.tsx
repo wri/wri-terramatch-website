@@ -15,8 +15,11 @@ export interface LinearProgressBarMonitoredProps {
 
 const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) => {
   const [statusHover, setStatusHover] = useState<string>("");
+  const [tooltipValue, setTooltipValue] = useState<string>("");
   const [isHover, setIsHover] = useState<boolean>(false);
   const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  const totalCount = data.reduce((sum, item) => sum + item.count, 0);
 
   const colorBg: { [key: string]: string } = {
     Draft: "bg-neutral-500 hover:shadow-[#E3E3E3]",
@@ -26,6 +29,9 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
   };
 
   const openTooltip = (e: React.MouseEvent<HTMLDivElement>, item: dataProps) => {
+    const percentage = totalCount > 0 ? ((item.count / totalCount) * 100).toFixed(0) : "0";
+    const value = `${percentage}% (${item.count} Polygons)`;
+    setTooltipValue(value);
     setStatusHover(item.status);
     setIsHover(true);
     setPosition({ top: e.pageY - 70, left: e.pageX });
@@ -45,10 +51,10 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
             : { display: "none" }
         }
       >
-        <TooltipLineProgressBarMonitored value={"30% (60 Polygons)"} label={statusHover} />
+        <TooltipLineProgressBarMonitored value={tooltipValue} label={statusHover} />
       </div>
       {data.map((item, index) => (
-        <div key={index} style={{ width: `${item.count}%` }}>
+        <div key={index} style={{ width: totalCount > 0 ? `${(item.count / totalCount) * 100}%` : "0%" }}>
           <div
             className={classNames(
               "h-[6px] w-full cursor-pointer rounded-sm hover:shadow-item-monitored lg:h-[8px] wide:h-[10px]",
