@@ -165,7 +165,7 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -201,7 +201,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap(isDashboard);
+    initMap();
     return () => {
       if (map.current) {
         setStyleLoaded(false);
