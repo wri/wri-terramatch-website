@@ -124,7 +124,6 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
-  abortProcessPolygons?: boolean;
   setAlertTitle?: (value: string) => void;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
@@ -164,7 +163,6 @@ export const MapContainer = ({
   showImagesButton,
   setIsLoadingDelayedJob,
   isLoadingDelayedJob,
-  abortProcessPolygons,
   setAlertTitle,
   showViewGallery = true,
   legendPosition,
@@ -579,7 +577,6 @@ export const MapContainer = ({
               polygonCheck={!siteData}
               setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
               isLoadingDelayedJob={isLoadingDelayedJob!}
-              abortProcessPolygons={abortProcessPolygons!}
               setAlertTitle={setAlertTitle!}
             />
           </ControlGroup>

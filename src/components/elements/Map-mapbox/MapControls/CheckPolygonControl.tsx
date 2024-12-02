@@ -35,7 +35,6 @@ export interface CheckSitePolygonProps {
   polygonCheck: boolean;
   setIsLoadingDelayedJob?: (isLoading: boolean) => void;
   isLoadingDelayedJob?: boolean;
-  abortProcessPolygons?: boolean;
   setAlertTitle?: (value: string) => void;
 }
 
@@ -55,8 +54,7 @@ interface TransformedData {
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, abortProcessPolygons, setAlertTitle } =
-    props;
+  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
@@ -106,7 +104,19 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      if (ApiSlice.apiDataStore.abort_delayed_job) {
+        displayNotification(
+          t("The Check Polygons processing was cancelled."),
+          "warning",
+          t("You can try again later.")
+        );
+
+        ApiSlice.abortDelayedJob(false);
+        ApiSlice.addTotalContent(0);
+        ApiSlice.addProgressContent(0);
+      } else {
+        displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      }
     }
   });
 
@@ -134,8 +144,15 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      Log.error("Error clipping polygons:", error);
-      displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+      if (ApiSlice.apiDataStore.abort_delayed_job) {
+        displayNotification(t("The Fix Polygons processing was cancelled."), "warning", t("You can try again later."));
+        ApiSlice.abortDelayedJob(false);
+        ApiSlice.addTotalContent(0);
+        ApiSlice.addProgressContent(0);
+      } else {
+        Log.error("Error clipping polygons:", error);
+        displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+      }
       hideLoader();
       setIsLoadingDelayedJob?.(false);
     }
@@ -235,12 +252,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
-
-  useEffect(() => {
-    if (abortProcessPolygons) {
-      console.log("abortProcessPolygons");
-    }
-  }, [abortProcessPolygons]);
 
   return (
     <div className="grid gap-2">

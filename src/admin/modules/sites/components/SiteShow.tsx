@@ -16,7 +16,6 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 
 const SiteShow: FC = () => {
   const [isLoadingDelayedJob, setIsLoadingDelayedJob] = useState(false);
-  const [abortProcessPolygons, setAbortProcessPolygons] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
 
   return (
@@ -35,7 +34,6 @@ const SiteShow: FC = () => {
                 type={"sites"}
                 setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
                 isLoadingDelayedJob={isLoadingDelayedJob!}
-                abortProcessPolygons={abortProcessPolygons!}
                 setAlertTitle={setAlertTitle!}
               />
             </MapAreaProvider>
@@ -50,7 +48,7 @@ const SiteShow: FC = () => {
       <DelayedJobsProgressAlert
         show={isLoadingDelayedJob}
         title={alertTitle}
-        onCancel={() => setAbortProcessPolygons(true)}
+        setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
       />
     </Show>
   );

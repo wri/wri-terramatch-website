@@ -63,7 +63,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label: string;
   setIsLoadingDelayedJob?: (isLoading: boolean) => void;
   isLoadingDelayedJob?: boolean;
-  abortProcessPolygons?: boolean;
   setAlertTitle?: (value: string) => void;
 }
 export interface IPolygonItem {
@@ -662,7 +661,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                 modelFilesData={modelFilesData?.data}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}
-                abortProcessPolygons={props.abortProcessPolygons}
                 setAlertTitle={props.setAlertTitle}
               />
               <div className="mb-6">

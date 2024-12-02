@@ -199,7 +199,7 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
       ApiSlice.addProgressContent(processed_content);
     }
 
-    if (signal?.aborted) throw new Error("Aborted");
+    if (signal?.aborted || ApiSlice.apiDataStore.abort_delayed_job) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }
 

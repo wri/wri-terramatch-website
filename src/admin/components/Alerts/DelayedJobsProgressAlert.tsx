@@ -2,6 +2,7 @@ import { Alert, AlertTitle, CircularProgress } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useStore } from "react-redux";
 
+import ApiSlice from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 
 type DelayedJobsProgressAlertProps = {
@@ -9,9 +10,15 @@ type DelayedJobsProgressAlertProps = {
   title?: string;
   message?: string;
   onCancel?: () => void;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
 };
 
-const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({ show, title, message, onCancel }) => {
+const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({
+  show,
+  title,
+  message,
+  setIsLoadingDelayedJob
+}) => {
   const [delayedJobProcessing, setDelayedJobProcessing] = useState<number>(0);
   const [delayedJobTotal, setDalayedJobTotal] = useState<number>(0);
 
@@ -35,6 +42,15 @@ const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({ show, tit
     };
   }, [show]);
 
+  const abortDelayedJob = () => {
+    ApiSlice.abortDelayedJob(true);
+    ApiSlice.addTotalContent(0);
+    ApiSlice.addProgressContent(0);
+    setDelayedJobProcessing(0);
+    setDalayedJobTotal(0);
+    setIsLoadingDelayedJob?.(false);
+  };
+
   if (!show) return null;
 
   const calculatedProgress = delayedJobTotal! > 0 ? Math.round((delayedJobProcessing! / delayedJobTotal!) * 100) : 0;
@@ -47,14 +63,12 @@ const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({ show, tit
         severity={severity}
         icon={<CircularProgress size={18} color="inherit" />}
         action={
-          onCancel && (
-            <button
-              onClick={onCancel}
-              className="bg-red-500 hover:bg-red-600 ml-2 rounded px-2 py-1 text-sm font-medium"
-            >
-              Cancel
-            </button>
-          )
+          <button
+            onClick={abortDelayedJob}
+            className="hover:bg-red-300 ml-2 rounded px-2 py-1 text-sm font-medium text-red-200"
+          >
+            Cancel
+          </button>
         }
       >
         <AlertTitle>{title}</AlertTitle>
