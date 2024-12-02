@@ -24,6 +24,7 @@ import Log from "@/utils/log";
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
+import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
 type EditPolygon = {
@@ -760,7 +761,15 @@ export const addLayerStyle = (
   moveDeleteLayers(map);
 };
 
-export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
+export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) => {
+  if (currentStyle === MapStyle.Street) {
+    map.setProjection("mercator");
+  } else if (currentStyle === MapStyle.Satellite) {
+    map.setProjection("globe");
+  }
+};
+
+export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, currentStyle = MapStyle.Satellite) => {
   if (map && bbox) {
     map.fitBounds(bbox, {
       padding: hasControls ? 100 : 30,
