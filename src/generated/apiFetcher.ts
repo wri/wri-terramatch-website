@@ -193,10 +193,11 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult = await loadJob(signal, delayedJobId)
   ) {
     //@ts-ignore
-    const { total_content, processed_content } = jobResult.data?.attributes;
+    const { total_content, processed_content, proccess_message } = jobResult.data?.attributes;
     if (total_content != null) {
       ApiSlice.addTotalContent(total_content);
       ApiSlice.addProgressContent(processed_content);
+      ApiSlice.addProgressMessage(proccess_message);
     }
 
     if (signal?.aborted || ApiSlice.apiDataStore.abort_delayed_job) throw new Error("Aborted");

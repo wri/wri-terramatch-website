@@ -99,6 +99,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       setIsLoadingDelayedJob?.(false);
       ApiSlice.addTotalContent(0);
       ApiSlice.addProgressContent(0);
+      ApiSlice.addProgressMessage("");
     },
     onError: () => {
       hideLoader();
@@ -114,6 +115,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         ApiSlice.abortDelayedJob(false);
         ApiSlice.addTotalContent(0);
         ApiSlice.addProgressContent(0);
+        ApiSlice.addProgressMessage("");
       } else {
         displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
       }
@@ -149,6 +151,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         ApiSlice.abortDelayedJob(false);
         ApiSlice.addTotalContent(0);
         ApiSlice.addProgressContent(0);
+        ApiSlice.addProgressMessage("");
       } else {
         Log.error("Error clipping polygons:", error);
         displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));

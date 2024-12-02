@@ -126,6 +126,7 @@ const ProcessBulkPolygonsControl = ({
                   setIsLoadingDelayedJob?.(false);
                   ApiSlice.addTotalContent(0);
                   ApiSlice.addProgressContent(0);
+                  ApiSlice.addProgressMessage("");
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -149,6 +150,7 @@ const ProcessBulkPolygonsControl = ({
                     ApiSlice.abortDelayedJob(false);
                     ApiSlice.addTotalContent(0);
                     ApiSlice.addProgressContent(0);
+                    ApiSlice.addProgressMessage("");
                   } else {
                     openNotification("error", t("Error!"), t("Failed to fix polygons"));
                   }
@@ -182,6 +184,7 @@ const ProcessBulkPolygonsControl = ({
           setIsLoadingDelayedJob?.(false);
           ApiSlice.addTotalContent(0);
           ApiSlice.addProgressContent(0);
+          ApiSlice.addProgressMessage("");
         },
         onError: () => {
           hideLoader();
@@ -195,6 +198,7 @@ const ProcessBulkPolygonsControl = ({
             ApiSlice.abortDelayedJob(false);
             ApiSlice.addTotalContent(0);
             ApiSlice.addProgressContent(0);
+            ApiSlice.addProgressMessage("");
           } else {
             openNotification("error", t("Error!"), t("Failed to check polygons"));
           }

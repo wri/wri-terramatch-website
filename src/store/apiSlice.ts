@@ -83,6 +83,7 @@ export type ApiDataStore = ApiResources & {
   };
   total_content: number;
   processed_content: number;
+  proccess_message: string;
   abort_delayed_job: boolean;
 };
 
@@ -100,6 +101,7 @@ export const INITIAL_STATE = {
   },
   total_content: 0,
   processed_content: 0,
+  proccess_message: "",
   abort_delayed_job: false
 } as ApiDataStore;
 
@@ -202,6 +204,10 @@ export const apiSlice = createSlice({
 
     setAbortDelayedJob: (state, action: PayloadAction<boolean>) => {
       state.abort_delayed_job = action.payload;
+    },
+
+    setProccessMessage: (state, action: PayloadAction<string>) => {
+      state.proccess_message = action.payload;
     }
   },
 
@@ -232,6 +238,7 @@ export const apiSlice = createSlice({
 
       state.total_content = payloadState.total_content ?? state.total_content;
       state.processed_content = payloadState.processed_content ?? state.processed_content;
+      state.proccess_message = payloadState.proccess_message ?? state.proccess_message;
       state.abort_delayed_job = payloadState.abort_delayed_job ?? state.abort_delayed_job;
     });
   }
@@ -290,6 +297,10 @@ export default class ApiSlice {
 
   static addProgressContent(processed_content: number) {
     this.redux.dispatch(apiSlice.actions.setProgressContent(processed_content));
+  }
+
+  static addProgressMessage(proccess_message: string) {
+    this.redux.dispatch(apiSlice.actions.setProccessMessage(proccess_message));
   }
 
   static abortDelayedJob(abort_delayed_job: boolean) {

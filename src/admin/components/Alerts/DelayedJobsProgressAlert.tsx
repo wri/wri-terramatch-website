@@ -8,28 +8,25 @@ import { AppStore } from "@/store/store";
 type DelayedJobsProgressAlertProps = {
   show: boolean;
   title?: string;
-  message?: string;
-  onCancel?: () => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
 };
 
-const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({
-  show,
-  title,
-  message,
-  setIsLoadingDelayedJob
-}) => {
+const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({ show, title, setIsLoadingDelayedJob }) => {
   const [delayedJobProcessing, setDelayedJobProcessing] = useState<number>(0);
   const [delayedJobTotal, setDalayedJobTotal] = useState<number>(0);
+  const [proccessMessage, setProccessMessage] = useState<string>("Running 0 out of 0 polygons (0%)");
 
   const store = useStore<AppStore>();
   useEffect(() => {
     let intervalId: any;
     if (show) {
       intervalId = setInterval(() => {
-        const { total_content, processed_content } = store.getState().api;
+        const { total_content, processed_content, proccess_message } = store.getState().api;
         setDalayedJobTotal(total_content);
         setDelayedJobProcessing(processed_content);
+        if (proccess_message != "") {
+          setProccessMessage(proccess_message);
+        }
       }, 1000);
     }
 
@@ -37,6 +34,7 @@ const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({
       if (intervalId) {
         setDelayedJobProcessing(0);
         setDalayedJobTotal(0);
+        setProccessMessage("Running 0 out of 0 polygons (0%)");
         clearInterval(intervalId);
       }
     };
@@ -46,6 +44,7 @@ const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({
     ApiSlice.abortDelayedJob(true);
     ApiSlice.addTotalContent(0);
     ApiSlice.addProgressContent(0);
+    ApiSlice.addProgressMessage("Running 0 out of 0 polygons (0%)");
     setDelayedJobProcessing(0);
     setDalayedJobTotal(0);
     setIsLoadingDelayedJob?.(false);
@@ -72,7 +71,7 @@ const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({
         }
       >
         <AlertTitle>{title}</AlertTitle>
-        {message || `Polygons processed: ${delayedJobProcessing} out of ${delayedJobTotal} (${calculatedProgress}%)`}
+        {proccessMessage ?? "Running 0 out of 0 polygons (0%)"}
       </Alert>
     </div>
   );
