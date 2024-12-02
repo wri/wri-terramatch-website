@@ -6,6 +6,8 @@ import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/Con
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 
+import { updateMapProjection } from "../utils";
+
 export const StyleControl = ({
   map,
   currentStyle,
@@ -20,6 +22,7 @@ export const StyleControl = ({
   const setMapStyle = (style: MapStyle) => {
     if (map && currentStyle !== style) {
       map.setStyle(style);
+      updateMapProjection(map, style);
       setCurrentStyle(style);
     }
   };
