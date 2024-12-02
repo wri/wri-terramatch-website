@@ -14,3 +14,5 @@ jobs:
         run: yarn
       - name: Test
         run: yarn run jest --ci
+      - name: Build
+        run: NEXT_PUBLIC_TARGET_ENV=staging yarn build
