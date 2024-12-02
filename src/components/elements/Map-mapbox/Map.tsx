@@ -122,6 +122,9 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   setLoader?: (value: boolean) => void;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
 }
@@ -158,6 +161,9 @@ export const MapContainer = ({
   centroids,
   listViewProjects,
   showImagesButton,
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle,
   showViewGallery = true,
   legendPosition,
   ...props
@@ -548,7 +554,12 @@ export const MapContainer = ({
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-            <ProcessBulkPolygonsControl entityData={record} />
+            <ProcessBulkPolygonsControl
+              entityData={record}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
+              setAlertTitle={setAlertTitle!}
+            />
           </ControlGroup>
         </When>
         <When condition={isDashboard !== "dashboard"}>
@@ -561,7 +572,13 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+            <CheckPolygonControl
+              siteRecord={record}
+              polygonCheck={!siteData}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
+              setAlertTitle={setAlertTitle!}
+            />
           </ControlGroup>
         </When>
         <When condition={formMap}>

@@ -4,6 +4,7 @@ import FormData from "form-data";
 import Log from "@/utils/log";
 import { resolveUrl as resolveV3Url } from "./v3/utils";
 import { apiBaseUrl } from "@/constants/environment";
+import ApiSlice from "@/store/apiSlice";
 
 const baseUrl = `${apiBaseUrl}/api`;
 
@@ -191,7 +192,15 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult.data?.attributes?.status === "pending";
     jobResult = await loadJob(signal, delayedJobId)
   ) {
-    if (signal?.aborted) throw new Error("Aborted");
+    //@ts-ignore
+    const { total_content, processed_content, proccess_message } = jobResult.data?.attributes;
+    if (total_content != null) {
+      ApiSlice.addTotalContent(total_content);
+      ApiSlice.addProgressContent(processed_content);
+      ApiSlice.addProgressMessage(proccess_message);
+    }
+
+    if (signal?.aborted || ApiSlice.apiDataStore.abort_delayed_job) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }
 
