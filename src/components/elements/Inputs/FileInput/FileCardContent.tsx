@@ -64,7 +64,7 @@ export const FileCardContent = ({
             className={classNames(errorMessage && "text-error first-letter:capitalize", variant.subTitleClassName)}
             title={errorMessage || subtitle}
           >
-            {errorMessage || subtitle}
+            {errorMessage?.replace(/,?\s*bin\b/g, "") || subtitle}
           </Text>
         </When>
         <When condition={showPrivateCheckbox}>

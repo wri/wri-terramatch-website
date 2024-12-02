@@ -123,8 +123,10 @@ export const useDashboardData = (filters: any) => {
     }
   );
 
-  const filteredProjects = activeProjects?.data?.filter((project: { name: string | null }) =>
-    project?.name?.toLowerCase().includes(searchTerm?.toLowerCase())
+  const filteredProjects = activeProjects?.data?.filter(
+    (project: { name: string | null; organisation: string | null }) =>
+      project?.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      project?.organisation?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =

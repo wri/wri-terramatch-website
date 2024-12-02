@@ -37,6 +37,7 @@ import SiteReportShow from "./siteReports/components/SiteReportShow";
 import { SiteReportsList } from "./siteReports/components/SiteReportsList";
 import SiteShow from "./sites/components/SiteShow";
 import { SitesList } from "./sites/components/SitesList";
+import UserCreate from "./user/components/UserCreate";
 import UserEdit from "./user/components/UserEdit";
 import { UserList } from "./user/components/UserList";
 import { UserShow } from "./user/components/UserShow";
@@ -45,7 +46,8 @@ const user = {
   ResourceName: "user",
   List: UserList,
   Show: UserShow,
-  Edit: UserEdit
+  Edit: UserEdit,
+  Create: UserCreate
 };
 
 const organisation = {

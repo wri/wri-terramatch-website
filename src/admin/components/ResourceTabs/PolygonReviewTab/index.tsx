@@ -40,8 +40,7 @@ import {
   fetchPutV2SitePolygonStatusBulk,
   GetV2MODELUUIDFilesResponse,
   useGetV2MODELUUIDFiles,
-  useGetV2SitesSiteBbox,
-  useGetV2SitesSitePolygon
+  useGetV2SitesSiteBbox
 } from "@/generated/apiComponents";
 import {
   PolygonBboxResponse,
@@ -49,6 +48,7 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
+import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -142,7 +142,15 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { showLoader, hideLoader } = useLoading();
-  const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
+  const {
+    setSelectedPolygonsInCheckbox,
+    setPolygonCriteriaMap,
+    setPolygonData,
+    polygonCriteriaMap: polygonsCriteriaData,
+    polygonData: polygonList,
+    shouldRefetchValidation,
+    setShouldRefetchValidation
+  } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const t = useT();
@@ -153,11 +161,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
-    pathParams: {
-      site: record.uuid
-    }
-  });
+  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSite(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -269,6 +273,16 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [errorMessage]);
 
+  useEffect(() => {
+    setPolygonCriteriaMap(polygonCriteriaMap);
+    setPolygonData(sitePolygonData);
+  }, [loading]);
+  useEffect(() => {
+    if (shouldRefetchValidation) {
+      refetch();
+      setShouldRefetchValidation(false);
+    }
+  }, [shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
     showLoader();
@@ -483,6 +497,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "white-page-admin",
           onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
         }}
+        polygonsCriteriaData={polygonsCriteriaData}
+        polygonList={polygonList}
       />
     );
   };

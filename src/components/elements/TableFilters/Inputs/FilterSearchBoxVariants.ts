@@ -19,5 +19,6 @@ export const FILTER_SEARCH_BOX_AIRTABLE = {
   container: "flex items-center gap-2 rounded-lg py-2 px-3 z-10 relative",
   icon: IconNames.SEARCH_PA,
   iconClassName: "w-5 h-5 text-white",
-  input: "text-14-light w-full p-0 border-0 placeholder:text-white focus:ring-0 bg-transparent text-white"
+  input:
+    "text-14-light w-full p-0 border-0 placeholder:text-white focus:ring-0 bg-transparent text-white input-dashboard"
 };

@@ -48,6 +48,10 @@ type MapAreaType = {
   setPreviewVersion: (value: boolean) => void;
   statusSelectedPolygon: string;
   setStatusSelectedPolygon: (value: string) => void;
+  polygonCriteriaMap: any;
+  setPolygonCriteriaMap: (value: any) => void;
+  polygonData: any[];
+  setPolygonData: (value: any[]) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -88,7 +92,11 @@ const defaultValue: MapAreaType = {
   previewVersion: false,
   setPreviewVersion: () => {},
   statusSelectedPolygon: "",
-  setStatusSelectedPolygon: () => {}
+  setStatusSelectedPolygon: () => {},
+  polygonCriteriaMap: {},
+  setPolygonCriteriaMap: () => {},
+  polygonData: [],
+  setPolygonData: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -108,6 +116,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
+  const [polygonData, setPolygonData] = useState<any[]>([]);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -173,7 +183,11 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     previewVersion,
     setPreviewVersion,
     setStatusSelectedPolygon,
-    statusSelectedPolygon
+    statusSelectedPolygon,
+    polygonCriteriaMap,
+    setPolygonCriteriaMap,
+    polygonData,
+    setPolygonData
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

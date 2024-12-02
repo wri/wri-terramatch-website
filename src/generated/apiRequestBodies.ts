@@ -8,6 +8,11 @@ export type PutV2AdminUpdateRequestsUuidStatusBody = {
   feedback_fields?: string[];
 };
 
+export type PatchAuthChangeBody = {
+  token?: string;
+  password?: string;
+};
+
 export type V2PostOrganisationsApproveUserBody = {
   organisation_uuid: string;
   user_uuid: string;
@@ -15,6 +20,11 @@ export type V2PostOrganisationsApproveUserBody = {
 
 export type PatchV2AuthVerifyBody = {
   token?: string;
+};
+
+export type PostAuthResetBody = {
+  email_address?: string;
+  callback_url?: string;
 };
 
 export type Body = {

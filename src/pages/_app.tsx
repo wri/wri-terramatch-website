@@ -16,6 +16,7 @@ import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
 import { loadLogin } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
+import * as environment from "@/constants/environment";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
 import NavbarProvider from "@/context/navbar.provider";
@@ -28,6 +29,11 @@ import { apiSlice } from "@/store/apiSlice";
 import { wrapper } from "@/store/store";
 import Log from "@/utils/log";
 import setupYup from "@/yup.locale";
+
+if (typeof window !== "undefined") {
+  // Make some things available to the browser console for easy debugging.
+  (window as any).terramatch = { environment };
+}
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
 

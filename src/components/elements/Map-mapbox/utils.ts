@@ -6,6 +6,7 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
@@ -24,9 +25,6 @@ import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { getPulsingDot } from "./pulsing.dot";
-
-const GEOSERVER = process.env.NEXT_PUBLIC_GEOSERVER_URL;
-const WORKSPACE = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE;
 
 type EditPolygon = {
   isOpen: boolean;
@@ -404,17 +402,18 @@ export const addSourcesToLayers = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
-  zoomFilter?: number | undefined
+  zoomFilter?: number | undefined,
+  isDashboard?: string | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
       if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
         addSourceToLayer(layer, map, polygonsData, zoomFilter);
       }
-      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
         addSourceToLayer(layer, map, undefined);
       }
-      if (layer.name === LAYERS_NAMES.CENTROIDS) {
+      if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });
@@ -520,8 +519,8 @@ export const addPopupToLayer = (
 };
 
 const getGeoserverURL = (layerName: string) => {
-  return `${GEOSERVER}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${WORKSPACE}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+  return `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
+      &VERSION=1.0.0&LAYER=${geoserverWorkspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
 export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   const { name, styles } = layer;

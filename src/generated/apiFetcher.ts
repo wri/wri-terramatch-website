@@ -3,8 +3,9 @@ import { ApiContext } from "./apiContext";
 import FormData from "form-data";
 import Log from "@/utils/log";
 import { resolveUrl as resolveV3Url } from "./v3/utils";
+import { apiBaseUrl } from "@/constants/environment";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL + "/api";
+const baseUrl = `${apiBaseUrl}/api`;
 
 export type ErrorWrapper<TError> =
   | TError
@@ -135,7 +136,7 @@ type JobResult = {
   };
 };
 
-async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): Promise<JobResult> {
+async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries = 3): Promise<JobResult> {
   let response, error;
   try {
     const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -144,6 +145,16 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string): P
 
     const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
     response = await fetch(url, { signal, headers });
+
+    // Retry logic for handling 502 Bad Gateway errors
+    // When requesting the job status from the server, a 502 Bad Gateway error may occur. This error should be temporary,
+    // retrying the request after a short delay might return the correct response.
+    // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
+    if (response.status === 502 && retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+      return loadJob(signal, delayedJobId, retries - 1); // Retry
+    }
+
     if (!response.ok) {
       try {
         error = {

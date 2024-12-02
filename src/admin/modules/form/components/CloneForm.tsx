@@ -7,11 +7,11 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import Input from "@/components/elements/Inputs/Input/Input";
+import { apiBaseUrl } from "@/constants/environment";
 import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
 
 export const CloneForm = () => {
   const record: any = useRecordContext();
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const token = getAccessToken();
   const [open, setOpen] = useState(false);
   const notify = useNotify();
@@ -50,7 +50,7 @@ export const CloneForm = () => {
     }
     delete formBody.framework_key;
 
-    const response = await fetch(`${baseUrl}/api/v2/admin/forms`, {
+    const response = await fetch(`${apiBaseUrl}/api/v2/admin/forms`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

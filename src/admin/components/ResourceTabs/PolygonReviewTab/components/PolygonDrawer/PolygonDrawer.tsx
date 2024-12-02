@@ -18,7 +18,6 @@ import {
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   useGetV2SitePolygonUuidVersions,
-  useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -88,14 +87,18 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
+  const {
+    statusSelectedPolygon,
+    setStatusSelectedPolygon,
+    setShouldRefetchValidation,
+    polygonCriteriaMap: polygonMap
+  } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: () => {
-      reloadCriteriaValidation();
       setCheckPolygonValidation(false);
       openNotification(
         "success",
@@ -111,16 +114,6 @@ const PolygonDrawer = ({
     }
   });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
-  const { data: criteriaData, refetch: reloadCriteriaValidation } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: {
-        uuid: polygonSelected
-      }
-    },
-    {
-      enabled: !!polygonSelected
-    }
-  );
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
     onSuccess: async (data: ClippedPolygonResponse) => {
@@ -138,6 +131,9 @@ const PolygonDrawer = ({
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
+      if (!selectedPolygon?.primary_uuid) {
+        return;
+      }
       const response = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: selectedPolygon?.primary_uuid as string }
       })) as SitePolygonsDataResponse;
@@ -164,7 +160,6 @@ const PolygonDrawer = ({
     if (checkPolygonValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
-      reloadCriteriaValidation();
     }
   }, [checkPolygonValidation]);
 
@@ -173,13 +168,14 @@ const PolygonDrawer = ({
   }, [isPolygonStatusOpen]);
 
   useEffect(() => {
+    const criteriaData = polygonMap[polygonSelected];
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setValidationStatus(true);
     } else {
       setValidationStatus(false);
     }
-  }, [criteriaData]);
+  }, [polygonMap, polygonSelected]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -263,7 +259,6 @@ const PolygonDrawer = ({
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
-
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
