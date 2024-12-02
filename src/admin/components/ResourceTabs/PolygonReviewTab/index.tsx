@@ -61,6 +61,8 @@ import SitePolygonStatus from "./components/SitePolygonStatus/SitePolygonStatus"
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
   label: string;
+  setIsLoadingDelayedJob: (isLoading: boolean) => void;
+  abortProcessPolygons: boolean;
 }
 export interface IPolygonItem {
   id: string;
@@ -656,6 +658,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
                 modelFilesData={modelFilesData?.data}
+                setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
+                abortProcessPolygons={props.abortProcessPolygons}
               />
               <div className="mb-6">
                 <div className="mb-4">

@@ -81,6 +81,8 @@ export type ApiDataStore = ApiResources & {
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
   };
+  total_content: number;
+  processed_content: number;
 };
 
 export const INITIAL_STATE = {
@@ -94,7 +96,9 @@ export const INITIAL_STATE = {
       acc[method] = {};
       return acc;
     }, {}) as ApiPendingStore
-  }
+  },
+  total_content: 0,
+  processed_content: 0
 } as ApiDataStore;
 
 type ApiFetchStartingProps = {
@@ -184,6 +188,14 @@ export const apiSlice = createSlice({
       // so we can safely fake a login into the store when we have an authToken already set in a
       // cookie on app bootup.
       state.logins["1"] = { attributes: { token: authToken } };
+    },
+
+    setTotalContent: (state, action: PayloadAction<number>) => {
+      state.total_content = action.payload;
+    },
+
+    setProgressContent: (state, action: PayloadAction<number>) => {
+      state.processed_content = action.payload;
     }
   },
 
@@ -211,6 +223,9 @@ export const apiSlice = createSlice({
       if (payloadState.meta.meUserId != null) {
         state.meta.meUserId = payloadState.meta.meUserId;
       }
+
+      state.total_content = payloadState.total_content ?? state.total_content;
+      state.processed_content = payloadState.processed_content ?? state.processed_content;
     });
   }
 });
@@ -260,5 +275,13 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
+  }
+
+  static addTotalContent(total_content: number) {
+    this.redux.dispatch(apiSlice.actions.setTotalContent(total_content));
+  }
+
+  static addProgressContent(processed_content: number) {
+    this.redux.dispatch(apiSlice.actions.setProgressContent(processed_content));
   }
 }

@@ -122,6 +122,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   setLoader?: (value: boolean) => void;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
+  abortProcessPolygons?: boolean;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
 }
@@ -158,6 +160,8 @@ export const MapContainer = ({
   centroids,
   listViewProjects,
   showImagesButton,
+  setIsLoadingDelayedJob,
+  abortProcessPolygons,
   showViewGallery = true,
   legendPosition,
   ...props
@@ -548,7 +552,7 @@ export const MapContainer = ({
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-            <ProcessBulkPolygonsControl entityData={record} />
+            <ProcessBulkPolygonsControl entityData={record} setIsLoadingDelayedJob={setIsLoadingDelayedJob!} />
           </ControlGroup>
         </When>
         <When condition={isDashboard !== "dashboard"}>
@@ -561,7 +565,12 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+            <CheckPolygonControl
+              siteRecord={record}
+              polygonCheck={!siteData}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              abortProcessPolygons={abortProcessPolygons!}
+            />
           </ControlGroup>
         </When>
         <When condition={formMap}>

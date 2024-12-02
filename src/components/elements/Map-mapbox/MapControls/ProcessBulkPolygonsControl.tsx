@@ -16,8 +16,15 @@ import {
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import ApiSlice from "@/store/apiSlice";
 
-const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
+const ProcessBulkPolygonsControl = ({
+  entityData,
+  setIsLoadingDelayedJob
+}: {
+  entityData: any;
+  setIsLoadingDelayedJob: (value: boolean) => void;
+}) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
@@ -100,7 +107,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            showLoader();
+            setIsLoadingDelayedJob(true);
             fixPolygons(
               {
                 body: {
@@ -111,6 +118,9 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
                 onSuccess: response => {
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
                   closeModal(ModalId.FIX_POLYGONS);
+                  setIsLoadingDelayedJob(false);
+                  ApiSlice.addTotalContent(0);
+                  ApiSlice.addProgressContent(0);
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -121,10 +131,10 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
                     openNotification("warning", t("Warning"), t("No polygons were fixed."));
                   }
                   refetchData?.();
-                  hideLoader();
                 },
                 onError: () => {
                   hideLoader();
+                  setIsLoadingDelayedJob?.(false);
                   openNotification("error", t("Error!"), t("Failed to fix polygons"));
                 }
               }
@@ -153,9 +163,13 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           refetchData?.();
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
+          setIsLoadingDelayedJob(false);
+          ApiSlice.addTotalContent(0);
+          ApiSlice.addProgressContent(0);
         },
         onError: () => {
           hideLoader();
+          setIsLoadingDelayedJob?.(false);
           openNotification("error", t("Error!"), t("Failed to check polygons"));
         }
       }
@@ -170,7 +184,7 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
       .filter((_, index) => initialSelection[index])
       .map((polygon: SitePolygon) => polygon.poly_id || "");
     if (type === "check") {
-      showLoader();
+      setIsLoadingDelayedJob(true);
       runCheckPolygonsSelected(selectedUUIDs);
     } else if (type === "fix") {
       openFormModalHandlerSubmitPolygon(selectedUUIDs);

@@ -22,6 +22,7 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -32,6 +33,8 @@ export interface CheckSitePolygonProps {
     uuid: string;
   };
   polygonCheck: boolean;
+  setIsLoadingDelayedJob?: (isLoading: boolean) => void;
+  abortProcessPolygons?: boolean;
 }
 
 interface CheckedPolygon {
@@ -50,7 +53,7 @@ interface TransformedData {
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck } = props;
+  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, abortProcessPolygons } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
@@ -59,7 +62,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
   const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
     useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -92,9 +95,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         "success",
         t("Success! TerraMatch reviewed all polygons")
       );
+      setIsLoadingDelayedJob?.(false);
+      ApiSlice.addTotalContent(0);
+      ApiSlice.addProgressContent(0);
     },
     onError: () => {
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
@@ -105,6 +112,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
         closeModal(ModalId.FIX_POLYGONS);
         return;
       }
@@ -118,6 +126,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           .join(", ");
         openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
       }
       closeModal(ModalId.FIX_POLYGONS);
     },
@@ -125,6 +134,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       Log.error("Error clipping polygons:", error);
       displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
     }
   });
 
@@ -167,7 +177,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
       clipPolygons({ pathParams: { uuid: siteUuid } });
     } else {
       displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));
@@ -216,10 +226,16 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
+
+  useEffect(() => {
+    if (abortProcessPolygons) {
+      console.log("abortProcessPolygons");
+    }
+  }, [abortProcessPolygons]);
 
   return (
     <div className="grid gap-2">
