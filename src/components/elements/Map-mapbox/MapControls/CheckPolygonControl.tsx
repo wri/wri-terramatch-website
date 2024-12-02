@@ -34,7 +34,9 @@ export interface CheckSitePolygonProps {
   };
   polygonCheck: boolean;
   setIsLoadingDelayedJob?: (isLoading: boolean) => void;
+  isLoadingDelayedJob?: boolean;
   abortProcessPolygons?: boolean;
+  setAlertTitle?: (value: string) => void;
 }
 
 interface CheckedPolygon {
@@ -53,7 +55,8 @@ interface TransformedData {
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, abortProcessPolygons } = props;
+  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, abortProcessPolygons, setAlertTitle } =
+    props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
@@ -178,6 +181,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
       setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Fix Polygons");
       clipPolygons({ pathParams: { uuid: siteUuid } });
     } else {
       displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));
@@ -227,6 +231,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   useEffect(() => {
     if (clickedValidation) {
       setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Check Polygons");
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
@@ -242,20 +247,24 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Button
           variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white
+          disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => {
             setClickedValidation(true);
             setOpenCollapse(true);
             setSelectedPolygonsInCheckbox([]);
           }}
+          disabled={isLoadingDelayedJob}
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
         <When condition={hasOverlaps}>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
+             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={openFormModalHandlerSubmitPolygon}
+            disabled={isLoadingDelayedJob}
           >
             {t("Fix Polygons")}
           </Button>

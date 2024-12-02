@@ -123,7 +123,9 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   selectedCountry?: string | null;
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
+  isLoadingDelayedJob?: boolean;
   abortProcessPolygons?: boolean;
+  setAlertTitle?: (value: string) => void;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
 }
@@ -161,7 +163,9 @@ export const MapContainer = ({
   listViewProjects,
   showImagesButton,
   setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
   abortProcessPolygons,
+  setAlertTitle,
   showViewGallery = true,
   legendPosition,
   ...props
@@ -552,7 +556,12 @@ export const MapContainer = ({
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-            <ProcessBulkPolygonsControl entityData={record} setIsLoadingDelayedJob={setIsLoadingDelayedJob!} />
+            <ProcessBulkPolygonsControl
+              entityData={record}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
+              setAlertTitle={setAlertTitle!}
+            />
           </ControlGroup>
         </When>
         <When condition={isDashboard !== "dashboard"}>
@@ -569,7 +578,9 @@ export const MapContainer = ({
               siteRecord={record}
               polygonCheck={!siteData}
               setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
               abortProcessPolygons={abortProcessPolygons!}
+              setAlertTitle={setAlertTitle!}
             />
           </ControlGroup>
         </When>

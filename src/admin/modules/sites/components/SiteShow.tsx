@@ -17,6 +17,7 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 const SiteShow: FC = () => {
   const [isLoadingDelayedJob, setIsLoadingDelayedJob] = useState(false);
   const [abortProcessPolygons, setAbortProcessPolygons] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
 
   return (
     <Show
@@ -32,8 +33,10 @@ const SiteShow: FC = () => {
               <PolygonReviewTab
                 label=""
                 type={"sites"}
-                setIsLoadingDelayedJob={setIsLoadingDelayedJob}
-                abortProcessPolygons={abortProcessPolygons}
+                setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+                isLoadingDelayedJob={isLoadingDelayedJob!}
+                abortProcessPolygons={abortProcessPolygons!}
+                setAlertTitle={setAlertTitle!}
               />
             </MapAreaProvider>
           </TabbedShowLayout.Tab>
@@ -46,7 +49,7 @@ const SiteShow: FC = () => {
       </RecordFrameworkProvider>
       <DelayedJobsProgressAlert
         show={isLoadingDelayedJob}
-        title="check polygons"
+        title={alertTitle}
         onCancel={() => setAbortProcessPolygons(true)}
       />
     </Show>

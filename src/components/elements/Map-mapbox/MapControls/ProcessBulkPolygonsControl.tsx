@@ -20,10 +20,14 @@ import ApiSlice from "@/store/apiSlice";
 
 const ProcessBulkPolygonsControl = ({
   entityData,
-  setIsLoadingDelayedJob
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle
 }: {
   entityData: any;
-  setIsLoadingDelayedJob: (value: boolean) => void;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
 }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
@@ -107,7 +111,8 @@ const ProcessBulkPolygonsControl = ({
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setIsLoadingDelayedJob(true);
+            setIsLoadingDelayedJob?.(true);
+            setAlertTitle?.("Fix Polygons");
             fixPolygons(
               {
                 body: {
@@ -118,7 +123,7 @@ const ProcessBulkPolygonsControl = ({
                 onSuccess: response => {
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
                   closeModal(ModalId.FIX_POLYGONS);
-                  setIsLoadingDelayedJob(false);
+                  setIsLoadingDelayedJob?.(false);
                   ApiSlice.addTotalContent(0);
                   ApiSlice.addProgressContent(0);
                   if (processedNames) {
@@ -163,7 +168,7 @@ const ProcessBulkPolygonsControl = ({
           refetchData?.();
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
-          setIsLoadingDelayedJob(false);
+          setIsLoadingDelayedJob?.(false);
           ApiSlice.addTotalContent(0);
           ApiSlice.addProgressContent(0);
         },
@@ -184,7 +189,8 @@ const ProcessBulkPolygonsControl = ({
       .filter((_, index) => initialSelection[index])
       .map((polygon: SitePolygon) => polygon.poly_id || "");
     if (type === "check") {
-      setIsLoadingDelayedJob(true);
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Check Polygons");
       runCheckPolygonsSelected(selectedUUIDs);
     } else if (type === "fix") {
       openFormModalHandlerSubmitPolygon(selectedUUIDs);
@@ -202,22 +208,28 @@ const ProcessBulkPolygonsControl = ({
         <div className="grid grid-cols-3 gap-2">
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white
+              disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("delete")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Delete")}
           </Button>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white
+             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("check")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Check")}
           </Button>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
+            disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("fix")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Fix")}
           </Button>
