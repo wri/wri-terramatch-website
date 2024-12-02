@@ -17,8 +17,9 @@ import {
 } from "react-admin";
 
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -90,6 +91,7 @@ const UserDataGrid = () => {
 
 export const UserList = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const { isSuperAdmin } = useGetUserRole();
 
   const userDataProvider = useDataProvider<UserDataProvider>();
 
@@ -106,7 +108,7 @@ export const UserList = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActionsCreateFilter isSuperAdmin={isSuperAdmin} onExport={handleExport} />} filters={filters}>
         <UserDataGrid />
       </List>
 
