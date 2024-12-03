@@ -50,8 +50,8 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
-const topHeaderFirstTable = window.innerWidth > 1900 ? "108px" : "102px";
-const topHeaderSecondTable = window.innerWidth > 1900 ? "75px" : `70px`;
+const topHeaderFirstTable = window && window.innerWidth && window.innerWidth > 1900 ? "108px" : "102px";
+const topHeaderSecondTable = window && window.innerWidth && window.innerWidth > 1900 ? "75px" : `70px`;
 
 const TABLE_COLUMNS: ColumnDef<RowData>[] = [
   {
