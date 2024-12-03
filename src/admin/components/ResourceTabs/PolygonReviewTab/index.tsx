@@ -280,9 +280,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [errorMessage]);
 
   useEffect(() => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(sitePolygonData);
   }, [loading]);
+
+  useEffect(() => {
+    setPolygonCriteriaMap(polygonCriteriaMap);
+  }, [polygonCriteriaMap]);
+
   useEffect(() => {
     if (shouldRefetchValidation) {
       refetch();
