@@ -1,3 +1,4 @@
+import { Box, LinearProgress } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -231,6 +232,12 @@ const Polygons = (props: IPolygonProps) => {
             {openCollapseAll ? "SHRINK" : "EXPAND"}
           </Button>
         </div>
+      </div>
+      <div className="mb-4 flex flex-col gap-1">
+        123 of 678 polygons loaded
+        <Box sx={{ width: "100%", maxWidth: 305, ml: 1 }}>
+          <LinearProgress variant="determinate" value={80} />
+        </Box>
       </div>
       <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
         {polygonMenu.map(item => (
