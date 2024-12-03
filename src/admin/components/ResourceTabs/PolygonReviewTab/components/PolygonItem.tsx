@@ -1,3 +1,5 @@
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
@@ -45,7 +47,7 @@ const PolygonItem = ({
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
+  const [validationStatus, setValidationStatus] = useState<string | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
@@ -59,10 +61,10 @@ const PolygonItem = ({
     const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
-      setValidationStatus(isValidCriteriaData(criteriaData));
+      setValidationStatus(isValidCriteriaData(criteriaData) ? "passed" : "failed");
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
-    } else {
-      setValidationStatus(undefined);
+    } else if (criteriaData?.criteria_list && criteriaData.criteria_list.length === 0) {
+      setValidationStatus("notChecked");
     }
   }, [polygonMap]);
 
@@ -105,12 +107,17 @@ const PolygonItem = ({
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
             <When condition={validationStatus == undefined}>
+              <Box sx={{ width: "100%", maxWidth: 100, ml: 1 }}>
+                <LinearProgress />
+              </Box>
+            </When>
+            <When condition={validationStatus == "notChecked"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 Not Checked
               </Text>
             </When>
-            <When condition={validationStatus}>
+            <When condition={validationStatus == "passed"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
@@ -125,7 +132,7 @@ const PolygonItem = ({
                 Passed
               </Text>
             </When>
-            <When condition={validationStatus === false}>
+            <When condition={validationStatus === "failed"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 Failed
