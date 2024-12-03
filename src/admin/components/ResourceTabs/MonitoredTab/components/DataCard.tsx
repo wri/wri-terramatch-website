@@ -1,6 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
@@ -50,627 +50,635 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
   tableData: TableData[];
 }
 
-const topHeaderFirstTable = window && window.innerWidth && window.innerWidth > 1900 ? "108px" : "102px";
-const topHeaderSecondTable = window && window.innerWidth && window.innerWidth > 1900 ? "75px" : `70px`;
-
-const TABLE_COLUMNS: ColumnDef<RowData>[] = [
-  {
-    id: "mainInfo",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
-    header: "",
-    columns: [
-      {
-        accessorKey: "polygonName",
-        header: "Polygon Name",
-        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
-      },
-      {
-        accessorKey: "size",
-        header: "Size (ha)",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      { accessorKey: "siteName", header: "Site Name", meta: { style: { top: `${topHeaderFirstTable}` } } },
-      {
-        accessorKey: "status",
-        header: "Status",
-        meta: { style: { top: `${topHeaderFirstTable}` } },
-        cell: (props: any) => (
-          <CustomChipField
-            label={props.getValue()}
-            classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
-          />
-        )
-      },
-      {
-        accessorKey: "plantDate",
-        header: () => (
-          <>
-            Plant
-            <br />
-            Start Date
-          </>
-        ),
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      }
-    ]
-  },
-  {
-    id: "analysis2024",
-    header: "Analysis: April 25, 2024",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
-    columns: [
-      {
-        accessorKey: "2024-2015",
-        header: "2015",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2016",
-        header: "2016",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2017",
-        header: "2017",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2018",
-        header: "2018",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2019",
-        header: "2019",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2020",
-        header: "2020",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2021",
-        header: "2021",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2022",
-        header: "2022",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2023",
-        header: "2023",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "2024-2024",
-        header: "2024",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      }
-    ]
-  },
-  {
-    id: "moreInfo",
-    header: " ",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
-    columns: [
-      {
-        accessorKey: "more",
-        header: "",
-        enableSorting: false,
-        cell: props => (
-          <div className="w-min rounded p-1 hover:bg-primary-200">
-            <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
-          </div>
-        ),
-        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
-      }
-    ]
-  }
-];
-
-const TABLE_COLUMNS_HECTARES: ColumnDef<RowData>[] = [
-  { accessorKey: "polygonName", header: "Polygon Name" },
-  {
-    accessorKey: "size",
-    header: "Size (ha)"
-  },
-  { accessorKey: "siteName", header: "Site Name" },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: (props: any) => (
-      <CustomChipField
-        label={props.getValue()}
-        classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
-      />
-    )
-  },
-  {
-    accessorKey: "plantDate",
-    header: "Plant Start Date"
-  },
-  {
-    accessorKey: "baseline",
-    header: "Baseline"
-  },
-  {
-    accessorKey: "treePlanting",
-    header: "Tree Planting"
-  },
-  {
-    accessorKey: "regeneration",
-    header: () => (
-      <>
-        Asst. Nat.
-        <br />
-        Regeneration
-      </>
-    )
-  },
-  {
-    accessorKey: "seeding",
-    header: () => (
-      <>
-        Direct
-        <br />
-        Seeding
-      </>
-    )
-  },
-  {
-    accessorKey: "more",
-    header: "",
-    enableSorting: false,
-    cell: props => (
-      <div className="w-min rounded p-1 hover:bg-primary-200">
-        <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
-      </div>
-    )
-  }
-];
-
-const TABLE_DATA = [
-  {
-    polygonName: "ABA",
-    siteName: "Palm Oil",
-    status: "Draft",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Adison Thaochu A",
-    siteName: "Palm Oil",
-    status: "Submitted",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Nabara Selatan",
-    siteName: "Palm Oil",
-    status: "Needs Info",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Raso",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Torup",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Africas",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agoue Iboe",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agrajaya Baktitama",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agralsa",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Africas",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agoue Iboe",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agrajaya Baktitama",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Agralsa",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "ABA",
-    siteName: "Palm Oil",
-    status: "Draft",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "Adison Thaochu A",
-    siteName: "Palm Oil",
-    status: "Submitted",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Nabara Selatan",
-    siteName: "Palm Oil",
-    status: "Needs Info",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Raso",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  },
-  {
-    polygonName: "AEK Torup",
-    siteName: "Palm Oil",
-    status: "Approved",
-    size: "7,473",
-    plantDate: "9/26/24",
-    baseline: "25/4/24",
-    treePlanting: "0.423",
-    regeneration: "0.120",
-    seeding: "0.120",
-    "2024-2015": "0.423",
-    "2024-2016": "0.120",
-    "2024-2017": "0.655",
-    "2024-2018": "0.208",
-    "2024-2019": "0.654",
-    "2024-2020": "0.466",
-    "2024-2021": "0.151",
-    "2024-2022": "0.385",
-    "2024-2023": "0.457",
-    "2024-2024": "0.966"
-  }
-];
-
-const DROPDOWN_OPTIONS = [
-  {
-    title: "Tree Cover Loss",
-    value: "1"
-  },
-  {
-    title: "Tree Cover Loss from Fire",
-    value: "2"
-  },
-  {
-    title: "Hectares Under Restoration By WWF EcoRegion",
-    value: "3"
-  },
-  {
-    title: "Hectares Under Restoration By Strategy",
-    value: "4"
-  },
-  {
-    title: "Hectares Under Restoration By Target Land Use System",
-    value: "5"
-  },
-  {
-    title: "Tree Count",
-    value: "6"
-  }
-];
-
-const toggleItems: TogglePropsItem[] = [
-  {
-    key: "dashboard",
-    render: (
-      <Text variant="text-14" className="py-0.5">
-        Table
-      </Text>
-    )
-  },
-  {
-    key: "table",
-    render: (
-      <Text variant="text-14" className="py-0.5">
-        Graph
-      </Text>
-    )
-  },
-  {
-    key: "table",
-    render: (
-      <Text variant="text-14" className="py-0.5">
-        Map
-      </Text>
-    )
-  }
-];
-
 const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   const [tabActive, setTabActive] = useState(0);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const mapFunctions = useMap();
+
+  const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
+  const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const width = window.innerWidth;
+      setTopHeaderFirstTable(width > 1900 ? "108px" : "102px");
+      setTopHeaderSecondTable(width > 1900 ? "75px" : "70px");
+    }
+  }, []);
+
+  const TABLE_COLUMNS: ColumnDef<RowData>[] = [
+    {
+      id: "mainInfo",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
+      header: "",
+      columns: [
+        {
+          accessorKey: "polygonName",
+          header: "Polygon Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        },
+        {
+          accessorKey: "size",
+          header: "Size (ha)",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        { accessorKey: "siteName", header: "Site Name", meta: { style: { top: `${topHeaderFirstTable}` } } },
+        {
+          accessorKey: "status",
+          header: "Status",
+          meta: { style: { top: `${topHeaderFirstTable}` } },
+          cell: (props: any) => (
+            <CustomChipField
+              label={props.getValue()}
+              classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+            />
+          )
+        },
+        {
+          accessorKey: "plantDate",
+          header: () => (
+            <>
+              Plant
+              <br />
+              Start Date
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        }
+      ]
+    },
+    {
+      id: "analysis2024",
+      header: "Analysis: April 25, 2024",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      columns: [
+        {
+          accessorKey: "2024-2015",
+          header: "2015",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2016",
+          header: "2016",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2017",
+          header: "2017",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2018",
+          header: "2018",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2019",
+          header: "2019",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2020",
+          header: "2020",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2021",
+          header: "2021",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2022",
+          header: "2022",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2023",
+          header: "2023",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "2024-2024",
+          header: "2024",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        }
+      ]
+    },
+    {
+      id: "moreInfo",
+      header: " ",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      columns: [
+        {
+          accessorKey: "more",
+          header: "",
+          enableSorting: false,
+          cell: props => (
+            <div className="w-min rounded p-1 hover:bg-primary-200">
+              <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+            </div>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        }
+      ]
+    }
+  ];
+
+  const TABLE_COLUMNS_HECTARES: ColumnDef<RowData>[] = [
+    { accessorKey: "polygonName", header: "Polygon Name" },
+    {
+      accessorKey: "size",
+      header: "Size (ha)"
+    },
+    { accessorKey: "siteName", header: "Site Name" },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: (props: any) => (
+        <CustomChipField
+          label={props.getValue()}
+          classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+        />
+      )
+    },
+    {
+      accessorKey: "plantDate",
+      header: "Plant Start Date"
+    },
+    {
+      accessorKey: "baseline",
+      header: "Baseline"
+    },
+    {
+      accessorKey: "treePlanting",
+      header: "Tree Planting"
+    },
+    {
+      accessorKey: "regeneration",
+      header: () => (
+        <>
+          Asst. Nat.
+          <br />
+          Regeneration
+        </>
+      )
+    },
+    {
+      accessorKey: "seeding",
+      header: () => (
+        <>
+          Direct
+          <br />
+          Seeding
+        </>
+      )
+    },
+    {
+      accessorKey: "more",
+      header: "",
+      enableSorting: false,
+      cell: props => (
+        <div className="w-min rounded p-1 hover:bg-primary-200">
+          <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+        </div>
+      )
+    }
+  ];
+
+  const TABLE_DATA = [
+    {
+      polygonName: "ABA",
+      siteName: "Palm Oil",
+      status: "Draft",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Adison Thaochu A",
+      siteName: "Palm Oil",
+      status: "Submitted",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Nabara Selatan",
+      siteName: "Palm Oil",
+      status: "Needs Info",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Raso",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Torup",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Africas",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agoue Iboe",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agrajaya Baktitama",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agralsa",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Africas",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agoue Iboe",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agrajaya Baktitama",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Agralsa",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "ABA",
+      siteName: "Palm Oil",
+      status: "Draft",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "Adison Thaochu A",
+      siteName: "Palm Oil",
+      status: "Submitted",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Nabara Selatan",
+      siteName: "Palm Oil",
+      status: "Needs Info",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Raso",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    },
+    {
+      polygonName: "AEK Torup",
+      siteName: "Palm Oil",
+      status: "Approved",
+      size: "7,473",
+      plantDate: "9/26/24",
+      baseline: "25/4/24",
+      treePlanting: "0.423",
+      regeneration: "0.120",
+      seeding: "0.120",
+      "2024-2015": "0.423",
+      "2024-2016": "0.120",
+      "2024-2017": "0.655",
+      "2024-2018": "0.208",
+      "2024-2019": "0.654",
+      "2024-2020": "0.466",
+      "2024-2021": "0.151",
+      "2024-2022": "0.385",
+      "2024-2023": "0.457",
+      "2024-2024": "0.966"
+    }
+  ];
+
+  const DROPDOWN_OPTIONS = [
+    {
+      title: "Tree Cover Loss",
+      value: "1"
+    },
+    {
+      title: "Tree Cover Loss from Fire",
+      value: "2"
+    },
+    {
+      title: "Hectares Under Restoration By WWF EcoRegion",
+      value: "3"
+    },
+    {
+      title: "Hectares Under Restoration By Strategy",
+      value: "4"
+    },
+    {
+      title: "Hectares Under Restoration By Target Land Use System",
+      value: "5"
+    },
+    {
+      title: "Tree Count",
+      value: "6"
+    }
+  ];
+
+  const toggleItems: TogglePropsItem[] = [
+    {
+      key: "dashboard",
+      render: (
+        <Text variant="text-14" className="py-0.5">
+          Table
+        </Text>
+      )
+    },
+    {
+      key: "table",
+      render: (
+        <Text variant="text-14" className="py-0.5">
+          Graph
+        </Text>
+      )
+    },
+    {
+      key: "table",
+      render: (
+        <Text variant="text-14" className="py-0.5">
+          Map
+        </Text>
+      )
+    }
+  ];
 
   const POLYGONS = [
     { title: "Agrariala Palma", value: "1" },
