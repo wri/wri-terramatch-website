@@ -9,6 +9,7 @@ import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
+import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
 import PolygonReviewTab from "@/admin/components/ResourceTabs/PolygonReviewTab";
 import ShowTitle from "@/admin/components/ShowTitle";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
@@ -41,7 +42,7 @@ const SiteShow: FC = () => {
           <GalleryTab label="Site Gallery" entity="sites" />
           <DocumentTab label="Site Documents" entity="sites" />
           <ChangeRequestsTab entity="sites" singularEntity="site" />
-          <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
+          <MonitoredTab label="Monitored Data" />
           <AuditLogTab entity={AuditLogButtonStates.SITE} />
         </TabbedShowLayout>
       </RecordFrameworkProvider>
