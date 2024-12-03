@@ -96,7 +96,8 @@ const PolygonReviewAside: FC<{
   setPolygonFromMap: any;
   refresh?: () => void;
   mapFunctions: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions }) => {
+  totalPolygons?: number;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons }) => {
   switch (type) {
     case "sites":
       return (
@@ -106,6 +107,7 @@ const PolygonReviewAside: FC<{
           setPolygonFromMap={setPolygonFromMap}
           mapFunctions={mapFunctions}
           refresh={refresh}
+          totalPolygons={totalPolygons}
         />
       );
     default:
@@ -165,7 +167,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSite(record.uuid, "sites");
+  const {
+    data: sitePolygonData,
+    refetch,
+    polygonCriteriaMap,
+    loading,
+    total
+  } = useLoadCriteriaSite(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -759,6 +767,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               setPolygonFromMap={setPolygonFromMap}
               mapFunctions={mapFunctions}
               refresh={refetch}
+              totalPolygons={total}
             />
           </Grid>
         </Grid>
