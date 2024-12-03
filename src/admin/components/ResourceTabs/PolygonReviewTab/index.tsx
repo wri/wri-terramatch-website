@@ -12,12 +12,14 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
+  countStatuses,
   downloadSiteGeoJsonPolygons,
   parsePolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
@@ -56,7 +58,6 @@ import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
-import SitePolygonStatus from "./components/SitePolygonStatus/SitePolygonStatus";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -211,6 +212,8 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
 
+  const dataPolygonOverview = countStatuses(sitePolygonData);
+
   const { openModal, closeModal } = useModalContext();
 
   const flyToPolygonBounds = async (uuid: string) => {
@@ -277,9 +280,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [errorMessage]);
 
   useEffect(() => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(sitePolygonData);
   }, [loading]);
+
+  useEffect(() => {
+    setPolygonCriteriaMap(polygonCriteriaMap);
+  }, [polygonCriteriaMap]);
+
   useEffect(() => {
     if (shouldRefetchValidation) {
       refetch();
@@ -589,11 +596,30 @@ const PolygonReviewTab: FC<IProps> = props => {
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
-              <div className="flex flex-wrap items-start gap-3">
+              <div className="flex flex-col items-start gap-3">
+                <div className="mb-2 flex w-full gap-2 rounded-xl bg-white p-3 shadow-monitored">
+                  <div className="w-40 lg:w-48">
+                    <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
+                      Site Status
+                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                    </Text>
+                    <Text variant="text-14-bold" className="text-black">
+                      {record?.readable_status}
+                    </Text>
+                  </div>
+                  <div className="w-full">
+                    <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
+                      Polygon Overview
+                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                    </Text>
+                    <LinearProgressBarMonitored data={dataPolygonOverview} />
+                  </div>
+                </div>
                 <div className="min-w-[450px] flex-[18]">
                   <div className="mb-2">
-                    <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                      Polygon Review
+                    <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
+                      Add or Edit Polygons
+                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
@@ -601,7 +627,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       application.
                     </Text>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="mt-8 flex w-[65%] gap-3">
                     <AddDataButton
                       classNameContent="flex-1"
                       openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
@@ -636,14 +662,14 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Button>
                   </div>
                 </div>
-                <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
+                {/* <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
                   <Text variant="text-14" className="mb-3 text-blueCustom-250">
                     Site Status
                   </Text>
-                  <div className="h-fit w-full">
+                  <div className="w-full h-fit">
                     <SitePolygonStatus statusLabel={record.readable_status} />
                   </div>
-                </div>
+                </div> */}
               </div>
               <MapContainer
                 record={record}
