@@ -38103,6 +38103,8 @@ export type PostV2TerrafundValidationPolygonsResponse = {
 
 export type PostV2TerrafundValidationPolygonsRequestBody = {
   uuids?: string[];
+  entity_uuid?: string;
+  entity_type?: string;
 };
 
 export type PostV2TerrafundValidationPolygonsVariables = {
