@@ -251,7 +251,7 @@ const Polygons = (props: IPolygonProps) => {
           </Box>
         </When>
       </div>
-      <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
+      <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
         {polygonMenu.map(item => (
           <div key={item.id}>
             <PolygonItem

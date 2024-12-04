@@ -53,21 +53,26 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
       >
         <TooltipLineProgressBarMonitored value={tooltipValue} label={statusHover} />
       </div>
-      {data.map((item, index) => (
-        <div key={index} style={{ width: totalCount > 0 ? `${(item.count / totalCount) * 100}%` : "0%" }}>
-          <div
-            className={classNames(
-              "h-[6px] w-full cursor-pointer rounded-sm hover:shadow-item-monitored lg:h-[8px] wide:h-[10px]",
-              colorBg[item.status]
+      {data.map((item, index) => {
+        const percentage = totalCount > 0 ? (item.count / totalCount) * 100 : 0;
+        return (
+          <div key={index} style={{ width: `${percentage}%` }}>
+            <div
+              className={classNames(
+                "h-[6px] w-full cursor-pointer rounded-sm hover:shadow-item-monitored lg:h-[8px] wide:h-[10px]",
+                colorBg[item.status]
+              )}
+              onMouseEnter={e => openTooltip(e, item)}
+              onMouseLeave={exitTooltip}
+            />
+            {percentage > 10 && (
+              <Text variant="text-12" className="pt-1 text-darkCustom-300">
+                {item.status}
+              </Text>
             )}
-            onMouseEnter={e => openTooltip(e, item)}
-            onMouseLeave={exitTooltip}
-          />
-          <Text variant="text-12" className="pt-1 text-darkCustom-300">
-            {item.status}
-          </Text>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };
