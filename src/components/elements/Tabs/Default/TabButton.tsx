@@ -38,7 +38,7 @@ export const TabButton = forwardRef(
             : `border-b border-white bg-grey-950 text-blueCustom-900`
         )}
       >
-        <Text variant={textVariant} className="line-clamp-2 w-full text-left md:pr-6" containHtml>
+        <Text variant={textVariant} className="w-full text-left line-clamp-2 md:pr-6" containHtml>
           {item.title}
         </Text>
         <When condition={item.done}>

@@ -112,7 +112,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       <div>
         <When condition={!props.withNumbers}>
           <div className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2">
-            <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-4 min-h-4 w-4 min-w-4 text-tertiary-600" />
+            <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
             If you would like to add a species not included on the original Restoration Project, it will be flagged to
             the admin as new information pending review.
           </div>
@@ -148,7 +148,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               />
               <When condition={valueAutoComplete.length > 0}>
                 <button onClick={() => setValueAutoComplete("")} className="absolute right-4 top-4 ">
-                  <Icon name={IconNames.CLEAR} className="h-3 min-h-3 w-3 min-w-3" />
+                  <Icon name={IconNames.CLEAR} className="min-h-3 min-w-3 h-3 w-3" />
                 </button>
               </When>
             </div>
@@ -184,7 +184,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {t("No matches available")}
             </Text>
             <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-4 min-h-4 w-4 min-w-4 text-tertiary-600" />
+              <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
               <Text variant="text-14-light" className="text-blueCustom-700">
                 {t("You can this add, but it will be pending review from Admin.")}
               </Text>
@@ -257,7 +257,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               </When>
               <When condition={editIndex === value.uuid}>
                 <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
-                  <Icon name={IconNames.EDIT_TA} className="h-6 min-h-6 w-6 min-w-6 text-primary" />
+                  <Icon name={IconNames.EDIT_TA} className="min-h-6 min-w-6 h-6 w-6 text-primary" />
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t(`NEW ${value.name}`)}
                   </Text>
@@ -275,10 +275,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               >
                 <div className="flex items-center gap-1">
                   <When condition={value.name === "non-scientific name"}>
-                    <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="h-8 min-h-8 w-8 min-w-8" />
+                    <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                   </When>
                   <When condition={value.new}>
-                    <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="h-8 min-h-8 w-8 min-w-8" />
+                    <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                   </When>
                   <Text variant="text-14-light" className="text-black ">
                     {t(value.name)}
