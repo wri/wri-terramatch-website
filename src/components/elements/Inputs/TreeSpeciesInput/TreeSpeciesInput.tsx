@@ -124,6 +124,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           <div className="mt-3 flex items-start gap-3">
             <div className="relative w-[40%]">
               <AutoCompleteInput
+                name="treeSpecies"
                 classNameMenu="bg-white  z-10 w-full"
                 type="text"
                 placeholder="Start typing"
