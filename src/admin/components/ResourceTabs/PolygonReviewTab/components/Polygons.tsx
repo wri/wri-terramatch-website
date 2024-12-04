@@ -1,4 +1,6 @@
+import { Box, LinearProgress } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
@@ -40,6 +42,7 @@ export interface IPolygonProps {
   setPolygonFromMap?: any;
   refresh?: () => void;
   mapFunctions: any;
+  totalPolygons?: number;
 }
 
 export const polygonData = [
@@ -62,13 +65,13 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
+  const sitePolygonData = context?.sitePolygonData;
   const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
     setPolygonMenu(props.menu);
   }, [props.menu]);
-
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
@@ -200,6 +203,7 @@ const Polygons = (props: IPolygonProps) => {
     setSelectedPolygonsInCheckbox(checkedUuids);
   };
 
+  const polygonSitePolygonCount = sitePolygonData?.length ?? 0;
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
@@ -231,6 +235,21 @@ const Polygons = (props: IPolygonProps) => {
             {openCollapseAll ? "SHRINK" : "EXPAND"}
           </Button>
         </div>
+      </div>
+      <div className="mb-4 flex flex-col gap-1">
+        <When condition={props.totalPolygons ?? 0 > 0}>
+          <Text variant="text-14-semibold" className="text-darkCustom">
+            <span className="font-bold">{polygonSitePolygonCount}</span> of{" "}
+            <span className="font-bold">{props.totalPolygons}</span> polygons
+          </Text>
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress
+              variant="determinate"
+              value={(polygonSitePolygonCount / (props.totalPolygons ?? 1)) * 100}
+              sx={{ borderRadius: 5 }}
+            />
+          </Box>
+        </When>
       </div>
       <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
         {polygonMenu.map(item => (
