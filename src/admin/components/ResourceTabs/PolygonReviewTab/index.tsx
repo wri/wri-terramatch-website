@@ -608,13 +608,13 @@ const PolygonReviewTab: FC<IProps> = props => {
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
               <div className="flex flex-col items-start gap-3">
-                <div className="mb-2 flex w-full gap-2 rounded-xl bg-white p-3 shadow-monitored">
+                <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
                       <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
-                    <Text variant="text-14-bold" className="text-black">
+                    <Text variant="text-14-bold" className="leading-[normal] text-black">
                       {record?.readable_status}
                     </Text>
                   </div>
