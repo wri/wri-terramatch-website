@@ -1,5 +1,6 @@
 import { Popover, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { ChangeEvent, forwardRef, Fragment, Ref, useState } from "react";
 import { Else, If, Then } from "react-if";
 
@@ -11,11 +12,16 @@ import Input, { InputProps } from "../Input/Input";
 export interface AutoCompleteInputProps extends InputProps {
   onSearch: (query: string) => Promise<string[]>;
   disableAutoComplete?: boolean;
+  classNameMenu?: string;
+  onSelected?: (item: string) => void;
 }
 
 //TODO: Bugfix: Users can enter space in this input
 const AutoCompleteInput = forwardRef(
-  ({ onSearch, disableAutoComplete, ...inputProps }: AutoCompleteInputProps, ref?: Ref<HTMLInputElement>) => {
+  (
+    { onSearch, disableAutoComplete, classNameMenu, onSelected, ...inputProps }: AutoCompleteInputProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
     const t = useT();
     const [list, setList] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -26,6 +32,8 @@ const AutoCompleteInput = forwardRef(
       } else {
         inputProps.onChange?.({ target: { name: inputProps.name, value: item } } as ChangeEvent<HTMLInputElement>);
       }
+
+      onSelected?.(item);
 
       setList([]);
     };
@@ -63,7 +71,10 @@ const AutoCompleteInput = forwardRef(
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          <Popover.Panel as="div" className="border-light mt-2 max-h-[230px] overflow-auto rounded-lg">
+          <Popover.Panel
+            as="div"
+            className={classNames("border-light mt-2 max-h-[230px] overflow-auto rounded-lg", classNameMenu)}
+          >
             <If condition={loading}>
               <Then>
                 <Text variant="text-body-600" className="p-3">

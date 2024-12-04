@@ -30,19 +30,22 @@ export const TabButton = forwardRef(
           className,
           "w-full items-center focus:outline-none disabled:text-neutral-900",
           item.done && "peer",
-          lastItem || selected ? "border-b" : "border-b-0",
+          lastItem || selected ? "border-b" : "border-b",
           selected
-            ? "border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+            ? "border border-success  bg-white text-blueCustom-900 peer-aria-checked:shadow-t-secondary"
             : item.done
-            ? `border-secondary-500 bg-secondary-300 text-neutral-800  `
-            : `border-neutral-100 bg-neutral-300 text-neutral-900`
+            ? `border-white bg-primary text-white `
+            : `border-b border-white bg-grey-950 text-blueCustom-900`
         )}
       >
-        <Text variant={textVariant} className="w-full text-left line-clamp-2 md:pr-6" containHtml>
+        <Text variant={textVariant} className="line-clamp-2 w-full text-left md:pr-6" containHtml>
           {item.title}
         </Text>
         <When condition={item.done}>
-          <Icon className="text-green-100 " name={IconNames.APPROVED_COLORLESS} width={20} />
+          <Icon className="text-success-410 " name={IconNames.APPROVED_COLORLESS} width={20} />
+        </When>
+        <When condition={selected}>
+          <Icon className="text-success " name={IconNames.EDIT_TA} width={20} />
         </When>
       </button>
     );
