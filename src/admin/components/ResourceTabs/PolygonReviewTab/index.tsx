@@ -1,8 +1,11 @@
 import { Grid, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { Else, If, Then } from "react-if";
 
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
@@ -620,7 +623,16 @@ const PolygonReviewTab: FC<IProps> = props => {
                       Polygon Overview
                       <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
-                    <LinearProgressBarMonitored data={dataPolygonOverview} />
+                    <If condition={sitePolygonData.length < total}>
+                      <Then>
+                        <Box sx={{ width: "100%" }}>
+                          <LinearProgress sx={{ borderRadius: 5 }} />
+                        </Box>
+                      </Then>
+                      <Else>
+                        <LinearProgressBarMonitored data={dataPolygonOverview} />
+                      </Else>
+                    </If>
                   </div>
                 </div>
                 <div className="min-w-[450px] flex-[18]">
@@ -670,14 +682,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Button>
                   </div>
                 </div>
-                {/* <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
-                  <Text variant="text-14" className="mb-3 text-blueCustom-250">
-                    Site Status
-                  </Text>
-                  <div className="w-full h-fit">
-                    <SitePolygonStatus statusLabel={record.readable_status} />
-                  </div>
-                </div> */}
               </div>
               <MapContainer
                 record={record}
