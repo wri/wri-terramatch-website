@@ -9,7 +9,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
     data-testid="txt"
     htmlFor=":r23:"
   >
-    Tree Species Grown *
+    ADD TREE SPECIES *
   </label>
   <p
     className="text-body-400 with-inner-html"
@@ -23,76 +23,198 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
   />
   <div>
     <div
-      className="mt-8 mb-2 flex justify-between"
-    >
-      <p
-        className="uppercase text-body-900"
-        data-testid="txt"
-      >
-         (
-        1
-        )
-      </p>
-    </div>
-    <div
-      className="max-h-[300px] overflow-y-auto"
+      className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2"
     >
       <div
-        className="relative flex w-full"
+        style={
+          Object {
+            "height": undefined,
+            "width": 24,
+          }
+        }
+      />
+      If you would like to add a species not included on the original Restoration Project, it will be flagged to the admin as new information pending review.
+    </div>
+    <div
+      className="mb-2 mt-8"
+    >
+      <p
+        className="text-black text-14-light"
+        data-testid="txt"
+      >
+        Scientific Name:
+      </p>
+      <div
+        className="mt-3 flex items-start gap-3"
       >
         <div
-          className="flex-1 relative space-y-2"
+          className="relative w-[40%]"
         >
           <div
-            className="relative"
+            className="w-full"
+            data-headlessui-state=""
           >
-            <input
-              aria-describedby=":r24:-description"
-              aria-invalid={false}
-              className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 border-b-neutral-400"
-              defaultValue="Test"
-              id=":r24:"
-              name="name"
-              onChange={[Function]}
-              onKeyDownCapture={[Function]}
-              placeholder="Species Name"
-              type="text"
-            />
+            <div
+              className="relative space-y-2"
+            >
+              <div
+                className="relative"
+              >
+                <input
+                  aria-describedby=":r26:-description"
+                  aria-expanded={false}
+                  aria-invalid={false}
+                  className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+                  data-headlessui-state=""
+                  id=":r26:"
+                  name="treeSpecies"
+                  onChange={[Function]}
+                  onChangeCapture={[Function]}
+                  onClick={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  placeholder="Start typing"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
           </div>
         </div>
         <button
-          className="flex items-center justify-center rounded-full hover:bg-opacity-60 absolute right-0 top-3"
+          disabled={true}
           onClick={[Function]}
         >
           <div
             style={
               Object {
                 "height": undefined,
-                "width": 22,
+                "width": 24,
               }
             }
           />
         </button>
       </div>
     </div>
-    <button
-      className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content mt-4 w-fit"
-      onClick={[Function]}
+    <div
+      className="mb-1 mt-9 flex gap-6 border-b pb-4"
     >
       <div
-        style={
-          Object {
-            "height": undefined,
-            "width": 12,
-          }
-        }
-      />
-      <span
-        className="flex items-center text-bold-caption-200"
+        className="w-[50%]"
       >
-        Add Another undefined
-      </span>
-    </button>
+        <p
+          className="uppercase text-black text-14-bold"
+          data-testid="txt"
+        />
+        <p
+          className="text-primary text-20-bold"
+          data-testid="txt"
+        >
+          1
+        </p>
+      </div>
+      <div
+        className="border-r pr-6"
+      >
+        <p
+          className="uppercase text-black text-14-bold"
+          data-testid="txt"
+        >
+          SPECIES PLANTED:
+        </p>
+        <p
+          className="text-primary text-20-bold"
+          data-testid="txt"
+        >
+          0
+        </p>
+      </div>
+      <div
+        className=""
+      >
+        <p
+          className="uppercase text-black text-14-bold"
+          data-testid="txt"
+        >
+          TOTAL PLANTED TO DATE:
+        </p>
+        <p
+          className="text-primary text-20-bold"
+          data-testid="txt"
+        >
+          47,800
+        </p>
+      </div>
+    </div>
+    <div
+      className=""
+    >
+      <div
+        className="relative flex w-full items-center gap-6 border-b border-neutral-450 py-2"
+      >
+        <div
+          style={
+            Object {
+              "minWidth": "undefinedpx",
+              "width": "undefinedpx",
+            }
+          }
+        >
+          <div
+            className="flex items-center gap-1"
+          >
+            <p
+              className="text-black  text-14-light"
+              data-testid="txt"
+            >
+              Test
+            </p>
+          </div>
+        </div>
+        <div
+          className=""
+          style={
+            Object {
+              "minWidth": "undefinedpx",
+              "width": "undefinedpx",
+            }
+          }
+        >
+          <div
+            className="relative space-y-2"
+          >
+            <div
+              className="relative"
+            >
+              <input
+                aria-describedby=":r27:-description"
+                aria-invalid={false}
+                className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent py-[7.5px] py-1.5 !w-[100px] text-center border border-blueCustom-700 rounded hover:border-primary hover:shadow-blue-border opacity-60 outline-none text-14-light !font-primary text-center"
+                defaultValue=""
+                id=":r27:"
+                name="amount"
+                onChange={[Function]}
+                onKeyDown={[Function]}
+                onKeyDownCapture={[Function]}
+                placeholder="0"
+                type="number"
+              />
+            </div>
+          </div>
+        </div>
+        <p
+          className="text-black text-14-light"
+          data-testid="txt"
+          style={
+            Object {
+              "width": "undefinedpx",
+            }
+          }
+        >
+          7,400
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -104,9 +226,9 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
   <label
     className="mr-2 inline uppercase text-bold-body-300"
     data-testid="txt"
-    htmlFor=":r25:"
+    htmlFor=":r28:"
   >
-    Tree Species Grown *
+    ADD TREE SPECIES *
   </label>
   <p
     className="text-body-400 with-inner-html"
@@ -116,107 +238,191 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
       }
     }
     data-testid="txt"
-    id=":r25:-description"
+    id=":r28:-description"
   />
   <div>
     <div
-      className="mt-8 mb-2 flex justify-between"
+      className="mb-2 mt-8"
     >
       <p
-        className="uppercase text-body-900"
+        className="text-black text-14-light"
         data-testid="txt"
       >
-         (
-        1
-        )
+        Scientific Name:
       </p>
-      <p
-        className="uppercase text-body-900"
-        data-testid="txt"
-      >
-        Total Count: (23)
-      </p>
-    </div>
-    <div
-      className="max-h-[300px] overflow-y-auto"
-    >
       <div
-        className="relative flex w-full"
+        className="mt-3 flex items-start gap-3"
       >
         <div
-          className="flex-1 relative space-y-2"
+          className="relative w-[40%]"
         >
           <div
-            className="relative"
+            className="w-full"
+            data-headlessui-state=""
           >
-            <input
-              aria-describedby=":r26:-description"
-              aria-invalid={false}
-              className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 border-b-neutral-400"
-              defaultValue="Test"
-              id=":r26:"
-              name="name"
-              onChange={[Function]}
-              onKeyDownCapture={[Function]}
-              placeholder="Species Name"
-              type="text"
-            />
-          </div>
-        </div>
-        <div
-          className="flex-3 relative space-y-2"
-        >
-          <div
-            className="relative"
-          >
-            <input
-              aria-describedby=":r27:-description"
-              aria-invalid={false}
-              className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent border-0 border-b py-[10px] px-0 pl-4 border-b-neutral-400"
-              defaultValue={23}
-              id=":r27:"
-              name="amount"
-              onChange={[Function]}
-              onKeyDown={[Function]}
-              onKeyDownCapture={[Function]}
-              placeholder="Enter value"
-              type="number"
-            />
+            <div
+              className="relative space-y-2"
+            >
+              <div
+                className="relative"
+              >
+                <input
+                  aria-describedby=":r2b:-description"
+                  aria-expanded={false}
+                  aria-invalid={false}
+                  className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+                  data-headlessui-state=""
+                  id=":r2b:"
+                  name="treeSpecies"
+                  onChange={[Function]}
+                  onChangeCapture={[Function]}
+                  onClick={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  placeholder="Start typing"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
           </div>
         </div>
         <button
-          className="flex items-center justify-center rounded-full hover:bg-opacity-60 absolute right-0 top-3"
+          disabled={true}
           onClick={[Function]}
         >
           <div
             style={
               Object {
                 "height": undefined,
-                "width": 22,
+                "width": 24,
               }
             }
           />
         </button>
       </div>
     </div>
-    <button
-      className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content mt-4 w-fit"
-      onClick={[Function]}
+    <div
+      className="mb-1 mt-9 flex gap-6 border-b pb-4"
     >
       <div
-        style={
-          Object {
-            "height": undefined,
-            "width": 12,
-          }
-        }
-      />
-      <span
-        className="flex items-center text-bold-caption-200"
+        className="w-[75%]"
       >
-        Add Another undefined
-      </span>
-    </button>
+        <p
+          className="uppercase text-black text-14-bold"
+          data-testid="txt"
+        />
+        <p
+          className="text-primary text-20-bold"
+          data-testid="txt"
+        >
+          1
+        </p>
+      </div>
+      <div
+        className=""
+      >
+        <p
+          className="uppercase text-black text-14-bold"
+          data-testid="txt"
+        >
+          TREES TO BE PLANTED:
+        </p>
+        <p
+          className="text-primary text-20-bold"
+          data-testid="txt"
+        >
+          23
+        </p>
+      </div>
+    </div>
+    <div
+      className=""
+    >
+      <div
+        className="relative flex w-full items-center gap-6 border-b border-neutral-450 py-2"
+      >
+        <div
+          style={
+            Object {
+              "minWidth": "undefinedpx",
+              "width": "undefinedpx",
+            }
+          }
+        >
+          <div
+            className="flex items-center gap-1"
+          >
+            <p
+              className="text-black  text-14-light"
+              data-testid="txt"
+            >
+              Test
+            </p>
+          </div>
+        </div>
+        <div
+          className=""
+          style={
+            Object {
+              "width": "undefinedpx",
+            }
+          }
+        >
+          <div
+            className="relative space-y-2"
+          >
+            <div
+              className="relative"
+            >
+              <input
+                aria-describedby=":r2c:-description"
+                aria-invalid={false}
+                className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent py-[7.5px] py-1.5 !w-[100px] text-center border border-blueCustom-700 rounded hover:border-primary hover:shadow-blue-border opacity-60 outline-none text-14-light !font-primary text-center"
+                defaultValue={23}
+                id=":r2c:"
+                name="amount"
+                onChange={[Function]}
+                onKeyDown={[Function]}
+                onKeyDownCapture={[Function]}
+                placeholder="0"
+                type="number"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="flex flex-1 justify-end gap-6"
+        >
+          <button
+            className="flex items-center justify-center rounded-full hover:bg-opacity-60 text-blueCustom-700 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
+          <button
+            className="flex items-center justify-center rounded-full hover:bg-opacity-60 text-blueCustom-700 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;

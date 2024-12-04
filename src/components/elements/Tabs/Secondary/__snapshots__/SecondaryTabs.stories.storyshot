@@ -16,7 +16,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={true}
         className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-primary"
         data-headlessui-state="selected"
-        id="headlessui-tabs-tab-:r35:"
+        id="headlessui-tabs-tab-:r3a:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -34,7 +34,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={false}
         className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r36:"
+        id="headlessui-tabs-tab-:r3b:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         aria-selected={false}
         className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
         data-headlessui-state=""
-        id="headlessui-tabs-tab-:r37:"
+        id="headlessui-tabs-tab-:r3c:"
         onClick={[Function]}
         onKeyDown={[Function]}
         onMouseDown={[Function]}
@@ -71,7 +71,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
   <div>
     <div
       data-headlessui-state="selected"
-      id="headlessui-tabs-panel-:r38:"
+      id="headlessui-tabs-panel-:r3d:"
       role="tabpanel"
       tabIndex={0}
     >
@@ -80,7 +80,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       </div>
     </div>
     <span
-      id="headlessui-tabs-panel-:r39:"
+      id="headlessui-tabs-panel-:r3e:"
       role="tabpanel"
       style={
         Object {
@@ -100,7 +100,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
       tabIndex={-1}
     />
     <span
-      id="headlessui-tabs-panel-:r3a:"
+      id="headlessui-tabs-panel-:r3f:"
       role="tabpanel"
       style={
         Object {
