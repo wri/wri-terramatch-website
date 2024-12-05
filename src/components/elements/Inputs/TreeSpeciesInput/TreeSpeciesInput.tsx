@@ -6,6 +6,7 @@ import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
 
+import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesInput/useAutocompleteSearch";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -47,6 +48,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const refPlanted = useRef<HTMLDivElement>(null);
   const refTotal = useRef<HTMLDivElement>(null);
   const refTreeSpecies = useRef<HTMLDivElement>(null);
+
+  const autocompleteSearch = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
 
@@ -131,18 +134,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 value={valueAutoComplete}
                 onChange={e => setValueAutoComplete(e.target.value)}
                 onSearch={(query: string) => {
-                  console.log("Query", query);
                   if (query === "non-scientific name") return Promise.resolve([]);
-                  return Promise.resolve([
-                    "Amadea diffusa",
-                    "Amadea occidentalis",
-                    "Amadea puberulenta",
-                    "Amadea lorem ipsum",
-                    "Amadea lorem ipsum"
-                  ]);
+                  return autocompleteSearch(query);
                 }}
                 onSelected={item => {
-                  console.log(item);
                   setValueAutoComplete(item);
                 }}
               />
@@ -186,7 +181,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
             <div className="flex items-center gap-1">
               <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
               <Text variant="text-14-light" className="text-blueCustom-700">
-                {t("You can this add, but it will be pending review from Admin.")}
+                {t("You can add this species, but it will be pending review from Admin.")}
               </Text>
             </div>
           </div>
