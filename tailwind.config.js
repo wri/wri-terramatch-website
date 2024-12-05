@@ -93,7 +93,8 @@ module.exports = {
         400: "#9EDD8F",
         300: "#C7ECC4",
         200: "#E0F3E9",
-        100: "#EFF9F4"
+        100: "#EFF9F4",
+        40: "#a9e7d6"
       },
       neutral: {
         DEFAULT: "#9B9B9B",
@@ -217,6 +218,7 @@ module.exports = {
         DEFAULT: "#FF6464",
         100: "#CBC8D2",
         200: "#E42222",
+        300: "#D33838",
         900: "#8D2D0E",
         1000: "#632424"
       }
