@@ -238,9 +238,9 @@ const Polygons = (props: IPolygonProps) => {
       </div>
       <div className="mb-4 flex flex-col gap-1">
         <When condition={props.totalPolygons ?? 0 > 0}>
-          <Text variant="text-14-semibold" className="text-darkCustom">
+          <Text variant="text-14" className="text-darkCustom">
             <span className="font-bold">{polygonSitePolygonCount}</span> of{" "}
-            <span className="font-bold">{props.totalPolygons}</span> polygons
+            <span className="font-bold">{props.totalPolygons}</span> polygons loaded
           </Text>
           <Box sx={{ width: "100%" }}>
             <LinearProgress
@@ -251,7 +251,7 @@ const Polygons = (props: IPolygonProps) => {
           </Box>
         </When>
       </div>
-      <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
+      <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
         {polygonMenu.map(item => (
           <div key={item.id}>
             <PolygonItem
