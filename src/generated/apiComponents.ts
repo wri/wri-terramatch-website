@@ -38051,6 +38051,14 @@ export type PostV2TerrafundClipPolygonsPolygonsResponse = {
 
 export type PostV2TerrafundClipPolygonsPolygonsRequestBody = {
   uuids?: string[];
+  /**
+   * The entity type of the polygon geometries to be fixed
+   */
+  entity_type?: string;
+  /**
+   * The entity ID of the polygon geometries to be fixed
+   */
+  entity_uuid?: string;
 };
 
 export type PostV2TerrafundClipPolygonsPolygonsVariables = {

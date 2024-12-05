@@ -116,7 +116,9 @@ const ProcessBulkPolygonsControl = ({
             fixPolygons(
               {
                 body: {
-                  uuids: selectedUUIDs
+                  uuids: selectedUUIDs,
+                  entity_uuid: entityData?.uuid,
+                  entity_type: "sites"
                 }
               },
               {
