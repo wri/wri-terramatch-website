@@ -23660,3 +23660,43 @@ export type UserCreateComplete = {
 export type V2AdminProjectUpdate = {
   is_test?: boolean;
 };
+
+export type IndicatorPost = {
+  uuids?: any[];
+};
+
+export type Indicators = {
+  ["2015"]?: number;
+  ["2016"]?: number;
+  ["2017"]?: number;
+  ["2018"]?: number;
+  ["2019"]?: number;
+  ["2020"]?: number;
+  ["2021"]?: number;
+  ["2022"]?: number;
+  ["2023"]?: number;
+  ["2024"]?: number;
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  site_name?: string;
+  size?: void;
+  /**
+   * @format date
+   */
+  created_at?: string;
+  indicator_slug?: string;
+  year_of_analysis?: number;
+  value?: Record<string, any>;
+};
+
+export type IndicatorPolygonsStatus = {
+  draft?: number;
+  submitted?: number;
+  approved?: number;
+  ["needs-more-information"]?: number;
+};

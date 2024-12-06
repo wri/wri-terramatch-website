@@ -1,3 +1,5 @@
+import { useShowContext } from "react-admin";
+
 import Button from "@/components/elements/Button/Button";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Text from "@/components/elements/Text/Text";
@@ -6,29 +8,18 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalNotes from "@/components/extensive/Modal/ModalNotes";
 import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
+import { EntityName } from "@/types/common";
 
-const HeaderMonitoredTab = () => {
+import { useMonitoredData } from "../hooks/useMonitoredData";
+
+const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
   const { openModal, closeModal } = useModalContext();
+  const { record } = useShowContext();
+  const { loadingAnalysis } = useMonitoredDataContext();
+  const { headerBarPolygonStatus, totalPolygonsStatus, unparsedUuids } = useMonitoredData(type, record?.uuid);
 
-  const dataPolygonOverview = [
-    {
-      status: "Draft",
-      count: 12.5,
-      color: "bg-grey-200"
-    },
-    {
-      status: "Submitted",
-      count: 42.5
-    },
-    {
-      status: "Needs Info",
-      count: 22.5
-    },
-    {
-      status: "Approved",
-      count: 22.5
-    }
-  ];
+  console.log(loadingAnalysis);
 
   const openRunAnalysis = () => {
     openModal(
@@ -37,6 +28,10 @@ const HeaderMonitoredTab = () => {
         title="Update Analysis "
         content="Project Developers may submit one or all polygons for review."
         primaryButtonText="Run"
+        projectName={record?.project ? record?.project?.name : record?.name}
+        entityType={type}
+        entityUuid={record?.uuid}
+        polygonsUiids={unparsedUuids}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
@@ -85,9 +80,23 @@ graphs and tables below by clicking update analysis button to your right. "
               Polygon Overview
               <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
             </Text>
+            <div className="flex items-center gap-1">
+              <Text as="span" variant="text-12" className="text-darkCustom-300">
+                Analyzed:
+              </Text>
+              {loadingAnalysis ? (
+                <Icon name={IconNames.IC_LOADING} className="h-4 w-4 animate-spin text-success-600" />
+              ) : (
+                <Icon name={IconNames.IC_LOADING} className="h-4 w-4 text-success-600" />
+              )}
+              <Text as="span" variant="text-12-bold" className="flex items-center gap-1 text-darkCustom-300">
+                Baseline
+                <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+              </Text>
+            </div>
           </div>
           <div className="w-[35vw] pt-2">
-            <LinearProgressBarMonitored data={dataPolygonOverview} />
+            <LinearProgressBarMonitored data={headerBarPolygonStatus} totalPolygonsStatus={totalPolygonsStatus} />
           </div>
         </div>
         <div className="flex gap-4">
@@ -96,7 +105,7 @@ graphs and tables below by clicking update analysis button to your right. "
               No. of Polygons
             </Text>
             <Text variant="text-12-bold" className="text-darkCusto pt-1">
-              45
+              {totalPolygonsStatus}
             </Text>
           </div>
           <div>
@@ -104,7 +113,7 @@ graphs and tables below by clicking update analysis button to your right. "
               No. of Sites
             </Text>
             <Text variant="text-12-bold" className="pt-1 text-darkCustom">
-              12
+              {record?.project ? record?.project?.total_sites : record?.total_sites}
             </Text>
           </div>
         </div>
