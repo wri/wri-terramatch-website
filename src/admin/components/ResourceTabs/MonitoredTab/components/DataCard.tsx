@@ -1,5 +1,6 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import classNames from "classnames";
+import { format } from "date-fns";
 import React, { useState } from "react";
 import { useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -73,11 +74,19 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
   },
   {
     accessorKey: "plantstart",
-    header: "Plant Start Date"
+    header: "Plant Start Date",
+    cell: (props: any) => {
+      const value = props.getValue();
+      return format(new Date(value), "dd/MM/yyyy");
+    }
   },
   {
-    accessorKey: "baseline",
-    header: "Baseline"
+    accessorKey: "base_line",
+    header: "Baseline",
+    cell: (props: any) => {
+      const value = props.getValue();
+      return format(new Date(value), "dd/MM/yyyy");
+    }
   }
 ];
 
