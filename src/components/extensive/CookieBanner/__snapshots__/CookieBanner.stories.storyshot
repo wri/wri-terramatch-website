@@ -18,7 +18,7 @@ exports[`Storyshots Components/Extensive/CookieBanner Default 1`] = `
     onClick={[Function]}
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Ok
     </span>

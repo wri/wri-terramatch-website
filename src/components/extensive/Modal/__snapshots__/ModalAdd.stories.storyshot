@@ -148,7 +148,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

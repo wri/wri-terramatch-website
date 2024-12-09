@@ -231,8 +231,17 @@ const Polygons = (props: IPolygonProps) => {
               Add Polygon <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
             </Text>
           </Button>
-          <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-            {openCollapseAll ? "SHRINK" : "EXPAND"}
+          <Button
+            variant="white-border"
+            onClick={() => setOpenCollapseAll(!openCollapseAll)}
+            className="mb-2 flex gap-1 !rounded-lg !capitalize"
+          >
+            {openCollapseAll ? (
+              <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            ) : (
+              <Icon name={IconNames.IC_EXPAND} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            )}
+            {openCollapseAll ? "Shrink  " : "Expand"}
           </Button>
         </div>
       </div>

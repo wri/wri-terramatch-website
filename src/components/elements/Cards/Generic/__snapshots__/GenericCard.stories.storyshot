@@ -114,7 +114,7 @@ exports[`Storyshots Components/Elements/Cards/GenericCard Default 1`] = `
       className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center gap-1.5 tracking-wide w-full justify-center"
     >
       <span
-        className="flex items-center text-bold-caption-200"
+        className="flex items-center text-bold-caption-200 !leading-[normal]"
       >
         View
       </span>
