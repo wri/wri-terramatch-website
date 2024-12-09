@@ -96,7 +96,7 @@ exports[`Storyshots Components/Elements/Fields/FieldsExpander Default 1`] = `
           onClick={[Function]}
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Download
           </span>
