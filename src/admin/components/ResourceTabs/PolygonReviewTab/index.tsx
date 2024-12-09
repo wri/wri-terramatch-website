@@ -34,6 +34,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -146,6 +147,7 @@ const ContentForApproval = ({
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
+  const { selectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
@@ -166,6 +168,12 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
 
+  useEffect(() => {
+    if (selectPolygonFromMap?.uuid) {
+      setPolygonFromMap(selectPolygonFromMap);
+      flyToPolygonBounds(selectPolygonFromMap.uuid);
+    }
+  }, [polygonList]);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };

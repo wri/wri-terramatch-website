@@ -43,7 +43,8 @@ const ProjectShow = () => {
           <GalleryTab label="Project Gallery" entity="projects" />
           <DocumentTab label="Project Documents" entity="projects" />
           <ChangeRequestsTab entity="projects" singularEntity="project" />
-          <MonitoredTab label="Monitored Data" />
+          {/* <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab> */}
+          <MonitoredTab label="Monitored Data" type={"projects"}></MonitoredTab>
           <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
         </TabbedShowLayout>
       </RecordFrameworkProvider>
