@@ -9,6 +9,7 @@ import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
   useGetV2IndicatorsEntityUuid,
   useGetV2IndicatorsEntityUuidSlug,
+  useGetV2IndicatorsEntityUuidSlugVerify,
   usePostV2IndicatorsSlug
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
@@ -160,7 +161,25 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     };
   });
 
-  const totalPolygonsStatus = headerBarPolygonStatus.reduce((acc, item) => acc + item.count, 0);
+  const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key === "approved")?.count;
+
+  const { data: dataToMissingPolygonVerify } = useGetV2IndicatorsEntityUuidSlugVerify(
+    {
+      pathParams: {
+        entity: entity!,
+        uuid: entity_uuid!,
+        slug: indicatorSlug!
+      }
+    },
+    {
+      enabled: !!indicatorSlug
+    }
+  );
+
+  // @ts-ignore
+  const polygonMissingAnalysis = dataToMissingPolygonVerify?.message
+    ? totalPolygonsApproved
+    : totalPolygonsApproved! - Object?.keys(dataToMissingPolygonVerify ?? {})?.length;
 
   const verifySlug = async (slug: string) =>
     fetchGetV2IndicatorsEntityUuidSlugVerify({
@@ -209,12 +228,13 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     polygonsIndicator: filteredPolygons,
     indicatorPolygonsStatus: indicatorPolygonsStatus,
     headerBarPolygonStatus: headerBarPolygonStatus,
-    totalPolygonsStatus: totalPolygonsStatus,
+    totalPolygonsStatus: totalPolygonsApproved,
     runAnalysisIndicator: mutate,
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
     setIsLoadingVerify: setIsLoadingVerify,
     dropdownAnalysisOptions: dropdownAnalysisOptions,
-    analysisToSlug: analysisToSlug
+    analysisToSlug: analysisToSlug,
+    polygonMissingAnalysis: polygonMissingAnalysis
   };
 };

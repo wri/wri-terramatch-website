@@ -16,7 +16,7 @@ import { useMonitoredData } from "../hooks/useMonitoredData";
 const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
-  const { headerBarPolygonStatus, totalPolygonsStatus } = useMonitoredData(type, record?.uuid);
+  const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis } = useMonitoredData(type, record?.uuid);
 
   const openRunAnalysis = () => {
     openModal(
@@ -51,9 +51,9 @@ const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
       ModalId.MODAL_NOTES,
       <ModalNotes
         title="Notes"
-        content="Baseline Analysis Underway: There are 200 approved polygons for this project 
-that are ready for analysis and 90 that have been analyzed already. Update the 
-graphs and tables below by clicking update analysis button to your right. "
+        content={`Baseline Analysis Underway: There are ${totalPolygonsStatus} approved polygons for this project 
+that are ready for analysis and ${polygonMissingAnalysis} that have been analyzed already. Update the 
+graphs and tables below by clicking update analysis button to your right. `}
         primaryButtonText="Close"
         primaryButtonProps={{
           className: "px-8 py-3",
@@ -76,23 +76,9 @@ graphs and tables below by clicking update analysis button to your right. "
               Polygon Overview
               <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
             </Text>
-            {/* <div className="flex items-center gap-1">
-              <Text as="span" variant="text-12" className="text-darkCustom-300">
-                Analyzed:
-              </Text>
-              {loadingAnalysis ? (
-                <Icon name={IconNames.IC_LOADING} className="h-4 w-4 animate-spin text-success-600" />
-              ) : (
-                <Icon name={IconNames.IC_LOADING} className="h-4 w-4 text-success-600" />
-              )}
-              <Text as="span" variant="text-12-bold" className="flex items-center gap-1 text-darkCustom-300">
-                Baseline
-                <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
-              </Text>
-            </div> */}
           </div>
           <div className="w-[35vw] pt-2">
-            <LinearProgressBarMonitored data={headerBarPolygonStatus} totalPolygonsStatus={totalPolygonsStatus} />
+            <LinearProgressBarMonitored data={headerBarPolygonStatus} />
           </div>
         </div>
         <div className="flex gap-4">

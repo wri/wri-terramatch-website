@@ -1,5 +1,7 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
+import { IpolygonFromMap } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/Polygons";
+
 type MonitoredDataType = {
   filters: {
     uuid: string;
@@ -17,6 +19,8 @@ type MonitoredDataType = {
   setIndicatorSlugAnalysis?: React.Dispatch<React.SetStateAction<string>>;
   loadingAnalysis?: boolean;
   setLoadingAnalysis?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectPolygonFromMap?: (value: IpolygonFromMap) => void;
+  selectPolygonFromMap?: IpolygonFromMap;
 };
 const defaultValues: MonitoredDataType = {
   filters: {
@@ -30,7 +34,9 @@ const defaultValues: MonitoredDataType = {
   indicatorSlugAnalysis: "treeCoverLoss",
   setIndicatorSlugAnalysis: () => {},
   loadingAnalysis: false,
-  setLoadingAnalysis: () => {}
+  setLoadingAnalysis: () => {},
+  setSelectPolygonFromMap: () => {},
+  selectPolygonFromMap: { isOpen: false, uuid: "" }
 };
 const MonitoredDataContext = createContext<MonitoredDataType>(defaultValues);
 
@@ -40,6 +46,8 @@ export const MonitoredDataProvider: React.FC<{ children: ReactNode }> = ({ child
   const [indicatorSlug, setIndicatorSlug] = React.useState("treeCoverLoss");
   const [indicatorSlugAnalysis, setIndicatorSlugAnalysis] = React.useState("treeCoverLoss");
   const [loadingAnalysis, setLoadingAnalysis] = React.useState<boolean>(false);
+  const [selectPolygonFromMap, setSelectPolygonFromMap] = React.useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+
   const contextValue: MonitoredDataType = {
     filters,
     setFilters,
@@ -50,7 +58,9 @@ export const MonitoredDataProvider: React.FC<{ children: ReactNode }> = ({ child
     indicatorSlugAnalysis,
     setIndicatorSlugAnalysis,
     loadingAnalysis,
-    setLoadingAnalysis
+    setLoadingAnalysis,
+    setSelectPolygonFromMap,
+    selectPolygonFromMap
   };
   return <MonitoredDataContext.Provider value={contextValue}>{children}</MonitoredDataContext.Provider>;
 };

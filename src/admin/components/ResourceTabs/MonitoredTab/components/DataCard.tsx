@@ -2,8 +2,9 @@ import { ColumnDef, RowData } from "@tanstack/react-table";
 import classNames from "classnames";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { useShowContext } from "react-admin";
+import { useBasename, useShowContext } from "react-admin";
 import { When } from "react-if";
+import { useNavigate } from "react-router-dom";
 
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
@@ -146,52 +147,52 @@ const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
     meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
     columns: [
       {
-        accessorKey: "2015",
+        accessorKey: "data.2015",
         header: "2015",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2016",
+        accessorKey: "data.2016",
         header: "2016",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2017",
+        accessorKey: "data.2017",
         header: "2017",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2018",
+        accessorKey: "data.2018",
         header: "2018",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2019",
+        accessorKey: "data.2019",
         header: "2019",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2020",
+        accessorKey: "data.2020",
         header: "2020",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2021",
+        accessorKey: "data.2021",
         header: "2021",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2022",
+        accessorKey: "data.2022",
         header: "2022",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2023",
+        accessorKey: "data.2023",
         header: "2023",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       },
       {
-        accessorKey: "2024",
+        accessorKey: "data.2024",
         header: "2024",
         meta: { style: { top: `${topHeaderFirstTable}` } }
       }
@@ -207,7 +208,7 @@ const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
         header: "",
         enableSorting: false,
         cell: props => (
-          <div className="w-min rounded p-1 hover:bg-primary-200">
+          <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
             <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
           </div>
         ),
@@ -220,7 +221,7 @@ const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
 const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
   ...COMMON_COLUMNS,
   {
-    accessorKey: "tree_planting",
+    accessorKey: "data.tree_planting",
     header: "Tree Planting",
     cell: (props: any) => {
       const value = props.getValue();
@@ -228,7 +229,7 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "assisted_natural_regeneration",
+    accessorKey: "data.assisted_natural_regeneration",
     header: () => (
       <>
         Asst. Nat.
@@ -242,7 +243,7 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "direct_seeding",
+    accessorKey: "data.direct_seeding",
     header: () => (
       <>
         Direct
@@ -260,7 +261,7 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min rounded p-1 hover:bg-primary-200">
+      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
     )
@@ -270,7 +271,7 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
 const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
   ...COMMON_COLUMNS,
   {
-    accessorKey: "australasian",
+    accessorKey: "data.australasian",
     header: "Australasian",
     cell: (props: any) => {
       const value = props.getValue();
@@ -278,7 +279,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "afrotropical",
+    accessorKey: "data.afrotropical",
     header: "Afrotropical",
     cell: (props: any) => {
       const value = props.getValue();
@@ -286,7 +287,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "paleartic11",
+    accessorKey: "data.paleartic11",
     header: "Paleartic11",
     cell: (props: any) => {
       const value = props.getValue();
@@ -298,7 +299,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min rounded p-1 hover:bg-primary-200">
+      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
     )
@@ -308,7 +309,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
 const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
   ...COMMON_COLUMNS,
   {
-    accessorKey: "agroforest",
+    accessorKey: "data.agroforest",
     header: "Agroforest",
     cell: (props: any) => {
       const value = props.getValue();
@@ -316,7 +317,7 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "natural_forest",
+    accessorKey: "data.natural_forest",
     header: "Natural Forest",
     cell: (props: any) => {
       const value = props.getValue();
@@ -324,7 +325,7 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     }
   },
   {
-    accessorKey: "mangrove",
+    accessorKey: "data.mangrove",
     header: "Mangrove",
     cell: (props: any) => {
       const value = props.getValue();
@@ -336,12 +337,21 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min rounded p-1 hover:bg-primary-200">
+      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
     )
   }
 ];
+
+const TABLE_COLUMNS_MAPPING: Record<string, any> = {
+  treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
+  treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
+  restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
+  restorationByStrategy: TABLE_COLUMNS_HECTARES_STRATEGY,
+  restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
+  treeCount: []
+};
 
 const DROPDOWN_OPTIONS = [
   {
@@ -376,15 +386,6 @@ const DROPDOWN_OPTIONS = [
   }
 ];
 
-const TABLE_COLUMNS_MAPPING: Record<string, any> = {
-  treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
-  treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
-  restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
-  restorationByStrategy: TABLE_COLUMNS_HECTARES_STRATEGY,
-  restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
-  treeCount: []
-};
-
 const toggleItems: TogglePropsItem[] = [
   {
     key: "dashboard",
@@ -412,13 +413,20 @@ const toggleItems: TogglePropsItem[] = [
   }
 ];
 
-const DataCard = ({ type, ...rest }: React.HTMLAttributes<HTMLDivElement> & { type?: EntityName }) => {
+const DataCard = ({
+  type,
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement> & {
+  type?: EntityName;
+}) => {
   const [tabActive, setTabActive] = useState(0);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
+  const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
-  const { setSearchTerm, setIndicatorSlug, indicatorSlug } = useMonitoredDataContext();
+  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap } = useMonitoredDataContext();
+  const navigate = useNavigate();
 
   const POLYGONS = [
     { title: "Agrariala Palma", value: "1" },
@@ -538,6 +546,16 @@ const DataCard = ({ type, ...rest }: React.HTMLAttributes<HTMLDivElement> & { ty
               classNameWrapper="!overflow-visible"
               visibleRows={50}
               border={1}
+              onRowClick={(row: any) => {
+                // const router = useRouter();
+                // const siteUrl = `/site/${polygonData?.site_id}`;
+                // window.open(siteUrl, "_blank");
+                // const link = document.createElement("a");
+                // link.href = `${basename}/admin#/site/${row?.site_id}/show/1`;
+                // link.click();
+                navigate(`${basename}/site/${row?.site_id}/show/1`);
+                setSelectPolygonFromMap?.({ isOpen: true, uuid: row?.poly_id });
+              }}
             />
           </div>
         </When>
