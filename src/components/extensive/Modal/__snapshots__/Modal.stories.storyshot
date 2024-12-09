@@ -39,7 +39,7 @@ exports[`Storyshots Components/Extensive/Modal Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           Cancel
         </span>
@@ -49,7 +49,7 @@ exports[`Storyshots Components/Extensive/Modal Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           Close and continue later
         </span>

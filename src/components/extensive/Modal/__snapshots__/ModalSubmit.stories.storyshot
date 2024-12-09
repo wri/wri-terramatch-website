@@ -117,7 +117,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+          className="flex items-center text-bold-caption-200 text-inherit uppercase !leading-[normal]"
         >
           <p
             className="capitalize text-14-bold"
@@ -132,7 +132,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

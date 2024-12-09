@@ -35,7 +35,7 @@ exports[`Storyshots Components/Elements/Inputs/DataTable Default 1`] = `
         }
       />
       <span
-        className="flex items-center text-bold-caption-200"
+        className="flex items-center text-bold-caption-200 !leading-[normal]"
       >
         Add funding source
       </span>
