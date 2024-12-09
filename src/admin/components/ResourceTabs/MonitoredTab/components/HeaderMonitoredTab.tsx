@@ -1,4 +1,5 @@
 import { useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
@@ -8,7 +9,6 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalNotes from "@/components/extensive/Modal/ModalNotes";
 import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
-import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { EntityName } from "@/types/common";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
@@ -16,10 +16,7 @@ import { useMonitoredData } from "../hooks/useMonitoredData";
 const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
-  const { loadingAnalysis } = useMonitoredDataContext();
-  const { headerBarPolygonStatus, totalPolygonsStatus, unparsedUuids } = useMonitoredData(type, record?.uuid);
-
-  console.log(loadingAnalysis);
+  const { headerBarPolygonStatus, totalPolygonsStatus } = useMonitoredData(type, record?.uuid);
 
   const openRunAnalysis = () => {
     openModal(
@@ -31,7 +28,6 @@ const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
         projectName={record?.project ? record?.project?.name : record?.name}
         entityType={type}
         entityUuid={record?.uuid}
-        polygonsUiids={unparsedUuids}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
@@ -80,7 +76,7 @@ graphs and tables below by clicking update analysis button to your right. "
               Polygon Overview
               <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
             </Text>
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               <Text as="span" variant="text-12" className="text-darkCustom-300">
                 Analyzed:
               </Text>
@@ -93,7 +89,7 @@ graphs and tables below by clicking update analysis button to your right. "
                 Baseline
                 <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
               </Text>
-            </div>
+            </div> */}
           </div>
           <div className="w-[35vw] pt-2">
             <LinearProgressBarMonitored data={headerBarPolygonStatus} totalPolygonsStatus={totalPolygonsStatus} />
@@ -108,14 +104,16 @@ graphs and tables below by clicking update analysis button to your right. "
               {totalPolygonsStatus}
             </Text>
           </div>
-          <div>
-            <Text variant="text-12" className=" text-darkCustom">
-              No. of Sites
-            </Text>
-            <Text variant="text-12-bold" className="pt-1 text-darkCustom">
-              {record?.project ? record?.project?.total_sites : record?.total_sites}
-            </Text>
-          </div>
+          <When condition={type === "projects"}>
+            <div>
+              <Text variant="text-12" className=" text-darkCustom">
+                No. of Sites
+              </Text>
+              <Text variant="text-12-bold" className="pt-1 text-darkCustom">
+                {record?.project ? record?.project?.total_sites : record?.total_sites}
+              </Text>
+            </div>
+          </When>
         </div>
       </div>
       <div className="flex gap-4">

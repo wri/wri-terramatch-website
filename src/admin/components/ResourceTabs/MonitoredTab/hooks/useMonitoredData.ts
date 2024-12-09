@@ -1,14 +1,14 @@
 import { useT } from "@transifex/react";
+import { useEffect, useState } from "react";
 
-// import { useEffect, useMemo, useState } from "react";
-// import { useMyUser } from "@/connections/User";
-// import { useLoading } from "@/context/loaderAdmin.provider";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
+  fetchGetV2IndicatorsEntityUuidSlugVerify,
   useGetV2IndicatorsEntityUuid,
   useGetV2IndicatorsEntityUuidSlug,
-  useGetV2IndicatorsEntityUuidSlugVerify,
   usePostV2IndicatorsSlug
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
@@ -38,6 +38,47 @@ const dataPolygonOverview = [
   }
 ];
 
+const DROPDOWN_OPTIONS = [
+  {
+    title: "Tree Cover Loss",
+    value: "1",
+    slug: "treeCoverLoss"
+  },
+  {
+    title: "Tree Cover Loss from Fire",
+    value: "2",
+    slug: "treeCoverLossFires"
+  },
+  {
+    title: "Hectares Under Restoration By WWF EcoRegion",
+    value: "3",
+    slug: "restorationByEcoRegion"
+  },
+  {
+    title: "Hectares Under Restoration By Strategy",
+    value: "4",
+    slug: "restorationByStrategy"
+  },
+  {
+    title: "Hectares Under Restoration By Target Land Use System",
+    value: "5",
+    slug: "restorationByLandUse"
+  },
+  {
+    title: "Tree Count",
+    value: "6",
+    slug: "treeCount"
+  }
+];
+
+const SLUGS_INDICATORS = [
+  "treeCoverLoss",
+  "treeCoverLossFires",
+  "restorationByEcoRegion",
+  "restorationByStrategy",
+  "restorationByLandUse"
+];
+
 type InterfaceIndicatorPolygonsStatus = {
   draft: number;
   submitted: number;
@@ -46,12 +87,20 @@ type InterfaceIndicatorPolygonsStatus = {
 };
 
 export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
-  // const [, { user }] = useMyUser();
   const t = useT();
-  // const [updateFilters, setUpdateFilters] = useState<any>({});
-  // const { showLoader, hideLoader } = useLoading();
-  const { searchTerm, indicatorSlug, indicatorSlugAnalysis, setLoadingAnalysis } = useMonitoredDataContext();
+  const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
+  const { modalOpened } = useModalContext();
+  const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
+  const [analysisToSlug, setAnalysisToSlug] = useState<any>({
+    treeCoverLoss: [],
+    treeCoverLossFires: [],
+    restorationByEcoRegion: [],
+    restorationByStrategy: [],
+    restorationByLandUse: [],
+    treeCount: []
+  });
+  const [dropdownAnalysisOptions, setDropdownAnalysisOptions] = useState(DROPDOWN_OPTIONS);
 
   const { mutate, isLoading } = usePostV2IndicatorsSlug({
     onSuccess: () => {
@@ -62,11 +111,13 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       );
       refetchDataIndicators();
       setLoadingAnalysis?.(false);
+      setIndicatorSlugAnalysis?.("treeCoverLoss");
     },
     onError: () => {
       openNotification("error", t("Error! Analysis failed."), t("The analysis has failed. Please try again."));
       refetchDataIndicators();
       setLoadingAnalysis?.(false);
+      setIndicatorSlugAnalysis?.("treeCoverLoss");
     }
   });
 
@@ -111,18 +162,48 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   const totalPolygonsStatus = headerBarPolygonStatus.reduce((acc, item) => acc + item.count, 0);
 
-  const { data: unparsedUuids, isLoading: isLoadingVerify } = useGetV2IndicatorsEntityUuidSlugVerify(
-    {
+  const verifySlug = async (slug: string) =>
+    fetchGetV2IndicatorsEntityUuidSlugVerify({
       pathParams: {
         entity: entity!,
         uuid: entity_uuid!,
-        slug: indicatorSlugAnalysis!
+        slug: slug!
       }
-    },
-    {
-      enabled: !!indicatorSlugAnalysis && !!entity_uuid
+    });
+
+  useEffect(() => {
+    const fetchSlugs = async () => {
+      setIsLoadingVerify(true);
+      const slugVerify = await Promise.all(SLUGS_INDICATORS.map(verifySlug));
+      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug, index) => {
+        acc[slug] = slugVerify[index];
+        return acc;
+      }, {});
+      const updateTitleDropdownOptions = () => {
+        return DROPDOWN_OPTIONS.map(option => {
+          if (slugToAnalysis[`${option.slug}`]?.message) {
+            return {
+              ...option,
+              title: `${option.title} (0 polygons not run)`
+            };
+          }
+          if (!slugToAnalysis[`${option.slug}`]) {
+            return option;
+          }
+          return {
+            ...option,
+            title: `${option.title} (${Object?.keys(slugToAnalysis[`${option.slug}`]).length} polygons not run)`
+          };
+        });
+      };
+      setAnalysisToSlug(slugToAnalysis);
+      await setDropdownAnalysisOptions(updateTitleDropdownOptions);
+      setIsLoadingVerify(false);
+    };
+    if (modalOpened(ModalId.MODAL_RUN_ANALYSIS)) {
+      fetchSlugs();
     }
-  );
+  }, [entity]);
 
   return {
     polygonsIndicator: filteredPolygons,
@@ -130,8 +211,10 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     headerBarPolygonStatus: headerBarPolygonStatus,
     totalPolygonsStatus: totalPolygonsStatus,
     runAnalysisIndicator: mutate,
-    unparsedUuids: unparsedUuids,
     loadingAnalysis: isLoading,
-    loadingVerify: isLoadingVerify
+    loadingVerify: isLoadingVerify,
+    setIsLoadingVerify: setIsLoadingVerify,
+    dropdownAnalysisOptions: dropdownAnalysisOptions,
+    analysisToSlug: analysisToSlug
   };
 };
