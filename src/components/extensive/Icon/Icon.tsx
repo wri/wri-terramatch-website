@@ -200,7 +200,9 @@ export enum IconNames {
   ORANGE_DOTS = "orange-dots",
   IC_NOTIFICATION = "notification",
   IC_LOADING = "loading",
-  IC_INFO_WHITE_BLACK = "ic-info-white-black"
+  IC_INFO_WHITE_BLACK = "ic-info-white-black",
+  IC_EXPAND = "ic_expand",
+  IC_SHINK = "ic_shrink"
 }
 
 export interface IconProps {
