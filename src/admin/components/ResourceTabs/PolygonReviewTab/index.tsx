@@ -347,23 +347,31 @@ const PolygonReviewTab: FC<IProps> = props => {
       setSubmitPolygonLoaded(false);
       hideLoader();
     } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message;
-        if (typeof errorMessage === "string") {
-          const parsedMessage = JSON.parse(errorMessage);
-          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-            errorMessage = parsedMessage.message;
+      let errorMessage;
+
+      if (error && typeof error === "object" && "error" in error) {
+        const nestedError = error.error;
+        if (typeof nestedError === "string") {
+          try {
+            const parsedNestedError = JSON.parse(nestedError);
+            if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
+              errorMessage = parsedNestedError.message;
+            } else {
+              errorMessage = nestedError;
+            }
+          } catch (parseError) {
+            errorMessage = nestedError;
           }
+        } else {
+          errorMessage = nestedError;
         }
-        if (errorMessage && typeof errorMessage === "object" && "message" in errorMessage) {
-          errorMessage = errorMessage.message;
-        }
-        openNotification("error", t("Error uploading file"), errorMessage);
-        hideLoader();
+      } else if (error && typeof error === "object" && "message" in error) {
+        errorMessage = error.message;
       } else {
-        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
-        hideLoader();
+        errorMessage = t("An unknown error occurred");
       }
+      openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
+      hideLoader();
     }
   };
 
