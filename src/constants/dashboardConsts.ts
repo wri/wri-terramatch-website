@@ -51,6 +51,13 @@ export const DEFAULT_POLYGONS_DATA = {
   }
 };
 
+export const DEFAULT_POLYGONS_DATA_STRATEGIES = [
+  { label: "Direct Seeding", value: 0 },
+  { label: "Assisted Natural Regeneration", value: 0 },
+  { label: "Tree Planting", value: 0 },
+  { label: "Multiple Strategies", value: 0 }
+];
+
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",

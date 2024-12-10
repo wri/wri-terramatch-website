@@ -21,11 +21,23 @@ import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { DEFAULT_POLYGONS_DATA } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  DEFAULT_POLYGONS_DATA,
+  DEFAULT_POLYGONS_DATA_STRATEGIES,
+  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+} from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
+import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
+import SecDashboard from "@/pages/dashboard/components/SecDashboard";
+import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 import { EntityName, OptionValue } from "@/types/common";
-import { parsePolygonsIndicatorDataForLandUse } from "@/utils/dashboardUtils";
+import {
+  isEmptyChartData,
+  parsePolygonsIndicatorDataForLandUse,
+  parsePolygonsIndicatorDataForStrategies
+} from "@/utils/dashboardUtils";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 
@@ -428,9 +440,16 @@ const DataCard = ({
   const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap } = useMonitoredDataContext();
   const navigate = useNavigate();
+  const totalHectaresRestoredGoal = record?.total_hectares_restored_goal
+    ? Number(record?.total_hectares_restored_goal)
+    : +record?.hectares_to_restore_goal;
   const landUseData = polygonsIndicator
-    ? parsePolygonsIndicatorDataForLandUse(polygonsIndicator)
+    ? parsePolygonsIndicatorDataForLandUse(polygonsIndicator, totalHectaresRestoredGoal)
     : DEFAULT_POLYGONS_DATA;
+  const strategiesData = polygonsIndicator
+    ? parsePolygonsIndicatorDataForStrategies(polygonsIndicator)
+    : DEFAULT_POLYGONS_DATA_STRATEGIES;
+
   const POLYGONS = [
     { title: "Agrariala Palma", value: "1" },
     { title: "Agraisa", value: "2" },
@@ -599,13 +618,29 @@ const DataCard = ({
               <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
             </When>
             <When condition={selected.includes("4")}>
-              <img src="/images/monitoring-graph-4.png" alt="" className="w-[73%] object-contain" />
+              <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
+                <When condition={isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)}>{noDataGraph}</When>
+                <SecDashboard
+                  title={"Total Hectares Under Restoration"}
+                  data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
+                  className="w-full place-content-center pl-8"
+                  tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
+                  showTreesRestoredGraph={false}
+                />
+                <SimpleBarChart
+                  data={
+                    isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)
+                      ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+                      : strategiesData
+                  }
+                />
+              </div>
             </When>
             <When condition={selected.includes("5")}>
               <div className="w-[73%]">
                 <GraphicIconDashboard
                   data={landUseData.graphicTargetLandUseTypes}
-                  maxValue={landUseData.totalSection.totalHectaresRestored}
+                  maxValue={totalHectaresRestoredGoal}
                 />
               </div>
             </When>

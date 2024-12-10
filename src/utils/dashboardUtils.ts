@@ -440,12 +440,15 @@ const formatLabel = (key: string): string => {
     .join(" ");
 };
 
-export const parsePolygonsIndicatorDataForLandUse = (polygonsIndicator: PolygonIndicator[]): ParsedPolygonsData => {
+export const parsePolygonsIndicatorDataForLandUse = (
+  polygonsIndicator: PolygonIndicator[],
+  totalHectares: number
+): ParsedPolygonsData => {
   if (!polygonsIndicator?.length) {
     return DEFAULT_POLYGONS_DATA;
   }
 
-  const { aggregatedData, totalHectares } = polygonsIndicator.reduce(
+  const { aggregatedData } = polygonsIndicator.reduce(
     (acc, polygon) => {
       if (!polygon.data) return acc;
 
@@ -453,14 +456,12 @@ export const parsePolygonsIndicatorDataForLandUse = (polygonsIndicator: PolygonI
         const label = formatLabel(key);
         const numericValue = Number(value);
         acc.aggregatedData[label] = (acc.aggregatedData[label] || 0) + numericValue;
-        acc.totalHectares += numericValue;
       });
 
       return acc;
     },
     {
-      aggregatedData: {} as Record<string, number>,
-      totalHectares: 0
+      aggregatedData: {} as Record<string, number>
     }
   );
 
@@ -479,4 +480,42 @@ export const parsePolygonsIndicatorDataForLandUse = (polygonsIndicator: PolygonI
       totalHectaresRestored: totalHectares
     }
   };
+};
+
+export const parsePolygonsIndicatorDataForStrategies = (polygonsIndicator: PolygonIndicator[]): ParsedDataItem[] => {
+  const totals = {
+    "Tree Planting": 0,
+    "Direct Seeding": 0,
+    "Assisted Natural Regeneration": 0,
+    "Multiple Strategies": 0
+  };
+
+  polygonsIndicator.forEach(polygon => {
+    const strategies = polygon.data ? Object.keys(polygon.data) : [];
+
+    if (strategies.length === 1) {
+      const strategy = strategies[0];
+      switch (strategy) {
+        case "tree_planting":
+          totals["Tree Planting"] += polygon.data?.[strategy] || 0;
+          break;
+        case "direct_seeding":
+          totals["Direct Seeding"] += polygon.data?.[strategy] || 0;
+          break;
+        case "assisted_natural_regeneration":
+          totals["Assisted Natural Regeneration"] += polygon.data?.[strategy] || 0;
+          break;
+      }
+    } else if (strategies.length > 1) {
+      const totalValue = polygon.data ? Object.values(polygon.data).reduce((sum, value) => sum + (value || 0), 0) : 0;
+      totals["Multiple Strategies"] += totalValue;
+    }
+  });
+
+  return Object.entries(totals)
+    .filter(([_, value]) => value > 0)
+    .map(([label, value]) => ({
+      label,
+      value: Number(value.toFixed(2))
+    }));
 };
