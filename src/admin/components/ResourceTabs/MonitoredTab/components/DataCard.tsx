@@ -21,10 +21,11 @@ import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED } from "@/constants/dashboardConsts";
+import { DEFAULT_POLYGONS_DATA } from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import { EntityName, OptionValue } from "@/types/common";
+import { parsePolygonsIndicatorDataForLandUse } from "@/utils/dashboardUtils";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 
@@ -427,7 +428,9 @@ const DataCard = ({
   const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap } = useMonitoredDataContext();
   const navigate = useNavigate();
-
+  const landUseData = polygonsIndicator
+    ? parsePolygonsIndicatorDataForLandUse(polygonsIndicator)
+    : DEFAULT_POLYGONS_DATA;
   const POLYGONS = [
     { title: "Agrariala Palma", value: "1" },
     { title: "Agraisa", value: "2" },
@@ -601,8 +604,8 @@ const DataCard = ({
             <When condition={selected.includes("5")}>
               <div className="w-[73%]">
                 <GraphicIconDashboard
-                  data={DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED.graphicTargetLandUseTypes}
-                  maxValue={90}
+                  data={landUseData.graphicTargetLandUseTypes}
+                  maxValue={landUseData.totalSection.totalHectaresRestored}
                 />
               </div>
             </When>

@@ -44,6 +44,13 @@ export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degrad
 
 export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 
+export const DEFAULT_POLYGONS_DATA = {
+  graphicTargetLandUseTypes: [],
+  totalSection: {
+    totalHectaresRestored: 0
+  }
+};
+
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",

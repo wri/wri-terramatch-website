@@ -1,4 +1,4 @@
-import { CHART_TYPES, MONTHS } from "@/constants/dashboardConsts";
+import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -121,6 +121,22 @@ interface ChartDataPoint {
 interface ChartCategory {
   name: string;
   values: ChartDataPoint[];
+}
+
+interface PolygonIndicator {
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  data?: Record<string, number>;
+  value?: Record<string, any>;
+  [key: string]: any;
+}
+
+export interface ParsedPolygonsData {
+  graphicTargetLandUseTypes: ParsedLandUseType[];
+  totalSection: {
+    totalHectaresRestored: number;
+  };
 }
 
 export const formatNumberUS = (value: number) =>
@@ -415,4 +431,52 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
     default:
       return false;
   }
+};
+
+const formatLabel = (key: string): string => {
+  return key
+    .split("_")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+export const parsePolygonsIndicatorDataForLandUse = (polygonsIndicator: PolygonIndicator[]): ParsedPolygonsData => {
+  if (!polygonsIndicator?.length) {
+    return DEFAULT_POLYGONS_DATA;
+  }
+
+  const { aggregatedData, totalHectares } = polygonsIndicator.reduce(
+    (acc, polygon) => {
+      if (!polygon.data) return acc;
+
+      Object.entries(polygon.data).forEach(([key, value]) => {
+        const label = formatLabel(key);
+        const numericValue = Number(value);
+        acc.aggregatedData[label] = (acc.aggregatedData[label] || 0) + numericValue;
+        acc.totalHectares += numericValue;
+      });
+
+      return acc;
+    },
+    {
+      aggregatedData: {} as Record<string, number>,
+      totalHectares: 0
+    }
+  );
+
+  const graphicTargetLandUseTypes = Object.entries(aggregatedData).map(([label, value]) => {
+    const percentage = calculatePercentage(value as number, totalHectares);
+    return {
+      label,
+      value: value as number,
+      valueText: `${Math.round(value as number)} ha ${percentage.toFixed(2)}%`
+    };
+  });
+
+  return {
+    graphicTargetLandUseTypes,
+    totalSection: {
+      totalHectaresRestored: totalHectares
+    }
+  };
 };
