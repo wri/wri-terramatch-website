@@ -36,7 +36,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   error?: FieldErrors[];
 }
 
-export type TreeSpeciesValue = { uuid?: string; name?: string; taxon_id?: string; amount?: number; new?: boolean };
+export type TreeSpeciesValue = { uuid?: string; name?: string; taxon_id?: string; amount?: number };
 
 const NonScientificConfirmationModal = ({ onConfirm }: { onConfirm: () => void }) => {
   const t = useT();
@@ -139,9 +139,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         uuid: uuidv4(),
         name: valueAutoComplete,
         taxon_id: taxonId,
-        amount: props.withNumbers ? 0 : undefined,
-        // TODO (NJC) this is not correct, but leaving it in for now for testing.
-        new: !props.withNumbers
+        amount: props.withNumbers ? 0 : undefined
       });
 
       lastInputRef.current?.focus();
@@ -356,7 +354,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   <When condition={value.taxon_id == null}>
                     <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                   </When>
-                  <When condition={value.new}>
+                  <When condition={false /* TODO */}>
                     <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                   </When>
                   <Text variant="text-14-light" className="text-black ">
@@ -391,34 +389,23 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   containerClassName=""
                 />
               </div>
-              <When condition={!props.withNumbers}>
-                <Text
-                  variant="text-14-light"
-                  className="text-black"
-                  style={refTotal ? { width: `${refTotal.current?.clientWidth}px` } : {}}
-                >
-                  7,400
-                </Text>
-              </When>
-              <When condition={props.withNumbers || value.new}>
-                <div className="flex flex-1 justify-end gap-6">
-                  <IconButton
-                    iconProps={{ name: IconNames.EDIT_TA, width: 24 }}
-                    className="text-blueCustom-700 hover:text-primary"
-                    onClick={() => {
-                      setValueAutoComplete(value.name ?? "");
-                      setEditIndex(value.uuid ?? null);
-                      setEditValue(value);
-                      autoCompleteRef.current?.focus();
-                    }}
-                  />
-                  <IconButton
-                    iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
-                    className="text-blueCustom-700 hover:text-primary"
-                    onClick={() => setDeleteIndex(value.uuid ?? null)}
-                  />
-                </div>
-              </When>
+              <div className="flex flex-1 justify-end gap-6">
+                <IconButton
+                  iconProps={{ name: IconNames.EDIT_TA, width: 24 }}
+                  className="text-blueCustom-700 hover:text-primary"
+                  onClick={() => {
+                    setValueAutoComplete(value.name ?? "");
+                    setEditIndex(value.uuid ?? null);
+                    setEditValue(value);
+                    autoCompleteRef.current?.focus();
+                  }}
+                />
+                <IconButton
+                  iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
+                  className="text-blueCustom-700 hover:text-primary"
+                  onClick={() => setDeleteIndex(value.uuid ?? null)}
+                />
+              </div>
             </div>
           )}
         />
