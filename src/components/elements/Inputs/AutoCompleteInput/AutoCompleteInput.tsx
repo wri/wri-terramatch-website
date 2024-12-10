@@ -13,13 +13,12 @@ export interface AutoCompleteInputProps extends InputProps {
   onSearch: (query: string) => Promise<string[]>;
   disableAutoComplete?: boolean;
   classNameMenu?: string;
-  onSelected?: (item: string) => void;
 }
 
 //TODO: Bugfix: Users can enter space in this input
 const AutoCompleteInput = forwardRef(
   (
-    { onSearch, disableAutoComplete, classNameMenu, onSelected, ...inputProps }: AutoCompleteInputProps,
+    { onSearch, disableAutoComplete, classNameMenu, ...inputProps }: AutoCompleteInputProps,
     ref?: Ref<HTMLInputElement>
   ) => {
     const t = useT();
@@ -32,8 +31,6 @@ const AutoCompleteInput = forwardRef(
       } else {
         inputProps.onChange?.({ target: { name: inputProps.name, value: item } } as ChangeEvent<HTMLInputElement>);
       }
-
-      onSelected?.(item);
 
       setList([]);
     };

@@ -4,6 +4,8 @@ import { useCallback, useMemo } from "react";
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { resolveUrl } from "@/generated/v3/utils";
 
+type ScientificName = { taxonId: string; scientificName: string };
+
 async function searchRequest(search: string) {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();
@@ -26,8 +28,8 @@ async function searchRequest(search: string) {
   }
 
   const payload = await response.json();
-  const data = payload.data as { attributes: { scientificName: string } }[];
-  return data.map(({ attributes }) => attributes.scientificName);
+  const data = payload.data as { id: string; attributes: { scientificName: string } }[];
+  return data.map(({ id, attributes: { scientificName } }) => ({ taxonId: id, scientificName } as ScientificName));
 }
 
 /**
@@ -37,16 +39,33 @@ async function searchRequest(search: string) {
  * types some characters, then backspaces a couple to type new ones).
  */
 export function useAutocompleteSearch() {
-  const cache = useMemo(() => new Map(), []);
-  return useCallback(
-    async (search: string) => {
+  const cache = useMemo(() => new Map<string, ScientificName[]>(), []);
+
+  const autocompleteSearch = useCallback(
+    async (search: string): Promise<string[]> => {
+      const mapNames = (names: ScientificName[]) => names.map(({ scientificName }) => scientificName);
+
       if (isEmpty(search)) return [];
-      if (cache.has(search)) return cache.get(search);
+      if (cache.has(search)) return mapNames(cache.get(search) as ScientificName[]);
 
       const names = await searchRequest(search);
       cache.set(search, names);
-      return names;
+      return mapNames(names);
     },
     [cache]
   );
+
+  const findTaxonId = useCallback(
+    (name: string) => {
+      for (const names of cache.values()) {
+        const found = names.find(({ scientificName }) => scientificName === name);
+        if (found != null) return found.taxonId;
+      }
+
+      return undefined;
+    },
+    [cache]
+  );
+
+  return { autocompleteSearch, findTaxonId };
 }
