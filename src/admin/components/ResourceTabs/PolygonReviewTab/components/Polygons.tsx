@@ -221,7 +221,7 @@ const Polygons = (props: IPolygonProps) => {
           />
         )}
       </Drawer>
-      <div className="mb-4 flex flex-col gap-2">
+      <div className="mb-4 flex items-center justify-between">
         <Text variant="text-16-bold" className="text-darkCustom">
           Polygons
         </Text>
@@ -229,7 +229,7 @@ const Polygons = (props: IPolygonProps) => {
           <Button
             variant="white-border"
             onClick={() => setOpenCollapseAll(!openCollapseAll)}
-            className="mb-2 flex gap-1.5 !rounded-lg !capitalize"
+            className="flex gap-1.5 !rounded-lg !capitalize"
           >
             {openCollapseAll ? (
               <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem]" />

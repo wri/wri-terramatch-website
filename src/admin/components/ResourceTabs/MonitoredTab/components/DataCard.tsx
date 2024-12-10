@@ -61,8 +61,8 @@ const DataCard = ({ ...rest }: React.HTMLAttributes<HTMLDivElement>) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const width = window.innerWidth;
-      setTopHeaderFirstTable(width > 1900 ? "108px" : "102px");
-      setTopHeaderSecondTable(width > 1900 ? "75px" : "70px");
+      setTopHeaderFirstTable(width > 1900 ? "110px" : "106px");
+      setTopHeaderSecondTable(width > 1900 ? "77px" : "72px");
     }
   }, []);
 
