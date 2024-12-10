@@ -1,7 +1,7 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import classNames from "classnames";
 import { format } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useBasename, useShowContext } from "react-admin";
 import { When } from "react-if";
 import { useNavigate } from "react-router-dom";
@@ -105,131 +105,6 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
 ];
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
-
-const topHeaderFirstTable = window.innerWidth > 1900 ? "108px" : "102px";
-const topHeaderSecondTable = window.innerWidth > 1900 ? "75px" : `70px`;
-
-const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
-  {
-    id: "mainInfo",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
-    header: "",
-    columns: [
-      {
-        accessorKey: "poly_name",
-        header: "Polygon Name",
-        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
-      },
-      {
-        accessorKey: "size",
-        header: "Size (ha)",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "site_name",
-        header: "Site Name",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        meta: { style: { top: `${topHeaderFirstTable}` } },
-        cell: (props: any) => (
-          <CustomChipField
-            label={props.getValue()}
-            classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
-          />
-        )
-      },
-      {
-        accessorKey: "plantstart",
-        header: () => (
-          <>
-            Plant
-            <br />
-            Start Date
-          </>
-        ),
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      }
-    ]
-  },
-  {
-    id: "analysis2024",
-    header: "Analysis: April 25, 2024",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
-    columns: [
-      {
-        accessorKey: "data.2015",
-        header: "2015",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2016",
-        header: "2016",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2017",
-        header: "2017",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2018",
-        header: "2018",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2019",
-        header: "2019",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2020",
-        header: "2020",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2021",
-        header: "2021",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2022",
-        header: "2022",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2023",
-        header: "2023",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      },
-      {
-        accessorKey: "data.2024",
-        header: "2024",
-        meta: { style: { top: `${topHeaderFirstTable}` } }
-      }
-    ]
-  },
-  {
-    id: "moreInfo",
-    header: " ",
-    meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
-    columns: [
-      {
-        accessorKey: "more",
-        header: "",
-        enableSorting: false,
-        cell: props => (
-          <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
-            <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
-          </div>
-        ),
-        meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
-      }
-    ]
-  }
-];
 
 const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
   ...COMMON_COLUMNS,
@@ -357,15 +232,6 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
   }
 ];
 
-const TABLE_COLUMNS_MAPPING: Record<string, any> = {
-  treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
-  treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
-  restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
-  restorationByStrategy: TABLE_COLUMNS_HECTARES_STRATEGY,
-  restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
-  treeCount: []
-};
-
 const DROPDOWN_OPTIONS = [
   {
     title: "Tree Cover Loss",
@@ -426,6 +292,78 @@ const toggleItems: TogglePropsItem[] = [
   }
 ];
 
+const noDataGraph = (
+  <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
+    <Text variant={"text-32-semibold"} className="text-blueCustom">
+      No Data to Display
+    </Text>
+    <div className="flex items-center gap-1">
+      <Text variant={"text-14"} className="text-darkCustom">
+        RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+      </Text>
+      <Tooltip content={"Tooltip"}>
+        <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
+      </Tooltip>
+    </div>
+  </div>
+);
+
+const indicatorDescription1 =
+  "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
+const indicatorDescription2 =
+  "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
+
+const POLYGONS = [
+  { title: "Agrariala Palma", value: "1" },
+  { title: "Agraisa", value: "2" },
+  { title: "Agrajaya Batitama", value: "3" },
+  { title: "Agoue Iboe", value: "4" },
+  { title: "Africas", value: "5" },
+  { title: "AEK Torup", value: "6" },
+  { title: "AEK Raso", value: "7" },
+  { title: "AEK Nabara Selatan", value: "8" },
+  { title: "Adison Thaochu A", value: "9" },
+  { title: "ABA", value: "10" }
+];
+
+const noDataMap = (
+  <div className="absolute top-0 flex h-full w-full">
+    <div className="relative flex w-[23vw] flex-col gap-3 p-6">
+      <div className="absolute left-0 top-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
+      <Text
+        variant={"text-14-semibold"}
+        className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
+      >
+        Indicator Description
+      </Text>
+      <div className="z-[5] flex min-h-0 flex-col gap-3 overflow-auto pr-1">
+        <Text variant={"text-14-light"} className="text-white" containHtml>
+          {indicatorDescription1}
+        </Text>
+        <Text variant={"text-14-light"} className="text-white" containHtml>
+          {indicatorDescription2}
+        </Text>
+      </div>
+    </div>
+    <div className="w-full p-6">
+      <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
+        <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
+        <Text variant={"text-32-semibold"} className="z-10 text-white">
+          No Data to Display
+        </Text>
+        <div className="flex items-center gap-1">
+          <Text variant={"text-14"} className="z-10 text-white">
+            RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+          </Text>
+          <Tooltip content={"Tooltip"}>
+            <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
+          </Tooltip>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const DataCard = ({
   type,
   ...rest
@@ -450,77 +388,147 @@ const DataCard = ({
     ? parsePolygonsIndicatorDataForStrategies(polygonsIndicator)
     : DEFAULT_POLYGONS_DATA_STRATEGIES;
 
-  const POLYGONS = [
-    { title: "Agrariala Palma", value: "1" },
-    { title: "Agraisa", value: "2" },
-    { title: "Agrajaya Batitama", value: "3" },
-    { title: "Agoue Iboe", value: "4" },
-    { title: "Africas", value: "5" },
-    { title: "AEK Torup", value: "6" },
-    { title: "AEK Raso", value: "7" },
-    { title: "AEK Nabara Selatan", value: "8" },
-    { title: "Adison Thaochu A", value: "9" },
-    { title: "ABA", value: "10" }
+  const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
+  const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
+
+  const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
+    {
+      id: "mainInfo",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
+      header: "",
+      columns: [
+        {
+          accessorKey: "poly_name",
+          header: "Polygon Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        },
+        {
+          accessorKey: "size",
+          header: "Size (ha)",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "site_name",
+          header: "Site Name",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "status",
+          header: "Status",
+          meta: { style: { top: `${topHeaderFirstTable}` } },
+          cell: (props: any) => (
+            <CustomChipField
+              label={props.getValue()}
+              classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+            />
+          )
+        },
+        {
+          accessorKey: "plantstart",
+          header: () => (
+            <>
+              Plant
+              <br />
+              Start Date
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        }
+      ]
+    },
+    {
+      id: "analysis2024",
+      header: "Analysis: April 25, 2024",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      columns: [
+        {
+          accessorKey: "data.2015",
+          header: "2015",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2016",
+          header: "2016",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2017",
+          header: "2017",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2018",
+          header: "2018",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2019",
+          header: "2019",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2020",
+          header: "2020",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2021",
+          header: "2021",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2022",
+          header: "2022",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2023",
+          header: "2023",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        },
+        {
+          accessorKey: "data.2024",
+          header: "2024",
+          meta: { style: { top: `${topHeaderFirstTable}` } }
+        }
+      ]
+    },
+    {
+      id: "moreInfo",
+      header: " ",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      columns: [
+        {
+          accessorKey: "more",
+          header: "",
+          enableSorting: false,
+          cell: props => (
+            <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
+              <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+            </div>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        }
+      ]
+    }
   ];
 
-  const indicatorDescription1 =
-    "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
-  const indicatorDescription2 =
-    "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
+  const TABLE_COLUMNS_MAPPING: Record<string, any> = {
+    treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
+    treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
+    restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
+    restorationByStrategy: TABLE_COLUMNS_HECTARES_STRATEGY,
+    restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
+    treeCount: []
+  };
 
-  const noDataGraph = (
-    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
-      <Text variant={"text-32-semibold"} className="text-blueCustom">
-        No Data to Display
-      </Text>
-      <div className="flex items-center gap-1">
-        <Text variant={"text-14"} className="text-darkCustom">
-          RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
-        </Text>
-        <Tooltip content={"Tooltip"}>
-          <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
-        </Tooltip>
-      </div>
-    </div>
-  );
-
-  const noDataMap = (
-    <div className="absolute top-0 flex h-full w-full">
-      <div className="relative flex w-[23vw] flex-col gap-3 p-6">
-        <div className="absolute left-0 top-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
-        <Text
-          variant={"text-14-semibold"}
-          className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
-        >
-          Indicator Description
-        </Text>
-        <div className="z-[5] flex min-h-0 flex-col gap-3 overflow-auto pr-1">
-          <Text variant={"text-14-light"} className="text-white" containHtml>
-            {indicatorDescription1}
-          </Text>
-          <Text variant={"text-14-light"} className="text-white" containHtml>
-            {indicatorDescription2}
-          </Text>
-        </div>
-      </div>
-      <div className="w-full p-6">
-        <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-          <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
-          <Text variant={"text-32-semibold"} className="z-10 text-white">
-            No Data to Display
-          </Text>
-          <div className="flex items-center gap-1">
-            <Text variant={"text-14"} className="z-10 text-white">
-              RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
-            </Text>
-            <Tooltip content={"Tooltip"}>
-              <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
-            </Tooltip>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const width = window.innerWidth;
+      setTopHeaderFirstTable(width > 1900 ? "108px" : "102px");
+      setTopHeaderSecondTable(width > 1900 ? "75px" : "70px");
+    }
+  }, []);
 
   return (
     <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
@@ -537,7 +545,7 @@ const DataCard = ({
               variant={VARIANT_DROPDOWN_SIMPLE}
               inputVariant="text-14-semibold"
               className="z-50"
-              defaultValue={[DROPDOWN_OPTIONS[0].value]}
+              defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
               optionsClassName="w-max z-50"
             />
           </div>

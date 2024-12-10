@@ -23662,7 +23662,7 @@ export type V2AdminProjectUpdate = {
 };
 
 export type IndicatorPost = {
-  uuids?: any[];
+  uuids?: string[];
 };
 
 export type Indicators = {

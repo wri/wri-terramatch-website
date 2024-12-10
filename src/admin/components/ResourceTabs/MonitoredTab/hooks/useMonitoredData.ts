@@ -131,7 +131,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       }
     },
     {
-      enabled: !!indicatorSlug
+      enabled: !!indicatorSlug || !!entity_uuid
     }
   );
 
