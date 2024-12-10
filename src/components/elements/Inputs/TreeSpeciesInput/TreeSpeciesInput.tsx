@@ -81,6 +81,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const id = useId();
   const t = useT();
   const lastInputRef = useRef<HTMLInputElement>(null);
+  const autoCompleteRef = useRef<HTMLInputElement>(null);
 
   const [valueAutoComplete, setValueAutoComplete] = useState("");
   const [searchResult, setSearchResult] = useState<string[]>();
@@ -143,7 +144,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         new: !props.withNumbers
       });
 
-      lastInputRef.current && lastInputRef.current.focus();
+      lastInputRef.current?.focus();
     };
 
     if (!isEmpty(searchResult) && taxonId == null) {
@@ -152,6 +153,28 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       openModal(ModalId.ERROR_MODAL, <NonScientificConfirmationModal onConfirm={doAdd} />);
     } else {
       doAdd();
+    }
+  };
+
+  const updateValue = () => {
+    const taxonId = findTaxonId(valueAutoComplete);
+
+    const doUpdate = () => {
+      setEditIndex(null);
+
+      handleUpdate({
+        ...editValue,
+        name: valueAutoComplete,
+        taxon_id: findTaxonId(valueAutoComplete)
+      });
+
+      setValueAutoComplete("");
+    };
+
+    if (!isEmpty(searchResult) && taxonId == null) {
+      openModal(ModalId.ERROR_MODAL, <NonScientificConfirmationModal onConfirm={doUpdate} />);
+    } else {
+      doUpdate();
     }
   };
 
@@ -186,6 +209,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           <div className="mt-3 flex items-start gap-3">
             <div className="relative w-[40%]">
               <AutoCompleteInput
+                ref={autoCompleteRef}
                 name="treeSpecies"
                 classNameMenu="bg-white z-10 w-full"
                 type="text"
@@ -217,14 +241,17 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 </button>
               </Then>
               <Else>
+                <Button onClick={updateValue} variant="secondary">
+                  {t("Save")}
+                </Button>
                 <Button
                   onClick={() => {
                     setEditIndex(null);
-                    handleUpdate({ ...editValue, name: valueAutoComplete });
+                    setValueAutoComplete("");
                   }}
                   variant="secondary"
                 >
-                  {t("Save")}
+                  {t("Cancel")}
                 </Button>
               </Else>
             </If>
@@ -311,7 +338,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
                   <Icon name={IconNames.EDIT_TA} className="min-h-6 min-w-6 h-6 w-6 text-primary" />
                   <Text variant="text-16" className="text-blueCustom-700">
-                    {t(`NEW ${value.name}`)}
+                    {t("Editing: {name}", { name: value.name })}
                   </Text>
                 </div>
               </When>
@@ -379,8 +406,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                     iconProps={{ name: IconNames.EDIT_TA, width: 24 }}
                     className="text-blueCustom-700 hover:text-primary"
                     onClick={() => {
+                      setValueAutoComplete(value.name ?? "");
                       setEditIndex(value.uuid ?? null);
                       setEditValue(value);
+                      autoCompleteRef.current?.focus();
                     }}
                   />
                   <IconButton
