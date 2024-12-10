@@ -188,12 +188,12 @@ export const VARIANT_TABLE_MONITORED = {
   tableWrapper: "border-b rounded-lg border-neutral-200",
   trHeader: "bg-white static z-[1] top-[70px] lg:top-[75px] first:rounded-tl-lg last:rounded-tr-lg first:!border-b-0",
   thHeader:
-    "border-collapse first:border-l last:border-r last:!border-l-0 first:rounded-tl-lg last:rounded-tr-lg z-[1] sticky top-[70px] lg:top-[75px] text-nowrap first:pl-2 first:pr-2 last:pr-2  border-neutral-200 text-10-semibold px-1.5 border-y py-2 bg-neutral-50",
+    "border-collapse first:border-l last:border-r last:!border-l-0 first:rounded-tl-lg last:rounded-tr-lg z-[1] sticky top-[70px] lg:top-[75px] text-nowrap first:pl-2 first:pr-2 last:pr-2  border-neutral-200 text-12-semibold px-1.5 border-y py-2 bg-neutral-50",
   tBody: "",
   thHeaderSort: "!border-x !place-items-center py-2",
   trBody: "bg-white border-y border-neutral-200 sticky z-[0] top-[85px] last:border-b",
   tdBody:
-    "text-10-light px-1.5 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white border-collapse sticky z-[0] top-[85px] first:border-l last:border-r border-neutral-200 ",
+    "text-12-light px-1.5 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white border-collapse sticky z-[0] top-[85px] first:border-l last:border-r border-neutral-200 ",
   thead: "bg-white ",
   paginationVariant: VARIANT_PAGINATION_MONITORED,
   thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",

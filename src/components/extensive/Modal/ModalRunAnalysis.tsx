@@ -4,14 +4,12 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_DEFAULT } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
-import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
-import { VARIANT_FILE_INPUT_MODAL_ADD } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
-import { ModalBaseWithLogo } from "./ModalsBases";
+import { ModalBaseWithMonitored } from "./ModalsBases";
 
 export interface ModalRunAnalysisProps extends ModalProps {
   secondaryButtonText?: string;
@@ -32,7 +30,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   ...rest
 }) => {
   return (
-    <ModalBaseWithLogo {...rest}>
+    <ModalBaseWithMonitored {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
@@ -72,23 +70,11 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             labelClassName="!capitalize !text-darkCustom"
             labelVariant="text-14-light"
           />
-          <FileInput
-            label="Upload Manually"
-            labelClassName="!capitalize !text-darkCustom"
-            labelVariant="text-14-light"
-            files={[]}
-            variant={VARIANT_FILE_INPUT_MODAL_ADD}
-            descriptionInput={
-              <Text variant="text-12-light" className="min-w-max text-center">
-                Drag and drop a CSV File based on the required{" "}
-                <Text variant="text-12-bold" className="text-primary" as="span">
-                  data table
-                </Text>{" "}
-                schema
-              </Text>
-            }
-          />
         </div>
+        <br />
+        <br />
+        <br />
+        <br />
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
@@ -104,7 +90,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
           </Text>
         </Button>
       </div>
-    </ModalBaseWithLogo>
+    </ModalBaseWithMonitored>
   );
 };
 
