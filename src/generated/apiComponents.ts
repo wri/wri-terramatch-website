@@ -38239,14 +38239,11 @@ export type PostV2IndicatorsSlugPathParams = {
 export type PostV2IndicatorsSlugError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2IndicatorsSlugResponse = {
-  /**
-   * A list of processed polygons
-   */
-  uuids?: any[];
+  uuids?: string[];
 };
 
 export type PostV2IndicatorsSlugRequestBody = {
-  uuids?: any[];
+  uuids?: string[];
 };
 
 export type PostV2IndicatorsSlugVariables = {
@@ -38350,34 +38347,7 @@ export type GetV2IndicatorsEntityUuidSlugVerifyPathParams = {
 
 export type GetV2IndicatorsEntityUuidSlugVerifyError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2IndicatorsEntityUuidSlugVerifyResponse = {
-  ["2015"]?: number;
-  ["2016"]?: number;
-  ["2017"]?: number;
-  ["2018"]?: number;
-  ["2019"]?: number;
-  ["2020"]?: number;
-  ["2021"]?: number;
-  ["2022"]?: number;
-  ["2023"]?: number;
-  ["2024"]?: number;
-  id?: number;
-  poly_name?: string;
-  status?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  site_name?: string;
-  size?: void;
-  /**
-   * @format date
-   */
-  created_at?: string;
-  indicator_slug?: string;
-  year_of_analysis?: number;
-  value?: Record<string, any>;
-}[];
+export type GetV2IndicatorsEntityUuidSlugVerifyResponse = any[];
 
 export type GetV2IndicatorsEntityUuidSlugVerifyVariables = {
   pathParams: GetV2IndicatorsEntityUuidSlugVerifyPathParams;
