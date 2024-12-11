@@ -55,12 +55,7 @@ const FloatNotification = ({ data }: FloatNotificationProps) => {
                     Site: <b>{item.site}</b>
                   </Text>
                   <div className="mt-2 flex items-center gap-2">
-                    <LinearProgressBar
-                      variant="determinate"
-                      value={parseInt(item.value)}
-                      className="h-2 bg-success-40"
-                      color="success-600"
-                    />
+                    <LinearProgressBar value={parseInt(item.value)} className="h-2 bg-success-40" color="success-600" />
                     <Text variant="text-12-semibold" className="text-black">
                       {item.value}
                     </Text>
