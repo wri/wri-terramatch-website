@@ -36,7 +36,7 @@ if (typeof window !== "undefined") {
 }
 
 import { MonitoredDataProvider } from "@/context/monitoredData.provider";
-
+import FloatNotificationProvider from "@/context/floatNotification.provider";
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
@@ -94,14 +94,16 @@ const _App = ({ Component, ...rest }: AppProps) => {
       <ReduxProvider store={store}>
         <WrappedQueryClientProvider>
           <LoadingProvider>
-            <NotificationProvider>
-              <MonitoredDataProvider>
-                <ModalProvider>
-                  <ModalRoot />
-                  <Component {...pageProps} />
-                </ModalProvider>
-              </MonitoredDataProvider>
-            </NotificationProvider>
+            <FloatNotificationProvider>
+                <NotificationProvider>
+                  <MonitoredDataProvider>
+                    <ModalProvider>
+                      <ModalRoot />
+                      <Component {...pageProps} />
+                    </ModalProvider>
+                  </MonitoredDataProvider>
+                </NotificationProvider>
+            </FloatNotificationProvider>
           </LoadingProvider>
         </WrappedQueryClientProvider>
       </ReduxProvider>

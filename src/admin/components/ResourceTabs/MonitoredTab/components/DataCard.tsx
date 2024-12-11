@@ -416,6 +416,22 @@ const DataCard = ({
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const width = window.innerWidth;
+      setTopHeaderFirstTable(width > 1900 ? "110px" : "106px");
+      setTopHeaderSecondTable(width > 1900 ? "77px" : "72px");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const width = window.innerWidth;
+      setTopHeaderFirstTable(width > 1900 ? "110px" : "106px");
+      setTopHeaderSecondTable(width > 1900 ? "77px" : "72px");
+    }
+  }, []);
+
   const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
     {
       id: "mainInfo",
@@ -546,14 +562,6 @@ const DataCard = ({
     restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
     treeCount: []
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const width = window.innerWidth;
-      setTopHeaderFirstTable(width > 1900 ? "108px" : "102px");
-      setTopHeaderSecondTable(width > 1900 ? "75px" : "70px");
-    }
-  }, []);
 
   const handleExport = async () => {
     try {
