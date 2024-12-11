@@ -533,7 +533,7 @@ const DataCard = ({
   return (
     <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
       <div className="sticky top-[0px] z-[10] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
-        <div className="sticky top-[0px] z-[10] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
+        <div className="sticky top-[0px] z-[11] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
           <div className="flex items-center gap-2">
             <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
             <Dropdown
@@ -590,11 +590,12 @@ const DataCard = ({
           </div>
         </When>
         <When condition={tabActive === 1}>
-          <div className="relative flex w-full gap-8 px-6 pb-6 pt-2">
+          <div className="relative z-[10] flex w-full gap-8 px-6 pb-6 pt-2">
             <Dropdown
-              containerClassName={classNames("absolute left-full -translate-x-full pr-6", {
+              containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-50", {
                 hidden: selected.includes("6")
               })}
+              optionsClassName="!w-max right-0"
               className="w-max"
               options={POLYGONS}
               defaultValue={["1"]}
