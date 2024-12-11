@@ -42,7 +42,7 @@ const SiteShow: FC = () => {
           <GalleryTab label="Site Gallery" entity="sites" />
           <DocumentTab label="Site Documents" entity="sites" />
           <ChangeRequestsTab entity="sites" singularEntity="site" />
-          <MonitoredTab label="Monitored Data" />
+          <MonitoredTab label="Monitored Data" type={"sites"}></MonitoredTab>
           <AuditLogTab entity={AuditLogButtonStates.SITE} />
         </TabbedShowLayout>
       </RecordFrameworkProvider>

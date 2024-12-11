@@ -1,11 +1,16 @@
 import { FC } from "react";
 import { When } from "react-if";
 
+import { useMonitoredData } from "@/admin/components/ResourceTabs/MonitoredTab/hooks/useMonitoredData";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_DEFAULT } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { EntityName } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -16,11 +21,17 @@ export interface ModalRunAnalysisProps extends ModalProps {
   onClose?: () => void;
   primaryButtonText: string;
   title: string;
+  projectName?: string;
+  entityType?: EntityName;
+  entityUuid?: string;
 }
 
 const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   primaryButtonProps,
   title,
+  projectName,
+  entityType,
+  entityUuid,
   primaryButtonText,
   secondaryButtonProps,
   secondaryButtonText,
@@ -29,11 +40,41 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   onClose,
   ...rest
 }) => {
+  const { indicatorSlugAnalysis, setIndicatorSlugAnalysis, setLoadingAnalysis } = useMonitoredDataContext();
+  const { runAnalysisIndicator, dropdownAnalysisOptions, loadingVerify, analysisToSlug } = useMonitoredData(
+    entityType,
+    entityUuid
+  );
+  const { openNotification } = useNotificationContext();
+  const runAnalysis = async () => {
+    setLoadingAnalysis?.(true);
+    if (analysisToSlug[`${indicatorSlugAnalysis}`]?.message) {
+      setLoadingAnalysis?.(false);
+      return openNotification("warning", "Warning", analysisToSlug[`${indicatorSlugAnalysis}`].message);
+    }
+    await runAnalysisIndicator({
+      pathParams: {
+        slug: indicatorSlugAnalysis!
+      },
+      body: {
+        uuids: analysisToSlug[`${indicatorSlugAnalysis}`]
+      }
+    });
+    setIndicatorSlugAnalysis?.("treeCoverLoss");
+    onClose?.();
+  };
+
   return (
     <ModalBaseWithMonitored {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
-        <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
+        <button
+          onClick={() => {
+            setIndicatorSlugAnalysis?.("treeCoverLoss");
+            onClose?.();
+          }}
+          className="ml-2 rounded p-1 hover:bg-grey-800"
+        >
           <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
         </button>
       </header>
@@ -48,7 +89,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
           <Input
             type="text"
             name="projectName"
-            placeholder="Project Name"
+            placeholder={projectName!}
             label="Project Name"
             variant="default"
             labelClassName="!capitalize !text-darkCustom"
@@ -56,20 +97,21 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             disabled={true}
             className="bg-neutral-150"
           />
-          <Dropdown
-            placeholder="Tree Cover Loss (16 polygons not run)"
-            label="Indicator"
-            options={[
-              { title: "Global", value: "Global" },
-              { title: "Country", value: "Country" },
-              { title: "Subnational", value: "Subnational" }
-            ]}
-            onChange={() => {}}
-            variant={VARIANT_DROPDOWN_DEFAULT}
-            className="!min-h-[44px] !py-[9px]"
-            labelClassName="!capitalize !text-darkCustom"
-            labelVariant="text-14-light"
-          />
+          <When condition={!loadingVerify}>
+            <Dropdown
+              placeholder={dropdownAnalysisOptions[0].title}
+              label="Indicator"
+              options={dropdownAnalysisOptions}
+              onChange={e => {
+                const indicator = dropdownAnalysisOptions.find(option => option.value === e[0])?.slug;
+                setIndicatorSlugAnalysis?.(indicator!);
+              }}
+              variant={VARIANT_DROPDOWN_DEFAULT}
+              className="!min-h-[44px] !py-[9px]"
+              labelClassName="!capitalize !text-darkCustom"
+              labelVariant="text-14-light"
+            />
+          </When>
         </div>
         <br />
         <br />
@@ -84,10 +126,11 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
+        <Button {...primaryButtonProps} onClick={runAnalysis} disabled={loadingVerify}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
+          <InlineLoader loading={loadingVerify} />
         </Button>
       </div>
     </ModalBaseWithMonitored>
