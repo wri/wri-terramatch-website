@@ -10,8 +10,10 @@ import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesI
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
+import { isReportModelName } from "@/types/common";
 import { updateArrayState } from "@/utils/array";
 
 import Button from "../../Button/Button";
@@ -26,7 +28,6 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   title: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
-  withTreeSearch?: boolean;
   value: TreeSpeciesValue[];
   onChange: (value: any[]) => void;
   clearErrors: () => void;
@@ -96,6 +97,12 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const { autocompleteSearch, findTaxonId } = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
+
+  const { entityUuid, entityName } = useEntityContext();
+  const handleBaseEntityTrees =
+    entityName != null &&
+    entityUuid != null &&
+    (isReportModelName(entityName) || ["sites", "nurseries"].includes(entityName));
 
   const handleCreate = useDebounce(
     useCallback(
@@ -193,14 +200,14 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       feedbackRequired={props.feedbackRequired}
     >
       <div>
-        <When condition={!props.withNumbers}>
+        {handleBaseEntityTrees && (
           <div className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2">
             <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
             {t(
               "If you would like to add a species not included on the original Restoration Project, it will be flagged to the admin as new information pending review."
             )}
           </div>
-        </When>
+        )}
         <div className="mb-2 mt-8">
           <Text variant="text-14-light" className="text-black">
             {t("Scientific Name:")}
@@ -353,10 +360,14 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               >
                 <div className="flex items-center gap-1">
                   <When condition={value.taxon_id == null}>
-                    <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
+                    <div title={t("Non-Scientific Name")}>
+                      <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
+                    </div>
                   </When>
-                  <When condition={false /* TODO */}>
-                    <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
+                  <When condition={true /* TODO */}>
+                    <div title={t("New Species (not used in establishment")}>
+                      <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
+                    </div>
                   </When>
                   <Text variant="text-14-light" className="text-black ">
                     {t(value.name)}
