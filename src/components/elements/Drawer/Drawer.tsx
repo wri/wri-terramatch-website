@@ -2,6 +2,7 @@ import classNames from "classnames";
 import React, { ReactNode, useEffect, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 
 import Button from "../Button/Button";
 import { DRAWER_VARIANT_DEFAULT, DrawerVariant } from "./DrawerVariants";
@@ -29,6 +30,7 @@ const Drawer = (props: DrawerProps) => {
   const [isScrolled, setIsScrolled] = useState(isScrolledDefault);
   const [isScrollingDown, setIsScrollingDown] = useState(isScrolledDefault);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const { setSelectPolygonFromMap } = useMonitoredDataContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,6 +72,7 @@ const Drawer = (props: DrawerProps) => {
           onClick={() => {
             setIsOpen(false);
             setPolygonFromMap && setPolygonFromMap({ isOpen: false, uuid: "" });
+            setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
           }}
         >
           <Icon name={IconNames.CLEAR} className={classNames("h-5 w-5", variant.iconClassName)} />

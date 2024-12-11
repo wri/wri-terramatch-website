@@ -38396,6 +38396,62 @@ export const useGetV2IndicatorsEntityUuidSlugVerify = <TData = GetV2IndicatorsEn
   );
 };
 
+export type GetV2IndicatorsEntityUuidSlugExportPathParams = {
+  /**
+   * Filter counts and metrics by entity.
+   */
+  entity: string;
+  /**
+   * Filter counts and metrics by entity uuid.
+   */
+  uuid: string;
+  /**
+   * Filter counts and metrics by slug.
+   */
+  slug: string;
+};
+
+export type GetV2IndicatorsEntityUuidSlugExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2IndicatorsEntityUuidSlugExportVariables = {
+  pathParams: GetV2IndicatorsEntityUuidSlugExportPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2IndicatorsEntityUuidSlugExport = (
+  variables: GetV2IndicatorsEntityUuidSlugExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    GetV2IndicatorsEntityUuidSlugExportError,
+    undefined,
+    {},
+    {},
+    GetV2IndicatorsEntityUuidSlugExportPathParams
+  >({ url: "/v2/indicators/{entity}/{uuid}/{slug}/export", method: "get", ...variables, signal });
+
+export const useGetV2IndicatorsEntityUuidSlugExport = <TData = undefined>(
+  variables: GetV2IndicatorsEntityUuidSlugExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<undefined, GetV2IndicatorsEntityUuidSlugExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<undefined, GetV2IndicatorsEntityUuidSlugExportError, TData>(
+    queryKeyFn({
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/export",
+      operationId: "getV2IndicatorsEntityUuidSlugExport",
+      variables
+    }),
+    ({ signal }) => fetchGetV2IndicatorsEntityUuidSlugExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -39116,4 +39172,9 @@ export type QueryOperation =
       path: "/v2/indicators/{entity}/{uuid}/{slug}/verify";
       operationId: "getV2IndicatorsEntityUuidSlugVerify";
       variables: GetV2IndicatorsEntityUuidSlugVerifyVariables;
+    }
+  | {
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/export";
+      operationId: "getV2IndicatorsEntityUuidSlugExport";
+      variables: GetV2IndicatorsEntityUuidSlugExportVariables;
     };

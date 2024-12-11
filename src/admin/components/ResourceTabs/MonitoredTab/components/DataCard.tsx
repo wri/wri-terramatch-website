@@ -1,4 +1,5 @@
 import { ColumnDef, RowData } from "@tanstack/react-table";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import { useBasename, useShowContext } from "react-admin";
 import { When } from "react-if";
 import { useNavigate } from "react-router-dom";
 
+import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -28,6 +30,8 @@ import {
   DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
 } from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
 import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import SecDashboard from "@/pages/dashboard/components/SecDashboard";
@@ -38,6 +42,7 @@ import {
   parsePolygonsIndicatorDataForLandUse,
   parsePolygonsIndicatorDataForStrategies
 } from "@/utils/dashboardUtils";
+import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 
@@ -185,7 +190,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     meta: { style: { width: "11.05%" } }
   },
   {
-    accessorKey: "data.paleartic11",
+    accessorKey: "data.paleartic",
     header: "Paleartic11",
     cell: (props: any) => {
       const value = props.getValue();
@@ -392,8 +397,12 @@ const DataCard = ({
   const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
-  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap } = useMonitoredDataContext();
+  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
+    useMonitoredDataContext();
   const navigate = useNavigate();
+  const { openNotification } = useNotificationContext();
+  const [exporting, setExporting] = useState<boolean>(false);
+  const t = useT();
   const totalHectaresRestoredGoal = record?.total_hectares_restored_goal
     ? Number(record?.total_hectares_restored_goal)
     : +record?.hectares_to_restore_goal;
@@ -546,151 +555,171 @@ const DataCard = ({
     }
   }, []);
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const blob = await fetchGetV2IndicatorsEntityUuidSlugExport({
+        pathParams: { entity: type!, uuid: record.uuid, slug: indicatorSlug! }
+      });
+      downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
+
+      openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));
+      setExporting(false);
+    } catch (error) {
+      openNotification("error", t("Error! Export failed."), t("The export has failed. Please try again."));
+      setExporting(false);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectPolygonFromMap?.isOpen) {
+      setSelectPolygonFromMap?.({ isOpen: false, uuid: "" });
+    }
+  }, [selectPolygonFromMap]);
   return (
-    <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
-      <div className="sticky top-[0px] z-[10] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
-        <div className="sticky top-[0px] z-[11] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
-          <div className="flex items-center gap-2">
-            <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
-            <Dropdown
-              options={DROPDOWN_OPTIONS}
-              onChange={option => {
-                setIndicatorSlug?.(DROPDOWN_OPTIONS.find(item => item.value === option[0])?.slug!);
-                setSelected(option);
-              }}
-              variant={VARIANT_DROPDOWN_SIMPLE}
-              inputVariant="text-14-semibold"
-              className="z-50"
-              defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
-              optionsClassName="w-max z-50"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <When condition={tabActive === 0}>
-              <FilterSearchBox
-                placeholder="Search"
-                onChange={e => {
-                  setSearchTerm(e);
+    <>
+      <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
+        <div className="sticky top-[0px] z-[10] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
+          <div className="sticky top-[0px] z-[11] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
+            <div className="flex items-center gap-2">
+              <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
+              <Dropdown
+                options={DROPDOWN_OPTIONS}
+                onChange={option => {
+                  setIndicatorSlug?.(DROPDOWN_OPTIONS.find(item => item.value === option[0])?.slug!);
+                  setSelected(option);
                 }}
-                variant={FILTER_SEARCH_MONITORING}
+                variant={VARIANT_DROPDOWN_SIMPLE}
+                inputVariant="text-14-semibold"
+                className="z-50"
+                defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
+                optionsClassName="w-max z-50"
               />
-              <Button variant="white-border" className="!h-[32px] !min-h-[32px] !w-8 p-0" onClick={() => {}}>
-                <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
-              </Button>
-            </When>
+            </div>
 
-            <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} />
+            <div className="flex items-center gap-2">
+              <When condition={tabActive === 0}>
+                <FilterSearchBox
+                  placeholder="Search"
+                  onChange={e => {
+                    setSearchTerm(e);
+                  }}
+                  variant={FILTER_SEARCH_MONITORING}
+                />
+                <Button variant="white-border" className="!h-[32px] !min-h-[32px] !w-8 p-0" onClick={handleExport}>
+                  <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
+                </Button>
+              </When>
+
+              <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} />
+            </div>
           </div>
+          <When condition={tabActive === 0}>
+            <div className="relative w-full px-6 pb-6">
+              <Table
+                columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
+                data={polygonsIndicator ?? []}
+                variant={VARIANT_TABLE_MONITORED}
+                classNameWrapper="!overflow-visible"
+                visibleRows={50}
+                border={1}
+                onRowClick={(row: any) => {
+                  navigate(`${basename}/site/${row?.site_id}/show/1`);
+                  setSelectPolygonFromMap?.({ isOpen: true, uuid: row?.poly_id });
+                }}
+              />
+            </div>
+          </When>
+          <When condition={tabActive === 1}>
+            <div className="relative z-[10] flex w-full gap-8 px-6 pb-6 pt-2">
+              <Dropdown
+                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-50", {
+                  hidden: selected.includes("6")
+                })}
+                optionsClassName="!w-max right-0"
+                className="w-max"
+                options={POLYGONS}
+                defaultValue={["1"]}
+                onChange={() => {}}
+              />
+              <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
+                <Text
+                  variant={"text-14-semibold"}
+                  className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
+                >
+                  Indicator Description
+                </Text>
+                <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
+                  <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+                    {indicatorDescription1}
+                  </Text>
+                  <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
+                    {indicatorDescription2}
+                  </Text>
+                </div>
+              </div>
+              <When condition={selected.includes("1")}>
+                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+              </When>
+              <When condition={selected.includes("2") || selected.includes("2")}>
+                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+              </When>
+              <When condition={selected.includes("3")}>
+                <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
+              </When>
+              <When condition={selected.includes("4")}>
+                <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
+                  <When condition={isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)}>{noDataGraph}</When>
+                  <SecDashboard
+                    title={"Total Hectares Under Restoration"}
+                    data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
+                    className="w-full place-content-center pl-8"
+                    tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
+                    showTreesRestoredGraph={false}
+                  />
+                  <SimpleBarChart
+                    data={
+                      isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)
+                        ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+                        : strategiesData
+                    }
+                  />
+                </div>
+              </When>
+              <When condition={selected.includes("5")}>
+                <div className="w-[73%]">
+                  <GraphicIconDashboard
+                    data={landUseData.graphicTargetLandUseTypes}
+                    maxValue={totalHectaresRestoredGoal}
+                  />
+                </div>
+              </When>
+              <When condition={selected.includes("6")}>{noDataGraph}</When>
+            </div>
+          </When>
+          <When condition={tabActive === 2}>
+            <div className="relative h-[calc(100vh-295px)] w-full">
+              <div className="absolute left-1/2 top-6 z-10">
+                <TooltipMapMonitoring />
+              </div>
+              <MapContainer
+                className="!h-full"
+                mapFunctions={mapFunctions}
+                sitePolygonData={[]}
+                hasControls={!selected.includes("6")}
+                showLegend={!selected.includes("6")}
+                legendPosition="bottom-right"
+                showViewGallery={false}
+              />
+              <When condition={selected.includes("6")}>{noDataMap}</When>
+            </div>
+          </When>
         </div>
-        <When condition={tabActive === 0}>
-          <div className="relative w-full px-6 pb-6">
-            <Table
-              columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-              data={polygonsIndicator ?? []}
-              variant={VARIANT_TABLE_MONITORED}
-              classNameWrapper="!overflow-visible"
-              visibleRows={50}
-              border={1}
-              onRowClick={(row: any) => {
-                // const router = useRouter();
-                // const siteUrl = `/site/${polygonData?.site_id}`;
-                // window.open(siteUrl, "_blank");
-                // const link = document.createElement("a");
-                // link.href = `${basename}/admin#/site/${row?.site_id}/show/1`;
-                // link.click();
-                navigate(`${basename}/site/${row?.site_id}/show/1`);
-                setSelectPolygonFromMap?.({ isOpen: true, uuid: row?.poly_id });
-              }}
-            />
-          </div>
-        </When>
-        <When condition={tabActive === 1}>
-          <div className="relative z-[10] flex w-full gap-8 px-6 pb-6 pt-2">
-            <Dropdown
-              containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-50", {
-                hidden: selected.includes("6")
-              })}
-              optionsClassName="!w-max right-0"
-              className="w-max"
-              options={POLYGONS}
-              defaultValue={["1"]}
-              onChange={() => {}}
-            />
-            <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
-              <Text
-                variant={"text-14-semibold"}
-                className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
-              >
-                Indicator Description
-              </Text>
-              <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
-                <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
-                  {indicatorDescription1}
-                </Text>
-                <Text variant={"text-14-light"} className="text-darkCustom-150" containHtml>
-                  {indicatorDescription2}
-                </Text>
-              </div>
-            </div>
-            <When condition={selected.includes("1")}>
-              <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
-            </When>
-            <When condition={selected.includes("2") || selected.includes("2")}>
-              <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
-            </When>
-            <When condition={selected.includes("3")}>
-              <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
-            </When>
-            <When condition={selected.includes("4")}>
-              <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-                <When condition={isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)}>{noDataGraph}</When>
-                <SecDashboard
-                  title={"Total Hectares Under Restoration"}
-                  data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
-                  className="w-full place-content-center pl-8"
-                  tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
-                  showTreesRestoredGraph={false}
-                />
-                <SimpleBarChart
-                  data={
-                    isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)
-                      ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
-                      : strategiesData
-                  }
-                />
-              </div>
-            </When>
-            <When condition={selected.includes("5")}>
-              <div className="w-[73%]">
-                <GraphicIconDashboard
-                  data={landUseData.graphicTargetLandUseTypes}
-                  maxValue={totalHectaresRestoredGoal}
-                />
-              </div>
-            </When>
-            <When condition={selected.includes("6")}>{noDataGraph}</When>
-          </div>
-        </When>
-        <When condition={tabActive === 2}>
-          <div className="relative h-[calc(100vh-295px)] w-full">
-            <div className="absolute left-1/2 top-6 z-10">
-              <TooltipMapMonitoring />
-            </div>
-            <MapContainer
-              className="!h-full"
-              mapFunctions={mapFunctions}
-              sitePolygonData={[]}
-              hasControls={!selected.includes("6")}
-              showLegend={!selected.includes("6")}
-              legendPosition="bottom-right"
-              showViewGallery={false}
-            />
-            <When condition={selected.includes("6")}>{noDataMap}</When>
-          </div>
-        </When>
       </div>
-    </div>
+      <ExportProcessingAlert show={exporting} />
+    </>
   );
 };
 
