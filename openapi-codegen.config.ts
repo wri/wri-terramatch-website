@@ -27,28 +27,34 @@ type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 type Environment = {
   apiBaseUrl: string;
   userServiceUrl: string;
+  jobServiceUrl: string;
 };
 
 const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
   local: {
     apiBaseUrl: "http://localhost:8080",
-    userServiceUrl: "http://localhost:4010"
+    userServiceUrl: "http://localhost:4010",
+    jobServiceUrl: "http://localhost:4020"
   },
   dev: {
     apiBaseUrl: "https://api-dev.terramatch.org",
-    userServiceUrl: "https://api-dev.terramatch.org"
+    userServiceUrl: "https://api-dev.terramatch.org",
+    jobServiceUrl: "https://api-dev.terramatch.org"
   },
   test: {
     apiBaseUrl: "https://api-test.terramatch.org",
-    userServiceUrl: "https://api-test.terramatch.org"
+    userServiceUrl: "https://api-test.terramatch.org",
+    jobServiceUrl: "https://api-test.terramatch.org"
   },
   staging: {
     apiBaseUrl: "https://api-staging.terramatch.org",
-    userServiceUrl: "https://api-staging.terramatch.org"
+    userServiceUrl: "https://api-staging.terramatch.org",
+    jobServiceUrl: "https://api-staging.terramatch.org"
   },
   prod: {
     apiBaseUrl: "https://api.terramatch.org",
-    userServiceUrl: "https://api.terramatch.org"
+    userServiceUrl: "https://api.terramatch.org",
+    jobServiceUrl: "https://api.terramatch.org"
   }
 };
 
@@ -60,13 +66,15 @@ if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
 const DEFAULTS = ENVIRONMENTS[declaredEnv];
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
+const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
 
 // The services defined in the v3 Node BE codebase. Although the URL path for APIs in the v3 space
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
 // isolate the generated API integration by service to make it easier for a developer to find where
 // the associated BE code is for a given FE API integration.
 const SERVICES = {
-  "user-service": userServiceUrl
+  "user-service": userServiceUrl,
+  "job-service": jobServiceUrl
 };
 
 const config: Record<string, Config> = {
