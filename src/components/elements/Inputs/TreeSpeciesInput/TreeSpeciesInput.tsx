@@ -10,6 +10,7 @@ import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesI
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { EstablishmentEntityType, useEstablimentTrees } from "@/connections/EstablishmentTrees";
 import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -103,6 +104,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     entityName != null &&
     entityUuid != null &&
     (isReportModelName(entityName) || ["sites", "nurseries"].includes(entityName));
+
+  const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
+  const uuid = handleBaseEntityTrees ? entityUuid : undefined;
+  const [, { establishmentTrees }] = useEstablimentTrees({ entity, uuid });
 
   const handleCreate = useDebounce(
     useCallback(
@@ -364,7 +369,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   </When>
-                  <When condition={true /* TODO */}>
+                  <When
+                    condition={
+                      establishmentTrees != null && value.name != null && !establishmentTrees.includes(value.name)
+                    }
+                  >
                     <div title={t("New Species (not used in establishment")}>
                       <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
