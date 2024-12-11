@@ -70,21 +70,23 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const COMMON_COLUMNS: ColumnDef<RowData>[] = [
-  { accessorKey: "poly_name", header: "Polygon Name" },
+  { accessorKey: "poly_name", header: "Polygon Name", meta: { style: { width: "13.30%" } } },
   {
     accessorKey: "size",
-    header: "Size (ha)"
+    header: "Size (ha)",
+    meta: { style: { width: "9.01%" } }
   },
-  { accessorKey: "site_name", header: "Site Name" },
+  { accessorKey: "site_name", header: "Site Name", meta: { style: { width: "9.90%" } } },
   {
     accessorKey: "status",
     header: "Status",
     cell: (props: any) => (
       <CustomChipField
         label={props.getValue()}
-        classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+        classNameChipField="!text-[12px] font-medium lg:!text-xs wide:!text-sm"
       />
-    )
+    ),
+    meta: { style: { width: "7.65%" } }
   },
   {
     accessorKey: "plantstart",
@@ -92,7 +94,8 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return format(new Date(value), "dd/MM/yyyy");
-    }
+    },
+    meta: { style: { width: "13.65%" } }
   },
   {
     accessorKey: "base_line",
@@ -100,7 +103,8 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return format(new Date(value), "dd/MM/yyyy");
-    }
+    },
+    meta: { style: { width: "8.87%" } }
   }
 ];
 
@@ -114,7 +118,8 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "11.95%" } }
   },
   {
     accessorKey: "data.assisted_natural_regeneration",
@@ -128,7 +133,8 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "12.09%" } }
   },
   {
     accessorKey: "data.direct_seeding",
@@ -142,7 +148,8 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "8.57%" } }
   },
   {
     accessorKey: "more",
@@ -152,7 +159,8 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
       <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
-    )
+    ),
+    meta: { style: { width: "5%" } }
   }
 ];
 
@@ -164,7 +172,8 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "11.45%" } }
   },
   {
     accessorKey: "data.afrotropical",
@@ -172,7 +181,8 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "11.05%" } }
   },
   {
     accessorKey: "data.paleartic11",
@@ -180,7 +190,8 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "10.33%" } }
   },
   {
     accessorKey: "more",
@@ -190,7 +201,8 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
       <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
-    )
+    ),
+    meta: { style: { width: "5%" } }
   }
 ];
 
@@ -202,7 +214,8 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "11.95%" } }
   },
   {
     accessorKey: "data.natural_forest",
@@ -210,7 +223,8 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "12.09%" } }
   },
   {
     accessorKey: "data.mangrove",
@@ -218,7 +232,8 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     cell: (props: any) => {
       const value = props.getValue();
       return value ?? "-";
-    }
+    },
+    meta: { style: { width: "8.57%" } }
   },
   {
     accessorKey: "more",
@@ -228,7 +243,8 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
       <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
         <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
       </div>
-    )
+    ),
+    meta: { style: { width: "5%" } }
   }
 ];
 
@@ -400,26 +416,26 @@ const DataCard = ({
         {
           accessorKey: "poly_name",
           header: "Polygon Name",
-          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0", width: "11%" } }
         },
         {
           accessorKey: "size",
           header: "Size (ha)",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } }
         },
         {
           accessorKey: "site_name",
           header: "Site Name",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
         },
         {
           accessorKey: "status",
           header: "Status",
-          meta: { style: { top: `${topHeaderFirstTable}` } },
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } },
           cell: (props: any) => (
             <CustomChipField
               label={props.getValue()}
-              classNameChipField="!text-[10px] font-medium lg:!text-xs wide:!text-sm"
+              classNameChipField="!text-[12px] font-medium lg:!text-xs wide:!text-sm"
             />
           )
         },
@@ -432,7 +448,7 @@ const DataCard = ({
               Start Date
             </>
           ),
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
         }
       ]
     },
@@ -444,59 +460,59 @@ const DataCard = ({
         {
           accessorKey: "data.2015",
           header: "2015",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2016",
           header: "2016",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2017",
           header: "2017",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2018",
           header: "2018",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2019",
           header: "2019",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2020",
           header: "2020",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2021",
           header: "2021",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2022",
           header: "2022",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2023",
           header: "2023",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         },
         {
           accessorKey: "data.2024",
           header: "2024",
-          meta: { style: { top: `${topHeaderFirstTable}` } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         }
       ]
     },
     {
       id: "moreInfo",
       header: " ",
-      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, width: "5%" } },
       columns: [
         {
           accessorKey: "more",
