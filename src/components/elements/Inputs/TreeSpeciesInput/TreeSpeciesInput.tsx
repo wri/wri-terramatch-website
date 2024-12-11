@@ -142,6 +142,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         amount: props.withNumbers ? 0 : undefined
       });
 
+      setValueAutoComplete("");
       lastInputRef.current?.focus();
     };
 
