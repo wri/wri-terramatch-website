@@ -374,7 +374,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                       establishmentTrees != null && value.name != null && !establishmentTrees.includes(value.name)
                     }
                   >
-                    <div title={t("New Species (not used in establishment")}>
+                    <div title={t("New Species (not used in establishment)")}>
                       <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   </When>
