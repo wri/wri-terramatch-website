@@ -144,6 +144,12 @@ interface ParsedResult {
   total: number;
 }
 
+type YearlyData = {
+  name: number;
+  treeCoverLoss: number;
+  treeCoverLossFires: number;
+};
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -549,3 +555,34 @@ export const parsePolygonsIndicatorDataForEcoRegion = (polygons: PolygonIndicato
 
   return result;
 };
+
+export function parseTreeCoverData(
+  treeCoverLossData: PolygonIndicator[],
+  treeCoverLossFiresData: PolygonIndicator[]
+): YearlyData[] {
+  const years = Array.from(
+    new Set(
+      treeCoverLossData
+        .flatMap(entry => (entry.data ? Object.keys(entry.data) : []))
+        .concat(treeCoverLossFiresData.flatMap(entry => (entry.data ? Object.keys(entry.data) : [])))
+    )
+  ).sort();
+
+  return years.map(year => {
+    const yearNumber = parseInt(year, 10);
+
+    const treeCoverLossSum = treeCoverLossData.reduce((sum, entry) => {
+      return sum + (entry.data?.[year] || 0);
+    }, 0);
+
+    const treeCoverLossFiresSum = treeCoverLossFiresData.reduce((sum, entry) => {
+      return sum + (entry.data?.[year] || 0);
+    }, 0);
+
+    return {
+      name: yearNumber,
+      treeCoverLoss: treeCoverLossSum,
+      treeCoverLossFires: treeCoverLossFiresSum
+    };
+  });
+}

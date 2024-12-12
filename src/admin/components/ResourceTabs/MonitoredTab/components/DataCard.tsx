@@ -42,12 +42,14 @@ import {
   isEmptyChartData,
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
-  parsePolygonsIndicatorDataForStrategies
+  parsePolygonsIndicatorDataForStrategies,
+  parseTreeCoverData
 } from "@/utils/dashboardUtils";
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
+import TreeLossBarChart from "./TreesLossBarChart";
 
 interface TableData {
   polygonName: string;
@@ -399,7 +401,8 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData } = useMonitoredData(type!, record.uuid);
+  const parsedData = parseTreeCoverData(treeCoverLossData, treeCoverLossFiresData);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
@@ -676,10 +679,10 @@ const DataCard = ({
                 </div>
               </div>
               <When condition={selected.includes("1")}>
-                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+                <TreeLossBarChart data={parsedData} />
               </When>
               <When condition={selected.includes("2") || selected.includes("2")}>
-                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+                <TreeLossBarChart data={parsedData} />
               </When>
               <When condition={selected.includes("3")}>
                 <EcoRegionDoughnutChart data={ecoRegionData} />

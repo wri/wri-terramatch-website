@@ -93,6 +93,8 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
+  const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
+  const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
   const [analysisToSlug, setAnalysisToSlug] = useState<any>({
     treeCoverLoss: [],
     treeCoverLossFires: [],
@@ -102,6 +104,44 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     treeCount: []
   });
   const [dropdownAnalysisOptions, setDropdownAnalysisOptions] = useState(DROPDOWN_OPTIONS);
+
+  const { data: indicatorData, refetch: refetchDataIndicators } = useGetV2IndicatorsEntityUuidSlug(
+    {
+      pathParams: {
+        entity: entity!,
+        uuid: entity_uuid!,
+        slug: indicatorSlug!
+      }
+    },
+    {
+      enabled: !!indicatorSlug && !!entity_uuid
+    }
+  );
+
+  const getComplementarySlug = (slug: string) => (slug === "treeCoverLoss" ? "treeCoverLossFires" : "treeCoverLoss");
+
+  const { data: complementaryData } = useGetV2IndicatorsEntityUuidSlug(
+    {
+      pathParams: {
+        entity: entity!,
+        uuid: entity_uuid!,
+        slug: getComplementarySlug(indicatorSlug || "")
+      }
+    },
+    {
+      enabled: (indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires") && !!entity_uuid
+    }
+  );
+
+  useEffect(() => {
+    if (indicatorSlug === "treeCoverLoss") {
+      setTreeCoverLossData(indicatorData || []);
+      setTreeCoverLossFiresData(complementaryData || []);
+    } else if (indicatorSlug === "treeCoverLossFires") {
+      setTreeCoverLossFiresData(indicatorData || []);
+      setTreeCoverLossData(complementaryData || []);
+    }
+  }, [indicatorData, complementaryData, indicatorSlug]);
 
   const { mutate, isLoading } = usePostV2IndicatorsSlug({
     onSuccess: () => {
@@ -121,19 +161,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       setIndicatorSlugAnalysis?.("treeCoverLoss");
     }
   });
-
-  const { data: indicatorData, refetch: refetchDataIndicators } = useGetV2IndicatorsEntityUuidSlug(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: indicatorSlug!
-      }
-    },
-    {
-      enabled: !!indicatorSlug || !!entity_uuid
-    }
-  );
 
   const { data: indicatorPolygonsStatus } = useGetV2IndicatorsEntityUuid<IndicatorPolygonsStatus>(
     {
@@ -226,15 +253,17 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   return {
     polygonsIndicator: filteredPolygons,
-    indicatorPolygonsStatus: indicatorPolygonsStatus,
-    headerBarPolygonStatus: headerBarPolygonStatus,
+    indicatorPolygonsStatus,
+    headerBarPolygonStatus,
     totalPolygonsStatus: totalPolygonsApproved,
     runAnalysisIndicator: mutate,
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
-    setIsLoadingVerify: setIsLoadingVerify,
-    dropdownAnalysisOptions: dropdownAnalysisOptions,
-    analysisToSlug: analysisToSlug,
-    polygonMissingAnalysis: polygonMissingAnalysis
+    setIsLoadingVerify,
+    dropdownAnalysisOptions,
+    analysisToSlug,
+    polygonMissingAnalysis,
+    treeCoverLossData,
+    treeCoverLossFiresData
   };
 };
