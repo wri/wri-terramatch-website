@@ -91,7 +91,6 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const [deleteIndex, setDeleteIndex] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<TreeSpeciesValue | null>(null);
   const refPlanted = useRef<HTMLDivElement>(null);
-  const refTotal = useRef<HTMLDivElement>(null);
   const refTreeSpecies = useRef<HTMLDivElement>(null);
   const { openModal } = useModalContext();
 
@@ -100,10 +99,9 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const { onChange, value, clearErrors, collection } = props;
 
   const { entityUuid, entityName } = useEntityContext();
-  const handleBaseEntityTrees =
-    entityName != null &&
-    entityUuid != null &&
-    (isReportModelName(entityName) || ["sites", "nurseries"].includes(entityName));
+  const isEntity = entityName != null && entityUuid != null;
+  const isReport = isEntity && isReportModelName(entityName);
+  const handleBaseEntityTrees = isReport || (isEntity && ["sites", "nurseries"].includes(entityName));
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
@@ -282,10 +280,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
         </When>
         <div className="mb-1 mt-9 flex gap-6 border-b pb-4">
-          <div
-            className={classNames({ "w-[75%]": props.withNumbers, "w-[50%]": !props.withNumbers })}
-            ref={refTreeSpecies}
-          >
+          <div className={classNames({ "w-[75%]": !isReport, "w-[50%]": isReport })} ref={refTreeSpecies}>
             <Text variant="text-14-bold" className="uppercase text-black">
               {props.title}
             </Text>
@@ -293,21 +288,21 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {props.value.length}
             </Text>
           </div>
-          <div className={classNames({ "border-r pr-6": !props.withNumbers })} ref={refPlanted}>
+          <div className={classNames({ "border-r pr-6": isReport })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {props.withNumbers ? "TREES TO BE PLANTED:" : "SPECIES PLANTED:"}
+              {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0) : "0"}
             </Text>
           </div>
-          <When condition={!props.withNumbers}>
-            <div className="" ref={refTotal}>
+          <When condition={isReport}>
+            <div>
               <Text variant="text-14-bold" className="uppercase text-black">
-                {"TOTAL PLANTED TO DATE:"}
+                {t("TOTAL PLANTED TO DATE:")}
               </Text>
               <Text variant="text-20-bold" className="text-primary">
-                47,800
+                TODO
               </Text>
             </div>
           </When>
@@ -324,7 +319,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 "blur-sm": editIndex && editIndex !== value.uuid
               })}
             >
-              <When condition={deleteIndex === value.uuid && deleteIndex}>
+              <When condition={deleteIndex === value.uuid}>
                 <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center justify-between bg-neutral-250 px-4 shadow-monitored">
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t(`Are you sure you want to delete “${value.name}”?`)}
@@ -369,11 +364,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   </When>
-                  <When
-                    condition={
-                      establishmentTrees != null && value.name != null && !establishmentTrees.includes(value.name)
-                    }
-                  >
+                  <When condition={establishmentTrees != null && !establishmentTrees.includes(value.name ?? "")}>
                     <div title={t("New Species (not used in establishment)")}>
                       <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
@@ -386,11 +377,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               <div
                 className=""
                 style={
-                  refPlanted && props.withNumbers
+                  props.withNumbers
                     ? {
                         width: `${refPlanted.current?.clientWidth}px`
                       }
-                    : refPlanted && !props.withNumbers
+                    : !props.withNumbers
                     ? {
                         width: `${refPlanted.current?.clientWidth}px`,
                         minWidth: `${refPlanted.current?.clientWidth}px`
