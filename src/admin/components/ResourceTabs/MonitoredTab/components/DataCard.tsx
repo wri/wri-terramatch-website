@@ -26,6 +26,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import {
   CHART_TYPES,
   DEFAULT_POLYGONS_DATA,
+  DEFAULT_POLYGONS_DATA_ECOREGIONS,
   DEFAULT_POLYGONS_DATA_STRATEGIES,
   DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
 } from "@/constants/dashboardConsts";
@@ -39,12 +40,14 @@ import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/cons
 import { EntityName, OptionValue } from "@/types/common";
 import {
   isEmptyChartData,
+  parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
   parsePolygonsIndicatorDataForStrategies
 } from "@/utils/dashboardUtils";
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
+import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
 
 interface TableData {
   polygonName: string;
@@ -413,6 +416,10 @@ const DataCard = ({
     ? parsePolygonsIndicatorDataForStrategies(polygonsIndicator)
     : DEFAULT_POLYGONS_DATA_STRATEGIES;
 
+  const ecoRegionData: any = polygonsIndicator
+    ? parsePolygonsIndicatorDataForEcoRegion(polygonsIndicator)
+    : DEFAULT_POLYGONS_DATA_ECOREGIONS;
+
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
 
@@ -675,7 +682,7 @@ const DataCard = ({
                 <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
               </When>
               <When condition={selected.includes("3")}>
-                <img src="/images/monitoring-graph-3.png" alt="" className="w-[73%] object-contain" />
+                <EcoRegionDoughnutChart data={ecoRegionData} />
               </When>
               <When condition={selected.includes("4")}>
                 <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
