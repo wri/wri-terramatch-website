@@ -54,13 +54,13 @@ type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeTyp
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
-export const RESOURCES = ["logins", "organisations", "users", "delayedJobs"] as const;
+export const RESOURCES = ["delayedJobs", "logins", "organisations", "users"] as const;
 
 type ApiResources = {
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
   logins: StoreResourceMap<LoginDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
-  delayedJobs: StoreResourceMap<DelayedJobDto>;
 };
 
 export type JsonApiResource = {
