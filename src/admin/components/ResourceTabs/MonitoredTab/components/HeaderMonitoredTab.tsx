@@ -9,6 +9,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalNotes from "@/components/extensive/Modal/ModalNotes";
 import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { EntityName } from "@/types/common";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
@@ -17,6 +18,7 @@ const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
   const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis } = useMonitoredData(type, record?.uuid);
+  const { loadingAnalysis } = useMonitoredDataContext();
 
   const openRunAnalysis = () => {
     openModal(
@@ -76,6 +78,11 @@ graphs and tables below by clicking update analysis button to your right. `}
               Polygon Overview
               <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
             </Text>
+            <div className="flex items-center gap-1">
+              {loadingAnalysis ? (
+                <Icon name={IconNames.IC_LOADING} className="h-4 w-4 animate-spin text-success-600" />
+              ) : null}
+            </div>
           </div>
           <div className="w-[35vw] pt-2">
             <LinearProgressBarMonitored data={headerBarPolygonStatus} />
