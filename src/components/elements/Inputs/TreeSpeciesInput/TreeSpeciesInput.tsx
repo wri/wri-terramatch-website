@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, remove } from "lodash";
-import { Fragment, KeyboardEvent, useCallback, useId, useRef, useState } from "react";
+import { Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +10,7 @@ import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesI
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { EstablishmentEntityType, useEstablimentTrees } from "@/connections/EstablishmentTrees";
+import { EstablishmentEntityType, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
 import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -105,7 +105,16 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [, { establishmentTrees }] = useEstablimentTrees({ entity, uuid });
+  const [, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+
+  const totalWithPrevious = useMemo(
+    () =>
+      props.value.reduce(
+        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""] ?? 0),
+        0
+      ),
+    [previousPlantingCounts, props.value]
+  );
 
   const handleCreate = useDebounce(
     useCallback(
@@ -293,7 +302,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
-              {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0) : "0"}
+              {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
             </Text>
           </div>
           <When condition={isReport}>
@@ -302,7 +311,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 {t("TOTAL PLANTED TO DATE:")}
               </Text>
               <Text variant="text-20-bold" className="text-primary">
-                TODO
+                {totalWithPrevious.toLocaleString()}
               </Text>
             </div>
           </When>
@@ -401,6 +410,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   containerClassName=""
                 />
               </div>
+              <When condition={isReport}>
+                <Text variant="text-14-light" className="text-black ">
+                  {(previousPlantingCounts?.[value.name ?? ""] ?? 0).toLocaleString()}
+                </Text>
+              </When>
               <div className="flex flex-1 justify-end gap-6">
                 <IconButton
                   iconProps={{ name: IconNames.EDIT_TA, width: 24 }}

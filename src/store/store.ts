@@ -36,6 +36,11 @@ export const makeStore = () => {
 
   ApiSlice.redux = store;
 
+  if (typeof window !== "undefined") {
+    // Make some things available to the browser console for easy debugging.
+    (window as any).terramatch.getApiState = () => store.getState();
+  }
+
   return store;
 };
 

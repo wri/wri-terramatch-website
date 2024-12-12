@@ -5,13 +5,15 @@ import {
   EstablishmentTreesFindPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { establishmentTreesFindFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
+import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 type EstablishmentTreesConnection = {
-  establishmentTrees?: string[];
+  establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"];
+  previousPlantingCounts?: EstablishmentsTreesDto["previousPlantingCounts"];
 
   establishmentTreesLoadFailed: boolean;
 };
@@ -49,10 +51,11 @@ const establishmentTreesConnection: Connection<EstablishmentTreesConnection, Est
         [establishmentTreesSelector(entity, uuid), establishmentTreesLoadFailed(entity, uuid)],
         (treesDto, establishmentTreesLoadFailed) => ({
           establishmentTrees: treesDto?.attributes?.establishmentTrees,
+          previousPlantingCounts: treesDto?.attributes?.previousPlantingCounts,
           establishmentTreesLoadFailed
         })
       )
   )
 };
 
-export const useEstablimentTrees = connectionHook(establishmentTreesConnection);
+export const useEstablishmentTrees = connectionHook(establishmentTreesConnection);

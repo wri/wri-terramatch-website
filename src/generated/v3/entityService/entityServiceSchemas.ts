@@ -17,4 +17,12 @@ export type EstablishmentsTreesDto = {
    * The species that were specified at the establishment of the parent entity.
    */
   establishmentTrees: string[];
+  /**
+   * If the entity in this request is a report, the sum totals of previous planting by species.
+   *
+   * @example {"Aster persaliens":256,"Cirsium carniolicum":1024}
+   */
+  previousPlantingCounts: {
+    [key: string]: number;
+  } | null;
 };
