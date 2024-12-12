@@ -422,14 +422,7 @@ const DataCard = ({
 
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const width = window.innerWidth;
-      setTopHeaderFirstTable(width > 1900 ? "110px" : "106px");
-      setTopHeaderSecondTable(width > 1900 ? "77px" : "72px");
-    }
-  }, []);
+  const totalElemIndicator = polygonsIndicator?.length ? polygonsIndicator?.length - 1 : null;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -486,7 +479,9 @@ const DataCard = ({
     },
     {
       id: "analysis2024",
-      header: "Analysis: April 25, 2024",
+      header: totalElemIndicator
+        ? `Analysis: ${format(new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!), "MMMM d, yyyy")}`
+        : "Analysis:",
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
         {
