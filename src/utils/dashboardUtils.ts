@@ -139,6 +139,11 @@ export interface ParsedPolygonsData {
   };
 }
 
+interface ParsedResult {
+  chartData: ChartDataItem[];
+  total: number;
+}
+
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -518,4 +523,29 @@ export const parsePolygonsIndicatorDataForStrategies = (polygonsIndicator: Polyg
       label,
       value: Number(value.toFixed(2))
     }));
+};
+
+export const parsePolygonsIndicatorDataForEcoRegion = (polygons: PolygonIndicator[]): ParsedResult => {
+  const result: ParsedResult = {
+    chartData: [],
+    total: 0
+  };
+
+  const ecoRegionMap = new Map<string, number>();
+
+  polygons.forEach(polygon => {
+    polygon.data &&
+      Object.entries(polygon.data).forEach(([name, value]) => {
+        ecoRegionMap.set(name, (ecoRegionMap.get(name) || 0) + value);
+      });
+  });
+
+  result.chartData = Array.from(ecoRegionMap, ([name, value]) => ({
+    name: formatLabel(name),
+    value: Number(value.toFixed(3))
+  }));
+
+  result.total = Number(result.chartData.reduce((sum, item) => sum + Number(item.value), 0).toFixed(3));
+
+  return result;
 };

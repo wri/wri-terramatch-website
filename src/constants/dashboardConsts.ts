@@ -58,6 +58,11 @@ export const DEFAULT_POLYGONS_DATA_STRATEGIES = [
   { label: "Multiple Strategies", value: 0 }
 ];
 
+export const DEFAULT_POLYGONS_DATA_ECOREGIONS = {
+  chartData: [],
+  total: 0
+};
+
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",
