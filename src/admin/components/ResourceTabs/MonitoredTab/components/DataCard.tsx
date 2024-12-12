@@ -24,11 +24,9 @@ import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import {
-  CHART_TYPES,
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
-  DEFAULT_POLYGONS_DATA_STRATEGIES,
-  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+  DEFAULT_POLYGONS_DATA_STRATEGIES
 } from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -39,7 +37,6 @@ import SecDashboard from "@/pages/dashboard/components/SecDashboard";
 import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 import { EntityName, OptionValue } from "@/types/common";
 import {
-  isEmptyChartData,
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
   parsePolygonsIndicatorDataForStrategies,
@@ -689,7 +686,6 @@ const DataCard = ({
               </When>
               <When condition={selected.includes("4")}>
                 <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-                  <When condition={isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)}>{noDataGraph}</When>
                   <SecDashboard
                     title={"Total Hectares Under Restoration"}
                     data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
@@ -697,17 +693,11 @@ const DataCard = ({
                     tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
                     showTreesRestoredGraph={false}
                   />
-                  <SimpleBarChart
-                    data={
-                      isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)
-                        ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
-                        : strategiesData
-                    }
-                  />
+                  <SimpleBarChart data={strategiesData} />
                 </div>
               </When>
               <When condition={selected.includes("5")}>
-                <div className="w-[73%]">
+                <div className="w-[73%] pt-12">
                   <GraphicIconDashboard
                     data={landUseData.graphicTargetLandUseTypes}
                     maxValue={totalHectaresRestoredGoal}
