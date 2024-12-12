@@ -24,11 +24,9 @@ import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import {
-  CHART_TYPES,
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
-  DEFAULT_POLYGONS_DATA_STRATEGIES,
-  DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
+  DEFAULT_POLYGONS_DATA_STRATEGIES
 } from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -39,15 +37,16 @@ import SecDashboard from "@/pages/dashboard/components/SecDashboard";
 import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 import { EntityName, OptionValue } from "@/types/common";
 import {
-  isEmptyChartData,
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
-  parsePolygonsIndicatorDataForStrategies
+  parsePolygonsIndicatorDataForStrategies,
+  parseTreeCoverData
 } from "@/utils/dashboardUtils";
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
+import TreeLossBarChart from "./TreesLossBarChart";
 
 interface TableData {
   polygonName: string;
@@ -399,7 +398,8 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator } = useMonitoredData(type!, record.uuid);
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData } = useMonitoredData(type!, record.uuid);
+  const parsedData = parseTreeCoverData(treeCoverLossData, treeCoverLossFiresData);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
@@ -671,17 +671,16 @@ const DataCard = ({
                 </div>
               </div>
               <When condition={selected.includes("1")}>
-                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+                <TreeLossBarChart data={parsedData} />
               </When>
               <When condition={selected.includes("2") || selected.includes("2")}>
-                <img src="/images/monitoring-graph-2.png" alt="" className="w-[73%] object-contain" />
+                <TreeLossBarChart data={parsedData} />
               </When>
               <When condition={selected.includes("3")}>
                 <EcoRegionDoughnutChart data={ecoRegionData} />
               </When>
               <When condition={selected.includes("4")}>
                 <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-                  <When condition={isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)}>{noDataGraph}</When>
                   <SecDashboard
                     title={"Total Hectares Under Restoration"}
                     data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
@@ -689,17 +688,11 @@ const DataCard = ({
                     tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
                     showTreesRestoredGraph={false}
                   />
-                  <SimpleBarChart
-                    data={
-                      isEmptyChartData(CHART_TYPES.simpleBarChart, strategiesData)
-                        ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
-                        : strategiesData
-                    }
-                  />
+                  <SimpleBarChart data={strategiesData} />
                 </div>
               </When>
               <When condition={selected.includes("5")}>
-                <div className="w-[73%]">
+                <div className="w-[73%] pt-12">
                   <GraphicIconDashboard
                     data={landUseData.graphicTargetLandUseTypes}
                     maxValue={totalHectaresRestoredGoal}
