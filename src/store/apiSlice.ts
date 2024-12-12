@@ -5,6 +5,7 @@ import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 export type PendingErrorState = {
@@ -53,12 +54,13 @@ type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeTyp
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
-export const RESOURCES = ["logins", "organisations", "users"] as const;
+export const RESOURCES = ["logins", "organisations", "users", "delayedJobs"] as const;
 
 type ApiResources = {
   logins: StoreResourceMap<LoginDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
 };
 
 export type JsonApiResource = {

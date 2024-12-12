@@ -18,7 +18,7 @@
     "generate:api": "openapi-codegen gen api",
     "generate:jobService": "openapi-codegen gen jobService",
     "generate:userService": "openapi-codegen gen userService",
-    "generate:services": "npm run generate:userService",
+    "generate:services": "yarn generate:userService && yarn generate:jobService",
     "tx:push": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli push --key-generator=hash src/ --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET",
     "tx:pull": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
