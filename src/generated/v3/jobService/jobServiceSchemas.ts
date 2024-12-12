@@ -29,7 +29,7 @@ export type DelayedJobDto = {
    */
   progressMessage: string | null;
   /**
-   * Indicates whether the jobs have been cleared
+   * Indicates whether the jobs have been acknowledged (cleared)
    */
   isAcknowledged: boolean | null;
 };

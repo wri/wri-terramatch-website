@@ -119,7 +119,7 @@ export const delayedJobsFind = (variables: DelayedJobsFindVariables, signal?: Ab
     signal
   });
 
-export type BulkClearJobsError = Fetcher.ErrorWrapper<
+export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -173,7 +173,7 @@ export type BulkClearJobsError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BulkClearJobsResponse = {
+export type BulkUpdateJobsResponse = {
   data?: {
     /**
      * @example delayedJobs
@@ -187,16 +187,16 @@ export type BulkClearJobsResponse = {
   };
 };
 
-export type BulkClearJobsVariables = {
+export type BulkUpdateJobsVariables = {
   body: Schemas.DelayedJobBulkUpdateBodyDto;
 };
 
 /**
  * Accepts a JSON:API-compliant payload to bulk update jobs, allowing each job's isAcknowledged attribute to be set to true or false.
  */
-export const bulkClearJobs = (variables: BulkClearJobsVariables, signal?: AbortSignal) =>
-  jobServiceFetch<BulkClearJobsResponse, BulkClearJobsError, Schemas.DelayedJobBulkUpdateBodyDto, {}, {}, {}>({
-    url: "/jobs/v3/delayedJobs/bulk-clear",
+export const bulkUpdateJobs = (variables: BulkUpdateJobsVariables, signal?: AbortSignal) =>
+  jobServiceFetch<BulkUpdateJobsResponse, BulkUpdateJobsError, Schemas.DelayedJobBulkUpdateBodyDto, {}, {}, {}>({
+    url: "/jobs/v3/delayedJobs/bulk-update",
     method: "patch",
     ...variables,
     signal

@@ -19,8 +19,8 @@ export const delayedJobsFindFetchFailed = (variables: DelayedJobsFindVariables) 
     ...variables
   });
 
-export const bulkClearJobsIsFetching = (store: ApiDataStore) =>
-  isFetching<{}, {}>({ store, url: "/jobs/v3/delayedJobs/bulk-clear", method: "patch" });
+export const bulkUpdateJobsIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/jobs/v3/delayedJobs/bulk-update", method: "patch" });
 
-export const bulkClearJobsFetchFailed = (store: ApiDataStore) =>
-  fetchFailed<{}, {}>({ store, url: "/jobs/v3/delayedJobs/bulk-clear", method: "patch" });
+export const bulkUpdateJobsFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/jobs/v3/delayedJobs/bulk-update", method: "patch" });
