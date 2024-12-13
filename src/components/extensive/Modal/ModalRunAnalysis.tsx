@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 
 import { useMonitoredData } from "@/admin/components/ResourceTabs/MonitoredTab/hooks/useMonitoredData";
@@ -40,24 +40,27 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   onClose,
   ...rest
 }) => {
-  const { indicatorSlugAnalysis, setIndicatorSlugAnalysis, setLoadingAnalysis } = useMonitoredDataContext();
+  const { indicatorSlugAnalysis, setIndicatorSlugAnalysis, setLoadingAnalysis, indicatorSlug } =
+    useMonitoredDataContext();
   const { runAnalysisIndicator, dropdownAnalysisOptions, loadingVerify, analysisToSlug } = useMonitoredData(
     entityType,
     entityUuid
   );
   const { openNotification } = useNotificationContext();
+  const [selectSlug, setSelectSlug] = useState<string | undefined>();
   const runAnalysis = async () => {
+    const indicatorSlugSelected = selectSlug ? indicatorSlugAnalysis : indicatorSlug;
     setLoadingAnalysis?.(true);
-    if (analysisToSlug[`${indicatorSlugAnalysis}`]?.message) {
+    if (analysisToSlug[`${indicatorSlugSelected}`]?.message) {
       setLoadingAnalysis?.(false);
-      return openNotification("warning", "Warning", analysisToSlug[`${indicatorSlugAnalysis}`].message);
+      return openNotification("warning", "Warning", analysisToSlug[`${indicatorSlugSelected}`].message);
     }
     await runAnalysisIndicator({
       pathParams: {
-        slug: indicatorSlugAnalysis!
+        slug: indicatorSlugSelected!
       },
       body: {
-        uuids: analysisToSlug[`${indicatorSlugAnalysis}`]
+        uuids: analysisToSlug[`${indicatorSlugSelected}`]
       }
     });
     setIndicatorSlugAnalysis?.("treeCoverLoss");
@@ -99,12 +102,13 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
           />
           <When condition={!loadingVerify}>
             <Dropdown
-              placeholder={dropdownAnalysisOptions[0].title}
+              placeholder={dropdownAnalysisOptions.find(option => option.slug === indicatorSlug)?.title}
               label="Indicator"
               options={dropdownAnalysisOptions}
               onChange={e => {
                 const indicator = dropdownAnalysisOptions.find(option => option.value === e[0])?.slug;
                 setIndicatorSlugAnalysis?.(indicator!);
+                setSelectSlug(indicator);
               }}
               variant={VARIANT_DROPDOWN_DEFAULT}
               className="!min-h-[44px] !py-[9px]"
