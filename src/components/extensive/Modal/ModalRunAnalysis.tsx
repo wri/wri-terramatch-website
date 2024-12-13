@@ -117,6 +117,11 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         <br />
         <br />
         <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
         <When condition={!!secondaryButtonProps}>
