@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 
-import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
 
 export interface FloatNotificationDataProps {
@@ -17,9 +17,13 @@ export interface FloatNotificationProps {
   data: FloatNotificationDataProps[];
 }
 
-const FloatNotification = ({ data }: FloatNotificationProps) => {
+const FloatNotification = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
+  const [isLoaded, { delayedJobs }] = useDelayedJobs();
 
+  useEffect(() => {
+    console.log("delayedJobs", delayedJobs);
+  }, [isLoaded, delayedJobs]);
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -43,31 +47,33 @@ const FloatNotification = ({ data }: FloatNotificationProps) => {
               </Text>
             </div>
             <div className="-mr-2 flex flex-1 flex-col gap-3 overflow-auto pr-2">
-              {data.map((item, index) => (
-                <div key={index} className="rounded-lg border-2 border-grey-350 bg-white p-4 hover:border-primary">
-                  <div className="mb-2 flex items-center gap-1">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
-                      {item.label}
-                    </Text>
-                  </div>
-                  <Text variant="text-14-light" className="text-darkCustom">
+              {isLoaded &&
+                delayedJobs &&
+                delayedJobs.map((item, index) => (
+                  <div key={index} className="rounded-lg border-2 border-grey-350 bg-white p-4 hover:border-primary">
+                    <div className="mb-2 flex items-center gap-1">
+                      <div className="h-2 w-2 rounded-full bg-primary" />
+                      <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
+                        {item.processedContent}
+                      </Text>
+                    </div>
+                    {/* <Text variant="text-14-light" className="text-darkCustom">
                     Site: <b>{item.site}</b>
-                  </Text>
-                  <div className="mt-2 flex items-center gap-2">
+                  </Text>*/}
+                    {/* <div className="mt-2 flex items-center gap-2">
                     <LinearProgressBar value={parseInt(item.value)} className="h-2 bg-success-40" color="success-600" />
                     <Text variant="text-12-semibold" className="text-black">
                       {item.value}
                     </Text>
+                  </div> */}
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
-        <When condition={data.length > 0}>
+        <When condition={isLoaded && (delayedJobs ?? []).length > 0}>
           <div className="text-14-bold absolute right-[-5px] top-[-5px] z-20 flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full bg-red-300 leading-[normal] text-white">
-            {data.length}
+            {delayedJobs?.length}
           </div>
         </When>
         <button
@@ -77,8 +83,8 @@ const FloatNotification = ({ data }: FloatNotificationProps) => {
           className={classNames(
             "z-10 flex h-15 w-15 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
-              hidden: data.length < 1,
-              visible: data.length > 0
+              // hidden: (delayedJobs?.length ?? 0) < 1 && isLoaded,
+              // visible: (delayedJobs?.length ?? 0) > 0 && isLoaded
             }
           )}
         >
