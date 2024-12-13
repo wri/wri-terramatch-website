@@ -99,7 +99,11 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   });
   const [dropdownAnalysisOptions, setDropdownAnalysisOptions] = useState(DROPDOWN_OPTIONS);
 
-  const { data: indicatorData, refetch: refetchDataIndicators } = useGetV2IndicatorsEntityUuidSlug(
+  const {
+    data: indicatorData,
+    refetch: refetchDataIndicators,
+    isLoading: isLoadingIndicator
+  } = useGetV2IndicatorsEntityUuidSlug(
     {
       pathParams: {
         entity: entity!,
@@ -253,6 +257,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     runAnalysisIndicator: mutate,
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
+    isLoadingIndicator,
     setIsLoadingVerify,
     dropdownAnalysisOptions,
     analysisToSlug,

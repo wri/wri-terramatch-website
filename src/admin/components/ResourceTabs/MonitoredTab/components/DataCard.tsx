@@ -31,10 +31,6 @@ import {
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
-import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
-import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
-import SecDashboard from "@/pages/dashboard/components/SecDashboard";
-import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 import { EntityName, OptionValue } from "@/types/common";
 import {
   parsePolygonsIndicatorDataForEcoRegion,
@@ -45,8 +41,7 @@ import {
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
-import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
-import TreeLossBarChart from "./TreesLossBarChart";
+import MonitoredCharts from "./MonitoredCharts";
 
 interface TableData {
   polygonName: string;
@@ -410,7 +405,10 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData } = useMonitoredData(type!, record.uuid);
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator } = useMonitoredData(
+    type!,
+    record.uuid
+  );
   const parsedData = parseTreeCoverData(treeCoverLossData, treeCoverLossFiresData);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
@@ -684,35 +682,16 @@ const DataCard = ({
                   </Text>
                 </div>
               </div>
-              <When condition={selected.includes("1")}>
-                <TreeLossBarChart data={parsedData} />
-              </When>
-              <When condition={selected.includes("2") || selected.includes("2")}>
-                <TreeLossBarChart data={parsedData} />
-              </When>
-              <When condition={selected.includes("3")}>
-                <EcoRegionDoughnutChart data={ecoRegionData} />
-              </When>
-              <When condition={selected.includes("4")}>
-                <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-                  <SecDashboard
-                    title={"Total Hectares Under Restoration"}
-                    data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
-                    className="w-full place-content-center pl-8"
-                    tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
-                    showTreesRestoredGraph={false}
-                  />
-                  <SimpleBarChart data={strategiesData} />
-                </div>
-              </When>
-              <When condition={selected.includes("5")}>
-                <div className="w-[73%] pt-12">
-                  <GraphicIconDashboard
-                    data={landUseData.graphicTargetLandUseTypes}
-                    maxValue={totalHectaresRestoredGoal}
-                  />
-                </div>
-              </When>
+              <MonitoredCharts
+                selected={selected}
+                isLoadingIndicator={isLoadingIndicator}
+                parsedData={parsedData}
+                ecoRegionData={ecoRegionData}
+                strategiesData={strategiesData}
+                landUseData={landUseData}
+                record={record}
+                totalHectaresRestoredGoal={totalHectaresRestoredGoal}
+              />
               <When condition={selected.includes("6")}>{noDataGraph}</When>
             </div>
           </When>

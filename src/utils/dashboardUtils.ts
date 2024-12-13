@@ -478,9 +478,10 @@ export const parsePolygonsIndicatorDataForLandUse = (
 
   const graphicTargetLandUseTypes = Object.entries(aggregatedData).map(([label, value]) => {
     const percentage = calculatePercentage(value as number, totalHectares);
+    const adjustedValue = (value as number) > totalHectares ? totalHectares : value;
     return {
       label,
-      value: value as number,
+      value: adjustedValue as number,
       valueText: `${Math.round(value as number)} ha ${percentage.toFixed(2)}%`
     };
   });
