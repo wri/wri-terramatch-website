@@ -84,13 +84,13 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
   };
 
   return (
-    <div className="relative h-80 w-full">
+    <div className="relative flex h-80 w-full items-center justify-center">
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ right: 0, left: 0, top: 0, bottom: 0 }}>
+        <PieChart>
           <Tooltip content={<CustomTooltip />} />
           <Pie
             data={chartData}
-            cx={200}
+            cx="50%"
             cy="50%"
             innerRadius={100}
             outerRadius={140}
@@ -101,7 +101,7 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
           >
-            <Label position="center" className="text-sm font-bold">
+            <Label position="center" className="text-20-semibold !font-semibold !text-darkCustom">
               ECO-REGION
             </Label>
             {chartData.map((entry, index) => (
@@ -114,8 +114,7 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
             align="right"
             verticalAlign="middle"
             wrapperStyle={{
-              right: 0,
-              left: 400,
+              right: "calc(50% - 261px)",
               paddingLeft: 0
             }}
           />

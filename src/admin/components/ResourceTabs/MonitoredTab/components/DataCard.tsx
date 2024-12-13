@@ -163,8 +163,11 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
-        <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+        <Icon
+          name={IconNames.IC_ARROW_COLLAPSE}
+          className="h-4 w-4 rotate-90 rounded-sm text-grey-720 hover:text-primary"
+        />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -205,8 +208,11 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
-        <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+        <Icon
+          name={IconNames.IC_ARROW_COLLAPSE}
+          className="h-4 w-4 rotate-90 rounded-sm text-grey-720 hover:text-primary"
+        />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -247,8 +253,11 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     header: "",
     enableSorting: false,
     cell: props => (
-      <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
-        <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+        <Icon
+          name={IconNames.IC_ARROW_COLLAPSE}
+          className="h-4 w-4 rotate-90 rounded-sm text-grey-720 hover:text-primary"
+        />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -546,8 +555,11 @@ const DataCard = ({
           header: "",
           enableSorting: false,
           cell: props => (
-            <div className="w-min cursor-pointer rounded p-1 hover:bg-primary-200">
-              <Icon name={IconNames.ELIPSES} className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+            <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+              <Icon
+                name={IconNames.IC_ARROW_COLLAPSE}
+                className="h-4 w-4 rotate-90 rounded-sm text-grey-720 hover:text-primary"
+              />
             </div>
           ),
           meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
