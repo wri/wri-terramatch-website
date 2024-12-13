@@ -31,10 +31,6 @@ import {
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
-import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
-import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
-import SecDashboard from "@/pages/dashboard/components/SecDashboard";
-import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 import { EntityName, OptionValue } from "@/types/common";
 import {
   parsePolygonsIndicatorDataForEcoRegion,
@@ -45,8 +41,7 @@ import {
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
-import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
-import TreeLossBarChart from "./TreesLossBarChart";
+import MonitoredCharts from "./MonitoredCharts";
 
 interface TableData {
   polygonName: string;
@@ -348,19 +343,6 @@ const indicatorDescription1 =
 const indicatorDescription2 =
   "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
 
-const POLYGONS = [
-  { title: "Agrariala Palma", value: "1" },
-  { title: "Agraisa", value: "2" },
-  { title: "Agrajaya Batitama", value: "3" },
-  { title: "Agoue Iboe", value: "4" },
-  { title: "Africas", value: "5" },
-  { title: "AEK Torup", value: "6" },
-  { title: "AEK Raso", value: "7" },
-  { title: "AEK Nabara Selatan", value: "8" },
-  { title: "Adison Thaochu A", value: "9" },
-  { title: "ABA", value: "10" }
-];
-
 const noDataMap = (
   <div className="absolute top-0 flex h-full w-full">
     <div className="relative flex w-[23vw] flex-col gap-3 p-6">
@@ -407,11 +389,30 @@ const DataCard = ({
 }) => {
   const [tabActive, setTabActive] = useState(0);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
+  const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData } = useMonitoredData(type!, record.uuid);
-  const parsedData = parseTreeCoverData(treeCoverLossData, treeCoverLossFiresData);
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator } = useMonitoredData(
+    type!,
+    record.uuid
+  );
+  const filteredPolygonsIndicator =
+    selectedPolygonUuid !== "0"
+      ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
+      : polygonsIndicator;
+
+  const filteredTreeCoverLossData =
+    selectedPolygonUuid !== "0"
+      ? treeCoverLossData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      : treeCoverLossData;
+
+  const filteredTreeCoverLossFiresData =
+    selectedPolygonUuid !== "0"
+      ? treeCoverLossFiresData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      : treeCoverLossFiresData;
+
+  const parsedData = parseTreeCoverData(filteredTreeCoverLossData, filteredTreeCoverLossFiresData);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
@@ -421,20 +422,28 @@ const DataCard = ({
   const totalHectaresRestoredGoal = record?.total_hectares_restored_goal
     ? Number(record?.total_hectares_restored_goal)
     : +record?.hectares_to_restore_goal;
-  const landUseData = polygonsIndicator
-    ? parsePolygonsIndicatorDataForLandUse(polygonsIndicator, totalHectaresRestoredGoal)
+  const landUseData = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForLandUse(filteredPolygonsIndicator, totalHectaresRestoredGoal)
     : DEFAULT_POLYGONS_DATA;
-  const strategiesData = polygonsIndicator
-    ? parsePolygonsIndicatorDataForStrategies(polygonsIndicator)
+  const strategiesData = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForStrategies(filteredPolygonsIndicator)
     : DEFAULT_POLYGONS_DATA_STRATEGIES;
 
-  const ecoRegionData: any = polygonsIndicator
-    ? parsePolygonsIndicatorDataForEcoRegion(polygonsIndicator)
+  const ecoRegionData: any = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForEcoRegion(filteredPolygonsIndicator)
     : DEFAULT_POLYGONS_DATA_ECOREGIONS;
 
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
-  const totalElemIndicator = polygonsIndicator?.length ? polygonsIndicator?.length - 1 : null;
+  const totalElemIndicator = filteredPolygonsIndicator?.length ? filteredPolygonsIndicator?.length - 1 : null;
+
+  const polygonsList = [
+    { title: "All Polygons", value: "0" },
+    ...(polygonsIndicator ?? []).map((item: any) => ({
+      title: item.poly_name,
+      value: item.poly_id
+    }))
+  ];
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -659,14 +668,14 @@ const DataCard = ({
           <When condition={tabActive === 1}>
             <div className="relative z-auto flex w-full gap-8 px-6 pb-6 pt-2">
               <Dropdown
-                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-50", {
+                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1]", {
                   hidden: selected.includes("6")
                 })}
                 optionsClassName="!w-max right-0"
                 className="w-max"
-                options={POLYGONS}
-                defaultValue={["1"]}
-                onChange={() => {}}
+                options={polygonsList}
+                defaultValue={["0"]}
+                onChange={option => setSelectedPolygonUuid(option[0])}
               />
               <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
                 <Text
@@ -684,35 +693,16 @@ const DataCard = ({
                   </Text>
                 </div>
               </div>
-              <When condition={selected.includes("1")}>
-                <TreeLossBarChart data={parsedData} />
-              </When>
-              <When condition={selected.includes("2") || selected.includes("2")}>
-                <TreeLossBarChart data={parsedData} />
-              </When>
-              <When condition={selected.includes("3")}>
-                <EcoRegionDoughnutChart data={ecoRegionData} />
-              </When>
-              <When condition={selected.includes("4")}>
-                <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-                  <SecDashboard
-                    title={"Total Hectares Under Restoration"}
-                    data={{ value: record.total_hectares_restored_sum, totalValue: totalHectaresRestoredGoal }}
-                    className="w-full place-content-center pl-8"
-                    tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
-                    showTreesRestoredGraph={false}
-                  />
-                  <SimpleBarChart data={strategiesData} />
-                </div>
-              </When>
-              <When condition={selected.includes("5")}>
-                <div className="w-[73%] pt-12">
-                  <GraphicIconDashboard
-                    data={landUseData.graphicTargetLandUseTypes}
-                    maxValue={totalHectaresRestoredGoal}
-                  />
-                </div>
-              </When>
+              <MonitoredCharts
+                selected={selected}
+                isLoadingIndicator={isLoadingIndicator}
+                parsedData={parsedData}
+                ecoRegionData={ecoRegionData}
+                strategiesData={strategiesData}
+                landUseData={landUseData}
+                record={record}
+                totalHectaresRestoredGoal={totalHectaresRestoredGoal}
+              />
               <When condition={selected.includes("6")}>{noDataGraph}</When>
             </div>
           </When>
