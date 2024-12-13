@@ -87,7 +87,7 @@ const MonitoredCharts = ({
       case "2":
         return (
           <ChartContainer isLoading={isLoadingIndicator} hasNoData={!parsedData?.length}>
-            <TreeLossBarChart data={parsedData} />
+            <TreeLossBarChart data={parsedData} className="flex flex-col" />
           </ChartContainer>
         );
 
