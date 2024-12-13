@@ -343,19 +343,6 @@ const indicatorDescription1 =
 const indicatorDescription2 =
   "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
 
-const POLYGONS = [
-  { title: "Agrariala Palma", value: "1" },
-  { title: "Agraisa", value: "2" },
-  { title: "Agrajaya Batitama", value: "3" },
-  { title: "Agoue Iboe", value: "4" },
-  { title: "Africas", value: "5" },
-  { title: "AEK Torup", value: "6" },
-  { title: "AEK Raso", value: "7" },
-  { title: "AEK Nabara Selatan", value: "8" },
-  { title: "Adison Thaochu A", value: "9" },
-  { title: "ABA", value: "10" }
-];
-
 const noDataMap = (
   <div className="absolute top-0 flex h-full w-full">
     <div className="relative flex w-[23vw] flex-col gap-3 p-6">
@@ -402,6 +389,7 @@ const DataCard = ({
 }) => {
   const [tabActive, setTabActive] = useState(0);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
+  const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
@@ -409,7 +397,22 @@ const DataCard = ({
     type!,
     record.uuid
   );
-  const parsedData = parseTreeCoverData(treeCoverLossData, treeCoverLossFiresData);
+  const filteredPolygonsIndicator =
+    selectedPolygonUuid !== "0"
+      ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
+      : polygonsIndicator;
+
+  const filteredTreeCoverLossData =
+    selectedPolygonUuid !== "0"
+      ? treeCoverLossData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      : treeCoverLossData;
+
+  const filteredTreeCoverLossFiresData =
+    selectedPolygonUuid !== "0"
+      ? treeCoverLossFiresData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      : treeCoverLossFiresData;
+
+  const parsedData = parseTreeCoverData(filteredTreeCoverLossData, filteredTreeCoverLossFiresData);
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
@@ -419,20 +422,28 @@ const DataCard = ({
   const totalHectaresRestoredGoal = record?.total_hectares_restored_goal
     ? Number(record?.total_hectares_restored_goal)
     : +record?.hectares_to_restore_goal;
-  const landUseData = polygonsIndicator
-    ? parsePolygonsIndicatorDataForLandUse(polygonsIndicator, totalHectaresRestoredGoal)
+  const landUseData = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForLandUse(filteredPolygonsIndicator, totalHectaresRestoredGoal)
     : DEFAULT_POLYGONS_DATA;
-  const strategiesData = polygonsIndicator
-    ? parsePolygonsIndicatorDataForStrategies(polygonsIndicator)
+  const strategiesData = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForStrategies(filteredPolygonsIndicator)
     : DEFAULT_POLYGONS_DATA_STRATEGIES;
 
-  const ecoRegionData: any = polygonsIndicator
-    ? parsePolygonsIndicatorDataForEcoRegion(polygonsIndicator)
+  const ecoRegionData: any = filteredPolygonsIndicator
+    ? parsePolygonsIndicatorDataForEcoRegion(filteredPolygonsIndicator)
     : DEFAULT_POLYGONS_DATA_ECOREGIONS;
 
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
-  const totalElemIndicator = polygonsIndicator?.length ? polygonsIndicator?.length - 1 : null;
+  const totalElemIndicator = filteredPolygonsIndicator?.length ? filteredPolygonsIndicator?.length - 1 : null;
+
+  const polygonsList = [
+    { title: "All Polygons", value: "0" },
+    ...(polygonsIndicator ?? []).map((item: any) => ({
+      title: item.poly_name,
+      value: item.poly_id
+    }))
+  ];
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -662,9 +673,9 @@ const DataCard = ({
                 })}
                 optionsClassName="!w-max right-0"
                 className="w-max"
-                options={POLYGONS}
-                defaultValue={["1"]}
-                onChange={() => {}}
+                options={polygonsList}
+                defaultValue={["0"]}
+                onChange={option => setSelectedPolygonUuid(option[0])}
               />
               <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
                 <Text
