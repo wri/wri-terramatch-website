@@ -77,7 +77,7 @@ const PolygonItem = ({
       {...props}
       className={classNames(
         className,
-        "flex flex-col rounded-lg border-2 border-grey-350 bg-white p-2 hover:border-primary"
+        "flex flex-col rounded-lg border-2 border-grey-350 bg-white p-2  shadow-monitored hover:border-primary"
       )}
     >
       <div className="flex items-center justify-between gap-2">
@@ -85,7 +85,7 @@ const PolygonItem = ({
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}
-            className=" h-11 w-11 rounded-lg bg-neutral-300"
+            className="h-11 w-11 rounded-lg bg-neutral-300"
           />
         </div>
         <div className="flex flex-1 flex-col justify-between gap-2 overflow-hidden">

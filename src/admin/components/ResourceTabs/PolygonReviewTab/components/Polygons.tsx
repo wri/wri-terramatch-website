@@ -66,7 +66,7 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
   const sitePolygonData = context?.sitePolygonData;
-  const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
+  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
@@ -221,18 +221,22 @@ const Polygons = (props: IPolygonProps) => {
           />
         )}
       </Drawer>
-      <div className="mb-4 flex flex-col gap-1">
+      <div className="mb-4 flex items-center justify-between">
         <Text variant="text-16-bold" className="text-darkCustom">
           Polygons
         </Text>
-        <div className="flex items-center justify-between">
-          <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
-            <Text variant="text-14-semibold" className="flex items-center gap-1">
-              Add Polygon <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
-            </Text>
-          </Button>
-          <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-            {openCollapseAll ? "SHRINK" : "EXPAND"}
+        <div className="flex items-center justify-start">
+          <Button
+            variant="white-border"
+            onClick={() => setOpenCollapseAll(!openCollapseAll)}
+            className="flex gap-1.5 !rounded-lg !capitalize"
+          >
+            {openCollapseAll ? (
+              <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            ) : (
+              <Icon name={IconNames.IC_EXPAND} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            )}
+            {openCollapseAll ? "Shrink  " : "Expand"}
           </Button>
         </div>
       </div>
@@ -251,7 +255,7 @@ const Polygons = (props: IPolygonProps) => {
           </Box>
         </When>
       </div>
-      <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
+      <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
         {polygonMenu.map(item => (
           <div key={item.id}>
             <PolygonItem

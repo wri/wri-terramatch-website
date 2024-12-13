@@ -2,7 +2,16 @@
 
 import { ReactNode } from "react";
 
-export type Colors = "white" | "black" | "neutral" | "secondary" | "tertiary" | "primary" | "success" | "error";
+export type Colors =
+  | "white"
+  | "black"
+  | "neutral"
+  | "secondary"
+  | "tertiary"
+  | "primary"
+  | "success"
+  | "error"
+  | "success-600";
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
 export type TextWeights = "regular" | "bold";

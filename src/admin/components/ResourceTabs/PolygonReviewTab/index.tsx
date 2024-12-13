@@ -1,8 +1,11 @@
 import { Grid, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { Else, If, Then } from "react-if";
 
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
@@ -31,6 +34,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -143,6 +147,7 @@ const ContentForApproval = ({
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
+  const { selectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
@@ -163,6 +168,12 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
 
+  useEffect(() => {
+    if (selectPolygonFromMap?.uuid) {
+      setPolygonFromMap(selectPolygonFromMap);
+      flyToPolygonBounds(selectPolygonFromMap.uuid);
+    }
+  }, [polygonList]);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -344,23 +355,31 @@ const PolygonReviewTab: FC<IProps> = props => {
       setSubmitPolygonLoaded(false);
       hideLoader();
     } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message;
-        if (typeof errorMessage === "string") {
-          const parsedMessage = JSON.parse(errorMessage);
-          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-            errorMessage = parsedMessage.message;
+      let errorMessage;
+
+      if (error && typeof error === "object" && "error" in error) {
+        const nestedError = error.error;
+        if (typeof nestedError === "string") {
+          try {
+            const parsedNestedError = JSON.parse(nestedError);
+            if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
+              errorMessage = parsedNestedError.message;
+            } else {
+              errorMessage = nestedError;
+            }
+          } catch (parseError) {
+            errorMessage = nestedError;
           }
+        } else {
+          errorMessage = nestedError;
         }
-        if (errorMessage && typeof errorMessage === "object" && "message" in errorMessage) {
-          errorMessage = errorMessage.message;
-        }
-        openNotification("error", t("Error uploading file"), errorMessage);
-        hideLoader();
+      } else if (error && typeof error === "object" && "message" in error) {
+        errorMessage = error.message;
       } else {
-        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
-        hideLoader();
+        errorMessage = t("An unknown error occurred");
       }
+      openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
+      hideLoader();
     }
   };
 
@@ -605,13 +624,13 @@ const PolygonReviewTab: FC<IProps> = props => {
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
               <div className="flex flex-col items-start gap-3">
-                <div className="mb-2 flex w-full gap-2 rounded-xl bg-white p-3 shadow-monitored">
+                <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
                       <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
-                    <Text variant="text-14-bold" className="text-black">
+                    <Text variant="text-14-bold" className="leading-[normal] text-black">
                       {record?.readable_status}
                     </Text>
                   </div>
@@ -620,7 +639,16 @@ const PolygonReviewTab: FC<IProps> = props => {
                       Polygon Overview
                       <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
                     </Text>
-                    <LinearProgressBarMonitored data={dataPolygonOverview} />
+                    <If condition={sitePolygonData.length < total}>
+                      <Then>
+                        <Box sx={{ width: "100%" }}>
+                          <LinearProgress sx={{ borderRadius: 5 }} />
+                        </Box>
+                      </Then>
+                      <Else>
+                        <LinearProgressBarMonitored data={dataPolygonOverview} />
+                      </Else>
+                    </If>
                   </div>
                 </div>
                 <div className="min-w-[450px] flex-[18]">
@@ -670,14 +698,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Button>
                   </div>
                 </div>
-                {/* <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
-                  <Text variant="text-14" className="mb-3 text-blueCustom-250">
-                    Site Status
-                  </Text>
-                  <div className="w-full h-fit">
-                    <SitePolygonStatus statusLabel={record.readable_status} />
-                  </div>
-                </div> */}
               </div>
               <MapContainer
                 record={record}

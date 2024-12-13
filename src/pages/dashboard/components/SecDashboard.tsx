@@ -55,7 +55,8 @@ const SecDashboard = ({
   dataForChart,
   chartType,
   isUserAllowed = true,
-  isLoading = false
+  isLoading = false,
+  showTreesRestoredGraph = true
 }: {
   title: string;
   type?: "legend" | "toggle";
@@ -73,6 +74,7 @@ const SecDashboard = ({
   chartType?: string;
   isUserAllowed?: boolean;
   isLoading?: boolean;
+  showTreesRestoredGraph?: boolean;
 }) => {
   const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
@@ -161,7 +163,7 @@ const SecDashboard = ({
         {data?.value !== undefined && (
           <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
         )}
-        <When condition={data?.totalValue}>
+        <When condition={data?.totalValue && showTreesRestoredGraph}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
               <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />

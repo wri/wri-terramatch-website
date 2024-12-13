@@ -44,7 +44,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+          className="flex items-center text-bold-caption-200 text-inherit uppercase !leading-[normal]"
         >
           <p
             className="capitalize text-12-bold"
@@ -59,7 +59,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-12-bold"

@@ -59,6 +59,7 @@ export interface DropdownProps {
   onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
+  titleClassname?: string;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -208,7 +209,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
-                  className={tw("w-full", variant.titleClassname)}
+                  className={tw("w-full", variant.titleClassname, props.titleClassname)}
                   title={formatSelectedValues(
                     selected,
                     options,
