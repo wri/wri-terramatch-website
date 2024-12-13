@@ -23,19 +23,6 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
   />
   <div>
     <div
-      className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2"
-    >
-      <div
-        style={
-          Object {
-            "height": undefined,
-            "width": 24,
-          }
-        }
-      />
-      If you would like to add a species not included on the original Restoration Project, it will be flagged to the admin as new information pending review.
-    </div>
-    <div
       className="mb-2 mt-8"
     >
       <p
@@ -69,7 +56,6 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
                   id=":r26:"
                   name="treeSpecies"
                   onChange={[Function]}
-                  onChangeCapture={[Function]}
                   onClick={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
@@ -100,7 +86,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
       className="mb-1 mt-9 flex gap-6 border-b pb-4"
     >
       <div
-        className="w-[50%]"
+        className="w-[75%]"
       >
         <p
           className="uppercase text-black text-14-bold"
@@ -114,35 +100,19 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
         </p>
       </div>
       <div
-        className="border-r pr-6"
-      >
-        <p
-          className="uppercase text-black text-14-bold"
-          data-testid="txt"
-        >
-          SPECIES PLANTED:
-        </p>
-        <p
-          className="text-primary text-20-bold"
-          data-testid="txt"
-        >
-          0
-        </p>
-      </div>
-      <div
         className=""
       >
         <p
           className="uppercase text-black text-14-bold"
           data-testid="txt"
         >
-          TOTAL PLANTED TO DATE:
+          TREES TO BE PLANTED:
         </p>
         <p
           className="text-primary text-20-bold"
           data-testid="txt"
         >
-          47,800
+          0
         </p>
       </div>
     </div>
@@ -163,6 +133,18 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
           <div
             className="flex items-center gap-1"
           >
+            <div
+              title="Non-Scientific Name"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+            </div>
             <p
               className="text-black  text-14-light"
               data-testid="txt"
@@ -202,17 +184,36 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
             </div>
           </div>
         </div>
-        <p
-          className="text-black text-14-light"
-          data-testid="txt"
-          style={
-            Object {
-              "width": "undefinedpx",
-            }
-          }
+        <div
+          className="flex flex-1 justify-end gap-6"
         >
-          7,400
-        </p>
+          <button
+            className="flex items-center justify-center rounded-full hover:bg-opacity-60 text-blueCustom-700 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
+          <button
+            className="flex items-center justify-center rounded-full hover:bg-opacity-60 text-blueCustom-700 hover:text-primary"
+            onClick={[Function]}
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 24,
+                }
+              }
+            />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -275,7 +276,6 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
                   id=":r2b:"
                   name="treeSpecies"
                   onChange={[Function]}
-                  onChangeCapture={[Function]}
                   onClick={[Function]}
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
@@ -353,6 +353,18 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
           <div
             className="flex items-center gap-1"
           >
+            <div
+              title="Non-Scientific Name"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
+              />
+            </div>
             <p
               className="text-black  text-14-light"
               data-testid="txt"

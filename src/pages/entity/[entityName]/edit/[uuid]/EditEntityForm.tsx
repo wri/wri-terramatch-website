@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
+import EntityProvider from "@/context/entity.provider";
 import { useFrameworkContext } from "@/context/framework.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
@@ -88,54 +89,56 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   }, [formSteps, mode]);
 
   return (
-    <WizardForm
-      steps={formSteps!}
-      errors={error}
-      onBackFirstStep={router.back}
-      onCloseForm={() => router.push("/home")}
-      onChange={(data, closeAndSave?: boolean) =>
-        updateEntity({
-          pathParams: { uuid: entityUUID, entity: entityName },
-          // @ts-ignore
-          body: {
-            answers: normalizedFormData(data, formSteps!),
-            ...(closeAndSave ? { continue_later_action: true } : {})
-          }
-        })
-      }
-      formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-      onSubmit={() =>
-        submitEntity({
-          pathParams: {
-            entity: entityName,
-            uuid: entityUUID
-          }
-        })
-      }
-      submitButtonDisable={isSubmitting}
-      defaultValues={defaultValues}
-      title={formTitle}
-      tabOptions={{
-        markDone: true,
-        disableFutureTabs: true
-      }}
-      summaryOptions={{
-        title: t("Review Details"),
-        downloadButtonText: t("Download")
-      }}
-      roundedCorners
-      saveAndCloseModal={{
-        content:
-          saveAndCloseModalMapping[entityName] ??
-          t(
-            "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
-          ),
-        onConfirm() {
-          router.push(getEntityDetailPageLink(entityName, entityUUID));
+    <EntityProvider entityUuid={entityUUID} entityName={entityName}>
+      <WizardForm
+        steps={formSteps!}
+        errors={error}
+        onBackFirstStep={router.back}
+        onCloseForm={() => router.push("/home")}
+        onChange={(data, closeAndSave?: boolean) =>
+          updateEntity({
+            pathParams: { uuid: entityUUID, entity: entityName },
+            // @ts-ignore
+            body: {
+              answers: normalizedFormData(data, formSteps!),
+              ...(closeAndSave ? { continue_later_action: true } : {})
+            }
+          })
         }
-      }}
-      {...initialStepProps}
-    />
+        formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+        onSubmit={() =>
+          submitEntity({
+            pathParams: {
+              entity: entityName,
+              uuid: entityUUID
+            }
+          })
+        }
+        submitButtonDisable={isSubmitting}
+        defaultValues={defaultValues}
+        title={formTitle}
+        tabOptions={{
+          markDone: true,
+          disableFutureTabs: true
+        }}
+        summaryOptions={{
+          title: t("Review Details"),
+          downloadButtonText: t("Download")
+        }}
+        roundedCorners
+        saveAndCloseModal={{
+          content:
+            saveAndCloseModalMapping[entityName] ??
+            t(
+              "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
+            ),
+          onConfirm() {
+            router.push(getEntityDetailPageLink(entityName, entityUUID));
+          }
+        }}
+        {...initialStepProps}
+      />
+    </EntityProvider>
   );
 };
 
