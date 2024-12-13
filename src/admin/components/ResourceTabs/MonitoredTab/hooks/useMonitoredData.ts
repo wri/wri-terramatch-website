@@ -64,11 +64,6 @@ const DROPDOWN_OPTIONS = [
     title: "Hectares Under Restoration By Target Land Use System",
     value: "5",
     slug: "restorationByLandUse"
-  },
-  {
-    title: "Tree Count",
-    value: "6",
-    slug: "treeCount"
   }
 ];
 
@@ -100,8 +95,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     treeCoverLossFires: [],
     restorationByEcoRegion: [],
     restorationByStrategy: [],
-    restorationByLandUse: [],
-    treeCount: []
+    restorationByLandUse: []
   });
   const [dropdownAnalysisOptions, setDropdownAnalysisOptions] = useState(DROPDOWN_OPTIONS);
 

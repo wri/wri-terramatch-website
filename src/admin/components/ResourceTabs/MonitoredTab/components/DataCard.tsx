@@ -77,7 +77,15 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const COMMON_COLUMNS: ColumnDef<RowData>[] = [
-  { accessorKey: "poly_name", header: "Polygon Name", meta: { style: { width: "13.30%" } } },
+  {
+    accessorKey: "poly_name",
+    header: "Polygon Name",
+    meta: { style: { width: "13.30%" } },
+    cell: (props: any) => {
+      const value = props.getValue();
+      return value == "" || value == "-" ? "-" : value;
+    }
+  },
   {
     accessorKey: "size",
     header: "Size (ha)",
@@ -100,7 +108,7 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     header: "Plant Start Date",
     cell: (props: any) => {
       const value = props.getValue();
-      return format(new Date(value), "dd/MM/yyyy");
+      return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
     },
     meta: { style: { width: "13.65%" } }
   },
@@ -280,11 +288,6 @@ const DROPDOWN_OPTIONS = [
     title: "Hectares Under Restoration By Target Land Use System",
     value: "5",
     slug: "restorationByLandUse"
-  },
-  {
-    title: "Tree Count",
-    value: "6",
-    slug: "treeCount"
   }
 ];
 
@@ -561,8 +564,7 @@ const DataCard = ({
     treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
     restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
     restorationByStrategy: TABLE_COLUMNS_HECTARES_STRATEGY,
-    restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE,
-    treeCount: []
+    restorationByLandUse: TABLE_COLUMNS_HECTARES_LAND_USE
   };
 
   const handleExport = async () => {
