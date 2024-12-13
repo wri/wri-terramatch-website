@@ -35,7 +35,6 @@ exports[`Storyshots Components/Elements/Inputs/AutoComplete Default 1`] = `
         className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
         data-headlessui-state=""
         id=":r9:"
-        onChangeCapture={[Function]}
         onClick={[Function]}
         onKeyUp={[Function]}
         onMouseDown={[Function]}

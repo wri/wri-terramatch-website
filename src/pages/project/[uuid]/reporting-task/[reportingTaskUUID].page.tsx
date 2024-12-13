@@ -187,7 +187,6 @@ const ReportingTaskPage = () => {
       enableSorting: false,
       cell: props => {
         const record = props.row.original as any;
-        console.log(record);
         const [isEnabled, setIsEnabled] = useState(true);
         const { index } = props.row;
         const { status, type, completion, uuid } = record;

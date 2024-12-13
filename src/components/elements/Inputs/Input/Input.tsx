@@ -14,7 +14,7 @@ export interface InputProps
   extends InputWrapperProps,
     Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "type" | "form"> {
   name: string;
-  variant?: "secondary" | "default" | "login" | "signup" | "monitored";
+  variant?: "secondary" | "default" | "login" | "signup" | "monitored" | "treePlanted";
   formHook?: UseFormReturn<any>;
   clearable?: boolean;
   iconButtonProps?: IconButtonProps;
@@ -112,6 +112,11 @@ const Input = forwardRef(
           true,
         "pl-4": inputProps.type === "number",
         "border-neutral-300": !error
+      },
+      treePlanted: {
+        "py-[7.5px] py-1.5 !w-[100px] text-center border border-blueCustom-700 rounded hover:border-primary hover:shadow-blue-border opacity-60 outline-none text-14-light !font-primary":
+          true,
+        "text-center": inputProps.type === "number"
       }
     };
 

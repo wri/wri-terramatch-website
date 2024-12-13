@@ -12,9 +12,9 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="true"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 border-r-white bg-white text-neutral-1000 peer-aria-checked:shadow-t-secondary"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border border-success  bg-white text-blueCustom-900 peer-aria-checked:shadow-t-secondary"
       data-headlessui-state="selected"
-      id="headlessui-tabs-tab-:r31:"
+      id="headlessui-tabs-tab-:r36:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}
@@ -30,13 +30,21 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
         }
         data-testid="txt"
       />
+      <div
+        style={
+          Object {
+            "height": undefined,
+            "width": 20,
+          }
+        }
+      />
     </button>
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-b border-white bg-grey-950 text-blueCustom-900"
       data-headlessui-state=""
-      id="headlessui-tabs-tab-:r32:"
+      id="headlessui-tabs-tab-:r37:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}
@@ -56,9 +64,9 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b-0 border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-b border-white bg-grey-950 text-blueCustom-900"
       data-headlessui-state=""
-      id="headlessui-tabs-tab-:r33:"
+      id="headlessui-tabs-tab-:r38:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}
@@ -78,9 +86,9 @@ exports[`Storyshots Components/Elements/Tabs Horizontal 1`] = `
     <button
       aria-checked="false"
       aria-selected="false"
-      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-neutral-100 bg-neutral-300 text-neutral-900"
+      className="flex min-h-[70px] w-full items-center justify-start py-4 px-6 w-full items-center focus:outline-none disabled:text-neutral-900 border-b border-b border-white bg-grey-950 text-blueCustom-900"
       data-headlessui-state=""
-      id="headlessui-tabs-tab-:r34:"
+      id="headlessui-tabs-tab-:r39:"
       onClick={[Function]}
       onKeyDown={[Function]}
       onMouseDown={[Function]}

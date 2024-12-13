@@ -1,7 +1,6 @@
 name: pull-request
 on:
   pull_request:
-    branches: [main, staging, release/**]
 jobs:
   test:
     runs-on: ubuntu-latest
