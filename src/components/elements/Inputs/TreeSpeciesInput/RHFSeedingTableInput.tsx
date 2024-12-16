@@ -33,6 +33,7 @@ const RHFSeedingTableInput = (props: PropsWithChildren<RHFSeedingTableInputProps
       title={t("Seed species or Mix")}
       buttonCaptionSuffix={t("Species or mix")}
       withPreviousCounts={false}
+      useTaxonomicBackbone={false}
       value={value ?? []}
       onChange={onChange}
       collection={collection}

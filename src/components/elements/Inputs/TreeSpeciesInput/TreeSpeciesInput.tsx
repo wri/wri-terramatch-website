@@ -30,7 +30,8 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   title: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
-  withPreviousCounts?: boolean;
+  withPreviousCounts: boolean;
+  useTaxonomicBackbone: boolean;
   value: TreeSpeciesValue[];
   onChange: (value: any[]) => void;
   clearErrors: () => void;
@@ -174,7 +175,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       handleCreate?.({
         uuid: uuidv4(),
         name: valueAutoComplete,
-        taxon_id: taxonId,
+        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
         amount: props.withNumbers ? 0 : undefined
       });
 
@@ -200,7 +201,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       handleUpdate({
         ...editValue,
         name: valueAutoComplete,
-        taxon_id: findTaxonId(valueAutoComplete)
+        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined
       });
 
       setValueAutoComplete("");
@@ -254,6 +255,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 value={valueAutoComplete}
                 onChange={e => setValueAutoComplete(e.target.value)}
                 onSearch={async search => {
+                  if (!props.useTaxonomicBackbone) return [];
+
                   const result = await autocompleteSearch(search);
                   setSearchResult(result);
                   return result;
@@ -390,7 +393,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 }
               >
                 <div className="flex items-center gap-1">
-                  <When condition={value.taxon_id == null}>
+                  <When condition={props.useTaxonomicBackbone && value.taxon_id == null}>
                     <div title={t("Non-Scientific Name")}>
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
