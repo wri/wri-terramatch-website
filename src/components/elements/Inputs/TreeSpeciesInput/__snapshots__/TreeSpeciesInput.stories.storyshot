@@ -133,18 +133,6 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
           <div
             className="flex items-center gap-1"
           >
-            <div
-              title="Non-Scientific Name"
-            >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
-            </div>
             <p
               className="text-black  text-14-light"
               data-testid="txt"
@@ -353,18 +341,6 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
           <div
             className="flex items-center gap-1"
           >
-            <div
-              title="Non-Scientific Name"
-            >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
-            </div>
             <p
               className="text-black  text-14-light"
               data-testid="txt"
