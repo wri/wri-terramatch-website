@@ -14,6 +14,7 @@ import { EstablishmentEntityType, useEstablishmentTrees } from "@/connections/Es
 import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { isReportModelName } from "@/types/common";
 import { updateArrayState } from "@/utils/array";
 
@@ -105,12 +106,25 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
+  useValueChanged(shouldPrepopulate, function () {
+    if (shouldPrepopulate) {
+      onChange(
+        Object.entries(previousPlantingCounts!).map(([name, previousCount]) => ({
+          uuid: uuidv4(),
+          name,
+          taxon_id: previousCount.taxonId,
+          amount: 0
+        }))
+      );
+    }
+  });
 
   const totalWithPrevious = useMemo(
     () =>
       props.value.reduce(
-        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""] ?? 0),
+        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""]?.amount ?? 0),
         0
       ),
     [previousPlantingCounts, props.value]
@@ -201,6 +215,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     e.preventDefault();
     addValue(e);
   };
+
+  if (!establishmentLoaded || shouldPrepopulate) return null;
 
   return (
     <InputWrapper
@@ -412,7 +428,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               </div>
               <When condition={isReport}>
                 <Text variant="text-14-light" className="text-black ">
-                  {(previousPlantingCounts?.[value.name ?? ""] ?? 0).toLocaleString()}
+                  {(previousPlantingCounts?.[value.name ?? ""]?.amount ?? 0).toLocaleString()}
                 </Text>
               </When>
               <div className="flex flex-1 justify-end gap-6">
