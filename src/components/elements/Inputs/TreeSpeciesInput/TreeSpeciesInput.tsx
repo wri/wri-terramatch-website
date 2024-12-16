@@ -30,6 +30,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   title: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
+  withPreviousCounts?: boolean;
   value: TreeSpeciesValue[];
   onChange: (value: any[]) => void;
   clearErrors: () => void;
@@ -102,7 +103,9 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const { entityUuid, entityName } = useEntityContext();
   const isEntity = entityName != null && entityUuid != null;
   const isReport = isEntity && isReportModelName(entityName);
-  const handleBaseEntityTrees = isReport || (isEntity && ["sites", "nurseries"].includes(entityName));
+  const handleBaseEntityTrees =
+    props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
+  const displayPreviousCounts = props.withPreviousCounts && isReport;
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
@@ -305,7 +308,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
         </When>
         <div className="mb-1 mt-9 flex gap-6 border-b pb-4">
-          <div className={classNames({ "w-[75%]": !isReport, "w-[50%]": isReport })} ref={refTreeSpecies}>
+          <div
+            className={classNames({ "w-[75%]": !displayPreviousCounts, "w-[50%]": displayPreviousCounts })}
+            ref={refTreeSpecies}
+          >
             <Text variant="text-14-bold" className="uppercase text-black">
               {props.title}
             </Text>
@@ -313,7 +319,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {props.value.length}
             </Text>
           </div>
-          <div className={classNames({ "border-r pr-6": isReport })} ref={refPlanted}>
+          <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
               {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
             </Text>
@@ -321,7 +327,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
             </Text>
           </div>
-          <When condition={isReport}>
+          <When condition={displayPreviousCounts}>
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
                 {t("TOTAL PLANTED TO DATE:")}
@@ -426,7 +432,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   containerClassName=""
                 />
               </div>
-              <When condition={isReport}>
+              <When condition={displayPreviousCounts}>
                 <Text variant="text-14-light" className="text-black ">
                   {(previousPlantingCounts?.[value.name ?? ""]?.amount ?? 0).toLocaleString()}
                 </Text>
