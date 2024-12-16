@@ -644,7 +644,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 1}>
-            <div className="relative z-auto flex h-[calc(100vh-320px)] w-full gap-8 px-6 pb-6 pt-2">
+            <div className="relative z-auto flex w-full gap-8 px-6 pb-6 pt-2">
               <Dropdown
                 containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1]", {
                   hidden: selected.includes("6")
