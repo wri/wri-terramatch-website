@@ -1,4 +1,5 @@
-import React from "react";
+import classNames from "classnames";
+import React, { useEffect, useState } from "react";
 import { ReactNode } from "react";
 import { When } from "react-if";
 
@@ -81,6 +82,27 @@ const MonitoredCharts = ({
   record,
   totalHectaresRestoredGoal
 }: MonitoredChartsProps) => {
+  const [hasNoData, setHasNoData] = useState(false);
+
+  useEffect(() => {
+    const noData = selected.some(chartId => {
+      switch (chartId) {
+        case "1":
+        case "2":
+          return !parsedData?.length;
+        case "3":
+          return !ecoRegionData?.chartData?.length;
+        case "4":
+          return !strategiesData?.length;
+        case "5":
+          return !landUseData?.graphicTargetLandUseTypes?.length;
+        default:
+          return false;
+      }
+    });
+    setHasNoData(noData);
+  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData]);
+
   const renderChart = (chartId: React.Key) => {
     switch (chartId) {
       case "1":
@@ -124,7 +146,11 @@ const MonitoredCharts = ({
   };
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div
+      className={classNames("flex w-full flex-col gap-6", {
+        "relative z-10 bg-white": hasNoData
+      })}
+    >
       {selected.map(
         (id: React.Key | null | undefined) =>
           id != null && (

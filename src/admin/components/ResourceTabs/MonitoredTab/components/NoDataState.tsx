@@ -6,7 +6,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 export const NoDataState = () => (
-  <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
+  <div className="z-10 flex h-[75%] w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
     <Text variant="text-32-semibold" className="text-blueCustom">
       No Data to Display
     </Text>
