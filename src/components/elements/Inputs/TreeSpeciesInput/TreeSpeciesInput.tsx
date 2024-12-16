@@ -451,11 +451,21 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                     autoCompleteRef.current?.focus();
                   }}
                 />
-                <IconButton
-                  iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
-                  className="text-blueCustom-700 hover:text-primary"
-                  onClick={() => setDeleteIndex(value.uuid ?? null)}
-                />
+                <When
+                  condition={
+                    !displayPreviousCounts ||
+                    previousPlantingCounts == null ||
+                    // If we're using previous counts, only allow delete if this row has never been
+                    // reported on before.
+                    Object.keys(previousPlantingCounts).find(name => name === value.name) == null
+                  }
+                >
+                  <IconButton
+                    iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
+                    className="text-blueCustom-700 hover:text-primary"
+                    onClick={() => setDeleteIndex(value.uuid ?? null)}
+                  />
+                </When>
               </div>
             </div>
           )}
