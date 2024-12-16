@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
@@ -82,6 +82,11 @@ type InterfaceIndicatorPolygonsStatus = {
   approved: number;
 };
 
+interface PolygonOption {
+  title: string;
+  value: string;
+}
+
 export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const t = useT();
   const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
@@ -89,6 +94,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
+  const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
   const [analysisToSlug, setAnalysisToSlug] = useState<any>({
     treeCoverLoss: [],
@@ -172,11 +178,33 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   );
 
-  const filteredPolygons = indicatorData?.filter(
-    (polygon: Indicators) =>
-      polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-      polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase())
-  );
+  const filteredPolygons = useMemo(() => {
+    if (!indicatorData) return [];
+
+    return indicatorData
+      .filter(
+        (polygon: Indicators) =>
+          polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+          polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase())
+      )
+      .sort((a, b) => (a.poly_name || "").localeCompare(b.poly_name || ""));
+  }, [indicatorData, searchTerm]);
+
+  useEffect(() => {
+    if (!indicatorData) return;
+
+    const options = [
+      { title: "All Polygons", value: "0" },
+      ...indicatorData
+        .map((item: any) => ({
+          title: item.poly_name || "",
+          value: item.poly_id || ""
+        }))
+        .sort((a, b) => a.title.localeCompare(b.title))
+    ];
+
+    setPolygonOptions(options);
+  }, [indicatorData]);
 
   const headerBarPolygonStatus = dataPolygonOverview.map(status => {
     const key = status.status_key as keyof InterfaceIndicatorPolygonsStatus;
@@ -251,6 +279,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   return {
     polygonsIndicator: filteredPolygons,
+    polygonOptions,
     indicatorPolygonsStatus,
     headerBarPolygonStatus,
     totalPolygonsStatus: totalPolygonsApproved,

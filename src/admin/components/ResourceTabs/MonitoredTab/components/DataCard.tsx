@@ -384,10 +384,8 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator } = useMonitoredData(
-    type!,
-    record.uuid
-  );
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
+    useMonitoredData(type!, record.uuid);
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
       ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
@@ -427,14 +425,6 @@ const DataCard = ({
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
   const totalElemIndicator = filteredPolygonsIndicator?.length ? filteredPolygonsIndicator?.length - 1 : null;
-
-  const polygonsList = [
-    { title: "All Polygons", value: "0" },
-    ...(polygonsIndicator ?? []).map((item: any) => ({
-      title: item.poly_name,
-      value: item.poly_id
-    }))
-  ];
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -654,14 +644,14 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 1}>
-            <div className="relative z-auto flex w-full gap-8 px-6 pb-6 pt-2">
+            <div className="relative z-auto flex h-[calc(100vh-320px)] w-full gap-8 px-6 pb-6 pt-2">
               <Dropdown
                 containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1]", {
                   hidden: selected.includes("6")
                 })}
                 optionsClassName="!w-max right-0"
                 className="w-max"
-                options={polygonsList}
+                options={polygonOptions}
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
               />
