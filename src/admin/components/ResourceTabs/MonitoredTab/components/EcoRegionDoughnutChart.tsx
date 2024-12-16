@@ -44,10 +44,21 @@ const CustomLegend = ({ payload }: CustomLegendProps) => {
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
+    const value = payload[0].value;
+    const total = payload[0].payload.total;
+    const percentage = (value / total) * 100;
+
+    const formattedValue = value.toLocaleString("en-US", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    });
+
+    const formattedPercentage = percentage.toFixed(0);
+
     return (
       <div className="shadow-lg rounded border bg-white p-2">
         <p className="font-medium">{payload[0].name}</p>
-        <p className="text-gray-600">{`Value: ${payload[0].value}`}</p>
+        <p className="text-gray-600">{`${formattedValue}ha (${formattedPercentage}%)`}</p>
       </div>
     );
   }
@@ -75,6 +86,13 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
   const { chartData } = data;
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
+  const total = chartData.reduce((sum, item) => sum + item.value, 0);
+
+  const enhancedChartData = chartData.map(item => ({
+    ...item,
+    total
+  }));
+
   const onPieEnter = (_: any, index: number) => {
     setActiveIndex(index);
   };
@@ -89,7 +107,7 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
         <PieChart>
           <Tooltip content={<CustomTooltip />} />
           <Pie
-            data={chartData}
+            data={enhancedChartData}
             cx="50%"
             cy="50%"
             innerRadius={100}
