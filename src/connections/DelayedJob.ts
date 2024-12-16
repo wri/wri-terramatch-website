@@ -1,12 +1,11 @@
 import { createSelector } from "reselect";
 
-import { DelayedJobsFindVariables, listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
-import { delayedJobsFindFetchFailed } from "@/generated/v3/jobService/jobServicePredicates";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
+import { listDelayedJobsFetchFailed } from "@/generated/v3/jobService/jobServicePredicates";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
 
 type DelayedJobsConnection = {
   delayedJobs?: DelayedJobDto[];
@@ -14,43 +13,34 @@ type DelayedJobsConnection = {
   hasLoadFailed: boolean;
 };
 
-type DelayedJobsProps = { uuid: string };
-
 const delayedJobsSelector = (store: ApiDataStore) => {
   const delayedJobsMap = store.delayedJobs || {};
   return Object.values(delayedJobsMap).map(resource => resource.attributes);
 };
 
-const delayedJobsLoadFailedSelector = (store: ApiDataStore, { uuid }: DelayedJobsProps) => {
-  const variables: DelayedJobsFindVariables = {
-    pathParams: { uuid }
-  };
-
-  return delayedJobsFindFetchFailed(variables)(store) != null;
+const delayedJobsLoadFailedSelector = (store: ApiDataStore) => {
+  return listDelayedJobsFetchFailed(store) != null;
 };
+
 const connectionIsLoaded = ({ delayedJobs, hasLoadFailed, isLoading }: DelayedJobsConnection) => {
   return (delayedJobs != null && delayedJobs.length > 0) || hasLoadFailed || isLoading;
 };
 
-const delayedJobsConnection: Connection<DelayedJobsConnection, DelayedJobsProps> = {
-  load: (connection, props) => {
+const delayedJobsConnection: Connection<DelayedJobsConnection> = {
+  load: connection => {
     const isLoaded = connectionIsLoaded(connection);
     if (!isLoaded) {
       listDelayedJobs();
     }
   },
   isLoaded: connectionIsLoaded,
-  selector: selectorCache(
-    props => props.uuid,
-    props =>
-      createSelector(
-        [delayedJobsSelector, store => delayedJobsLoadFailedSelector(store, props)],
-        (delayedJobs, hasLoadFailed): DelayedJobsConnection => ({
-          delayedJobs,
-          isLoading: delayedJobs == null && !hasLoadFailed,
-          hasLoadFailed
-        })
-      )
+  selector: createSelector(
+    [delayedJobsSelector, store => delayedJobsLoadFailedSelector(store)],
+    (delayedJobs, hasLoadFailed): DelayedJobsConnection => ({
+      delayedJobs,
+      isLoading: delayedJobs == null && !hasLoadFailed,
+      hasLoadFailed
+    })
   )
 };
 
