@@ -603,7 +603,7 @@ const DataCard = ({
                   setSelected(option);
                 }}
                 variant={VARIANT_DROPDOWN_SIMPLE}
-                inputVariant="text-14-semibold"
+                inputVariant="text-18-semibold"
                 className="z-50"
                 defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
                 optionsClassName="w-max z-50"
