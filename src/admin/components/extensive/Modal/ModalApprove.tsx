@@ -169,9 +169,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
               {content}
             </Text>
           </When>
-          <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2 pr-[76px]">
-            Select All
-            <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
+          <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">
+            <Checkbox
+              className="flex h-min items-center"
+              name="Select All"
+              onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)}
+            />
+            <span className="text-14-bold leading-[normal]">Select All</span>
           </Text>
         </div>
 

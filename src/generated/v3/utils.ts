@@ -1,7 +1,7 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { selectLogin } from "@/connections/Login";
-import { jobServiceUrl, userServiceUrl } from "@/constants/environment";
+import { entityServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
@@ -16,7 +16,8 @@ type SelectorOptions<TQueryParams, TPathParams> = {
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   users: userServiceUrl,
-  jobs: jobServiceUrl
+  jobs: jobServiceUrl,
+  trees: entityServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
