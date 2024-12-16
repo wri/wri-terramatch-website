@@ -384,10 +384,8 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator } = useMonitoredData(
-    type!,
-    record.uuid
-  );
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
+    useMonitoredData(type!, record.uuid);
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
       ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
@@ -427,14 +425,6 @@ const DataCard = ({
   const [topHeaderFirstTable, setTopHeaderFirstTable] = useState("102px");
   const [topHeaderSecondTable, setTopHeaderSecondTable] = useState("70px");
   const totalElemIndicator = filteredPolygonsIndicator?.length ? filteredPolygonsIndicator?.length - 1 : null;
-
-  const polygonsList = [
-    { title: "All Polygons", value: "0" },
-    ...(polygonsIndicator ?? []).map((item: any) => ({
-      title: item.poly_name,
-      value: item.poly_id
-    }))
-  ];
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -661,7 +651,7 @@ const DataCard = ({
                 })}
                 optionsClassName="!w-max right-0"
                 className="w-max"
-                options={polygonsList}
+                options={polygonOptions}
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
               />
