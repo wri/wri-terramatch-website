@@ -11,11 +11,14 @@ import { DashboardTableDataProps } from "../index.page";
 
 const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[]; maxValue: number }) => {
   const t = useT();
-  const [tooltip, setTooltip] = useState<{ text: string | null; label: string | null; x: number; y: number }>({
+  const [tooltip, setTooltip] = useState<{
+    text: string | null;
+    label: string | null;
+    position: { top: number; left: number } | null;
+  }>({
     text: null,
     label: null,
-    x: 0,
-    y: 0
+    position: null
   });
 
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
@@ -43,17 +46,23 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
     }
   };
 
-  const handleMouseEnter = (event: MouseEvent<HTMLDivElement>, label: string, valueText: string) => {
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>, label: string, valueText: string) => {
     setTooltip({
       text: valueText,
       label,
-      x: event.pageX,
-      y: event.pageY
+      position: {
+        top: event.clientY - 70,
+        left: event.clientX
+      }
     });
   };
 
   const handleMouseLeave = () => {
-    setTooltip({ text: null, label: null, x: 0, y: 0 });
+    setTooltip({
+      text: null,
+      label: null,
+      position: null
+    });
   };
 
   return (
@@ -72,18 +81,18 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                 )}
                 style={{ width: `${percentage}%` }}
                 key={index}
-                onMouseEnter={e => handleMouseEnter(e, item.label, item.valueText)}
+                onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
                 onMouseLeave={handleMouseLeave}
               />
             );
           })}
         </div>
-        {tooltip.text && (
+        {tooltip.text && tooltip.position && (
           <div
             className="shadow-md fixed z-10 w-auto rounded border border-darkCustom bg-white p-2"
             style={{
-              left: `${tooltip.x}px`,
-              top: `${tooltip.y - 65}px`,
+              left: `${tooltip.position.left}px`,
+              top: `${tooltip.position.top}px`,
               transform: "translateX(-50%)"
             }}
           >
@@ -109,7 +118,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                 </div>
                 <div
                   className="relative h-4 rounded bg-blueCustom-30 lg:h-5"
-                  onMouseEnter={e => handleMouseEnter(e, item.label, item.valueText)}
+                  onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
                   onMouseLeave={handleMouseLeave}
                 >
                   <div
