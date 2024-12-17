@@ -14,6 +14,7 @@ import { EstablishmentEntityType, useEstablishmentTrees } from "@/connections/Es
 import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { isReportModelName } from "@/types/common";
 import { updateArrayState } from "@/utils/array";
 
@@ -29,6 +30,8 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   title: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
+  withPreviousCounts: boolean;
+  useTaxonomicBackbone: boolean;
   value: TreeSpeciesValue[];
   onChange: (value: any[]) => void;
   clearErrors: () => void;
@@ -101,16 +104,31 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const { entityUuid, entityName } = useEntityContext();
   const isEntity = entityName != null && entityUuid != null;
   const isReport = isEntity && isReportModelName(entityName);
-  const handleBaseEntityTrees = isReport || (isEntity && ["sites", "nurseries"].includes(entityName));
+  const handleBaseEntityTrees =
+    props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
+  const displayPreviousCounts = props.withPreviousCounts && isReport;
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
+  useValueChanged(shouldPrepopulate, function () {
+    if (shouldPrepopulate) {
+      onChange(
+        Object.entries(previousPlantingCounts!).map(([name, previousCount]) => ({
+          uuid: uuidv4(),
+          name,
+          taxon_id: previousCount.taxonId,
+          amount: 0
+        }))
+      );
+    }
+  });
 
   const totalWithPrevious = useMemo(
     () =>
       props.value.reduce(
-        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""] ?? 0),
+        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""]?.amount ?? 0),
         0
       ),
     [previousPlantingCounts, props.value]
@@ -157,7 +175,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       handleCreate?.({
         uuid: uuidv4(),
         name: valueAutoComplete,
-        taxon_id: taxonId,
+        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
         amount: props.withNumbers ? 0 : undefined
       });
 
@@ -183,7 +201,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       handleUpdate({
         ...editValue,
         name: valueAutoComplete,
-        taxon_id: findTaxonId(valueAutoComplete)
+        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined
       });
 
       setValueAutoComplete("");
@@ -201,6 +219,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     e.preventDefault();
     addValue(e);
   };
+
+  if (!establishmentLoaded || shouldPrepopulate) return null;
 
   return (
     <InputWrapper
@@ -235,6 +255,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 value={valueAutoComplete}
                 onChange={e => setValueAutoComplete(e.target.value)}
                 onSearch={async search => {
+                  if (!props.useTaxonomicBackbone) return [];
+
                   const result = await autocompleteSearch(search);
                   setSearchResult(result);
                   return result;
@@ -289,7 +311,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
         </When>
         <div className="mb-1 mt-9 flex gap-6 border-b pb-4">
-          <div className={classNames({ "w-[75%]": !isReport, "w-[50%]": isReport })} ref={refTreeSpecies}>
+          <div
+            className={classNames({ "w-[75%]": !displayPreviousCounts, "w-[50%]": displayPreviousCounts })}
+            ref={refTreeSpecies}
+          >
             <Text variant="text-14-bold" className="uppercase text-black">
               {props.title}
             </Text>
@@ -297,7 +322,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {props.value.length}
             </Text>
           </div>
-          <div className={classNames({ "border-r pr-6": isReport })} ref={refPlanted}>
+          <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
               {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
             </Text>
@@ -305,7 +330,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
             </Text>
           </div>
-          <When condition={isReport}>
+          <When condition={displayPreviousCounts}>
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
                 {t("TOTAL PLANTED TO DATE:")}
@@ -368,7 +393,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 }
               >
                 <div className="flex items-center gap-1">
-                  <When condition={value.taxon_id == null}>
+                  <When condition={props.useTaxonomicBackbone && value.taxon_id == null}>
                     <div title={t("Non-Scientific Name")}>
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
@@ -410,9 +435,9 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   containerClassName=""
                 />
               </div>
-              <When condition={isReport}>
+              <When condition={displayPreviousCounts}>
                 <Text variant="text-14-light" className="text-black ">
-                  {(previousPlantingCounts?.[value.name ?? ""] ?? 0).toLocaleString()}
+                  {(previousPlantingCounts?.[value.name ?? ""]?.amount ?? 0).toLocaleString()}
                 </Text>
               </When>
               <div className="flex flex-1 justify-end gap-6">
@@ -426,11 +451,21 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                     autoCompleteRef.current?.focus();
                   }}
                 />
-                <IconButton
-                  iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
-                  className="text-blueCustom-700 hover:text-primary"
-                  onClick={() => setDeleteIndex(value.uuid ?? null)}
-                />
+                <When
+                  condition={
+                    !displayPreviousCounts ||
+                    previousPlantingCounts == null ||
+                    // If we're using previous counts, only allow delete if this row has never been
+                    // reported on before.
+                    Object.keys(previousPlantingCounts).find(name => name === value.name) == null
+                  }
+                >
+                  <IconButton
+                    iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
+                    className="text-blueCustom-700 hover:text-primary"
+                    onClick={() => setDeleteIndex(value.uuid ?? null)}
+                  />
+                </When>
               </div>
             </div>
           )}
