@@ -5,6 +5,10 @@
  */
 export type DelayedJobDto = {
   /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
    * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
    */
   status: "pending" | "failed" | "succeeded";

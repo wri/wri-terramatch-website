@@ -1,9 +1,10 @@
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useDelayedJobs } from "@/connections/DelayedJob";
+import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 
 import Text from "../Text/Text";
 
@@ -21,9 +22,19 @@ const FloatNotification = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
 
-  useEffect(() => {
-    console.log("delayedJobs", delayedJobs);
-  }, [isLoaded, delayedJobs]);
+  const clearJobs = () => {
+    if (delayedJobs === undefined) return;
+    const newJobsData: DelayedJobData[] = delayedJobs.map((job: DelayedJobDto) => {
+      return {
+        uuid: job.uuid,
+        type: "delayedJobs",
+        attributes: {
+          isAcknowledged: true
+        }
+      };
+    });
+    triggerBulkUpdate(newJobsData);
+  };
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -42,7 +53,7 @@ const FloatNotification = () => {
               <Text variant="text-14-light" className="text-neutral-400">
                 Actions Taken
               </Text>
-              <Text variant="text-12-semibold" className="text-primary">
+              <Text variant="text-12-semibold" className="text-primary" onClick={clearJobs}>
                 Clear completed
               </Text>
             </div>
