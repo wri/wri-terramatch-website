@@ -36,8 +36,8 @@ const TreeLossBarChart = ({ data, className = "" }: TreeLossBarChartProps) => {
   };
 
   return (
-    <div className={`h-[500px] w-full p-4 ${className} pt-2.5`}>
-      <h2 className="text-12 mb-1 pl-10">Tree Loss Retrospective (ha)</h2>
+    <div className={`h-[500px] w-full p-4 ${className} pt-0`}>
+      <h2 className="text-14 mb-3 pl-10 uppercase text-darkCustom">Tree Loss Retrospective (ha)</h2>
       <h3 className="text-14-semibold mb-4 pl-10">2015-2024</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
