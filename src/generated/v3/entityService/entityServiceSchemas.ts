@@ -3,6 +3,17 @@
  *
  * @version 1.0
  */
+export type PreviousPlantingCountDto = {
+  /**
+   * Taxonomic ID for this tree species row
+   */
+  taxonId: string | null;
+  /**
+   * Number of trees of this type that have been planted in all previous reports on this entity.
+   */
+  amount: number;
+};
+
 export type ScientificNameDto = {
   /**
    * The scientific name for this tree species
@@ -20,9 +31,9 @@ export type EstablishmentsTreesDto = {
   /**
    * If the entity in this request is a report, the sum totals of previous planting by species.
    *
-   * @example {"Aster persaliens":256,"Cirsium carniolicum":1024}
+   * @example {"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}}
    */
   previousPlantingCounts: {
-    [key: string]: number;
+    [key: string]: PreviousPlantingCountDto;
   } | null;
 };
