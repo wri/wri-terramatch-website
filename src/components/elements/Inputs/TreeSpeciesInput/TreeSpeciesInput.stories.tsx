@@ -27,6 +27,8 @@ export const Default: Story = {
     label: "Tree Species Grown",
     description:
       "List the tree species that you expect to restore on this project, across all sites. Please enter the scientific name for each tree species.",
+    withPreviousCounts: false,
+    useTaxonomicBackbone: true,
     required: true,
     value: [
       {

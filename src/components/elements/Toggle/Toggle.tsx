@@ -14,12 +14,19 @@ export interface ToggleProps {
   disabledIndexes?: number[];
   variant?: ToggleVariants;
   onChangeActiveIndex?: (index: number) => void;
+  defaultActiveIndex?: number;
 }
 
 const Toggle = (props: ToggleProps) => {
-  const { items, disabledIndexes = [], variant = VARIANT_TOGGLE_PRIMARY, onChangeActiveIndex } = props;
+  const {
+    items,
+    disabledIndexes = [],
+    variant = VARIANT_TOGGLE_PRIMARY,
+    onChangeActiveIndex,
+    defaultActiveIndex = 0
+  } = props;
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
   const [width, setWidth] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
