@@ -36,6 +36,14 @@ export type DelayedJobDto = {
    * Indicates whether the jobs have been acknowledged (cleared)
    */
   isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., site, project).
+   */
+  entityName?: string | null;
 };
 
 export type DelayedJobAttributes = {

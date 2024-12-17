@@ -6,6 +6,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 
+import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
 
 export interface FloatNotificationDataProps {
@@ -65,18 +66,22 @@ const FloatNotification = () => {
                     <div className="mb-2 flex items-center gap-1">
                       <div className="h-2 w-2 rounded-full bg-primary" />
                       <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
-                        {item.processedContent}
+                        {item.name}
                       </Text>
                     </div>
-                    {/* <Text variant="text-14-light" className="text-darkCustom">
-                    Site: <b>{item.site}</b>
-                  </Text>*/}
-                    {/* <div className="mt-2 flex items-center gap-2">
-                    <LinearProgressBar value={parseInt(item.value)} className="h-2 bg-success-40" color="success-600" />
-                    <Text variant="text-12-semibold" className="text-black">
-                      {item.value}
+                    <Text variant="text-14-light" className="text-darkCustom">
+                      Site: <b>{item.entityName}</b>
                     </Text>
-                  </div> */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <LinearProgressBar
+                        value={((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100}
+                        className="h-2 bg-success-40"
+                        color="success-600"
+                      />
+                      <Text variant="text-12-semibold" className="text-black">
+                        {(item.processedContent ?? 0) / (item.totalContent ?? 1)}%
+                      </Text>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -94,8 +99,8 @@ const FloatNotification = () => {
           className={classNames(
             "z-10 flex h-15 w-15 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
-              // hidden: (delayedJobs?.length ?? 0) < 1 && isLoaded,
-              // visible: (delayedJobs?.length ?? 0) > 0 && isLoaded
+              hidden: (delayedJobs?.length ?? 0) < 1 && isLoaded,
+              visible: (delayedJobs?.length ?? 0) > 0 && isLoaded
             }
           )}
         >
