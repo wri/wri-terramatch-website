@@ -56,6 +56,7 @@ const RestorationMetrics = ({
       className="w-full place-content-center pl-8"
       tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
       showTreesRestoredGraph={false}
+      classNameBody="!mt-1.5"
     />
     <SimpleBarChart data={strategiesData} />
   </div>
@@ -134,7 +135,7 @@ const MonitoredCharts = ({
       case "5":
         return (
           <ChartContainer isLoading={isLoadingIndicator} hasNoData={!landUseData?.graphicTargetLandUseTypes?.length}>
-            <div className="w-full pt-12">
+            <div className="w-full pt-[38px]">
               <GraphicIconDashboard data={landUseData.graphicTargetLandUseTypes} maxValue={totalHectaresRestoredGoal} />
             </div>
           </ChartContainer>
