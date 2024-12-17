@@ -83,12 +83,12 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
             className="shadow-md fixed z-10 w-auto rounded border border-darkCustom bg-white p-2"
             style={{
               left: `${tooltip.x}px`,
-              top: `${tooltip.y - 50}px`,
+              top: `${tooltip.y - 65}px`,
               transform: "translateX(-50%)"
             }}
           >
-            <span className="text-12-light text-darkCustom">{`${t(tooltip.label)} `}</span>
-            <span className="text-12-bold text-darkCustom">{t(tooltip.text)}</span>
+            <p className="text-12-bold text-darkCustom">{`${t(tooltip.label)} `}</p>
+            <span className="text-12-light text-darkCustom">{t(tooltip.text)}</span>
           </div>
         )}
         <div className="w-full">
