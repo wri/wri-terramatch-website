@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -22,7 +22,7 @@ export interface FloatNotificationProps {
 const FloatNotification = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
-
+  const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
     const newJobsData: DelayedJobData[] = delayedJobs.map((job: DelayedJobDto) => {
@@ -36,6 +36,11 @@ const FloatNotification = () => {
     });
     triggerBulkUpdate(newJobsData);
   };
+  useEffect(() => {
+    if (delayedJobs === undefined) return;
+    const notAcknowledgedJobs = delayedJobs.filter((job: DelayedJobDto) => !job.isAcknowledged);
+    setNotAcknowledgedJobs(notAcknowledgedJobs);
+  }, [delayedJobs]);
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -60,8 +65,8 @@ const FloatNotification = () => {
             </div>
             <div className="-mr-2 flex flex-1 flex-col gap-3 overflow-auto pr-2">
               {isLoaded &&
-                delayedJobs &&
-                delayedJobs.map((item, index) => (
+                notAcknowledgedJobs &&
+                notAcknowledgedJobs.map((item, index) => (
                   <div key={index} className="rounded-lg border-2 border-grey-350 bg-white p-4 hover:border-primary">
                     <div className="mb-2 flex items-center gap-1">
                       <div className="h-2 w-2 rounded-full bg-primary" />
@@ -87,9 +92,9 @@ const FloatNotification = () => {
             </div>
           </div>
         </div>
-        <When condition={isLoaded && (delayedJobs ?? []).length > 0}>
+        <When condition={isLoaded && (notAcknowledgedJobs ?? []).length > 0}>
           <div className="text-14-bold absolute right-[-5px] top-[-5px] z-20 flex min-h-[24px] min-w-[24px] items-center justify-center rounded-full bg-red-300 leading-[normal] text-white">
-            {delayedJobs?.length}
+            {notAcknowledgedJobs?.length}
           </div>
         </When>
         <button
@@ -99,8 +104,8 @@ const FloatNotification = () => {
           className={classNames(
             "z-10 flex h-15 w-15 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
-              hidden: (delayedJobs?.length ?? 0) < 1 && isLoaded,
-              visible: (delayedJobs?.length ?? 0) > 0 && isLoaded
+              hidden: (notAcknowledgedJobs?.length ?? 0) < 1 && isLoaded,
+              visible: (notAcknowledgedJobs?.length ?? 0) > 0 && isLoaded
             }
           )}
         >
