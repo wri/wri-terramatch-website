@@ -86,6 +86,9 @@ const MonitoredCharts = ({
   const [hasNoData, setHasNoData] = useState(false);
 
   useEffect(() => {
+    if (isLoadingIndicator) {
+      setHasNoData(false);
+    }
     const noData = selected.some(chartId => {
       switch (chartId) {
         case "1":
@@ -102,7 +105,7 @@ const MonitoredCharts = ({
       }
     });
     setHasNoData(noData);
-  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData]);
+  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData, isLoadingIndicator]);
 
   const renderChart = (chartId: React.Key) => {
     switch (chartId) {
