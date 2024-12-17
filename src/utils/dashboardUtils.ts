@@ -482,7 +482,7 @@ export const parsePolygonsIndicatorDataForLandUse = (
     return {
       label,
       value: adjustedValue as number,
-      valueText: `${Math.round(value as number)} ha ${percentage.toFixed(2)}%`
+      valueText: `${Math.round(value as number)}ha (${percentage.toFixed(0)}%)`
     };
   });
 
@@ -524,12 +524,10 @@ export const parsePolygonsIndicatorDataForStrategies = (polygonsIndicator: Polyg
     }
   });
 
-  return Object.entries(totals)
-    .filter(([_, value]) => value > 0)
-    .map(([label, value]) => ({
-      label,
-      value: Number(value.toFixed(2))
-    }));
+  return Object.entries(totals).map(([label, value]) => ({
+    label,
+    value: Number(value.toFixed(2))
+  }));
 };
 
 export const parsePolygonsIndicatorDataForEcoRegion = (polygons: PolygonIndicator[]): ParsedResult => {

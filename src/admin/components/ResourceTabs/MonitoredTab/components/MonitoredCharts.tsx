@@ -57,7 +57,7 @@ const RestorationMetrics = ({
       tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
       showTreesRestoredGraph={false}
     />
-    <SimpleBarChart data={strategiesData} />
+    <SimpleBarChart data={strategiesData} total={record.total_hectares_restored_sum} />
   </div>
 );
 

@@ -378,7 +378,7 @@ const DataCard = ({
 }: React.HTMLAttributes<HTMLDivElement> & {
   type?: EntityName;
 }) => {
-  const [tabActive, setTabActive] = useState(0);
+  const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
   const basename = useBasename();
@@ -624,7 +624,7 @@ const DataCard = ({
                 </Button>
               </When>
 
-              <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} />
+              <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} defaultActiveIndex={tabActive} />
             </div>
           </div>
           <When condition={tabActive === 0}>
