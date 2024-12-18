@@ -120,144 +120,6 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
 
-const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
-  ...COMMON_COLUMNS,
-  {
-    accessorKey: "data.tree_planting",
-    header: "Tree Planting",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "11.95%" } }
-  },
-  {
-    accessorKey: "data.assisted_natural_regeneration",
-    header: () => (
-      <>
-        Asst. Nat.
-        <br />
-        Regeneration
-      </>
-    ),
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "12.09%" } }
-  },
-  {
-    accessorKey: "data.direct_seeding",
-    header: () => (
-      <>
-        Direct
-        <br />
-        Seeding
-      </>
-    ),
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "8.57%" } }
-  },
-  {
-    accessorKey: "more",
-    header: "",
-    enableSorting: false,
-    cell: props => (
-      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
-      </div>
-    ),
-    meta: { style: { width: "5%" } }
-  }
-];
-
-const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
-  ...COMMON_COLUMNS,
-  {
-    accessorKey: "data.australasian",
-    header: "Australasian",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "11.45%" } }
-  },
-  {
-    accessorKey: "data.afrotropical",
-    header: "Afrotropical",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "11.05%" } }
-  },
-  {
-    accessorKey: "data.paleartic",
-    header: "Paleartic11",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "10.33%" } }
-  },
-  {
-    accessorKey: "more",
-    header: "",
-    enableSorting: false,
-    cell: props => (
-      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
-      </div>
-    ),
-    meta: { style: { width: "5%" } }
-  }
-];
-
-const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
-  ...COMMON_COLUMNS,
-  {
-    accessorKey: "data.agroforest",
-    header: "Agroforest",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "11.95%" } }
-  },
-  {
-    accessorKey: "data.natural_forest",
-    header: "Natural Forest",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "12.09%" } }
-  },
-  {
-    accessorKey: "data.mangrove",
-    header: "Mangrove",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return value ?? "-";
-    },
-    meta: { style: { width: "8.57%" } }
-  },
-  {
-    accessorKey: "more",
-    header: "",
-    enableSorting: false,
-    cell: props => (
-      <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
-      </div>
-    ),
-    meta: { style: { width: "5%" } }
-  }
-];
-
 const DROPDOWN_OPTIONS = [
   {
     title: "Tree Cover Loss",
@@ -549,12 +411,158 @@ const DataCard = ({
           enableSorting: false,
           cell: props => (
             <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-              <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+                <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+              </button>
             </div>
           ),
           meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
         }
       ]
+    }
+  ];
+
+  const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
+    ...COMMON_COLUMNS,
+    {
+      accessorKey: "data.tree_planting",
+      header: "Tree Planting",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "11.95%" } }
+    },
+    {
+      accessorKey: "data.assisted_natural_regeneration",
+      header: () => (
+        <>
+          Asst. Nat.
+          <br />
+          Regeneration
+        </>
+      ),
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "12.09%" } }
+    },
+    {
+      accessorKey: "data.direct_seeding",
+      header: () => (
+        <>
+          Direct
+          <br />
+          Seeding
+        </>
+      ),
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "8.57%" } }
+    },
+    {
+      accessorKey: "more",
+      header: "",
+      enableSorting: false,
+      cell: props => (
+        <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+            <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+          </button>
+        </div>
+      ),
+      meta: { style: { width: "5%" } }
+    }
+  ];
+
+  const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
+    ...COMMON_COLUMNS,
+    {
+      accessorKey: "data.australasian",
+      header: "Australasian",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "11.45%" } }
+    },
+    {
+      accessorKey: "data.afrotropical",
+      header: "Afrotropical",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "11.05%" } }
+    },
+    {
+      accessorKey: "data.paleartic",
+      header: "Paleartic11",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "10.33%" } }
+    },
+    {
+      accessorKey: "more",
+      header: "",
+      enableSorting: false,
+      cell: props => (
+        <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+            <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+          </button>
+        </div>
+      ),
+      meta: { style: { width: "5%" } }
+    }
+  ];
+
+  const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
+    ...COMMON_COLUMNS,
+    {
+      accessorKey: "data.agroforest",
+      header: "Agroforest",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "11.95%" } }
+    },
+    {
+      accessorKey: "data.natural_forest",
+      header: "Natural Forest",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "12.09%" } }
+    },
+    {
+      accessorKey: "data.mangrove",
+      header: "Mangrove",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "8.57%" } }
+    },
+    {
+      accessorKey: "more",
+      header: "",
+      enableSorting: false,
+      cell: props => (
+        <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+            <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+          </button>
+        </div>
+      ),
+      meta: { style: { width: "5%" } }
     }
   ];
 
@@ -636,10 +644,6 @@ const DataCard = ({
                 classNameWrapper="!overflow-visible"
                 visibleRows={50}
                 border={1}
-                onRowClick={(row: any) => {
-                  navigate(`${basename}/site/${row?.site_id}/show/1`);
-                  setSelectPolygonFromMap?.({ isOpen: true, uuid: row?.poly_id });
-                }}
               />
             </div>
           </When>

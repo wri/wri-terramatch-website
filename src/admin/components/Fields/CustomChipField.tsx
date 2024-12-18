@@ -16,7 +16,10 @@ const STATUS_CLASSNAME_MAP: { [key: string]: string } = {
   "Needs Info": "bg-tertiary-50 text-tertiary-650",
   "Needs more information": "bg-tertiary-50 text-tertiary-650",
   "More info requested": "bg-tertiary-50 text-tertiary-650",
-  "No Update": "bg-grey-200 text-grey-500"
+  "No Update": "bg-grey-200 text-grey-500",
+  approved: "bg-green-30 text-green-100",
+  submitted: "bg-blue-200 text-blue",
+  "needs-more-information": "bg-tertiary-50 text-tertiary-650"
 };
 
 const CustomChipField = ({
