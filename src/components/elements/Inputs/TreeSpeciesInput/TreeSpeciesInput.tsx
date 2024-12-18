@@ -30,6 +30,7 @@ import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
 
 export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> {
   title: string;
+  label?: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
   withPreviousCounts: boolean;
@@ -191,7 +192,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   return (
     <InputWrapper
       inputId={id}
-      label={"ADD TREE SPECIES"}
+      label={props.label ?? t("ADD TREE SPECIES")}
       description={props.description}
       containerClassName={props.containerClassName}
       required={props.required}
