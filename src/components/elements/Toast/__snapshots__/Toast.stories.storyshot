@@ -7,7 +7,7 @@ Array [
     onClick={[Function]}
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Trigger
     </span>
@@ -25,7 +25,7 @@ Array [
     onClick={[Function]}
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Trigger
     </span>

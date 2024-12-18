@@ -9,6 +9,7 @@ import { MENU_ITEM_VARIANT_BLUE } from "../MenuItem/MenuItemVariant";
 import {
   MENU_PLACEMENT_BOTTOM_RIGHT,
   MENU_PLACEMENT_LEFT_BOTTOM,
+  MENU_PLACEMENT_LEFT_HALF_BOTTOM,
   MENU_PLACEMENT_LEFT_HALF_TOP,
   MENU_PLACEMENT_RIGHT_BOTTOM,
   MENU_PLACEMENT_RIGHT_TOP
@@ -140,10 +141,25 @@ const Menu = (props: MenuProps) => {
     };
   };
 
+  const calculateMenuStyleForLeftHalfBottom = () => {
+    if (!menuContainerRef.current) {
+      return {};
+    }
+    const top = menuContainerRef.current.getBoundingClientRect().top ?? 0;
+    const left = menuContainerRef.current.getBoundingClientRect().left ?? 0;
+    const width = menuRef.current ? menuRef.current.getBoundingClientRect().width ?? 0 : 0;
+
+    return {
+      top: top,
+      left: left - width - 5
+    };
+  };
+
   const calculateMenuStyle = () => {
     const placeMap: { [key: string]: string } = {
       [MENU_PLACEMENT_RIGHT_TOP]: "horizontalTop",
       [MENU_PLACEMENT_LEFT_BOTTOM]: "horizontalBottom",
+      [MENU_PLACEMENT_LEFT_HALF_BOTTOM]: "leftHalfBottom",
       [MENU_PLACEMENT_RIGHT_BOTTOM]: "horizontalBottom",
       [MENU_PLACEMENT_LEFT_HALF_TOP]: "leftHalfTop"
     };
@@ -159,6 +175,9 @@ const Menu = (props: MenuProps) => {
         break;
       case "leftHalfTop":
         styles = calculateMenuStyleForLeftHalfTop();
+        break;
+      case "leftHalfBottom":
+        styles = calculateMenuStyleForLeftHalfBottom();
         break;
       default:
         styles = calculateMenuStyleForBottom();

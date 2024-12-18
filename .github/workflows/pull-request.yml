@@ -1,7 +1,6 @@
 name: pull-request
 on:
   pull_request:
-    branches: [main, staging, release/**]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,3 +13,5 @@ jobs:
         run: yarn
       - name: Test
         run: yarn run jest --ci
+      - name: Build
+        run: NEXT_PUBLIC_TARGET_ENV=staging yarn build

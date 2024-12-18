@@ -6,6 +6,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -47,6 +48,7 @@ const RHFMap = ({
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
   const { setSiteData } = useMapAreaContext();
+  const { setSelectPolygonFromMap } = useMonitoredDataContext();
 
   const refetchData = () => {
     reloadProjectPolygonData();
@@ -84,6 +86,7 @@ const RHFMap = ({
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
+        setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
         setBbboxAndZoom();
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });

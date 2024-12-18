@@ -38051,6 +38051,14 @@ export type PostV2TerrafundClipPolygonsPolygonsResponse = {
 
 export type PostV2TerrafundClipPolygonsPolygonsRequestBody = {
   uuids?: string[];
+  /**
+   * The entity type of the polygon geometries to be fixed
+   */
+  entity_type?: string;
+  /**
+   * The entity ID of the polygon geometries to be fixed
+   */
+  entity_uuid?: string;
 };
 
 export type PostV2TerrafundClipPolygonsPolygonsVariables = {
@@ -38103,6 +38111,8 @@ export type PostV2TerrafundValidationPolygonsResponse = {
 
 export type PostV2TerrafundValidationPolygonsRequestBody = {
   uuids?: string[];
+  entity_uuid?: string;
+  entity_type?: string;
 };
 
 export type PostV2TerrafundValidationPolygonsVariables = {
@@ -38141,6 +38151,314 @@ export const usePostV2TerrafundValidationPolygons = (
     (variables: PostV2TerrafundValidationPolygonsVariables) =>
       fetchPostV2TerrafundValidationPolygons({ ...fetcherOptions, ...variables }),
     options
+  );
+};
+
+export type GetV2IndicatorsEntityUuidSlugPathParams = {
+  /**
+   * Filter counts and metrics by entity.
+   */
+  entity: string;
+  /**
+   * Filter counts and metrics by entity uuid.
+   */
+  uuid: string;
+  /**
+   * Filter counts and metrics by slug.
+   */
+  slug: string;
+};
+
+export type GetV2IndicatorsEntityUuidSlugError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2IndicatorsEntityUuidSlugResponse = {
+  ["2015"]?: number;
+  ["2016"]?: number;
+  ["2017"]?: number;
+  ["2018"]?: number;
+  ["2019"]?: number;
+  ["2020"]?: number;
+  ["2021"]?: number;
+  ["2022"]?: number;
+  ["2023"]?: number;
+  ["2024"]?: number;
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  site_name?: string;
+  size?: void;
+  /**
+   * @format date
+   */
+  created_at?: string;
+  indicator_slug?: string;
+  year_of_analysis?: number;
+  value?: Record<string, any>;
+}[];
+
+export type GetV2IndicatorsEntityUuidSlugVariables = {
+  pathParams: GetV2IndicatorsEntityUuidSlugPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2IndicatorsEntityUuidSlug = (
+  variables: GetV2IndicatorsEntityUuidSlugVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2IndicatorsEntityUuidSlugResponse,
+    GetV2IndicatorsEntityUuidSlugError,
+    undefined,
+    {},
+    {},
+    GetV2IndicatorsEntityUuidSlugPathParams
+  >({ url: "/v2/indicators/{entity}/{uuid}/{slug}", method: "get", ...variables, signal });
+
+export const useGetV2IndicatorsEntityUuidSlug = <TData = GetV2IndicatorsEntityUuidSlugResponse>(
+  variables: GetV2IndicatorsEntityUuidSlugVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2IndicatorsEntityUuidSlugResponse, GetV2IndicatorsEntityUuidSlugError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2IndicatorsEntityUuidSlugResponse, GetV2IndicatorsEntityUuidSlugError, TData>(
+    queryKeyFn({
+      path: "/v2/indicators/{entity}/{uuid}/{slug}",
+      operationId: "getV2IndicatorsEntityUuidSlug",
+      variables
+    }),
+    ({ signal }) => fetchGetV2IndicatorsEntityUuidSlug({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2IndicatorsSlugPathParams = {
+  /**
+   * Optional. Filter counts and metrics by slug.
+   */
+  slug: string;
+};
+
+export type PostV2IndicatorsSlugError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2IndicatorsSlugResponse = {
+  uuids?: string[];
+};
+
+export type PostV2IndicatorsSlugRequestBody = {
+  uuids?: string[];
+};
+
+export type PostV2IndicatorsSlugVariables = {
+  body?: PostV2IndicatorsSlugRequestBody;
+  pathParams: PostV2IndicatorsSlugPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2IndicatorsSlug = (variables: PostV2IndicatorsSlugVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2IndicatorsSlugResponse,
+    PostV2IndicatorsSlugError,
+    PostV2IndicatorsSlugRequestBody,
+    {},
+    {},
+    PostV2IndicatorsSlugPathParams
+  >({ url: "/v2/indicators/{slug}", method: "post", ...variables, signal });
+
+export const usePostV2IndicatorsSlug = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2IndicatorsSlugResponse,
+      PostV2IndicatorsSlugError,
+      PostV2IndicatorsSlugVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<PostV2IndicatorsSlugResponse, PostV2IndicatorsSlugError, PostV2IndicatorsSlugVariables>(
+    (variables: PostV2IndicatorsSlugVariables) => fetchPostV2IndicatorsSlug({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2IndicatorsEntityUuidPathParams = {
+  /**
+   * Filter counts and metrics by entity.
+   */
+  entity: string;
+  /**
+   * Filter counts and metrics by entity uuid.
+   */
+  uuid: string;
+};
+
+export type GetV2IndicatorsEntityUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2IndicatorsEntityUuidResponse = {
+  draft?: number;
+  submitted?: number;
+  approved?: number;
+  ["needs-more-information"]?: number;
+}[];
+
+export type GetV2IndicatorsEntityUuidVariables = {
+  pathParams: GetV2IndicatorsEntityUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2IndicatorsEntityUuid = (variables: GetV2IndicatorsEntityUuidVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2IndicatorsEntityUuidResponse,
+    GetV2IndicatorsEntityUuidError,
+    undefined,
+    {},
+    {},
+    GetV2IndicatorsEntityUuidPathParams
+  >({ url: "/v2/indicators/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2IndicatorsEntityUuid = <TData = GetV2IndicatorsEntityUuidResponse>(
+  variables: GetV2IndicatorsEntityUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2IndicatorsEntityUuidResponse, GetV2IndicatorsEntityUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2IndicatorsEntityUuidResponse, GetV2IndicatorsEntityUuidError, TData>(
+    queryKeyFn({ path: "/v2/indicators/{entity}/{uuid}", operationId: "getV2IndicatorsEntityUuid", variables }),
+    ({ signal }) => fetchGetV2IndicatorsEntityUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2IndicatorsEntityUuidSlugVerifyPathParams = {
+  /**
+   * Filter counts and metrics by entity.
+   */
+  entity: string;
+  /**
+   * Filter counts and metrics by entity uuid.
+   */
+  uuid: string;
+  /**
+   * Filter counts and metrics by slug.
+   */
+  slug: string;
+};
+
+export type GetV2IndicatorsEntityUuidSlugVerifyError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2IndicatorsEntityUuidSlugVerifyResponse = any[];
+
+export type GetV2IndicatorsEntityUuidSlugVerifyVariables = {
+  pathParams: GetV2IndicatorsEntityUuidSlugVerifyPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2IndicatorsEntityUuidSlugVerify = (
+  variables: GetV2IndicatorsEntityUuidSlugVerifyVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2IndicatorsEntityUuidSlugVerifyResponse,
+    GetV2IndicatorsEntityUuidSlugVerifyError,
+    undefined,
+    {},
+    {},
+    GetV2IndicatorsEntityUuidSlugVerifyPathParams
+  >({ url: "/v2/indicators/{entity}/{uuid}/{slug}/verify", method: "get", ...variables, signal });
+
+export const useGetV2IndicatorsEntityUuidSlugVerify = <TData = GetV2IndicatorsEntityUuidSlugVerifyResponse>(
+  variables: GetV2IndicatorsEntityUuidSlugVerifyVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2IndicatorsEntityUuidSlugVerifyResponse,
+      GetV2IndicatorsEntityUuidSlugVerifyError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2IndicatorsEntityUuidSlugVerifyResponse,
+    GetV2IndicatorsEntityUuidSlugVerifyError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/verify",
+      operationId: "getV2IndicatorsEntityUuidSlugVerify",
+      variables
+    }),
+    ({ signal }) => fetchGetV2IndicatorsEntityUuidSlugVerify({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2IndicatorsEntityUuidSlugExportPathParams = {
+  /**
+   * Filter counts and metrics by entity.
+   */
+  entity: string;
+  /**
+   * Filter counts and metrics by entity uuid.
+   */
+  uuid: string;
+  /**
+   * Filter counts and metrics by slug.
+   */
+  slug: string;
+};
+
+export type GetV2IndicatorsEntityUuidSlugExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2IndicatorsEntityUuidSlugExportVariables = {
+  pathParams: GetV2IndicatorsEntityUuidSlugExportPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2IndicatorsEntityUuidSlugExport = (
+  variables: GetV2IndicatorsEntityUuidSlugExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    GetV2IndicatorsEntityUuidSlugExportError,
+    undefined,
+    {},
+    {},
+    GetV2IndicatorsEntityUuidSlugExportPathParams
+  >({ url: "/v2/indicators/{entity}/{uuid}/{slug}/export", method: "get", ...variables, signal });
+
+export const useGetV2IndicatorsEntityUuidSlugExport = <TData = undefined>(
+  variables: GetV2IndicatorsEntityUuidSlugExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<undefined, GetV2IndicatorsEntityUuidSlugExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<undefined, GetV2IndicatorsEntityUuidSlugExportError, TData>(
+    queryKeyFn({
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/export",
+      operationId: "getV2IndicatorsEntityUuidSlugExport",
+      variables
+    }),
+    ({ signal }) => fetchGetV2IndicatorsEntityUuidSlugExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
   );
 };
 
@@ -38849,4 +39167,24 @@ export type QueryOperation =
       path: "/v2/site-polygon/{uuid}/versions";
       operationId: "getV2SitePolygonUuidVersions";
       variables: GetV2SitePolygonUuidVersionsVariables;
+    }
+  | {
+      path: "/v2/indicators/{entity}/{uuid}/{slug}";
+      operationId: "getV2IndicatorsEntityUuidSlug";
+      variables: GetV2IndicatorsEntityUuidSlugVariables;
+    }
+  | {
+      path: "/v2/indicators/{entity}/{uuid}";
+      operationId: "getV2IndicatorsEntityUuid";
+      variables: GetV2IndicatorsEntityUuidVariables;
+    }
+  | {
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/verify";
+      operationId: "getV2IndicatorsEntityUuidSlugVerify";
+      variables: GetV2IndicatorsEntityUuidSlugVerifyVariables;
+    }
+  | {
+      path: "/v2/indicators/{entity}/{uuid}/{slug}/export";
+      operationId: "getV2IndicatorsEntityUuidSlugExport";
+      variables: GetV2IndicatorsEntityUuidSlugExportVariables;
     };

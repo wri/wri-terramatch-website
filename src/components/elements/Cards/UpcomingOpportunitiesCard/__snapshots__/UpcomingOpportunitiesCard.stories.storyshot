@@ -24,7 +24,7 @@ exports[`Storyshots Components/Elements/Cards/UpcomingOpportunitiesCard Primary 
     onTouchStart={[Function]}
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Find out more
     </span>

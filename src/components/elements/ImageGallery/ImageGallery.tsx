@@ -105,7 +105,11 @@ const ImageGallery = ({
     setSortLabel(sortOrder === "asc" ? t("Oldest to Newest") : t("Newest to Oldest"));
   }, [sortOrder]);
 
-  const tabs = ["All Images", "Geotagged", "Not Geotagged"];
+  const tabs = [
+    { key: "0", render: "All Images" },
+    { key: "1", render: "Geotagged" },
+    { key: "2", render: "Not Geotagged" }
+  ];
   const getFilteredMenu = (entity: string) => {
     return [
       {
@@ -334,7 +338,7 @@ const ImageGallery = ({
               placeholder={"Search..."}
               className="w-64"
             />
-            <Toggle items={tabs} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+            <Toggle items={tabs} onChangeActiveIndex={setActiveIndex} />
           </div>
           <div className="flex gap-4">
             <button className="text-primary hover:text-red" onClick={handleClearFilters}>

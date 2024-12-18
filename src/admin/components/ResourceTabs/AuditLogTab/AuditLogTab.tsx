@@ -9,6 +9,7 @@ import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entitie
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
+import AuditLogTable from "./components/AuditLogTable";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
@@ -57,6 +58,10 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     refetch();
     loadEntityList();
   }, [buttonToggle]);
+
+  const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const redirectTo = `${basename}/${modules.site.ResourceName}/${selected?.uuid}/show/6`;
+  const title = () => selected?.title ?? selected?.name;
 
   const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
@@ -133,6 +138,32 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             />
           </Grid>
         </Grid>
+        <div className="px-2 py-2">
+          <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
+            <Text variant="text-16-bold" className="mb-6">
+              History and Discussion for {record && record?.name}
+            </Text>
+            {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
+          </When>
+          <When condition={buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity}>
+            <>
+              <div className="mb-6">
+                {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+                {(isSite || verifyEntity) && (
+                  <Text variant="text-16-bold">
+                    History and Discussion for{" "}
+                    <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                      {title()}
+                    </Link>
+                  </Text>
+                )}
+              </div>
+              <When condition={!!auditLogData}>
+                <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
+              </When>
+            </>
+          </When>
+        </div>
       </TabbedShowLayout.Tab>
     </When>
   );

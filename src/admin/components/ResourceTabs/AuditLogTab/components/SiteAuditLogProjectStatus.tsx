@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse, ProjectLiteRead } from "@/generated/apiSchemas";
@@ -10,13 +11,15 @@ export interface SiteAuditLogProjectStatusProps {
   auditLogData?: { data: AuditStatusResponse[] };
   auditData?: { entity: string; entity_uuid: string };
   refresh?: () => void;
+  viewPD?: boolean;
 }
 
 const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
   record,
   auditLogData,
   auditData,
-  refresh
+  refresh,
+  viewPD = false
 }) => (
   <div className="flex flex-col gap-6">
     <div>
@@ -27,8 +30,10 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
         Update the project status, view updates, or add comments
       </Text>
     </div>
-    <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
-    {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
+    <When condition={viewPD}>
+      <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
+      {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
+    </When>
   </div>
 );
 

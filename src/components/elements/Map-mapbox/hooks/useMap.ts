@@ -38,13 +38,12 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
   };
-  const initMap = (isDashboard?: string) => {
+  const initMap = () => {
     if (map.current) return;
-    const mapStyle = isDashboard ? MapStyle.Street : MapStyle.Satellite;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
-      style: mapStyle,
+      style: MapStyle.Satellite,
       zoom: zoom,
       accessToken: mapboxToken
     });

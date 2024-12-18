@@ -190,7 +190,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               >
                 <textarea
                   className="min-h-[150px] w-full rounded-lg px-3 py-2 focus:border-primary-500 outline-none transition-all duration-300 ease-in-out focus:ring-transparent max-h-72 !min-h-0 resize-none border-none !p-0 text-xs border-light "
-                  id=":r3e:"
+                  id=":r3j:"
                   name=""
                   onChange={[Function]}
                   placeholder="Add a comment"
@@ -239,7 +239,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
                 }
               />
               <span
-                className="flex items-center text-bold-caption-200"
+                className="flex items-center text-bold-caption-200 !leading-[normal]"
               >
                 <p
                   className="text-white text-12-bold"
@@ -261,7 +261,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+          className="flex items-center text-bold-caption-200 text-inherit uppercase !leading-[normal]"
         >
           <p
             className="capitalize text-14-bold"
@@ -274,7 +274,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

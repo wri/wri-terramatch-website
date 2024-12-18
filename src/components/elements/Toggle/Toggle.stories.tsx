@@ -16,7 +16,10 @@ const ToggleWrapper = (args: ToggleProps) => {
 
   return (
     <div className="w-fit">
-      <Component {...args} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+      <Component {...args} onChangeActiveIndex={setActiveIndex} />
+      {activeIndex === 0 && <div>Tab 1</div>}
+      {activeIndex === 1 && <div>Tab 2</div>}
+      {activeIndex === 2 && <div>Tab 3</div>}
     </div>
   );
 };
@@ -24,6 +27,10 @@ const ToggleWrapper = (args: ToggleProps) => {
 export const Horizontal: Story = {
   render: args => <ToggleWrapper {...args} />,
   args: {
-    items: ["Tab 1", "Tab 2", "Tab 3"]
+    items: [
+      { key: "Tab 1", render: '"Tab 1"' },
+      { key: "Tab 2", render: '"Tab 2"' },
+      { key: "Tab 3", render: '"Tab 3"' }
+    ]
   }
 };

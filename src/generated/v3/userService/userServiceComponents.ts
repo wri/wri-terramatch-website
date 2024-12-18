@@ -57,6 +57,8 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
 export type UsersFindPathParams = {
   /**
    * A valid user id or "me"
+   *
+   * @example me
    */
   id: string;
 };

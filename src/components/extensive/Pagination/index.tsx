@@ -18,7 +18,13 @@ export interface PaginationProps extends PageSelectorProps {
 function Pagination(props: PaginationProps) {
   const t = useT();
   return (
-    <div className={classNames("flex items-center justify-between", props.containerClassName)}>
+    <div
+      className={classNames(
+        "flex items-center justify-between",
+        props.containerClassName,
+        props.variant?.containerClassName
+      )}
+    >
       {props.hasPageSizeSelector ? (
         <PerPageSelector
           label={t(props.variant?.labelText || "Per page")}

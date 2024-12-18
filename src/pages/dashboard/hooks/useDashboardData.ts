@@ -143,10 +143,8 @@ export const useDashboardData = (filters: any) => {
     useGetV2DashboardIndicatorHectaresRestoration<any>({
       queryParams: queryParams
     });
-  const { data: dashboardProjectDetails } = useGetV2DashboardProjectDetailsProject<any>(
-    { pathParams: { project: filters.uuid } },
-    { enabled: !!filters.uuid }
-  );
+  const { data: dashboardProjectDetails, isLoading: isLoadingProjectDetails } =
+    useGetV2DashboardProjectDetailsProject<any>({ pathParams: { project: filters.uuid } }, { enabled: !!filters.uuid });
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -219,6 +217,7 @@ export const useDashboardData = (filters: any) => {
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
     dashboardProjectDetails,
+    isLoadingProjectDetails,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,

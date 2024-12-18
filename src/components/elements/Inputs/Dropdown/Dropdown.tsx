@@ -59,6 +59,7 @@ export interface DropdownProps {
   onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
+  titleClassname?: string;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -197,9 +198,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             </When>
             <Listbox.Button
               as="div"
-              className={classNames(
+              className={tw(
                 "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
-                !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className,
                 variant.className
@@ -209,7 +209,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
-                  className={tw("w-full", variant.titleClassname)}
+                  className={tw("w-full", variant.titleClassname, props.titleClassname)}
                   title={formatSelectedValues(
                     selected,
                     options,
