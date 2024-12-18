@@ -53,7 +53,7 @@ export const VARIANT_DROPDOWN_FILTER: DropdownVariant = {
 };
 
 export const VARIANT_DROPDOWN_SIMPLE: DropdownVariant = {
-  className: "gap-2 text-black border-b-2 border-black py-0 px-1 rounded-none h-fit",
+  className: "gap-2 text-black border-b-2 border-black py-0 px-1 rounded-none h-fit pb-2.5 !h-8",
   iconClassName: "w-3 h-[9px] fill-trasparent",
   iconName: IconNames.CHEVRON_DOWN_DASH,
   iconNameClear: IconNames.CLEAR,

@@ -26,6 +26,7 @@ import LinearProgressBarMonitored from "@/components/elements/ProgressBar/Linear
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -34,6 +35,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -146,6 +148,7 @@ const ContentForApproval = ({
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
+  const { selectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
@@ -166,6 +169,12 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
 
+  useEffect(() => {
+    if (selectPolygonFromMap?.uuid) {
+      setPolygonFromMap(selectPolygonFromMap);
+      flyToPolygonBounds(selectPolygonFromMap.uuid);
+    }
+  }, [polygonList]);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -620,7 +629,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
-                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      <ToolTip title={""} content={"Site Status"} width="" trigger="click">
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      </ToolTip>
                     </Text>
                     <Text variant="text-14-bold" className="leading-[normal] text-black">
                       {record?.readable_status}
@@ -629,7 +640,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-full">
                     <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Polygon Overview
-                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      <ToolTip title={""} content={"Polygon Overview"} width="" trigger="click">
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      </ToolTip>
                     </Text>
                     <If condition={sitePolygonData.length < total}>
                       <Then>
@@ -647,7 +660,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Add or Edit Polygons
-                      <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      <ToolTip title={""} content={"Add or Edit Polygons"} width="" trigger="click">
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      </ToolTip>
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map

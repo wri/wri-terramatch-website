@@ -1,4 +1,4 @@
-import { CHART_TYPES, MONTHS } from "@/constants/dashboardConsts";
+import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -122,6 +122,33 @@ interface ChartCategory {
   name: string;
   values: ChartDataPoint[];
 }
+
+interface PolygonIndicator {
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  data?: Record<string, number>;
+  value?: Record<string, any>;
+  [key: string]: any;
+}
+
+export interface ParsedPolygonsData {
+  graphicTargetLandUseTypes: ParsedLandUseType[];
+  totalSection: {
+    totalHectaresRestored: number;
+  };
+}
+
+interface ParsedResult {
+  chartData: ChartDataItem[];
+  total: number;
+}
+
+type YearlyData = {
+  name: number;
+  treeCoverLoss: number;
+  treeCoverLossFires: number;
+};
 
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
@@ -416,3 +443,145 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
       return false;
   }
 };
+
+const formatLabel = (key: string): string => {
+  return key
+    .split("_")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+export const parsePolygonsIndicatorDataForLandUse = (
+  polygonsIndicator: PolygonIndicator[],
+  totalHectares: number
+): ParsedPolygonsData => {
+  if (!polygonsIndicator?.length) {
+    return DEFAULT_POLYGONS_DATA;
+  }
+
+  const { aggregatedData } = polygonsIndicator.reduce(
+    (acc, polygon) => {
+      if (!polygon.data) return acc;
+
+      Object.entries(polygon.data).forEach(([key, value]) => {
+        const label = formatLabel(key);
+        const numericValue = Number(value);
+        acc.aggregatedData[label] = (acc.aggregatedData[label] || 0) + numericValue;
+      });
+
+      return acc;
+    },
+    {
+      aggregatedData: {} as Record<string, number>
+    }
+  );
+
+  const graphicTargetLandUseTypes = Object.entries(aggregatedData).map(([label, value]) => {
+    const percentage = calculatePercentage(value as number, totalHectares);
+    const adjustedValue = (value as number) > totalHectares ? totalHectares : value;
+    return {
+      label,
+      value: adjustedValue as number,
+      valueText: `${Math.round(value as number)}ha (${percentage.toFixed(0)}%)`
+    };
+  });
+
+  return {
+    graphicTargetLandUseTypes,
+    totalSection: {
+      totalHectaresRestored: totalHectares
+    }
+  };
+};
+
+export const parsePolygonsIndicatorDataForStrategies = (polygonsIndicator: PolygonIndicator[]): ParsedDataItem[] => {
+  const totals = {
+    "Tree Planting": 0,
+    "Direct Seeding": 0,
+    "Assisted Natural Regeneration": 0,
+    "Multiple Strategies": 0
+  };
+
+  polygonsIndicator.forEach(polygon => {
+    const strategies = polygon.data ? Object.keys(polygon.data) : [];
+
+    if (strategies.length === 1) {
+      const strategy = strategies[0];
+      switch (strategy) {
+        case "tree_planting":
+          totals["Tree Planting"] += polygon.data?.[strategy] || 0;
+          break;
+        case "direct_seeding":
+          totals["Direct Seeding"] += polygon.data?.[strategy] || 0;
+          break;
+        case "assisted_natural_regeneration":
+          totals["Assisted Natural Regeneration"] += polygon.data?.[strategy] || 0;
+          break;
+      }
+    } else if (strategies.length > 1) {
+      const totalValue = polygon.data ? Object.values(polygon.data).reduce((sum, value) => sum + (value || 0), 0) : 0;
+      totals["Multiple Strategies"] += totalValue;
+    }
+  });
+
+  return Object.entries(totals).map(([label, value]) => ({
+    label,
+    value: Number(value.toFixed(2))
+  }));
+};
+
+export const parsePolygonsIndicatorDataForEcoRegion = (polygons: PolygonIndicator[]): ParsedResult => {
+  const result: ParsedResult = {
+    chartData: [],
+    total: 0
+  };
+
+  const ecoRegionMap = new Map<string, number>();
+
+  polygons.forEach(polygon => {
+    polygon.data &&
+      Object.entries(polygon.data).forEach(([name, value]) => {
+        ecoRegionMap.set(name, (ecoRegionMap.get(name) || 0) + value);
+      });
+  });
+
+  result.chartData = Array.from(ecoRegionMap, ([name, value]) => ({
+    name: formatLabel(name),
+    value: Number(value.toFixed(3))
+  }));
+
+  result.total = Number(result.chartData.reduce((sum, item) => sum + Number(item.value), 0).toFixed(3));
+
+  return result;
+};
+
+export function parseTreeCoverData(
+  treeCoverLossData: PolygonIndicator[],
+  treeCoverLossFiresData: PolygonIndicator[]
+): YearlyData[] {
+  const years = Array.from(
+    new Set(
+      treeCoverLossData
+        .flatMap(entry => (entry.data ? Object.keys(entry.data) : []))
+        .concat(treeCoverLossFiresData.flatMap(entry => (entry.data ? Object.keys(entry.data) : [])))
+    )
+  ).sort();
+
+  return years.map(year => {
+    const yearNumber = parseInt(year, 10);
+
+    const treeCoverLossSum = treeCoverLossData.reduce((sum, entry) => {
+      return sum + (entry.data?.[year] || 0);
+    }, 0);
+
+    const treeCoverLossFiresSum = treeCoverLossFiresData.reduce((sum, entry) => {
+      return sum + (entry.data?.[year] || 0);
+    }, 0);
+
+    return {
+      name: yearNumber,
+      treeCoverLoss: treeCoverLossSum,
+      treeCoverLossFires: treeCoverLossFiresSum
+    };
+  });
+}

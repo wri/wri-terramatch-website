@@ -203,7 +203,12 @@ export enum IconNames {
   IC_INFO_WHITE_BLACK = "ic-info-white-black",
   FLOAT_NOTIFICATION = "float-notification",
   IC_EXPAND = "ic_expand",
-  IC_SHINK = "ic_shrink"
+  IC_SHINK = "ic_shrink",
+  IC_ADD_BUTTON = "add-button",
+  TRASH_TA = "trash-ta",
+  EDIT_TA = "edit-ta",
+  NON_SCIENTIFIC_NAME = "non-scientific name",
+  NEW_TAG_TREE_SPECIES = "new-tag-tree-species"
 }
 
 export interface IconProps {

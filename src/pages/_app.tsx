@@ -36,6 +36,7 @@ if (typeof window !== "undefined") {
 }
 
 import FloatNotificationProvider from "@/context/floatNotification.provider";
+import { MonitoredDataProvider } from "@/context/monitoredData.provider";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
 
@@ -96,10 +97,12 @@ const _App = ({ Component, ...rest }: AppProps) => {
           <LoadingProvider>
             <FloatNotificationProvider>
               <NotificationProvider>
-                <ModalProvider>
-                  <ModalRoot />
-                  <Component {...pageProps} />
-                </ModalProvider>
+                <MonitoredDataProvider>
+                  <ModalProvider>
+                    <ModalRoot />
+                    <Component {...pageProps} />
+                  </ModalProvider>
+                </MonitoredDataProvider>
               </NotificationProvider>
             </FloatNotificationProvider>
           </LoadingProvider>
