@@ -9,7 +9,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
     data-testid="txt"
     htmlFor=":r23:"
   >
-    ADD TREE SPECIES *
+    Tree Species Grown *
   </label>
   <p
     className="text-body-400 with-inner-html"
@@ -229,7 +229,7 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput With Number 1`] 
     data-testid="txt"
     htmlFor=":r28:"
   >
-    ADD TREE SPECIES *
+    Tree Species Grown *
   </label>
   <p
     className="text-body-400 with-inner-html"

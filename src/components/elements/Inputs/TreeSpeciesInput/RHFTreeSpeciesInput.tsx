@@ -28,7 +28,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   return (
     <TreeSpeciesInput
       {...props}
-      title={t("Tree Species")}
+      title={t("Species")}
       buttonCaptionSuffix={t("Species")}
       withPreviousCounts={true}
       useTaxonomicBackbone={true}
