@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createSelector } from "reselect";
 
 import { bulkUpdateJobs, listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
@@ -49,6 +50,22 @@ const delayedJobsConnection: Connection<DelayedJobsConnection> = {
   )
 };
 
+export const useDelayedJobs = () => {
+  const connection = connectionHook(delayedJobsConnection)();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      listDelayedJobs();
+    }, 1500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  return connection;
+};
+
 export const triggerBulkUpdate = (jobs: DelayedJobData[]) => {
   return bulkUpdateJobs({ body: { data: jobs } });
 };
@@ -83,5 +100,4 @@ const connectionBulkUpdateIsLoaded = ({ isLoading, hasLoadFailed }: { isLoading:
   return !isLoading && !hasLoadFailed;
 };
 
-export const useDelayedJobs = connectionHook(delayedJobsConnection);
 export const useBulkUpdateJobs = connectionLoader(bulkUpdateJobsConnection);

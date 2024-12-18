@@ -180,32 +180,21 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     throw error;
   }
 }
-
 async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayedJobId: string): Promise<TData> {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
-
-  let jobResult;
-  for (
-    jobResult = await loadJob(signal, delayedJobId);
-    jobResult.data?.attributes?.status === "pending";
-    jobResult = await loadJob(signal, delayedJobId)
-  ) {
-    //@ts-ignore
-    const { total_content, processed_content, progress_message } = jobResult.data?.attributes;
-    if (total_content != null) {
-      ApiSlice.addTotalContent(total_content);
-      ApiSlice.addProgressContent(processed_content);
-      ApiSlice.addProgressMessage(progress_message);
-    }
-
-    if (signal?.aborted || ApiSlice.apiDataStore.abort_delayed_job) throw new Error("Aborted");
-    await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
-  }
+  const jobResult = await loadJob(signal, delayedJobId);
 
   const { status, statusCode, payload } = jobResult.data!.attributes;
-  if (status === "failed") throw { statusCode, ...payload };
+
+  if (status === "failed") {
+    throw { statusCode, ...payload };
+  }
+
+  if (status === "pending") {
+    throw new Error("Job is still pending. Handle pending jobs appropriately.");
+  }
 
   return payload as TData;
 }

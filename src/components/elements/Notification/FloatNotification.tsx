@@ -1,3 +1,4 @@
+import { LinearProgress } from "@mui/material";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -41,6 +42,11 @@ const FloatNotification = () => {
     const notAcknowledgedJobs = delayedJobs.filter((job: DelayedJobDto) => !job.isAcknowledged);
     setNotAcknowledgedJobs(notAcknowledgedJobs);
   }, [delayedJobs]);
+  useEffect(() => {
+    if (!notAcknowledgedJobs.length) {
+      setOpenModalNotification(false);
+    }
+  }, [notAcknowledgedJobs]);
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -78,14 +84,30 @@ const FloatNotification = () => {
                       Site: <b>{item.entityName}</b>
                     </Text>
                     <div className="mt-2 flex items-center gap-2">
-                      <LinearProgressBar
-                        value={((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100}
-                        className="h-2 bg-success-40"
-                        color="success-600"
-                      />
-                      <Text variant="text-12-semibold" className="text-black">
-                        {(item.processedContent ?? 0) / (item.totalContent ?? 1)}%
-                      </Text>
+                      {item.name === "Polygon Upload" &&
+                      (item.processedContent === null || item.totalContent === null) &&
+                      item.status === "pending" ? (
+                        <div style={{ width: "100%" }}>
+                          <LinearProgress className="h-2 rounded-full" />
+                        </div>
+                      ) : (
+                        <LinearProgressBar
+                          value={
+                            item.status === "succeeded"
+                              ? 100
+                              : ((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100
+                          }
+                          className="h-2 bg-success-40"
+                          color="success-600"
+                        />
+                      )}
+                      {item.name !== "Polygon Upload" && (
+                        <Text variant="text-12-semibold" className="text-black">
+                          {item.status === "succeeded"
+                            ? "100%"
+                            : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
+                        </Text>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -104,8 +126,8 @@ const FloatNotification = () => {
           className={classNames(
             "z-10 flex h-15 w-15 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
-              hidden: (notAcknowledgedJobs?.length ?? 0) < 1 && isLoaded,
-              visible: (notAcknowledgedJobs?.length ?? 0) > 0 && isLoaded
+              hidden: (notAcknowledgedJobs?.length ?? 0) === 0,
+              visible: (notAcknowledgedJobs?.length ?? 0) > 0
             }
           )}
         >
