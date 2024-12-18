@@ -43,7 +43,13 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   error?: FieldErrors[];
 }
 
-export type TreeSpeciesValue = { uuid?: string; name?: string; taxon_id?: string; amount?: number };
+export type TreeSpeciesValue = {
+  uuid?: string;
+  name?: string;
+  collection?: string;
+  taxon_id?: string;
+  amount?: number;
+};
 
 const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const id = useId();
@@ -82,7 +88,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           uuid: uuidv4(),
           name,
           taxon_id: previousCount.taxonId,
-          amount: 0
+          amount: 0,
+          collection: props.collection
         }))
       );
     }
@@ -100,10 +107,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const handleCreate = useDebounce(
     useCallback(
       (treeValue: TreeSpeciesValue) => {
-        onChange([...value, { ...treeValue, collection }]);
+        onChange([...value, { ...treeValue }]);
         clearErrors();
       },
-      [onChange, value, collection, clearErrors]
+      [onChange, value, clearErrors]
     )
   );
 
@@ -139,7 +146,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         uuid: uuidv4(),
         name: valueAutoComplete,
         taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
-        amount: props.withNumbers ? 0 : undefined
+        amount: props.withNumbers ? 0 : undefined,
+        collection
       });
 
       setValueAutoComplete("");
