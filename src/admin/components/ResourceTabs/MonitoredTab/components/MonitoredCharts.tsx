@@ -138,8 +138,12 @@ const MonitoredCharts = ({
       case "5":
         return (
           <ChartContainer isLoading={isLoadingIndicator} hasNoData={!landUseData?.graphicTargetLandUseTypes?.length}>
-            <div className="w-full pt-[38px]">
-              <GraphicIconDashboard data={landUseData.graphicTargetLandUseTypes} maxValue={totalHectaresRestoredGoal} />
+            <div className="w-full">
+              <GraphicIconDashboard
+                title="Hectares Under Restoration By Target Land Use System"
+                data={landUseData.graphicTargetLandUseTypes}
+                maxValue={totalHectaresRestoredGoal}
+              />
             </div>
           </ChartContainer>
         );

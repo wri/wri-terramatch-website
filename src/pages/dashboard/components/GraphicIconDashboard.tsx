@@ -9,7 +9,15 @@ import { getPercentage } from "@/utils/dashboardUtils";
 
 import { DashboardTableDataProps } from "../index.page";
 
-const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[]; maxValue: number }) => {
+const GraphicIconDashboard = ({
+  data,
+  maxValue,
+  title
+}: {
+  data: DashboardTableDataProps[];
+  maxValue: number;
+  title?: string;
+}) => {
   const t = useT();
   const [tooltip, setTooltip] = useState<{
     text: string | null;
@@ -67,6 +75,11 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
 
   return (
     <div className="relative grid w-full gap-4">
+      <When condition={title}>
+        <Text variant="text-14" className="text-14 mb-1 uppercase text-darkCustom">
+          {title}
+        </Text>
+      </When>
       <When condition={data.length > 0}>
         <div className="relative flex h-9 w-full rounded bg-blueCustom-30 first:rounded-l first-of-type:rounded-l lg:h-10">
           {data.map((item, index) => {

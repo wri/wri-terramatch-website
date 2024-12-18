@@ -650,7 +650,7 @@ const DataCard = ({
                   hidden: selected.includes("6")
                 })}
                 optionsClassName="!w-max right-0"
-                className="w-max"
+                className="!h-8 w-max"
                 options={polygonOptions}
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
