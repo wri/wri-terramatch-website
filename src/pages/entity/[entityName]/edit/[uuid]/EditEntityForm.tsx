@@ -64,7 +64,12 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   );
 
   const reportingWindow = useReportingWindow(entity?.due_at);
-  const formTitle = `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
+  const formTitle =
+    entityName === "site-reports"
+      ? t("{siteName} Site Report", { siteName: entity.site.name })
+      : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
+  const formSubtitle =
+    entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
   const saveAndCloseModalMapping: any = {
     projects: t(
@@ -117,6 +122,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
         submitButtonDisable={isSubmitting}
         defaultValues={defaultValues}
         title={formTitle}
+        subtitle={formSubtitle}
         tabOptions={{
           markDone: true,
           disableFutureTabs: true
