@@ -195,7 +195,9 @@ function Table<TData extends RowData>({
                           >
                             <span
                               className="font-inherit relative"
-                              style={{ marginRight: `${iconRefs.current[header.index]?.offsetWidth}px` }}
+                              style={{
+                                marginRight: `${iconRefs.current[header.index]?.getBoundingClientRect().width}px`
+                              }}
                             >
                               <span
                                 className="font-inherit "
@@ -219,7 +221,7 @@ function Table<TData extends RowData>({
                                     }
                                   }}
                                   className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
-                                  style={{ left: `${spanRefs.current[header.index]?.offsetWidth}px` }}
+                                  style={{ left: `${spanRefs.current[header.index]?.getBoundingClientRect().width}px` }}
                                 >
                                   <Icon
                                     name={
