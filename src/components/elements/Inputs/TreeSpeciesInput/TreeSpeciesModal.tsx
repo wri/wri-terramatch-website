@@ -12,7 +12,7 @@ type TreeSpeciesModalProps = {
 const TreeSpeciesModal = ({ title, content, buttons }: TreeSpeciesModalProps) => (
   <div className="margin-4 z-50 m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white">
     <div className="flex w-full items-center justify-center gap-1 border-b-2 border-neutral-100 py-1">
-      <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="mb-1 h-4 min-h-4 w-4 min-w-4 text-tertiary-600" />
+      <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 mb-1 h-4 w-4 text-tertiary-600" />
       <Text variant="text-16-semibold" className="mb-1 text-blueCustom-700">
         {title}
       </Text>

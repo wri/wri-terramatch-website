@@ -200,7 +200,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
       <div>
         {handleBaseEntityTrees && (
           <div className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2">
-            <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-4 min-h-4 w-4 min-w-4 text-tertiary-600" />
+            <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
             {t(
               "If you would like to add a species not included on the original Restoration Project, it will be flagged to the admin as new information pending review."
             )}
@@ -230,7 +230,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               />
               <When condition={valueAutoComplete.length > 0}>
                 <button onClick={() => setValueAutoComplete("")} className="absolute right-4 top-4 ">
-                  <Icon name={IconNames.CLEAR} className="h-3 min-h-3 w-3 min-w-3" />
+                  <Icon name={IconNames.CLEAR} className="min-h-3 min-w-3 h-3 w-3" />
                 </button>
               </When>
             </div>
@@ -269,7 +269,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               {t("No matches available")}
             </Text>
             <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-4 min-h-4 w-4 min-w-4 text-tertiary-600" />
+              <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
               <Text variant="text-14-light" className="text-blueCustom-700">
                 {t("You can add this species, but it will be pending review from Admin.")}
               </Text>
@@ -342,7 +342,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               </When>
               <When condition={editIndex === value.uuid}>
                 <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
-                  <Icon name={IconNames.EDIT_TA} className="h-6 min-h-6 w-6 min-w-6 text-primary" />
+                  <Icon name={IconNames.EDIT_TA} className="min-h-6 min-w-6 h-6 w-6 text-primary" />
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t("Editing: {name}", { name: value.name })}
                   </Text>
@@ -361,12 +361,12 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 <div className="flex items-center gap-1">
                   <When condition={props.useTaxonomicBackbone && value.taxon_id == null}>
                     <div title={t("Non-Scientific Name")}>
-                      <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="h-8 min-h-8 w-8 min-w-8" />
+                      <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   </When>
                   <When condition={establishmentTrees != null && !establishmentTrees.includes(value.name ?? "")}>
                     <div title={t("New Species (not used in establishment)")}>
-                      <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="h-8 min-h-8 w-8 min-w-8" />
+                      <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   </When>
                   <Text variant="text-14-light" className="text-black ">
