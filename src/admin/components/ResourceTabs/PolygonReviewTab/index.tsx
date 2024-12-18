@@ -742,7 +742,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     pagination: { pageSize: 10000000 }
                   }}
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name" },
+                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
@@ -751,15 +751,28 @@ const PolygonReviewTab: FC<IProps> = props => {
                         return (
                           <input
                             placeholder={placeholder}
-                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
                           />
                         );
-                      }
+                      },
+                      meta: { style: { width: "17.63%" } }
                     },
-                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
-                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
-                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
-                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "Target Land Use System",
+                      accessorKey: "target-land-use-system",
+                      meta: { style: { width: "20.63%" } }
+                    },
+                    {
+                      header: "Tree Distribution",
+                      accessorKey: "tree-distribution",
+                      meta: { style: { width: "15.63%" } }
+                    },
+                    {
+                      header: "Planting Start Date",
+                      accessorKey: "planting-start-date",
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
                     {
                       header: "",
                       accessorKey: "ellipse",
