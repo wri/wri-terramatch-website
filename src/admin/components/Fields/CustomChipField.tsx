@@ -19,7 +19,7 @@ const STATUS_CLASSNAME_MAP: { [key: string]: string } = {
   "No Update": "bg-grey-200 text-grey-500",
   approved: "bg-green-30 text-green-100",
   submitted: "bg-blue-200 text-blue",
-  "needs info": "bg-tertiary-50 text-tertiary-650"
+  "needs-more-information": "bg-tertiary-50 text-tertiary-650"
 };
 
 const CustomChipField = ({
