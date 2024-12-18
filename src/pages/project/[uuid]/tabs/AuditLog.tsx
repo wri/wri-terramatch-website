@@ -62,7 +62,7 @@ const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus,
                 <div className="grid w-[64%] gap-6">
                   <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
-                    <SiteAuditLogProjectStatus record={project} auditLogData={auditLogData} />
+                    <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
                   </When>
                   <When condition={buttonToggle !== ButtonStates.PROJECTS}>
                     <SiteAuditLogEntityStatus

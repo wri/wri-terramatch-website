@@ -167,7 +167,7 @@ const TABLE_COLUMNS_HECTARES_STRATEGY: ColumnDef<RowData>[] = [
     enableSorting: false,
     cell: props => (
       <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-grey-720 hover:text-primary" />
+        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -209,7 +209,7 @@ const TABLE_COLUMNS_HECTARES_ECO_REGION: ColumnDef<RowData>[] = [
     enableSorting: false,
     cell: props => (
       <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-grey-720 hover:text-primary" />
+        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -251,7 +251,7 @@ const TABLE_COLUMNS_HECTARES_LAND_USE: ColumnDef<RowData>[] = [
     enableSorting: false,
     cell: props => (
       <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-grey-720 hover:text-primary" />
+        <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
       </div>
     ),
     meta: { style: { width: "5%" } }
@@ -378,7 +378,7 @@ const DataCard = ({
 }: React.HTMLAttributes<HTMLDivElement> & {
   type?: EntityName;
 }) => {
-  const [tabActive, setTabActive] = useState(0);
+  const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
   const basename = useBasename();
@@ -549,7 +549,7 @@ const DataCard = ({
           enableSorting: false,
           cell: props => (
             <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-              <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-grey-720 hover:text-primary" />
+              <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
             </div>
           ),
           meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
@@ -603,7 +603,7 @@ const DataCard = ({
                   setSelected(option);
                 }}
                 variant={VARIANT_DROPDOWN_SIMPLE}
-                inputVariant="text-14-semibold"
+                inputVariant="text-18-semibold"
                 className="z-50"
                 defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
                 optionsClassName="w-max z-50"
@@ -624,7 +624,7 @@ const DataCard = ({
                 </Button>
               </When>
 
-              <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} />
+              <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} defaultActiveIndex={tabActive} />
             </div>
           </div>
           <When condition={tabActive === 0}>
@@ -644,22 +644,19 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 1}>
-            <div className="relative z-auto flex h-[calc(100vh-320px)] w-full gap-8 px-6 pb-6 pt-2">
+            <div className="relative z-auto flex w-full gap-8 px-6 pb-6 pt-2">
               <Dropdown
-                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1]", {
+                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
                   hidden: selected.includes("6")
                 })}
                 optionsClassName="!w-max right-0"
-                className="w-max"
+                className="!h-8 w-max"
                 options={polygonOptions}
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
               />
               <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
-                <Text
-                  variant={"text-14-semibold"}
-                  className="w-fit border-b-2 border-neutral-450 pb-1.5 text-blueCustom-900"
-                >
+                <Text variant={"text-14-semibold"} className="w-fit text-blueCustom-900">
                   Indicator Description
                 </Text>
                 <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">

@@ -56,8 +56,9 @@ const RestorationMetrics = ({
       className="w-full place-content-center pl-8"
       tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
       showTreesRestoredGraph={false}
+      classNameBody="!mt-1.5"
     />
-    <SimpleBarChart data={strategiesData} />
+    <SimpleBarChart data={strategiesData} total={record.total_hectares_restored_sum} />
   </div>
 );
 
@@ -85,6 +86,9 @@ const MonitoredCharts = ({
   const [hasNoData, setHasNoData] = useState(false);
 
   useEffect(() => {
+    if (isLoadingIndicator) {
+      setHasNoData(false);
+    }
     const noData = selected.some(chartId => {
       switch (chartId) {
         case "1":
@@ -101,7 +105,7 @@ const MonitoredCharts = ({
       }
     });
     setHasNoData(noData);
-  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData]);
+  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData, isLoadingIndicator]);
 
   const renderChart = (chartId: React.Key) => {
     switch (chartId) {
@@ -134,8 +138,12 @@ const MonitoredCharts = ({
       case "5":
         return (
           <ChartContainer isLoading={isLoadingIndicator} hasNoData={!landUseData?.graphicTargetLandUseTypes?.length}>
-            <div className="w-full pt-12">
-              <GraphicIconDashboard data={landUseData.graphicTargetLandUseTypes} maxValue={totalHectaresRestoredGoal} />
+            <div className="w-full">
+              <GraphicIconDashboard
+                title="Hectares Under Restoration By Target Land Use System"
+                data={landUseData.graphicTargetLandUseTypes}
+                maxValue={totalHectaresRestoredGoal}
+              />
             </div>
           </ChartContainer>
         );

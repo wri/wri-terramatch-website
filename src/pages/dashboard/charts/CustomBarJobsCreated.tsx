@@ -10,6 +10,9 @@ interface CustomBarProps {
 
 export const CustomBar: React.FC<CustomBarProps> = ({ fill, x, y, width, height }) => {
   const radius = 5;
+  if (width === 0 || height === 0) {
+    return null;
+  }
   const path = `
     M${x},${y + height}
     L${x},${y + radius}

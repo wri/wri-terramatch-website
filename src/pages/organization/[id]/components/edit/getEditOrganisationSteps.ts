@@ -599,6 +599,8 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           ),
           fieldProps: {
             title: t("Tree Species"),
+            withPreviousCounts: false,
+            useTaxonomicBackbone: true,
             buttonCaptionSuffix: t("Species"),
             withNumbers: false
           }

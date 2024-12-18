@@ -97,8 +97,7 @@ const Homepage = () => {
                   Landscapes programme of 2024.
                 </Text>
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  Please note that the dashboard is pre-filtered upon page load to display only projects from the
-                  TerraFund Landscapes programme. Each project reports 12 times over six years.
+                  Each project reports 12 times over six years.
                 </Text>
                 <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
                   {t("Open Dashboard")}
@@ -149,9 +148,7 @@ const Homepage = () => {
               >
                 here
               </a>{" "}
-              or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen. The dashboard is
-              pre-filtered to display projects from the TerraFund Landscapes programme. This filter can be removed by
-              using the clear filters button.
+              or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen.
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
@@ -184,7 +181,7 @@ const Homepage = () => {
               >
                 Lake Kivu & Rusizi River Basin
               </a>
-              . These pages show relevant projects from both programmes, Top 100 and Landsacpes.
+              . These pages show relevant projects from both programmes, Top 100 and Landscapes.
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
