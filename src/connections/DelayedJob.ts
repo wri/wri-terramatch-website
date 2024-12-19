@@ -59,10 +59,7 @@ export const useDelayedJobs = () => {
   return connection;
 };
 
-export const triggerBulkUpdate = (jobs: DelayedJobData[]) => {
-  console.log("triggerBulkUpdate", jobs);
-  bulkUpdateJobs({ body: { data: jobs } });
-};
+export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs({ body: { data: jobs } });
 
 const bulkUpdateJobsSelector = (store: ApiDataStore) => ({
   isLoading: bulkUpdateJobsIsFetching(store),
