@@ -9,13 +9,24 @@ import { getPercentage } from "@/utils/dashboardUtils";
 
 import { DashboardTableDataProps } from "../index.page";
 
-const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[]; maxValue: number }) => {
+const GraphicIconDashboard = ({
+  data,
+  maxValue,
+  title
+}: {
+  data: DashboardTableDataProps[];
+  maxValue: number;
+  title?: string;
+}) => {
   const t = useT();
-  const [tooltip, setTooltip] = useState<{ text: string | null; label: string | null; x: number; y: number }>({
+  const [tooltip, setTooltip] = useState<{
+    text: string | null;
+    label: string | null;
+    position: { top: number; left: number } | null;
+  }>({
     text: null,
     label: null,
-    x: 0,
-    y: 0
+    position: null
   });
 
   const colorIconLabel = (label: string): { color: string; icon: keyof typeof IconNames } => {
@@ -43,21 +54,32 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
     }
   };
 
-  const handleMouseEnter = (event: MouseEvent<HTMLDivElement>, label: string, valueText: string) => {
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>, label: string, valueText: string) => {
     setTooltip({
       text: valueText,
       label,
-      x: event.pageX,
-      y: event.pageY
+      position: {
+        top: event.clientY - 70,
+        left: event.clientX
+      }
     });
   };
 
   const handleMouseLeave = () => {
-    setTooltip({ text: null, label: null, x: 0, y: 0 });
+    setTooltip({
+      text: null,
+      label: null,
+      position: null
+    });
   };
 
   return (
     <div className="relative grid w-full gap-4">
+      <When condition={title}>
+        <Text variant="text-14" className="text-14 mb-1 uppercase text-darkCustom">
+          {title}
+        </Text>
+      </When>
       <When condition={data.length > 0}>
         <div className="relative flex h-9 w-full rounded bg-blueCustom-30 first:rounded-l first-of-type:rounded-l lg:h-10">
           {data.map((item, index) => {
@@ -72,23 +94,23 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                 )}
                 style={{ width: `${percentage}%` }}
                 key={index}
-                onMouseEnter={e => handleMouseEnter(e, item.label, item.valueText)}
+                onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
                 onMouseLeave={handleMouseLeave}
               />
             );
           })}
         </div>
-        {tooltip.text && (
+        {tooltip.text && tooltip.position && (
           <div
             className="shadow-md fixed z-10 w-auto rounded border border-darkCustom bg-white p-2"
             style={{
-              left: `${tooltip.x}px`,
-              top: `${tooltip.y - 50}px`,
+              left: `${tooltip.position.left}px`,
+              top: `${tooltip.position.top}px`,
               transform: "translateX(-50%)"
             }}
           >
-            <span className="text-12-light text-darkCustom">{`${t(tooltip.label)} `}</span>
-            <span className="text-12-bold text-darkCustom">{t(tooltip.text)}</span>
+            <p className="text-12-bold text-darkCustom">{`${t(tooltip.label)} `}</p>
+            <span className="text-12-light text-darkCustom">{t(tooltip.text)}</span>
           </div>
         )}
         <div className="w-full">
@@ -109,7 +131,7 @@ const GraphicIconDashboard = ({ data, maxValue }: { data: DashboardTableDataProp
                 </div>
                 <div
                   className="relative h-4 rounded bg-blueCustom-30 lg:h-5"
-                  onMouseEnter={e => handleMouseEnter(e, item.label, item.valueText)}
+                  onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
                   onMouseLeave={handleMouseLeave}
                 >
                   <div

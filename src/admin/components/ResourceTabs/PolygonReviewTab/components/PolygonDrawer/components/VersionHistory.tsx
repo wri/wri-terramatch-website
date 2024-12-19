@@ -358,10 +358,12 @@ const VersionHistory = ({
             suffixLabelView={true}
             labelClassName="capitalize"
             labelVariant="text-14-light"
-            optionsClassName="!h-[182px] lg:!h-[195px] wide:h-[266px]"
+            optionsClassName="!max-h-[182px] lg:!max-h-[195px] wide:max-h-[266px]"
             placeholder="Select Polygon Version"
             options={polygonVersionData ?? []}
             optionVariant="text-12-light"
+            titleClassname="one-line-text !w-full !text-nowrap"
+            titleContainerClassName="!w-[calc(100%-25px)] !text-nowrap"
             defaultValue={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
             onChange={e => {
               const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);

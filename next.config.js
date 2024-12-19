@@ -45,8 +45,8 @@ const userSentryWebpackPluginOptions = {
   // Suppresses source map uploading logs during build
   silent: true,
 
-  org: process.env.SENTRY_ORG || "3-sided-cube",
-  project: process.env.SENTRY_PROJECT || "wri-web-platform-version-2",
+  org: process.env.SENTRY_ORG ?? "wri-terramatch",
+  project: process.env.SENTRY_PROJECT ?? "terramatch-frontend",
   authToken: process.env.SENTRY_AUTH_TOKEN
 };
 

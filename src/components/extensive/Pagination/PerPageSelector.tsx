@@ -53,7 +53,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                 <Listbox.Options
                   as="div"
                   className={classNames(
-                    "absolute mt-6 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow outline-none",
+                    "absolute z-10 mt-6 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow outline-none",
                     { "bottom-[35px]": props.invertSelect }
                   )}
                 >

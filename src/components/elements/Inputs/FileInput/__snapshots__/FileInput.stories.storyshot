@@ -80,11 +80,11 @@ Array [
             className="line-clamp-1 text-light-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
-                "__html": "Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>",
+                "__html": "Drag and drop or <span className=\\"underline text-primary\\">browse your device</span>",
               }
             }
             data-testid="txt"
-            title="Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>"
+            title="Drag and drop or <span className=\\"underline text-primary\\">browse your device</span>"
           />
         </div>
       </div>
@@ -175,11 +175,11 @@ Array [
             className="line-clamp-1 text-light-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
-                "__html": "Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>",
+                "__html": "Drag and drop or <span className=\\"underline text-primary\\">browse your device</span>",
               }
             }
             data-testid="txt"
-            title="Drag and drop or <span className=\\"text-primary underline\\">browse your device</span>"
+            title="Drag and drop or <span className=\\"underline text-primary\\">browse your device</span>"
           />
         </div>
       </div>
@@ -263,12 +263,7 @@ Array [
         >
           or
         </p>
-        <p
-          className="max-w-[210px] text-center text-12-light"
-          data-testid="txt"
-        >
-          drag and drop
-        </p>
+        drag and drop
       </div>
     </div>
   </div>,

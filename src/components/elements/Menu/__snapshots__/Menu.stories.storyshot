@@ -9,7 +9,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Left 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>
@@ -60,7 +60,7 @@ exports[`Storyshots Components/Elements/Menu Placement Bottom Right 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>
@@ -111,7 +111,7 @@ exports[`Storyshots Components/Elements/Menu Placement Left Bottom 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>
@@ -162,7 +162,7 @@ exports[`Storyshots Components/Elements/Menu Placement Right Top 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>
@@ -213,7 +213,7 @@ exports[`Storyshots Components/Elements/Menu Primary 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>
@@ -264,7 +264,7 @@ exports[`Storyshots Components/Elements/Menu Secondary 1`] = `
     className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Open/Close
     </span>

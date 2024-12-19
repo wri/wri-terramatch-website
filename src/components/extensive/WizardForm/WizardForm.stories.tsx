@@ -187,6 +187,8 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
           description: "TRee species input description",
           fieldProps: {
             title: "Tree Species",
+            withPreviousCounts: false,
+            useTaxonomicBackbone: false,
             buttonCaptionSuffix: "Species",
             required: true
           },
@@ -204,6 +206,8 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
 
           fieldProps: {
             title: "Tree Species",
+            withPreviousCounts: false,
+            useTaxonomicBackbone: false,
             buttonCaptionSuffix: "Species",
             required: true,
             withNumbers: true

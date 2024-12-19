@@ -2,7 +2,16 @@
 
 import { ReactNode } from "react";
 
-export type Colors = "white" | "black" | "neutral" | "secondary" | "tertiary" | "primary" | "success" | "error";
+export type Colors =
+  | "white"
+  | "black"
+  | "neutral"
+  | "secondary"
+  | "tertiary"
+  | "primary"
+  | "success"
+  | "error"
+  | "success-600";
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
 export type TextWeights = "regular" | "bold";
@@ -60,6 +69,10 @@ export type TextVariantNew =
   | "text-28"
   | "text-28-semibold"
   | "text-28-bold"
+  | "text-32-light"
+  | "text-32"
+  | "text-32-semibold"
+  | "text-32-bold"
   | "text-36-light"
   | "text-36"
   | "text-36-semibold"
@@ -218,9 +231,17 @@ export type EntityName = BaseModelNames | ReportsModelNames;
 export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
 export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports";
 
+export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
+export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
+
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
 export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report";
+
+export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>
+  !name.endsWith("-report");
+export const isSingularReportModelName = (name: SingularEntityName): name is SingularReportsModelNames =>
+  name.endsWith("-report");
 
 export type Entity = {
   entityName: EntityName | SingularEntityName;

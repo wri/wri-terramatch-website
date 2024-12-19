@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import Toggle from "@/components/elements/Toggle/Toggle";
+import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_DASHBOARD } from "@/components/elements/Toggle/ToggleVariants";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
@@ -34,10 +34,15 @@ import { DashboardDataProps } from "./ObjectiveSec";
 import ObjectiveSec from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
+interface secondOptionsDataItem {
+  tooltip: TogglePropsItem;
+  color?: string;
+}
+
 const SecDashboard = ({
   title,
   type,
-  secondOptionsData,
+  secondOptionsData = [],
   className,
   classNameBody,
   classNameHeader,
@@ -50,11 +55,12 @@ const SecDashboard = ({
   dataForChart,
   chartType,
   isUserAllowed = true,
-  isLoading = false
+  isLoading = false,
+  showTreesRestoredGraph = true
 }: {
   title: string;
   type?: "legend" | "toggle";
-  secondOptionsData?: any;
+  secondOptionsData?: secondOptionsDataItem[];
   className?: string;
   classNameBody?: string;
   classNameHeader?: string;
@@ -68,6 +74,7 @@ const SecDashboard = ({
   chartType?: string;
   isUserAllowed?: boolean;
   isLoading?: boolean;
+  showTreesRestoredGraph?: boolean;
 }) => {
   const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
@@ -134,11 +141,11 @@ const SecDashboard = ({
         <When condition={type === "legend"}>
           <div className="flex gap-4">
             {secondOptionsData &&
-              secondOptionsData.map((item: any, index: number) => (
+              secondOptionsData.map((item: secondOptionsDataItem, index: number) => (
                 <div key={index} className="flex items-center gap-1">
                   <div className={classNames("h-2 w-2 rounded-full", item.color)} />
                   <Text variant="text-12" className="text-darkCustom">
-                    {t(item.label)}
+                    {t(item.tooltip.render)}
                   </Text>
                 </div>
               ))}
@@ -146,11 +153,8 @@ const SecDashboard = ({
         </When>
         <When condition={type === "toggle"}>
           <Toggle
-            items={secondOptionsData}
-            activeIndex={toggleValue}
-            setActiveIndex={() => {
-              setToggleValue(toggleValue === 0 ? 1 : 0);
-            }}
+            items={secondOptionsData.map(item => item.tooltip)}
+            onChangeActiveIndex={setToggleValue}
             variant={VARIANT_TOGGLE_DASHBOARD}
           />
         </When>
@@ -159,7 +163,7 @@ const SecDashboard = ({
         {data?.value !== undefined && (
           <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
         )}
-        <When condition={data?.totalValue}>
+        <When condition={data?.totalValue && showTreesRestoredGraph}>
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
               <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />

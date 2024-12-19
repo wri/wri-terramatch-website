@@ -11,7 +11,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       className="absolute top-1 transition-all rounded-lg bg-white h-[calc(100%_-_8px)]"
       style={
         Object {
-          "transform": "translateX(calc(undefinedpx - 4px))",
+          "transform": "translateX(calc(0px - 4px))",
           "width": 0,
         }
       }
@@ -22,7 +22,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       onClick={[Function]}
       type="button"
     >
-      Tab 1
+      "Tab 1"
     </button>
     <button
       className="hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
@@ -30,7 +30,7 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       onClick={[Function]}
       type="button"
     >
-      Tab 2
+      "Tab 2"
     </button>
     <button
       className="hover:stroke-blue-950 hover:text-blue-950 group relative z-auto inline-flex h-full w-max min-w-[32px] items-center justify-center gap-1 whitespace-nowrap px-3 align-middle transition-all duration-300 ease-in-out text-14-bold text-darkCustom-60"
@@ -38,8 +38,11 @@ exports[`Storyshots Components/Elements/Toggle Horizontal 1`] = `
       onClick={[Function]}
       type="button"
     >
-      Tab 3
+      "Tab 3"
     </button>
+  </div>
+  <div>
+    Tab 1
   </div>
 </div>
 `;

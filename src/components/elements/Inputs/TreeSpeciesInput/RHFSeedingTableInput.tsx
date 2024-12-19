@@ -9,7 +9,7 @@ export interface RHFSeedingTableInputProps
     UseControllerProps {
   collection?: string;
   onChangeCapture?: () => void;
-  formHook?: UseFormReturn;
+  formHook: UseFormReturn;
 }
 
 /**
@@ -19,12 +19,14 @@ export interface RHFSeedingTableInputProps
 const RHFSeedingTableInput = (props: PropsWithChildren<RHFSeedingTableInputProps>) => {
   const t = useT();
   const {
-    field: { value, onChange }
+    field: { onChange }
   } = useController(props);
   const { formHook, collection } = props;
 
+  const value = formHook.watch(props.name);
+
   const clearErrors = useCallback(() => {
-    formHook?.clearErrors(props.name);
+    formHook.clearErrors(props.name);
   }, [formHook, props.name]);
 
   return (
@@ -32,12 +34,14 @@ const RHFSeedingTableInput = (props: PropsWithChildren<RHFSeedingTableInputProps
       {...props}
       title={t("Seed species or Mix")}
       buttonCaptionSuffix={t("Species or mix")}
+      withPreviousCounts={false}
+      useTaxonomicBackbone={false}
       value={value ?? []}
       onChange={onChange}
       collection={collection}
       clearErrors={clearErrors}
       onError={() =>
-        props.formHook?.setError(props.name, { message: t("One or more values are missing"), type: "required" })
+        props.formHook.setError(props.name, { message: t("One or more values are missing"), type: "required" })
       }
     />
   );

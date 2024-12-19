@@ -142,7 +142,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   };
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
-  const tabs = ["Image", "Location"];
+  const tabs = [
+    { key: "Image", render: "Image" },
+    { key: "Location", render: "Location" }
+  ];
   const handleDelete = () => {
     onClose?.();
     openModal(
@@ -276,8 +279,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
           <Toggle
             items={tabs}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
+            onChangeActiveIndex={setActiveIndex}
             textClassName="!w-1/2 flex justify-center py-1"
             disabledIndexes={isGeotagged ? [] : [1]}
           />

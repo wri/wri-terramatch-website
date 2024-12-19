@@ -22,6 +22,7 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -32,6 +33,9 @@ export interface CheckSitePolygonProps {
     uuid: string;
   };
   polygonCheck: boolean;
+  setIsLoadingDelayedJob?: (isLoading: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
 }
 
 interface CheckedPolygon {
@@ -50,7 +54,7 @@ interface TransformedData {
 }
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck } = props;
+  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
@@ -59,7 +63,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
   const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
     useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -92,11 +96,29 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         "success",
         t("Success! TerraMatch reviewed all polygons")
       );
+      setIsLoadingDelayedJob?.(false);
+      ApiSlice.addTotalContent(0);
+      ApiSlice.addProgressContent(0);
+      ApiSlice.addProgressMessage("");
     },
     onError: () => {
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      if (ApiSlice.apiDataStore.abort_delayed_job) {
+        displayNotification(
+          t("The Check Polygons processing was cancelled."),
+          "warning",
+          t("You can try again later.")
+        );
+
+        ApiSlice.abortDelayedJob(false);
+        ApiSlice.addTotalContent(0);
+        ApiSlice.addProgressContent(0);
+        ApiSlice.addProgressMessage("");
+      } else {
+        displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      }
     }
   });
 
@@ -105,6 +127,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
         closeModal(ModalId.FIX_POLYGONS);
         return;
       }
@@ -118,13 +141,23 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           .join(", ");
         openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
       }
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      Log.error("Error clipping polygons:", error);
-      displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+      if (ApiSlice.apiDataStore.abort_delayed_job) {
+        displayNotification(t("The Fix Polygons processing was cancelled."), "warning", t("You can try again later."));
+        ApiSlice.abortDelayedJob(false);
+        ApiSlice.addTotalContent(0);
+        ApiSlice.addProgressContent(0);
+        ApiSlice.addProgressMessage("");
+      } else {
+        Log.error("Error clipping polygons:", error);
+        displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
+      }
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
     }
   });
 
@@ -167,7 +200,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Fix Polygons");
       clipPolygons({ pathParams: { uuid: siteUuid } });
     } else {
       displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));
@@ -216,7 +250,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     if (clickedValidation) {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Check Polygons");
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
   }, [clickedValidation]);
@@ -226,20 +261,24 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Button
           variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white
+          disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => {
             setClickedValidation(true);
             setOpenCollapse(true);
             setSelectedPolygonsInCheckbox([]);
           }}
+          disabled={isLoadingDelayedJob}
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
         <When condition={hasOverlaps}>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
+             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={openFormModalHandlerSubmitPolygon}
+            disabled={isLoadingDelayedJob}
           >
             {t("Fix Polygons")}
           </Button>

@@ -73,7 +73,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         >
           <input
             hidden={true}
-            id=":r3b:"
+            id=":r3g:"
             multiple={true}
             onChange={[Function]}
             onClick={[Function]}
@@ -108,12 +108,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
             >
               or
             </p>
-            <p
-              className="max-w-[210px] text-center text-12-light"
-              data-testid="txt"
-            >
-              Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
-            </p>
+            Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
           </div>
         </div>
       </div>
@@ -153,7 +148,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

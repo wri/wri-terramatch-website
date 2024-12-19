@@ -2,19 +2,21 @@ import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
+export type ControlMapPosition =
+  | "top-right"
+  | "top-left"
+  | "bottom-right"
+  | "bottom-left"
+  | "bottom-left-site"
+  | "top-center"
+  | "top-left-site"
+  | "top-centerSite"
+  | "top-centerPolygonsInCheckbox";
+
 export interface ControlGroupProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
-  position:
-    | "top-right"
-    | "top-left"
-    | "bottom-right"
-    | "bottom-left"
-    | "bottom-left-site"
-    | "top-center"
-    | "top-left-site"
-    | "top-centerSite"
-    | "top-centerPolygonsInCheckbox";
+  position: ControlMapPosition;
 }
 
 const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {

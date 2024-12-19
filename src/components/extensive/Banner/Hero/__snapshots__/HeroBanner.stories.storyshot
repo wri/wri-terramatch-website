@@ -32,7 +32,7 @@ exports[`Storyshots Components/Extensive/Banner/HeroBanner Default 1`] = `
     onTouchStart={[Function]}
   >
     <span
-      className="flex items-center text-bold-caption-200"
+      className="flex items-center text-bold-caption-200 !leading-[normal]"
     >
       Sign up
     </span>

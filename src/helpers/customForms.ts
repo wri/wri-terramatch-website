@@ -732,7 +732,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       const arrayItemShape = question.with_numbers
         ? yup.object({
             name: yup.string().required(),
-            amount: yup.number().min(1).required()
+            amount: yup.number().min(0).required()
           })
         : yup.object({
             name: yup.string().required()
