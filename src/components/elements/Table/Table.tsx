@@ -14,7 +14,7 @@ import {
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useState } from "react";
+import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -94,6 +94,9 @@ function Table<TData extends RowData>({
   const t = useT();
   const [sorting, setSorting] = useState<SortingState>(initialTableState?.sorting ?? []);
   const [filters, setFilters] = useState<FilterValue[]>([]);
+
+  const spanRefs = useRef<HTMLSpanElement[]>([]);
+  const iconRefs = useRef<HTMLSpanElement[]>([]);
 
   const {
     getHeaderGroups,
@@ -183,7 +186,7 @@ function Table<TData extends RowData>({
                           }
                         >
                           <div
-                            className="flex items-center"
+                            className="inline w-full max-w-full"
                             style={{
                               fontSize: "inherit",
                               fontWeight: "inherit",
@@ -191,22 +194,52 @@ function Table<TData extends RowData>({
                               fontFamily: "inherit"
                             }}
                           >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            <When condition={header.column.getCanSort()}>
-                              <Icon
-                                name={
-                                  { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
-                                    header.column.getIsSorted() as string
-                                  ] ?? IconNames.SORT
-                                }
-                                className={classNames(
-                                  "ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
-                                  variant.iconSort
-                                )}
-                                width={11}
-                                height={14}
-                              />
-                            </When>
+                            <div
+                              className="font-inherit relative w-full max-w-full"
+                              style={{
+                                paddingRight: `${iconRefs.current[header.index]?.getBoundingClientRect().width}px`
+                              }}
+                            >
+                              <span
+                                className="font-inherit "
+                                ref={el => {
+                                  if (
+                                    el &&
+                                    !spanRefs.current.includes(el) &&
+                                    flexRender(header.column.columnDef.header, header.getContext())
+                                  ) {
+                                    spanRefs.current.push(el);
+                                  }
+                                }}
+                              >
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+                              </span>
+                              <When condition={header.column.getCanSort()}>
+                                <span
+                                  ref={el => {
+                                    if (el && !iconRefs.current.includes(el)) {
+                                      iconRefs.current.push(el);
+                                    }
+                                  }}
+                                  className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                                  style={{ left: `${spanRefs.current[header.index]?.getBoundingClientRect().width}px` }}
+                                >
+                                  <Icon
+                                    name={
+                                      { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
+                                        header.column.getIsSorted() as string
+                                      ] ?? IconNames.SORT
+                                    }
+                                    className={classNames(
+                                      "ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
+                                      variant.iconSort
+                                    )}
+                                    width={11}
+                                    height={14}
+                                  />
+                                </span>
+                              </When>
+                            </div>
                           </div>
                         </th>
                       );

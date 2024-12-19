@@ -124,7 +124,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -134,7 +134,20 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -149,7 +162,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -159,15 +172,37 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -182,7 +217,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -192,15 +227,37 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -215,7 +272,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -225,7 +282,20 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -240,7 +310,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -249,7 +319,20 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -987,7 +1070,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -997,7 +1080,20 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1012,7 +1108,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1022,15 +1118,37 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1045,7 +1163,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1055,15 +1173,37 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1078,7 +1218,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1088,7 +1228,20 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1103,7 +1256,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1112,7 +1265,20 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -1850,7 +2016,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1860,7 +2026,20 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1875,7 +2054,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1885,15 +2064,37 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1908,7 +2109,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1918,15 +2119,37 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1941,7 +2164,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1951,7 +2174,20 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -1966,7 +2202,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -1975,7 +2211,20 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -2713,7 +2962,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -2723,7 +2972,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -2738,7 +3000,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -2748,15 +3010,37 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -2771,7 +3055,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -2781,15 +3065,37 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -2804,7 +3110,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -2814,7 +3120,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -2829,7 +3148,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -2838,7 +3157,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -3579,7 +3911,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -3589,7 +3921,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                     }
                   }
                 >
-                  Funding type
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding type
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -3604,7 +3949,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -3614,15 +3959,37 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                     }
                   }
                 >
-                  Funding source
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding source
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -3637,7 +4004,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -3647,15 +4014,37 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                     }
                   }
                 >
-                  Funding amount
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding amount
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -3670,7 +4059,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -3680,7 +4069,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                     }
                   }
                 >
-                  Status
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Status
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -3695,7 +4097,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -3704,7 +4106,20 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
                       "fontWeight": "inherit",
                     }
                   }
-                />
+                >
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    />
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
@@ -4443,7 +4858,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -4453,7 +4868,20 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -4468,7 +4896,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -4478,15 +4906,37 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -4501,7 +4951,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -4511,15 +4961,37 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -4534,7 +5006,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -4544,7 +5016,20 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -4559,7 +5044,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -4568,7 +5053,20 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -5306,7 +5804,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -5316,7 +5814,20 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                   }
                 }
               >
-                Funding type
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -5331,7 +5842,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -5341,15 +5852,37 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                   }
                 }
               >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -5364,7 +5897,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -5374,15 +5907,37 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -5397,7 +5952,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -5407,7 +5962,20 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
               </div>
             </th>
             <th
@@ -5422,7 +5990,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -5431,7 +5999,20 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -6172,7 +6753,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -6182,7 +6763,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                     }
                   }
                 >
-                  Funding type
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding type
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -6197,7 +6791,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -6207,15 +6801,37 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                     }
                   }
                 >
-                  Funding source
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding source
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -6230,7 +6846,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -6240,15 +6856,37 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                     }
                   }
                 >
-                  Funding amount
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding amount
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -6263,7 +6901,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -6273,7 +6911,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                     }
                   }
                 >
-                  Status
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Status
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -6288,7 +6939,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -6297,7 +6948,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
                       "fontWeight": "inherit",
                     }
                   }
-                />
+                >
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    />
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
@@ -7039,7 +7703,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7049,7 +7713,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                     }
                   }
                 >
-                  Funding type
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding type
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7064,7 +7741,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7074,15 +7751,37 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                     }
                   }
                 >
-                  Funding source
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding source
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7097,7 +7796,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7107,15 +7806,37 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                     }
                   }
                 >
-                  Funding amount
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding amount
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7130,7 +7851,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7140,7 +7861,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                     }
                   }
                 >
-                  Status
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Status
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7155,7 +7889,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7164,7 +7898,20 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
                       "fontWeight": "inherit",
                     }
                   }
-                />
+                >
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    />
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
@@ -7906,7 +8653,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7916,7 +8663,20 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                     }
                   }
                 >
-                  Funding type
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding type
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7931,7 +8691,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7941,15 +8701,37 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                     }
                   }
                 >
-                  Funding source
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding source
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7964,7 +8746,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -7974,15 +8756,37 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                     }
                   }
                 >
-                  Funding amount
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding amount
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -7997,7 +8801,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -8007,7 +8811,20 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                     }
                   }
                 >
-                  Status
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Status
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -8022,7 +8839,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -8031,7 +8848,20 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
                       "fontWeight": "inherit",
                     }
                   }
-                />
+                >
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    />
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
@@ -8756,11 +9586,11 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
           className="bg-blueCustom-100"
         >
           <tr
-            className="bg-neutral-150"
+            className="bg-neutral-150 sticky top-0 z-auto"
           >
             <th
               align="left"
-              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0"
+              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto"
               colSpan={1}
               onClick={[Function]}
               style={
@@ -8770,7 +9600,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -8780,45 +9610,25 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
                   }
                 }
               >
-                Funding type
-              </div>
-            </th>
-            <th
-              align="left"
-              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 cursor-pointer"
-              colSpan={1}
-              onClick={[Function]}
-              style={
-                Object {
-                  "width": undefined,
-                }
-              }
-            >
-              <div
-                className="flex items-center"
-                style={
-                  Object {
-                    "color": "currentColor",
-                    "fontFamily": "inherit",
-                    "fontSize": "inherit",
-                    "fontWeight": "inherit",
-                  }
-                }
-              >
-                Funding source
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding type
+                  </span>
+                </div>
               </div>
             </th>
             <th
               align="left"
-              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 cursor-pointer"
+              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto cursor-pointer"
               colSpan={1}
               onClick={[Function]}
               style={
@@ -8828,7 +9638,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -8838,20 +9648,42 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
                   }
                 }
               >
-                Funding amount
                 <div
+                  className="font-inherit relative w-full max-w-full"
                   style={
                     Object {
-                      "height": 14,
-                      "width": 11,
+                      "paddingRight": "undefinedpx",
                     }
                   }
-                />
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding source
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
               align="left"
-              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0"
+              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto cursor-pointer"
               colSpan={1}
               onClick={[Function]}
               style={
@@ -8861,7 +9693,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -8871,12 +9703,42 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
                   }
                 }
               >
-                Status
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Funding amount
+                  </span>
+                  <span
+                    className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                    style={
+                      Object {
+                        "left": "undefinedpx",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "height": 14,
+                          "width": 11,
+                        }
+                      }
+                    />
+                  </span>
+                </div>
               </div>
             </th>
             <th
               align="left"
-              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0"
+              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto"
               colSpan={1}
               onClick={[Function]}
               style={
@@ -8886,7 +9748,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
               }
             >
               <div
-                className="flex items-center"
+                className="inline w-full max-w-full"
                 style={
                   Object {
                     "color": "currentColor",
@@ -8895,7 +9757,58 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
                     "fontWeight": "inherit",
                   }
                 }
-              />
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  >
+                    Status
+                  </span>
+                </div>
+              </div>
+            </th>
+            <th
+              align="left"
+              className="py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto"
+              colSpan={1}
+              onClick={[Function]}
+              style={
+                Object {
+                  "width": undefined,
+                }
+              }
+            >
+              <div
+                className="inline w-full max-w-full"
+                style={
+                  Object {
+                    "color": "currentColor",
+                    "fontFamily": "inherit",
+                    "fontSize": "inherit",
+                    "fontWeight": "inherit",
+                  }
+                }
+              >
+                <div
+                  className="font-inherit relative w-full max-w-full"
+                  style={
+                    Object {
+                      "paddingRight": "undefinedpx",
+                    }
+                  }
+                >
+                  <span
+                    className="font-inherit "
+                  />
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
@@ -9636,7 +10549,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -9646,7 +10559,20 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                     }
                   }
                 >
-                  Funding type
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding type
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -9661,7 +10587,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -9671,15 +10597,37 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                     }
                   }
                 >
-                  Funding source
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding source
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -9694,7 +10642,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -9704,15 +10652,37 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                     }
                   }
                 >
-                  Funding amount
                   <div
+                    className="font-inherit relative w-full max-w-full"
                     style={
                       Object {
-                        "height": 14,
-                        "width": 11,
+                        "paddingRight": "undefinedpx",
                       }
                     }
-                  />
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Funding amount
+                    </span>
+                    <span
+                      className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                      style={
+                        Object {
+                          "left": "undefinedpx",
+                        }
+                      }
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": 14,
+                            "width": 11,
+                          }
+                        }
+                      />
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -9727,7 +10697,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -9737,7 +10707,20 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                     }
                   }
                 >
-                  Status
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    >
+                      Status
+                    </span>
+                  </div>
                 </div>
               </th>
               <th
@@ -9752,7 +10735,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                 }
               >
                 <div
-                  className="flex items-center"
+                  className="inline w-full max-w-full"
                   style={
                     Object {
                       "color": "currentColor",
@@ -9761,7 +10744,20 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
                       "fontWeight": "inherit",
                     }
                   }
-                />
+                >
+                  <div
+                    className="font-inherit relative w-full max-w-full"
+                    style={
+                      Object {
+                        "paddingRight": "undefinedpx",
+                      }
+                    }
+                  >
+                    <span
+                      className="font-inherit "
+                    />
+                  </div>
+                </div>
               </th>
             </tr>
           </thead>
