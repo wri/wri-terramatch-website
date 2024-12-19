@@ -54,7 +54,11 @@ const FloatNotification = () => {
         ?.map((p: any) => p.poly_name)
         .filter(Boolean)
         .join(", ");
-      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
+      if (updatedPolygonNames) {
+        return "Success! The following polygons have been fixed: " + updatedPolygonNames;
+      } else {
+        return "No polygons were fixed";
+      }
     }
     return null;
   };

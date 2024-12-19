@@ -153,7 +153,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
@@ -315,7 +315,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
-    showLoader();
 
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
@@ -351,10 +350,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
       refetch();
       refetchSiteBbox();
-      closeModal(ModalId.ADD_POLYGON);
       setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
-      hideLoader();
     } catch (error) {
       let errorMessage;
 
@@ -381,6 +378,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
       openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
       hideLoader();
+    } finally {
+      closeModal(ModalId.ADD_POLYGON);
     }
   };
 
