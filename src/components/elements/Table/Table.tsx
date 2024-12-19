@@ -186,6 +186,7 @@ function Table<TData extends RowData>({
                           }
                         >
                           <div
+                            className="inline w-full max-w-full"
                             style={{
                               fontSize: "inherit",
                               fontWeight: "inherit",
@@ -193,10 +194,10 @@ function Table<TData extends RowData>({
                               fontFamily: "inherit"
                             }}
                           >
-                            <span
-                              className="font-inherit relative"
+                            <div
+                              className="font-inherit relative w-full max-w-full"
                               style={{
-                                marginRight: `${iconRefs.current[header.index]?.getBoundingClientRect().width}px`
+                                paddingRight: `${iconRefs.current[header.index]?.getBoundingClientRect().width}px`
                               }}
                             >
                               <span
@@ -238,7 +239,7 @@ function Table<TData extends RowData>({
                                   />
                                 </span>
                               </When>
-                            </span>
+                            </div>
                           </div>
                         </th>
                       );
