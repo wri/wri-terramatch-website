@@ -25,15 +25,21 @@ export type ScientificNameDto = {
 
 export type EstablishmentsTreesDto = {
   /**
-   * The species that were specified at the establishment of the parent entity.
-   */
-  establishmentTrees: string[];
-  /**
-   * If the entity in this request is a report, the sum totals of previous planting by species.
+   * The species that were specified at the establishment of the parent entity keyed by collection
    *
-   * @example {"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}}
+   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
+   */
+  establishmentTrees: {
+    [key: string]: string[];
+  };
+  /**
+   * If the entity in this request is a report, the sum totals of previous planting by species by collection.
+   *
+   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
    */
   previousPlantingCounts: {
-    [key: string]: PreviousPlantingCountDto;
+    [key: string]: {
+      [key: string]: PreviousPlantingCountDto;
+    };
   } | null;
 };
