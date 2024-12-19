@@ -1,3 +1,4 @@
+import { Box } from "@mui/system";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -5,6 +6,7 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Else, If, Then, When } from "react-if";
 
+import TreeSpeciesTableTF from "@/admin/components/Tables/TreeSpeciesTableTF";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ButtonField from "@/components/elements/Field/ButtonField";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -13,7 +15,7 @@ import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -24,6 +26,7 @@ import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { EstablishmentEntityType } from "@/connections/EstablishmentTrees";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
@@ -131,11 +134,57 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.PPC]}>
+                    <ContextCondition frameworksHide={[Framework.HBF]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
-                    <GenericField label={t("Trees Planted")}>
+                    <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
+                      <TreeSpeciesTableTF
+                        uuid={siteReportUUID}
+                        entity={"site-report" as EstablishmentEntityType}
+                        total={siteReport.total_trees_planted_count}
+                        totalText={t("TOTAL TREES PLANTED (ON REPORT)")}
+                        title={t("Trees Planted")}
+                        countColumnName={t("TREE COUNT")}
+                        collection="tree-planted"
+                      />
+                      <TreeSpeciesTableTF
+                        uuid={siteReportUUID}
+                        entity={"site-report" as EstablishmentEntityType}
+                        total={siteReport.total_non_tree_species_planted_count}
+                        totalText={t("TOTAL SEEDS PLANTED (ON REPORT)")}
+                        title={t("Non-Trees Planted")}
+                        countColumnName={t("NON-TREE COUNT")}
+                        collection="non-tree"
+                      />
+                      <Box paddingX={3} paddingY={1}>
+                        <Text variant="text-24-bold" className="text-darkCustom">
+                          {t("Assisted Natural Regeneration")}
+                        </Text>
+                      </Box>
+                      <Box paddingX={3} paddingY={1}>
+                        <div className="flex items-center gap-1">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00000008]">
+                            <Icon name={IconNames.ASSISTED_NATURAL_REGENERATION} className="text-primary" />
+                          </div>
+                          <Text variant="text-16-semibold" className="text-grey-500">
+                            {t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT)")}:
+                          </Text>
+                          <Text variant="text-24-bold" className="text-black">
+                            {new Intl.NumberFormat("en-US").format(siteReport.total_trees_planted_count!) ?? "N/A"}
+                          </Text>
+                        </div>
+                      </Box>
+                      <Box paddingX={3} paddingY={1}>
+                        <Text variant="text-16-semibold" className="text-grey-500">
+                          {t("DESCRIPTION OF ANR ACTIVITIES")}:
+                        </Text>
+                        <Text variant="text-14-light" className="text-black">
+                          {siteReport.regeneration_description}
+                        </Text>
+                      </Box>
+                    </ContextCondition>
+                    <GenericField label={t("Trees Planted")} frameworksShow={[Framework.PPC, Framework.HBF]}>
                       <TextField
                         className="mt-2"
                         label={t("Total Trees Planted")}
@@ -162,9 +211,6 @@ const SiteReportDetailPage = () => {
                     <GenericField label={t("Disturbances")}>
                       <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
                     </GenericField>
-                    <LongTextField frameworksHide={[Framework.PPC, Framework.HBF]} title={t("Site Changes")}>
-                      {siteReport.polygon_status}
-                    </LongTextField>
                   </PageCard>
                 </PageColumn>
               </PageRow>
@@ -205,7 +251,7 @@ const SiteReportDetailPage = () => {
                 </PageColumn>
               </PageRow>
               <PageRow>
-                <PageColumn>
+                <PageColumn frameworksShow={[Framework.HBF, Framework.PPC]}>
                   <PageCard title={t("Site Report Details")}>
                     <TextField label={t("Site Report name")} value={siteReport.title} />
                     <TextField label={t("Site name")} value={siteReport.site?.name} />

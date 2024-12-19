@@ -208,7 +208,10 @@ export enum IconNames {
   TRASH_TA = "trash-ta",
   EDIT_TA = "edit-ta",
   NON_SCIENTIFIC_NAME = "non-scientific name",
-  NEW_TAG_TREE_SPECIES = "new-tag-tree-species"
+  NEW_TAG_TREE_SPECIES = "new-tag-tree-species",
+  NON_SCIENTIFIC_NAME_CUSTOM = "non-scientific name custom",
+  TREE_DASHABOARD = "tree-dashboard",
+  ASSISTED_NATURAL_REGENERATION = "assisted-natural-regeneration"
 }
 
 export interface IconProps {
