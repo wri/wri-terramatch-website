@@ -79,7 +79,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
+    entity,
+    uuid,
+    collection
+  });
   const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
