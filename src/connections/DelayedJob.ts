@@ -8,9 +8,10 @@ import {
   listDelayedJobsFetchFailed
 } from "@/generated/v3/jobService/jobServicePredicates";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
+import { connectionLoader } from "@/utils/connectionShortcuts";
 
 // --- Delayed Jobs Connection ---
 type DelayedJobsConnection = {
@@ -19,18 +20,13 @@ type DelayedJobsConnection = {
   hasLoadFailed: boolean;
 };
 
-const delayedJobsSelector = (store: ApiDataStore) => {
-  const delayedJobsMap = store.delayedJobs || {};
-  return Object.values(delayedJobsMap).map(resource => resource.attributes);
-};
+const delayedJobsSelector = (store: ApiDataStore) =>
+  Object.values(store.delayedJobs ?? {}).map(resource => resource.attributes);
 
-const delayedJobsLoadFailedSelector = (store: ApiDataStore) => {
-  return listDelayedJobsFetchFailed(store) != null;
-};
+const delayedJobsLoadFailedSelector = (store: ApiDataStore) => listDelayedJobsFetchFailed(store) != null;
 
-const connectionIsLoaded = ({ delayedJobs, hasLoadFailed, isLoading }: DelayedJobsConnection) => {
-  return (delayedJobs != null && delayedJobs.length > 0) || hasLoadFailed || isLoading;
-};
+const connectionIsLoaded = ({ delayedJobs, hasLoadFailed, isLoading }: DelayedJobsConnection) =>
+  (delayedJobs != null && delayedJobs.length > 0) || hasLoadFailed || isLoading;
 
 const delayedJobsConnection: Connection<DelayedJobsConnection> = {
   load: connection => {
@@ -40,18 +36,15 @@ const delayedJobsConnection: Connection<DelayedJobsConnection> = {
     }
   },
   isLoaded: connectionIsLoaded,
-  selector: createSelector(
-    [delayedJobsSelector, store => delayedJobsLoadFailedSelector(store)],
-    (delayedJobs, hasLoadFailed): DelayedJobsConnection => ({
-      delayedJobs,
-      isLoading: delayedJobs == null && !hasLoadFailed,
-      hasLoadFailed
-    })
-  )
+  selector: createSelector([delayedJobsSelector, delayedJobsLoadFailedSelector], (delayedJobs, hasLoadFailed) => ({
+    delayedJobs,
+    isLoading: delayedJobs == null && !hasLoadFailed,
+    hasLoadFailed
+  }))
 };
 
 export const useDelayedJobs = () => {
-  const connection = connectionHook(delayedJobsConnection)();
+  const connection = useConnection(delayedJobsConnection);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -67,37 +60,34 @@ export const useDelayedJobs = () => {
 };
 
 export const triggerBulkUpdate = (jobs: DelayedJobData[]) => {
-  return bulkUpdateJobs({ body: { data: jobs } });
+  console.log("triggerBulkUpdate", jobs);
+  bulkUpdateJobs({ body: { data: jobs } });
 };
 
-const bulkUpdateJobsSelector = (store: ApiDataStore) => {
-  const bulkUpdateState = store.delayedJobs || {};
-  return {
-    isLoading: bulkUpdateJobsIsFetching(store),
-    hasLoadFailed: bulkUpdateJobsFetchFailed(store) != null,
-    response: bulkUpdateState.response
-  };
-};
+const bulkUpdateJobsSelector = (store: ApiDataStore) => ({
+  isLoading: bulkUpdateJobsIsFetching(store),
+  hasLoadFailed: bulkUpdateJobsFetchFailed(store) != null,
+  response: store.delayedJobs
+});
 
 const bulkUpdateJobsConnection: Connection<DelayedJobsConnection, { jobs: DelayedJobData[] }> = {
-  load: async (connection, { jobs }) => {
+  load: (connection, { jobs }) => {
     const isLoaded = connectionBulkUpdateIsLoaded(connection);
     if (!isLoaded) {
-      await bulkUpdateJobs({ body: { data: jobs } });
+      bulkUpdateJobs({ body: { data: jobs } });
     }
   },
 
   isLoaded: state => !state.isLoading,
 
-  selector: createSelector([store => bulkUpdateJobsSelector(store)], ({ isLoading, hasLoadFailed, response }) => ({
+  selector: createSelector(bulkUpdateJobsSelector, ({ isLoading, hasLoadFailed, response }) => ({
     isLoading,
     hasLoadFailed,
     response
   }))
 };
 
-const connectionBulkUpdateIsLoaded = ({ isLoading, hasLoadFailed }: { isLoading: boolean; hasLoadFailed: boolean }) => {
-  return !isLoading && !hasLoadFailed;
-};
+const connectionBulkUpdateIsLoaded = ({ isLoading, hasLoadFailed }: { isLoading: boolean; hasLoadFailed: boolean }) =>
+  !isLoading && !hasLoadFailed;
 
 export const useBulkUpdateJobs = connectionLoader(bulkUpdateJobsConnection);

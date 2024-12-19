@@ -45,7 +45,6 @@ export type Relationships = {
 };
 
 export type StoreResource<AttributeType> = {
-  id?: string;
   attributes: AttributeType;
   // We do a bit of munging on the shape from the API, removing the intermediate "data" member, and
   // ensuring there's always an array, to make consuming the data clientside a little smoother.

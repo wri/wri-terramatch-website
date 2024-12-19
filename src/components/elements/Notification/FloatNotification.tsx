@@ -36,6 +36,7 @@ const FloatNotification = () => {
         }
       };
     });
+    console.log("Should trigger bulk update");
     triggerBulkUpdate(newJobsData);
   };
   useEffect(() => {
@@ -130,9 +131,12 @@ const FloatNotification = () => {
                               color="success-600"
                             />
                           )}
-
                           <Text variant="text-12-semibold" className="text-black">
-                            {item.status === "succeeded"
+                            {item.name === "Polygon Upload"
+                              ? item.status === "succeeded"
+                                ? "Done!"
+                                : ""
+                              : item.status === "succeeded"
                               ? "Done!"
                               : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
                           </Text>
