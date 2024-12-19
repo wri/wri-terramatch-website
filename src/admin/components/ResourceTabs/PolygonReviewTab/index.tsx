@@ -26,7 +26,6 @@ import LinearProgressBarMonitored from "@/components/elements/ProgressBar/Linear
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -623,9 +622,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
-                      <ToolTip title={""} content={"Site Status"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
-                      </ToolTip>
                     </Text>
                     <Text variant="text-14-bold" className="leading-[normal] text-black">
                       {record?.readable_status}
@@ -634,9 +630,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-full">
                     <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Polygon Overview
-                      <ToolTip title={""} content={"Polygon Overview"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
-                      </ToolTip>
                     </Text>
                     <If condition={sitePolygonData.length < total}>
                       <Then>
@@ -654,9 +647,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Add or Edit Polygons
-                      <ToolTip title={""} content={"Add or Edit Polygons"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
-                      </ToolTip>
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
@@ -736,7 +726,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     pagination: { pageSize: 10000000 }
                   }}
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name" },
+                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
@@ -745,15 +735,28 @@ const PolygonReviewTab: FC<IProps> = props => {
                         return (
                           <input
                             placeholder={placeholder}
-                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
                           />
                         );
-                      }
+                      },
+                      meta: { style: { width: "17.63%" } }
                     },
-                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
-                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
-                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
-                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "Target Land Use System",
+                      accessorKey: "target-land-use-system",
+                      meta: { style: { width: "20.63%" } }
+                    },
+                    {
+                      header: "Tree Distribution",
+                      accessorKey: "tree-distribution",
+                      meta: { style: { width: "15.63%" } }
+                    },
+                    {
+                      header: "Planting Start Date",
+                      accessorKey: "planting-start-date",
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
                     {
                       header: "",
                       accessorKey: "ellipse",

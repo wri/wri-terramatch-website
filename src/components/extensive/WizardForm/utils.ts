@@ -44,7 +44,7 @@ export const getSchemaFields = (fields: FormField[]) => {
         }
       });
     } else {
-      schema[field.name] = field.validation?.nullable().label(field.label);
+      schema[field.name] = field.validation?.nullable().label(" ");
     }
 
     if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
