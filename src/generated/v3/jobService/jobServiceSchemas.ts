@@ -41,9 +41,13 @@ export type DelayedJobDto = {
    */
   name: string | null;
   /**
-   * The name of the related entity (e.g., site, project).
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
   entityName?: string | null;
+  /**
+   * The type of the entity (e.g., site, project).
+   */
+  entityType?: string | null;
 };
 
 export type DelayedJobAttributes = {
