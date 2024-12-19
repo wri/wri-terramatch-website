@@ -44,7 +44,13 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   error?: FieldErrors[];
 }
 
-export type TreeSpeciesValue = { uuid?: string; name?: string; taxon_id?: string; amount?: number };
+export type TreeSpeciesValue = {
+  uuid?: string;
+  name?: string;
+  collection?: string;
+  taxon_id?: string;
+  amount?: number;
+};
 
 const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const id = useId();
@@ -74,7 +80,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
+    entity,
+    uuid,
+    collection
+  });
   const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
@@ -83,7 +93,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           uuid: uuidv4(),
           name,
           taxon_id: previousCount.taxonId,
-          amount: 0
+          amount: 0,
+          collection: props.collection
         }))
       );
     }
@@ -101,10 +112,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const handleCreate = useDebounce(
     useCallback(
       (treeValue: TreeSpeciesValue) => {
-        onChange([...value, { ...treeValue, collection }]);
+        onChange([...value, { ...treeValue }]);
         clearErrors();
       },
-      [onChange, value, collection, clearErrors]
+      [onChange, value, clearErrors]
     )
   );
 
@@ -140,7 +151,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         uuid: uuidv4(),
         name: valueAutoComplete,
         taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
-        amount: props.withNumbers ? 0 : undefined
+        amount: props.withNumbers ? 0 : undefined,
+        collection
       });
 
       setValueAutoComplete("");
@@ -291,7 +303,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
+              {isReport ? t("TOTAL PLANTED THIS REPORT:") : t("TREES TO BE PLANTED:")}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}

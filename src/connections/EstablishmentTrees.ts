@@ -12,13 +12,15 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 type EstablishmentTreesConnection = {
-  establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"];
-  previousPlantingCounts?: EstablishmentsTreesDto["previousPlantingCounts"];
+  establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"][string];
+  previousPlantingCounts?: Exclude<EstablishmentsTreesDto["previousPlantingCounts"], null>[string];
 
   establishmentTreesLoadFailed: boolean;
 };
 
-type EstablishmentTreesProps = Partial<EstablishmentTreesFindPathParams>;
+type EstablishmentTreesProps = Partial<EstablishmentTreesFindPathParams> & {
+  collection?: string;
+};
 
 export type EstablishmentEntityType = EstablishmentTreesFindPathParams["entity"] | undefined;
 const establishmentTreesSelector =
@@ -32,8 +34,8 @@ const establishmentTreesLoadFailed =
 
 const connectionIsLoaded = (
   { establishmentTrees, establishmentTreesLoadFailed }: EstablishmentTreesConnection,
-  { entity, uuid }: EstablishmentTreesProps
-) => entity == null || uuid == null || establishmentTrees != null || establishmentTreesLoadFailed;
+  { entity, uuid, collection }: EstablishmentTreesProps
+) => collection == null || entity == null || uuid == null || establishmentTrees != null || establishmentTreesLoadFailed;
 
 const establishmentTreesConnection: Connection<EstablishmentTreesConnection, EstablishmentTreesProps> = {
   load: (connection, props) => {
@@ -45,15 +47,18 @@ const establishmentTreesConnection: Connection<EstablishmentTreesConnection, Est
   isLoaded: connectionIsLoaded,
 
   selector: selectorCache(
-    ({ entity, uuid }) => `${entity}|${uuid}`,
-    ({ entity, uuid }) =>
+    ({ entity, uuid, collection }) => `${entity}|${uuid}|${collection}`,
+    ({ entity, uuid, collection }) =>
       createSelector(
         [establishmentTreesSelector(entity, uuid), establishmentTreesLoadFailed(entity, uuid)],
-        (treesDto, establishmentTreesLoadFailed) => ({
-          establishmentTrees: treesDto?.attributes?.establishmentTrees,
-          previousPlantingCounts: treesDto?.attributes?.previousPlantingCounts,
-          establishmentTreesLoadFailed
-        })
+        (treesDto, establishmentTreesLoadFailed) => {
+          const loadComplete = treesDto?.attributes?.establishmentTrees != null;
+          const establishmentTrees =
+            collection == null || !loadComplete ? undefined : treesDto.attributes.establishmentTrees[collection] ?? [];
+          const previousPlantingCounts =
+            collection == null || !loadComplete ? undefined : treesDto.attributes.previousPlantingCounts?.[collection];
+          return { establishmentTrees, previousPlantingCounts, establishmentTreesLoadFailed };
+        }
       )
   )
 };
