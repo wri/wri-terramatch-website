@@ -47,6 +47,16 @@ const FloatNotification = () => {
       setOpenModalNotification(false);
     }
   }, [notAcknowledgedJobs]);
+  const listOfPolygonsFixed = (data: Record<string, any> | null) => {
+    if (data?.updated_polygons) {
+      const updatedPolygonNames = data.updated_polygons
+        ?.map((p: any) => p.poly_name)
+        .filter(Boolean)
+        .join(", ");
+      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
+    }
+    return null;
+  };
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -88,7 +98,14 @@ const FloatNotification = () => {
                       (item.processedContent === null || item.totalContent === null) &&
                       item.status === "pending" ? (
                         <div style={{ width: "100%" }}>
-                          <LinearProgress className="h-2 rounded-full" />
+                          <LinearProgress
+                            sx={{
+                              height: 9,
+                              borderRadius: 99,
+                              backgroundColor: "#a9e7d6",
+                              "& .MuiLinearProgress-bar": { backgroundColor: "#29c499" }
+                            }}
+                          />
                         </div>
                       ) : (
                         <LinearProgressBar
@@ -101,14 +118,18 @@ const FloatNotification = () => {
                           color="success-600"
                         />
                       )}
-                      {item.name !== "Polygon Upload" && (
-                        <Text variant="text-12-semibold" className="text-black">
-                          {item.status === "succeeded"
-                            ? "100%"
-                            : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
-                        </Text>
-                      )}
+
+                      <Text variant="text-12-semibold" className="text-black">
+                        {item.status === "succeeded"
+                          ? "Done!"
+                          : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
+                      </Text>
                     </div>
+                    {item.status === "succeeded" && (
+                      <Text variant="text-12-light" className="mt-2 text-neutral-500">
+                        {listOfPolygonsFixed(item.payload)}
+                      </Text>
+                    )}
                   </div>
                 ))}
             </div>
