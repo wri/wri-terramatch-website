@@ -5,6 +5,10 @@
  */
 export type DelayedJobDto = {
   /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
    * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
    */
   status: "pending" | "failed" | "succeeded";
@@ -32,6 +36,18 @@ export type DelayedJobDto = {
    * Indicates whether the jobs have been acknowledged (cleared)
    */
   isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+  /**
+   * The type of the entity (e.g., site, project).
+   */
+  entityType?: string | null;
 };
 
 export type DelayedJobAttributes = {
