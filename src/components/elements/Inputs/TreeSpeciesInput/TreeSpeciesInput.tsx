@@ -302,7 +302,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
+              {isReport ? t("TOTAL PLANTED THIS REPORT:") : t("TREES TO BE PLANTED:")}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
