@@ -26,6 +26,7 @@ import LinearProgressBarMonitored from "@/components/elements/ProgressBar/Linear
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -628,6 +629,16 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
+                      <ToolTip
+                        title={""}
+                        content={
+                          "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
+                        }
+                        width="w-64 lg:w-72"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                      </ToolTip>
                     </Text>
                     <Text variant="text-14-bold" className="leading-[normal] text-black">
                       {record?.readable_status}
@@ -636,6 +647,16 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-full">
                     <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Polygon Overview
+                      <ToolTip
+                        title={""}
+                        content={
+                          "This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the “Check Polygon” and “Approve Polygon” features below to validate and approve the remaining polygons."
+                        }
+                        width="w-72 lg:w-80"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                      </ToolTip>
                     </Text>
                     <If condition={sitePolygonData.length < total}>
                       <Then>
