@@ -27,16 +27,17 @@ const FloatNotification = () => {
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
-    const newJobsData: DelayedJobData[] = delayedJobs.map((job: DelayedJobDto) => {
-      return {
-        uuid: job.uuid,
-        type: "delayedJobs",
-        attributes: {
-          isAcknowledged: true
-        }
-      };
-    });
-    console.log("Should trigger bulk update");
+    const newJobsData: DelayedJobData[] = delayedJobs
+      .filter((job: DelayedJobDto) => job.status === "pending")
+      .map((job: DelayedJobDto) => {
+        return {
+          uuid: job.uuid,
+          type: "delayedJobs",
+          attributes: {
+            isAcknowledged: true
+          }
+        };
+      });
     triggerBulkUpdate(newJobsData);
   };
   useEffect(() => {
