@@ -6,6 +6,8 @@ import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
 
+import NonScientificConfirmationModal from "@/components/elements/Inputs/TreeSpeciesInput/NonScientificConfirmationModal";
+import SpeciesAlreadyExistsModal from "@/components/elements/Inputs/TreeSpeciesInput/SpeciesAlreadyExistsModal";
 import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesInput/useAutocompleteSearch";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -28,6 +30,7 @@ import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
 
 export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> {
   title: string;
+  label?: string;
   buttonCaptionSuffix: string;
   withNumbers?: boolean;
   withPreviousCounts: boolean;
@@ -41,45 +44,12 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   error?: FieldErrors[];
 }
 
-export type TreeSpeciesValue = { uuid?: string; name?: string; taxon_id?: string; amount?: number };
-
-const NonScientificConfirmationModal = ({ onConfirm }: { onConfirm: () => void }) => {
-  const t = useT();
-  const { closeModal } = useModalContext();
-
-  return (
-    <div className="margin-4 z-50 m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white">
-      <div className="flex w-full items-center justify-center gap-1 border-b-2 border-neutral-100 py-1">
-        <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 mb-1 h-4 w-4 text-tertiary-600" />
-        <Text variant="text-16-semibold" className="mb-1 text-blueCustom-700">
-          {t("Your input is a not a scientific name")}
-        </Text>
-      </div>
-      <div className="w-full p-4">
-        <div className="w-full rounded-lg border border-dashed bg-neutral-250 p-2">
-          <div className="flex items-center gap-1">
-            <Text variant="text-14-light" className="text-blueCustom-700">
-              {t("You can add this species, but it will be pending review from Admin.")}
-            </Text>
-          </div>
-        </div>
-        <div className="mt-4 flex w-full justify-end gap-3">
-          <Button variant="secondary" onClick={() => closeModal(ModalId.ERROR_MODAL)}>
-            {t("CANCEL")}
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              closeModal(ModalId.ERROR_MODAL);
-              onConfirm();
-            }}
-          >
-            {t("CONFIRM")}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+export type TreeSpeciesValue = {
+  uuid?: string;
+  name?: string;
+  collection?: string;
+  taxon_id?: string;
+  amount?: number;
 };
 
 const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
@@ -110,7 +80,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({ entity, uuid });
+  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
+    entity,
+    uuid,
+    collection
+  });
   const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
@@ -119,7 +93,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           uuid: uuidv4(),
           name,
           taxon_id: previousCount.taxonId,
-          amount: 0
+          amount: 0,
+          collection: props.collection
         }))
       );
     }
@@ -137,10 +112,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const handleCreate = useDebounce(
     useCallback(
       (treeValue: TreeSpeciesValue) => {
-        onChange([...value, { ...treeValue, collection }]);
+        onChange([...value, { ...treeValue }]);
         clearErrors();
       },
-      [onChange, value, collection, clearErrors]
+      [onChange, value, clearErrors]
     )
   );
 
@@ -176,15 +151,19 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
         uuid: uuidv4(),
         name: valueAutoComplete,
         taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
-        amount: props.withNumbers ? 0 : undefined
+        amount: props.withNumbers ? 0 : undefined,
+        collection
       });
 
       setValueAutoComplete("");
       lastInputRef.current?.focus();
     };
 
-    if (!isEmpty(searchResult) && taxonId == null) {
-      // In this case the use had valid values to choose from, but decided to add a value that isn't
+    if (value.find(({ name }) => name === valueAutoComplete) != null) {
+      openModal(ModalId.ERROR_MODAL, <SpeciesAlreadyExistsModal speciesName={valueAutoComplete} />);
+      setValueAutoComplete("");
+    } else if (!isEmpty(searchResult) && taxonId == null) {
+      // In this case the user had valid values to choose from, but decided to add a value that isn't
       // on the list, so they haven't been shown the warning yet.
       openModal(ModalId.ERROR_MODAL, <NonScientificConfirmationModal onConfirm={doAdd} />);
     } else {
@@ -225,7 +204,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   return (
     <InputWrapper
       inputId={id}
-      label={"ADD TREE SPECIES"}
+      label={props.label ?? t("ADD TREE SPECIES")}
       description={props.description}
       containerClassName={props.containerClassName}
       required={props.required}
@@ -324,7 +303,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("SPECIES PLANTED:") : t("TREES TO BE PLANTED:")}
+              {isReport ? t("TOTAL PLANTED THIS REPORT:") : t("TREES TO BE PLANTED:")}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}

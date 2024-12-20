@@ -629,8 +629,15 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                       Site Status
-                      <ToolTip title={""} content={"Site Status"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      <ToolTip
+                        title={""}
+                        content={
+                          "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
+                        }
+                        width="w-64 lg:w-72"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
                       </ToolTip>
                     </Text>
                     <Text variant="text-14-bold" className="leading-[normal] text-black">
@@ -640,8 +647,15 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="w-full">
                     <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Polygon Overview
-                      <ToolTip title={""} content={"Polygon Overview"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
+                      <ToolTip
+                        title={""}
+                        content={
+                          "This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the “Check Polygon” and “Approve Polygon” features below to validate and approve the remaining polygons."
+                        }
+                        width="w-72 lg:w-80"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
                       </ToolTip>
                     </Text>
                     <If condition={sitePolygonData.length < total}>
@@ -660,9 +674,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                   <div className="mb-2">
                     <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Add or Edit Polygons
-                      <ToolTip title={""} content={"Add or Edit Polygons"} width="" trigger="click">
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom" />
-                      </ToolTip>
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
@@ -742,7 +753,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     pagination: { pageSize: 10000000 }
                   }}
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name" },
+                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
@@ -751,15 +762,28 @@ const PolygonReviewTab: FC<IProps> = props => {
                         return (
                           <input
                             placeholder={placeholder}
-                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
                           />
                         );
-                      }
+                      },
+                      meta: { style: { width: "17.63%" } }
                     },
-                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
-                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
-                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
-                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "Target Land Use System",
+                      accessorKey: "target-land-use-system",
+                      meta: { style: { width: "20.63%" } }
+                    },
+                    {
+                      header: "Tree Distribution",
+                      accessorKey: "tree-distribution",
+                      meta: { style: { width: "15.63%" } }
+                    },
+                    {
+                      header: "Planting Start Date",
+                      accessorKey: "planting-start-date",
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
                     {
                       header: "",
                       accessorKey: "ellipse",
