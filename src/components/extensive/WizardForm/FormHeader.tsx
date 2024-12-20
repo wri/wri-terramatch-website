@@ -11,10 +11,14 @@ export interface WizardFormHeaderProps {
   errorMessage?: string;
   onClickSaveAndCloseButton?: () => void;
   title?: string;
+  subtitle?: string;
 }
 
 export const WizardFormHeader = (props: WizardFormHeaderProps) => {
   const t = useT();
+
+  const subtitle =
+    props.subtitle ?? t("Progress: {number} steps complete", { number: `${props.currentStep}/${props.numberOfSteps}` });
 
   return (
     <div className="sticky top-[74px] z-40 flex border-neutral-150 bg-treesHeaderWithOverlay bg-cover bg-no-repeat px-10 py-3 md:py-8">
@@ -27,9 +31,9 @@ export const WizardFormHeader = (props: WizardFormHeaderProps) => {
           )}
           <div className="flex">
             <Text variant="text-14-light" className="overflow-hidden text-ellipsis whitespace-nowrap">
-              <T _str="Progress: {number} steps complete" number={`${props.currentStep}/${props.numberOfSteps}`} />
+              {subtitle}
             </Text>
-            <Text variant="text-14-light">
+            <Text variant="text-14-light" className="pl-1">
               <Switch>
                 <Case condition={!props.formStatus}>{t("Unsaved")}</Case>
                 <Case condition={props.formStatus === "saving"}>{t("Saving…")}</Case>

@@ -60,6 +60,7 @@ export interface DropdownProps {
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
   titleClassname?: string;
+  titleContainerClassName?: string;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -206,7 +207,13 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
               )}
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
-              <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
+              <div
+                className={tw(
+                  "flex items-center gap-2",
+                  variant.titleContainerClassName,
+                  props.titleContainerClassName
+                )}
+              >
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
                   className={tw("w-full", variant.titleClassname, props.titleClassname)}

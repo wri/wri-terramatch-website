@@ -32,6 +32,7 @@ export interface WizardFormProps {
 
   formStatus?: "saving" | "saved";
   title?: string;
+  subtitle?: string;
   errors?: ErrorWrapper<null>;
   summaryOptions?: FormSummaryOptions & {
     downloadButtonText?: string;
@@ -267,6 +268,7 @@ function WizardForm(props: WizardFormProps) {
           errorMessage={props.errors && t("Something went wrong")}
           onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
           title={props.title}
+          subtitle={props.subtitle}
         />
       </When>
       <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0", props.className)}>

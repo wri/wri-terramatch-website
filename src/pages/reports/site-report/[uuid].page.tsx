@@ -139,6 +139,16 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
+                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Description of Survival Rate Calculation")}>
+                        {siteReport.survival_calculation}
+                      </LongTextField>
+                      <LongTextField title={t("Explanation of Survival Rate")}>
+                        {siteReport.survival_description}
+                      </LongTextField>
+                      <LongTextField title={t("Maintenance Activities")}>
+                        {siteReport.maintenance_activities}
+                      </LongTextField>
                       <TreeSpeciesTableTF
                         uuid={siteReportUUID}
                         entity={"site-report" as EstablishmentEntityType}
@@ -152,16 +162,20 @@ const SiteReportDetailPage = () => {
                         uuid={siteReportUUID}
                         entity={"site-report" as EstablishmentEntityType}
                         total={siteReport.total_non_tree_species_planted_count}
-                        totalText={t("TOTAL SEEDS PLANTED (ON REPORT)")}
+                        totalText={t("TOTAL NON-TREES SPECIES PLANTED (ON REPORT)")}
                         title={t("Non-Trees Planted")}
                         countColumnName={t("NON-TREE COUNT")}
                         collection="non-tree"
                       />
-                      <Box paddingX={3} paddingY={1}>
-                        <Text variant="text-24-bold" className="text-darkCustom">
-                          {t("Assisted Natural Regeneration")}
-                        </Text>
-                      </Box>
+                      <TreeSpeciesTableTF
+                        uuid={siteReportUUID}
+                        entity={"site-report" as EstablishmentEntityType}
+                        total={siteReport.total_tree_replanting_count}
+                        totalText={t("TOTAL TREE REPLANTING (ON REPORT)")}
+                        title={t("Tree Replanting")}
+                        countColumnName={t("TREE REPLANTING COUNT")}
+                        collection="replanting"
+                      />
                       <Box paddingX={3} paddingY={1}>
                         <div className="flex items-center gap-1">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00000008]">
@@ -174,6 +188,11 @@ const SiteReportDetailPage = () => {
                             {new Intl.NumberFormat("en-US").format(siteReport.total_trees_planted_count!) ?? "N/A"}
                           </Text>
                         </div>
+                      </Box>
+                      <Box paddingX={3} paddingY={1}>
+                        <Text variant="text-24-bold" className="text-darkCustom">
+                          {t("Assisted Natural Regeneration")}
+                        </Text>
                       </Box>
                       <Box paddingX={3} paddingY={1}>
                         <Text variant="text-16-semibold" className="text-grey-500">
@@ -192,7 +211,7 @@ const SiteReportDetailPage = () => {
                       />
                       <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
                     </GenericField>
-                    <GenericField label={t("Direct Seeding")} frameworksHide={[Framework.HBF]}>
+                    <GenericField label={t("Direct Seeding")} frameworksShow={[Framework.PPC]}>
                       <TextField
                         className="mt-2"
                         label={t("Total Direct Seedings")}
