@@ -25,11 +25,12 @@ const delayedJobsSelector = (store: ApiDataStore) =>
 const delayedJobsLoadFailedSelector = (store: ApiDataStore) => listDelayedJobsFetchFailed(store) != null;
 
 const delayedJobsIsLoaded = ({ delayedJobs, delayedJobsHasFailed, delayedJobsIsLoading }: DelayedJobsConnection) =>
-  (delayedJobs != null && delayedJobs.length > 0) || delayedJobsHasFailed || delayedJobsIsLoading;
+  delayedJobs != null || delayedJobsHasFailed;
 
 const delayedJobsConnection: Connection<DelayedJobsConnection> = {
   load: connection => {
     if (!delayedJobsIsLoaded(connection)) {
+      console.log("list call");
       listDelayedJobs();
     }
   },
@@ -49,6 +50,7 @@ export const useDelayedJobs = () => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
+      console.log("This call");
       listDelayedJobs();
     }, 1500);
 

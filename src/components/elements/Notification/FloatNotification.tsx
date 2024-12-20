@@ -28,7 +28,7 @@ const FloatNotification = () => {
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
     const newJobsData: DelayedJobData[] = delayedJobs
-      .filter((job: DelayedJobDto) => job.status === "pending")
+      .filter((job: DelayedJobDto) => job.status !== "pending")
       .map((job: DelayedJobDto) => {
         return {
           uuid: job.uuid,
