@@ -200,6 +200,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
+      closeModal(ModalId.FIX_POLYGONS);
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Fix Polygons");
       clipPolygons({ pathParams: { uuid: siteUuid } });
