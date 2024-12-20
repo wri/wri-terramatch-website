@@ -13,11 +13,10 @@ import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 
-// --- Delayed Jobs Connection ---
 type DelayedJobsConnection = {
   delayedJobs?: DelayedJobDto[];
-  isLoading: boolean;
-  hasLoadFailed: boolean;
+  delayedJobsIsLoading: boolean;
+  delayedJobsHasFailed: boolean;
 };
 
 const delayedJobsSelector = (store: ApiDataStore) =>
@@ -25,22 +24,24 @@ const delayedJobsSelector = (store: ApiDataStore) =>
 
 const delayedJobsLoadFailedSelector = (store: ApiDataStore) => listDelayedJobsFetchFailed(store) != null;
 
-const connectionIsLoaded = ({ delayedJobs, hasLoadFailed, isLoading }: DelayedJobsConnection) =>
-  (delayedJobs != null && delayedJobs.length > 0) || hasLoadFailed || isLoading;
+const delayedJobsIsLoaded = ({ delayedJobs, delayedJobsHasFailed, delayedJobsIsLoading }: DelayedJobsConnection) =>
+  (delayedJobs != null && delayedJobs.length > 0) || delayedJobsHasFailed || delayedJobsIsLoading;
 
 const delayedJobsConnection: Connection<DelayedJobsConnection> = {
   load: connection => {
-    const isLoaded = connectionIsLoaded(connection);
-    if (!isLoaded) {
+    if (!delayedJobsIsLoaded(connection)) {
       listDelayedJobs();
     }
   },
-  isLoaded: connectionIsLoaded,
-  selector: createSelector([delayedJobsSelector, delayedJobsLoadFailedSelector], (delayedJobs, hasLoadFailed) => ({
-    delayedJobs,
-    isLoading: delayedJobs == null && !hasLoadFailed,
-    hasLoadFailed
-  }))
+  isLoaded: delayedJobsIsLoaded,
+  selector: createSelector(
+    [delayedJobsSelector, delayedJobsLoadFailedSelector],
+    (delayedJobs, delayedJobsHasFailed) => ({
+      delayedJobs,
+      delayedJobsIsLoading: delayedJobs == null && !delayedJobsHasFailed,
+      delayedJobsHasFailed
+    })
+  )
 };
 
 export const useDelayedJobs = () => {
@@ -59,32 +60,39 @@ export const useDelayedJobs = () => {
   return connection;
 };
 
-export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs({ body: { data: jobs } });
+type BulkUpdateJobsConnection = {
+  bulkUpdateJobsIsLoading: boolean;
+  bulkUpdateJobsHasFailed: boolean;
+  updatedJobsResponse?: DelayedJobDto[];
+};
 
 const bulkUpdateJobsSelector = (store: ApiDataStore) => ({
-  isLoading: bulkUpdateJobsIsFetching(store),
-  hasLoadFailed: bulkUpdateJobsFetchFailed(store) != null,
-  response: store.delayedJobs
+  bulkUpdateJobsIsLoading: bulkUpdateJobsIsFetching(store),
+  bulkUpdateJobsHasFailed: bulkUpdateJobsFetchFailed(store) != null,
+  updatedJobsResponse: Object.values(store.delayedJobs ?? {}).map(resource => resource.attributes as DelayedJobDto)
 });
 
-const bulkUpdateJobsConnection: Connection<DelayedJobsConnection, { jobs: DelayedJobData[] }> = {
+const bulkUpdateJobsIsLoaded = ({ bulkUpdateJobsIsLoading, bulkUpdateJobsHasFailed }: BulkUpdateJobsConnection) =>
+  !bulkUpdateJobsIsLoading && !bulkUpdateJobsHasFailed;
+
+const bulkUpdateJobsConnection: Connection<BulkUpdateJobsConnection, { jobs: DelayedJobData[] }> = {
   load: (connection, { jobs }) => {
-    const isLoaded = connectionBulkUpdateIsLoaded(connection);
-    if (!isLoaded) {
+    if (!bulkUpdateJobsIsLoaded(connection)) {
       bulkUpdateJobs({ body: { data: jobs } });
     }
   },
-
-  isLoaded: state => !state.isLoading,
-
-  selector: createSelector(bulkUpdateJobsSelector, ({ isLoading, hasLoadFailed, response }) => ({
-    isLoading,
-    hasLoadFailed,
-    response
-  }))
+  isLoaded: bulkUpdateJobsIsLoaded,
+  selector: createSelector(
+    bulkUpdateJobsSelector,
+    ({ bulkUpdateJobsIsLoading, bulkUpdateJobsHasFailed, updatedJobsResponse }) => ({
+      bulkUpdateJobsIsLoading,
+      bulkUpdateJobsHasFailed,
+      updatedJobsResponse
+    })
+  )
 };
 
-const connectionBulkUpdateIsLoaded = ({ isLoading, hasLoadFailed }: { isLoading: boolean; hasLoadFailed: boolean }) =>
-  !isLoading && !hasLoadFailed;
-
 export const useBulkUpdateJobs = connectionLoader(bulkUpdateJobsConnection);
+
+// Function to trigger bulk update
+export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs({ body: { data: jobs } });
