@@ -17,7 +17,7 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
-import { CHART_TYPES } from "@/constants/dashboardConsts";
+import { CHART_TYPES, TERRAFUND_MRV_LINK } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
@@ -270,7 +270,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           variantSubTitle="text-14-light"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
-            `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in <span class="underline">TerraFund’s MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+            `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
           )}
           widthTooltip="w-52 lg:w-64"
         >

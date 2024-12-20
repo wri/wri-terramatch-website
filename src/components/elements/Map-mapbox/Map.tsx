@@ -9,7 +9,7 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
-import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
+import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -122,6 +122,11 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   setLoader?: (value: boolean) => void;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
+  showViewGallery?: boolean;
+  legendPosition?: ControlMapPosition;
 }
 
 export const MapContainer = ({
@@ -156,12 +161,17 @@ export const MapContainer = ({
   centroids,
   listViewProjects,
   showImagesButton,
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle,
+  showViewGallery = true,
+  legendPosition,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
   const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -197,7 +207,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap(isDashboard);
+    initMap();
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -544,7 +554,12 @@ export const MapContainer = ({
         </When>
         <When condition={selectedPolygonsInCheckbox.length}>
           <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-            <ProcessBulkPolygonsControl entityData={record} />
+            <ProcessBulkPolygonsControl
+              entityData={record}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
+              setAlertTitle={setAlertTitle!}
+            />
           </ControlGroup>
         </When>
         <When condition={isDashboard !== "dashboard"}>
@@ -557,7 +572,13 @@ export const MapContainer = ({
         </ControlGroup>
         <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-            <CheckPolygonControl siteRecord={record} polygonCheck={!siteData} />
+            <CheckPolygonControl
+              siteRecord={record}
+              polygonCheck={!siteData}
+              setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+              isLoadingDelayedJob={isLoadingDelayedJob!}
+              setAlertTitle={setAlertTitle!}
+            />
           </ControlGroup>
         </When>
         <When condition={formMap}>
@@ -602,7 +623,7 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
-        <When condition={!formMap}>
+        <When condition={!formMap && showViewGallery}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
             <When condition={showImagesButton}>
               <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
@@ -618,7 +639,7 @@ export const MapContainer = ({
         </When>
       </When>
       <When condition={showLegend}>
-        <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+        <ControlGroup position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}>
           <FilterControl />
         </ControlGroup>
       </When>

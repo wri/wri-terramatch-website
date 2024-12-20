@@ -11,9 +11,18 @@ export interface StatusPillProps
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   status: Status;
   description?: string;
+  classNameStatusBar?: string;
 }
 
-const StatusBar = ({ title, status, children, description = "", className, ...props }: StatusPillProps) => {
+const StatusBar = ({
+  title,
+  status,
+  children,
+  description = "",
+  className,
+  classNameStatusBar,
+  ...props
+}: StatusPillProps) => {
   const t = useT();
 
   // eslint-disable-next-line no-unused-vars
@@ -48,7 +57,12 @@ const StatusBar = ({ title, status, children, description = "", className, ...pr
 
   return (
     <div {...props} className={classnames(className, statusProps.classNames, "w-full")}>
-      <div className="mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0">
+      <div
+        className={classnames(
+          "mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0",
+          classNameStatusBar
+        )}
+      >
         <div className="flex flex-1 items-center">
           <StatusPill status={status} />
           <div>

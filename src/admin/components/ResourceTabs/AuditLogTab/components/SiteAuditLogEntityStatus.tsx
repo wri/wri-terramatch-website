@@ -63,24 +63,26 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
-      <div>
-        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
-        {(isSite || verifyEntity) && (
-          <Text variant="text-16-bold">
-            History and Discussion for{" "}
-            {viewPD ? (
-              <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
-                {title()}
-              </Link>
-            ) : (
-              <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                {title()}
-              </RaLink>
-            )}
-          </Text>
-        )}
-      </div>
-      <When condition={!!auditLogData}>
+      <When condition={viewPD}>
+        <div>
+          {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
+          {(isSite || verifyEntity) && (
+            <Text variant="text-16-bold">
+              History and Discussion for{" "}
+              {viewPD ? (
+                <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
+                  {title()}
+                </Link>
+              ) : (
+                <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                  {title()}
+                </RaLink>
+              )}
+            </Text>
+          )}
+        </div>
+      </When>
+      <When condition={!!auditLogData && viewPD}>
         <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refresh} />
       </When>
     </div>

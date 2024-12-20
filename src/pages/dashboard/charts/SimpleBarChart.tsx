@@ -17,12 +17,14 @@ type ResturationStrategy = {
 type FormattedData = {
   name: string;
   Value: number;
+  total: number;
 };
 
-const SimpleBarChart = ({ data }: { data: ResturationStrategy[] }) => {
+const SimpleBarChart = ({ data, total }: { data: ResturationStrategy[]; total?: number }) => {
   const formattedData: FormattedData[] = data.map(item => ({
     name: item.label.split(",").join(" + ").replace(/-/g, " "),
-    Value: item.value
+    Value: item.value,
+    total: total ?? 0
   }));
 
   return (

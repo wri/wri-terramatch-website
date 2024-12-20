@@ -8,6 +8,7 @@ interface SitePolygonReviewAsideProps {
   setPolygonFromMap?: any;
   refresh?: () => void;
   mapFunctions: any;
+  totalPolygons?: number;
 }
 
 const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
@@ -18,6 +19,7 @@ const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
       setPolygonFromMap={props?.setPolygonFromMap}
       refresh={props?.refresh}
       mapFunctions={props?.mapFunctions}
+      totalPolygons={props?.totalPolygons}
     />
   </Stack>
 );

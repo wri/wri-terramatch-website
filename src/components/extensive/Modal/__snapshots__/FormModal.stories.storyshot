@@ -39,7 +39,7 @@ exports[`Storyshots Components/Extensive/Modal/FormModal Default 1`] = `
         type="submit"
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           Save
         </span>

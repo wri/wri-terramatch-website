@@ -185,7 +185,7 @@ export const OrganisationShow = () => {
             />
             <NumberField source="trees_grown_total" label="Total Trees Grown" emptyText="Not Provided" />
             <NumberField source="trees_grown_3year" label="Trees Grown in the last 3 years" emptyText="Not Provided" />
-            <ArrayField source="tree_species" label="Tree Species Grown" emptyText="Not Provided">
+            <ArrayField source="tree_species_historical" label="Tree Species Grown" emptyText="Not Provided">
               <Datagrid
                 bulkActionButtons={false}
                 empty={

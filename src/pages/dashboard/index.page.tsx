@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useEffect } from "react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -13,12 +13,12 @@ import {
   CHART_TYPES,
   JOBS_CREATED_CHART_TYPE,
   NO_DATA_INFORMATION,
-  ORGANIZATIONS_TYPES
+  ORGANIZATIONS_TYPES,
+  TERRAFUND_MRV_LINK
 } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
-  getCoverFileUrl,
   getFrameworkName,
   parseDataToObjetive,
   parseHectaresUnderRestorationData
@@ -73,6 +73,7 @@ const Dashboard = () => {
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
     dashboardProjectDetails,
+    isLoadingProjectDetails = false,
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
@@ -84,8 +85,14 @@ const Dashboard = () => {
     isUserAllowed
   } = useDashboardData(filters);
 
-  const dataToggle = ["Absolute", "Relative"];
-  const dataToggleGraphic = ["Table", "Graph"];
+  const dataToggle = [
+    { tooltip: { key: "Absolute", render: "Absolute" } },
+    { tooltip: { key: "Relative", render: "Relative" } }
+  ];
+  const dataToggleGraphic = [
+    { tooltip: { key: "Table", render: "Table" } },
+    { tooltip: { key: "Graph", render: "Graph" } }
+  ];
 
   useEffect(() => {
     refetchTotalSectionHeader();
@@ -319,11 +326,20 @@ const Dashboard = () => {
           <When condition={filters.uuid}>
             <PageCard className="border-0 px-4 py-6" gap={8}>
               <div className="flex items-center">
-                <img
-                  src={getCoverFileUrl(dashboardProjectDetails?.data?.file) ?? "/images/_AJL2963.jpg"}
-                  alt="tree"
-                  className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
-                />
+                <If condition={isLoadingProjectDetails}>
+                  <Then>
+                    <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
+                      <Text variant="text-20-bold">{t("Loading...")}</Text>
+                    </div>
+                  </Then>
+                  <Else>
+                    <img
+                      src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
+                      alt="tree"
+                      className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
+                    />
+                  </Else>
+                </If>
                 <div>
                   <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
                   <Text variant="text-14-light" className="text-darkCustom">
@@ -363,7 +379,7 @@ const Dashboard = () => {
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             variantSubTitle="text-14-light"
             subtitle={t(
-              `The numbers and reports below display data related to Indicator 1: Trees Restored described in <span class="underline">TerraFund's MRV framework</span>. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+              `The numbers and reports below display data related to Indicator 1: Trees Restored described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
             )}
           >
             <SecDashboard
@@ -414,7 +430,7 @@ const Dashboard = () => {
             widthTooltip="w-80 lg:w-96"
             iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
             subtitle={t(
-              `The numbers and reports below display data related to Indicator 3: Jobs Created described in <span class="underline">TerraFund's MRV framework</span>. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+              `The numbers and reports below display data related to Indicator 3: Jobs Created described in ${TERRAFUND_MRV_LINK}. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
           >
             <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">

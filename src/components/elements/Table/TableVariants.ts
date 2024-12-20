@@ -1,5 +1,6 @@
 import {
   VARIANT_PAGINATION_DASHBOARD,
+  VARIANT_PAGINATION_MONITORED,
   VARIANT_PAGINATION_TEXT_16,
   VariantPagination
 } from "@/components/extensive/Pagination/PaginationVariant";
@@ -10,12 +11,16 @@ export interface TableVariant {
   name: string;
   table?: string;
   trHeader: string;
+  thHeaderSort?: string;
+  thHeaderSticky?: string;
   tBody?: string;
   trBody: string;
   tdBody?: string;
   thHeader?: string;
   thead?: string;
   paginationVariant?: VariantPagination;
+  tdBodySticky?: string;
+  iconSort?: string;
 }
 
 export const VARIANT_TABLE_PRIMARY = {
@@ -92,9 +97,9 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   table: "border-collapse",
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-hidden",
-  trHeader: "bg-neutral-150",
+  trHeader: "bg-neutral-150 sticky top-0 z-auto",
   thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0",
+    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
@@ -175,4 +180,23 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
   tdBody: "text-14-light px-2 py-4 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
   thead: "text-14-semibold bg-blueCustom-100",
   paginationVariant: VARIANT_PAGINATION_DASHBOARD
+};
+
+export const VARIANT_TABLE_MONITORED = {
+  table: "w-full border-separate border-spacing-0",
+  name: "border-airtable",
+  tableWrapper: "border-b rounded-lg border-neutral-200",
+  trHeader: "bg-white static z-[1] top-[72px] lg:top-[77px] first:rounded-tl-lg last:rounded-tr-lg first:!border-b-0",
+  thHeader:
+    "border-collapse first:border-l last:border-r last:!border-l-0 first:rounded-tl-lg last:rounded-tr-lg z-[1] sticky top-[77px] lg:top-[77px] text-nowrap first:pl-2 first:pr-2 last:pr-2  border-neutral-200 text-12-semibold px-1.5 border-y py-2 bg-neutral-50",
+  tBody: "",
+  thHeaderSort: "!border-x !place-items-center py-2",
+  trBody: "bg-white border-y border-neutral-200 sticky z-[0] top-[87px] last:border-b",
+  tdBody:
+    "text-12-light px-1.5 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white border-collapse sticky z-[0] top-[87px] first:border-l last:border-r border-neutral-200 ",
+  thead: "bg-white ",
+  paginationVariant: VARIANT_PAGINATION_MONITORED,
+  thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
+  tdBodySticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
+  iconSort: "!w-2.5 !h-2.5 object-cover !ml-0"
 };

@@ -14,7 +14,7 @@ import {
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useState } from "react";
+import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -27,10 +27,14 @@ import Pagination from "@/components/extensive/Pagination";
 import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
 
 declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue> {
-    width?: string;
+  interface ColumnMeta<TData extends RowData, TValue = unknown> {
+    sticky?: boolean;
+    left?: string | number;
     align?: "left" | "center" | "right";
+    data?: TData | TValue;
+    width?: string;
+    className?: string;
+    style?: React.CSSProperties;
   }
 }
 
@@ -90,6 +94,9 @@ function Table<TData extends RowData>({
   const t = useT();
   const [sorting, setSorting] = useState<SortingState>(initialTableState?.sorting ?? []);
   const [filters, setFilters] = useState<FilterValue[]>([]);
+
+  const spanRefs = useRef<HTMLSpanElement[]>([]);
+  const iconRefs = useRef<HTMLSpanElement[]>([]);
 
   const {
     getHeaderGroups,
@@ -152,22 +159,34 @@ function Table<TData extends RowData>({
             <thead className={variant.thead}>
               {getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} className={variant.trHeader}>
-                  {headerGroup.headers.map(
-                    header =>
-                      !header.isPlaceholder && (
+                  {headerGroup.headers.map(header => {
+                    if (!header.isPlaceholder) {
+                      const isSticky = header.column.columnDef.meta?.sticky;
+
+                      return (
                         <th
                           key={header.id}
                           colSpan={header.colSpan}
                           onClick={header.column.getToggleSortingHandler()}
                           className={tw(
                             `text-bold-subtitle-500 whitespace-nowrap px-6 py-4 ${variant.thHeader}`,
-                            classNames({ "cursor-pointer": header.column.getCanSort() })
+
+                            classNames({ "cursor-pointer": header.column.getCanSort() }),
+                            classNames({ [variant.thHeaderSort || ""]: !header.column.getCanSort() }),
+                            classNames({ [variant.thHeaderSticky || ""]: isSticky }),
+                            classNames({
+                              [header.column.columnDef.meta?.className || ""]: header.column.columnDef.meta?.className
+                            })
                           )}
                           align="left"
-                          style={{ width: header.column.columnDef.meta?.width }}
+                          style={
+                            header.column.columnDef.meta?.style
+                              ? header.column.columnDef.meta?.style
+                              : { width: header.column.columnDef.meta?.width }
+                          }
                         >
                           <div
-                            className="flex items-center"
+                            className="inline w-full max-w-full"
                             style={{
                               fontSize: "inherit",
                               fontWeight: "inherit",
@@ -175,25 +194,58 @@ function Table<TData extends RowData>({
                               fontFamily: "inherit"
                             }}
                           >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                            <When condition={header.column.getCanSort()}>
-                              <Icon
-                                name={
-                                  { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
-                                    header.column.getIsSorted() as string
-                                  ] ?? IconNames.SORT
-                                }
-                                className="ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]"
-                                width={11}
-                                height={14}
-                              />
-                            </When>
+                            <div
+                              className="font-inherit relative w-full max-w-full"
+                              style={{
+                                paddingRight: `${iconRefs.current[header.index]?.getBoundingClientRect().width}px`
+                              }}
+                            >
+                              <span
+                                className="font-inherit "
+                                ref={el => {
+                                  if (
+                                    el &&
+                                    !spanRefs.current.includes(el) &&
+                                    flexRender(header.column.columnDef.header, header.getContext())
+                                  ) {
+                                    spanRefs.current.push(el);
+                                  }
+                                }}
+                              >
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+                              </span>
+                              <When condition={header.column.getCanSort()}>
+                                <span
+                                  ref={el => {
+                                    if (el && !iconRefs.current.includes(el)) {
+                                      iconRefs.current.push(el);
+                                    }
+                                  }}
+                                  className="absolute left-[calc(100%+10px)] top-1/2 z-auto -translate-y-1/2 transform"
+                                  style={{ left: `${spanRefs.current[header.index]?.getBoundingClientRect().width}px` }}
+                                >
+                                  <Icon
+                                    name={
+                                      { asc: IconNames.SORT_UP, desc: IconNames.SORT_DOWN }[
+                                        header.column.getIsSorted() as string
+                                      ] ?? IconNames.SORT
+                                    }
+                                    className={classNames(
+                                      "ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
+                                      variant.iconSort
+                                    )}
+                                    width={11}
+                                    height={14}
+                                  />
+                                </span>
+                              </When>
+                            </div>
                           </div>
                         </th>
-                      )
-                  )}
+                      );
+                    }
+                    return null;
+                  })}
                 </tr>
               ))}
             </thead>
@@ -261,9 +313,11 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
     [cell.getValue()]
   );
 
+  const isSticky = cell.column.columnDef.meta?.sticky;
+
   return (
     <td
-      className={classNames("text-normal-subtitle-400", variant.tdBody)}
+      className={classNames("text-normal-subtitle-400", variant.tdBody, { [variant.tdBodySticky || ""]: isSticky })}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
     >

@@ -24,6 +24,7 @@ import Log from "@/utils/log";
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
+import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
 type EditPolygon = {
@@ -31,6 +32,11 @@ type EditPolygon = {
   uuid: string;
   primary_uuid?: string;
 };
+
+type DataPolygonOverview = {
+  status: string;
+  count: number;
+}[];
 
 type PopupComponentProps = {
   feature: mapboxgl.MapboxGeoJSONFeature;
@@ -760,7 +766,15 @@ export const addLayerStyle = (
   moveDeleteLayers(map);
 };
 
-export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
+export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) => {
+  if (currentStyle === MapStyle.Street) {
+    map.setProjection("mercator");
+  } else if (currentStyle === MapStyle.Satellite) {
+    map.setProjection("globe");
+  }
+};
+
+export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, currentStyle = MapStyle.Satellite) => {
   if (map && bbox) {
     map.fitBounds(bbox, {
       padding: hasControls ? 100 : 30,
@@ -818,6 +832,35 @@ export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: s
     cb(result);
   });
 }
+
+export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOverview => {
+  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
+
+  const statusCountMap: Record<string, number> = {};
+
+  sitePolygonData.forEach(item => {
+    let statusKey = item.status?.toLowerCase();
+
+    if (statusKey) {
+      if (statusKey === "needs-more-information") {
+        statusKey = "Needs Info";
+      } else {
+        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
+      }
+
+      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
+    }
+  });
+
+  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
+    status,
+    count
+  }));
+
+  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+
+  return orderedData;
+};
 
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");

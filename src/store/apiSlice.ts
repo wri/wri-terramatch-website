@@ -5,6 +5,8 @@ import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
+import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 export type PendingErrorState = {
@@ -53,9 +55,11 @@ type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeTyp
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
-export const RESOURCES = ["logins", "organisations", "users"] as const;
+export const RESOURCES = ["delayedJobs", "establishmentTrees", "logins", "organisations", "users"] as const;
 
 type ApiResources = {
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
+  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
@@ -81,6 +85,10 @@ export type ApiDataStore = ApiResources & {
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
   };
+  total_content: number;
+  processed_content: number;
+  progress_message: string;
+  abort_delayed_job: boolean;
 };
 
 export const INITIAL_STATE = {
@@ -94,7 +102,11 @@ export const INITIAL_STATE = {
       acc[method] = {};
       return acc;
     }, {}) as ApiPendingStore
-  }
+  },
+  total_content: 0,
+  processed_content: 0,
+  progress_message: "",
+  abort_delayed_job: false
 } as ApiDataStore;
 
 type ApiFetchStartingProps = {
@@ -184,6 +196,22 @@ export const apiSlice = createSlice({
       // so we can safely fake a login into the store when we have an authToken already set in a
       // cookie on app bootup.
       state.logins["1"] = { attributes: { token: authToken } };
+    },
+
+    setTotalContent: (state, action: PayloadAction<number>) => {
+      state.total_content = action.payload;
+    },
+
+    setProgressContent: (state, action: PayloadAction<number>) => {
+      state.processed_content = action.payload;
+    },
+
+    setAbortDelayedJob: (state, action: PayloadAction<boolean>) => {
+      state.abort_delayed_job = action.payload;
+    },
+
+    setProgressMessage: (state, action: PayloadAction<string>) => {
+      state.progress_message = action.payload;
     }
   },
 
@@ -211,6 +239,11 @@ export const apiSlice = createSlice({
       if (payloadState.meta.meUserId != null) {
         state.meta.meUserId = payloadState.meta.meUserId;
       }
+
+      state.total_content = payloadState.total_content ?? state.total_content;
+      state.processed_content = payloadState.processed_content ?? state.processed_content;
+      state.progress_message = payloadState.progress_message ?? state.progress_message;
+      state.abort_delayed_job = payloadState.abort_delayed_job ?? state.abort_delayed_job;
     });
   }
 });
@@ -260,5 +293,21 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
+  }
+
+  static addTotalContent(total_content: number) {
+    this.redux.dispatch(apiSlice.actions.setTotalContent(total_content));
+  }
+
+  static addProgressContent(processed_content: number) {
+    this.redux.dispatch(apiSlice.actions.setProgressContent(processed_content));
+  }
+
+  static addProgressMessage(progress_message: string) {
+    this.redux.dispatch(apiSlice.actions.setProgressMessage(progress_message));
+  }
+
+  static abortDelayedJob(abort_delayed_job: boolean) {
+    this.redux.dispatch(apiSlice.actions.setAbortDelayedJob(abort_delayed_job));
   }
 }

@@ -48,7 +48,7 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             View Feedback
           </span>
@@ -57,7 +57,7 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Learn More
           </span>
@@ -66,7 +66,7 @@ exports[`Storyshots Components/Elements/StatusBar Awaiting 1`] = `
           className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Setup Project
           </span>
@@ -125,7 +125,7 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             View Feedback
           </span>
@@ -134,7 +134,7 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Learn More
           </span>
@@ -143,7 +143,7 @@ exports[`Storyshots Components/Elements/StatusBar Default 1`] = `
           className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Setup Project
           </span>
@@ -202,7 +202,7 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             View Feedback
           </span>
@@ -211,7 +211,7 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Learn More
           </span>
@@ -220,7 +220,7 @@ exports[`Storyshots Components/Elements/StatusBar Draft 1`] = `
           className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Setup Project
           </span>
@@ -279,7 +279,7 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             View Feedback
           </span>
@@ -288,7 +288,7 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Learn More
           </span>
@@ -297,7 +297,7 @@ exports[`Storyshots Components/Elements/StatusBar Error 1`] = `
           className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Setup Project
           </span>
@@ -356,7 +356,7 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             View Feedback
           </span>
@@ -365,7 +365,7 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
           className="bg-white border border-neutral-1000 hover:border-primary-500 disabled:border-neutral-1000 py-[10.5px] rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Learn More
           </span>
@@ -374,7 +374,7 @@ exports[`Storyshots Components/Elements/StatusBar Warning 1`] = `
           className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content"
         >
           <span
-            className="flex items-center text-bold-caption-200"
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
           >
             Setup Project
           </span>

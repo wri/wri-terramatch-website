@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { TERRAFUND_MONITORING_LINK } from "@/constants/dashboardConsts";
 
 import TabCarouselAboutUs from "../components/TabCarouselAboutUs";
 
@@ -74,7 +75,7 @@ const Homepage = () => {
                   organizations that grow trees, their financial and government partners, and the wider public – can
                   access data and insights about projects that are tracked through&nbsp;
                   <a
-                    href="https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework"
+                    href={TERRAFUND_MONITORING_LINK}
                     target="_blank"
                     className="text-14-bold underline underline-offset-4"
                     rel="noreferrer"
@@ -96,8 +97,7 @@ const Homepage = () => {
                   Landscapes programme of 2024.
                 </Text>
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  Please note that the dashboard is pre-filtered upon page load to display only projects from the
-                  TerraFund Landscapes programme. Each project reports 12 times over six years.
+                  Each project reports 12 times over six years.
                 </Text>
                 <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
                   {t("Open Dashboard")}
@@ -148,9 +148,7 @@ const Homepage = () => {
               >
                 here
               </a>{" "}
-              or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen. The dashboard is
-              pre-filtered to display projects from the TerraFund Landscapes programme. This filter can be removed by
-              using the clear filters button.
+              or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen.
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
@@ -183,7 +181,7 @@ const Homepage = () => {
               >
                 Lake Kivu & Rusizi River Basin
               </a>
-              . These pages show relevant projects from both programmes, Top 100 and Landsacpes.
+              . These pages show relevant projects from both programmes, Top 100 and Landscapes.
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
@@ -263,7 +261,7 @@ const Homepage = () => {
             <Text variant="text-14-light" as="p" className="text-darkCustom-150">
               The dashboard displays data collected through the{" "}
               <a
-                href="https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework"
+                href={TERRAFUND_MONITORING_LINK}
                 target="_blank"
                 className="text-14-bold underline underline-offset-4"
                 rel="noreferrer"

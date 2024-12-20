@@ -90,10 +90,12 @@ module.exports = {
         600: "#29C499",
         500: "#009344",
         450: "#3BAE5B",
+        410: "#27E045",
         400: "#9EDD8F",
         300: "#C7ECC4",
         200: "#E0F3E9",
-        100: "#EFF9F4"
+        100: "#EFF9F4",
+        40: "#a9e7d6"
       },
       neutral: {
         DEFAULT: "#9B9B9B",
@@ -106,6 +108,7 @@ module.exports = {
         400: "#B1B1B1",
         450: "#CCD4D6",
         300: "#D8D8D8",
+        250: "#F7F7F7",
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
@@ -150,6 +153,7 @@ module.exports = {
       },
       darkCustom: {
         DEFAULT: "#353535",
+        300: "#525866",
         200: "#84959D",
         150: "#5D5D59",
         100: "#637579",
@@ -164,7 +168,10 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
-        100: "#8096D3"
+        500: "#4249E6",
+        100: "#8096D3",
+        60: "#ddddfb",
+        50: "#ededfd"
       },
       grey: {
         100: "#F4F4F4",
@@ -178,6 +185,7 @@ module.exports = {
         740: "#E0E0E0",
         750: "#E6EAEB",
         800: "#E9EDF0",
+        850: "#F0F3FA",
         900: "#F6FAFD",
         950: "#ebebeb",
         1000: "#DFE3E8"
@@ -212,6 +220,7 @@ module.exports = {
         DEFAULT: "#FF6464",
         100: "#CBC8D2",
         200: "#E42222",
+        300: "#D33838",
         900: "#8D2D0E",
         1000: "#632424"
       }
@@ -220,7 +229,14 @@ module.exports = {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       all: "0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 4px rgba(0, 0, 0, 0.06)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
-      none: "0 0 #0000"
+      none: "0 0 #0000",
+      "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
+    },
+    dropShadow: {
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
     },
     fontFamily: {
       primary: ["Inter"],

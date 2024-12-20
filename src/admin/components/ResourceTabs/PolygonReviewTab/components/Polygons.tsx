@@ -1,4 +1,6 @@
+import { Box, LinearProgress } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
@@ -40,6 +42,7 @@ export interface IPolygonProps {
   setPolygonFromMap?: any;
   refresh?: () => void;
   mapFunctions: any;
+  totalPolygons?: number;
 }
 
 export const polygonData = [
@@ -62,13 +65,13 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
-  const { setIsUserDrawingEnabled, setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
+  const sitePolygonData = context?.sitePolygonData;
+  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
     setPolygonMenu(props.menu);
   }, [props.menu]);
-
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
@@ -200,6 +203,7 @@ const Polygons = (props: IPolygonProps) => {
     setSelectedPolygonsInCheckbox(checkedUuids);
   };
 
+  const polygonSitePolygonCount = sitePolygonData?.length ?? 0;
   return (
     <div>
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
@@ -217,22 +221,41 @@ const Polygons = (props: IPolygonProps) => {
           />
         )}
       </Drawer>
-      <div className="mb-4 flex flex-col gap-1">
+      <div className="mb-4 flex items-center justify-between">
         <Text variant="text-16-bold" className="text-darkCustom">
           Polygons
         </Text>
-        <div className="flex items-center justify-between">
-          <Button variant="text" onClick={() => setIsUserDrawingEnabled?.(true)}>
-            <Text variant="text-14-semibold" className="flex items-center gap-1">
-              Add Polygon <Icon name={IconNames.PLUS_CIRCLE} className="h-4 w-4" />
-            </Text>
-          </Button>
-          <Button variant="white-border" onClick={() => setOpenCollapseAll(!openCollapseAll)} className="mb-2">
-            {openCollapseAll ? "SHRINK" : "EXPAND"}
+        <div className="flex items-center justify-start">
+          <Button
+            variant="white-border"
+            onClick={() => setOpenCollapseAll(!openCollapseAll)}
+            className="flex gap-1.5 !rounded-lg !capitalize"
+          >
+            {openCollapseAll ? (
+              <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            ) : (
+              <Icon name={IconNames.IC_EXPAND} className="mr-1 h-[0.8rem] w-[0.8rem]" />
+            )}
+            {openCollapseAll ? "Shrink  " : "Expand"}
           </Button>
         </div>
       </div>
-      <div ref={containerRef} className="flex max-h-[150vh] flex-col gap-2 overflow-auto">
+      <div className="mb-4 flex flex-col gap-1">
+        <When condition={props.totalPolygons ?? 0 > 0}>
+          <Text variant="text-14" className="text-darkCustom">
+            <span className="font-bold">{polygonSitePolygonCount}</span> of{" "}
+            <span className="font-bold">{props.totalPolygons}</span> polygons loaded
+          </Text>
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress
+              variant="determinate"
+              value={(polygonSitePolygonCount / (props.totalPolygons ?? 1)) * 100}
+              sx={{ borderRadius: 5 }}
+            />
+          </Box>
+        </When>
+      </div>
+      <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
         {polygonMenu.map(item => (
           <div key={item.id}>
             <PolygonItem

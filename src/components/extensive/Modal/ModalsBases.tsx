@@ -32,6 +32,15 @@ export const ModalBaseImageGallery = createModalComponent(
 export const ModalBaseWithClose = createModalComponent(commonBaseClasses + " max-w-[800px] p-8", "margin-4 z-50");
 
 export const ModalBaseWithLogo = createModalComponent(commonBaseClasses + " h-[95%] w-[776px]", "margin-4 z-50");
+export const ModalBaseWithMonitored = createModalComponent(
+  commonBaseClasses + " max-h-[95%] w-[776px]",
+  "margin-4 z-50"
+);
+
+export const ModalBaseWithLogoAuto = createModalComponent(
+  commonBaseClasses + " h-auto w-[700px] !max-h-max",
+  "margin-4 z-50"
+);
 
 export const ModalBaseWithMap = createModalComponent(
   commonBaseClasses + " h-[504px] w-[80vw] overflow-hidden wide:h-[700px]",

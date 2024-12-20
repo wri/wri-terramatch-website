@@ -35,6 +35,9 @@ if (typeof window !== "undefined") {
   (window as any).terramatch = { environment };
 }
 
+import FloatNotificationProvider from "@/context/floatNotification.provider";
+import { MonitoredDataProvider } from "@/context/monitoredData.provider";
+
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
 
 const CookieBanner = dynamic(() => import("@/components/extensive/CookieBanner/CookieBanner"), {
@@ -92,12 +95,16 @@ const _App = ({ Component, ...rest }: AppProps) => {
       <ReduxProvider store={store}>
         <WrappedQueryClientProvider>
           <LoadingProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                <ModalRoot />
-                <Component {...pageProps} />
-              </ModalProvider>
-            </NotificationProvider>
+            <FloatNotificationProvider>
+              <NotificationProvider>
+                <MonitoredDataProvider>
+                  <ModalProvider>
+                    <ModalRoot />
+                    <Component {...pageProps} />
+                  </ModalProvider>
+                </MonitoredDataProvider>
+              </NotificationProvider>
+            </FloatNotificationProvider>
           </LoadingProvider>
         </WrappedQueryClientProvider>
       </ReduxProvider>
