@@ -134,9 +134,21 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.HBF]}>
+                    <ContextCondition frameworksShow={[Framework.PPC]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
+                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Description of Survival Rate Calculation")}>
+                        {siteReport.survival_calculation}
+                      </LongTextField>
+                      <LongTextField title={t("Explanation of Survival Rate")}>
+                        {siteReport.survival_description}
+                      </LongTextField>
+                      <LongTextField title={t("Maintenance Activities")}>
+                        {siteReport.maintenance_activities}
+                      </LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
                       <TreeSpeciesTableTF
