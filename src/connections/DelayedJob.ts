@@ -24,13 +24,12 @@ const delayedJobsSelector = (store: ApiDataStore) =>
 
 const delayedJobsLoadFailedSelector = (store: ApiDataStore) => listDelayedJobsFetchFailed(store) != null;
 
-const delayedJobsIsLoaded = ({ delayedJobs, delayedJobsHasFailed, delayedJobsIsLoading }: DelayedJobsConnection) =>
+const delayedJobsIsLoaded = ({ delayedJobs, delayedJobsHasFailed }: DelayedJobsConnection) =>
   delayedJobs != null || delayedJobsHasFailed;
 
 const delayedJobsConnection: Connection<DelayedJobsConnection> = {
   load: connection => {
     if (!delayedJobsIsLoaded(connection)) {
-      console.log("list call");
       listDelayedJobs();
     }
   },
@@ -50,7 +49,6 @@ export const useDelayedJobs = () => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log("This call");
       listDelayedJobs();
     }, 1500);
 
@@ -96,5 +94,4 @@ const bulkUpdateJobsConnection: Connection<BulkUpdateJobsConnection, { jobs: Del
 
 export const useBulkUpdateJobs = connectionLoader(bulkUpdateJobsConnection);
 
-// Function to trigger bulk update
 export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs({ body: { data: jobs } });
