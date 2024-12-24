@@ -17,24 +17,17 @@ type DelayedJobCombinedConnection = {
   updatedJobsResponse?: DelayedJobDto[];
 };
 
-const delayedJobsSelector = (store: ApiDataStore) =>
-  Object.values(store.delayedJobs ?? {}).map(resource => resource.attributes);
-
-const bulkUpdateJobsSelector = (store: ApiDataStore) => ({
-  bulkUpdateJobsIsLoading: bulkUpdateJobsIsFetching(store),
-  bulkUpdateJobsHasFailed: bulkUpdateJobsFetchFailed(store) != null,
-  updatedJobsResponse: Object.values(store.delayedJobs ?? {}).map(resource => resource.attributes as DelayedJobDto)
-});
+const delayedJobsSelector = (store: ApiDataStore) => store.delayedJobs;
 
 const combinedSelector = createSelector(
-  [delayedJobsSelector, bulkUpdateJobsSelector],
-  (delayedJobs, { bulkUpdateJobsIsLoading, bulkUpdateJobsHasFailed, updatedJobsResponse }) => ({
-    delayedJobs,
-    delayedJobsIsLoading: delayedJobs == null && !bulkUpdateJobsHasFailed,
-    delayedJobsHasFailed: bulkUpdateJobsHasFailed,
+  [delayedJobsSelector, bulkUpdateJobsIsFetching, bulkUpdateJobsFetchFailed],
+  (delayedJobs, bulkUpdateJobsIsLoading, bulkUpdateJobsFailure) => ({
+    delayedJobs: Object.values(delayedJobs ?? {}).map(resource => resource.attributes),
+    delayedJobsIsLoading: delayedJobs == null && !bulkUpdateJobsFailure,
+    delayedJobsHasFailed: Boolean(bulkUpdateJobsFailure),
     bulkUpdateJobsIsLoading,
-    bulkUpdateJobsHasFailed,
-    updatedJobsResponse
+    bulkUpdateJobsHasFailed: bulkUpdateJobsFailure != null,
+    updatedJobsResponse: Object.values(delayedJobs ?? {}).map(resource => resource.attributes as DelayedJobDto)
   })
 );
 

@@ -1,4 +1,5 @@
 import { LinearProgress } from "@mui/material";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -22,6 +23,7 @@ export interface FloatNotificationProps {
 }
 
 const FloatNotification = () => {
+  const t = useT();
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
@@ -76,15 +78,15 @@ const FloatNotification = () => {
           )}
         >
           <Text variant="text-20-bold" className="border-b border-grey-350 p-6 text-blueCustom-900">
-            Notifications
+            {t("Notifications")}
           </Text>
           <div className="flex flex-col overflow-hidden px-6 pb-8 pt-6">
             <div className="mb-2 flex items-center justify-between">
               <Text variant="text-14-light" className="text-neutral-400">
-                Actions Taken
+                {t("Actions Taken")}
               </Text>
               <Text variant="text-12-semibold" className="text-primary" onClick={clearJobs}>
-                Clear completed
+                {t("Clear completed")}
               </Text>
             </div>
             <div className="-mr-2 flex flex-1 flex-col gap-3 overflow-auto pr-2">
@@ -104,7 +106,7 @@ const FloatNotification = () => {
                     <div className="mt-2">
                       {item.status === "failed" ? (
                         <Text variant="text-12-semibold" className="text-error-600">
-                          {item.payload ? getErrorMessageFromPayload(item.payload) : "Failed to complete"}
+                          {item.payload ? t(getErrorMessageFromPayload(item.payload)) : t("Failed to complete")}
                         </Text>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -135,10 +137,10 @@ const FloatNotification = () => {
                           <Text variant="text-12-semibold" className="text-black">
                             {item.name === "Polygon Upload"
                               ? item.status === "succeeded"
-                                ? "Done!"
+                                ? t("Done!")
                                 : ""
                               : item.status === "succeeded"
-                              ? "Done!"
+                              ? t("Done!")
                               : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
                           </Text>
                         </div>
