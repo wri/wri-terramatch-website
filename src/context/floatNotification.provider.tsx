@@ -34,7 +34,7 @@ const FloatNotificationProvider = ({ children }: FloatNotificationProviderProps)
   return (
     <FloatNotificationContext.Provider value={value}>
       {children}
-      <FloatNotification data={data} />
+      <FloatNotification />
     </FloatNotificationContext.Provider>
   );
 };
