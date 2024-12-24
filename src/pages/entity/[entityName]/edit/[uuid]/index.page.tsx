@@ -18,7 +18,7 @@ const EditEntityPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  const { data: entityData } = useGetV2ENTITYUUID({
+  const { data: entityData, isLoading: getEntityLoading } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
   const entity = entityData?.data ?? {}; //Do not abuse this since forms should stay entity agnostic!
@@ -37,7 +37,7 @@ const EditEntityPage = () => {
   return (
     <BackgroundLayout>
       <FrameworkProvider frameworkKey={entity.framework_key}>
-        <LoadingContainer loading={isLoading}>
+        <LoadingContainer loading={isLoading || getEntityLoading}>
           <EditEntityForm {...{ entityName, entityUUID, entity, formData }} />
         </LoadingContainer>
         <br />
