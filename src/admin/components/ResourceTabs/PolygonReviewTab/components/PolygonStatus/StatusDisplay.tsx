@@ -218,7 +218,7 @@ const StatusDisplay = ({
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus == AuditLogEntityEnum.Polygon ? record?.title : removeUnderscore(name)}.
+        {titleStatus == AuditLogEntityEnum.Polygon ? record?.title || record?.poly_name : removeUnderscore(name)}.
       </Text>
     </div>
   );
