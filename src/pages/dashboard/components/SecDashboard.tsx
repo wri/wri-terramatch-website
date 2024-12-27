@@ -225,17 +225,20 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
           <BlurContainer
             isBlur={
-              (isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)
+              (isUserAllowed ?? false) &&
+              !isLoading &&
+              isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart?.restorationStrategiesRepresented)
             }
             textInformation={noDataInformation}
             className="ml-[40px] lg:ml-[35px]"
           >
             <SimpleBarChart
               data={
-                isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart)
+                isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart?.restorationStrategiesRepresented)
                   ? DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART
-                  : dataForChart
+                  : dataForChart?.restorationStrategiesRepresented
               }
+              total={dataForChart?.totalSection?.totalHectaresRestored}
             />
           </BlurContainer>
         </When>

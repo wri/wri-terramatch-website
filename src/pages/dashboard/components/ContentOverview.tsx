@@ -296,7 +296,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={{}}
             classNameBody="ml-[-40px] lg:ml-[-35px]"
             chartType={CHART_TYPES.simpleBarChart}
-            dataForChart={dataHectaresUnderRestoration.restorationStrategiesRepresented}
+            dataForChart={dataHectaresUnderRestoration}
             tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
             isUserAllowed={isUserAllowed}
             isLoading={isLoadingHectaresUnderRestoration}

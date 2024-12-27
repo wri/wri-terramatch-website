@@ -4,7 +4,7 @@ import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recha
 import { calculateTotalsVolunteers, ChartDataVolunteers, COLORS_VOLUNTEERS } from "@/utils/dashboardUtils";
 
 import { CustomLegendVolunteers } from "./CustomLegendVolunteers";
-import { CustomTooltip } from "./CustomTooltip";
+import { CustomTooltip } from "./CustomTooltipJobsCreated";
 
 const DoughnutChart: React.FC<{ data: ChartDataVolunteers }> = ({ data }) => {
   const { chartData, total } = data;

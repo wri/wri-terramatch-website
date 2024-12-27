@@ -5,7 +5,7 @@ import { calculateTotals, GroupedBarChartData } from "@/utils/dashboardUtils";
 
 import { CustomBar } from "./CustomBarJobsCreated";
 import { CustomLegend } from "./CustomLegendJobsCreated";
-import { CustomTooltip } from "./CustomTooltip";
+import { CustomTooltip } from "./CustomTooltipJobsCreated";
 import { CustomXAxisTick } from "./CustomXAxisTickJobsCreated";
 import { CustomYAxisTick } from "./CustomYAxisTickJobsCreated";
 
