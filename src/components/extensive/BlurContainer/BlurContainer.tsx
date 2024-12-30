@@ -5,18 +5,17 @@ import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
-import { useLogout } from "@/hooks/logout";
 
 export interface BlurContainerProps {
   isBlur: boolean;
   textType?: string;
   children: React.ReactNode;
   className?: string;
+  logout?: () => void;
 }
 
-const BlurContainer = ({ isBlur, textType, children, className }: BlurContainerProps) => {
+const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurContainerProps) => {
   const t = useT();
-  const logout = useLogout();
 
   if (!isBlur) {
     return <>{children}</>;

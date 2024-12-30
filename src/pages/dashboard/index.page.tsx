@@ -17,6 +17,7 @@ import {
   TEXT_TYPES
 } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLogout } from "@/hooks/logout";
 import {
   formatLabelsVolunteers,
   getFrameworkName,
@@ -59,6 +60,7 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
+  const logout = useLogout();
   const { filters, setFilters, frameworks } = useDashboardContext();
   const {
     dashboardHeader,
@@ -297,6 +299,7 @@ const Dashboard = () => {
           <BlurContainer
             isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
             textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
+            logout={logout}
           >
             <div className="grid w-full grid-cols-3 gap-4">
               {dashboardHeader.map((item, index) => (
