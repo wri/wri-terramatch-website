@@ -14,7 +14,7 @@ export const CustomLabel: React.FC<any> = props => {
       dominantBaseline={isSmallBar ? "bottom" : "middle"}
       className="text-12"
     >
-      {`${value.toFixed(0)} ha`}
+      {`${Math.round(value).toLocaleString()} ha`}
     </text>
   );
 };
