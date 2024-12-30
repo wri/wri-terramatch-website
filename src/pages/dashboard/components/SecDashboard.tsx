@@ -18,7 +18,8 @@ import {
   DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
   DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART,
-  DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED
+  DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED,
+  TEXT_TYPES
 } from "@/constants/dashboardConsts";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
@@ -83,10 +84,6 @@ const SecDashboard = ({
   >([]);
   const [treesPlantedByYear, setTreesPlantedByYear] = useState<{ name: string; values: any }[]>([]);
   const t = useT();
-
-  const noDataInformation = t(
-    "Data is still being collected and checked. This visual will remain empty until data is properly quality assured."
-  );
 
   const tableColumns = [
     {
@@ -179,7 +176,7 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.multiLineChart}>
           <BlurContainer
             isBlur={(isUserAllowed ?? false) && !isLoading && isEmptyChartData(chartType ?? "", treesPlantedByYear)}
-            textInformation={noDataInformation}
+            textType={TEXT_TYPES.NO_DATA}
             className="ml-[20px] lg:ml-[15px]"
           >
             <MultiLineChart
@@ -197,7 +194,7 @@ const SecDashboard = ({
             isBlur={
               (isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
             }
-            textInformation={noDataInformation}
+            textType={TEXT_TYPES.NO_DATA}
           >
             <GroupedBarChart
               data={
@@ -211,7 +208,7 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <BlurContainer
             isBlur={(isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
-            textInformation={noDataInformation}
+            textType={TEXT_TYPES.NO_DATA}
           >
             <DoughnutChart
               data={
@@ -229,7 +226,7 @@ const SecDashboard = ({
               !isLoading &&
               isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart?.restorationStrategiesRepresented)
             }
-            textInformation={noDataInformation}
+            textType={TEXT_TYPES.NO_DATA}
             className="ml-[40px] lg:ml-[35px]"
           >
             <SimpleBarChart
@@ -297,7 +294,7 @@ const SecDashboard = ({
               !isLoading &&
               (data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0)
             }
-            textInformation={noDataInformation}
+            textType={TEXT_TYPES.NO_DATA}
           >
             <GraphicIconDashboard
               data={

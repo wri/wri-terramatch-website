@@ -38,9 +38,13 @@ export const ORGANIZATIONS_TYPES = {
   "for-profit-organization": "Enterprise"
 };
 
-export const NO_DATA_INFORMATION = "No data available. You may not have permission to view the project profile.";
-
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+
+export const TEXT_TYPES = {
+  LOGGED_USER: "textForLoggedUser",
+  NOT_LOGGED_USER: "textForNotLoggedUser",
+  NO_DATA: "noData"
+};
 
 export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 
