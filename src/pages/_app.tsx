@@ -118,18 +118,20 @@ const _App = ({ Component, ...rest }: AppProps) => {
           <Hydrate state={pageProps.dehydratedState}>
             <RouteHistoryProvider>
               <LoadingProvider>
-                <NotificationProvider>
-                  <ModalProvider>
-                    <NavbarProvider>
-                      <ModalRoot />
-                      <Toast />
-                      <MainLayout>
-                        <Component {...pageProps} />
-                        <CookieBanner />
-                      </MainLayout>
-                    </NavbarProvider>
-                  </ModalProvider>
-                </NotificationProvider>
+                <FloatNotificationProvider>
+                  <NotificationProvider>
+                    <ModalProvider>
+                      <NavbarProvider>
+                        <ModalRoot />
+                        <Toast />
+                        <MainLayout>
+                          <Component {...pageProps} />
+                          <CookieBanner />
+                        </MainLayout>
+                      </NavbarProvider>
+                    </ModalProvider>
+                  </NotificationProvider>
+                </FloatNotificationProvider>
               </LoadingProvider>
             </RouteHistoryProvider>
           </Hydrate>
