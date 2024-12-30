@@ -12,9 +12,9 @@ import { useMyUser } from "@/connections/User";
 import {
   CHART_TYPES,
   JOBS_CREATED_CHART_TYPE,
-  NO_DATA_INFORMATION,
   ORGANIZATIONS_TYPES,
-  TERRAFUND_MRV_LINK
+  TERRAFUND_MRV_LINK,
+  TEXT_TYPES
 } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
@@ -296,7 +296,7 @@ const Dashboard = () => {
           </When>
           <BlurContainer
             isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
-            textInformation={user !== undefined ? NO_DATA_INFORMATION : <></>}
+            textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
           >
             <div className="grid w-full grid-cols-3 gap-4">
               {dashboardHeader.map((item, index) => (
