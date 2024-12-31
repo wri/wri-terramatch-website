@@ -4,6 +4,7 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { withFrameworkShow } from "@/context/framework.provider";
+import { TextVariants } from "@/types/common";
 
 import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
 import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressCardItem";
@@ -16,6 +17,11 @@ export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<
   hasProgress?: boolean;
   progressBarValue?: number;
   labelValue?: string;
+  totalValue?: string | number;
+  classNameLabel?: string;
+  labelVariant?: TextVariants;
+  classNameCard?: string;
+  classNameLabelValue?: string;
 }
 
 const GoalProgressCard: FC<GoalProgressCardProps> = ({
@@ -27,6 +33,11 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   hasProgress = true,
   className,
   labelValue,
+  totalValue,
+  classNameLabel,
+  labelVariant,
+  classNameCard,
+  classNameLabelValue,
   ...rest
 }) => {
   const value = _val ?? 0;
@@ -34,21 +45,29 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   // Calculates percentage and clamps between 0 and 100
   const progressValue = !limit ? 0 : Math.min(Math.max((value / limit) * 100, 0), 100);
 
+  console.log("progressValue", progressValue);
+
   return (
     <div {...rest} className={classNames("flex items-center rounded-lg", className)}>
       {/* Left */}
       <When condition={hasProgress}>
-        <div className="mr-6 w-full">
-          <Text variant="text-16-light" className="mb-1 w-full">
+        <div className={classNames("mr-6 w-full", classNameCard)}>
+          <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
           </Text>
-          <Text variant="text-24-bold" className="flex w-full items-baseline">
+          <When condition={!!totalValue}>
+            <img src="/images/graphic-5.png" alt="arrow-right" className="mb-2 size-32 lg:size-40" />
+          </When>
+          <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
-            <When condition={!!limit}>
-              <Text variant="text-16-light">of {limit?.toLocaleString()}</Text>
+            <When condition={!!limit || !!totalValue}>
+              <Text variant="text-16-light">of {limit?.toLocaleString() ?? totalValue?.toLocaleString()}</Text>
             </When>
-            <Text variant="text-16-light">{labelValue}</Text>
+            <When condition={!!labelValue}>
+              <Text variant="text-16-light">{labelValue}</Text>
+            </When>
           </Text>
+
           <LinearProgressBar
             color="primary"
             value={progressValue}
@@ -60,7 +79,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
       </When>
       {/* Right */}
       {items && (
-        <div className="w-full space-y-3 pl-6 ">
+        <div className={classNames("w-full space-y-3 pl-6", classNameCard)}>
           {items.map(item => (
             <GoalProgressCardItem key={item.label} {...item} />
           ))}

@@ -1,4 +1,3 @@
-import { Box } from "@mui/system";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,27 +5,24 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Else, If, Then, When } from "react-if";
 
-import TreeSpeciesTableTF from "@/admin/components/Tables/TreeSpeciesTableTF";
+import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ButtonField from "@/components/elements/Field/ButtonField";
-import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import DisturbancesTable from "@/components/extensive/Tables/DisturbancesTable";
-import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { EstablishmentEntityType } from "@/connections/EstablishmentTrees";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
@@ -68,6 +64,76 @@ const SiteReportDetailPage = () => {
     SITE_WORKDAY_COLLECTIONS,
     "Site Workdays"
   );
+
+  const dataTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "7,500"
+    },
+    {
+      name: ["Non-scientific name", "tree"],
+      treeCount: "4,040"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "3,200"
+    },
+    {
+      name: ["Species scientific name", "new"],
+      treeCount: "3,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "0"
+    }
+  ];
+
+  const dataNonTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "7,500"
+    },
+    {
+      name: ["Non-scientific name", "tree"],
+      nonTreeCount: "4,040"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "3,200"
+    },
+    {
+      name: ["Species scientific name", "new"],
+      nonTreeCount: "3,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "0"
+    }
+  ];
 
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
@@ -138,7 +204,117 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
+                    <ContextCondition frameworksHide={[Framework.HBF]}>
+                      <Text variant="text-20-bold">{t("Trees Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.TREE_CIRCLE_PD,
+                            label: t("TOTAL TREES PLANTED (on report):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: 100000
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksShow={[Framework.HBF]}>
+                      <Text variant="text-20-bold">{t("Saplings Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.TREE_CIRCLE_PD,
+                            label: t("TOTAL saplings PLANTED (on report):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: 100000
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.TF]}>
+                      <Text variant="text-20-bold">{t("Seeds Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.LEAF_CIRCLE_PD,
+                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: 5250
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksShow={[Framework.TF]}>
+                      <Text variant="text-20-bold">{t("Non-Trees Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
+                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: 5250
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+                      </div>
+                    </ContextCondition>
+                    <div>
+                      <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.REFRESH_CIRCLE_PD,
+                            label: t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: 3200
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <Text variant="text-14" className="uppercase text-neutral-650">
+                        {t("Description of AND Activities:")}
+                      </Text>
+                      <Text variant="text-16" className="mt-2 text-blueCustom-700">
+                        {t(
+                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum imperdiet consequat nulla, a dapibus nunc ultricies eget. Aliquam facilisis luctus nibh. Vivamus a lobortis nisl, scelerisque porttitor velit. Phasellus nec hendrerit felis. Proin commodo tortor consequat tortor pulvinar auctor. Nam rhoncus urna dolor, nec scelerisque elit blandit quis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam sollicitudin lobortis leo, eget laoreet magna fermentum ut. Suspendisse volutpat scelerisque felis, non commodo arcu laoreet vel. Sed facilisis volutpat est, a venenatis orci rhoncus cursus."
+                        )}
+                      </Text>
+                    </div>
+                    {/* <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
                       <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
                       <LongTextField title={t("Description of Survival Rate Calculation")}>
                         {siteReport.survival_calculation}
@@ -229,7 +405,7 @@ const SiteReportDetailPage = () => {
                     </GenericField>
                     <GenericField label={t("Disturbances")}>
                       <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
-                    </GenericField>
+                    </GenericField> */}
                   </PageCard>
                 </PageColumn>
               </PageRow>
@@ -327,7 +503,12 @@ const SiteReportDetailPage = () => {
               </PageRow>
             </Else>
           </If>
+          <br />
+          <br />
+          <br />
         </PageBody>
+
+        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );

@@ -53,6 +53,7 @@ export enum IconNames {
   INSTAGRAM = "instagram",
   USER_CIRCLE = "user-circle",
   TREE_CIRCLE = "tree-circle",
+  TREE_CIRCLE_PD = "tree-circle-pd",
   DOCUMENT_CIRCLE = "document-circle",
   DOWNLOAD = "download",
   DOWNLOAD_CUSTOM = "download-custom",
@@ -87,7 +88,9 @@ export enum IconNames {
   LOCK_CIRCLE = "lock-circle",
   MAP_THUMBNAIL = "map-thumbnail",
   LEAF_CIRCLE = "leaf-circle",
+  LEAF_CIRCLE_PD = "leaf-circle_pd",
   REFRESH_CIRCLE = "refresh-circle",
+  REFRESH_CIRCLE_PD = "refresh-circle_pd",
   SITE_CIRCLE = "site-circle",
   NURSERY_CIRCLE = "nursery-circle",
   SUCCESS = "ic-success",
@@ -211,7 +214,16 @@ export enum IconNames {
   NEW_TAG_TREE_SPECIES = "new-tag-tree-species",
   NON_SCIENTIFIC_NAME_CUSTOM = "non-scientific name custom",
   TREE_DASHABOARD = "tree-dashboard",
-  ASSISTED_NATURAL_REGENERATION = "assisted-natural-regeneration"
+  ASSISTED_NATURAL_REGENERATION = "assisted-natural-regeneration",
+  NATIVE_SPECIES = "native-species",
+  NEW_TAG_TREE_SPECIES_CUSTOM = "new-tag-tree-species-custom",
+  SURVIVAL_RATE = "survival-rate",
+  LEAF_PLANTED_CIRCLE = "leaf-planted-circle_pd",
+  LEARF_NATIVE_CIRCLE_PD = "leaf-native-circle_pd",
+  NON_TREES_PLANTED_CIRCLE = "non-trees-planted-circle",
+  SEED_PLANTED = "seed-planted",
+  TREES_REGENERATING = "trees-regenerating",
+  NON_TRESS_PLANTED = "non-trees-planted"
 }
 
 export interface IconProps {
