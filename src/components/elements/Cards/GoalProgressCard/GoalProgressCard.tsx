@@ -56,7 +56,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {label}
           </Text>
           <When condition={!!totalValue}>
-            <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
+            <img src="/images/graphic-5.png" alt="arrow-right" className="mb-2 size-32 lg:size-40" />
           </When>
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
