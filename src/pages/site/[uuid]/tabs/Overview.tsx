@@ -96,7 +96,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -138,7 +138,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       formData.append("polygon_loaded", polygonLoaded.toString());
       formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
-      showLoader();
       switch (fileType) {
         case "geojson":
           uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
@@ -202,7 +201,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           variant: "primary",
           onClick: () => {
             setSaveFlags(true);
-            showLoader();
           }
         }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
