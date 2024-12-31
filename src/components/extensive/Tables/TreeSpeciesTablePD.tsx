@@ -16,7 +16,6 @@ export type ModelNameType =
 
 export interface TreeSpeciesTablePDProps {
   data: any[];
-  column: any[];
   modelName: ModelNameType;
 }
 

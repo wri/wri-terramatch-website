@@ -12,7 +12,7 @@ import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressC
 export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   value?: number;
   limit?: number;
-  label: string;
+  label?: string;
   items?: GoalProgressCardItemProps[];
   hasProgress?: boolean;
   progressBarValue?: number;
@@ -56,7 +56,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {label}
           </Text>
           <When condition={!!totalValue}>
-            <img src="/images/graphic-5.png" alt="arrow-right" className="mb-2 size-32 lg:size-40" />
+            <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
           </When>
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
