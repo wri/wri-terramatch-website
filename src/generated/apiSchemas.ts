@@ -22441,6 +22441,45 @@ export type V2TerrafundCriteriaData = {
   }[];
 };
 
+export type V2TerrafundCriteriaDataMultiple = {
+  [key: string]:
+    | {
+        /**
+         * The ID of the polygon
+         */
+        polygon_id: string;
+        /**
+         * List of validation criteria
+         */
+        criteria_list: {
+          /**
+           * The ID of the criteria
+           */
+          criteria_id?: number;
+          /**
+           * The latest created at timestamp of the criteria
+           *
+           * @format date-time
+           */
+          latest_created_at?: string;
+          /**
+           * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+           */
+          valid?: number;
+          /**
+           * Extra information about the polygon validation
+           */
+          extra_info?: Record<string, any>;
+        }[];
+      }
+    | {
+        /**
+         * Error message if the polygon or criteria data is not found
+         */
+        error: string;
+      };
+};
+
 export type V2TerrafundCriteriaSite = {
   /**
    * The UUID of the polygon.
