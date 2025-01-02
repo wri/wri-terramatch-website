@@ -45,8 +45,6 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   // Calculates percentage and clamps between 0 and 100
   const progressValue = !limit ? 0 : Math.min(Math.max((value / limit) * 100, 0), 100);
 
-  console.log("progressValue", progressValue);
-
   return (
     <div {...rest} className={classNames("flex items-center rounded-lg", className)}>
       {/* Left */}
