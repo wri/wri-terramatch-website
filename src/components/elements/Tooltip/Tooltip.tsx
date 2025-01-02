@@ -4,6 +4,8 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
+import { TextVariants } from "@/types/common";
+
 import Text from "../Text/Text";
 
 export interface TooltipProps {
@@ -14,6 +16,8 @@ export interface TooltipProps {
   className?: string;
   title?: string;
   trigger?: "hover" | "click";
+  colorBackground?: "black" | "white";
+  textVariantContent?: TextVariants;
 }
 
 const ToolTip = ({
@@ -23,6 +27,8 @@ const ToolTip = ({
   placement = "top",
   className,
   title,
+  colorBackground = "black",
+  textVariantContent,
   trigger = "hover"
 }: TooltipProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -160,16 +166,22 @@ const ToolTip = ({
         ref={tooltipRef}
       >
         <div
-          className={tw(
-            "shadow-lg text-12 relative w-fit rounded bg-darkCustom p-3 text-left text-white opacity-0",
-            isVisible ? "opacity-100" : "",
-            width
+          className={classNames(
+            tw(
+              "text-12 relative w-fit rounded p-3  text-left opacity-0 shadow-monitored",
+              isVisible ? "opacity-100" : "",
+              width
+            ),
+            { "bg-darkCustom text-white ": colorBackground === "black" },
+            { "bg-neutral-40 text-black": colorBackground === "white" }
           )}
         >
           <div
             className={classNames(
-              "absolute border-[5px] border-darkCustom",
-              PLACEMENT[placementArrowTop < 0 ? "bottom" : placement]
+              "absolute border-[5px]",
+              PLACEMENT[placementArrowTop < 0 ? "bottom" : placement],
+              { "border-darkCustom": colorBackground === "black" },
+              { "border-neutral-40": colorBackground === "white" }
             )}
             style={placement === "top" ? { marginLeft: `${placementArrowLeft}px` } : {}}
           />
@@ -178,7 +190,11 @@ const ToolTip = ({
               {t(title)}
             </Text>
           </When>
-          <Text variant="text-12-light" className="!font-light leading-[normal]" containHtml={true}>
+          <Text
+            variant={textVariantContent ?? "text-12-light"}
+            className={classNames("leading-[normal]", { "!font-light ": colorBackground === "black" })}
+            containHtml={true}
+          >
             {t(content)}
           </Text>
         </div>
