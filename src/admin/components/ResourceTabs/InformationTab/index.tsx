@@ -150,7 +150,7 @@ const InformationTab: FC<IProps> = props => {
                         }
                       >
                         <ContextCondition frameworksShow={[Framework.PPC]}>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 pb-8">
                             <Text variant="text-18-semibold" className="capitalize">
                               Total Trees Planted{" "}
                               <When condition={props.type === "project-reports"}>in site Report</When>:
@@ -193,7 +193,7 @@ const InformationTab: FC<IProps> = props => {
                   >
                     <div className="pl-8">
                       <ContextCondition frameworksShow={[Framework.PPC]}>
-                        <div className="flex items-center gap-1 pt-6">
+                        <div className="flex items-center gap-1 py-8">
                           <Text variant="text-18-semibold" className="capitalize">
                             Total Seeds Planted:
                           </Text>
