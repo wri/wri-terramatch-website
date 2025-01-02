@@ -1,40 +1,171 @@
 import { useT } from "@transifex/react";
+import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
-import GenericField from "@/components/elements/Field/GenericField";
-import TextField from "@/components/elements/Field/TextField";
-import { VARIANT_TABLE_BORDER } from "@/components/elements/Table/TableVariants";
+import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
-import { ContextCondition } from "@/context/ContextCondition";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressTabProps {
   site: any;
 }
 
+export const LABEL_LEGEND = [
+  {
+    label: { key: "Trees", render: "Trees" },
+    color: "bg-primary"
+  },
+  {
+    label: { key: "Seeds", render: "Seeds" },
+    color: "bg-blueCustom-900"
+  },
+  {
+    label: { key: "Regenerating", render: "Regenerating" },
+    color: "bg-secondary-600"
+  }
+];
+
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
+
+  const dataTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "7,500"
+    },
+    {
+      name: ["Non-scientific name", "tree"],
+      treeCount: "4,040"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "3,200"
+    },
+    {
+      name: ["Species scientific name", "new"],
+      treeCount: "3,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "0"
+    }
+  ];
+
+  const dataSeedCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      seedCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "7,500"
+    }
+  ];
+  const dataNonTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "7,500"
+    }
+  ];
 
   return (
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap items-start gap-8">
+          <div className="flex w-full flex-wrap items-start justify-between gap-8">
             <GoalProgressCard
-              frameworksShow={[Framework.PPC]}
-              label={t("Workday Count (PPC)")}
-              value={site.combined_workday_count}
-              className="w-[170px]"
+              frameworksShow={[Framework.TF]}
+              label={t("JOBS CREATED")}
+              value={205}
+              totalValue={300}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
             />
             <GoalProgressCard
-              frameworksHide={[Framework.PPC]}
-              label={t("Hectares Restored Goal")}
-              value={site.hectares_to_restore_goal}
+              frameworksShow={[Framework.HBF]}
+              label={t("workdays CREATED")}
+              value={205}
+              totalValue={300}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
+            />
+            <GoalProgressCard
+              label={t("Hectares RESTORED")}
+              value={129}
+              totalValue={"300 ha"}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
+            />
+            <GoalProgressCard
+              label={t("Trees Restored")}
+              frameworksHide={[Framework.HBF]}
+              value={113250}
+              totalValue={"300,000"}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
+            />
+            <GoalProgressCard
+              label={t("saplings Restored ")}
+              frameworksShow={[Framework.HBF]}
+              value={113250}
+              totalValue={"300,000"}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
+            />
+            <GoalProgressCard
+              frameworksShow={[Framework.PPC]}
+              label={t("workdays CREATED")}
+              value={site.combined_workday_count}
+              classNameLabel="text-neutral-650 uppercase mb-3"
+              labelVariant="text-14"
+              classNameCard="text-center flex flex-col items-center"
+              classNameLabelValue="justify-center"
             />
 
             <GoalProgressCard
@@ -43,59 +174,217 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               limit={site.trees_grown_goal}
               hasProgress={false}
               items={[
-                { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: site.trees_planted_count },
-                { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: site.seeds_planted_count },
                 {
-                  iconName: IconNames.REFRESH_CIRCLE,
-                  label: t("Trees Regenerating"),
+                  iconName: IconNames.TREE_CIRCLE_PD,
+                  label: t("Trees Planted:"),
+                  variantLabel: "text-14",
+                  classNameLabel: " text-neutral-650 uppercase",
+                  value: site.trees_planted_count
+                },
+                {
+                  iconName: IconNames.LEAF_CIRCLE_PD,
+                  label: t("Seeds Planted:"),
+                  variantLabel: "text-14",
+                  classNameLabel: " text-neutral-650 uppercase",
+                  value: site.seeds_planted_count
+                },
+                {
+                  iconName: IconNames.REFRESH_CIRCLE_PD,
+                  label: t("Trees Regenerating:"),
+                  variantLabel: "text-14",
+                  classNameLabel: " text-neutral-650 uppercase",
                   value: site.regenerated_trees_count
                 }
               ]}
-              className="flex-1"
+              className="pr-[41px] lg:pr-[150px]"
             />
           </div>
         </PageCard>
       </PageRow>
 
       <PageRow>
-        <PageColumn>
-          <PageCard
-            title={t("Monitored Data")}
-            gap={4}
-            isEmpty={true}
-            emptyStateProps={{
-              title: t("Satellite Data Baseline Unavailable"),
-              content: t(
-                "WRI Monitoring Data will be available soon. We will notify you once this data has been integrated into your project."
-              )
-            }}
-          >
-            {/* TODO: To be added */}
-          </PageCard>
-        </PageColumn>
-
-        <PageColumn>
-          <PageCard title={t("Other Goals")} gap={4}>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TextField
-                label={t("Natural Regeneration Trees Per Hectare")}
-                value={site?.a_nat_regeneration_trees_per_hectare}
+        <PageCard title={t("Tree Planting Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.TREE_CIRCLE_PD,
+                    label: t("Trees Planted:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: 100000
+                  },
+                  {
+                    iconName: IconNames.SURVIVAL_RATE,
+                    label: t("Estimated Survival Rate:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: "85%"
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                    value: 10,
+                    limit: 12
+                  },
+                  {
+                    iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
+                    label: t("PERCENTAGE of Native species:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: "3% "
+                  }
+                ]}
               />
-              <TextField label={t("Number of Hectares for Natural Regeneration")} value={site.a_nat_regeneration} />
-              <TextField label={t("Number of Mature Trees")} value={site.aim_number_of_mature_trees} />
-              <TextField
-                frameworksShow={[Framework.PPC]}
-                label={t("Year 5 Grown Cover Goal (PPC)")}
-                value={site.aim_year_five_crown_cover}
-              />
-              <TextField label={t("Survival Rate of Planted")} value={site.survival_rate_planted} />
-            </ContextCondition>
-            <TextField label={t("Direct Seeding Survival Rate")} value={site.direct_seeding_survival_rate} />
-            <GenericField label={t("Tree Species")} frameworksHide={[Framework.PPC]}>
-              <TreeSpeciesTable modelName="site" modelUUID={site.uuid} variantTable={VARIANT_TABLE_BORDER} />
-            </GenericField>
-          </PageCard>
-        </PageColumn>
+              <div className="mt-2 border-t border-dashed border-neutral-480 pt-4">
+                <div className="flex items-center justify-between">
+                  <Text variant="text-14" className="uppercase text-neutral-650">
+                    {t("PROGRESS over time:")}
+                  </Text>
+                  <div className="flex items-center gap-4">
+                    {LABEL_LEGEND.map((item, index) => (
+                      <div key={index} className="flex items-baseline">
+                        <span className={`h-[10px] w-[10px] ${item.color} mr-2 rounded-full`} />
+                        <Text variant="text-12" className="leading-[normal] text-darkCustom">
+                          {t(item.label.key)}
+                        </Text>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
+              </div>
+            </div>
+            <div>
+              <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
+      <PageRow>
+        <PageCard
+          title={t(site.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
+        >
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <When condition={site.framework_key === Framework.PPC}>
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.LEAF_CIRCLE_PD,
+                      label: t("Trees Planted:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: 5250
+                    },
+                    {
+                      iconName: IconNames.SURVIVAL_RATE,
+                      label: t("Estimated Survival Rate:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: "80% "
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species PLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: 6
+                    },
+                    {
+                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
+                      label: t("PERCENTAGE of Native species:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: "1%"
+                    }
+                  ]}
+                />
+              </When>
+              <When condition={site.framework_key === Framework.TF}>
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
+                      label: t("number of Non-Trees PLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: 5250
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species PLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: "6"
+                    }
+                  ]}
+                />
+              </When>
+              <When condition={site.framework_key === Framework.HBF}>
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.LEAF_CIRCLE_PD,
+                      label: t("Trees Planted:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: 5250
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species PLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: 6
+                    },
+                    {
+                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
+                      label: t("PERCENTAGE of Native species:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: "1%"
+                    }
+                  ]}
+                />
+              </When>
+            </div>
+            <div>
+              <If condition={site.framework_key === Framework.TF}>
+                <Then>
+                  <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+                </Then>
+                <Else>
+                  <TreeSpeciesTablePD modelName="seedCount" data={dataSeedCount} />
+                </Else>
+              </If>
+            </div>
+          </div>
+        </PageCard>
       </PageRow>
       <br />
       <br />
