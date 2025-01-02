@@ -217,6 +217,6 @@ export const VARIANT_TABLE_TREE_SPECIES = {
   tBody: "",
   trBody: "bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100",
   tdBody: "first:rounded-l-lg last:rounded-r-lg text-16-light text-gray-700 pr-4 pl-0 py-3 border-b border-neutral-200",
-  thead: "bg-transparent",
-  paginationVariant: VARIANT_PAGINATION_DASHBOARD
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD,
+  thead: "bg-transparent"
 };
