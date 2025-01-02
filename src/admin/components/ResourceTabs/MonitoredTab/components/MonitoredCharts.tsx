@@ -155,7 +155,7 @@ const MonitoredCharts = ({
 
   return (
     <div
-      className={classNames("flex w-full flex-col gap-6", {
+      className={classNames("flex w-full max-w-[calc(75vw-356px)] flex-col gap-6 lg:max-w-[calc(75vw-395px)]", {
         "relative z-10 bg-white": hasNoData
       })}
     >
