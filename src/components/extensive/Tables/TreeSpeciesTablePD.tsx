@@ -16,7 +16,8 @@ export type ModelNameType =
   | "treeCount/Goal"
   | "speciesCount/Goal"
   | "saplingsCount"
-  | "seedCount/Goal";
+  | "seedCount/Goal"
+  | "saplingsCount";
 
 export interface TreeSpeciesTablePDProps {
   data: any[];
