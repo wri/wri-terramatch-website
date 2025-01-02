@@ -32,7 +32,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
   const value = _val || 0;
   return (
     <div {...rest} className={classNames("flex w-full items-center", className)}>
-      <Icon name={iconName} className="min-w-10 mr-4 h-10 w-10" />
+      <Icon name={iconName} className="mr-4 h-10 w-10 min-w-[40px]" />
 
       <Text
         variant={variantLabel ?? "text-16-light"}

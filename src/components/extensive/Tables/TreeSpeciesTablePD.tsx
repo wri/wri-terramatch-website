@@ -4,6 +4,7 @@ import LinearProgressBar from "@/components/elements/ProgressBar/LinearProgressB
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
@@ -40,13 +41,21 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="font-inherit flex items-center gap-1">
             {value[0]}
-            <Icon
-              name={IconNames.NON_SCIENTIFIC_NAME_CUSTOM}
-              className={classNames(
-                "h-7 w-7",
-                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-              )}
-            />
+            <ToolTip
+              title=""
+              content="Non-scientific name"
+              colorBackground="white"
+              placement="right"
+              textVariantContent="text-14"
+            >
+              <Icon
+                name={IconNames.NON_SCIENTIFIC_NAME_CUSTOM}
+                className={classNames(
+                  "mr-1 h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
+              />
+            </ToolTip>
           </div>
         );
       }
@@ -57,13 +66,21 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="font-inherit flex items-center gap-1">
             {value[0]}
-            <Icon
-              name={IconNames.NATIVE_SPECIES}
-              className={classNames(
-                "h-7 w-7",
-                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-              )}
-            />
+            <ToolTip
+              title=""
+              content="Native species"
+              colorBackground="white"
+              placement="right"
+              textVariantContent="text-14"
+            >
+              <Icon
+                name={IconNames.NATIVE_SPECIES}
+                className={classNames(
+                  "h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
+              />
+            </ToolTip>
           </div>
         );
       }
@@ -71,13 +88,21 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="font-inherit flex items-center gap-1">
             {value[0]}
-            <Icon
-              name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
-              className={classNames(
-                "h-7 w-7",
-                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-              )}
-            />
+            <ToolTip
+              title=""
+              content="New Species"
+              colorBackground="white"
+              placement="right"
+              textVariantContent="text-14"
+            >
+              <Icon
+                name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
+                className={classNames(
+                  "mr-1 h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
+              />
+            </ToolTip>
           </div>
         );
       }
@@ -158,7 +183,7 @@ const TreeSpeciesTablePD = ({
             <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
             <Text variant="text-14-bold" className="flex gap-2">
               {value[0]}
-              <Text variant="text-14-light" className="">
+              <Text variant="text-14" className="">
                 of {value[1]}
               </Text>
             </Text>
@@ -204,7 +229,7 @@ const TreeSpeciesTablePD = ({
             <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
             <Text variant="text-14-bold" className="flex gap-2">
               {value[0]}
-              <Text variant="text-14-light" className="">
+              <Text variant="text-14" className="">
                 of {value[1]}
               </Text>
             </Text>

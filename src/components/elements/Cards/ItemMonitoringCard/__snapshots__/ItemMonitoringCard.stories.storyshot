@@ -35,10 +35,10 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
+                className="text-12 relative rounded p-3 text-left opacity-0 shadow-monitored w-56 bg-darkCustom text-white "
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent border-darkCustom"
                   style={
                     Object {
                       "marginLeft": "0px",
@@ -52,7 +52,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Default 1`] = 
                   Tree Count
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  className="leading-[normal] !font-light  text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "",
@@ -119,10 +119,10 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
+                className="text-12 relative rounded p-3 text-left opacity-0 shadow-monitored w-56 bg-darkCustom text-white "
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent border-darkCustom"
                   style={
                     Object {
                       "marginLeft": "0px",
@@ -136,7 +136,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph 1`]
                   Tree Count
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  className="leading-[normal] !font-light  text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "",
@@ -233,10 +233,10 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
               }
             >
               <div
-                className="shadow-lg relative rounded bg-darkCustom p-3 text-left text-white opacity-0 w-56"
+                className="text-12 relative rounded p-3 text-left opacity-0 shadow-monitored w-56 bg-darkCustom text-white "
               >
                 <div
-                  className="absolute border-[5px] border-darkCustom bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent"
+                  className="absolute border-[5px] bottom-0 left-1/2 transform -translate-x-1/2 mb-[-9px] border-b-transparent border-l-transparent border-r-transparent border-darkCustom"
                   style={
                     Object {
                       "marginLeft": "0px",
@@ -250,7 +250,7 @@ exports[`Storyshots Components/Elements/Cards/ItemMonitoringCards Type Graph But
                   EMA SNOVO
                 </p>
                 <p
-                  className="!font-light leading-[normal] text-12-light with-inner-html"
+                  className="leading-[normal] !font-light  text-12-light with-inner-html"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "",
