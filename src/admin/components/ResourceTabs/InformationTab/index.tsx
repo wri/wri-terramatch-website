@@ -141,60 +141,74 @@ const InformationTab: FC<IProps> = props => {
                       )}
                     />
                   </Card>
+
                   <When condition={record}>
-                    <When
-                      condition={
-                        props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
-                      }
-                    >
-                      <ContextCondition frameworksShow={[Framework.PPC]}>
-                        <div className="flex items-center gap-1 pl-2">
-                          <Text variant="text-18-semibold" className="capitalize">
-                            Total Trees Planted <When condition={props.type === "project-reports"}>in site Report</When>
-                            :
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary">
-                            {record?.total_trees_planted_count ?? 0}
-                          </Text>
-                        </div>
-                      </ContextCondition>
-                      <TreeSpeciesTablePD
-                        modelName="treeCount/Goal"
-                        data={dataTreeCountGoal}
-                        headerName="tree species name"
-                        secondColumnWidth="40%"
-                      />
-                    </When>
-                  </When>
-                  <When condition={props.type === "projects"}>
-                    <div className="flex flex-col gap-4">
-                      <Text variant="text-16-bold" className="pl-2 capitalize">
-                        Tree Species:
-                      </Text>
-                      <TreeSpeciesTablePD modelName="treeCount/Goal" data={dataTreeCountGoal} secondColumnWidth="40%" />
+                    <div className="pl-8">
+                      <When
+                        condition={
+                          props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
+                        }
+                      >
+                        <ContextCondition frameworksShow={[Framework.PPC]}>
+                          <div className="flex items-center gap-1">
+                            <Text variant="text-18-semibold" className="capitalize">
+                              Total Trees Planted{" "}
+                              <When condition={props.type === "project-reports"}>in site Report</When>:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary">
+                              {record?.total_trees_planted_count ?? 0}
+                            </Text>
+                          </div>
+                        </ContextCondition>
+                      </When>
+                      <If condition={props.type === "projects"}>
+                        <Then>
+                          <div className="flex flex-col gap-4">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Tree Species:
+                            </Text>
+                            <TreeSpeciesTablePD
+                              modelName="treeCount/Goal"
+                              data={dataTreeCountGoal}
+                              secondColumnWidth="45%"
+                            />
+                          </div>
+                        </Then>
+                        <Else>
+                          <TreeSpeciesTablePD
+                            modelName="treeCount/Goal"
+                            data={dataTreeCountGoal}
+                            headerName="tree species name"
+                            secondColumnWidth="45%"
+                          />
+                        </Else>
+                      </If>
                     </div>
                   </When>
+
                   <When
                     condition={
                       props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
                     }
                   >
-                    <ContextCondition frameworksShow={[Framework.PPC]}>
-                      <div className="flex items-center gap-1 pl-2 pt-6">
-                        <Text variant="text-18-semibold" className="capitalize">
-                          Total Seeds Planted:
-                        </Text>
-                        <Text variant="text-18-semibold" className="capitalize text-primary">
-                          {totalSeedlings ?? 0}
-                        </Text>
-                      </div>
-                    </ContextCondition>
-                    <TreeSpeciesTablePD
-                      modelName="seedCount/Goal"
-                      data={props.type === "site-reports" ? dataSeedCountGoalSiteReport : dataSeedCountGoal}
-                      headerName="seeding species name"
-                      secondColumnWidth="40%"
-                    />
+                    <div className="pl-8">
+                      <ContextCondition frameworksShow={[Framework.PPC]}>
+                        <div className="flex items-center gap-1 pt-6">
+                          <Text variant="text-18-semibold" className="capitalize">
+                            Total Seeds Planted:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary">
+                            {totalSeedlings ?? 0}
+                          </Text>
+                        </div>
+                      </ContextCondition>
+                      <TreeSpeciesTablePD
+                        modelName="seedCount/Goal"
+                        data={props.type === "site-reports" ? dataSeedCountGoalSiteReport : dataSeedCountGoal}
+                        headerName="seeding species name"
+                        secondColumnWidth="45%"
+                      />
+                    </div>
                   </When>
 
                   <When condition={props.type === "projects"}>

@@ -28,7 +28,7 @@ export interface TreeSpeciesTablePDProps {
 const TreeSpeciesTablePD = ({
   data,
   modelName,
-  headerName = 'species Name"',
+  headerName = "species Name",
   secondColumnWidth = ""
 }: TreeSpeciesTablePDProps) => {
   const rowSpeciesName = {
