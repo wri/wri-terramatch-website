@@ -199,7 +199,7 @@ const indicatorDescription2 =
 const noDataMap = (
   <div className="absolute top-0 flex h-full w-full">
     <div className="relative flex w-[23vw] flex-col gap-3 p-6">
-      <div className="absolute left-0 top-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
+      <div className="absolute top-0 left-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
       <Text
         variant={"text-14-semibold"}
         className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
@@ -217,7 +217,7 @@ const noDataMap = (
     </div>
     <div className="w-full p-6">
       <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-        <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
+        <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
         <Text variant={"text-32-semibold"} className="z-10 text-white">
           No Data to Display
         </Text>
@@ -648,7 +648,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 1}>
-            <div className="relative z-auto flex w-full gap-8 px-6 pb-6 pt-2">
+            <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-8 px-6 pt-2 pb-6">
               <Dropdown
                 containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
                   hidden: selected.includes("6")
@@ -659,7 +659,7 @@ const DataCard = ({
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
               />
-              <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] flex-col gap-3">
+              <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] max-w-[calc(25vw-356px)] flex-col gap-3">
                 <Text variant={"text-14-semibold"} className="w-fit text-blueCustom-900">
                   Indicator Description
                 </Text>
