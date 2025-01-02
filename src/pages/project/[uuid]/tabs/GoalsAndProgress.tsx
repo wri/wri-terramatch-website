@@ -30,189 +30,267 @@ export const LABEL_LEGEND = [
   }
 ];
 
+export const dataTreeCount = [
+  {
+    name: ["Species scientific name", "tree"],
+    treeCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    treeCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCount: "10,350"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCount: "7,500"
+  },
+  {
+    name: ["Non-scientific name", "tree"],
+    treeCount: "4,040"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCount: "3,200"
+  },
+  {
+    name: ["Species scientific name", "new"],
+    treeCount: "3,000"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCount: "0"
+  }
+];
+
+export const dataSeedCount = [
+  {
+    name: ["Species scientific name", "tree"],
+    seedCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    seedCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCount: "10,350"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCount: "7,500"
+  }
+];
+export const dataNonTreeCount = [
+  {
+    name: ["Species scientific name", "tree"],
+    nonTreeCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    nonTreeCount: "45,000"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    nonTreeCount: "10,350"
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    nonTreeCount: "7,500"
+  }
+];
+
+export const dataTreeCountSite = [
+  {
+    name: "Site Name",
+    treeCount: "2,500"
+  },
+  {
+    name: "Site Name",
+    treeCount: "1,850"
+  },
+  {
+    name: "Site Name",
+    treeCount: "1,000"
+  },
+  {
+    name: "Site Name",
+    treeCount: "960"
+  },
+  {
+    name: "Site Name",
+    treeCount: "620"
+  },
+  {
+    name: "Site Name",
+    treeCount: "450"
+  },
+  {
+    name: "Site Name",
+    treeCount: "300"
+  }
+];
+
+export const dataTreeCountGoal = [
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["45,0000", "90,000"]
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    treeCountGoal: ["35,350", "70,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["10,350", "35,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["7,500", "21,000"]
+  },
+  {
+    name: ["Non-scientific name", "tree"],
+    treeCountGoal: ["4,040", "15,300"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["3,200", "8,000"]
+  },
+  {
+    name: ["Species scientific name", "new"],
+    treeCountGoal: ["3,000", "5,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["1,000", "4,500"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    treeCountGoal: ["0", "3,000"]
+  }
+];
+
+export const dataSpeciesCountGoal = [
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["45,0000", "90,000"]
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    speciesCountGoal: ["35,350", "70,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["10,350", "35,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["7,500", "21,000"]
+  },
+  {
+    name: ["Non-scientific name", "tree"],
+    speciesCountGoal: ["4,040", "15,300"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["3,200", "8,000"]
+  },
+  {
+    name: ["Species scientific name", "new"],
+    speciesCountGoal: ["3,000", "5,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["1,000", "4,500"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    speciesCountGoal: ["0", "3,000"]
+  }
+];
+
+export const dataSeedCountGoal = [
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["45,0000", "90,000"]
+  },
+  {
+    name: ["Species scientific name", "Native species"],
+    seedCountGoal: ["35,350", "70,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["10,350", "35,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["7,500", "21,000"]
+  },
+  {
+    name: ["Non-scientific name", "tree"],
+    seedCountGoal: ["4,040", "15,300"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["3,200", "8,000"]
+  },
+  {
+    name: ["Species scientific name", "new"],
+    seedCountGoal: ["3,000", "5,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["1,000", "4,500"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["0", "3,000"]
+  }
+];
+
+export const dataSeedCountGoalSiteReport = [
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["45,0000", "90,000"]
+  },
+  {
+    name: ["Species scientific name", "Native species", "approved"],
+    seedCountGoal: ["35,350", "70,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["10,350", "35,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["7,500", "21,000"]
+  },
+  {
+    name: ["Non-scientific name", "tree", "approved"],
+    seedCountGoal: ["4,040", "15,300"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["3,200", "8,000"]
+  },
+  {
+    name: ["Species scientific name", "new"],
+    seedCountGoal: ["3,000", "5,000"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["1,000", "4,500"]
+  },
+  {
+    name: ["Species scientific name", "tree"],
+    seedCountGoal: ["0", "3,000"]
+  }
+];
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
-
-  const dataSeedCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "7,500"
-    }
-  ];
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    }
-  ];
-
-  const dataTreeCountSite = [
-    {
-      name: "Site Name",
-      treeCount: "2,500"
-    },
-    {
-      name: "Site Name",
-      treeCount: "1,850"
-    },
-    {
-      name: "Site Name",
-      treeCount: "1,000"
-    },
-    {
-      name: "Site Name",
-      treeCount: "960"
-    },
-    {
-      name: "Site Name",
-      treeCount: "620"
-    },
-    {
-      name: "Site Name",
-      treeCount: "450"
-    },
-    {
-      name: "Site Name",
-      treeCount: "300"
-    }
-  ];
-
-  const dataTreeCountGoal = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["45,0000", "90,000"]
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCountGoal: ["35,350", "70,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["10,350", "35,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["7,500", "21,000"]
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCountGoal: ["4,040", "15,300"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["3,200", "8,000"]
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCountGoal: ["3,000", "5,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["1,000", "4,500"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCountGoal: ["0", "3,000"]
-    }
-  ];
-
-  const dataSpeciesCountGoal = [
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["45,0000", "90,000"]
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      speciesCountGoal: ["35,350", "70,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["10,350", "35,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["7,500", "21,000"]
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      speciesCountGoal: ["4,040", "15,300"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["3,200", "8,000"]
-    },
-    {
-      name: ["Species scientific name", "new"],
-      speciesCountGoal: ["3,000", "5,000"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["1,000", "4,500"]
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      speciesCountGoal: ["0", "3,000"]
-    }
-  ];
 
   return (
     <PageBody className="text-darkCustom">

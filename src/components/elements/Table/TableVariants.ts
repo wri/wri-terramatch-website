@@ -205,9 +205,9 @@ export const VARIANT_TABLE_TREE_SPECIES = {
   table: "border-collapse w-full",
   name: "border-airtable text-left",
   trHeader: "!bg-transparent border-b border-neutral-650 text-14 text-neutral-650 ",
-  thHeader: " text-14 uppercase !px-2 !py-2 font-medium text-14",
+  thHeader: " text-14 uppercase !pr-4 !pl-0 !py-2 font-medium text-14",
   tBody: "",
   trBody: "bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100",
-  tdBody: "first:rounded-l-lg last:rounded-r-lg text-16-light text-gray-700 px-2 py-3 border-b border-neutral-200",
+  tdBody: "first:rounded-l-lg last:rounded-r-lg text-16-light text-gray-700 pr-4 pl-0 py-3 border-b border-neutral-200",
   thead: "bg-transparent"
 };

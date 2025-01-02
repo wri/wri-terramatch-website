@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 import LinearProgressBar from "@/components/elements/ProgressBar/LinearProgressBar/LinearProgressBar";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
@@ -13,17 +15,26 @@ export type ModelNameType =
   | "treeCountSite"
   | "treeCount/Goal"
   | "speciesCount/Goal"
+  | "saplingsCount"
+  | "seedCount/Goal"
   | "saplingsCount";
 
 export interface TreeSpeciesTablePDProps {
   data: any[];
   modelName: ModelNameType;
+  headerName?: string;
+  secondColumnWidth?: string;
 }
 
-const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
+const TreeSpeciesTablePD = ({
+  data,
+  modelName,
+  headerName = "species Name",
+  secondColumnWidth = ""
+}: TreeSpeciesTablePDProps) => {
   const rowSpeciesName = {
     accessorKey: "name",
-    header: "species Name",
+    header: headerName,
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -40,7 +51,10 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
             >
               <Icon
                 name={IconNames.NON_SCIENTIFIC_NAME_CUSTOM}
-                className="mr-1 h-7 w-7 text-blueCustom-700 opacity-50"
+                className={classNames(
+                  "mr-1 h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
               />
             </ToolTip>
           </div>
@@ -60,7 +74,13 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
               placement="right"
               textVariantContent="text-14"
             >
-              <Icon name={IconNames.NATIVE_SPECIES} className="h-7 w-7 text-blueCustom-700 opacity-50" />
+              <Icon
+                name={IconNames.NATIVE_SPECIES}
+                className={classNames(
+                  "h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
+              />
             </ToolTip>
           </div>
         );
@@ -78,7 +98,10 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
             >
               <Icon
                 name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
-                className="mr-1 h-7 w-7 text-blueCustom-700 opacity-50"
+                className={classNames(
+                  "mr-1 h-7 w-7",
+                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                )}
               />
             </ToolTip>
           </div>
@@ -93,6 +116,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "treeCount",
       header: "Tree CounT",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return <div className="text-14 !font-bold">{value}</div>;
@@ -106,6 +130,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "seedCount",
       header: "SEED Count",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return <div className="text-14 !font-bold">{value}</div>;
@@ -119,6 +144,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "nonTreeCount",
       header: "Non Tree Count",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return <div className="text-14 !font-bold">{value}</div>;
@@ -136,6 +162,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "treeCount",
       header: "Tree Count",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return <div className="text-14 !font-bold">{value}</div>;
@@ -149,6 +176,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "treeCountGoal",
       header: "Tree Count / goal",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return (
@@ -165,12 +193,36 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       }
     }
   ];
+
+  const columnSeedCountGoal = [
+    rowSpeciesName,
+    {
+      accessorKey: "seedCountGoal",
+      header: "Seed Count / goal",
+      enableSorting: false,
+      meta: { width: secondColumnWidth },
+      cell: (props: any) => {
+        const value = props.getValue();
+        return (
+          <div className="grid grid-cols-2 gap-3">
+            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <Text variant="text-14-bold" className="flex gap-2">
+              {value[0]}
+              <Text variant="text-14-light">of {value[1]}</Text>
+            </Text>
+          </div>
+        );
+      }
+    }
+  ];
+
   const columnSpeciesCountGoal = [
     rowSpeciesName,
     {
       accessorKey: "speciesCountGoal",
       header: "SPECIES Count / goal",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return (
@@ -194,6 +246,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
       accessorKey: "treeCount",
       header: "saplings CounT",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return <div className="text-14 !font-bold">{value}</div>;
@@ -208,6 +261,7 @@ const TreeSpeciesTablePD = ({ data, modelName }: TreeSpeciesTablePDProps) => {
     treeCountSite: columnTreeCountSite,
     "treeCount/Goal": columnTreeCountGoal,
     "speciesCount/Goal": columnSpeciesCountGoal,
+    "seedCount/Goal": columnSeedCountGoal,
     saplingsCount: columnSaplingsCount
   };
 
