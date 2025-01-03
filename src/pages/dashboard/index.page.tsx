@@ -61,7 +61,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const logout = useLogout();
-  const { filters, setFilters, frameworks } = useDashboardContext();
+  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -95,6 +95,10 @@ const Dashboard = () => {
     { tooltip: { key: "Table", render: "Table" } },
     { tooltip: { key: "Graph", render: "Graph" } }
   ];
+
+  useEffect(() => {
+    setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
+  }, [totalSectionHeader]);
 
   useEffect(() => {
     refetchTotalSectionHeader();
