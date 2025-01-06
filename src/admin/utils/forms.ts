@@ -71,7 +71,7 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
   steps.forEach(step => {
     step.fields.forEach(field => {
       if (field.type === FieldType.Conditional && typeof output[field.name] !== "boolean") {
-        output[field.name] = true;
+        output[field.name] = false;
       }
     });
   });
