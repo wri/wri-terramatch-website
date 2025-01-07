@@ -19,7 +19,10 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis tickLine={false} axisLine={false} dataKey="name" tick={props => <CustomXAxisTick {...props} />} />
         <YAxis tickLine={false} axisLine={false} range={[0, maxValue]} tick={props => <CustomYAxisTick {...props} />} />
-        <Tooltip content={props => <CustomTooltip {...props} />} cursor={{ fill: "rgba(0, 0, 0, 0.05)" }} />
+        <Tooltip
+          content={props => <CustomTooltip {...props} total={total} />}
+          cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
+        />
         <Legend content={<CustomLegend totals={totals} totalJobs={total} />} />
         <Bar
           dataKey={type === "gender" ? "Women" : "Youth"}

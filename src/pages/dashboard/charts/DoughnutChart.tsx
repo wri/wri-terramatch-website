@@ -19,7 +19,7 @@ const DoughnutChart: React.FC<{ data: ChartDataVolunteers }> = ({ data }) => {
               <Cell key={`cell-${index}`} fill={COLORS_VOLUNTEERS[index % COLORS_VOLUNTEERS.length]} />
             ))}
           </Pie>
-          <Tooltip content={props => <CustomTooltip {...props} />} />
+          <Tooltip content={props => <CustomTooltip {...props} total={total} />} />
           <Legend content={<CustomLegendVolunteers totals={totals} totalVolunteers={total} />} />
         </PieChart>
       </ResponsiveContainer>
