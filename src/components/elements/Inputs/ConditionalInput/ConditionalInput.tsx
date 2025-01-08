@@ -39,6 +39,11 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.value, formHook]);
 
+  useEffect(() => {
+    if (field.value == null) {
+      field.onChange(false);
+    }
+  }, [field, field.value]);
   return (
     <>
       <RadioGroup

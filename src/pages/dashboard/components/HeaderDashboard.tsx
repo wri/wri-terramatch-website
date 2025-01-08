@@ -46,7 +46,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries } =
+  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries, lastUpdatedAt } =
     useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
@@ -234,6 +234,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
             &nbsp;&nbsp;{t("BETA")}
           </Text>
+        </Text>
+        <Text variant="text-16" className="absolute top-3 right-3 text-white ">
+          {t(lastUpdatedAt ? `Last Updated on ${new Date(lastUpdatedAt).toISOString().split("T")[0]}` : "")}
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
