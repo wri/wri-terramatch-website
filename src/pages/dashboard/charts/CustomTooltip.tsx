@@ -11,7 +11,7 @@ export const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
     maximumFractionDigits: 1
   });
 
-  const formattedPercentage = percentage.toFixed(0);
+  const formattedPercentage = percentage.toFixed(1);
 
   return (
     <div className="border-gray-300 custom-tooltip rounded-lg border bg-white p-2">

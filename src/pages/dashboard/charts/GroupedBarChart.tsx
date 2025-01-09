@@ -5,7 +5,7 @@ import { calculateTotals, GroupedBarChartData } from "@/utils/dashboardUtils";
 
 import { CustomBar } from "./CustomBarJobsCreated";
 import { CustomLegend } from "./CustomLegendJobsCreated";
-import { CustomTooltip } from "./CustomTooltip";
+import { CustomTooltip } from "./CustomTooltipJobsCreated";
 import { CustomXAxisTick } from "./CustomXAxisTickJobsCreated";
 import { CustomYAxisTick } from "./CustomYAxisTickJobsCreated";
 
@@ -19,7 +19,10 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis tickLine={false} axisLine={false} dataKey="name" tick={props => <CustomXAxisTick {...props} />} />
         <YAxis tickLine={false} axisLine={false} range={[0, maxValue]} tick={props => <CustomYAxisTick {...props} />} />
-        <Tooltip content={props => <CustomTooltip {...props} />} cursor={{ fill: "rgba(0, 0, 0, 0.05)" }} />
+        <Tooltip
+          content={props => <CustomTooltip {...props} total={total} />}
+          cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
+        />
         <Legend content={<CustomLegend totals={totals} totalJobs={total} />} />
         <Bar
           dataKey={type === "gender" ? "Women" : "Youth"}

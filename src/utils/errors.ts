@@ -22,3 +22,25 @@ export const getErrorMessages = (t: typeof useT, errorCode: string, variables: a
 
   return errorMapping[errorCode];
 };
+
+export const getErrorMessageFromPayload = (payload: any): string => {
+  try {
+    if (typeof payload === "object" && payload.error) {
+      try {
+        const parsedError = JSON.parse(payload.error);
+        return parsedError.message || parsedError.error || payload.error;
+      } catch {
+        return payload.error;
+      }
+    }
+
+    if (typeof payload === "string") {
+      const parsedPayload = JSON.parse(payload);
+      return parsedPayload.message || parsedPayload.error || payload;
+    }
+
+    return String(payload);
+  } catch (e) {
+    return String(payload);
+  }
+};

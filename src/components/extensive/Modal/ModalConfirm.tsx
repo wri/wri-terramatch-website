@@ -43,7 +43,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   };
 
   return (
-    <ModalBase {...rest} className={tw("min-w-80 p-5", className)}>
+    <ModalBase {...rest} className={tw("min-w-[30rem] p-5", className)}>
       <div className="flex w-full flex-col gap-2">
         <Text variant="text-14-bold" className="text-center">
           {title}

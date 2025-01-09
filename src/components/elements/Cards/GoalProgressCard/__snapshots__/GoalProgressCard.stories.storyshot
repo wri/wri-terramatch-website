@@ -22,13 +22,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
       >
         150
          
-        <p
-          className="text-16-light"
-          data-testid="txt"
-        />
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200 opacity-0"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200 opacity-0"
         role="progressbar"
       >
         <div
@@ -74,13 +70,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           of 
           732
         </p>
-        <p
-          className="text-16-light"
-          data-testid="txt"
-        />
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
         role="progressbar"
       >
         <div
@@ -94,7 +86,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
       </div>
     </div>
     <div
-      className="w-full space-y-3 pl-6 "
+      className="w-full space-y-3 pl-6"
     >
       <div
         className="flex w-full items-center"
@@ -114,7 +106,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           Organisations Joined
         </p>
         <p
-          className="text-14-bold"
+          className="flex w-full justify-end text-14-bold"
           data-testid="txt"
         >
           23
@@ -138,7 +130,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           Trees Planed
         </p>
         <p
-          className="text-14-bold"
+          className="flex w-full justify-end text-14-bold"
           data-testid="txt"
         >
           1,332
@@ -162,7 +154,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           Trash Removed 
         </p>
         <p
-          className="text-14-bold"
+          className="flex w-full justify-end text-14-bold"
           data-testid="txt"
         >
           530,000
@@ -202,13 +194,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
           of 
           150
         </p>
-        <p
-          className="text-16-light"
-          data-testid="txt"
-        />
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
         role="progressbar"
       >
         <div

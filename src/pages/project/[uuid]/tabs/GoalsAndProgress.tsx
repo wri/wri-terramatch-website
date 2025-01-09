@@ -113,7 +113,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 </FieldsExpander>
               </ContextCondition>
             </ContextCondition>
+
             <br />
+
             <GenericField label={t("Tree Species")}>
               <TreeSpeciesTable modelName="project" modelUUID={project.uuid} variantTable={VARIANT_TABLE_BORDER} />
             </GenericField>

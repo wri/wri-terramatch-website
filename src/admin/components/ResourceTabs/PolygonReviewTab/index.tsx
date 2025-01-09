@@ -32,7 +32,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -153,7 +152,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { showLoader, hideLoader } = useLoading();
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
@@ -315,8 +313,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
-    showLoader();
-
+    closeModal(ModalId.ADD_POLYGON);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const site_uuid = record.uuid;
@@ -351,10 +348,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
       refetch();
       refetchSiteBbox();
-      closeModal(ModalId.ADD_POLYGON);
       setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
-      hideLoader();
     } catch (error) {
       let errorMessage;
 
@@ -380,7 +375,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         errorMessage = t("An unknown error occurred");
       }
       openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
-      hideLoader();
     }
   };
 

@@ -29,7 +29,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               frameworksShow={[Framework.PPC]}
               label={t("Workday Count (PPC)")}
               value={site.combined_workday_count}
-              className="w-[170px]"
+              className="w-[25vw]"
             />
             <GoalProgressCard
               frameworksHide={[Framework.PPC]}
@@ -51,7 +51,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   value: site.regenerated_trees_count
                 }
               ]}
-              className="flex-1"
+              className="w-[30vw] max-w-[30vw] flex-1"
             />
           </div>
         </PageCard>

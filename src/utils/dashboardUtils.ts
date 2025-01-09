@@ -353,8 +353,20 @@ export const parseHectaresUnderRestorationData = (
 
   const formatValueText = (value: number): string => {
     if (!total_hectares_restored) return "0 ha 0%";
+
     const percentage = (value / total_hectares_restored) * 100;
-    return `${value.toFixed(0)} ha ${percentage.toFixed(2)}%`;
+
+    // Special handling for very small percentages
+    if (percentage < 0.1 && percentage > 0) {
+      let decimals = 1;
+      while (percentage.toFixed(decimals) === "0.000000".slice(0, decimals + 2)) {
+        decimals++;
+        if (decimals > 6) break;
+      }
+      return `${Math.round(value).toLocaleString()} ha ${percentage.toFixed(decimals)}%`;
+    }
+
+    return `${Math.round(value).toLocaleString()} ha ${percentage.toFixed(1)}%`;
   };
 
   const getLandUseTypeTitle = (value: string): string => {

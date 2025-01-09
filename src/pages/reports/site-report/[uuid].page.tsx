@@ -15,11 +15,12 @@ import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTable from "@/components/extensive/Tables/DisturbancesTable";
 import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
@@ -36,18 +37,15 @@ import useDemographicData from "@/hooks/useDemographicData";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
-
 const SiteReportDetailPage = () => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
-
   const { data, isLoading } = useGetV2ENTITYUUID({
     pathParams: { uuid: siteReportUUID, entity: "site-reports" }
   });
   const siteReport = (data?.data ?? {}) as any;
-
   const { data: site } = useGetV2ENTITYUUID(
     {
       pathParams: { uuid: siteReport?.site?.uuid, entity: "sites" }
@@ -56,11 +54,9 @@ const SiteReportDetailPage = () => {
       enabled: !!siteReport?.site?.uuid
     }
   );
-
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
   const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
-
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
     "site-report",
     "workdays",
@@ -134,7 +130,7 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.PPC]}>
+                    <ContextCondition frameworksHide={[Framework.HBF]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
@@ -149,8 +145,6 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Maintenance Activities")}>
                         {siteReport.maintenance_activities}
                       </LongTextField>
-                    </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
                       <TreeSpeciesTableTF
                         uuid={siteReportUUID}
                         entity={"site-report" as EstablishmentEntityType}
@@ -178,6 +172,19 @@ const SiteReportDetailPage = () => {
                         countColumnName={t("TREE REPLANTING COUNT")}
                         collection="replanting"
                       />
+                      <Box paddingX={3} paddingY={1}>
+                        <div className="flex items-center gap-1">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00000008]">
+                            <Icon name={IconNames.ASSISTED_NATURAL_REGENERATION} className="text-primary" />
+                          </div>
+                          <Text variant="text-16-semibold" className="text-grey-500">
+                            {t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT)")}:
+                          </Text>
+                          <Text variant="text-24-bold" className="text-black">
+                            {new Intl.NumberFormat("en-US").format(siteReport.total_trees_planted_count!) ?? "N/A"}
+                          </Text>
+                        </div>
+                      </Box>
                       <Box paddingX={3} paddingY={1}>
                         <Text variant="text-24-bold" className="text-darkCustom">
                           {t("Assisted Natural Regeneration")}
@@ -316,10 +323,13 @@ const SiteReportDetailPage = () => {
               </PageRow>
             </Else>
           </If>
+          <br />
+          <br />
+          <br />
         </PageBody>
+        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );
 };
-
 export default SiteReportDetailPage;

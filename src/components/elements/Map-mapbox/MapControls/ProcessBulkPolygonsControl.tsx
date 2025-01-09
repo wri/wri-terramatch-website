@@ -111,6 +111,7 @@ const ProcessBulkPolygonsControl = ({
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            closeModal(ModalId.FIX_POLYGONS);
             setIsLoadingDelayedJob?.(true);
             setAlertTitle?.("Fix Polygons");
             fixPolygons(
@@ -124,7 +125,7 @@ const ProcessBulkPolygonsControl = ({
               {
                 onSuccess: response => {
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
-                  closeModal(ModalId.FIX_POLYGONS);
+
                   setIsLoadingDelayedJob?.(false);
                   ApiSlice.addTotalContent(0);
                   ApiSlice.addProgressContent(0);

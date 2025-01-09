@@ -1,7 +1,6 @@
 import {
   VARIANT_PAGINATION_DASHBOARD,
   VARIANT_PAGINATION_MONITORED,
-  VARIANT_PAGINATION_TEXT_16,
   VariantPagination
 } from "@/components/extensive/Pagination/PaginationVariant";
 
@@ -31,7 +30,8 @@ export const VARIANT_TABLE_PRIMARY = {
   tBody: "space-y-4",
   trBody: "rounded-lg bg-white",
   tdBody: "first:rounded-tl-lg text-14-light first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_SECONDARY = {
@@ -42,7 +42,8 @@ export const VARIANT_TABLE_SECONDARY = {
   tBody: "space-y-4",
   trBody: "bg-neutral-50 rounded-lg",
   tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_SECONDARY_WHITE = {
@@ -53,7 +54,8 @@ export const VARIANT_TABLE_SECONDARY_WHITE = {
   tBody: "space-y-4",
   trBody: "bg-white rounded-lg",
   tdBody: "first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4 border-0",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_BORDER = {
@@ -65,7 +67,8 @@ export const VARIANT_TABLE_BORDER = {
   trBody: "bg-white border rounded-lg",
   tdBody:
     "border-neutral-200 border text-16-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_BORDER_ALL = {
@@ -78,7 +81,8 @@ export const VARIANT_TABLE_BORDER_ALL = {
   trBody: "bg-white rounded-lg",
   tdBody:
     "border-neutral-200 border-t border-b first:border-l last:border-r text-14-light first:rounded-tl-lg first:rounded-bl-lg last:rounded-br-lg last:rounded-tr-lg px-6 py-4",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_AIRTABLE = {
@@ -90,7 +94,7 @@ export const VARIANT_TABLE_AIRTABLE = {
   trBody: "bg-white border-y border-neutral-200 lastRow",
   tdBody: "text-16-light px-6 py-3",
   thead: "bg-blueCustom-100",
-  paginationVariant: VARIANT_PAGINATION_TEXT_16
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
@@ -103,7 +107,8 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
-  thead: "bg-blueCustom-100"
+  thead: "bg-blueCustom-100",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_VERSION = {
@@ -114,7 +119,8 @@ export const VARIANT_TABLE_VERSION = {
   tBody: "",
   trBody: "bg-transparent border-y border-neutral-200 lastRow !group hover:bg-[#ffffff33] py-0.5",
   tdBody: "first:rounded-l-lg last:rounded-r-lg text-10-bold text-white",
-  thead: "bg-transparent"
+  thead: "bg-transparent",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_ORGANISATION = {
@@ -125,7 +131,8 @@ export const VARIANT_TABLE_ORGANISATION = {
   tBody: "",
   trBody: "bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100",
   tdBody: "first:rounded-l-lg last:rounded-r-lg text-14-light text-gray-700 px-2 py-3 border-b border-neutral-200",
-  thead: "bg-transparent"
+  thead: "bg-transparent",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
@@ -137,7 +144,8 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4",
-  thead: "bg-blueCustom-100 "
+  thead: "bg-blueCustom-100 ",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL = {
@@ -199,4 +207,16 @@ export const VARIANT_TABLE_MONITORED = {
   thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
   tdBodySticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
   iconSort: "!w-2.5 !h-2.5 object-cover !ml-0"
+};
+
+export const VARIANT_TABLE_TREE_SPECIES = {
+  table: "border-collapse w-full",
+  name: "border-airtable text-left",
+  trHeader: "!bg-transparent border-b border-neutral-650 text-14 text-neutral-650 ",
+  thHeader: " text-14 uppercase !pr-4 !pl-0 !py-2 font-medium text-14",
+  tBody: "",
+  trBody: "bg-white border-b border-neutral-200 last:border-0 hover:bg-gray-100",
+  tdBody: "first:rounded-l-lg last:rounded-r-lg text-16-light text-gray-700 pr-4 pl-0 py-3 border-b border-neutral-200",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD,
+  thead: "bg-transparent"
 };

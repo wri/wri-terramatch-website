@@ -1,8 +1,7 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Show, TabbedShowLayout } from "react-admin";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
-import DelayedJobsProgressAlert from "@/admin/components/Alerts/DelayedJobsProgressAlert";
 import AuditLogTab from "@/admin/components/ResourceTabs/AuditLogTab/AuditLogTab";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRequestsTab";
@@ -16,9 +15,6 @@ import { RecordFrameworkProvider } from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 
 const SiteShow: FC = () => {
-  const [isLoadingDelayedJob, setIsLoadingDelayedJob] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
-
   return (
     <Show
       title={<ShowTitle moduleName="Site" getTitle={record => record?.name} />}
@@ -30,13 +26,7 @@ const SiteShow: FC = () => {
           <InformationTab type="sites" />
           <TabbedShowLayout.Tab label="Polygon Review">
             <MapAreaProvider>
-              <PolygonReviewTab
-                label=""
-                type={"sites"}
-                setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-                isLoadingDelayedJob={isLoadingDelayedJob!}
-                setAlertTitle={setAlertTitle!}
-              />
+              <PolygonReviewTab label="" type={"sites"} />
             </MapAreaProvider>
           </TabbedShowLayout.Tab>
           <GalleryTab label="Site Gallery" entity="sites" />
@@ -46,11 +36,6 @@ const SiteShow: FC = () => {
           <AuditLogTab entity={AuditLogButtonStates.SITE} />
         </TabbedShowLayout>
       </RecordFrameworkProvider>
-      <DelayedJobsProgressAlert
-        show={isLoadingDelayedJob}
-        title={alertTitle}
-        setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-      />
     </Show>
   );
 };
