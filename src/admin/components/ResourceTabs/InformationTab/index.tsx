@@ -7,9 +7,10 @@ import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
-import SeedingsTable from "@/admin/components/Tables/SeedingsTable";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
+import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import {
@@ -19,19 +20,21 @@ import {
 } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
+import {
+  dataSeedCountGoal,
+  dataSeedCountGoalSiteReport,
+  dataTreeCountGoal
+} from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
-import TreeSpeciesTable from "../../Tables/TreeSpeciesTable";
 import InformationTabRow from "./components/InformationTabRow";
 import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
-
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
 }
-
 const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   switch (type) {
     case "projects":
@@ -50,13 +53,14 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
       return null;
   }
 };
-
 const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, resource } = useShowContext();
+  const t = useT();
+  const { framework } = useFrameworkContext();
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
-      uuid: record.uuid,
+      uuid: record?.uuid,
       entity: props.type
     }
   });
@@ -64,20 +68,16 @@ const InformationTab: FC<IProps> = props => {
   const { data: seedlings } = useGetV2SeedingsENTITYUUID({
     pathParams: {
       uuid: record?.uuid,
-      entity: resource.replace("Report", "-report")
+      entity: resource?.replace("Report", "-report")
     }
   });
 
-  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
-  const t = useT();
-
   const isLoading = ctxLoading || queryLoading;
 
-  if (isLoading) return null;
+  if (isLoading || !record) return null;
 
-  const { framework } = useFrameworkContext();
+  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
-
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
     : normalizedFormDefaultValue(response?.data.answers!, formSteps);
@@ -91,9 +91,7 @@ const InformationTab: FC<IProps> = props => {
       case "nurseries":
         return "Nursery Information";
       case "project-reports":
-        return "Reported Data";
       case "site-reports":
-        return "Reported Data";
       case "nursery-reports":
         return "Reported Data";
       default:
@@ -138,31 +136,72 @@ const InformationTab: FC<IProps> = props => {
                     />
                   </Card>
                   <When condition={record}>
-                    <When condition={props.type === "sites" || props.type === "site-reports"}>
+                    <div className="pl-8">
+                      <When
+                        condition={
+                          props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
+                        }
+                      >
+                        <ContextCondition frameworksShow={[Framework.PPC]}>
+                          <div className="flex items-center gap-1 pb-8">
+                            <Text variant="text-18-semibold" className="capitalize">
+                              Total Trees Planted{" "}
+                              <When condition={props.type === "project-reports"}>in site Report</When>:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary">
+                              {record?.total_trees_planted_count ?? 0}
+                            </Text>
+                          </div>
+                        </ContextCondition>
+                      </When>
+                      <If condition={props.type === "projects"}>
+                        <Then>
+                          <div className="flex flex-col gap-4">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Tree Species:
+                            </Text>
+                            <TreeSpeciesTablePD
+                              modelName="treeCount/Goal"
+                              data={dataTreeCountGoal}
+                              secondColumnWidth="45%"
+                            />
+                          </div>
+                        </Then>
+                        <Else>
+                          <TreeSpeciesTablePD
+                            modelName="treeCount/Goal"
+                            data={dataTreeCountGoal}
+                            headerName="tree species name"
+                            secondColumnWidth="45%"
+                          />
+                        </Else>
+                      </If>
+                    </div>
+                  </When>
+                  <When
+                    condition={
+                      props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
+                    }
+                  >
+                    <div className="pl-8">
                       <ContextCondition frameworksShow={[Framework.PPC]}>
-                        <Card sx={{ padding: 3 }}>
-                          <Typography variant="h6" component="h3" className="capitalize">
-                            Total Trees Planted
-                          </Typography>
-                          {record?.total_trees_planted_count}
-                        </Card>
+                        <div className="flex items-center gap-1 py-8">
+                          <Text variant="text-18-semibold" className="capitalize">
+                            Total Seeds Planted:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary">
+                            {totalSeedlings ?? 0}
+                          </Text>
+                        </div>
                       </ContextCondition>
-                    </When>
-                    <TreeSpeciesTable uuid={record.uuid} entity={resource} />
+                      <TreeSpeciesTablePD
+                        modelName="seedCount/Goal"
+                        data={props.type === "site-reports" ? dataSeedCountGoalSiteReport : dataSeedCountGoal}
+                        headerName="seeding species name"
+                        secondColumnWidth="45%"
+                      />
+                    </div>
                   </When>
-
-                  <When condition={props.type === "sites" || props.type === "site-reports"}>
-                    <ContextCondition frameworksShow={[Framework.PPC]}>
-                      <Card sx={{ padding: 3 }}>
-                        <Typography variant="h6" component="h3" className="capitalize">
-                          Total Seeds Planted
-                        </Typography>
-                        {totalSeedlings}
-                      </Card>
-                    </ContextCondition>
-                    <SeedingsTable uuid={record.uuid} entity={resource} />
-                  </When>
-
                   <When condition={props.type === "projects"}>
                     <MonitoringPartnersTable project={record} />
                     <ProjectManagersTable project={record} />
@@ -171,7 +210,6 @@ const InformationTab: FC<IProps> = props => {
               </Else>
             </If>
           </Grid>
-
           <Grid xs={4} item>
             <InformationAside type={props.type} />
           </Grid>
@@ -180,5 +218,4 @@ const InformationTab: FC<IProps> = props => {
     </When>
   );
 };
-
 export default InformationTab;
