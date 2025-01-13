@@ -50,6 +50,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
+  const optionsCohort = [
+    { title: "Top 100", value: "terrafund" },
+    { title: "Landscapes", value: "terrafund-landscapes" },
+    { title: "Enterprises", value: "enterprises" }
+  ];
+
   const optionMenu = activeProjects
     ? activeProjects?.map(
         (
@@ -121,6 +127,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         }
       },
       organizations: [],
+      cohort: "",
       uuid: ""
     });
     setSearchTerm("");
@@ -132,6 +139,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       landscapes: filters.landscapes,
       country: filters.country?.country_slug || undefined,
       organizations: filters.organizations,
+      cohort: filters.cohort,
       uuid: filters.uuid
     };
 
@@ -149,13 +157,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   useEffect(() => {
     setDashboardCountries(dashboardCountries);
-    const { programmes, landscapes, country, organizations, uuid } = router.query;
+    const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
 
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
+      cohort: Array.isArray(cohort) ? cohort[0] : cohort ?? "",
       uuid: (uuid as string) || ""
     };
 
@@ -261,6 +270,35 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     handleChange("programmes", []);
                   }}
                   options={programmeOptions}
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[5]"
+                />
+              </BlurContainer>
+              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
+                <Dropdown
+                  key={filters.cohort.length}
+                  showClear
+                  prefix={<Text variant="text-14-light">{t("Cohort:")}</Text>}
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="All Data"
+                  value={filters.cohort ? [filters.cohort] : []}
+                  onChange={(value: OptionValue[]) => {
+                    console.log(value);
+                    return setFilters(prevValues => ({
+                      ...prevValues,
+                      uuid: "",
+                      cohort: value[0] as string
+                    }));
+                  }}
+                  onClear={() => {
+                    setFilters(prevValues => ({
+                      ...prevValues,
+                      uuid: "",
+                      cohort: ""
+                    }));
+                  }}
+                  options={optionsCohort}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[5]"
                 />
