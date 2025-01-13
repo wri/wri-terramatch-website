@@ -51,8 +51,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const { activeProjects } = useDashboardData(filters);
 
   const optionsCohort = [
-    { title: "Top 100", value: "top-100" },
-    { title: "Landscapes", value: "landscapes" }
+    { title: "Top 100", value: "terrafund" },
+    { title: "Landscapes", value: "terrafund-landscapes" },
+    { title: "Enterprises", value: "enterprises" }
   ];
 
   const optionMenu = activeProjects
