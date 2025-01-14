@@ -263,7 +263,6 @@ const TreeSpeciesTablePD = ({
       enableSorting: false,
       cell: (props: any) => {
         const value = props.getValue();
-        console.log(value, "VVVVVVVVV");
         return (
           <div className="grid grid-cols-2 gap-3">
             <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
