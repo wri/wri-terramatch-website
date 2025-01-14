@@ -20,11 +20,7 @@ import {
 } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import {
-  dataSeedCountGoal,
-  dataSeedCountGoalSiteReport,
-  dataTreeCountGoal
-} from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
+import { dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -139,26 +135,59 @@ const InformationTab: FC<IProps> = props => {
                     <div className="pl-8">
                       <When
                         condition={
-                          props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
+                          props.type === "projects" ||
+                          props.type === "sites" ||
+                          props.type === "site-reports" ||
+                          props.type === "project-reports"
                         }
                       >
-                        <ContextCondition frameworksShow={[Framework.PPC]}>
-                          <div className="flex items-center gap-1 pb-8">
-                            <Text variant="text-18-semibold" className="capitalize">
-                              Total Trees Planted{" "}
-                              <When condition={props.type === "project-reports"}>in site Report</When>:
-                            </Text>
-                            <Text variant="text-18-semibold" className="capitalize text-primary">
-                              {record?.total_trees_planted_count ?? 0}
-                            </Text>
-                          </div>
-                        </ContextCondition>
-                      </When>
-                      <If condition={props.type === "projects"}>
-                        <Then>
+                        <div className="flex flex-col gap-11">
+                          <ContextCondition frameworksHide={[Framework.PPC]}>
+                            <div className="flex flex-col gap-4">
+                              <Text variant="text-16-bold" className="capitalize">
+                                Non-Trees:
+                              </Text>
+                              <TreeSpeciesTablePD
+                                modelName="treeCount/Goal"
+                                data={dataTreeCountGoal}
+                                secondColumnWidth="45%"
+                              />
+                            </div>
+                          </ContextCondition>
+                          <When condition={props.type === "projects" || props.type === "project-reports"}>
+                            <ContextCondition frameworksShow={[Framework.PPC]}>
+                              <div className="flex flex-col gap-4">
+                                <Text variant="text-16-bold" className="capitalize">
+                                  Nursery-Saplings:
+                                </Text>
+                                <TreeSpeciesTablePD
+                                  modelName="treeCount/Goal"
+                                  data={dataTreeCountGoal}
+                                  secondColumnWidth="45%"
+                                />
+                              </div>
+                            </ContextCondition>
+                          </When>
+                          <ContextCondition frameworksShow={[Framework.PPC]}>
+                            <div className="flex flex-col gap-4">
+                              <div className="flex items-center gap-1 py-8">
+                                <Text variant="text-16-bold" className="capitalize">
+                                  Seedings:
+                                </Text>
+                                <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                  {totalSeedlings ?? 0}
+                                </Text>
+                              </div>
+                              <TreeSpeciesTablePD
+                                modelName="treeCount/Goal"
+                                data={dataTreeCountGoal}
+                                secondColumnWidth="45%"
+                              />
+                            </div>
+                          </ContextCondition>
                           <div className="flex flex-col gap-4">
                             <Text variant="text-16-bold" className="capitalize">
-                              Tree Species:
+                              Trees Planted:
                             </Text>
                             <TreeSpeciesTablePD
                               modelName="treeCount/Goal"
@@ -166,40 +195,22 @@ const InformationTab: FC<IProps> = props => {
                               secondColumnWidth="45%"
                             />
                           </div>
-                        </Then>
-                        <Else>
-                          <TreeSpeciesTablePD
-                            modelName="treeCount/Goal"
-                            data={dataTreeCountGoal}
-                            headerName="tree species name"
-                            secondColumnWidth="45%"
-                          />
-                        </Else>
-                      </If>
-                    </div>
-                  </When>
-                  <When
-                    condition={
-                      props.type === "sites" || props.type === "site-reports" || props.type === "project-reports"
-                    }
-                  >
-                    <div className="pl-8">
-                      <ContextCondition frameworksShow={[Framework.PPC]}>
-                        <div className="flex items-center gap-1 py-8">
-                          <Text variant="text-18-semibold" className="capitalize">
-                            Total Seeds Planted:
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary">
-                            {totalSeedlings ?? 0}
-                          </Text>
+                          <When condition={props.type === "site-reports" || props.type === "project-reports"}>
+                            <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
+                              <div className="flex flex-col gap-4">
+                                <Text variant="text-16-bold" className="capitalize">
+                                  Replanting:
+                                </Text>
+                                <TreeSpeciesTablePD
+                                  modelName="treeCount/Goal"
+                                  data={dataTreeCountGoal}
+                                  secondColumnWidth="45%"
+                                />
+                              </div>
+                            </ContextCondition>
+                          </When>
                         </div>
-                      </ContextCondition>
-                      <TreeSpeciesTablePD
-                        modelName="seedCount/Goal"
-                        data={props.type === "site-reports" ? dataSeedCountGoalSiteReport : dataSeedCountGoal}
-                        headerName="seeding species name"
-                        secondColumnWidth="45%"
-                      />
+                      </When>
                     </div>
                   </When>
                   <When condition={props.type === "projects"}>
