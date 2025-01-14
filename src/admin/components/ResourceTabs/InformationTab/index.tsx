@@ -20,7 +20,7 @@ import {
 } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
+import { dataTreeCount, dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -148,8 +148,18 @@ const InformationTab: FC<IProps> = props => {
                                 Non-Trees:
                               </Text>
                               <TreeSpeciesTablePD
-                                modelName="treeCount/Goal"
-                                data={dataTreeCountGoal}
+                                modelName={
+                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                  (props.type === "projects" || props.type === "sites")
+                                    ? "noGoal"
+                                    : "treeCount/Goal"
+                                }
+                                data={
+                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                  (props.type === "projects" || props.type === "sites")
+                                    ? dataTreeCount
+                                    : dataTreeCountGoal
+                                }
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -161,8 +171,8 @@ const InformationTab: FC<IProps> = props => {
                                   Nursery-Saplings:
                                 </Text>
                                 <TreeSpeciesTablePD
-                                  modelName="treeCount/Goal"
-                                  data={dataTreeCountGoal}
+                                  modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
+                                  data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -179,8 +189,8 @@ const InformationTab: FC<IProps> = props => {
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
-                                modelName="treeCount/Goal"
-                                data={dataTreeCountGoal}
+                                modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
+                                data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -190,8 +200,20 @@ const InformationTab: FC<IProps> = props => {
                               Trees Planted:
                             </Text>
                             <TreeSpeciesTablePD
-                              modelName="treeCount/Goal"
-                              data={dataTreeCountGoal}
+                              modelName={
+                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                  props.type === "sites") ||
+                                (framework.includes(Framework.PPC) && props.type === "projects")
+                                  ? "noGoal"
+                                  : "treeCount/Goal"
+                              }
+                              data={
+                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                  props.type === "sites") ||
+                                (framework.includes(Framework.PPC) && props.type === "projects")
+                                  ? dataTreeCount
+                                  : dataTreeCountGoal
+                              }
                               secondColumnWidth="45%"
                             />
                           </div>

@@ -17,7 +17,8 @@ export type ModelNameType =
   | "speciesCount/Goal"
   | "saplingsCount"
   | "seedCount/Goal"
-  | "saplingsCount";
+  | "saplingsCount"
+  | "noGoal";
 
 export interface TreeSpeciesTablePDProps {
   data: any[];
@@ -254,6 +255,27 @@ const TreeSpeciesTablePD = ({
     }
   ];
 
+  const columnNoGoal = [
+    rowSpeciesName,
+    {
+      accessorKey: "treeCount",
+      header: "Tree Count",
+      enableSorting: false,
+      cell: (props: any) => {
+        const value = props.getValue();
+        console.log(value, "VVVVVVVVV");
+        return (
+          <div className="grid grid-cols-2 gap-3">
+            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <Text variant="text-14-bold" className="flex gap-2">
+              {value}
+            </Text>
+          </div>
+        );
+      }
+    }
+  ];
+
   const columnTable: { [key in ModelNameType]: any[] } = {
     treeCount: columnTreeCount,
     seedCount: columnSeedCount,
@@ -262,7 +284,8 @@ const TreeSpeciesTablePD = ({
     "treeCount/Goal": columnTreeCountGoal,
     "speciesCount/Goal": columnSpeciesCountGoal,
     "seedCount/Goal": columnSeedCountGoal,
-    saplingsCount: columnSaplingsCount
+    saplingsCount: columnSaplingsCount,
+    noGoal: columnNoGoal
   };
 
   return (
