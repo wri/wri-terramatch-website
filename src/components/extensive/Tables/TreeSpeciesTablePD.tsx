@@ -267,7 +267,13 @@ const TreeSpeciesTablePD = ({
 
   return (
     <div>
-      <Table data={data} columns={columnTable[modelName]} variant={VARIANT_TABLE_TREE_SPECIES} hasPagination />
+      <Table
+        data={data}
+        columns={columnTable[modelName]}
+        variant={VARIANT_TABLE_TREE_SPECIES}
+        hasPagination
+        invertSelectPagination
+      />
     </div>
   );
 };
