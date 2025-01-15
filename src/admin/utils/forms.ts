@@ -69,9 +69,20 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
   const output = { ...answers };
 
   steps.forEach(step => {
-    step.fields.forEach(field => {
-      if (field.type === FieldType.Conditional && typeof output[field.name] !== "boolean") {
-        output[field.name] = false;
+    step.fields.forEach(fieldStep => {
+      if (fieldStep.type === FieldType.Conditional && typeof output[fieldStep.name] !== "boolean") {
+        output[fieldStep.name] = false;
+      }
+      if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
+        fieldStep.fieldProps?.fields.forEach((fieldProps: any) => {
+          if (
+            Array.isArray(output[fieldProps.name]) &&
+            output[fieldProps.name]?.length > 0 &&
+            !output[fieldStep.name]
+          ) {
+            output[fieldStep.name] = true;
+          }
+        });
       }
     });
   });
