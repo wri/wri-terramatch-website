@@ -20,7 +20,6 @@ import {
 } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { dataTreeCount, dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -53,6 +52,8 @@ const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, resource } = useShowContext();
   const t = useT();
   const { framework } = useFrameworkContext();
+  const modelName = resource?.replace("Report", "-report");
+  const modelUUID = record?.uuid;
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -61,7 +62,7 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
-  const { data: seedlings } = useGetV2SeedingsENTITYUUID({
+  const { data: seedings } = useGetV2SeedingsENTITYUUID({
     pathParams: {
       uuid: record?.uuid,
       entity: resource?.replace("Report", "-report")
@@ -72,7 +73,7 @@ const InformationTab: FC<IProps> = props => {
 
   if (isLoading || !record) return null;
 
-  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
+  const totalSeedlings = seedings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -148,18 +149,21 @@ const InformationTab: FC<IProps> = props => {
                                 Non-Trees:
                               </Text>
                               <TreeSpeciesTablePD
-                                modelName={
-                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  (props.type === "projects" || props.type === "sites")
-                                    ? "noGoal"
-                                    : "treeCount/Goal"
-                                }
-                                data={
-                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  (props.type === "projects" || props.type === "sites")
-                                    ? dataTreeCount
-                                    : dataTreeCountGoal
-                                }
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                collection="non-tree"
+                                // modelName={
+                                //   (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                //   (props.type === "projects" || props.type === "sites")
+                                //     ? "noGoal"
+                                //     : "treeCount/Goal"
+                                // }
+                                // data={
+                                //   (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                //   (props.type === "projects" || props.type === "sites")
+                                //     ? dataTreeCount
+                                //     : dataTreeCountGoal
+                                // }
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -171,8 +175,11 @@ const InformationTab: FC<IProps> = props => {
                                   Nursery-Saplings:
                                 </Text>
                                 <TreeSpeciesTablePD
-                                  modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                  data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="nursery-seedling"
+                                  // modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
+                                  // data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -189,8 +196,10 @@ const InformationTab: FC<IProps> = props => {
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
-                                modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                // modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
+                                // data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -200,20 +209,23 @@ const InformationTab: FC<IProps> = props => {
                               Trees Planted:
                             </Text>
                             <TreeSpeciesTablePD
-                              modelName={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects")
-                                  ? "noGoal"
-                                  : "treeCount/Goal"
-                              }
-                              data={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects")
-                                  ? dataTreeCount
-                                  : dataTreeCountGoal
-                              }
+                              modelUUID={modelUUID}
+                              modelName={modelName}
+                              collection="tree-planted"
+                              // modelName={
+                              //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                              //     props.type === "sites") ||
+                              //   (framework.includes(Framework.PPC) && props.type === "projects")
+                              //     ? "noGoal"
+                              //     : "treeCount/Goal"
+                              // }
+                              // data={
+                              //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                              //     props.type === "sites") ||
+                              //   (framework.includes(Framework.PPC) && props.type === "projects")
+                              //     ? dataTreeCount
+                              //     : dataTreeCountGoal
+                              // }
                               secondColumnWidth="45%"
                             />
                           </div>
@@ -224,8 +236,11 @@ const InformationTab: FC<IProps> = props => {
                                   Replanting:
                                 </Text>
                                 <TreeSpeciesTablePD
-                                  modelName="treeCount/Goal"
-                                  data={dataTreeCountGoal}
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="restored"
+                                  // modelName="treeCount/Goal"
+                                  // data={dataTreeCountGoal}
                                   secondColumnWidth="45%"
                                 />
                               </div>

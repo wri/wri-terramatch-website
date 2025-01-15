@@ -7,7 +7,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+// import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
@@ -502,7 +502,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
               </div>
             </div>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
+            {/* <ContextCondition frameworksShow={[Framework.PPC]}>
               <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.TF]}>
@@ -510,7 +510,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TreeSpeciesTablePD modelName="speciesCount/Goal" data={dataSpeciesCountGoal} />
-            </ContextCondition>
+            </ContextCondition> */}
           </div>
         </PageCard>
       </PageRow>
@@ -628,12 +628,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 </>
               </ContextCondition>
               <div className="mt-2">
-                <ContextCondition frameworksShow={[Framework.TF]}>
+                {/* <ContextCondition frameworksShow={[Framework.TF]}>
                   <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
                 </ContextCondition>
                 <ContextCondition frameworksHide={[Framework.TF]}>
                   <TreeSpeciesTablePD modelName="seedCount" data={dataSeedCount} />
-                </ContextCondition>
+                </ContextCondition> */}
               </div>
             </div>
           </PageCard>
@@ -680,7 +680,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
 
             <div className="mt-2">
-              <TreeSpeciesTablePD modelName="treeCountSite" data={dataTreeCountSite} />
+              {/* <TreeSpeciesTablePD modelName="treeCountSite" data={dataTreeCountSite} /> */}
             </div>
           </PageCard>
         </PageColumn>
@@ -723,7 +723,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </div>
-              <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+              {/* <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} /> */}
             </div>
           </PageCard>
         </PageRow>
