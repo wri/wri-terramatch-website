@@ -259,13 +259,12 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCount",
-      header: "Tree Count",
+      header: "Count",
       enableSorting: false,
       cell: (props: any) => {
         const value = props.getValue();
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
             <Text variant="text-14-bold" className="flex gap-2">
               {value}
             </Text>
