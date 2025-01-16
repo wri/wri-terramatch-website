@@ -198,6 +198,7 @@ const InformationTab: FC<IProps> = props => {
                               <TreeSpeciesTablePD
                                 modelUUID={modelUUID}
                                 modelName={modelName}
+                                collection="seeding"
                                 // modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
                                 // data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
                                 secondColumnWidth="45%"
