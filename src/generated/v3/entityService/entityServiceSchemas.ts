@@ -25,7 +25,7 @@ export type ScientificNameDto = {
 
 export type EstablishmentsTreesDto = {
   /**
-   * The species that were specified at the establishment of the parent entity keyed by collection
+   * The species that were specified at the establishment of the parent entity keyed by collection. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
    *
    * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
    */
