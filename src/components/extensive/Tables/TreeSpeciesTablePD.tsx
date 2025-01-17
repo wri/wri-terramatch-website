@@ -43,8 +43,6 @@ const TreeSpeciesTablePD = ({
   if (collection != null) {
     queryParams["filter[collection]"] = collection;
   }
-  queryParams["page"] = 1;
-  queryParams["per_page"] = 10;
 
   const { data: apiResponse } = useGetV2TreeSpeciesEntityUUID(
     {
