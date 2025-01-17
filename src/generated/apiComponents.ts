@@ -19612,21 +19612,27 @@ export type GetV2TasksUUIDReportsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2TasksUUIDReportsResponse = {
   data?: {
-    uuid?: number;
-    type?: string;
-    status?: string;
+    uuid?: string;
     /**
      * @format date-time
      */
     due_at?: string;
-    title?: string;
-    report_title?: string;
-    update_request_status?: string;
     /**
      * @format date-time
      */
     submitted_at?: string;
+    report_title?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    update_request_status?: string;
+    nothing_to_report?: boolean;
+    title?: string;
+    type?: string;
     parent_name?: string;
+    completion?: number;
   }[];
 };
 
