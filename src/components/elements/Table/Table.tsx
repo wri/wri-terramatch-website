@@ -49,6 +49,7 @@ export interface TableProps<TData>
   initialTableState?: InitialTableState;
   variant?: TableVariant;
   hasPagination?: boolean;
+  resetOnDataChange?: boolean;
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
   invertSelectPagination?: boolean;
@@ -87,6 +88,7 @@ function Table<TData extends RowData>({
   invertSelectPagination = false,
   hasPagination = false,
   visibleRows = 10,
+  resetOnDataChange = true, // maintains default behavior
   onRowClick,
   contentClassName,
   ...props
@@ -129,7 +131,9 @@ function Table<TData extends RowData>({
       onTableStateChange?.({ sorting, filters });
     },
     getRowId: (row: any) => row.uuid,
-    debugTable: process.env.NODE_ENV === "development"
+    debugTable: process.env.NODE_ENV === "development",
+
+    autoResetAll: resetOnDataChange
   });
 
   const tableState = getState();
@@ -138,7 +142,7 @@ function Table<TData extends RowData>({
     setSorting(initialTableState?.sorting ?? []);
     setPageSize(visibleRows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, visibleRows]);
+  }, [visibleRows]);
 
   return (
     <div className={classNames("w-full", variant.className, contentClassName)}>
