@@ -154,3 +154,106 @@ export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =
     ...variables,
     signal
   });
+
+export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+    /**
+     * @example Bad Request
+     */
+    error?: string;
+  };
+}>;
+
+export type RequestPasswordResetResponse = {
+  data?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+    /**
+     * @pattern ^\d{5}$
+     */
+    id?: string;
+    attributes?: Schemas.RequestResetPasswordDto;
+  };
+};
+
+export type RequestPasswordResetVariables = {
+  body: Schemas.RequestResetPasswordDto;
+};
+
+/**
+ * Send password reset email with a token
+ */
+export const requestPasswordReset = (variables: RequestPasswordResetVariables, signal?: AbortSignal) =>
+  userServiceFetch<
+    RequestPasswordResetResponse,
+    RequestPasswordResetError,
+    Schemas.RequestResetPasswordDto,
+    {},
+    {},
+    {}
+  >({ url: "/auth/v3/reset-password/request", method: "post", ...variables, signal });
+
+export type ResetPasswordPathParams = {
+  token: string;
+};
+
+export type ResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+    /**
+     * @example Bad Request
+     */
+    error?: string;
+  };
+}>;
+
+export type ResetPasswordResponse = {
+  data?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+    /**
+     * @pattern ^\d{5}$
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseOperationDto;
+  };
+};
+
+export type ResetPasswordVariables = {
+  body?: Schemas.ResetPasswordDto;
+  pathParams: ResetPasswordPathParams;
+};
+
+/**
+ * Reset password using the provided token
+ */
+export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortSignal) =>
+  userServiceFetch<
+    ResetPasswordResponse,
+    ResetPasswordError,
+    Schemas.ResetPasswordDto,
+    {},
+    {},
+    ResetPasswordPathParams
+  >({ url: "/auth/v3/reset-password/reset/{token}", method: "post", ...variables, signal });

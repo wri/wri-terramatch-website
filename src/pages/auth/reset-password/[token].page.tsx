@@ -7,7 +7,8 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { usePatchAuthChange } from "@/generated/apiComponents";
+// import { usePatchAuthChange } from "@/generated/apiComponents";
+import { resetPassword as NewResetPassword } from "@/generated/v3/userService/userServiceComponents";
 
 import ResetPasswordForm from "./components/ResetPasswordForm";
 
@@ -21,8 +22,6 @@ export type ResetPasswordData = yup.InferType<typeof ResetPasswordDataSchema>;
 const ResetPasswordPage = () => {
   const router = useRouter();
   const t = useT();
-
-  const { mutateAsync: requestResetPassword, isLoading, error, isSuccess } = usePatchAuthChange();
   const form = useForm<ResetPasswordData>({
     resolver: yupResolver(ResetPasswordDataSchema),
     mode: "all"
@@ -44,10 +43,12 @@ const ResetPasswordPage = () => {
       if (!router.query.token) {
         router.push("/");
       } else {
-        await requestResetPassword({
+        NewResetPassword({
           body: {
-            token: (router.query.token as string)!,
-            password: data.password
+            newPassword: data.password
+          },
+          pathParams: {
+            token: (router.query.token as string)!
           }
         });
       }
@@ -62,13 +63,7 @@ const ResetPasswordPage = () => {
   return (
     <BackgroundLayout>
       <ContentLayout>
-        <ResetPasswordForm
-          form={form}
-          loading={isLoading}
-          handleSave={handleSave}
-          apiError={error}
-          success={isSuccess}
-        />
+        <ResetPasswordForm form={form} loading={false} handleSave={handleSave} apiError={null} success={false} />
       </ContentLayout>
     </BackgroundLayout>
   );

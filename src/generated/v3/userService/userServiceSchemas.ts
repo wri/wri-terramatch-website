@@ -53,3 +53,23 @@ export type OrganisationDto = {
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
 };
+
+export type RequestResetPasswordDto = {
+  /**
+   * User email
+   *
+   * @example user@example.com
+   */
+  emailAddress: string;
+};
+
+export type ResetPasswordResponseOperationDto = {
+  /**
+   * User email
+   *
+   * @example user@example.com
+   */
+  message: string;
+};
+
+export type ResetPasswordDto = {};
