@@ -786,10 +786,10 @@ const DataCard = ({
       "[x_ha]": Math.round(sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true)),
       "[x_%]": calculatePercentage(
         sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true),
-        landUseData.totalSection.totalHectaresRestored
+        totalHectaresRestoredGoal
       ),
-      "[x_ha_goal]": Math.round(landUseData.totalSection.totalHectaresRestored),
-      "[x_1a]": getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]?.label ?? "N/A",
+      "[x_ha_goal]": Math.round(totalHectaresRestoredGoal),
+      "[x_1a]": getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]?.label ?? "NaN",
       "[x_1b]":
         Math.round(
           parseInt(
@@ -798,10 +798,10 @@ const DataCard = ({
               .trim(),
             10
           )
-        ) ?? "N/A",
+        ) ?? "NaN",
       "[other_target_land_use]": formatDescriptionIndicator(
         valuesItemsLandUse,
-        record.total_hectares_restored_sum,
+        totalHectaresRestoredGoal,
         false,
         "The other target land use systems used include"
       )
