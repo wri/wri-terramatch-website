@@ -721,12 +721,12 @@ const DataCard = ({
           ecoRegionData.chartData.length
         } major ecoregion(s): ${calculatePercentage(
           ecoRegionData.chartData[0].value,
-          record.total_hectares_restored_sum
+          ecoRegionData.total
         )}% of the project takes place in the ${ecoRegionData.chartData[0].name} ecoregion ${
           ecoRegionData.chartData?.[1]
             ? `[and ${calculatePercentage(
                 ecoRegionData.chartData[1].value,
-                record.total_hectares_restored_sum
+                ecoRegionData.total
               )}% of the project takes place in the ${ecoRegionData.chartData[1].name} ecoregion].`
             : "."
         }`
@@ -760,9 +760,9 @@ const DataCard = ({
     restorationByEcoRegion: {
       "[organization_name]": record?.organisation?.name,
       "[date_run]": dateRunIndicator,
-      "[x_ha]": Math.round(ecoRegionData.total),
-      "[x_%]": calculatePercentage(ecoRegionData.total, record.total_hectares_restored_sum),
-      "[x_ha_goal]": Math.round(record.total_hectares_restored_sum),
+      "[x_ha]": Math.round(sumRestorationByValues(ecoRegionData?.chartData, false)),
+      "[x_%]": calculatePercentage(sumRestorationByValues(ecoRegionData?.chartData, false), ecoRegionData.total),
+      "[x_ha_goal]": Math.round(ecoRegionData.total),
       "[restoration_eco_region]": restorationEcoregionText
     },
     restorationByStrategy: {
@@ -786,9 +786,9 @@ const DataCard = ({
       "[x_ha]": Math.round(sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true)),
       "[x_%]": calculatePercentage(
         sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true),
-        record.total_hectares_restored_sum
+        landUseData.totalSection.totalHectaresRestored
       ),
-      "[x_ha_goal]": Math.round(record.total_hectares_restored_sum),
+      "[x_ha_goal]": Math.round(landUseData.totalSection.totalHectaresRestored),
       "[x_1a]": getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]?.label ?? "N/A",
       "[x_1b]":
         Math.round(

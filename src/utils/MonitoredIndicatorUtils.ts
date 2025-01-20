@@ -19,7 +19,7 @@ export const getKeyValue = (data: { [key: string]: number }) => {
 
 export const calculatePercentage = (value: number, total: number): number => {
   if (!total) return 0;
-  return Math.round((Math.round(value) / Math.round(total)) * 100);
+  return Math.round((value / total) * 100);
 };
 
 export const formatDescriptionIndicator = (
