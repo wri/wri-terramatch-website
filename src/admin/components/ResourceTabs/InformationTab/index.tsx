@@ -146,21 +146,25 @@ const InformationTab: FC<IProps> = props => {
                           <ContextCondition frameworksHide={[Framework.PPC]}>
                             <div className="flex flex-col gap-4">
                               <Text variant="text-16-bold" className="capitalize">
-                                Non-Trees:
+                                Non-Trees Planted
                               </Text>
                               <TreeSpeciesTablePD
                                 modelUUID={modelUUID}
                                 modelName={modelName}
                                 collection="non-tree"
                                 // modelName={
-                                //   (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                //   (props.type === "projects" || props.type === "sites")
+                                //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                //     (props.type === "projects" || props.type === "sites")) ||
+                                //   props.type === "site-reports" ||
+                                //   props.type === "project-reports"
                                 //     ? "noGoal"
                                 //     : "treeCount/Goal"
                                 // }
                                 // data={
-                                //   (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                //   (props.type === "projects" || props.type === "sites")
+                                //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+                                //     (props.type === "projects" || props.type === "sites")) ||
+                                //   props.type === "site-reports" ||
+                                //   props.type === "project-reports"
                                 //     ? dataTreeCount
                                 //     : dataTreeCountGoal
                                 // }
@@ -172,7 +176,7 @@ const InformationTab: FC<IProps> = props => {
                             <ContextCondition frameworksShow={[Framework.PPC]}>
                               <div className="flex flex-col gap-4">
                                 <Text variant="text-16-bold" className="capitalize">
-                                  Nursery-Saplings:
+                                  Saplings Grown in Nurseries:
                                 </Text>
                                 <TreeSpeciesTablePD
                                   modelUUID={modelUUID}
@@ -189,7 +193,7 @@ const InformationTab: FC<IProps> = props => {
                             <div className="flex flex-col gap-4">
                               <div className="flex items-center gap-1 py-8">
                                 <Text variant="text-16-bold" className="capitalize">
-                                  Seedings:
+                                  Seeds Planted:
                                 </Text>
                                 <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                                   {totalSeedlings ?? 0}
@@ -216,14 +220,18 @@ const InformationTab: FC<IProps> = props => {
                               // modelName={
                               //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
                               //     props.type === "sites") ||
-                              //   (framework.includes(Framework.PPC) && props.type === "projects")
+                              //   (framework.includes(Framework.PPC) && props.type === "projects") ||
+                              //   props.type === "site-reports" ||
+                              //   props.type === "project-reports"
                               //     ? "noGoal"
                               //     : "treeCount/Goal"
                               // }
                               // data={
                               //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
                               //     props.type === "sites") ||
-                              //   (framework.includes(Framework.PPC) && props.type === "projects")
+                              //   (framework.includes(Framework.PPC) && props.type === "projects") ||
+                              //   props.type === "site-reports" ||
+                              //   props.type === "project-reports"
                               //     ? dataTreeCount
                               //     : dataTreeCountGoal
                               // }

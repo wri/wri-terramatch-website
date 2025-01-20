@@ -38,6 +38,13 @@ import {
   parsePolygonsIndicatorDataForStrategies,
   parseTreeCoverData
 } from "@/utils/dashboardUtils";
+import {
+  calculatePercentage,
+  formatDescriptionIndicator,
+  getKeyValue,
+  getOrderTop3,
+  replaceTextWithParams
+} from "@/utils/MonitoredIndicatorUtils";
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
@@ -124,27 +131,37 @@ const DROPDOWN_OPTIONS = [
   {
     title: "Tree Cover Loss",
     value: "1",
-    slug: "treeCoverLoss"
+    slug: "treeCoverLoss",
+    description:
+      "Tree cover loss and tree cover loss by fires gives an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br> From [year_start] to [year_end], the project area being restored today by [organization_name] lost [x_ha] ha of tree cover from fires and [xx_ha] from all other drivers of loss. The total tree cover loss presents [x_%]% of project area.[sites] <br><br>The following data layer is used for lookback analysis. <br><br>UMD tree cover loss (Global, 30m, annual, 2001-2020) <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br>Tree cover loss due to fires (Global, 30m, annual, 2001-2020) <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
   },
   {
     title: "Tree Cover Loss from Fire",
     value: "2",
-    slug: "treeCoverLossFires"
+    slug: "treeCoverLossFires",
+    description:
+      "Tree cover loss and tree cover loss by fires gives an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br>From [year_start] to [year_end], the project area being restored today by [organization_name] lost [x_ha] ha of tree cover from fires and [xx_ha] from all other drivers of loss. The total tree cover loss presents [x_%]% of project area.[sites] <br><br>The following data layer is used for lookback analysis. <br><br>UMD tree cover loss (Global, 30m, annual, 2001-2020) <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br>Tree cover loss due to fires (Global, 30m, annual, 2001-2020) <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
   },
   {
     title: "Hectares Under Restoration By WWF EcoRegion",
     value: "3",
-    slug: "restorationByEcoRegion"
+    slug: "restorationByEcoRegion",
+    description:
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. [restoration_eco_region] <br><br>This analysis was last updated on [date_run] analysis using the <a href='https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world'>WWF ecoregion dataset.</a>"
   },
   {
     title: "Hectares Under Restoration By Strategy",
     value: "4",
-    slug: "restorationByStrategy"
+    slug: "restorationByStrategy",
+    description:
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent restoration strategy used to restore land was [x_1a], present on [x_1b] ha. [other_restoration_strategies] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here.</a>"
   },
   {
     title: "Hectares Under Restoration By Target Land Use System",
     value: "5",
-    slug: "restorationByLandUse"
+    slug: "restorationByLandUse",
+    description:
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent target land use system is [x_1a] with [x_1b] ha. [other_target_land_use] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here.</a>"
   }
 ];
 
@@ -234,6 +251,39 @@ const noDataMap = (
   </div>
 );
 
+const sumValuesTreeCoverLoss = (data: any) => {
+  return data?.reduce((totalAcc: number, data: { [key: number | string]: number }) => {
+    const sum = Object.values(data?.data).reduce((acc: number, curr: number) => acc + curr, 0);
+    return totalAcc + sum;
+  }, 0);
+};
+
+const groupedBySiteUuidWithPolygons = (data: any[]) => {
+  return data.reduce((acc, polygon) => {
+    acc[polygon.site_name] = acc[polygon.site_name] || [];
+    acc[polygon.site_name].push(polygon);
+    return acc;
+  }, {} as Record<string, typeof data>);
+};
+
+const getSiteValues = (data: any[]) => {
+  const arrayValues: any[] = [];
+  Object.entries(data).forEach(([siteName, polygons]) => {
+    arrayValues.push({ [siteName]: polygons });
+  });
+  return arrayValues;
+};
+
+const getSiteTreeCoverLossSumValues = (data: any[]) => {
+  const arrayValues: any[] = [];
+  data.forEach((site: any) => {
+    Object.entries(site).forEach(([siteName, polygons]) => {
+      arrayValues.push({ [siteName]: sumValuesTreeCoverLoss(polygons) });
+    });
+  });
+  return arrayValues;
+};
+
 const DataCard = ({
   type,
   ...rest
@@ -264,6 +314,16 @@ const DataCard = ({
       : treeCoverLossFiresData;
 
   const parsedData = parseTreeCoverData(filteredTreeCoverLossData, filteredTreeCoverLossFiresData);
+
+  const sumTreeCoverData = parsedData.reduce(
+    (acc, data) => {
+      const treeCoverLoss = acc.treeCoverLoss + data.treeCoverLoss;
+      const treeCoverLossFires = acc.treeCoverLossFires + data.treeCoverLossFires;
+      return { treeCoverLoss, treeCoverLossFires };
+    },
+    { treeCoverLoss: 0, treeCoverLossFires: 0 }
+  );
+
   const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
@@ -597,6 +657,157 @@ const DataCard = ({
       setSelectPolygonFromMap?.({ isOpen: false, uuid: "" });
     }
   }, [selectPolygonFromMap]);
+
+  const dateRunIndicator = polygonsIndicator?.[polygonsIndicator.length - 1]
+    ? format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy")
+    : "";
+  const sitePolygonsIndicator = getSiteValues(groupedBySiteUuidWithPolygons(polygonsIndicator));
+  const sortedTreeCoverSiteValues = getSiteTreeCoverLossSumValues(sitePolygonsIndicator).sort((a, b) => {
+    const valueA: any = Object.values(a)[0];
+    const valueB: any = Object.values(b)[0];
+
+    return valueB - valueA;
+  });
+
+  const sumRestorationByValues = (data: any[], landUse: boolean) => {
+    return data?.reduce((acc, polygon) => {
+      if (landUse) return acc + (parseInt(polygon?.valueText?.match(/^(.*?)ha/)![1].trim(), 10) || 0);
+      return acc + (polygon.value || 0);
+    }, 0);
+  };
+
+  const valuesItemsTreecover = {
+    [getKeyValue(sortedTreeCoverSiteValues[0])?.name as string]: Math.round(
+      getKeyValue(sortedTreeCoverSiteValues[0])?.value as number
+    ),
+    [getKeyValue(sortedTreeCoverSiteValues[1])?.name as string]: Math.round(
+      getKeyValue(sortedTreeCoverSiteValues[1])?.value as number
+    ),
+    [getKeyValue(sortedTreeCoverSiteValues[2])?.name as string]: Math.round(
+      getKeyValue(sortedTreeCoverSiteValues[2])?.value as number
+    )
+  };
+
+  const valuesItemsLandUse = {
+    [getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[1]?.label as string]: Math.round(
+      Math.round(getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[1]?.value)
+    ),
+    [getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[2]?.label as string]: Math.round(
+      Math.round(getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[2]?.value)
+    )
+  };
+
+  const valuesItemsRestorationBy = {
+    [getOrderTop3(strategiesData)?.[1]?.label as string]: Math.round(
+      Math.round(getOrderTop3(strategiesData)?.[1]?.value)
+    ),
+    [getOrderTop3(strategiesData)?.[2]?.label as string]: Math.round(
+      Math.round(getOrderTop3(strategiesData)?.[2]?.value)
+    )
+  };
+
+  const sitesMostDisturbancesText =
+    !record?.project && sortedTreeCoverSiteValues.length > 0
+      ? `<br><br>The sites that had the most disturbances are ${formatDescriptionIndicator(
+          valuesItemsTreecover,
+          record.total_hectares_restored_sum,
+          true
+        )}`
+      : "";
+
+  const restorationEcoregionText =
+    ecoRegionData.chartData.length > 0
+      ? `<br><br>Within these hectares, the project is located within ${
+          ecoRegionData.chartData.length
+        } major ecoregion(s): ${calculatePercentage(
+          ecoRegionData.chartData[0].value,
+          ecoRegionData.total
+        )}% of the project takes place in the ${ecoRegionData.chartData[0].name} ecoregion ${
+          ecoRegionData.chartData?.[1]
+            ? `[and ${calculatePercentage(
+                ecoRegionData.chartData[1].value,
+                ecoRegionData.total
+              )}% of the project takes place in the ${ecoRegionData.chartData[1].name} ecoregion].`
+            : "."
+        }`
+      : "";
+
+  const monitoredDescriptionParams: Record<string, any> = {
+    treeCoverLoss: {
+      "[organization_name]": record?.organisation?.name,
+      "[year_start]": 2015,
+      "[year_end]": 2024,
+      "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
+      "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
+      "[x_%]": calculatePercentage(
+        sumTreeCoverData.treeCoverLossFires + sumTreeCoverData.treeCoverLoss,
+        record.total_hectares_restored_sum
+      ),
+      "[sites]": sitesMostDisturbancesText
+    },
+    treeCoverLossFires: {
+      "[organization_name]": record?.organisation?.name,
+      "[year_start]": 2015,
+      "[year_end]": 2024,
+      "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
+      "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
+      "[x_%]": calculatePercentage(
+        sumTreeCoverData.treeCoverLossFires + sumTreeCoverData.treeCoverLoss,
+        record.total_hectares_restored_sum
+      ),
+      "[sites]": sitesMostDisturbancesText
+    },
+    restorationByEcoRegion: {
+      "[organization_name]": record?.organisation?.name,
+      "[date_run]": dateRunIndicator,
+      "[x_ha]": Math.round(sumRestorationByValues(ecoRegionData?.chartData, false)),
+      "[x_%]": calculatePercentage(sumRestorationByValues(ecoRegionData?.chartData, false), ecoRegionData.total),
+      "[x_ha_goal]": Math.round(ecoRegionData.total),
+      "[restoration_eco_region]": restorationEcoregionText
+    },
+    restorationByStrategy: {
+      "[organization_name]": record?.organisation?.name,
+      "[date_run]": dateRunIndicator,
+      "[x_ha]": Math.round(sumRestorationByValues(strategiesData, false)),
+      "[x_%]": calculatePercentage(sumRestorationByValues(strategiesData, false), record.total_hectares_restored_sum),
+      "[x_ha_goal]": Math.round(record.total_hectares_restored_sum),
+      "[x_1a]": getOrderTop3(strategiesData)?.[0]?.label ?? "N/A",
+      "[x_1b]": Math.round(getOrderTop3(strategiesData)?.[0]?.value) ?? "N/A",
+      "[other_restoration_strategies]": formatDescriptionIndicator(
+        valuesItemsRestorationBy,
+        totalHectaresRestoredGoal,
+        false,
+        "The other restoration strategies used include"
+      )
+    },
+    restorationByLandUse: {
+      "[organization_name]": record?.organisation?.name,
+      "[date_run]": dateRunIndicator,
+      "[x_ha]": Math.round(sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true)),
+      "[x_%]": calculatePercentage(
+        sumRestorationByValues(landUseData.graphicTargetLandUseTypes, true),
+        totalHectaresRestoredGoal
+      ),
+      "[x_ha_goal]": Math.round(totalHectaresRestoredGoal),
+      "[x_1a]": getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]?.label ?? "NaN",
+      "[x_1b]":
+        Math.round(
+          parseInt(
+            getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]
+              ?.valueText?.match(/^(.*?)ha/)[1]
+              .trim(),
+            10
+          )
+        ) ?? "NaN",
+      "[other_target_land_use]": formatDescriptionIndicator(
+        valuesItemsLandUse,
+        totalHectaresRestoredGoal,
+        false,
+        "The other target land use systems used include"
+      )
+    }
+  };
+
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
@@ -665,10 +876,10 @@ const DataCard = ({
                 </Text>
                 <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
                   <Text variant={"text-14"} className="text-darkCustom" containHtml>
-                    {indicatorDescription1}
-                  </Text>
-                  <Text variant={"text-14"} className="text-darkCustom" containHtml>
-                    {indicatorDescription2}
+                    {replaceTextWithParams(
+                      monitoredDescriptionParams[indicatorSlug!],
+                      DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.description!
+                    )}
                   </Text>
                 </div>
               </div>
