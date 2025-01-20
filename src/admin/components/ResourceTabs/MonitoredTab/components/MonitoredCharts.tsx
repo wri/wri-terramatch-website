@@ -50,7 +50,7 @@ const RestorationMetrics = ({
     <SecDashboard
       title="Total Hectares Under Restoration"
       data={{
-        value: record.total_hectares_restored_sum,
+        value: parseFloat(record.total_hectares_restored_sum.toFixed(1)),
         totalValue: totalHectaresRestoredGoal
       }}
       className="w-full place-content-center pl-8"
