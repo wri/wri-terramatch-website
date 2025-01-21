@@ -20,7 +20,6 @@ import {
 } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { dataTreeCount, dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -53,6 +52,8 @@ const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, resource } = useShowContext();
   const t = useT();
   const { framework } = useFrameworkContext();
+  const modelName = resource?.replace("Report", "-report");
+  const modelUUID = record?.uuid;
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -61,7 +62,7 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
-  const { data: seedlings } = useGetV2SeedingsENTITYUUID({
+  const { data: seedings } = useGetV2SeedingsENTITYUUID({
     pathParams: {
       uuid: record?.uuid,
       entity: resource?.replace("Report", "-report")
@@ -72,7 +73,7 @@ const InformationTab: FC<IProps> = props => {
 
   if (isLoading || !record) return null;
 
-  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
+  const totalSeedlings = seedings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -148,22 +149,10 @@ const InformationTab: FC<IProps> = props => {
                                 Non-Trees Planted
                               </Text>
                               <TreeSpeciesTablePD
-                                modelName={
-                                  ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                    (props.type === "projects" || props.type === "sites")) ||
-                                  props.type === "site-reports" ||
-                                  props.type === "project-reports"
-                                    ? "noGoal"
-                                    : "treeCount/Goal"
-                                }
-                                data={
-                                  ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                    (props.type === "projects" || props.type === "sites")) ||
-                                  props.type === "site-reports" ||
-                                  props.type === "project-reports"
-                                    ? dataTreeCount
-                                    : dataTreeCountGoal
-                                }
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                collection="non-tree"
+                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -174,7 +163,13 @@ const InformationTab: FC<IProps> = props => {
                                 <Text variant="text-16-bold" className="capitalize">
                                   Saplings Grown in Nurseries:
                                 </Text>
-                                <TreeSpeciesTablePD modelName="noGoal" data={dataTreeCount} secondColumnWidth="45%" />
+                                <TreeSpeciesTablePD
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="nursery-seedling"
+                                  framework={record?.framework_key}
+                                  secondColumnWidth="45%"
+                                />
                               </div>
                             </ContextCondition>
                           </When>
@@ -188,7 +183,13 @@ const InformationTab: FC<IProps> = props => {
                                   {totalSeedlings ?? 0}
                                 </Text>
                               </div>
-                              <TreeSpeciesTablePD modelName="noGoal" data={dataTreeCount} secondColumnWidth="45%" />
+                              <TreeSpeciesTablePD
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                collection="seeding"
+                                framework={record?.framework_key}
+                                secondColumnWidth="45%"
+                              />
                             </div>
                           </ContextCondition>
                           <div className="flex flex-col gap-4">
@@ -196,24 +197,10 @@ const InformationTab: FC<IProps> = props => {
                               Trees Planted:
                             </Text>
                             <TreeSpeciesTablePD
-                              modelName={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects") ||
-                                props.type === "site-reports" ||
-                                props.type === "project-reports"
-                                  ? "noGoal"
-                                  : "treeCount/Goal"
-                              }
-                              data={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects") ||
-                                props.type === "site-reports" ||
-                                props.type === "project-reports"
-                                  ? dataTreeCount
-                                  : dataTreeCountGoal
-                              }
+                              modelUUID={modelUUID}
+                              modelName={modelName}
+                              collection="tree-planted"
+                              framework={record?.framework_key}
                               secondColumnWidth="45%"
                             />
                           </div>
@@ -223,7 +210,13 @@ const InformationTab: FC<IProps> = props => {
                                 <Text variant="text-16-bold" className="capitalize">
                                   Replanting:
                                 </Text>
-                                <TreeSpeciesTablePD modelName="noGoal" data={dataTreeCount} secondColumnWidth="45%" />
+                                <TreeSpeciesTablePD
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="replanting"
+                                  framework={record?.framework_key}
+                                  secondColumnWidth="45%"
+                                />
                               </div>
                             </ContextCondition>
                           </When>
