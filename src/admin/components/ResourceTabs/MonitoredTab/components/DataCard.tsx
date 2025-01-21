@@ -859,7 +859,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 1}>
-            <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-8 px-6 pt-2 pb-6">
+            <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-2 px-6 pt-2 pb-6">
               <Dropdown
                 containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
                   hidden: selected.includes("6")
@@ -870,7 +870,7 @@ const DataCard = ({
                 defaultValue={["0"]}
                 onChange={option => setSelectedPolygonUuid(option[0])}
               />
-              <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[25%] max-w-[calc(25vw-356px)] flex-col gap-3">
+              <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[29%] max-w-[calc(29vw-356px)] flex-col gap-3">
                 <Text variant={"text-14-semibold"} className="w-fit text-blueCustom-900">
                   Indicator Description
                 </Text>

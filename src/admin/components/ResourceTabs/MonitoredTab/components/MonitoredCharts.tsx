@@ -143,6 +143,7 @@ const MonitoredCharts = ({
                 title="Hectares Under Restoration By Target Land Use System"
                 data={landUseData.graphicTargetLandUseTypes}
                 maxValue={totalHectaresRestoredGoal}
+                className="pl-8"
               />
             </div>
           </ChartContainer>
@@ -155,7 +156,7 @@ const MonitoredCharts = ({
 
   return (
     <div
-      className={classNames("flex w-full max-w-[calc(75vw-356px)] flex-col gap-6 lg:max-w-[calc(75vw-395px)]", {
+      className={classNames("flex w-full max-w-[calc(71vw-356px)] flex-col gap-6 lg:max-w-[calc(71vw-395px)]", {
         "relative z-10 bg-white": hasNoData
       })}
     >
