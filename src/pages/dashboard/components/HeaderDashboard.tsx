@@ -249,7 +249,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
-            <div className="flex max-w-[70%] flex-wrap items-center gap-3 small:flex-nowrap">
+            <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap">
               <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.programmes.length}
