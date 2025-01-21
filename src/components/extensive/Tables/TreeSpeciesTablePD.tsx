@@ -72,7 +72,7 @@ const TreeSpeciesTablePD = ({
       result = modelName === "project" ? "noGoal" : "treeCount/Goal";
     }
     if (collection === "seeding") {
-      result = modelName === "project" ? "noGoal" : "seedCount/Goal";
+      result = "noGoal";
     }
     if (collection === "tree-planted") {
       result =
@@ -369,6 +369,7 @@ const TreeSpeciesTablePD = ({
       accessorKey: "treeCount",
       header: "Count",
       enableSorting: false,
+      meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
         return (

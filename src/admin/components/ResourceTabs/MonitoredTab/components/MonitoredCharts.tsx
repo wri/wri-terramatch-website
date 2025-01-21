@@ -143,7 +143,7 @@ const MonitoredCharts = ({
                 title="Hectares Under Restoration By Target Land Use System"
                 data={landUseData.graphicTargetLandUseTypes}
                 maxValue={totalHectaresRestoredGoal}
-                className="pl-8"
+                className="pt-8 pl-8 lg:pt-9 wide:pt-10"
               />
             </div>
           </ChartContainer>
