@@ -62,9 +62,7 @@ const TreeSpeciesTablePD = ({
     let result = "tree";
     if (collection === "non-tree") {
       result =
-        (framework && framework.includes(Framework.HBF) && (modelName === "project" || modelName === "site")) ||
-        modelName === "site-report" ||
-        modelName === "project-report"
+        framework && framework.includes(Framework.HBF) && (modelName === "project" || modelName === "site")
           ? "treeCount/Goal"
           : "noGoal";
     }
@@ -77,13 +75,13 @@ const TreeSpeciesTablePD = ({
     if (collection === "tree-planted") {
       result =
         (framework &&
-          (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-          modelName === "site") ||
-        (framework && framework.includes(Framework.PPC) && modelName === "project") ||
-        modelName === "site-report" ||
-        modelName === "project-report"
-          ? "noGoal"
-          : "treeCount/Goal";
+          (framework.includes(Framework.HBF) ||
+            framework.includes(Framework.TF) ||
+            framework.includes(Framework.ENTERPRISES)) &&
+          modelName === "project") ||
+        (framework && framework.includes(Framework.HBF) && modelName === "site")
+          ? "treeCount/Goal"
+          : "noGoal";
     }
     if (collection === "replanting") {
       result = "noGoal";
