@@ -26,6 +26,7 @@ export interface TreeSpeciesTablePDProps {
   modelUUID: string;
   modelName: string;
   framework?: string;
+  setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
@@ -35,6 +36,7 @@ const TreeSpeciesTablePD = ({
   modelUUID,
   modelName,
   framework,
+  setTotalCount,
   collection,
   headerName = "species Name",
   secondColumnWidth = ""
@@ -91,7 +93,13 @@ const TreeSpeciesTablePD = ({
 
   const processTableData = (rows: any[]) => {
     if (!rows) return [];
-
+    if (setTotalCount) {
+      const total = rows.reduce(
+        (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
+        0
+      );
+      setTotalCount(total);
+    }
     return rows.map(row => {
       let speciesType = "tree";
       if (!row.taxon_id) {
@@ -117,8 +125,6 @@ const TreeSpeciesTablePD = ({
   };
 
   const tableData = apiResponse?.data ? processTableData(apiResponse.data) : [];
-
-  console.log("rows tableData", tableData);
 
   const rowSpeciesName = {
     accessorKey: "name",
