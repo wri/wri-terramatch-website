@@ -147,7 +147,7 @@ const InformationTab: FC<IProps> = props => {
                           props.type === "project-reports"
                         }
                       >
-                        <div className="flex flex-col gap-11">
+                        <div className="flex flex-col gap-4">
                           <ContextCondition frameworksHide={[Framework.PPC]}>
                             <div className="flex flex-col gap-4">
                               <div className="flex items-center gap-1 py-8">
