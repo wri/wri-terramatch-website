@@ -20,7 +20,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+// import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
@@ -65,75 +65,75 @@ const SiteReportDetailPage = () => {
     "Site Workdays"
   );
 
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
+  // const dataTreeCount = [
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "Native species"],
+  //     treeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "10,350"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "7,500"
+  //   },
+  //   {
+  //     name: ["Non-scientific name", "tree"],
+  //     treeCount: "4,040"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "3,200"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "new"],
+  //     treeCount: "3,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "0"
+  //   }
+  // ];
 
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      nonTreeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      nonTreeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "0"
-    }
-  ];
+  // const dataNonTreeCount = [
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "Native species"],
+  //     nonTreeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "10,350"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "7,500"
+  //   },
+  //   {
+  //     name: ["Non-scientific name", "tree"],
+  //     nonTreeCount: "4,040"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "3,200"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "new"],
+  //     nonTreeCount: "3,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "0"
+  //   }
+  // ];
 
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
@@ -222,7 +222,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
+                        {/* <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} /> */}
                       </div>
                     </ContextCondition>
                     <ContextCondition frameworksShow={[Framework.HBF]}>
@@ -243,7 +243,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} />
+                        {/* <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} /> */}
                       </div>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.TF]}>
@@ -264,7 +264,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} />
+                        {/* <TreeSpeciesTablePD modelName="saplingsCount" data={dataTreeCount} /> */}
                       </div>
                     </ContextCondition>
                     <ContextCondition frameworksShow={[Framework.TF]}>
@@ -285,7 +285,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+                        {/* <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} /> */}
                       </div>
                     </ContextCondition>
                     <div>

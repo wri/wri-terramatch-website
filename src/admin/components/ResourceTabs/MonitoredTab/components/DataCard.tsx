@@ -147,21 +147,21 @@ const DROPDOWN_OPTIONS = [
     value: "3",
     slug: "restorationByEcoRegion",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. [restoration_eco_region] <br><br>This analysis was last updated on [date_run] analysis using the <a href='https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world'>WWF ecoregion dataset</a>"
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. [restoration_eco_region] <br><br>This analysis was last updated on [date_run] analysis using the <a href='https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world'>WWF ecoregion dataset</a>."
   },
   {
     title: "Hectares Under Restoration By Strategy",
     value: "4",
     slug: "restorationByStrategy",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent restoration strategy used to restore land was [x_1a], present on [x_1b] ha. [other_restoration_strategies] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>"
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent restoration strategy used to restore land was [x_1a], present on [x_1b] ha. [other_restoration_strategies] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
   },
   {
     title: "Hectares Under Restoration By Target Land Use System",
     value: "5",
     slug: "restorationByLandUse",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent target land use system is [x_1a] with [x_1b] ha. [other_target_land_use] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>"
+      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent target land use system is [x_1a] with [x_1b] ha. [other_target_land_use] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
   }
 ];
 

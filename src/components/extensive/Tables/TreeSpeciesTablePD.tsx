@@ -5,6 +5,8 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import { Framework } from "@/context/framework.provider";
+import { useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
@@ -21,25 +23,116 @@ export type ModelNameType =
   | "noGoal";
 
 export interface TreeSpeciesTablePDProps {
-  data: any[];
-  modelName: ModelNameType;
+  modelUUID: string;
+  modelName: string;
+  framework?: string;
+  setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
+  collection?: string;
   secondColumnWidth?: string;
 }
 
 const TreeSpeciesTablePD = ({
-  data,
+  modelUUID,
   modelName,
+  framework,
+  setTotalCount,
+  collection,
   headerName = "species Name",
   secondColumnWidth = ""
 }: TreeSpeciesTablePDProps) => {
+  const queryParams: any = {};
+
+  if (collection != null) {
+    queryParams["filter[collection]"] = collection;
+  }
+
+  const { data: apiResponse } = useGetV2TreeSpeciesEntityUUID(
+    {
+      queryParams,
+      pathParams: {
+        uuid: modelUUID,
+        entity: modelName?.replace("Report", "-report")
+      }
+    },
+    {
+      enabled: !!modelUUID
+    }
+  );
+
+  const getCollectionType = (collection: string) => {
+    let result = "tree";
+    if (collection === "non-tree") {
+      result =
+        framework && framework.includes(Framework.HBF) && (modelName === "project" || modelName === "site")
+          ? "treeCount/Goal"
+          : "noGoal";
+    }
+    if (collection === "nursery-seedling") {
+      result = modelName === "project" ? "noGoal" : "treeCount/Goal";
+    }
+    if (collection === "seeding") {
+      result = modelName === "project" ? "noGoal" : "seedCount/Goal";
+    }
+    if (collection === "tree-planted") {
+      result =
+        (framework &&
+          (framework.includes(Framework.HBF) ||
+            framework.includes(Framework.TF) ||
+            framework.includes(Framework.ENTERPRISES)) &&
+          modelName === "project") ||
+        (framework && framework.includes(Framework.HBF) && modelName === "site")
+          ? "treeCount/Goal"
+          : "noGoal";
+    }
+    if (collection === "replanting") {
+      result = "noGoal";
+    }
+    return result;
+  };
+
+  const processTableData = (rows: any[]) => {
+    if (!rows) return [];
+    if (setTotalCount) {
+      const total = rows.reduce(
+        (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
+        0
+      );
+      setTotalCount(total);
+    }
+    return rows.map(row => {
+      let speciesType = "tree";
+      if (!row.taxon_id) {
+        speciesType = "non-scientific";
+      }
+      if (row.is_new_species) {
+        speciesType = "new";
+      }
+      if (getCollectionType(collection ?? "") !== "noGoal" && getCollectionType(collection ?? "").includes("Goal")) {
+        return {
+          name: [row.name, speciesType],
+          treeCountGoal: [row.report_amount, row.amount],
+          uuid: row.uuid
+        };
+      }
+
+      return {
+        name: [row.name, speciesType],
+        treeCount: row.amount || "0",
+        uuid: row.uuid
+      };
+    });
+  };
+
+  const tableData = apiResponse?.data ? processTableData(apiResponse.data) : [];
+
   const rowSpeciesName = {
     accessorKey: "name",
     header: headerName,
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
-      if (value[0] === "Non-scientific name") {
+      if (value[1] === "non-scientific") {
         return (
           <div className="font-inherit flex items-center gap-1">
             {value[0]}
@@ -115,7 +208,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCount",
-      header: "Tree CounT",
+      header: "Tree Count",
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -180,13 +273,20 @@ const TreeSpeciesTablePD = ({
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
+        if (!value) {
+          return null;
+        }
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
+              {value[0].toLocaleString()}
               <Text variant="text-14" className="">
-                of {value[1]}
+                of {value[1].toLocaleString()}
               </Text>
             </Text>
           </div>
@@ -206,10 +306,14 @@ const TreeSpeciesTablePD = ({
         const value = props.getValue();
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
-              <Text variant="text-14-light">of {value[1]}</Text>
+              {value[0].toLocaleString()}
+              <Text variant="text-14-light">of {value[1].toLocaleString()}</Text>
             </Text>
           </div>
         );
@@ -228,11 +332,15 @@ const TreeSpeciesTablePD = ({
         const value = props.getValue();
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
+              {value[0].toLocaleString()}
               <Text variant="text-14" className="">
-                of {value[1]}
+                of {value[1].toLocaleString()}
               </Text>
             </Text>
           </div>
@@ -250,7 +358,7 @@ const TreeSpeciesTablePD = ({
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
-        return <div className="text-14 !font-bold">{value}</div>;
+        return <div className="text-14 !font-bold">{value.toLocaleString()}</div>;
       }
     }
   ];
@@ -266,7 +374,7 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="grid grid-cols-2 gap-3">
             <Text variant="text-14-bold" className="flex gap-2">
-              {value}
+              {value.toLocaleString()}
             </Text>
           </div>
         );
@@ -289,11 +397,12 @@ const TreeSpeciesTablePD = ({
   return (
     <div>
       <Table
-        data={data}
-        columns={columnTable[modelName]}
+        data={tableData}
+        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
+        visibleRows={5}
       />
     </div>
   );
