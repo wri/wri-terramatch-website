@@ -152,22 +152,7 @@ const InformationTab: FC<IProps> = props => {
                                 modelUUID={modelUUID}
                                 modelName={modelName}
                                 collection="non-tree"
-                                // modelName={
-                                //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                //     (props.type === "projects" || props.type === "sites")) ||
-                                //   props.type === "site-reports" ||
-                                //   props.type === "project-reports"
-                                //     ? "noGoal"
-                                //     : "treeCount/Goal"
-                                // }
-                                // data={
-                                //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                //     (props.type === "projects" || props.type === "sites")) ||
-                                //   props.type === "site-reports" ||
-                                //   props.type === "project-reports"
-                                //     ? dataTreeCount
-                                //     : dataTreeCountGoal
-                                // }
+                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -182,8 +167,7 @@ const InformationTab: FC<IProps> = props => {
                                   modelUUID={modelUUID}
                                   modelName={modelName}
                                   collection="nursery-seedling"
-                                  // modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                  // data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -203,8 +187,7 @@ const InformationTab: FC<IProps> = props => {
                                 modelUUID={modelUUID}
                                 modelName={modelName}
                                 collection="seeding"
-                                // modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                // data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -217,24 +200,7 @@ const InformationTab: FC<IProps> = props => {
                               modelUUID={modelUUID}
                               modelName={modelName}
                               collection="tree-planted"
-                              // modelName={
-                              //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                              //     props.type === "sites") ||
-                              //   (framework.includes(Framework.PPC) && props.type === "projects") ||
-                              //   props.type === "site-reports" ||
-                              //   props.type === "project-reports"
-                              //     ? "noGoal"
-                              //     : "treeCount/Goal"
-                              // }
-                              // data={
-                              //   ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                              //     props.type === "sites") ||
-                              //   (framework.includes(Framework.PPC) && props.type === "projects") ||
-                              //   props.type === "site-reports" ||
-                              //   props.type === "project-reports"
-                              //     ? dataTreeCount
-                              //     : dataTreeCountGoal
-                              // }
+                              framework={record?.framework_key}
                               secondColumnWidth="45%"
                             />
                           </div>
@@ -248,8 +214,7 @@ const InformationTab: FC<IProps> = props => {
                                   modelUUID={modelUUID}
                                   modelName={modelName}
                                   collection="replanting"
-                                  // modelName="treeCount/Goal"
-                                  // data={dataTreeCountGoal}
+                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>

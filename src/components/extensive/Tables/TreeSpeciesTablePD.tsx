@@ -5,6 +5,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import { Framework } from "@/context/framework.provider";
 import { useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -24,16 +25,16 @@ export type ModelNameType =
 export interface TreeSpeciesTablePDProps {
   modelUUID: string;
   modelName: string;
+  framework?: string;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
 }
-// modelName = entity
-// modelUUID = entity uuid
-// collection (optional) for tree species only
+
 const TreeSpeciesTablePD = ({
   modelUUID,
   modelName,
+  framework,
   collection,
   headerName = "species Name",
   secondColumnWidth = ""
@@ -57,22 +58,57 @@ const TreeSpeciesTablePD = ({
     }
   );
 
-  console.log("rows modelUUID", modelUUID);
-  console.log("rows modelName", modelName);
-  console.log("rows collection", collection);
-  console.log("rows", apiResponse);
+  const getCollectionType = (collection: string) => {
+    let result = "tree";
+    if (collection === "non-tree") {
+      result =
+        (framework && framework.includes(Framework.HBF) && (modelName === "project" || modelName === "site")) ||
+        modelName === "site-report" ||
+        modelName === "project-report"
+          ? "treeCount/Goal"
+          : "noGoal";
+    }
+    if (collection === "nursery-seedling") {
+      result = modelName === "project" ? "noGoal" : "treeCount/Goal";
+    }
+    if (collection === "seeding") {
+      result = modelName === "project" ? "noGoal" : "seedCount/Goal";
+    }
+    if (collection === "tree-planted") {
+      result =
+        (framework &&
+          (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
+          modelName === "site") ||
+        (framework && framework.includes(Framework.PPC) && modelName === "project") ||
+        modelName === "site-report" ||
+        modelName === "project-report"
+          ? "noGoal"
+          : "treeCount/Goal";
+    }
+    if (collection === "replanting") {
+      result = "noGoal";
+    }
+    return result;
+  };
 
   const processTableData = (rows: any[]) => {
     if (!rows) return [];
 
     return rows.map(row => {
-      // Determine species type
       let speciesType = "tree";
       if (!row.taxon_id) {
         speciesType = "non-scientific";
       }
-      // Note: Add logic here to determine if species is "new" based on project establishment
-      // This would require additional context/data from the API
+      if (row.is_new_species) {
+        speciesType = "new";
+      }
+      if (getCollectionType(collection ?? "") !== "noGoal" && getCollectionType(collection ?? "").includes("Goal")) {
+        return {
+          name: [row.name, speciesType],
+          treeCountGoal: [row.report_amount, row.amount],
+          uuid: row.uuid
+        };
+      }
 
       return {
         name: [row.name, speciesType],
@@ -233,13 +269,20 @@ const TreeSpeciesTablePD = ({
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
+        if (!value) {
+          return null;
+        }
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
+              {value[0].toLocaleString()}
               <Text variant="text-14" className="">
-                of {value[1]}
+                of {value[1].toLocaleString()}
               </Text>
             </Text>
           </div>
@@ -259,10 +302,14 @@ const TreeSpeciesTablePD = ({
         const value = props.getValue();
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
-              <Text variant="text-14-light">of {value[1]}</Text>
+              {value[0].toLocaleString()}
+              <Text variant="text-14-light">of {value[1].toLocaleString()}</Text>
             </Text>
           </div>
         );
@@ -281,11 +328,15 @@ const TreeSpeciesTablePD = ({
         const value = props.getValue();
         return (
           <div className="grid grid-cols-2 gap-3">
-            <LinearProgressBar color="primary" value={50} className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"} />
+            <LinearProgressBar
+              color="primary"
+              value={value[0] > value[1] ? 100 : (value[0] / value[1]) * 100}
+              className={"mt-2 !h-1.5 bg-primary-200 lg:!h-2"}
+            />
             <Text variant="text-14-bold" className="flex gap-2">
-              {value[0]}
+              {value[0].toLocaleString()}
               <Text variant="text-14" className="">
-                of {value[1]}
+                of {value[1].toLocaleString()}
               </Text>
             </Text>
           </div>
@@ -303,7 +354,7 @@ const TreeSpeciesTablePD = ({
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
         const value = props.getValue();
-        return <div className="text-14 !font-bold">{value}</div>;
+        return <div className="text-14 !font-bold">{value.toLocaleString()}</div>;
       }
     }
   ];
@@ -319,7 +370,7 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="grid grid-cols-2 gap-3">
             <Text variant="text-14-bold" className="flex gap-2">
-              {value}
+              {value.toLocaleString()}
             </Text>
           </div>
         );
@@ -343,7 +394,7 @@ const TreeSpeciesTablePD = ({
     <div>
       <Table
         data={tableData}
-        columns={"treeCount" in columnTable ? columnTable["treeCount"] : columnTable["noGoal"]}
+        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
