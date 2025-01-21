@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Else, If, Then, When } from "react-if";
+import { When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
@@ -7,7 +7,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+// import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressTabProps {
@@ -32,77 +32,77 @@ export const LABEL_LEGEND = [
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
 
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
+  // const dataTreeCount = [
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "Native species"],
+  //     treeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "10,350"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "7,500"
+  //   },
+  //   {
+  //     name: ["Non-scientific name", "tree"],
+  //     treeCount: "4,040"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "3,200"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "new"],
+  //     treeCount: "3,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     treeCount: "0"
+  //   }
+  // ];
 
-  const dataSeedCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "7,500"
-    }
-  ];
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    }
-  ];
+  // const dataSeedCount = [
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     seedCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "Native species"],
+  //     seedCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     seedCount: "10,350"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     seedCount: "7,500"
+  //   }
+  // ];
+  // const dataNonTreeCount = [
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "Native species"],
+  //     nonTreeCount: "45,000"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "10,350"
+  //   },
+  //   {
+  //     name: ["Species scientific name", "tree"],
+  //     nonTreeCount: "7,500"
+  //   }
+  // ];
 
   return (
     <PageBody>
@@ -264,9 +264,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                 <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
               </div>
             </div>
-            <div>
+            {/* <div>
               <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
-            </div>
+            </div> */}
           </div>
         </PageCard>
       </PageRow>
@@ -374,14 +374,14 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </When>
             </div>
             <div>
-              <If condition={site.framework_key === Framework.TF}>
+              {/* <If condition={site.framework_key === Framework.TF}>
                 <Then>
                   <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
                 </Then>
                 <Else>
                   <TreeSpeciesTablePD modelName="seedCount" data={dataSeedCount} />
                 </Else>
-              </If>
+              </If> */}
             </div>
           </div>
         </PageCard>
