@@ -48,7 +48,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
         values[fieldChildren.name]?.length > 0 &&
         field.value == null
       ) {
-        field.onChange(true);
+        field.onChange(fieldChildren.conditional_default);
       }
     });
     if (field.value == null) {

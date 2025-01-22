@@ -20,6 +20,7 @@
         {
           "uuid": "3e34aab6-f6fe-45f2-9d2c-581a69dbd1bc",
           "input_type": "select",
+          "conditional_default": true,
           "label": "Headquarters address Country",
           "order": 1,
           "options_list": "countries"
@@ -27,6 +28,7 @@
         {
           "uuid": "a90630bf-b77f-4b6e-a828-013f4d0ac1fb",
           "input_type": "select",
+          "conditional_default": true,
           "label": "What Countries is your organisation legally registered in?",
           "description": "Please select the relevant countries where your organization is legally registered to operate.",
           "validation": { "required": false, "min": 1, "max": 3 },
@@ -37,6 +39,7 @@
         {
           "uuid": "d64877a6-fc33-4bd8-9f75-43e77a5112ab",
           "input_type": "long-text",
+          "conditional_default": true,
           "label": "Organization Mission",
           "description": "Please describe your organization's mission.",
           "validation": { "required": true, "max": 300 },
@@ -45,12 +48,14 @@
         {
           "uuid": "ced1d792-2f5f-40b0-8686-86e048c98406",
           "input_type": "date",
+          "conditional_default": true,
           "label": "On what date was your organisation founded?",
           "order": 4
         },
         {
           "uuid": "6827e8c1-632c-47cf-a45b-43b8bfba78f2",
           "input_type": "select",
+          "conditional_default": true,
           "label": "In what languages can your organisation communicate?",
           "description": "Please select as many as apply. TerraMatch is available only in the languages listed below.",
           "validation": { "required": true, "min": 1, "max": 3 },
@@ -94,6 +99,7 @@
         {
           "uuid": "6303cc5c-cbd7-4f46-bed6-d339c4c2f00b",
           "input_type": "file",
+          "conditional_default": true,
           "label": "Please provide at least two letters of reference",
           "description": "Reference letters could come from a verifiable former donor or investor, a former or current project partner, a traditional or community leader, or any other individual or organization that can vouch for your work. We highly recommend that applicants submit an endorsement letter from a local or national government agency. Upload only .pdf files less than 5mb.",
 
@@ -107,12 +113,14 @@
         {
           "uuid": "981edb54-739e-4971-b078-4e2a971d9ffd",
           "input_type": "url",
+          "conditional_default": true,
           "label": "Organization Twitter URL(optional)",
           "order": 7
         },
         {
           "uuid": "4388ff23-a5e7-486a-9b37-7ad41cce5e77",
           "input_type": "long-text",
+          "conditional_default": true,
           "label": "List the people who have a ownership stake in your company",
           "description": "Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age:<br>Name<br>Title<br>Gender<br>Age",
           "order": 8
@@ -120,6 +128,7 @@
         {
           "uuid": "9bfe6b76-2ff1-4658-9763-54bc6242cce6",
           "input_type": "select-image",
+          "conditional_default": true,
           "label": "What interventions do you intend to use to restore land?",
           "description": "Please indicate all of the restoration interventions you have used in previous projects. If you intend to use multiple different restoration interventions, check all that apply. ",
           "order": 5,
@@ -210,6 +219,7 @@
         {
           "uuid": "3be9ae6a-c769-44e7-a8e6-46cd9b7d7ff2",
           "input_type": "select",
+          "conditional_default": true,
           "label": "How does your organization engage with farmers? ",
           "description": "Select the statement(s) below that best align with your farmer engagement strategy: ",
           "validation": { "required": true },
@@ -253,6 +263,7 @@
         {
           "uuid": "32873c74-5ec4-4508-90a1-bb05b9139ab2",
           "input_type": "select",
+          "conditional_default": true,
           "label": "How does your organization engage with women?",
           "description": "Select the statement(s) below that best aligns with your engagement strategy for women: ",
           "validation": { "required": true },
@@ -296,6 +307,7 @@
         {
           "uuid": "bb1c3fd3-be90-46db-9996-5148ead42376",
           "input_type": "select",
+          "conditional_default": true,
           "label": "How does your organization engage with people younger than 35 years old?",
           "description": "Select the statement(s) below that best aligns with your engagement strategy for people younger than 35 years old",
           "validation": { "required": true },
@@ -347,6 +359,7 @@
         {
           "uuid": "2fc2ddcb-65c4-401f-ad8b-2464127995e1",
           "input_type": "number",
+          "conditional_default": true,
           "label": "What were your organization's revenues in USD in 2020?",
           "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
           "order": 1
@@ -354,6 +367,7 @@
         {
           "uuid": "dfc8b46f-a2b5-4c47-9d86-6eaf02f38ff4",
           "input_type": "file",
+          "conditional_default": true,
           "label": "Please upload your organization's 2020 income statement and balance sheet.",
           "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
           "validation": { "required": false },
@@ -372,6 +386,7 @@
         {
           "uuid": "a5ff9d12-249f-4752-8c56-93d6c21ff7b6",
           "input_type": "number",
+          "conditional_default": true,
           "label": "What were your organization's revenues in USD in 2021?",
           "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
           "order": 3
@@ -379,6 +394,7 @@
         {
           "uuid": "4519d674-4110-4523-a745-f999741622cd",
           "input_type": "file",
+          "conditional_default": true,
           "label": "Please upload your organization's 2021 income statement and balance sheet.",
           "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
           "validation": { "required": false },
@@ -397,6 +413,7 @@
         {
           "uuid": "c1537262-4802-4223-b694-9088d76a2d11",
           "input_type": "number",
+          "conditional_default": true,
           "label": "What were your organization's revenues in USD in 2022?",
           "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\"",
           "order": 5
@@ -404,6 +421,7 @@
         {
           "uuid": "eae46eca-8e4e-4cec-a7a0-cd9d93af8054",
           "input_type": "file",
+          "conditional_default": true,
           "label": "Please upload your organization's 2022 income statement and balance sheet.",
           "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
           "validation": { "required": false },
@@ -422,6 +440,7 @@
         {
           "uuid": "ae621f3b-552c-4f5f-8616-5d7821299959",
           "input_type": "number",
+          "conditional_default": true,
           "label": "What are your organization's projected revenues in USD for 2023",
           "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as \"turnover.\" We understand that this information is not yet available for 2023. Please provide your best estimation. ",
           "order": 7
@@ -437,6 +456,7 @@
         {
           "uuid": "003a59f0-d262-45b1-b4ef-c46c62f79341",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many years of restoration experience does your organization have?",
           "description": "Please indicate how many years your organization has been involved in actively restoring degraded land. If your organization began to restore land significantly later than it was founded, make sure to only include the years after you began to work on restoration.",
           "order": 1
@@ -444,6 +464,7 @@
         {
           "uuid": "c8ba24a7-3532-4665-99d0-8d1b10e85f27",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many hectares of degraded land has your organisation restored since it was founded? ",
           "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
           "order": 2
@@ -451,6 +472,7 @@
         {
           "uuid": "12e2645b-ab2d-4c69-ab21-379408a1e743",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many hectares of degraded land has your organization restored in the past 36 months?",
           "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
           "order": 3
@@ -458,6 +480,7 @@
         {
           "uuid": "1817a476-e340-467c-8c6b-8918c200654e",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many trees has your organization restored or naturally regenerated since it was founded? ",
           "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they  are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
           "order": 4
@@ -465,6 +488,7 @@
         {
           "uuid": "4c0e0a9f-636a-45b0-ad5c-80f5722c7cfe",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many trees has your organization planted, naturally regenerated or otherwise restored in the past 36 months?",
           "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk  growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
           "order": 5
@@ -480,18 +504,21 @@
         {
           "uuid": "2f114af5-a0b9-405d-926b-7689a9fd5a25",
           "input_type": "text",
+          "conditional_default": true,
           "label": "What is the name of your proposed project?",
           "order": 1
         },
         {
           "uuid": "917fd2b0-74c2-42c8-b65e-b98144322f6d",
           "input_type": "long-text",
+          "conditional_default": true,
           "label": "What are the objectives of your proposed project?",
           "order": 2
         },
         {
           "uuid": "875d923a-f1e4-4516-a77a-96fcdf099f66",
           "input_type": "select",
+          "conditional_default": true,
           "label": "In what country will your project operate? ",
           "order": 3,
           "options_list": "countries"
@@ -499,6 +526,7 @@
         {
           "uuid": "59388280-52bd-48f8-97a6-8de30b509494",
           "input_type": "text",
+          "conditional_default": true,
           "label": "In which subnational jurisdictions would you carry out this project? ",
           "description": "Please enter the precise name of the district or sub-counties where your project would operate. This should be an official administrative jurisdiction. Please be as precise as possible.",
           "order": 4
@@ -506,6 +534,7 @@
         {
           "uuid": "5c2b9303-302d-4140-beba-95d79fb2d060",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many hectares of land do you intend to restore through this project?",
           "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land could without active planting. Only count land that has benefitted from tree-based restoration techniques in your total.",
           "order": 6
@@ -513,6 +542,7 @@
         {
           "uuid": "790370ce-a8e4-4185-a6ef-99a64b2e4bc5",
           "input_type": "number",
+          "conditional_default": true,
           "label": "How many trees do you intend to restore through this project?",
           "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts \"trees restored,\" not \"planted.\" Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as \"restored.\"",
           "order": 7
@@ -520,6 +550,7 @@
         {
           "uuid": "90acff1b-27f1-4de7-a9a3-caf6be137604",
           "input_type": "treeSpecies",
+          "conditional_default": true,
           "label": "What tree species do you intend to grow through this project?",
           "description": "List the species and the estimated number of trees that you intend to plant using the form below. The scientific names of each species are preferred. Please be precise.",
           "order": 8,
@@ -529,6 +560,7 @@
         {
           "uuid": "09475088-63b9-4634-bb13-d0ad6c9ecf14",
           "input_type": "number",
+          "conditional_default": true,
           "label": "What is your proposed project budget in USD? ",
           "order": 9
         }
@@ -542,6 +574,7 @@
         {
           "uuid": "e55c81f1-e0ba-42a3-9887-d22f853687c2",
           "input_type": "file",
+          "conditional_default": true,
           "label": "Upload any additional documents",
           "validation": { "required": false },
           "multichoice": true,
@@ -562,6 +595,7 @@
         {
           "uuid": "3d456c52-8e68-45ff-ae88-37a96263130e",
           "input_type": "select",
+          "conditional_default": true,
           "label": "On which of the following topics would you request technical assistance from a team of experts?",
           "description": "Please select as many as apply. Note that this information remains private. Definitions for each topic can be found here (<a href=\"https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources\" target=\"_blank\">EOI-Resources</a>)",
           "validation": { "required": true },
@@ -693,6 +727,7 @@
         {
           "uuid": "6ed56eff-b1c3-4df3-bfcc-98db47e02fb0",
           "input_type": "select",
+          "conditional_default": true,
           "label": "How did you hear about this opportunity on TerraMatch?",
           "description": "Please select all that apply. If you heard about us from another source, please select other.",
           "validation": { "required": true },
