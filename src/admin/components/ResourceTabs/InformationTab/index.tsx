@@ -147,10 +147,10 @@ const InformationTab: FC<IProps> = props => {
                           props.type === "project-reports"
                         }
                       >
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-10">
                           <ContextCondition frameworksHide={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <div className="flex items-center gap-1 py-8">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
                                   Non-Trees Planted:
                                 </Text>
@@ -170,8 +170,8 @@ const InformationTab: FC<IProps> = props => {
                           </ContextCondition>
                           <When condition={props.type === "projects" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.PPC]}>
-                              <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-1 py-8">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
                                   <Text variant="text-16-bold" className="capitalize">
                                     Saplings Grown in Nurseries:
                                   </Text>
@@ -191,8 +191,8 @@ const InformationTab: FC<IProps> = props => {
                             </ContextCondition>
                           </When>
                           <ContextCondition frameworksShow={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <div className="flex items-center gap-1 py-8">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
                                   Seeds Planted:
                                 </Text>
@@ -210,8 +210,8 @@ const InformationTab: FC<IProps> = props => {
                               />
                             </div>
                           </ContextCondition>
-                          <div className="flex flex-col gap-4">
-                            <div className="flex items-center gap-1 py-8">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
                               <Text variant="text-16-bold" className="capitalize">
                                 Trees Planted:
                               </Text>
@@ -230,8 +230,8 @@ const InformationTab: FC<IProps> = props => {
                           </div>
                           <When condition={props.type === "site-reports" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
-                              <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-1 py-8">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
                                   <Text variant="text-16-bold" className="capitalize">
                                     Replanting:
                                   </Text>
