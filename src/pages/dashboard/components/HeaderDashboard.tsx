@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { When } from "react-if";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -17,7 +17,7 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
-import { Option, OptionValue } from "@/types/common";
+import { OptionValue } from "@/types/common";
 
 import { PROJECT_INSIGHTS_SECTION_TOOLTIP } from "../constants/tooltips";
 import { useDashboardData } from "../hooks/useDashboardData";
@@ -42,7 +42,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     dashboardCountries,
     setSelectedCountry
   } = props;
-  const [programmeOptions, setProgrammeOptions] = useState<Option[]>([]);
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
@@ -52,8 +51,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const optionsCohort = [
     { title: "Top 100", value: "terrafund" },
-    { title: "Landscapes", value: "terrafund-landscapes" },
-    { title: "Enterprises", value: "enterprises" }
+    { title: "Landscapes", value: "terrafund-landscapes" }
   ];
 
   const optionMenu = activeProjects
@@ -103,14 +101,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   useEffect(() => {
     if (frameworks) {
-      const options: Option[] = frameworks
-        .filter(framework => framework.name && framework.framework_slug)
-        .map(framework => ({
-          title: framework.name!,
-          value: framework.framework_slug!
-        }));
       setFrameworks(frameworks);
-      setProgrammeOptions(options);
     }
   }, [frameworks]);
 
@@ -250,59 +241,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
             <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap">
-              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.programmes.length}
-                  showClear
-                  showSelectAll
-                  showLabelAsMultiple
-                  multiSelect
-                  prefix={<Text variant="text-14-light">{t("Programme:")}</Text>}
-                  inputVariant="text-14-semibold"
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  value={filters.programmes}
-                  placeholder="All Data"
-                  multipleText="Multiple programmes"
-                  onChange={(value: OptionValue[]) => {
-                    handleChange("programmes", value);
-                  }}
-                  onClear={() => {
-                    handleChange("programmes", []);
-                  }}
-                  options={programmeOptions}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[5]"
-                />
-              </BlurContainer>
-              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.cohort.length}
-                  showClear
-                  prefix={<Text variant="text-14-light">{t("Cohort:")}</Text>}
-                  inputVariant="text-14-semibold"
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="All Data"
-                  value={filters.cohort ? [filters.cohort] : []}
-                  onChange={(value: OptionValue[]) => {
-                    console.log(value);
-                    return setFilters(prevValues => ({
-                      ...prevValues,
-                      uuid: "",
-                      cohort: value[0] as string
-                    }));
-                  }}
-                  onClear={() => {
-                    setFilters(prevValues => ({
-                      ...prevValues,
-                      uuid: "",
-                      cohort: ""
-                    }));
-                  }}
-                  options={optionsCohort}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[5]"
-                />
-              </BlurContainer>
               <BlurContainer className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]" disabled={isProjectPage}>
                 <Dropdown
                   key={filters.landscapes.length}
@@ -387,6 +325,35 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   options={organizationOptions}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[2]"
+                />
+              </BlurContainer>
+              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
+                <Dropdown
+                  key={filters.cohort.length}
+                  showClear
+                  prefix={<Text variant="text-14-light">{t("Cohort:")}</Text>}
+                  inputVariant="text-14-semibold"
+                  variant={VARIANT_DROPDOWN_HEADER}
+                  placeholder="All Data"
+                  value={filters.cohort ? [filters.cohort] : []}
+                  onChange={(value: OptionValue[]) => {
+                    console.log(value);
+                    return setFilters(prevValues => ({
+                      ...prevValues,
+                      uuid: "",
+                      cohort: value[0] as string
+                    }));
+                  }}
+                  onClear={() => {
+                    setFilters(prevValues => ({
+                      ...prevValues,
+                      uuid: "",
+                      cohort: ""
+                    }));
+                  }}
+                  options={optionsCohort}
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[5]"
                 />
               </BlurContainer>
             </div>
