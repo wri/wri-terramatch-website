@@ -118,7 +118,7 @@ const TreeSpeciesTablePD = ({
 
       return {
         name: [row.name, speciesType],
-        treeCount: row.report_amount || "0",
+        treeCount: row.report_amount ?? "0",
         uuid: row.uuid
       };
     });
