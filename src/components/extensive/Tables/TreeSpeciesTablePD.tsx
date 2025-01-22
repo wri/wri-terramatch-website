@@ -30,6 +30,16 @@ export interface TreeSpeciesTablePDProps {
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
+  data?: any;
+  typeTable?:
+    | "treeCount"
+    | "treeCount/Goal"
+    | "speciesCount/Goal"
+    | "nonTreeCount"
+    | "seedCount"
+    | "treeCountSite"
+    | "saplingsCount";
+  visibleRows?: number;
 }
 
 const TreeSpeciesTablePD = ({
@@ -39,7 +49,10 @@ const TreeSpeciesTablePD = ({
   setTotalCount,
   collection,
   headerName = "species Name",
-  secondColumnWidth = ""
+  secondColumnWidth = "",
+  typeTable,
+  visibleRows = 5,
+  data
 }: TreeSpeciesTablePDProps) => {
   const queryParams: any = {};
 
@@ -398,12 +411,12 @@ const TreeSpeciesTablePD = ({
   return (
     <div>
       <Table
-        data={tableData}
-        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
+        data={data ?? tableData}
+        columns={columnTable[typeTable ?? (getCollectionType(collection ?? "") as ModelNameType)]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
-        visibleRows={5}
+        visibleRows={visibleRows}
       />
     </div>
   );
