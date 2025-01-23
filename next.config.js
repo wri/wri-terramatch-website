@@ -16,9 +16,6 @@ const nextConfig = {
   //Added "page.tsx", "page.ts" to get middleware.page.ts working
   // https://github.com/vercel/next.js/issues/38233#issuecomment-1172457237
   pageExtensions: ["tsx", "page.tsx", "page.ts"],
-  publicRuntimeConfig: {
-    TxNativePublicToken: process.env.TRANSIFEX_TOKEN
-  },
   images: { domains: process.env.IMAGE_DOMAINS?.split(",") ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {
