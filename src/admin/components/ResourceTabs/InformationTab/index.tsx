@@ -13,11 +13,7 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  useGetV2SeedingsENTITYUUID
-} from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
@@ -67,18 +63,10 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
-  const { data: seedings } = useGetV2SeedingsENTITYUUID({
-    pathParams: {
-      uuid: record?.uuid,
-      entity: resource?.replace("Report", "-report")
-    }
-  });
-
   const isLoading = ctxLoading || queryLoading;
 
   if (isLoading || !record) return null;
 
-  const totalSeedlings = seedings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -197,7 +185,7 @@ const InformationTab: FC<IProps> = props => {
                                   Seeds Planted:
                                 </Text>
                                 <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                  {(totalSeedlings ?? totalCountSeeding).toLocaleString()}
+                                  {totalCountSeeding.toLocaleString()}
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
