@@ -6,7 +6,7 @@ import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVar
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import { Framework } from "@/context/framework.provider";
-import { useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
+import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
@@ -30,6 +30,15 @@ export interface TreeSpeciesTablePDProps {
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
+}
+
+export interface TreeSpeciesTableRowData {
+  name: [string, string, string?];
+  treeCount?: string | number;
+  treeCountGoal?: [number, number];
+  seedCount?: string | number;
+  nonTreeCount?: string | number;
+  uuid: string;
 }
 
 const TreeSpeciesTablePD = ({
@@ -56,7 +65,19 @@ const TreeSpeciesTablePD = ({
       }
     },
     {
-      enabled: !!modelUUID
+      enabled: !!modelUUID && collection !== "seeding"
+    }
+  );
+
+  const { data: seedings } = useGetV2SeedingsENTITYUUID(
+    {
+      pathParams: {
+        uuid: modelUUID,
+        entity: modelName?.replace("Report", "-report")
+      }
+    },
+    {
+      enabled: !!modelUUID && collection === "seeding"
     }
   );
 
@@ -91,7 +112,7 @@ const TreeSpeciesTablePD = ({
     return result;
   };
 
-  const processTableData = (rows: any[]) => {
+  const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
     if (!rows) return [];
     if (setTotalCount) {
       const total = rows.reduce(
@@ -124,7 +145,30 @@ const TreeSpeciesTablePD = ({
     });
   };
 
-  const tableData = apiResponse?.data ? processTableData(apiResponse.data) : [];
+  const processSeedingTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
+    if (!rows) return [];
+    if (setTotalCount) {
+      const total = rows.reduce((sum, row) => sum + row.amount, 0);
+      setTotalCount(total);
+    }
+    return rows.map(row => {
+      let speciesType = "tree";
+      return {
+        name: [row.name, speciesType],
+        treeCount: row.amount,
+        uuid: row.uuid
+      };
+    });
+  };
+
+  const tableData =
+    collection === "seeding"
+      ? seedings?.data
+        ? processSeedingTableData(seedings.data)
+        : []
+      : apiResponse?.data
+      ? processTreeSpeciesTableData(apiResponse.data)
+      : [];
 
   const rowSpeciesName = {
     accessorKey: "name",
