@@ -39,7 +39,7 @@ interface FormFieldBase {
   placeholder?: string;
   condition?: boolean;
   feedbackRequired?: boolean;
-  conditional_default?: boolean;
+  is_parent_conditional_default?: boolean;
 }
 
 type FieldProps<T> = Omit<T, "label" | "description" | "placeholder" | "name">;

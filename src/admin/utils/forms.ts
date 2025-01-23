@@ -74,15 +74,13 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
         output[fieldStep.name] = false;
       }
       if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
+        let hasChildrenValues = false;
         fieldStep.fieldProps?.fields.forEach((fieldProps: any) => {
-          if (
-            Array.isArray(output[fieldProps.name]) &&
-            output[fieldProps.name]?.length > 0 &&
-            !output[fieldStep.name]
-          ) {
-            output[fieldStep.name] = true;
+          if (fieldProps.is_parent_conditional_default && output[fieldProps.name]) {
+            hasChildrenValues = true;
           }
         });
+        output[fieldStep.name] = hasChildrenValues;
       }
     });
   });

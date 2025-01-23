@@ -41,20 +41,24 @@ const ConditionalInput = (props: ConditionalInputProps) => {
 
   useEffect(() => {
     const values = props?.formHook?.formState?.defaultValues;
+    let hasChildrenValues = false;
+    if (!field.value) {
+      field.onChange(false);
+      return;
+    }
     fields.forEach(fieldChildren => {
-      if (
-        values &&
-        Array.isArray(values[fieldChildren.name]) &&
-        values[fieldChildren.name]?.length > 0 &&
-        field.value == null
-      ) {
-        field.onChange(fieldChildren.conditional_default);
+      if (values && values[fieldChildren.name] && fieldChildren.is_parent_conditional_default) {
+        hasChildrenValues = true;
       }
     });
     if (field.value == null) {
       field.onChange(false);
     }
+    if (hasChildrenValues) {
+      field.onChange(true);
+    }
   }, [field, field.value]);
+
   return (
     <>
       <RadioGroup
