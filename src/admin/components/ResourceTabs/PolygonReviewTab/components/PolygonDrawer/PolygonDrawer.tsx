@@ -203,6 +203,7 @@ const PolygonDrawer = ({
       (criteria: any) =>
         criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
         criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+        criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
         criteria.valid !== 1
     );
   };
