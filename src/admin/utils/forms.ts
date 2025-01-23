@@ -70,19 +70,23 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
 
   steps.forEach(step => {
     step.fields.forEach(fieldStep => {
+      // if (fieldStep.label == 'Did Your Project Employ New People In The Last 6 Months?'){
+      console.log("here fieldStep", fieldStep);
+      // }
       if (fieldStep.type === FieldType.Conditional && typeof output[fieldStep.name] !== "boolean") {
         output[fieldStep.name] = false;
       }
       if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
+        // if (fieldStep.label == 'Did Your Project Employ New People In The Last 6 Months?'){
+        console.log("here fieldStep.fieldProps?.fields", fieldStep.fieldProps?.fields);
+        // }
+        let hasChildrenValues = false;
         fieldStep.fieldProps?.fields.forEach((fieldProps: any) => {
-          if (
-            Array.isArray(output[fieldProps.name]) &&
-            output[fieldProps.name]?.length > 0 &&
-            !output[fieldStep.name]
-          ) {
-            output[fieldStep.name] = true;
+          if (fieldProps.is_parent_conditional_default && output[fieldProps.name]) {
+            hasChildrenValues = true;
           }
         });
+        output[fieldStep.name] = hasChildrenValues;
       }
     });
   });
