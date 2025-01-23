@@ -49,6 +49,7 @@ export interface ICriteriaCheckItem {
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
 export const OVERLAPPING_CRITERIA_ID = 3;
+export const WITHIN_COUNTRY_CRITERIA_ID = 7;
 
 const PolygonDrawer = ({
   polygonSelected,

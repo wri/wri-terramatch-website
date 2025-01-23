@@ -4,7 +4,8 @@ import { twMerge as tw } from "tailwind-merge";
 
 import {
   COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID
+  ESTIMATED_AREA_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -44,7 +45,11 @@ const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
   if (criteria?.nonValidCriteria?.length === 0) {
     return true;
   }
-  const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+  const excludedFromValidationCriterias = [
+    COMPLETED_DATA_CRITERIA_ID,
+    ESTIMATED_AREA_CRITERIA_ID,
+    WITHIN_COUNTRY_CRITERIA_ID
+  ];
   const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
   const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
   return failingCriterias?.length === 0;
