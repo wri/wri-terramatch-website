@@ -1,3 +1,4 @@
+import { normalizeLocale, tx } from "@transifex/native";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -42,8 +43,7 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
   };
 
   const changeLanguageHandler = (lang: OptionValue) => {
-    //Change Locale without changing the route
-    router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
+    tx.setCurrentLocale(normalizeLocale(lang));
     setV1Lang(lang as string);
     handleClose?.();
   };

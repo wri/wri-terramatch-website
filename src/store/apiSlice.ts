@@ -4,7 +4,7 @@ import isArray from "lodash/isArray";
 import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
-import { setAccessToken } from "@/admin/apiProvider/utils/token";
+import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
@@ -94,6 +94,17 @@ export type ApiDataStore = ApiResources & {
 export const INITIAL_STATE = {
   ...RESOURCES.reduce((acc: Partial<ApiResources>, resource) => {
     acc[resource] = {};
+
+    if (resource === "logins" && typeof window !== "undefined") {
+      const accessToken = getAccessToken();
+      if (accessToken != null) {
+        // We only ever expect there to be at most one Login in the store, and we never inspect the ID
+        // so we can safely fake a login into the store when we have an authToken already set in a
+        // cookie on app bootup.
+        acc[resource]!["1"] = { attributes: { token: accessToken } };
+      }
+    }
+
     return acc;
   }, {}),
 
