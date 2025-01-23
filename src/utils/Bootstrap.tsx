@@ -1,0 +1,92 @@
+import { normalizeLocale, tx } from "@transifex/native";
+import { useRouter } from "next/router";
+import { PropsWithChildren, useEffect, useMemo } from "react";
+
+import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
+import Log from "@/utils/log";
+import { PathMatcher, Redirect } from "@/utils/PathMatcher";
+
+const useRedirect = () => {
+  const router = useRouter();
+  const [loaded, { user, isAdmin, isFunderOrGovernment }] = useMyUser();
+  const [, { organisation, organisationId, userStatus }] = useMyOrg();
+
+  return useMemo(() => {
+    if (!loaded) return;
+
+    Log.info("Calculating potential redirect");
+    const matcher = new PathMatcher(router.asPath);
+
+    try {
+      // Allow everybody to access the dashboard
+      matcher.startsWith("/dashboard")?.allow();
+
+      matcher.if(user == null, () => {
+        matcher.startsWith("/home")?.redirect("/");
+        matcher.startsWith("/auth")?.allow();
+        matcher.exact("/")?.allow();
+        matcher.redirect("/auth/login");
+      });
+
+      matcher.when(user!.emailAddressVerifiedAt == null)?.ensure(`/auth/signup/confirm?email=${user!.emailAddress}`);
+
+      // If they were already on dashboard, they were caught by the dashboard allow() at the top.
+      matcher.when(isFunderOrGovernment)?.redirect("/dashboard/learn-more?tab=about-us");
+
+      matcher.when(isAdmin)?.ensure("/admin");
+
+      matcher.if(
+        organisation == null,
+        () => matcher.ensure("/organisation/assign"),
+        () => matcher.exact("/organisation")?.redirect(`/organisation/${organisationId}`)
+      );
+      matcher.when(userStatus === "requested")?.ensure("/organisation/status/pending");
+      matcher.if(
+        organisation!.status === "draft",
+        () => matcher.ensure("/organisation/create"),
+        () => {
+          matcher.if(
+            organisation!.status === "rejected",
+            () => matcher.ensure("/organisation/status/rejected"),
+            () => matcher.startsWith("/organisation/create")?.ensure("/organisation/create/confirm")
+          );
+        }
+      );
+
+      matcher.exact("/")?.redirect("/home");
+      matcher.startsWith("/auth")?.redirect("/home");
+    } catch (error) {
+      if (error instanceof Redirect) {
+        if (error.path != null) {
+          Log.info("Forcing redirect", error.path);
+          router.push(error.path);
+        }
+      } else throw error;
+    }
+
+    // Ignoring changes to router. This should only calculate on initial page load, or when something
+    // important about the current user changes. Where the user can navigate to from there is
+    // determined by the navigational items available to them on the page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, organisation, organisationId, user, userStatus]);
+};
+
+const DEFAULT_LOCALE = "en-US";
+
+const Bootstrap = ({ children }: PropsWithChildren) => {
+  const [loaded, { user }] = useMyUser();
+  useEffect(() => {
+    const locale = user?.locale;
+    // Don't reset to the default automatically on logout.
+    if (locale == null && tx.getCurrentLocale() !== normalizeLocale(DEFAULT_LOCALE)) return;
+
+    tx.setCurrentLocale(normalizeLocale(locale ?? DEFAULT_LOCALE));
+  }, [user?.locale]);
+
+  useRedirect();
+
+  return !loaded ? null : <>{children}</>;
+};
+
+export default Bootstrap;

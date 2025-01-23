@@ -8,9 +8,11 @@ import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
-type UserConnection = {
+export type UserConnection = {
   user?: UserDto;
   userLoadFailed: boolean;
+  isAdmin: boolean;
+  isFunderOrGovernment: boolean;
 
   /** Used internally by the connection to determine if an attempt to load users/me should happen or not. */
   isLoggedIn: boolean;
@@ -21,6 +23,10 @@ const selectUsers = (store: ApiDataStore) => store.users;
 export const selectMe = createSelector([selectMeId, selectUsers], (meId, users) =>
   meId == null ? undefined : users?.[meId]
 );
+
+const isAdmin = (user?: UserDto) =>
+  (user?.primaryRole === "project-manager" || user?.primaryRole.includes("admin")) ?? false;
+const isFunderOrGovernment = (user?: UserDto) => user?.primaryRole === "funder" || user?.primaryRole === "government";
 
 const FIND_ME: UsersFindVariables = { pathParams: { id: "me" } };
 
@@ -36,7 +42,9 @@ const myUserConnection: Connection<UserConnection> = {
     (resource, firstLogin, userLoadFailure) => ({
       user: resource?.attributes,
       userLoadFailed: userLoadFailure != null,
-      isLoggedIn: firstLogin?.token != null
+      isLoggedIn: firstLogin?.token != null,
+      isAdmin: isAdmin(resource?.attributes),
+      isFunderOrGovernment: isFunderOrGovernment(resource?.attributes)
     })
   )
 };

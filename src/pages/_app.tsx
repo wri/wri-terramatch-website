@@ -1,19 +1,18 @@
 import "src/styles/globals.css";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { normalizeLocale, tx } from "@transifex/native";
+import { tx } from "@transifex/native";
 import { useT } from "@transifex/react";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren } from "react";
 
 import Toast from "@/components/elements/Toast/Toast";
 import CookieBanner from "@/components/extensive/CookieBanner/CookieBanner";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
-import { useMyUser } from "@/connections/User";
 import * as environment from "@/constants/environment";
 import FloatNotificationProvider from "@/context/floatNotification.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
@@ -25,6 +24,7 @@ import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { WrappedReduxProvider } from "@/store/store";
+import Bootstrap from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -37,17 +37,6 @@ if (typeof window !== "undefined") {
 tx.init({
   token: process.env.NEXT_PUBLIC_TRANSIFEX_TOKEN
 });
-
-const Bootstrap = ({ children }: PropsWithChildren) => {
-  const [loaded, { user }] = useMyUser();
-  useEffect(() => {
-    tx.setCurrentLocale(normalizeLocale(user?.locale ?? "en-US"));
-  }, [user?.locale]);
-
-  // TODO: refactor middleware routing to this component.
-
-  return loaded ? <>{children}</> : null;
-};
 
 const DashboardStack = ({ children }: PropsWithChildren) => (
   <RouteHistoryProvider>
