@@ -671,7 +671,7 @@ const DataCard = ({
 
   const sumRestorationByValues = (data: any[], landUse: boolean) => {
     return data?.reduce((acc, polygon) => {
-      if (landUse) return acc + (parseInt(polygon?.valueText?.match(/^(.*?)ha/)![1].trim(), 10) || 0);
+      if (landUse) return acc + polygon?.valueNotRounded;
       return acc + (polygon.value || 0);
     }, 0);
   };

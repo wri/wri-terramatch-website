@@ -497,7 +497,8 @@ export const parsePolygonsIndicatorDataForLandUse = (
     return {
       label,
       value: adjustedValue as number,
-      valueText: `${Math.round(value as number)}ha (${percentage.toFixed(0)}%)`
+      valueText: `${Math.round(value as number)}ha (${percentage.toFixed(0)}%)`,
+      valueNotRounded: value as number
     };
   });
 
