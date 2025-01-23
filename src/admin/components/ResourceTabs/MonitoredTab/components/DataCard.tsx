@@ -721,12 +721,12 @@ const DataCard = ({
           ecoRegionData.chartData.length
         } major ecoregion(s): <b>${calculatePercentage(
           ecoRegionData.chartData[0].value,
-          ecoRegionData.total
+          totalHectaresRestoredGoal
         )}%</b> of the project takes place in the <b>${ecoRegionData.chartData[0].name}</b> ecoregion ${
           ecoRegionData.chartData?.[1]
             ? `[and <b>${calculatePercentage(
                 ecoRegionData.chartData[1].value,
-                ecoRegionData.total
+                totalHectaresRestoredGoal
               )}%</b> of the project takes place in the <b>${ecoRegionData.chartData[1].name}</b> ecoregion].`
             : "."
         }`
