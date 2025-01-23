@@ -42,6 +42,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   useEffect(() => {
     const values = props?.formHook?.formState?.defaultValues;
     let hasChildrenValues = false;
+    if (!field.value) {
+      field.onChange(false);
+      return;
+    }
     fields.forEach(fieldChildren => {
       if (values && values[fieldChildren.name] && fieldChildren.is_parent_conditional_default) {
         hasChildrenValues = true;
