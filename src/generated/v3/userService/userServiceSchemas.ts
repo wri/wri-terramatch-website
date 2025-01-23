@@ -70,6 +70,12 @@ export type ResetPasswordResponseOperationDto = {
    * @example user@example.com
    */
   message: string;
+  /**
+   * User Id
+   *
+   * @example 12345
+   */
+  userId: number;
 };
 
 export type ResetPasswordDto = {};

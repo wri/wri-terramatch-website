@@ -7,8 +7,8 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-// import { usePatchAuthChange } from "@/generated/apiComponents";
-import { resetPassword as NewResetPassword } from "@/generated/v3/userService/userServiceComponents";
+import { resetPassword } from "@/generated/v3/userService/userServiceComponents";
+import { useResetPassword } from "@/store/apiSlice";
 
 import ResetPasswordForm from "./components/ResetPasswordForm";
 
@@ -27,6 +27,8 @@ const ResetPasswordPage = () => {
     mode: "all"
   });
 
+  const [, { isLoading, requestFailed, isSuccess }] = useResetPassword();
+
   const { strength } = usePasswordStrength({ password: form.watch("password") });
 
   const handleSave = async (data: ResetPasswordData) => {
@@ -43,7 +45,7 @@ const ResetPasswordPage = () => {
       if (!router.query.token) {
         router.push("/");
       } else {
-        NewResetPassword({
+        resetPassword({
           body: {
             newPassword: data.password
           },
@@ -63,7 +65,13 @@ const ResetPasswordPage = () => {
   return (
     <BackgroundLayout>
       <ContentLayout>
-        <ResetPasswordForm form={form} loading={false} handleSave={handleSave} apiError={null} success={false} />
+        <ResetPasswordForm
+          form={form}
+          loading={isLoading}
+          handleSave={handleSave}
+          apiError={requestFailed}
+          success={isSuccess}
+        />
       </ContentLayout>
     </BackgroundLayout>
   );

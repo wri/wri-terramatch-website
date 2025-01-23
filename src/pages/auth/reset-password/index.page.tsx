@@ -1,9 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { requestPasswordReset as newRequestResetPassword } from "@/generated/v3/userService/userServiceComponents";
+import { requestPasswordReset } from "@/generated/v3/userService/userServiceComponents";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import RequestResetForm from "@/pages/auth/reset-password/components/RequestResetForm";
+import { useRequestPassword } from "@/store/apiSlice";
 
 import LoginLayout from "../layout";
 
@@ -18,20 +22,28 @@ const RequestResetPage = () => {
     resolver: yupResolver(RequestResetDataSchema),
     mode: "onSubmit"
   });
+  const [isToggled, setIsToggled] = useState(false);
+
+  const router = useRouter();
+  const isAdmin = router.asPath.includes("/admin");
+
+  const baseAuthPath = isAdmin ? "/admin/auth" : "/auth";
+
+  const [, { isLoading, requestFailed, isSuccess, requestEmail }] = useRequestPassword();
+
+  useValueChanged(isSuccess, () => {
+    if (isSuccess && isToggled)
+      router.push(`${baseAuthPath}/reset-password/confirm?email=${encodeURIComponent(requestEmail)}`);
+  });
 
   const handleSave = async (data: RequestResetData) => {
-    /*return requestResetPassword({
-      body: {
-        email_address: data.email,
-        callback_url: window.location.origin + `${baseAuthPath}/reset-password/`
-      }
-    });*/
-    newRequestResetPassword({ body: { emailAddress: data.email } });
+    setIsToggled(true);
+    requestPasswordReset({ body: { emailAddress: data.email } });
   };
 
   return (
     <LoginLayout>
-      <RequestResetForm form={form} loading={false} handleSave={handleSave} apiError={null} />
+      <RequestResetForm form={form} loading={isLoading} handleSave={handleSave} apiError={requestFailed} />
     </LoginLayout>
   );
 };
