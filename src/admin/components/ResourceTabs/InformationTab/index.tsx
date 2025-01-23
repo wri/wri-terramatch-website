@@ -84,8 +84,6 @@ const InformationTab: FC<IProps> = props => {
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
     : normalizedFormDefaultValue(response?.data.answers!, formSteps);
 
-  console.log("here values", record.migrated, values);
-
   const tabTitle = (() => {
     switch (props.type) {
       case "projects":
