@@ -477,6 +477,9 @@ export const parsePolygonsIndicatorDataForLandUse = (
 
       Object.entries(polygon.data).forEach(([key, value]) => {
         const label = formatLabel(key);
+        if (label == "") {
+          return acc;
+        }
         const numericValue = Number(value);
         acc.aggregatedData[label] = (acc.aggregatedData[label] || 0) + numericValue;
       });

@@ -32,7 +32,9 @@ export const formatDescriptionIndicator = (
     .filter(([key, value]) => value != undefined && value != null && !Number.isNaN(value))
     .map(
       ([key, value]) =>
-        `${key} with ${value} ha ${percentage ? `(${calculatePercentage(value!, totalHectares)}%)` : ""}`
+        `<b>${key}</b> with <b>${value} ha </b>${
+          percentage ? `(<b>${calculatePercentage(value!, totalHectares)}%</b>)` : ""
+        }`
     );
 
   if (validItems.length == 0) return "";
