@@ -136,7 +136,13 @@ const TreeSpeciesTablePD = ({
           uuid: row.uuid
         };
       }
-
+      if (modelName === "site-report") {
+        return {
+          name: [row.name, speciesType],
+          treeCount: row.amount,
+          uuid: row.uuid
+        };
+      }
       return {
         name: [row.name, speciesType],
         treeCount: row.report_amount ?? "0",
