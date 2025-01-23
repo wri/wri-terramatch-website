@@ -1,7 +1,5 @@
 import * as reactQuery from "@tanstack/react-query";
-import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import Button from "@/components/elements/Button/Button";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -72,21 +70,12 @@ const DebugPage = () => {
             <div className="space-y-8">
               <Button onClick={handleErrorClick}>Trigger Network Error</Button>
               <Button onClick={handleCrashPage}>Crash Client side</Button>
-              <Button as={Link} href="?broken=true">
-                Crash ServerSideProps
-              </Button>
             </div>
           </PageCard>
         </PageSection>
       </PageBody>
     </>
   );
-};
-
-export const getServerSideProps = (ctx: GetServerSidePropsContext) => {
-  if (ctx.query.broken === "true") {
-    throw new Error("getServerSideProps error");
-  } else return { props: {} };
 };
 
 export default DebugPage;
