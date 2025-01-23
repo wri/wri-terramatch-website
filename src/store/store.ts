@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createWrapper, MakeStore } from "next-redux-wrapper";
-import { Store } from "redux";
 import { createLogger } from "redux-logger";
 
 import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "@/store/apiSlice";
@@ -10,6 +8,7 @@ export type AppStore = {
 };
 
 export const makeStore = () => {
+  console.log("MAKE STORE");
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer
@@ -43,5 +42,3 @@ export const makeStore = () => {
 
   return store;
 };
-
-export const wrapper = createWrapper<Store<AppStore>>(makeStore as MakeStore<Store<AppStore>>);

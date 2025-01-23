@@ -6,7 +6,7 @@ import { useT } from "@transifex/react";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import Toast from "@/components/elements/Toast/Toast";
@@ -25,7 +25,7 @@ import NotificationProvider from "@/context/notification.provider";
 import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
-import { wrapper } from "@/store/store";
+import { makeStore } from "@/store/store";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -92,16 +92,14 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </ToastProvider>
 );
 
-const _App = ({ Component, ...rest }: AppProps) => {
+const _App = ({ Component, pageProps }: AppProps) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
 
-  const {
-    store,
-    props: { pageProps }
-  } = wrapper.useWrappedStore(rest);
+  console.log("pageProps", pageProps);
+  const store = useMemo(() => makeStore(), []);
 
   setupYup(t);
 

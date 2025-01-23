@@ -1,7 +1,6 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer";
 import isArray from "lodash/isArray";
-import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
@@ -200,15 +199,6 @@ export const apiSlice = createSlice({
 
     clearApiCache,
 
-    // only used during app bootup.
-    setInitialAuthToken: (state, action: PayloadAction<{ authToken: string }>) => {
-      const { authToken } = action.payload;
-      // We only ever expect there to be at most one Login in the store, and we never inspect the ID
-      // so we can safely fake a login into the store when we have an authToken already set in a
-      // cookie on app bootup.
-      state.logins["1"] = { attributes: { token: authToken } };
-    },
-
     setTotalContent: (state, action: PayloadAction<number>) => {
       state.total_content = action.payload;
     },
@@ -224,38 +214,6 @@ export const apiSlice = createSlice({
     setProgressMessage: (state, action: PayloadAction<string>) => {
       state.progress_message = action.payload;
     }
-  },
-
-  extraReducers: builder => {
-    builder.addCase(HYDRATE, (state, action) => {
-      const {
-        payload: { api: payloadState }
-      } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
-
-      if (state.meta.meUserId !== payloadState.meta.meUserId) {
-        // It's likely the server hasn't loaded as many resources as the client. We should only
-        // clear out our cached client-side state if the server claims to have a different logged-in
-        // user state than we do.
-        clearApiCache(state);
-      }
-
-      for (const resource of RESOURCES) {
-        state[resource] = payloadState[resource] as StoreResourceMap<any>;
-      }
-
-      for (const method of METHODS) {
-        state.meta.pending[method] = payloadState.meta.pending[method];
-      }
-
-      if (payloadState.meta.meUserId != null) {
-        state.meta.meUserId = payloadState.meta.meUserId;
-      }
-
-      state.total_content = payloadState.total_content ?? state.total_content;
-      state.processed_content = payloadState.processed_content ?? state.processed_content;
-      state.progress_message = payloadState.progress_message ?? state.progress_message;
-      state.abort_delayed_job = payloadState.abort_delayed_job ?? state.abort_delayed_job;
-    });
   }
 });
 
