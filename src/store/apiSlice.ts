@@ -1,4 +1,5 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { QueryClient } from "@tanstack/react-query";
 import { WritableDraft } from "immer";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
@@ -234,15 +235,8 @@ authListenerMiddleware.startListening({
 });
 
 export default class ApiSlice {
-  private static _redux: Store;
-
-  static set redux(store: Store) {
-    this._redux = store;
-  }
-
-  static get redux(): Store {
-    return this._redux;
-  }
+  static redux: Store;
+  static queryClient?: QueryClient;
 
   static get apiDataStore(): ApiDataStore {
     return this.redux.getState().api;

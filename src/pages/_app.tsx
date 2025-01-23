@@ -6,8 +6,7 @@ import { useT } from "@transifex/react";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect, useMemo } from "react";
-import { Provider as ReduxProvider } from "react-redux";
+import { PropsWithChildren, useEffect } from "react";
 
 import Toast from "@/components/elements/Toast/Toast";
 import CookieBanner from "@/components/extensive/CookieBanner/CookieBanner";
@@ -25,7 +24,7 @@ import NotificationProvider from "@/context/notification.provider";
 import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
-import { makeStore } from "@/store/store";
+import { WrappedReduxProvider } from "@/store/store";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -51,17 +50,15 @@ const Bootstrap = ({ children }: PropsWithChildren) => {
 };
 
 const DashboardStack = ({ children }: PropsWithChildren) => (
-  <ToastProvider>
-    <RouteHistoryProvider>
-      <NavbarProvider>
-        <ModalRoot />
-        <Toast />
-        <DashboardAnalyticsWrapper>
-          <DashboardLayout>{children}</DashboardLayout>
-        </DashboardAnalyticsWrapper>
-      </NavbarProvider>
-    </RouteHistoryProvider>
-  </ToastProvider>
+  <RouteHistoryProvider>
+    <NavbarProvider>
+      <ModalRoot />
+      <Toast />
+      <DashboardAnalyticsWrapper>
+        <DashboardLayout>{children}</DashboardLayout>
+      </DashboardAnalyticsWrapper>
+    </NavbarProvider>
+  </RouteHistoryProvider>
 );
 
 const AdminStack = ({ children }: PropsWithChildren) => (
@@ -76,20 +73,18 @@ const AdminStack = ({ children }: PropsWithChildren) => (
 );
 
 const PDStack = ({ children }: PropsWithChildren) => (
-  <ToastProvider>
-    <RouteHistoryProvider>
-      <FloatNotificationProvider>
-        <NavbarProvider>
-          <ModalRoot />
-          <Toast />
-          <MainLayout>
-            {children}
-            <CookieBanner />
-          </MainLayout>
-        </NavbarProvider>
-      </FloatNotificationProvider>
-    </RouteHistoryProvider>
-  </ToastProvider>
+  <RouteHistoryProvider>
+    <FloatNotificationProvider>
+      <NavbarProvider>
+        <ModalRoot />
+        <Toast />
+        <MainLayout>
+          {children}
+          <CookieBanner />
+        </MainLayout>
+      </NavbarProvider>
+    </FloatNotificationProvider>
+  </RouteHistoryProvider>
 );
 
 const _App = ({ Component, pageProps }: AppProps) => {
@@ -98,38 +93,37 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
 
-  console.log("pageProps", pageProps);
-  const store = useMemo(() => makeStore(), []);
-
   setupYup(t);
 
   return (
-    <ReduxProvider store={store}>
-      <Bootstrap>
-        <WrappedQueryClientProvider>
-          <LoadingProvider>
-            <NotificationProvider>
-              <ModalProvider>
-                {isOnDashboards ? (
-                  <DashboardStack>
-                    <Component {...pageProps} />
-                  </DashboardStack>
-                ) : isAdmin ? (
-                  <AdminStack>
-                    <Component {...pageProps} />
-                  </AdminStack>
-                ) : (
-                  <PDStack>
-                    <Component {...pageProps} />
-                  </PDStack>
-                )}
-              </ModalProvider>
-            </NotificationProvider>
-          </LoadingProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </WrappedQueryClientProvider>
-      </Bootstrap>
-    </ReduxProvider>
+    <ToastProvider>
+      <WrappedQueryClientProvider>
+        <WrappedReduxProvider>
+          <Bootstrap>
+            <LoadingProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  {isOnDashboards ? (
+                    <DashboardStack>
+                      <Component {...pageProps} />
+                    </DashboardStack>
+                  ) : isAdmin ? (
+                    <AdminStack>
+                      <Component {...pageProps} />
+                    </AdminStack>
+                  ) : (
+                    <PDStack>
+                      <Component {...pageProps} />
+                    </PDStack>
+                  )}
+                </ModalProvider>
+              </NotificationProvider>
+            </LoadingProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Bootstrap>
+        </WrappedReduxProvider>
+      </WrappedQueryClientProvider>
+    </ToastProvider>
   );
 };
 

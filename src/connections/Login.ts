@@ -20,6 +20,8 @@ export const logout = () => {
   // When we log out, remove all cached API resources so that when we log in again, these resources
   // are freshly fetched from the BE.
   ApiSlice.clearApiCache();
+  ApiSlice.queryClient?.getQueryCache()?.clear();
+  ApiSlice.queryClient?.clear();
   window.location.replace("/auth/login");
 };
 

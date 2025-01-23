@@ -8,10 +8,9 @@ import { Else, If, Then, When } from "react-if";
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { useLogin } from "@/connections/Login";
+import { logout, useLogin } from "@/connections/Login";
 import { useMyOrg } from "@/connections/Organisation";
 import { useNavbarContext } from "@/context/navbar.provider";
-import { useLogout } from "@/hooks/logout";
 import { OptionValue } from "@/types/common";
 
 import NavbarItem from "./NavbarItem";
@@ -26,7 +25,6 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
   const router = useRouter();
   const t = useT();
   const [, myOrg] = useMyOrg();
-  const logout = useLogout();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 
   const navItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
