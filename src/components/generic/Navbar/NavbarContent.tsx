@@ -9,7 +9,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { logout, useLogin } from "@/connections/Login";
 import { useMyOrg } from "@/connections/Organisation";
-import { useMyUser } from "@/connections/User";
+import { useMyUser, ValidLocale } from "@/connections/User";
 import { useNavbarContext } from "@/context/navbar.provider";
 
 import NavbarItem from "./NavbarItem";
@@ -36,7 +36,7 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
       // In this case, the Bootstrap component will notice the changed user locale and update our URL for us
       // after the server round trip. We don't want to do it here because then it's a race condition
       // that can cause the URL locale to flicker.
-      setLocale(lang);
+      setLocale(lang as ValidLocale);
     } else {
       // In this case we don't have a user to store the locale on, so just go ahead and directly change the URL.
       router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });

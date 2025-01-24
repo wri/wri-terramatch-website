@@ -58,7 +58,7 @@ export type UserUpdateAttributes = {
   /**
    * New default locale for the given user
    */
-  locale: string | null;
+  locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
 };
 
 export type UserUpdate = {

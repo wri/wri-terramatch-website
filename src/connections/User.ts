@@ -9,6 +9,8 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
+export type ValidLocale = Exclude<UserUpdateAttributes["locale"], null>;
+
 export type UserConnection = {
   user?: UserDto;
   userLoadFailed: boolean;
@@ -16,7 +18,7 @@ export type UserConnection = {
   isFunderOrGovernment: boolean;
 
   userUpdateFailed: boolean;
-  setLocale?: (locale: string) => void;
+  setLocale?: (locale: ValidLocale) => void;
 
   /** Used internally by the connection to determine if an attempt to load users/me should happen or not. */
   isLoggedIn: boolean;
@@ -66,7 +68,8 @@ const myUserConnection: Connection<UserConnection> = {
       isFunderOrGovernment: isFunderOrGovernment(resource?.attributes),
       userUpdateFailed: userUpdateFailure != null,
 
-      setLocale: resource == null ? undefined : (locale: string) => updateUser(resource.attributes.uuid, { locale })
+      setLocale:
+        resource == null ? undefined : (locale: ValidLocale) => updateUser(resource.attributes.uuid, { locale })
     })
   )
 };
