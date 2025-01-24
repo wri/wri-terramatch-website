@@ -11,18 +11,17 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { fetchPatchV2AuthVerify } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
-import { useQueryString } from "@/hooks/useQueryString";
 import Log from "@/utils/log";
 
 const VerifyEmail = () => {
   const t = useT();
-  const token = useQueryString().token as string;
   const router = useRouter();
+  const token = router.query.token as string;
   const [verified, setVerified] = useState(false);
 
   useOnMount(async () => {
     if (token == null) {
-      Log.error("No token found in query string");
+      Log.error("No token found in url");
       router.push("/");
     } else {
       try {
