@@ -8,6 +8,7 @@ import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token"
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
   statusCode: number;
@@ -215,6 +216,23 @@ export const apiSlice = createSlice({
     setProgressMessage: (state, action: PayloadAction<string>) => {
       state.progress_message = action.payload;
     }
+  },
+
+  extraReducers: builder => {
+    // Used only in test suites to dump some specific state into the store.
+    builder.addCase(__TEST_HYDRATE__, (state, action) => {
+      const {
+        payload: { api: payloadState }
+      } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
+
+      clearApiCache(state);
+
+      for (const resource of RESOURCES) {
+        state[resource] = payloadState[resource] as StoreResourceMap<any>;
+      }
+
+      state.meta = payloadState.meta;
+    });
   }
 });
 

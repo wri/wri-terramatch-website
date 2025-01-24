@@ -6,6 +6,9 @@ import { createLogger } from "redux-logger";
 
 import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "@/store/apiSlice";
 
+// Action used only in test suites to dump some specific state into the store.
+export const __TEST_HYDRATE__ = "__TEST_HYDRATE__";
+
 export type AppStore = {
   api: ApiDataStore;
 };
