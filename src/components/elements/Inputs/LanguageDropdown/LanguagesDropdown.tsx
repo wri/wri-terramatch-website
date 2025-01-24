@@ -7,7 +7,6 @@ import { PropsWithChildren, useRef, useState } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { useMyUser } from "@/connections/User";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
 
@@ -28,14 +27,13 @@ const languageForLocale = (locale?: string | null) => LANGUAGES.find(({ value })
 
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const [, { user }] = useMyUser();
   const router = useRouter();
 
   const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
   let buttonRef = useRef<any>();
 
-  useValueChanged(user?.locale, () => {
-    setSelected(languageForLocale(user?.locale));
+  useValueChanged(router.locale, () => {
+    setSelected(languageForLocale(router.locale));
   });
 
   const onChange = (lang: Option) => {
