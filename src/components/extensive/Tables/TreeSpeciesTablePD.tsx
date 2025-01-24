@@ -33,7 +33,7 @@ export interface TreeSpeciesTablePDProps {
 }
 
 export interface TreeSpeciesTableRowData {
-  name: [string, string, string?];
+  name: [string, string[]];
   treeCount?: string | number;
   treeCountGoal?: [number, number];
   seedCount?: string | number;
@@ -122,29 +122,25 @@ const TreeSpeciesTablePD = ({
       setTotalCount(total);
     }
     return rows.map(row => {
-      let speciesType = "tree";
-      if (!row.taxon_id) {
-        speciesType = "non-scientific";
-      }
-      if (row.is_new_species) {
-        speciesType = "new";
-      }
+      let speciesTypes = ["tree"];
+      if (!row.taxon_id) speciesTypes.push("non-scientific");
+      if (row.is_new_species) speciesTypes.push("new");
       if (getCollectionType(collection ?? "") !== "noGoal" && getCollectionType(collection ?? "").includes("Goal")) {
         return {
-          name: [row.name, speciesType],
+          name: [row.name, speciesTypes],
           treeCountGoal: [row.report_amount, row.amount],
           uuid: row.uuid
         };
       }
       if (modelName === "site-report") {
         return {
-          name: [row.name, speciesType],
+          name: [row.name, speciesTypes],
           treeCount: row.amount,
           uuid: row.uuid
         };
       }
       return {
-        name: [row.name, speciesType],
+        name: [row.name, speciesTypes],
         treeCount: row.report_amount ?? "0",
         uuid: row.uuid
       };
@@ -158,9 +154,9 @@ const TreeSpeciesTablePD = ({
       setTotalCount(total);
     }
     return rows.map(row => {
-      let speciesType = "tree";
+      let speciesTypes = ["tree"];
       return {
-        name: [row.name, speciesType],
+        name: [row.name, speciesTypes],
         treeCount: row.amount,
         uuid: row.uuid
       };
@@ -182,75 +178,46 @@ const TreeSpeciesTablePD = ({
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
-      if (value[1] === "non-scientific") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="Non-scientific name"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NON_SCIENTIFIC_NAME_CUSTOM}
-                className={classNames(
-                  "mr-1 h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
-      if (value[1] === "tree") {
-        return <div className="font-inherit">{value[0]}</div>;
-      }
-      if (value[1] === "Native species") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="Native species"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NATIVE_SPECIES}
-                className={classNames(
-                  "h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
-      if (value[1] === "new") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="New Species"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
-                className={classNames(
-                  "mr-1 h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
+      const [speciesName, speciesTypes] = value;
+      const iconConfigs: { [key: string]: { tooltip: string; icon: IconNames } } = {
+        "non-scientific": {
+          tooltip: "Non-scientific name",
+          icon: IconNames.NON_SCIENTIFIC_NAME_CUSTOM
+        },
+        new: {
+          tooltip: "New Species",
+          icon: IconNames.NEW_TAG_TREE_SPECIES_CUSTOM
+        }
+      };
+
+      const icons = (speciesTypes || []).map((type: string) => {
+        const config = iconConfigs[type];
+        return config ? (
+          <ToolTip
+            key={type}
+            title=""
+            content={config.tooltip}
+            colorBackground="white"
+            placement="right"
+            textVariantContent="text-14"
+          >
+            <Icon
+              name={config.icon}
+              className={classNames(
+                "h-7 w-7",
+                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+              )}
+            />
+          </ToolTip>
+        ) : null;
+      });
+
+      return (
+        <div className="font-inherit flex items-center gap-1">
+          {speciesName}
+          {icons}
+        </div>
+      );
     }
   };
 
