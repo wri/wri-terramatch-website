@@ -37,18 +37,18 @@ const useRedirect = () => {
 
       matcher.if(
         organisation == null,
-        () => matcher.ensure("/organisation/assign"),
-        () => matcher.exact("/organisation")?.redirect(`/organisation/${organisationId}`)
+        () => matcher.ensure("/organization/assign"),
+        () => matcher.exact("/organization")?.redirect(`/organization/${organisationId}`)
       );
-      matcher.when(userStatus === "requested")?.ensure("/organisation/status/pending");
+      matcher.when(userStatus === "requested")?.ensure("/organization/status/pending");
       matcher.if(
         organisation!.status === "draft",
-        () => matcher.ensure("/organisation/create"),
+        () => matcher.ensure("/organization/create"),
         () => {
           matcher.if(
             organisation!.status === "rejected",
-            () => matcher.ensure("/organisation/status/rejected"),
-            () => matcher.startsWith("/organisation/create")?.ensure("/organisation/create/confirm")
+            () => matcher.ensure("/organization/status/rejected"),
+            () => matcher.startsWith("/organization/create")?.ensure("/organization/create/confirm")
           );
         }
       );
