@@ -86,7 +86,9 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
           if (output[fieldStep.name] == true) {
             if (
               (Array.isArray(output[fieldProps.name]) && output[fieldProps.name]?.length < 1) ||
-              output[fieldProps.name] == null
+              output[fieldProps.name] == null ||
+              output[fieldProps.name] == "" ||
+              output[fieldProps.name] == 0
             ) {
               fieldsCount++;
             }
