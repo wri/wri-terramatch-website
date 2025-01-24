@@ -38,7 +38,9 @@ const RequestResetPage = () => {
 
   const handleSave = async (data: RequestResetData) => {
     setIsToggled(true);
-    requestPasswordReset({ body: { emailAddress: data.email } });
+    requestPasswordReset({
+      body: { emailAddress: data.email, callbackUrl: window.location.origin + `${baseAuthPath}/reset-password` }
+    });
   };
 
   return (

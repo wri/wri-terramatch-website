@@ -61,6 +61,12 @@ export type RequestResetPasswordDto = {
    * @example user@example.com
    */
   emailAddress: string;
+  /**
+   * Url to redirect the user to after the password reset is completed
+   *
+   * @example www.terramatch.com
+   */
+  callbackUrl: string;
 };
 
 export type ResetPasswordResponseOperationDto = {
