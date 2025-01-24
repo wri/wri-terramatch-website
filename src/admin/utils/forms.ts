@@ -74,19 +74,29 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
         output[fieldStep.name] = false;
       }
       if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
-        let hasChildrenValues = false;
+        let fieldsCount = 0;
         fieldStep.fieldProps?.fields.forEach((fieldProps: any) => {
           if (
-            (fieldProps.is_parent_conditional_default && output[fieldProps.name]) ||
-            (Array.isArray(output[fieldProps.name]) &&
-              output[fieldProps.name]?.length > 0 &&
-              output[fieldStep.name] == null) ||
-            output[fieldStep.name] == true
+            Array.isArray(output[fieldProps.name]) &&
+            output[fieldProps.name]?.length > 0 &&
+            output[fieldStep.name] == null
           ) {
-            hasChildrenValues = true;
+            output[fieldStep.name] = true;
+          }
+          if (output[fieldStep.name] == true) {
+            if (
+              (Array.isArray(output[fieldProps.name]) && output[fieldProps.name]?.length < 1) ||
+              output[fieldProps.name] == null ||
+              output[fieldProps.name] == "" ||
+              output[fieldProps.name] == 0
+            ) {
+              fieldsCount++;
+            }
+          }
+          if ("fields" in fieldStep.fieldProps && fieldsCount == fieldStep.fieldProps?.fields?.length) {
+            output[fieldStep.name] = false;
           }
         });
-        output[fieldStep.name] = hasChildrenValues;
       }
     });
   });
