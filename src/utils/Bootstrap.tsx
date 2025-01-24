@@ -15,7 +15,7 @@ const useRedirect = () => {
   return useMemo(() => {
     if (!loaded) return;
 
-    Log.info("Calculating potential redirect");
+    Log.info("Calculating potential redirect", { from: router.asPath });
     const matcher = new PathMatcher(router.asPath);
 
     try {
@@ -23,10 +23,9 @@ const useRedirect = () => {
       matcher.startsWith("/dashboard")?.allow();
 
       matcher.if(user == null, () => {
-        matcher.startsWith("/home")?.redirect("/");
         matcher.startsWith("/auth")?.allow();
         matcher.exact("/")?.allow();
-        matcher.redirect("/auth/login");
+        matcher.redirect("/");
       });
 
       matcher.when(user!.emailAddressVerifiedAt == null)?.ensure(`/auth/signup/confirm?email=${user!.emailAddress}`);
@@ -72,20 +71,33 @@ const useRedirect = () => {
   }, [loaded, organisation, organisationId, user, userStatus]);
 };
 
-const DEFAULT_LOCALE = "en-US";
+const useLanguageTransition = () => {
+  const [, { user }] = useMyUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    // make sure our route contains the appropriate locale if not english.
+    if (user?.locale != null && router.locale !== user.locale) {
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: user.locale });
+    }
+  }, [router, user?.locale]);
+
+  useEffect(() => {
+    const routerLocale = normalizeLocale(router.locale);
+    if (tx.getCurrentLocale() !== routerLocale) {
+      Log.info("Updating in-browser locale", { normalized: routerLocale, locale: router.locale });
+      tx.setCurrentLocale(routerLocale);
+    }
+  }, [router.locale]);
+};
 
 const Bootstrap = ({ children }: PropsWithChildren) => {
-  const [loaded, { user }] = useMyUser();
-  useEffect(() => {
-    const locale = user?.locale;
-    // Don't reset to the default automatically on logout.
-    if (locale == null && tx.getCurrentLocale() !== normalizeLocale(DEFAULT_LOCALE)) return;
+  const [loaded] = useMyUser();
 
-    tx.setCurrentLocale(normalizeLocale(locale ?? DEFAULT_LOCALE));
-  }, [user?.locale]);
-
+  useLanguageTransition();
   useRedirect();
 
+  // don't try to mount children until we've tried to load our own user.
   return !loaded ? null : <>{children}</>;
 };
 

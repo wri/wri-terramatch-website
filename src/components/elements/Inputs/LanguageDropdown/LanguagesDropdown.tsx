@@ -1,21 +1,20 @@
 import { Popover } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useRef, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useMyUser } from "@/connections/User";
-import { fetchPatchV2UsersLocale } from "@/generated/apiComponents";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
 
 export interface DropdownProps {
   defaultValue?: OptionValue;
-  onChange?: (value: OptionValue) => void;
+  onChange?: (value: string) => void;
   className?: string;
-  isLoggedIn?: boolean;
 }
 
 const LANGUAGES: Option[] = [
@@ -30,8 +29,9 @@ const languageForLocale = (locale?: string | null) => LANGUAGES.find(({ value })
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
   const [, { user }] = useMyUser();
+  const router = useRouter();
 
-  const [selected, setSelected] = useState<Option>(languageForLocale(user?.locale));
+  const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
   let buttonRef = useRef<any>();
 
   useValueChanged(user?.locale, () => {
@@ -40,13 +40,8 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const onChange = (lang: Option) => {
     setSelected(lang);
-    props.onChange?.(lang.value);
+    props.onChange?.(lang.value as string);
     buttonRef.current?.click();
-    if (props.isLoggedIn) {
-      fetchPatchV2UsersLocale({
-        body: { locale: lang.value as string }
-      });
-    }
   };
 
   return (

@@ -53,3 +53,23 @@ export type OrganisationDto = {
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
 };
+
+export type UserUpdateAttributes = {
+  /**
+   * New default locale for the given user
+   */
+  locale: string | null;
+};
+
+export type UserUpdate = {
+  type: "users";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UserUpdateAttributes;
+};
+
+export type UserUpdateBodyDto = {
+  data: UserUpdate;
+};

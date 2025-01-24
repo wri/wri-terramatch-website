@@ -1,4 +1,3 @@
-import { normalizeLocale, tx } from "@transifex/native";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -10,8 +9,8 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { logout, useLogin } from "@/connections/Login";
 import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
 import { useNavbarContext } from "@/context/navbar.provider";
-import { OptionValue } from "@/types/common";
 
 import NavbarItem from "./NavbarItem";
 import { getNavbarItems } from "./navbarItems";
@@ -24,6 +23,7 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
   const [, { isLoggedIn }] = useLogin();
   const router = useRouter();
   const t = useT();
+  const [, { setLocale }] = useMyUser();
   const [, myOrg] = useMyOrg();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 
@@ -31,18 +31,17 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
 
   const { linksDisabled } = useNavbarContext();
 
-  const setV1Lang = (lang: string) => {
-    let v1Lang = lang;
+  const changeLanguageHandler = (lang: string) => {
+    if (setLocale != null) {
+      // In this case, the Bootstrap component will notice the changed user locale and update our URL for us
+      // after the server round trip. We don't want to do it here because then it's a race condition
+      // that can cause the URL locale to flicker.
+      setLocale(lang);
+    } else {
+      // In this case we don't have a user to store the locale on, so just go ahead and directly change the URL.
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
+    }
 
-    if (lang === "es-MX") v1Lang = "es";
-    if (lang === "fr-FR") v1Lang = "fr";
-
-    localStorage.setItem("i18nextLng", v1Lang);
-  };
-
-  const changeLanguageHandler = (lang: OptionValue) => {
-    tx.setCurrentLocale(normalizeLocale(lang));
-    setV1Lang(lang as string);
     handleClose?.();
   };
 
@@ -82,7 +81,7 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
           </NavbarItem>
         </Else>
       </If>
-      <LanguagesDropdown onChange={changeLanguageHandler} isLoggedIn={isLoggedIn} className="hidden sm:block" />
+      <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
   );
 };

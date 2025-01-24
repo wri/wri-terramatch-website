@@ -22,7 +22,6 @@ export const logout = () => {
   ApiSlice.clearApiCache();
   ApiSlice.queryClient?.getQueryCache()?.clear();
   ApiSlice.queryClient?.clear();
-  window.location.replace("/auth/login");
 };
 
 export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;

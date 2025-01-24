@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "next dev",
-    "build": "npm run generate:api && npm run generate:services && next build",
+    "build": "yarn generate:api && yarn generate:services && next build",
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -64,7 +64,7 @@
     "next": "13.1.5",
     "nookies": "^2.5.2",
     "prettier-plugin-tailwindcss": "^0.2.2",
-    "query-string": "^9.1.1",
+    "query-string": "^7.1.1",
     "ra-input-rich-text": "^4.12.2",
     "react": "18.2.0",
     "react-admin": "^4.7.4",
