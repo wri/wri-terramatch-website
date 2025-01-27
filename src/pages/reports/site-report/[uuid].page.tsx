@@ -37,15 +37,18 @@ import useDemographicData from "@/hooks/useDemographicData";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
+
 const SiteReportDetailPage = () => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
+
   const { data, isLoading } = useGetV2ENTITYUUID({
     pathParams: { uuid: siteReportUUID, entity: "site-reports" }
   });
   const siteReport = (data?.data ?? {}) as any;
+
   const { data: site } = useGetV2ENTITYUUID(
     {
       pathParams: { uuid: siteReport?.site?.uuid, entity: "sites" }
@@ -54,9 +57,11 @@ const SiteReportDetailPage = () => {
       enabled: !!siteReport?.site?.uuid
     }
   );
+
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
   const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
+
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
     "site-report",
     "workdays",
@@ -332,4 +337,5 @@ const SiteReportDetailPage = () => {
     </FrameworkProvider>
   );
 };
+
 export default SiteReportDetailPage;

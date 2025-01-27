@@ -65,6 +65,7 @@ export const useDashboardData = (filters: any) => {
       country: filters.country.country_slug,
       organisationType: filters.organizations,
       landscapes: filters.landscapes,
+      cohort: filters.cohort,
       projectUuid: filters.uuid
     };
     setUpdateFilters(parsedFilters);

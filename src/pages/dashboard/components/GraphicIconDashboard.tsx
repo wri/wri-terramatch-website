@@ -12,11 +12,13 @@ import { DashboardTableDataProps } from "../index.page";
 const GraphicIconDashboard = ({
   data,
   maxValue,
-  title
+  title,
+  className
 }: {
   data: DashboardTableDataProps[];
   maxValue: number;
   title?: string;
+  className?: string;
 }) => {
   const t = useT();
   const [tooltip, setTooltip] = useState<{
@@ -74,7 +76,7 @@ const GraphicIconDashboard = ({
   };
 
   return (
-    <div className="relative grid w-full gap-4">
+    <div className={classNames("relative grid w-full gap-4", className)}>
       <When condition={title}>
         <Text variant="text-14" className="text-14 mb-1 uppercase text-darkCustom">
           {title}

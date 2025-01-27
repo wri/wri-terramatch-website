@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
@@ -17,6 +17,7 @@ export interface ConditionalInputProps extends Omit<InputProps, "defaultValue">,
 
 const ConditionalInput = (props: ConditionalInputProps) => {
   const { fields, formHook, onChangeCapture, ...inputProps } = props;
+  const [valueCondition, setValueCondition] = useState<OptionValueWithBoolean>();
   const t = useT();
   const { field } = useController(props);
 
@@ -29,6 +30,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   }, [fields, formHook.watch(props.name)]);
 
   const onChange = (value: OptionValueWithBoolean) => {
+    setValueCondition(value);
     field.onChange(value);
     onChangeCapture();
     formHook.trigger();
@@ -40,10 +42,37 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   }, [props.value, formHook]);
 
   useEffect(() => {
-    if (field.value == null) {
+    if (valueCondition == true) {
+      field.onChange(true);
+      return;
+    }
+    const values = props?.formHook?.formState?.defaultValues;
+    let fieldsCount = 0;
+    fields.forEach(fieldChildren => {
+      if (
+        values &&
+        Array.isArray(values[fieldChildren.name]) &&
+        values[fieldChildren.name]?.length > 0 &&
+        field.value == null
+      ) {
+        field.onChange(true);
+        return;
+      }
+      if (values && (field.value == true || field.value == null)) {
+        if (
+          (Array.isArray(values[fieldChildren.name]) && values[fieldChildren.name]?.length < 1) ||
+          values[fieldChildren.name] == null
+        ) {
+          fieldsCount++;
+        }
+      }
+    });
+
+    if (fieldsCount == fields?.length) {
       field.onChange(false);
     }
-  }, [field, field.value]);
+  }, [valueCondition]);
+
   return (
     <>
       <RadioGroup

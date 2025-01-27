@@ -25,7 +25,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     <PageBody className="text-darkCustom">
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap items-start gap-8">
+          <div className="flex w-full flex-wrap items-start justify-between gap-8">
             <GoalProgressCard
               frameworksShow={[Framework.PPC]}
               label={t("Workday (PPC)")}
@@ -127,5 +127,4 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     </PageBody>
   );
 };
-
 export default GoalsAndProgressTab;

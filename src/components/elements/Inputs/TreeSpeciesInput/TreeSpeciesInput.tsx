@@ -77,6 +77,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const handleBaseEntityTrees =
     props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
   const displayPreviousCounts = props.withPreviousCounts && isReport;
+  const hasCountActive = props.withNumbers;
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
@@ -303,10 +304,14 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("TOTAL PLANTED THIS REPORT:") : t("TREES TO BE PLANTED:")}
+              {isReport ? t("TOTAL PLANTED THIS REPORT:") : hasCountActive ? t("TREES TO BE PLANTED:") : ""}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
-              {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
+              {hasCountActive
+                ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString()
+                : isReport
+                ? "0"
+                : ""}
             </Text>
           </div>
           <When condition={displayPreviousCounts}>

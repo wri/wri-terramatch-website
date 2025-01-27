@@ -103,7 +103,7 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
 
   return (
     <div className="relative flex h-[380px] w-full flex-col items-center justify-center p-4 pt-0">
-      <h2 className="text-14 w-full pl-10 uppercase text-darkCustom">Hectares Under Restoration By WWF EcoRegion</h2>
+      <h2 className="text-14 w-full pl-4 uppercase text-darkCustom">Hectares Under Restoration By WWF EcoRegion</h2>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Tooltip content={<CustomTooltip />} />
