@@ -6,6 +6,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
+  useGetV2DashboardBboxLandscape,
   useGetV2DashboardCountryCountry,
   useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
@@ -28,6 +29,7 @@ import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
+  const [landscapeBboxParsed, setLandscapeBboxParsed] = useState<BBox | undefined>(undefined);
   const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
@@ -56,6 +58,16 @@ export const useDashboardData = (filters: any) => {
     },
     {
       enabled: !!filters.country.country_slug
+    }
+  );
+  const { data: landscapeBbbox } = useGetV2DashboardBboxLandscape(
+    {
+      queryParams: {
+        landscapes: filters.landscapes?.join(",")
+      }
+    },
+    {
+      enabled: !!filters.landscapes?.length
     }
   );
   const [updateFilters, setUpdateFilters] = useState<any>({});
@@ -204,6 +216,13 @@ export const useDashboardData = (filters: any) => {
       setCountryBboxParsed(undefined);
     }
   }, [countryBbox]);
+  useEffect(() => {
+    if (landscapeBbbox && Array.isArray(landscapeBbbox.bbox) && landscapeBbbox.bbox.length > 1) {
+      setLandscapeBboxParsed(landscapeBbbox.bbox as unknown as BBox);
+    } else {
+      setLandscapeBboxParsed(undefined);
+    }
+  }, [landscapeBbbox]);
 
   return {
     dashboardHeader,
@@ -227,6 +246,7 @@ export const useDashboardData = (filters: any) => {
     polygonsData: polygonsData?.data ?? {},
     countryBbox: countryBboxParsed,
     isUserAllowed,
-    projectBbox: projectBbox?.bbox
+    projectBbox: projectBbox?.bbox,
+    landscapeBbox: landscapeBboxParsed
   };
 };

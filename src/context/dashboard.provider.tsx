@@ -28,6 +28,7 @@ type DashboardType = {
     }>
   >;
   searchTerm: string;
+  setIsInitialized: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   frameworks: { framework_slug?: string; name?: string }[];
   setFrameworks: React.Dispatch<React.SetStateAction<{ framework_slug?: string; name?: string }[]>>;
@@ -35,6 +36,7 @@ type DashboardType = {
   setDashboardCountries: React.Dispatch<React.SetStateAction<CountriesProps[]>>;
   lastUpdatedAt?: string;
   setLastUpdatedAt?: React.Dispatch<React.SetStateAction<string>>;
+  isInitialized?: boolean;
 };
 const defaultValues: DashboardType = {
   filters: {
@@ -52,6 +54,8 @@ const defaultValues: DashboardType = {
     cohort: "",
     uuid: ""
   },
+  isInitialized: false,
+  setIsInitialized: () => {},
   setFilters: () => {},
   searchTerm: "",
   setSearchTerm: () => {},
@@ -69,6 +73,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [frameworks, setFrameworks] = React.useState<{ framework_slug?: string; name?: string }[]>([]);
   const [dashboardCountries, setDashboardCountries] = React.useState<CountriesProps[]>([]);
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
   const [lastUpdatedAt, setLastUpdatedAt] = React.useState<string>("");
   const contextValue: DashboardType = {
     filters,
@@ -80,7 +85,9 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     dashboardCountries,
     setDashboardCountries,
     lastUpdatedAt,
-    setLastUpdatedAt
+    setLastUpdatedAt,
+    isInitialized,
+    setIsInitialized
   };
   return <DashboardContext.Provider value={contextValue}>{children}</DashboardContext.Provider>;
 };
