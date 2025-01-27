@@ -8,7 +8,7 @@ import {
 } from "./entityServiceComponents";
 
 export const treeScientificNamesSearchIsFetching =
-  (variables: TreeScientificNamesSearchVariables) => (store: ApiDataStore) =>
+  (variables: Omit<TreeScientificNamesSearchVariables, "body">) => (store: ApiDataStore) =>
     isFetching<TreeScientificNamesSearchQueryParams, {}>({
       store,
       url: "/trees/v3/scientific-names",
@@ -17,7 +17,7 @@ export const treeScientificNamesSearchIsFetching =
     });
 
 export const treeScientificNamesSearchFetchFailed =
-  (variables: TreeScientificNamesSearchVariables) => (store: ApiDataStore) =>
+  (variables: Omit<TreeScientificNamesSearchVariables, "body">) => (store: ApiDataStore) =>
     fetchFailed<TreeScientificNamesSearchQueryParams, {}>({
       store,
       url: "/trees/v3/scientific-names",
@@ -25,16 +25,17 @@ export const treeScientificNamesSearchFetchFailed =
       ...variables
     });
 
-export const establishmentTreesFindIsFetching = (variables: EstablishmentTreesFindVariables) => (store: ApiDataStore) =>
-  isFetching<{}, EstablishmentTreesFindPathParams>({
-    store,
-    url: "/trees/v3/establishments/{entity}/{uuid}",
-    method: "get",
-    ...variables
-  });
+export const establishmentTreesFindIsFetching =
+  (variables: Omit<EstablishmentTreesFindVariables, "body">) => (store: ApiDataStore) =>
+    isFetching<{}, EstablishmentTreesFindPathParams>({
+      store,
+      url: "/trees/v3/establishments/{entity}/{uuid}",
+      method: "get",
+      ...variables
+    });
 
 export const establishmentTreesFindFetchFailed =
-  (variables: EstablishmentTreesFindVariables) => (store: ApiDataStore) =>
+  (variables: Omit<EstablishmentTreesFindVariables, "body">) => (store: ApiDataStore) =>
     fetchFailed<{}, EstablishmentTreesFindPathParams>({
       store,
       url: "/trees/v3/establishments/{entity}/{uuid}",

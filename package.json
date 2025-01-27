@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "next dev",
-    "build": "npm run generate:api && npm run generate:services && next build",
+    "build": "yarn generate:api && yarn generate:services && next build",
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -20,8 +20,8 @@
     "generate:userService": "openapi-codegen gen userService",
     "generate:entityService": "openapi-codegen gen entityService",
     "generate:services": "yarn generate:userService && yarn generate:entityService && yarn generate:jobService",
-    "tx:push": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli push --key-generator=hash src/ --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET",
-    "tx:pull": "eval $(grep '^TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
+    "tx:push": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli push --key-generator=hash src/ --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET",
+    "tx:pull": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
@@ -62,9 +62,9 @@
     "mapbox-gl": "^2.15.0",
     "mapbox-gl-draw-circle": "^1.1.2",
     "next": "13.1.5",
-    "next-redux-wrapper": "^8.1.0",
     "nookies": "^2.5.2",
     "prettier-plugin-tailwindcss": "^0.2.2",
+    "query-string": "^7.1.1",
     "ra-input-rich-text": "^4.12.2",
     "react": "18.2.0",
     "react-admin": "^4.7.4",
@@ -76,9 +76,10 @@
     "react-inlinesvg": "^3.0.0",
     "react-joyride": "^2.5.5",
     "react-redux": "^9.1.2",
-    "redux-logger": "^3.0.6",
     "recharts": "^2.13.0",
+    "redux-logger": "^3.0.6",
     "reselect": "^4.1.8",
+    "sharp": "^0.33.5",
     "swiper": "^9.0.5",
     "tailwind-merge": "^1.14.0",
     "typescript": "4.9.4",

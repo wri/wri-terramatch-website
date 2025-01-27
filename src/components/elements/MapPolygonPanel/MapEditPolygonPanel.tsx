@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
@@ -34,6 +34,7 @@ const MapEditPolygonPanel = ({
   polygonData,
   recallEntityData
 }: MapEditPolygonPanelProps) => {
+  const t = useT();
   const {
     editPolygon,
     setEditPolygon,

@@ -17,6 +17,13 @@ export type GetV2TreeSpeciesEntityUUIDPathParams = {
   uuid: string;
 };
 
+export type GetV2TreeSpeciesEntityUUIDQueryParams = {
+  /**
+   * The collection to filter tree species by.
+   */
+  ["filter[collection]"]?: string;
+};
+
 export type GetV2TreeSpeciesEntityUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2TreeSpeciesEntityUUIDResponse = {
@@ -44,6 +51,7 @@ export type GetV2TreeSpeciesEntityUUIDResponse = {
 
 export type GetV2TreeSpeciesEntityUUIDVariables = {
   pathParams: GetV2TreeSpeciesEntityUUIDPathParams;
+  queryParams?: GetV2TreeSpeciesEntityUUIDQueryParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntityUUIDVariables, signal?: AbortSignal) =>
@@ -52,7 +60,7 @@ export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntit
     GetV2TreeSpeciesEntityUUIDError,
     undefined,
     {},
-    {},
+    GetV2TreeSpeciesEntityUUIDQueryParams,
     GetV2TreeSpeciesEntityUUIDPathParams
   >({ url: "/v2/tree-species/{entity}/{uuid}", method: "get", ...variables, signal });
 
@@ -37961,41 +37969,6 @@ export const usePutV2SitePolygonUuidMakeActive = (
   >(
     (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
       fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2UsersLocaleError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2UsersLocaleResponse = {
-  message?: string;
-};
-
-export type PatchV2UsersLocaleRequestBody = {
-  locale?: string;
-};
-
-export type PatchV2UsersLocaleVariables = {
-  body?: PatchV2UsersLocaleRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2UsersLocale = (variables: PatchV2UsersLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleRequestBody, {}, {}, {}>({
-    url: "/v2/users/locale",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
-export const usePatchV2UsersLocale = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>(
-    (variables: PatchV2UsersLocaleVariables) => fetchPatchV2UsersLocale({ ...fetcherOptions, ...variables }),
     options
   );
 };

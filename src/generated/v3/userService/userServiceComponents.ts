@@ -56,11 +56,11 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
 
 export type UsersFindPathParams = {
   /**
-   * A valid user id or "me"
+   * A valid user uuid or "me"
    *
    * @example me
    */
-  id: string;
+  uuid: string;
 };
 
 export type UsersFindError = Fetcher.ErrorWrapper<
@@ -149,8 +149,125 @@ export type UsersFindVariables = {
  */
 export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
   userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
-    url: "/users/v3/users/{id}",
+    url: "/users/v3/users/{uuid}",
     method: "get",
+    ...variables,
+    signal
+  });
+
+export type UserUpdatePathParams = {
+  /**
+   * A valid user uuid
+   */
+  uuid: string;
+};
+
+export type UserUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+        /**
+         * @example Bad Request
+         */
+        error?: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+        /**
+         * @example Unauthorized
+         */
+        error?: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+        /**
+         * @example Not Found
+         */
+        error?: string;
+      };
+    }
+>;
+
+export type UserUpdateResponse = {
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserUpdateVariables = {
+  body: Schemas.UserUpdateBodyDto;
+  pathParams: UserUpdatePathParams;
+};
+
+/**
+ * Update a user by ID
+ */
+export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
+  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBodyDto, {}, {}, UserUpdatePathParams>({
+    url: "/users/v3/users/{uuid}",
+    method: "patch",
     ...variables,
     signal
   });
