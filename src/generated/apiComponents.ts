@@ -35485,6 +35485,54 @@ export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectRe
   );
 };
 
+export type GetV2DashboardBboxLandscapeQueryParams = {
+  /**
+   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
+   */
+  landscapes: string;
+};
+
+export type GetV2DashboardBboxLandscapeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxLandscapeResponse = {
+  bbox?: number[];
+};
+
+export type GetV2DashboardBboxLandscapeVariables = {
+  queryParams: GetV2DashboardBboxLandscapeQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxLandscape = (
+  variables: GetV2DashboardBboxLandscapeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardBboxLandscapeResponse,
+    GetV2DashboardBboxLandscapeError,
+    undefined,
+    {},
+    GetV2DashboardBboxLandscapeQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/landscape", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxLandscape = <TData = GetV2DashboardBboxLandscapeResponse>(
+  variables: GetV2DashboardBboxLandscapeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/bbox/landscape", operationId: "getV2DashboardBboxLandscape", variables }),
+    ({ signal }) => fetchGetV2DashboardBboxLandscape({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountryCountryPathParams = {
   /**
    * ISO code of the country
@@ -39122,6 +39170,11 @@ export type QueryOperation =
       path: "/v2/dashboard/bbox/project";
       operationId: "getV2DashboardBboxProject";
       variables: GetV2DashboardBboxProjectVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/landscape";
+      operationId: "getV2DashboardBboxLandscape";
+      variables: GetV2DashboardBboxLandscapeVariables;
     }
   | {
       path: "/v2/dashboard/country/{country}";

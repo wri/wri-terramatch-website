@@ -1,7 +1,8 @@
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
@@ -61,7 +62,8 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
-  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
+  const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
+  const { filters, setFilters, frameworks, setLastUpdatedAt, isInitialized, setIsInitialized } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -84,6 +86,7 @@ const Dashboard = () => {
     polygonsData,
     countryBbox,
     projectBbox,
+    landscapeBbox,
     isUserAllowed
   } = useDashboardData(filters);
 
@@ -100,6 +103,20 @@ const Dashboard = () => {
     setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
   }, [totalSectionHeader]);
 
+  useEffect(() => {
+    if (landscapeBbox && !isInitialized) {
+      setCurrentBbox(landscapeBbox);
+    }
+  }, [landscapeBbox, isInitialized]);
+
+  useEffect(() => {
+    if (countryBbox) {
+      setCurrentBbox(countryBbox);
+      if (isInitialized) {
+        setIsInitialized(false);
+      }
+    }
+  }, [countryBbox, isInitialized]);
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
@@ -546,7 +563,7 @@ const Dashboard = () => {
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
-        bbox={filters.uuid ? projectBbox : countryBbox}
+        bbox={filters.uuid ? projectBbox : currentBbox}
         projectCounts={projectCounts}
       />
     </div>
