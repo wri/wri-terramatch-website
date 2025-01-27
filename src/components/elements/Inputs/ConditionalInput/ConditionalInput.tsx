@@ -58,7 +58,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
         field.onChange(true);
         return;
       }
-      if (values && field.value == true) {
+      if (values && (field.value == true || field.value == null)) {
         if (
           (Array.isArray(values[fieldChildren.name]) && values[fieldChildren.name]?.length < 1) ||
           values[fieldChildren.name] == null
@@ -69,9 +69,6 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     });
 
     if (fieldsCount == fields?.length) {
-      field.onChange(false);
-    }
-    if (field.value == null) {
       field.onChange(false);
     }
   }, [valueCondition]);
