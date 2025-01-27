@@ -91,7 +91,7 @@ const UserDataGrid = () => {
 
 export const UserList = () => {
   const [exporting, setExporting] = useState<boolean>(false);
-  const { isSuperAdmin } = useGetUserRole();
+  const { isFrameworkAdmin } = useGetUserRole();
 
   const userDataProvider = useDataProvider<UserDataProvider>();
 
@@ -108,7 +108,10 @@ export const UserList = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActionsCreateFilter isSuperAdmin={isSuperAdmin} onExport={handleExport} />} filters={filters}>
+      <List
+        actions={<ListActionsCreateFilter canCreateUser={isFrameworkAdmin} onExport={handleExport} />}
+        filters={filters}
+      >
         <UserDataGrid />
       </List>
 
