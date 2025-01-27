@@ -1,11 +1,9 @@
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import { useLogout } from "@/hooks/logout";
+import { logout } from "@/connections/Login";
 
 export default function Custom500() {
-  const logout = useLogout();
-
   const handleBackToHome = () => {
     try {
       logout();

@@ -24,7 +24,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
          
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200 opacity-0"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200 opacity-0"
         role="progressbar"
       >
         <div
@@ -72,7 +72,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
         </p>
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
         role="progressbar"
       >
         <div
@@ -196,7 +196,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
         </p>
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
         role="progressbar"
       >
         <div

@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
 import { useTimer } from "use-timer";
 
 import Button from "@/components/elements/Button/Button";
@@ -10,10 +10,18 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { zendeskSupportLink } from "@/constants/links";
 import { usePostV2UsersResend } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
+import { useQueryString } from "@/hooks/useQueryString";
 
-const SignupConfirmPage = ({ email }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const SignupConfirmPage = () => {
   const t = useT();
   const timer = useTimer({ initialTime: 30, timerType: "DECREMENTAL", autostart: true, endTime: 0 });
+  const router = useRouter();
+  const email = useQueryString().email as string;
+
+  useOnMount(() => {
+    if (email == null) router.push("/auth/signup");
+  });
 
   const { mutateAsync: resend } = usePostV2UsersResend({
     onSuccess: () => {
@@ -31,7 +39,7 @@ const SignupConfirmPage = ({ email }: InferGetServerSidePropsType<typeof getServ
     });
   };
 
-  return (
+  return email == null ? null : (
     <BackgroundLayout>
       <ContentLayout>
         <Confirmation icon={IconNames.MAIL_SENT} title={t("Confirm your email address")}>
@@ -58,27 +66,6 @@ const SignupConfirmPage = ({ email }: InferGetServerSidePropsType<typeof getServ
       </ContentLayout>
     </BackgroundLayout>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { query } = ctx;
-  const email = query.email;
-
-  let options = {};
-  if (!email)
-    options = {
-      redirect: {
-        permanent: false,
-        destination: "/auth/signup"
-      }
-    };
-
-  return {
-    ...options,
-    props: {
-      email: email as string
-    }
-  };
 };
 
 export default SignupConfirmPage;

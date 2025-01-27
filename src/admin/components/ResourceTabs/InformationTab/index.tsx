@@ -13,11 +13,7 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  useGetV2SeedingsENTITYUUID
-} from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
@@ -67,18 +63,10 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
-  const { data: seedings } = useGetV2SeedingsENTITYUUID({
-    pathParams: {
-      uuid: record?.uuid,
-      entity: resource?.replace("Report", "-report")
-    }
-  });
-
   const isLoading = ctxLoading || queryLoading;
 
   if (isLoading || !record) return null;
 
-  const totalSeedlings = seedings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -147,10 +135,10 @@ const InformationTab: FC<IProps> = props => {
                           props.type === "project-reports"
                         }
                       >
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-10">
                           <ContextCondition frameworksHide={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <div className="flex items-center gap-1 py-8">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
                                   Non-Trees Planted:
                                 </Text>
@@ -170,8 +158,8 @@ const InformationTab: FC<IProps> = props => {
                           </ContextCondition>
                           <When condition={props.type === "projects" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.PPC]}>
-                              <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-1 py-8">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
                                   <Text variant="text-16-bold" className="capitalize">
                                     Saplings Grown in Nurseries:
                                   </Text>
@@ -191,13 +179,13 @@ const InformationTab: FC<IProps> = props => {
                             </ContextCondition>
                           </When>
                           <ContextCondition frameworksShow={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <div className="flex items-center gap-1 py-8">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
                                   Seeds Planted:
                                 </Text>
                                 <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                  {(totalSeedlings ?? totalCountSeeding).toLocaleString()}
+                                  {totalCountSeeding.toLocaleString()}
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
@@ -210,8 +198,8 @@ const InformationTab: FC<IProps> = props => {
                               />
                             </div>
                           </ContextCondition>
-                          <div className="flex flex-col gap-4">
-                            <div className="flex items-center gap-1 py-8">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
                               <Text variant="text-16-bold" className="capitalize">
                                 Trees Planted:
                               </Text>
@@ -230,8 +218,8 @@ const InformationTab: FC<IProps> = props => {
                           </div>
                           <When condition={props.type === "site-reports" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
-                              <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-1 py-8">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
                                   <Text variant="text-16-bold" className="capitalize">
                                     Replanting:
                                   </Text>

@@ -347,7 +347,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   placeholder="All Data"
                   value={filters.cohort ? [filters.cohort] : []}
                   onChange={(value: OptionValue[]) => {
-                    console.log(value);
                     return setFilters(prevValues => ({
                       ...prevValues,
                       uuid: "",
