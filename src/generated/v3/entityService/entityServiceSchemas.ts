@@ -33,7 +33,7 @@ export type EstablishmentsTreesDto = {
     [key: string]: string[];
   };
   /**
-   * If the entity in this request is a report, the sum totals of previous planting by species by collection.
+   * If the entity in this request is a report, the sum totals of previous planting by species by collection. Note that for site reports, the seeds planted under previous site reports are included under the collection name "seeds"
    *
    * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
    */
