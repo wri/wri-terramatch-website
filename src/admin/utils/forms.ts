@@ -2,7 +2,7 @@
 import { get, memoize, uniqBy } from "lodash";
 import { AnyObjectSchema } from "yup";
 
-import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 
 export const validateForm = (schema: AnyObjectSchema) => (values: any) => {
   let errors: { [index: string]: string } = {};
@@ -70,25 +70,27 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
 
   steps.forEach(step => {
     step.fields.forEach(fieldStep => {
-      if (fieldStep.type === FieldType.Conditional && typeof output[fieldStep.name] !== "boolean") {
-        output[fieldStep.name] = false;
-      }
       if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
         let fieldsCount = 0;
-        fieldStep.fieldProps?.fields.forEach((fieldProps: any) => {
+        let valueAlreadyCalculated = false;
+        fieldStep.fieldProps?.fields.forEach((fieldChildren: any) => {
+          if (valueAlreadyCalculated) {
+            return;
+          }
           if (
-            Array.isArray(output[fieldProps.name]) &&
-            output[fieldProps.name]?.length > 0 &&
+            Array.isArray(output[fieldChildren.name]) &&
+            output[fieldChildren.name]?.length > 0 &&
             output[fieldStep.name] == null
           ) {
             output[fieldStep.name] = true;
+            valueAlreadyCalculated = true;
           }
           if (output[fieldStep.name] == true) {
             if (
-              (Array.isArray(output[fieldProps.name]) && output[fieldProps.name]?.length < 1) ||
-              output[fieldProps.name] == null ||
-              output[fieldProps.name] == "" ||
-              output[fieldProps.name] == 0
+              (Array.isArray(output[fieldChildren.name]) && output[fieldChildren.name]?.length < 1) ||
+              output[fieldChildren.name] == null ||
+              output[fieldChildren.name] == "" ||
+              output[fieldChildren.name] == 0
             ) {
               fieldsCount++;
             }
