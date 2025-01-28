@@ -6,7 +6,7 @@ import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVar
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import { Framework } from "@/context/framework.provider";
-import { useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
+import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
@@ -30,6 +30,25 @@ export interface TreeSpeciesTablePDProps {
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
+  data?: any;
+  typeTable?:
+    | "treeCount"
+    | "treeCount/Goal"
+    | "speciesCount/Goal"
+    | "nonTreeCount"
+    | "seedCount"
+    | "treeCountSite"
+    | "saplingsCount";
+  visibleRows?: number;
+}
+
+export interface TreeSpeciesTableRowData {
+  name: [string, string[]];
+  treeCount?: string | number;
+  treeCountGoal?: [number, number];
+  seedCount?: string | number;
+  nonTreeCount?: string | number;
+  uuid: string;
 }
 
 const TreeSpeciesTablePD = ({
@@ -39,7 +58,10 @@ const TreeSpeciesTablePD = ({
   setTotalCount,
   collection,
   headerName = "species Name",
-  secondColumnWidth = ""
+  secondColumnWidth = "",
+  typeTable,
+  visibleRows = 5,
+  data
 }: TreeSpeciesTablePDProps) => {
   const queryParams: any = {};
 
@@ -56,7 +78,19 @@ const TreeSpeciesTablePD = ({
       }
     },
     {
-      enabled: !!modelUUID
+      enabled: !!modelUUID && collection !== "seeding"
+    }
+  );
+
+  const { data: seedings } = useGetV2SeedingsENTITYUUID(
+    {
+      pathParams: {
+        uuid: modelUUID,
+        entity: modelName?.replace("Report", "-report")
+      }
+    },
+    {
+      enabled: !!modelUUID && collection === "seeding"
     }
   );
 
@@ -91,7 +125,7 @@ const TreeSpeciesTablePD = ({
     return result;
   };
 
-  const processTableData = (rows: any[]) => {
+  const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
     if (!rows) return [];
     if (setTotalCount) {
       const total = rows.reduce(
@@ -101,30 +135,55 @@ const TreeSpeciesTablePD = ({
       setTotalCount(total);
     }
     return rows.map(row => {
-      let speciesType = "tree";
-      if (!row.taxon_id) {
-        speciesType = "non-scientific";
-      }
-      if (row.is_new_species) {
-        speciesType = "new";
-      }
+      let speciesTypes = ["tree"];
+      if (!row.taxon_id) speciesTypes.push("non-scientific");
+      if (row.is_new_species) speciesTypes.push("new");
       if (getCollectionType(collection ?? "") !== "noGoal" && getCollectionType(collection ?? "").includes("Goal")) {
         return {
-          name: [row.name, speciesType],
+          name: [row.name, speciesTypes],
           treeCountGoal: [row.report_amount, row.amount],
           uuid: row.uuid
         };
       }
-
+      if (modelName === "site-report") {
+        return {
+          name: [row.name, speciesTypes],
+          treeCount: row.amount,
+          uuid: row.uuid
+        };
+      }
       return {
-        name: [row.name, speciesType],
-        treeCount: row.amount || "0",
+        name: [row.name, speciesTypes],
+        treeCount: row.report_amount ?? "0",
         uuid: row.uuid
       };
     });
   };
 
-  const tableData = apiResponse?.data ? processTableData(apiResponse.data) : [];
+  const processSeedingTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
+    if (!rows) return [];
+    if (setTotalCount) {
+      const total = rows.reduce((sum, row) => sum + row.amount, 0);
+      setTotalCount(total);
+    }
+    return rows.map(row => {
+      let speciesTypes = ["tree"];
+      return {
+        name: [row.name, speciesTypes],
+        treeCount: row.amount,
+        uuid: row.uuid
+      };
+    });
+  };
+
+  const tableData =
+    collection === "seeding"
+      ? seedings?.data
+        ? processSeedingTableData(seedings.data)
+        : []
+      : apiResponse?.data
+      ? processTreeSpeciesTableData(apiResponse.data)
+      : [];
 
   const rowSpeciesName = {
     accessorKey: "name",
@@ -132,75 +191,48 @@ const TreeSpeciesTablePD = ({
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
-      if (value[1] === "non-scientific") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="Non-scientific name"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NON_SCIENTIFIC_NAME_CUSTOM}
-                className={classNames(
-                  "mr-1 h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
-      if (value[1] === "tree") {
-        return <div className="font-inherit">{value[0]}</div>;
-      }
-      if (value[1] === "Native species") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="Native species"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NATIVE_SPECIES}
-                className={classNames(
-                  "h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
-      if (value[1] === "new") {
-        return (
-          <div className="font-inherit flex items-center gap-1">
-            {value[0]}
-            <ToolTip
-              title=""
-              content="New Species"
-              colorBackground="white"
-              placement="right"
-              textVariantContent="text-14"
-            >
-              <Icon
-                name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
-                className={classNames(
-                  "mr-1 h-7 w-7",
-                  value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-                )}
-              />
-            </ToolTip>
-          </div>
-        );
-      }
+      const [speciesName, speciesTypes] = value;
+      const iconConfigs: { [key: string]: { tooltip: string; icon: IconNames } } = {
+        "non-scientific": {
+          tooltip: "Non-scientific name",
+          icon: IconNames.NON_SCIENTIFIC_NAME_CUSTOM
+        },
+        new: {
+          tooltip: "New Species",
+          icon: IconNames.NEW_TAG_TREE_SPECIES_CUSTOM
+        }
+      };
+
+      const icons = Array.isArray(speciesTypes)
+        ? speciesTypes.map((type: string) => {
+            const config = iconConfigs[type];
+            return config ? (
+              <ToolTip
+                key={type}
+                title=""
+                content={config.tooltip}
+                colorBackground="white"
+                placement="right"
+                textVariantContent="text-14"
+              >
+                <Icon
+                  name={config.icon}
+                  className={classNames(
+                    "h-7 w-7",
+                    value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                  )}
+                />
+              </ToolTip>
+            ) : null;
+          })
+        : null;
+
+      return (
+        <div className="font-inherit flex items-center gap-1">
+          {speciesName}
+          {icons}
+        </div>
+      );
     }
   };
 
@@ -398,12 +430,12 @@ const TreeSpeciesTablePD = ({
   return (
     <div>
       <Table
-        data={tableData}
-        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
+        data={data ?? tableData}
+        columns={columnTable[typeTable ?? (getCollectionType(collection ?? "") as ModelNameType)]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
-        visibleRows={5}
+        visibleRows={visibleRows}
       />
     </div>
   );

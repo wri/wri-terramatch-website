@@ -133,35 +133,35 @@ const DROPDOWN_OPTIONS = [
     value: "1",
     slug: "treeCoverLoss",
     description:
-      "Tree cover loss and tree cover loss by fires give an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br> From <strong>[year_start] to [year_end]</strong>, the project area being restored today by [organization_name] lost [x_ha] ha of tree cover from fires and [xx_ha] ha all other drivers of loss. The total tree cover loss represents [x_%]% of project area.[sites] <br><br><u>The following data layer is used for lookback analysis.</u> <br><br><strong>UMD tree cover loss (Global, 30m, annual, 2001-2020)</strong> <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br><strong>Tree cover loss due to fires (Global, 30m, annual, 2001-2020)</strong> <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
+      "Tree cover loss and tree cover loss by fires give an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br> From <b>[year_start]</b> to <b>[year_end]</b>, the project area being restored today by <b>[organization_name]</b> lost <b>[x_ha] ha</b> of tree cover from fires and <b>[xx_ha] ha</b> all other drivers of loss. The total tree cover loss represents <b>[x_%]%</b> of project area.[sites] <br><br><u>The following data layer is used for lookback analysis.</u> <br><br><b>UMD tree cover loss (Global, 30m, annual, 2001-2020)</b> <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br><b>Tree cover loss due to fires (Global, 30m, annual, 2001-2020)</b> <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
   },
   {
     title: "Tree Cover Loss from Fire",
     value: "2",
     slug: "treeCoverLossFires",
     description:
-      "Tree cover loss and tree cover loss by fires give an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br>From [year_start] to [year_end], the project area being restored today by [organization_name] lost [x_ha] ha of tree cover from fires and [xx_ha] ha all other drivers of loss. The total tree cover loss represents [x_%]% of project area.[sites] <br><br><u>The following data layer is used for lookback analysis.</u> <br><br><strong>UMD tree cover loss (Global, 30m, annual, 2001-2020)</strong> <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br><strong>Tree cover loss due to fires (Global, 30m, annual, 2001-2020)</strong> <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
+      "Tree cover loss and tree cover loss by fires give an indication of any past deforestation events in the project area prior to the project start date. To ensure additionality of the portfolio, we aim to fund projects that have experienced minimal disturbances 10 years before the project start date. <br><br>From <b>[year_start]</b> to <b>[year_end]</b>, the project area being restored today by <b>[organization_name]</b> lost <b>[x_ha] ha</b> of tree cover from fires and <b>[xx_ha] ha</b> all other drivers of loss. The total tree cover loss represents <b>[x_%]%</b> of project area.[sites] <br><br><u>The following data layer is used for lookback analysis.</u> <br><br><b>UMD tree cover loss (Global, 30m, annual, 2001-2020)</b> <br><br>Shows year-by-year tree cover loss, defined as stand level replacement of vegetation greater than 5 meters, within the selected area. Note that “tree cover loss” is not the same as “deforestation” – tree cover loss includes change in both natural and planted forest and does not need to be human caused. The data from 2011 onward were produced with an updated methodology that may capture additional loss. <br><br><b>Tree cover loss due to fires (Global, 30m, annual, 2001-2020)</b> <br><br>Identifies areas of tree cover loss due to fires compared to all other drivers of tree cover loss. This data is produced by the Global Land Analysis & Discovery (GLAD) lab at the University of Maryland and measures areas of tree cover loss due to fires compared to all other drivers across all global land (except Antarctica and other Arctic islands) at approximately 30 × 30- meter resolution. The data were generated using global Landsat-based annual change detection metrics for 2001-2020 as input data to a set of regionally calibrated classification tree ensemble models. The result of the mapping process can be viewed as a set of binary maps (tree cover loss due to fire vs. tree cover loss due to all other drivers)"
   },
   {
     title: "Hectares Under Restoration By WWF EcoRegion",
     value: "3",
     slug: "restorationByEcoRegion",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. [restoration_eco_region] <br><br>This analysis was last updated on [date_run] analysis using the <a href='https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world'>WWF ecoregion dataset</a>."
+      "According to the polygons approved for this project, <b>[organization_name]</b> is restoring <b>[x_ha]</b> hectares, <b>[x_%]%</b> of their <b>[x_ha_goal] ha</b> goal. [restoration_eco_region] <br><br>This analysis was last updated on <b>[date_run]</b> analysis using the <a href='https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world'>WWF ecoregion dataset</a>."
   },
   {
     title: "Hectares Under Restoration By Strategy",
     value: "4",
     slug: "restorationByStrategy",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent restoration strategy used to restore land was [x_1a], present on [x_1b] ha. [other_restoration_strategies] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
+      "According to the polygons approved for this project, <b>[organization_name]</b> is restoring <b>[x_ha]</b> hectares, <b>[x_%]%</b> of their <b>[x_ha_goal] ha</b> goal. <br><br>Within these hectares, the most prevalent restoration strategy used to restore land was <b>[x_1a]</b>, present on <b>[x_1b] ha</b>. [other_restoration_strategies] <br><br>This analysis was last updated on <b>[date_run]</b> analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
   },
   {
     title: "Hectares Under Restoration By Target Land Use System",
     value: "5",
     slug: "restorationByLandUse",
     description:
-      "According to the polygons approved for this project, [organization_name] is restoring [x_ha] hectares, [x_%]% of their [x_ha_goal] ha goal. <br><br>Within these hectares, the most prevalent target land use system is [x_1a] with [x_1b] ha. [other_target_land_use] <br><br>This analysis was last updated on [date_run] analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
+      "According to the polygons approved for this project, <b>[organization_name]</b> is restoring <b>[x_ha]</b> hectares, <b>[x_%]%</b> of their <b>[x_ha_goal] ha</b> goal. <br><br>Within these hectares, the most prevalent target land use system is <b>[x_1a]</b> with <b>[x_1b] ha</b>. [other_target_land_use] <br><br>This analysis was last updated on <b>[date_run]</b> analysis and is calculated by the sum of hectares of all approved polygons and their relevant attribute data. <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178070530203-Target-Land-Use-and-Restoration-Practice-Definitions'>You can learn more about restoration strategies and their definitions here</a>."
   }
 ];
 
@@ -671,7 +671,7 @@ const DataCard = ({
 
   const sumRestorationByValues = (data: any[], landUse: boolean) => {
     return data?.reduce((acc, polygon) => {
-      if (landUse) return acc + (parseInt(polygon?.valueText?.match(/^(.*?)ha/)![1].trim(), 10) || 0);
+      if (landUse) return acc + polygon?.valueNotRounded;
       return acc + (polygon.value || 0);
     }, 0);
   };
@@ -719,15 +719,15 @@ const DataCard = ({
     ecoRegionData.chartData.length > 0
       ? `<br><br>Within these hectares, the project is located within ${
           ecoRegionData.chartData.length
-        } major ecoregion(s): ${calculatePercentage(
+        } major ecoregion(s): <b>${calculatePercentage(
           ecoRegionData.chartData[0].value,
-          ecoRegionData.total
-        )}% of the project takes place in the ${ecoRegionData.chartData[0].name} ecoregion ${
+          totalHectaresRestoredGoal
+        )}%</b> of the project takes place in the <b>${ecoRegionData.chartData[0].name}</b> ecoregion ${
           ecoRegionData.chartData?.[1]
-            ? `[and ${calculatePercentage(
+            ? `[and <b>${calculatePercentage(
                 ecoRegionData.chartData[1].value,
-                ecoRegionData.total
-              )}% of the project takes place in the ${ecoRegionData.chartData[1].name} ecoregion].`
+                totalHectaresRestoredGoal
+              )}%</b> of the project takes place in the <b>${ecoRegionData.chartData[1].name}</b> ecoregion].`
             : "."
         }`
       : "";
@@ -761,16 +761,16 @@ const DataCard = ({
       "[organization_name]": record?.organisation?.name,
       "[date_run]": dateRunIndicator,
       "[x_ha]": Math.round(sumRestorationByValues(ecoRegionData?.chartData, false)),
-      "[x_%]": calculatePercentage(sumRestorationByValues(ecoRegionData?.chartData, false), ecoRegionData.total),
-      "[x_ha_goal]": Math.round(ecoRegionData.total),
+      "[x_%]": calculatePercentage(sumRestorationByValues(ecoRegionData?.chartData, false), totalHectaresRestoredGoal),
+      "[x_ha_goal]": Math.round(totalHectaresRestoredGoal),
       "[restoration_eco_region]": restorationEcoregionText
     },
     restorationByStrategy: {
       "[organization_name]": record?.organisation?.name,
       "[date_run]": dateRunIndicator,
       "[x_ha]": Math.round(sumRestorationByValues(strategiesData, false)),
-      "[x_%]": calculatePercentage(sumRestorationByValues(strategiesData, false), record.total_hectares_restored_sum),
-      "[x_ha_goal]": Math.round(record.total_hectares_restored_sum),
+      "[x_%]": calculatePercentage(sumRestorationByValues(strategiesData, false), totalHectaresRestoredGoal),
+      "[x_ha_goal]": Math.round(totalHectaresRestoredGoal),
       "[x_1a]": getOrderTop3(strategiesData)?.[0]?.label ?? "N/A",
       "[x_1b]": Math.round(getOrderTop3(strategiesData)?.[0]?.value) ?? "N/A",
       "[other_restoration_strategies]": formatDescriptionIndicator(

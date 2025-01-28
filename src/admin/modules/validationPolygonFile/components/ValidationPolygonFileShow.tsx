@@ -15,6 +15,7 @@ import {
   fetchPostV2TerrafundUploadShapefileValidate
 } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
+import { getErrorMessageFromPayload } from "@/utils/errors";
 
 const ValidatePolygonFileShow: FC = () => {
   const { openModal, closeModal } = useModalContext();
@@ -95,7 +96,8 @@ const ValidatePolygonFileShow: FC = () => {
         }
         openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
+        const errorMessage = getErrorMessageFromPayload(error);
+        openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     }
     hideLoader();

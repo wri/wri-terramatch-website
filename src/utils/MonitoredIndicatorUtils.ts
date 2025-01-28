@@ -19,7 +19,7 @@ export const getKeyValue = (data: { [key: string]: number }) => {
 
 export const calculatePercentage = (value: number, total: number): number => {
   if (!total) return 0;
-  return Math.round((value / total) * 100);
+  return Math.round(Number(((value / total) * 100).toFixed(1)));
 };
 
 export const formatDescriptionIndicator = (
@@ -32,7 +32,9 @@ export const formatDescriptionIndicator = (
     .filter(([key, value]) => value != undefined && value != null && !Number.isNaN(value))
     .map(
       ([key, value]) =>
-        `${key} with ${value} ha ${percentage ? `(${calculatePercentage(value!, totalHectares)}%)` : ""}`
+        `<b>${key}</b> with <b>${value} ha </b>${
+          percentage ? `(<b>${calculatePercentage(value!, totalHectares)}%</b>)` : ""
+        }`
     );
 
   if (validItems.length == 0) return "";

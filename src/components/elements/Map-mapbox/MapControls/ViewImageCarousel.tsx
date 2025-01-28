@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -15,6 +15,7 @@ const ViewImageCarousel = ({
   modelFilesData: GetV2MODELUUIDFilesResponse["data"];
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }) => {
+  const t = useT();
   const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
     const modelFilesGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
     const modelFilesNonGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];

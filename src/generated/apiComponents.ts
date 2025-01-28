@@ -17,6 +17,13 @@ export type GetV2TreeSpeciesEntityUUIDPathParams = {
   uuid: string;
 };
 
+export type GetV2TreeSpeciesEntityUUIDQueryParams = {
+  /**
+   * The collection to filter tree species by.
+   */
+  ["filter[collection]"]?: string;
+};
+
 export type GetV2TreeSpeciesEntityUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2TreeSpeciesEntityUUIDResponse = {
@@ -44,6 +51,7 @@ export type GetV2TreeSpeciesEntityUUIDResponse = {
 
 export type GetV2TreeSpeciesEntityUUIDVariables = {
   pathParams: GetV2TreeSpeciesEntityUUIDPathParams;
+  queryParams?: GetV2TreeSpeciesEntityUUIDQueryParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntityUUIDVariables, signal?: AbortSignal) =>
@@ -52,7 +60,7 @@ export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntit
     GetV2TreeSpeciesEntityUUIDError,
     undefined,
     {},
-    {},
+    GetV2TreeSpeciesEntityUUIDQueryParams,
     GetV2TreeSpeciesEntityUUIDPathParams
   >({ url: "/v2/tree-species/{entity}/{uuid}", method: "get", ...variables, signal });
 
@@ -35477,6 +35485,54 @@ export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectRe
   );
 };
 
+export type GetV2DashboardBboxLandscapeQueryParams = {
+  /**
+   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
+   */
+  landscapes: string;
+};
+
+export type GetV2DashboardBboxLandscapeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxLandscapeResponse = {
+  bbox?: number[];
+};
+
+export type GetV2DashboardBboxLandscapeVariables = {
+  queryParams: GetV2DashboardBboxLandscapeQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxLandscape = (
+  variables: GetV2DashboardBboxLandscapeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardBboxLandscapeResponse,
+    GetV2DashboardBboxLandscapeError,
+    undefined,
+    {},
+    GetV2DashboardBboxLandscapeQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/landscape", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxLandscape = <TData = GetV2DashboardBboxLandscapeResponse>(
+  variables: GetV2DashboardBboxLandscapeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/bbox/landscape", operationId: "getV2DashboardBboxLandscape", variables }),
+    ({ signal }) => fetchGetV2DashboardBboxLandscape({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountryCountryPathParams = {
   /**
    * ISO code of the country
@@ -37965,41 +38021,6 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
-export type PatchV2UsersLocaleError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2UsersLocaleResponse = {
-  message?: string;
-};
-
-export type PatchV2UsersLocaleRequestBody = {
-  locale?: string;
-};
-
-export type PatchV2UsersLocaleVariables = {
-  body?: PatchV2UsersLocaleRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2UsersLocale = (variables: PatchV2UsersLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleRequestBody, {}, {}, {}>({
-    url: "/v2/users/locale",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
-export const usePatchV2UsersLocale = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>(
-    (variables: PatchV2UsersLocaleVariables) => fetchPatchV2UsersLocale({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PostV2TerrafundClipPolygonsPolygonUuidPathParams = {
   /**
    * The UUID of the polygon to clip polygons for.
@@ -39149,6 +39170,11 @@ export type QueryOperation =
       path: "/v2/dashboard/bbox/project";
       operationId: "getV2DashboardBboxProject";
       variables: GetV2DashboardBboxProjectVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/landscape";
+      operationId: "getV2DashboardBboxLandscape";
+      variables: GetV2DashboardBboxLandscapeVariables;
     }
   | {
       path: "/v2/dashboard/country/{country}";
