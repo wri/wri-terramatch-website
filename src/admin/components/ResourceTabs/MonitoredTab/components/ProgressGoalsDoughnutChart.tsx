@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Cell, Label, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
+import { Cell, Label, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
 
 interface ChartDataItem {
   name: string;
@@ -54,7 +54,7 @@ const renderActiveShape = (props: any) => {
 };
 
 const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({ data }) => {
-  const { chartData, hectares } = data as any;
+  const { chartData } = data as any;
 
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
@@ -76,7 +76,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
   const COLORS = ["#27A9E0FF", "#D8EAF6"];
 
   return (
-    <div className="relative flex h-[380px] w-full flex-col items-center justify-center p-4 pt-0">
+    <div className="relative flex h-[180px] w-full flex-col items-center justify-center pt-0">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Tooltip content={<CustomTooltip />} />
@@ -84,8 +84,8 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
             data={enhancedChartData}
             cx="50%"
             cy="50%"
-            innerRadius={50}
-            outerRadius={80}
+            innerRadius={40}
+            outerRadius={70}
             paddingAngle={0}
             dataKey="value"
             onMouseEnter={onPieEnter}
@@ -93,33 +93,35 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
             activeIndex={activeIndex}
             activeShape={renderActiveShape}
           >
-            <Label
-              position="center"
-              content={({ viewBox }) => {
-                const { cx, cy } = viewBox;
-                return (
-                  <text
-                    x={cx}
-                    y={cy}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="text-20-semibold !font-semibold !text-darkCustom"
-                  >
-                    <tspan x={cx} dy="-10" className="font-medium">
-                      {percentage(chartData[0]?.value, chartData[1]?.value)}%
-                    </tspan>
-                    <tspan x={cx} dy="20" className="font-medium">
-                      complete
-                    </tspan>
-                  </text>
-                );
-              }}
-            />
+            {chartData[1]?.value ? (
+              <Label
+                position="center"
+                content={({ viewBox }) => {
+                  const { cx, cy } = viewBox;
+                  return (
+                    <text
+                      x={cx}
+                      y={cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="text-20-semibold !font-semibold !text-darkCustom"
+                    >
+                      <tspan x={cx} dy="-10" className="text-sm font-medium" style={{ fontSize: "10px" }}>
+                        {percentage(chartData[0]?.value, chartData[1]?.value)}%
+                      </tspan>
+                      <tspan x={cx} dy="20" className="text-sm font-medium" style={{ fontSize: "10px" }}>
+                        complete
+                      </tspan>
+                    </text>
+                  );
+                }}
+              />
+            ) : null}
             {chartData.map((entry: any, index: any) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Legend
+          {/* <Legend
             content={
               <div>
                 <span>
@@ -140,7 +142,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
               justifyContent: "center",
               marginBottom: "30px"
             }}
-          />
+          /> */}
         </PieChart>
       </ResponsiveContainer>
     </div>
