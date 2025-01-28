@@ -8,16 +8,17 @@ export const listDelayedJobsIsFetching = (store: ApiDataStore) =>
 export const listDelayedJobsFetchFailed = (store: ApiDataStore) =>
   fetchFailed<{}, {}>({ store, url: "/jobs/v3/delayedJobs", method: "get" });
 
-export const delayedJobsFindIsFetching = (variables: DelayedJobsFindVariables) => (store: ApiDataStore) =>
+export const delayedJobsFindIsFetching = (variables: Omit<DelayedJobsFindVariables, "body">) => (store: ApiDataStore) =>
   isFetching<{}, DelayedJobsFindPathParams>({ store, url: "/jobs/v3/delayedJobs/{uuid}", method: "get", ...variables });
 
-export const delayedJobsFindFetchFailed = (variables: DelayedJobsFindVariables) => (store: ApiDataStore) =>
-  fetchFailed<{}, DelayedJobsFindPathParams>({
-    store,
-    url: "/jobs/v3/delayedJobs/{uuid}",
-    method: "get",
-    ...variables
-  });
+export const delayedJobsFindFetchFailed =
+  (variables: Omit<DelayedJobsFindVariables, "body">) => (store: ApiDataStore) =>
+    fetchFailed<{}, DelayedJobsFindPathParams>({
+      store,
+      url: "/jobs/v3/delayedJobs/{uuid}",
+      method: "get",
+      ...variables
+    });
 
 export const bulkUpdateJobsIsFetching = (store: ApiDataStore) =>
   isFetching<{}, {}>({ store, url: "/jobs/v3/delayedJobs/bulk-update", method: "patch" });

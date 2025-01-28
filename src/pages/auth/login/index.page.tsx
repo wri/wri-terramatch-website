@@ -1,6 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -27,7 +26,6 @@ export const LoginFormDataSchema = (t: any) => {
 const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
-  const router = useRouter();
   const [, { isLoggedIn, isLoggingIn, loginFailed }] = useLogin();
   const { openToast } = useToastContext();
   const form = useForm<LoginFormDataType>({
@@ -37,9 +35,6 @@ const LoginPage = () => {
 
   useValueChanged(loginFailed, () => {
     if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
-  });
-  useValueChanged(isLoggedIn, () => {
-    if (isLoggedIn) router.push("/home");
   });
 
   const handleSave = (data: LoginFormDataType) => login(data.email, data.password);

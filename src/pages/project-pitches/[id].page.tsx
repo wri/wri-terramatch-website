@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
-import { GetServerSidePropsContext, InferGetServerSidePropsType, NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import Text from "@/components/elements/Text/Text";
@@ -16,8 +16,9 @@ import PitchOverviewTab from "@/pages/project-pitches/components/tabs/PitchOverv
 import PitchSocialImpactTab from "@/pages/project-pitches/components/tabs/PitchSocialImpactTab";
 import { formatOptionsList } from "@/utils/options";
 
-const ProjectPitchPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ pitchId }) => {
+const ProjectPitchPage = () => {
   const t = useT();
+  const pitchId = useRouter().query.id as string;
 
   // Queries
   const { data: pitch } = useGetV2ProjectPitchesUUID<{ data: ProjectPitchRead }>({
@@ -95,15 +96,6 @@ const ProjectPitchPage: NextPage<InferGetServerSidePropsType<typeof getServerSid
       <PageFooter />
     </div>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const pitchId = ctx.params?.id as string;
-  return {
-    props: {
-      pitchId
-    }
-  };
 };
 
 export default ProjectPitchPage;

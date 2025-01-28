@@ -1,6 +1,5 @@
 import { AuthProvider } from "react-admin";
 
-import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
 import { loadLogin, logout } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
 import Log from "@/utils/log";
@@ -14,10 +13,10 @@ export const authProvider: AuthProvider = {
 
   // when the user navigates, make sure that their credentials are still valid
   checkAuth: async () => {
-    const { user } = await loadMyUser();
+    const { user, isAdmin } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    if (!isAdmin(user.primaryRole as UserRole)) throw "Only admins are allowed.";
+    if (!isAdmin) throw "Only admins are allowed.";
   },
 
   // remove local credentials

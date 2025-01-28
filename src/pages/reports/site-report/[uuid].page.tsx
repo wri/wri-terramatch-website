@@ -589,7 +589,6 @@ const SiteReportDetailPage = () => {
           <br />
           <br />
         </PageBody>
-
         <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>

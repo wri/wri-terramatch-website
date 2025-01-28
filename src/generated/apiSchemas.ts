@@ -22823,6 +22823,10 @@ export type DashboardBBOXProject = {
   bbox?: number[];
 };
 
+export type DashboardBBOXLandscape = {
+  bbox?: number[];
+};
+
 export type DashboardBBOXCountry = {
   bbox?: number[];
 };

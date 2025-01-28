@@ -744,5 +744,4 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     </PageBody>
   );
 };
-
 export default GoalsAndProgressTab;

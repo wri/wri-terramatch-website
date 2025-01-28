@@ -1,13 +1,14 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { QueryClient } from "@tanstack/react-query";
 import { WritableDraft } from "immer";
 import isArray from "lodash/isArray";
-import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
 
-import { setAccessToken } from "@/admin/apiProvider/utils/token";
+import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
   statusCode: number;
@@ -94,6 +95,17 @@ export type ApiDataStore = ApiResources & {
 export const INITIAL_STATE = {
   ...RESOURCES.reduce((acc: Partial<ApiResources>, resource) => {
     acc[resource] = {};
+
+    if (resource === "logins" && typeof window !== "undefined") {
+      const accessToken = getAccessToken();
+      if (accessToken != null) {
+        // We only ever expect there to be at most one Login in the store, and we never inspect the ID
+        // so we can safely fake a login into the store when we have an authToken already set in a
+        // cookie on app bootup.
+        acc[resource]!["1"] = { attributes: { token: accessToken } };
+      }
+    }
+
     return acc;
   }, {}),
 
@@ -189,15 +201,6 @@ export const apiSlice = createSlice({
 
     clearApiCache,
 
-    // only used during app bootup.
-    setInitialAuthToken: (state, action: PayloadAction<{ authToken: string }>) => {
-      const { authToken } = action.payload;
-      // We only ever expect there to be at most one Login in the store, and we never inspect the ID
-      // so we can safely fake a login into the store when we have an authToken already set in a
-      // cookie on app bootup.
-      state.logins["1"] = { attributes: { token: authToken } };
-    },
-
     setTotalContent: (state, action: PayloadAction<number>) => {
       state.total_content = action.payload;
     },
@@ -216,34 +219,19 @@ export const apiSlice = createSlice({
   },
 
   extraReducers: builder => {
-    builder.addCase(HYDRATE, (state, action) => {
+    // Used only in test suites to dump some specific state into the store.
+    builder.addCase(__TEST_HYDRATE__, (state, action) => {
       const {
         payload: { api: payloadState }
       } = action as unknown as PayloadAction<{ api: ApiDataStore }>;
 
-      if (state.meta.meUserId !== payloadState.meta.meUserId) {
-        // It's likely the server hasn't loaded as many resources as the client. We should only
-        // clear out our cached client-side state if the server claims to have a different logged-in
-        // user state than we do.
-        clearApiCache(state);
-      }
+      clearApiCache(state);
 
       for (const resource of RESOURCES) {
         state[resource] = payloadState[resource] as StoreResourceMap<any>;
       }
 
-      for (const method of METHODS) {
-        state.meta.pending[method] = payloadState.meta.pending[method];
-      }
-
-      if (payloadState.meta.meUserId != null) {
-        state.meta.meUserId = payloadState.meta.meUserId;
-      }
-
-      state.total_content = payloadState.total_content ?? state.total_content;
-      state.processed_content = payloadState.processed_content ?? state.processed_content;
-      state.progress_message = payloadState.progress_message ?? state.progress_message;
-      state.abort_delayed_job = payloadState.abort_delayed_job ?? state.abort_delayed_job;
+      state.meta = payloadState.meta;
     });
   }
 });
@@ -265,15 +253,8 @@ authListenerMiddleware.startListening({
 });
 
 export default class ApiSlice {
-  private static _redux: Store;
-
-  static set redux(store: Store) {
-    this._redux = store;
-  }
-
-  static get redux(): Store {
-    return this._redux;
-  }
+  static redux: Store;
+  static queryClient?: QueryClient;
 
   static get apiDataStore(): ApiDataStore {
     return this.redux.getState().api;

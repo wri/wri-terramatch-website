@@ -1,10 +1,9 @@
 import { cloneDeep } from "lodash";
-import { HYDRATE } from "next-redux-wrapper";
 import { ReactNode, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { INITIAL_STATE } from "@/store/apiSlice";
-import { makeStore } from "@/store/store";
+import { __TEST_HYDRATE__, makeStore } from "@/store/store";
 
 class StoreBuilder {
   store = cloneDeep(INITIAL_STATE);
@@ -27,7 +26,7 @@ export const StoreProvider = ({ storeBuilder, children }: { storeBuilder?: Store
       const store = makeStore();
       const initialState = storeBuilder == null ? undefined : { api: storeBuilder.store };
       if (initialState != null) {
-        store.dispatch({ type: HYDRATE, payload: initialState });
+        store.dispatch({ type: __TEST_HYDRATE__, payload: initialState });
       }
 
       return store;
