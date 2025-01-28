@@ -3,13 +3,13 @@ import { Button, CreateButton, FilterButton, TopToolbar } from "react-admin";
 import { When } from "react-if";
 
 interface ListActionsCreateFilterProps {
-  isSuperAdmin?: boolean;
+  canCreateUser?: boolean;
   onExport?: () => void;
 }
 
-const ListActionsCreateFilter = ({ isSuperAdmin, onExport }: ListActionsCreateFilterProps) => (
+const ListActionsCreateFilter = ({ canCreateUser, onExport }: ListActionsCreateFilterProps) => (
   <TopToolbar>
-    <When condition={isSuperAdmin}>
+    <When condition={canCreateUser}>
       <CreateButton className="filter-button-page-admin" />
     </When>
     <FilterButton className="filter-button-page-admin" />

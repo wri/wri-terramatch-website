@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   AutocompleteInput,
   Create,
@@ -13,6 +14,7 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   countriesChoices,
   directFrameworkChoices,
+  frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
@@ -21,7 +23,7 @@ import { validateForm } from "@/admin/utils/forms";
 import modules from "../..";
 
 const UserCreate = () => {
-  const { isSuperAdmin } = useGetUserRole();
+  const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
 
   const schemaObject: any = {
     first_name: yup.string().nullable().required("First Name is required"),
@@ -34,9 +36,17 @@ const UserCreate = () => {
     country: yup.string().nullable()
   };
 
-  if (isSuperAdmin) {
+  if (isFrameworkAdmin) {
     schemaObject.role = yup.string().required("Role is required");
   }
+
+  const roleChoices = useMemo(() => {
+    if (isSuperAdmin) {
+      return userPrimaryRoleChoices;
+    }
+
+    return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
+  }, [isFrameworkAdmin]);
 
   return (
     <Create title="Create User">
@@ -56,7 +66,7 @@ const UserCreate = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && <SelectInput source="role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
 
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
 
