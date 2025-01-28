@@ -8,12 +8,10 @@ import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant
 import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useLogin } from "@/connections/Login";
-import { useLogout } from "@/hooks/logout";
+import { logout, useLogin } from "@/connections/Login";
 
 const Sidebar = () => {
   const router = useRouter();
-  const logout = useLogout();
   const [, { isLoggedIn }] = useLogin();
 
   const t = useT();

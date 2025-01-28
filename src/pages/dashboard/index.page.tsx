@@ -1,13 +1,15 @@
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { logout } from "@/connections/Login";
 import { useMyUser } from "@/connections/User";
 import {
   CHART_TYPES,
@@ -17,7 +19,6 @@ import {
   TEXT_TYPES
 } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLogout } from "@/hooks/logout";
 import {
   formatLabelsVolunteers,
   getFrameworkName,
@@ -35,13 +36,14 @@ import {
   JOBS_CREATED_BY_GENDER_TOOLTIP,
   NEW_FULL_TIME_JOBS_TOOLTIP,
   NEW_PART_TIME_JOBS_TOOLTIP,
+  NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
+  NUMBER_OF_TREES_PLANTED_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
   VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
 } from "./constants/tooltips";
-import { NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS, NUMBER_OF_TREES_PLANTED_TOOLTIP } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
 
@@ -60,8 +62,8 @@ export interface GraphicLegendProps {
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
-  const logout = useLogout();
-  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
+  const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
+  const { filters, setFilters, frameworks, setLastUpdatedAt, isInitialized, setIsInitialized } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -84,6 +86,7 @@ const Dashboard = () => {
     polygonsData,
     countryBbox,
     projectBbox,
+    landscapeBbox,
     isUserAllowed
   } = useDashboardData(filters);
 
@@ -100,6 +103,20 @@ const Dashboard = () => {
     setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
   }, [totalSectionHeader]);
 
+  useEffect(() => {
+    if (landscapeBbox && !isInitialized) {
+      setCurrentBbox(landscapeBbox);
+    }
+  }, [landscapeBbox, isInitialized]);
+
+  useEffect(() => {
+    if (countryBbox) {
+      setCurrentBbox(countryBbox);
+      if (isInitialized) {
+        setIsInitialized(false);
+      }
+    }
+  }, [countryBbox, isInitialized]);
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
@@ -546,7 +563,7 @@ const Dashboard = () => {
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
-        bbox={filters.uuid ? projectBbox : countryBbox}
+        bbox={filters.uuid ? projectBbox : currentBbox}
         projectCounts={projectCounts}
       />
     </div>

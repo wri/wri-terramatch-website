@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
@@ -7,8 +7,9 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-// import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { Framework } from "@/context/framework.provider";
+import { TextVariants } from "@/types/common";
 
 interface GoalsAndProgressTabProps {
   site: any;
@@ -32,77 +33,77 @@ export const LABEL_LEGEND = [
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
 
-  // const dataTreeCount = [
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     treeCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "Native species"],
-  //     treeCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     treeCount: "10,350"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     treeCount: "7,500"
-  //   },
-  //   {
-  //     name: ["Non-scientific name", "tree"],
-  //     treeCount: "4,040"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     treeCount: "3,200"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "new"],
-  //     treeCount: "3,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     treeCount: "0"
-  //   }
-  // ];
+  const dataTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      treeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "7,500"
+    },
+    {
+      name: ["Non-scientific name", "tree"],
+      treeCount: "4,040"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "3,200"
+    },
+    {
+      name: ["Species scientific name", "new"],
+      treeCount: "3,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      treeCount: "0"
+    }
+  ];
 
-  // const dataSeedCount = [
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     seedCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "Native species"],
-  //     seedCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     seedCount: "10,350"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     seedCount: "7,500"
-  //   }
-  // ];
-  // const dataNonTreeCount = [
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     nonTreeCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "Native species"],
-  //     nonTreeCount: "45,000"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     nonTreeCount: "10,350"
-  //   },
-  //   {
-  //     name: ["Species scientific name", "tree"],
-  //     nonTreeCount: "7,500"
-  //   }
-  // ];
+  const dataSeedCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      seedCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      seedCount: "7,500"
+    }
+  ];
+  const dataNonTreeCount = [
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "Native species"],
+      nonTreeCount: "45,000"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "10,350"
+    },
+    {
+      name: ["Species scientific name", "tree"],
+      nonTreeCount: "7,500"
+    }
+  ];
 
   return (
     <PageBody>
@@ -110,20 +111,10 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         <PageCard title={t("Progress & Goals")}>
           <div className="flex w-full flex-wrap items-start justify-between gap-8">
             <GoalProgressCard
-              frameworksShow={[Framework.TF]}
-              label={t("JOBS CREATED")}
-              value={205}
-              totalValue={300}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
               frameworksShow={[Framework.HBF]}
               label={t("workdays CREATED")}
               value={205}
-              totalValue={300}
+              totalValue={"no data"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -132,7 +123,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <GoalProgressCard
               label={t("Hectares RESTORED")}
               value={129}
-              totalValue={"300 ha"}
+              totalValue={site.framework_key === Framework.PPC ? "no data" : "300 ha"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -142,7 +133,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               label={t("Trees Restored")}
               frameworksHide={[Framework.HBF]}
               value={113250}
-              totalValue={"300,000"}
+              totalValue={
+                site.framework_key === Framework.TF || site.framework_key === Framework.PPC ? "no data" : "300,000"
+              }
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -203,7 +196,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       </PageRow>
 
       <PageRow>
-        <PageCard title={t("Tree Planting Progress")}>
+        <PageCard
+          title={t(site.framework_key === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+        >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
@@ -212,37 +207,51 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                 items={[
                   {
                     iconName: IconNames.TREE_CIRCLE_PD,
-                    label: t("Trees Planted:"),
+                    label: t(
+                      site.framework_key === Framework.HBF ? "number of SAPLINGS PLANTED" : "number of TREES PLANTED:"
+                    ),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
                     value: 100000
                   },
-                  {
-                    iconName: IconNames.SURVIVAL_RATE,
-                    label: t("Estimated Survival Rate:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: "85%"
-                  },
+                  ...(site.framework_key !== Framework.HBF
+                    ? [
+                        {
+                          iconName: IconNames.SURVIVAL_RATE,
+                          label: t(
+                            site.framework_key === Framework.TF
+                              ? "Last Reported Survival Rate"
+                              : "Estimated Survival Rate:"
+                          ),
+                          variantLabel: "text-14" as TextVariants,
+                          classNameLabel: " text-neutral-650 uppercase !w-auto",
+                          classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                          value: "85%"
+                        }
+                      ]
+                    : []),
                   {
                     iconName: IconNames.LEAF_PLANTED_CIRCLE,
                     label: t("number of species PLANTED:"),
-                    variantLabel: "text-14",
+                    variantLabel: "text-14" as TextVariants,
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
                     value: 10,
                     limit: 12
                   },
-                  {
-                    iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                    label: t("PERCENTAGE of Native species:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: "3% "
-                  }
+                  ...(site.framework_key === Framework.TF
+                    ? [
+                        {
+                          iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
+                          label: t("PERCENTAGE of Native species:"),
+                          variantLabel: "text-14" as TextVariants,
+                          classNameLabel: " text-neutral-650 uppercase !w-auto",
+                          classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                          value: "3% "
+                        }
+                      ]
+                    : [])
                 ]}
               />
               <div className="mt-2 border-t border-dashed border-neutral-480 pt-4">
@@ -264,9 +273,15 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                 <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
               </div>
             </div>
-            {/* <div>
-              <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
-            </div> */}
+            <div>
+              <TreeSpeciesTablePD
+                modelName="site"
+                data={dataTreeCount}
+                typeTable="treeCount"
+                modelUUID={site.uuid}
+                visibleRows={10}
+              />
+            </div>
           </div>
         </PageCard>
       </PageRow>
@@ -283,8 +298,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   items={[
                     {
                       iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("Trees Planted:"),
-                      variantLabel: "text-14",
+                      label: t("number of seeds PLANTED:"),
+                      variantLabel: "text-14" as TextVariants,
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
                       value: 5250
@@ -304,14 +319,6 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
                       value: 6
-                    },
-                    {
-                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                      label: t("PERCENTAGE of Native species:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "1%"
                     }
                   ]}
                 />
@@ -347,7 +354,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   items={[
                     {
                       iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("Trees Planted:"),
+                      label: t("number of seeds PLANTED:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
@@ -374,14 +381,26 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </When>
             </div>
             <div>
-              {/* <If condition={site.framework_key === Framework.TF}>
+              <If condition={site.framework_key === Framework.TF}>
                 <Then>
-                  <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+                  <TreeSpeciesTablePD
+                    modelName="site"
+                    data={dataNonTreeCount}
+                    typeTable="nonTreeCount"
+                    modelUUID={site.uuid}
+                    visibleRows={10}
+                  />
                 </Then>
                 <Else>
-                  <TreeSpeciesTablePD modelName="seedCount" data={dataSeedCount} />
+                  <TreeSpeciesTablePD
+                    modelName="site"
+                    data={dataSeedCount}
+                    typeTable="seedCount"
+                    modelUUID={site.uuid}
+                    visibleRows={10}
+                  />
                 </Else>
-              </If> */}
+              </If>
             </div>
           </div>
         </PageCard>

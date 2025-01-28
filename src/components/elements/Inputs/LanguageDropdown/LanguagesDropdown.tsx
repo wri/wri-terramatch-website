@@ -1,42 +1,45 @@
 import { Popover } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useRef, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { fetchPatchV2UsersLocale } from "@/generated/apiComponents";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
 
 export interface DropdownProps {
   defaultValue?: OptionValue;
-  onChange?: (value: OptionValue) => void;
+  onChange?: (value: string) => void;
   className?: string;
-  isLoggedIn?: boolean;
 }
+
+const LANGUAGES: Option[] = [
+  { value: "en-US", title: "English" },
+  { value: "es-MX", title: "Spanish" },
+  { value: "fr-FR", title: "French" },
+  { value: "pt-BR", title: "Portuguese" }
+];
+
+const languageForLocale = (locale?: string | null) => LANGUAGES.find(({ value }) => value === locale) ?? LANGUAGES[0];
 
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
-  const Languages: Option[] = [
-    { value: "en-US", title: t("English") },
-    { value: "es-MX", title: t("Spanish") },
-    { value: "fr-FR", title: t("French") },
-    { value: "pt-BR", title: t("Portuguese") }
-  ];
+  const router = useRouter();
 
-  const [selected, setSelected] = useState<Option>(Languages[0]);
+  const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
   let buttonRef = useRef<any>();
+
+  useValueChanged(router.locale, () => {
+    setSelected(languageForLocale(router.locale));
+  });
 
   const onChange = (lang: Option) => {
     setSelected(lang);
-    props.onChange?.(lang.value);
+    props.onChange?.(lang.value as string);
     buttonRef.current?.click();
-    if (props.isLoggedIn) {
-      fetchPatchV2UsersLocale({
-        body: { locale: lang.value as string }
-      });
-    }
   };
 
   return (
@@ -44,7 +47,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
       <Popover.Button ref={buttonRef} className="flex items-center justify-between p-2">
         <Icon name={IconNames.EARTH} width={16} className="mr-2 fill-neutral-700" />
         <span className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom">
-          {selected?.title}
+          {t(selected?.title)}
         </span>
         <Icon
           name={IconNames.TRIANGLE_DOWN}
@@ -55,14 +58,14 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
 
       <Popover.Panel className="border-1 absolute right-0 z-50 mt-4 w-[130px]  border border-neutral-300 bg-white shadow">
         <List
-          items={Languages}
+          items={LANGUAGES}
           render={item => (
             <Text
               variant={selected.value === item.value ? "text-body-900" : "text-body-600"}
               className={classNames("px-3 py-1 uppercase text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200")}
               onClick={() => onChange(item)}
             >
-              {item.title}
+              {t(item.title)}
             </Text>
           )}
         />

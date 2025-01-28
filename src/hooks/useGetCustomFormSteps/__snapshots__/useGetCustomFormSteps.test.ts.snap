@@ -6,7 +6,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -1013,8 +1012,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Headquarters address Country",
         "name": "3e34aab6-f6fe-45f2-9d2c-581a69dbd1bc",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": StringSchema {
@@ -1048,7 +1049,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please select the relevant countries where your organization is legally registered to operate.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2055,8 +2055,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "What Countries is your organisation legally registered in?",
         "name": "a90630bf-b77f-4b6e-a828-013f4d0ac1fb",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -2159,7 +2161,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please describe your organization's mission.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2167,8 +2168,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "minLength": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Organization Mission",
         "name": "d64877a6-fc33-4bd8-9f75-43e77a5112ab",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "textArea",
         "validation": StringSchema {
@@ -2209,7 +2212,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2220,8 +2222,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "date",
         },
+        "is_parent_conditional_default": undefined,
         "label": "On what date was your organisation founded?",
         "name": "ced1d792-2f5f-40b0-8686-86e048c98406",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": StringSchema {
@@ -2255,7 +2259,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please select as many as apply. TerraMatch is available only in the languages listed below.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2306,8 +2309,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "In what languages can your organisation communicate?",
         "name": "6827e8c1-632c-47cf-a45b-43b8bfba78f2",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -2412,7 +2417,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please indicate all of the restoration interventions you have used in previous projects. If you intend to use multiple different restoration interventions, check all that apply. ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2511,8 +2515,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           ],
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "What interventions do you intend to use to restore land?",
         "name": "9bfe6b76-2ff1-4658-9763-54bc6242cce6",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "selectImage",
         "validation": ArraySchema {
@@ -2610,7 +2616,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Reference letters could come from a verifiable former donor or investor, a former or current project partner, a traditional or community leader, or any other individual or organization that can vouch for your work. We highly recommend that applicants submit an endorsement letter from a local or national government agency. Upload only .pdf files less than 5mb.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2625,8 +2630,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "showPrivateCheckbox": undefined,
           "uuid": null,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Please provide at least two letters of reference",
         "name": "6303cc5c-cbd7-4f46-bed6-d339c4c2f00b",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "file",
         "validation": ArraySchema {
@@ -2660,7 +2667,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2671,8 +2677,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "url",
         },
+        "is_parent_conditional_default": undefined,
         "label": "Organization Twitter URL(optional)",
         "name": "981edb54-739e-4971-b078-4e2a971d9ffd",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": StringSchema {
@@ -2709,7 +2717,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please list the individuals who own your company. For each person listed, please indicate their name, title, gender and age:<br>Name<br>Title<br>Gender<br>Age",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2717,8 +2724,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "minLength": undefined,
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "List the people who have a ownership stake in your company",
         "name": "4388ff23-a5e7-486a-9b37-7ad41cce5e77",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "textArea",
         "validation": StringSchema {
@@ -2758,7 +2767,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Select the statement(s) below that best align with your farmer engagement strategy: ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2809,8 +2817,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with farmers? ",
         "name": "3be9ae6a-c769-44e7-a8e6-46cd9b7d7ff2",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -2913,7 +2923,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Select the statement(s) below that best aligns with your engagement strategy for women: ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -2964,8 +2973,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with women?",
         "name": "32873c74-5ec4-4508-90a1-bb05b9139ab2",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -3068,7 +3079,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Select the statement(s) below that best aligns with your engagement strategy for people younger than 35 years old",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3119,8 +3129,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with people younger than 35 years old?",
         "name": "bb1c3fd3-be90-46db-9996-5148ead42376",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -3229,7 +3241,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3240,8 +3251,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2020?",
         "name": "2fc2ddcb-65c4-401f-ad8b-2464127995e1",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3275,7 +3288,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3294,8 +3306,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "showPrivateCheckbox": undefined,
           "uuid": null,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2020 income statement and balance sheet.",
         "name": "dfc8b46f-a2b5-4c47-9d86-6eaf02f38ff4",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "file",
         "validation": ArraySchema {
@@ -3329,7 +3343,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3340,8 +3353,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2021?",
         "name": "a5ff9d12-249f-4752-8c56-93d6c21ff7b6",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3375,7 +3390,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3394,8 +3408,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "showPrivateCheckbox": undefined,
           "uuid": null,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2021 income statement and balance sheet.",
         "name": "4519d674-4110-4523-a745-f999741622cd",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "file",
         "validation": ArraySchema {
@@ -3429,7 +3445,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3440,8 +3455,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2022?",
         "name": "c1537262-4802-4223-b694-9088d76a2d11",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3475,7 +3492,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) but will accept .PDF files. Do not submit files in any other format. Please ensure that you have uploaded all financial information necessary to assess the health of your business. Your upload should include a profit & loss / income statement and a balance sheet.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3494,8 +3510,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "showPrivateCheckbox": undefined,
           "uuid": null,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2022 income statement and balance sheet.",
         "name": "eae46eca-8e4e-4cec-a7a0-cd9d93af8054",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "file",
         "validation": ArraySchema {
@@ -3529,7 +3547,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover." We understand that this information is not yet available for 2023. Please provide your best estimation. ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3540,8 +3557,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What are your organization's projected revenues in USD for 2023",
         "name": "ae621f3b-552c-4f5f-8616-5d7821299959",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3581,7 +3600,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please indicate how many years your organization has been involved in actively restoring degraded land. If your organization began to restore land significantly later than it was founded, make sure to only include the years after you began to work on restoration.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3592,8 +3610,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many years of restoration experience does your organization have?",
         "name": "003a59f0-d262-45b1-b4ef-c46c62f79341",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3627,7 +3647,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3638,8 +3657,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many hectares of degraded land has your organisation restored since it was founded? ",
         "name": "c8ba24a7-3532-4665-99d0-8d1b10e85f27",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3673,7 +3694,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3684,8 +3704,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many hectares of degraded land has your organization restored in the past 36 months?",
         "name": "12e2645b-ab2d-4c69-ab21-379408a1e743",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3719,7 +3741,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they  are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3730,8 +3751,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many trees has your organization restored or naturally regenerated since it was founded? ",
         "name": "1817a476-e340-467c-8c6b-8918c200654e",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3765,7 +3788,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk  growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3776,8 +3798,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many trees has your organization planted, naturally regenerated or otherwise restored in the past 36 months?",
         "name": "4c0e0a9f-636a-45b0-ad5c-80f5722c7cfe",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -3817,7 +3841,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3828,8 +3851,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "text",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What is the name of your proposed project?",
         "name": "2f114af5-a0b9-405d-926b-7689a9fd5a25",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": StringSchema {
@@ -3863,7 +3888,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -3871,8 +3895,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "minLength": undefined,
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "What are the objectives of your proposed project?",
         "name": "917fd2b0-74c2-42c8-b65e-b98144322f6d",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "textArea",
         "validation": StringSchema {
@@ -3906,7 +3932,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -4913,8 +4938,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": false,
         },
+        "is_parent_conditional_default": undefined,
         "label": "In what country will your project operate? ",
         "name": "875d923a-f1e4-4516-a77a-96fcdf099f66",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": StringSchema {
@@ -4948,7 +4975,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please enter the precise name of the district or sub-counties where your project would operate. This should be an official administrative jurisdiction. Please be as precise as possible.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -4959,8 +4985,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "text",
         },
+        "is_parent_conditional_default": undefined,
         "label": "In which subnational jurisdictions would you carry out this project? ",
         "name": "59388280-52bd-48f8-97a6-8de30b509494",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": StringSchema {
@@ -4994,7 +5022,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land could without active planting. Only count land that has benefitted from tree-based restoration techniques in your total.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5005,8 +5032,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many hectares of land do you intend to restore through this project?",
         "name": "5c2b9303-302d-4140-beba-95d79fb2d060",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -5040,7 +5069,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5051,8 +5079,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "How many trees do you intend to restore through this project?",
         "name": "790370ce-a8e4-4185-a6ef-99a64b2e4bc5",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -5086,7 +5116,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "List the species and the estimated number of trees that you intend to plant using the form below. The scientific names of each species are preferred. Please be precise.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5096,8 +5125,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "uuid": null,
           "withNumbers": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "What tree species do you intend to grow through this project?",
         "name": "90acff1b-27f1-4de7-a9a3-caf6be137604",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "treeSpecies",
         "validation": ArraySchema {
@@ -5329,7 +5360,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5340,8 +5370,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "required": false,
           "type": "number",
         },
+        "is_parent_conditional_default": undefined,
         "label": "What is your proposed project budget in USD? ",
         "name": "09475088-63b9-4634-bb13-d0ad6c9ecf14",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "input",
         "validation": NumberSchema {
@@ -5381,7 +5413,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
     "fields": [
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5403,8 +5434,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "showPrivateCheckbox": undefined,
           "uuid": null,
         },
+        "is_parent_conditional_default": undefined,
         "label": "Upload any additional documents",
         "name": "e55c81f1-e0ba-42a3-9887-d22f853687c2",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "file",
         "validation": ArraySchema {
@@ -5438,7 +5471,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please select as many as apply. Note that this information remains private. Definitions for each topic can be found here (<a href="https://terramatchsupport.zendesk.com/hc/en-us/sections/13162666535835-EOI-Resources" target="_blank">EOI-Resources</a>)",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5599,8 +5631,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "On which of the following topics would you request technical assistance from a team of experts?",
         "name": "3d456c52-8e68-45ff-ae88-37a96263130e",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {
@@ -5703,7 +5737,6 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
       },
       {
         "condition": undefined,
-        "conditional_default": true,
         "description": "Please select all that apply. If you heard about us from another source, please select other.",
         "feedbackRequired": undefined,
         "fieldProps": {
@@ -5864,8 +5897,10 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
           "optionsFilterFieldName": undefined,
           "required": true,
         },
+        "is_parent_conditional_default": undefined,
         "label": "How did you hear about this opportunity on TerraMatch?",
         "name": "6ed56eff-b1c3-4df3-bfcc-98db47e02fb0",
+        "parent_id": undefined,
         "placeholder": undefined,
         "type": "dropdown",
         "validation": ArraySchema {

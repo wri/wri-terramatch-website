@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
@@ -22,6 +22,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 }
 
 const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
+  const t = useT();
   const ctx = useShowContext();
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter] = useState<string>("all");

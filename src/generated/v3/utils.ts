@@ -1,6 +1,6 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 import Log from "@/utils/log";
-import { selectLogin } from "@/connections/Login";
+import { logout, selectLogin } from "@/connections/Login";
 import { entityServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
@@ -83,6 +83,13 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     if (!response.ok) {
       const error = (await response.json()) as ErrorWrapper<TError>;
       ApiSlice.fetchFailed({ ...actionPayload, error: error as PendingErrorState });
+
+      if (url.endsWith("/users/me") && response.status === 401) {
+        // If the users/me fetch is unauthorized, our login has timed out and we need to transition
+        // to a logged out state.
+        logout();
+      }
+
       return;
     }
 

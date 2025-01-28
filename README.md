@@ -116,7 +116,7 @@ Pushing new translations to the Transifex cloud involves just one manual step. Y
 
 For more details about the command-line interface (CLI), please refer to the [official documentation](https://developers.transifex.com/docs/cli).
 
-It's important to note that the setup requires the correct configuration of `TRANSIFEX_TOKEN` and `TRANSIFEX_SECRET` environment variables. Due to the sensitive nature of these variables, they will be securely shared with you via 1Password.
+It's important to note that the setup requires the correct configuration of `NEXT_PUBLIC_TRANSIFEX_TOKEN` and `TRANSIFEX_SECRET` environment variables. Due to the sensitive nature of these variables, they will be securely shared with you via 1Password.
 
 Additionally, consider automating this step using GitHub Actions for increased efficiency.
 

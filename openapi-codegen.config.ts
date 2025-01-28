@@ -287,7 +287,10 @@ const createPredicateNodes = ({
               undefined,
               f.createIdentifier("variables"),
               undefined,
-              variablesType,
+              f.createTypeReferenceNode("Omit", [
+                variablesType,
+                f.createLiteralTypeNode(f.createStringLiteral("body"))
+              ]),
               undefined
             )
           ],

@@ -7,7 +7,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-// import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
@@ -48,7 +48,7 @@ export const dataTreeCount = [
     treeCount: "7,500"
   },
   {
-    name: ["Non-scientific name", "tree"],
+    name: ["Non-scientific name", "non-scientific"],
     treeCount: "4,040"
   },
   {
@@ -311,7 +311,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               frameworksShow={[Framework.HBF]}
               label={t("workdays CREATED")}
               value={205}
-              totalValue={300}
+              totalValue={"no data"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -423,14 +423,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
                       value: 10,
                       limit: 12
-                    },
-                    {
-                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                      label: t("PERCENTAGE of Native species:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "3% "
                     }
                   ]}
                 />
@@ -470,14 +462,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
                         value: 10,
                         limit: 12
-                      },
-                      {
-                        iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                        label: t("PERCENTAGE of Native species:"),
-                        variantLabel: "text-14",
-                        classNameLabel: " text-neutral-650 uppercase !w-auto",
-                        classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                        value: "3% "
                       }
                     ]}
                   />
@@ -502,15 +486,33 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
               </div>
             </div>
-            {/* <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TreeSpeciesTablePD modelName="treeCount" data={dataTreeCount} />
+            <ContextCondition frameworksShow={[Framework.PPC]}>
+              <TreeSpeciesTablePD
+                typeTable="treeCount"
+                data={dataTreeCount}
+                modelUUID={project.uuid}
+                modelName="project"
+                visibleRows={10}
+              />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.TF]}>
-              <TreeSpeciesTablePD modelName="treeCount/Goal" data={dataTreeCountGoal} />
+              <TreeSpeciesTablePD
+                modelName="project"
+                data={dataTreeCountGoal}
+                typeTable="treeCount/Goal"
+                modelUUID={project.uuid}
+                visibleRows={10}
+              />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <TreeSpeciesTablePD modelName="speciesCount/Goal" data={dataSpeciesCountGoal} />
-            </ContextCondition> */}
+              <TreeSpeciesTablePD
+                modelName="project"
+                data={dataSpeciesCountGoal}
+                typeTable="speciesCount/Goal"
+                modelUUID={project.uuid}
+                visibleRows={10}
+              />
+            </ContextCondition>
           </div>
         </PageCard>
       </PageRow>
@@ -548,14 +550,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
                       value: 6
-                    },
-                    {
-                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                      label: t("PERCENTAGE of Native species:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "10%"
                     }
                   ]}
                 />
@@ -614,26 +608,30 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl",
                         value: 6
-                      },
-                      {
-                        iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                        label: t("PERCENTAGE of Native species:"),
-                        variantLabel: "text-14",
-                        classNameLabel: " text-neutral-650 uppercase !w-auto",
-                        classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                        value: "6%"
                       }
                     ]}
                   />
                 </>
               </ContextCondition>
               <div className="mt-2">
-                {/* <ContextCondition frameworksShow={[Framework.TF]}>
-                  <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} />
+                <ContextCondition frameworksShow={[Framework.TF]}>
+                  <TreeSpeciesTablePD
+                    modelName="project"
+                    modelUUID={project.uuid}
+                    data={dataNonTreeCount}
+                    visibleRows={10}
+                    typeTable="nonTreeCount"
+                  />
                 </ContextCondition>
                 <ContextCondition frameworksHide={[Framework.TF]}>
-                  <TreeSpeciesTablePD modelName="seedCount" data={dataSeedCount} />
-                </ContextCondition> */}
+                  <TreeSpeciesTablePD
+                    modelName="project"
+                    modelUUID={project.uuid}
+                    data={dataSeedCount}
+                    visibleRows={10}
+                    typeTable="seedCount"
+                  />
+                </ContextCondition>
               </div>
             </div>
           </PageCard>
@@ -680,7 +678,13 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
 
             <div className="mt-2">
-              {/* <TreeSpeciesTablePD modelName="treeCountSite" data={dataTreeCountSite} /> */}
+              <TreeSpeciesTablePD
+                modelName="project"
+                data={dataTreeCountSite}
+                modelUUID={project.uuid}
+                visibleRows={10}
+                typeTable="treeCountSite"
+              />
             </div>
           </PageCard>
         </PageColumn>
@@ -723,7 +727,13 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </div>
-              {/* <TreeSpeciesTablePD modelName="nonTreeCount" data={dataNonTreeCount} /> */}
+              <TreeSpeciesTablePD
+                modelName="project"
+                modelUUID={project.uuid}
+                data={dataNonTreeCount}
+                visibleRows={10}
+                typeTable="nonTreeCount"
+              />
             </div>
           </PageCard>
         </PageRow>
@@ -734,5 +744,4 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     </PageBody>
   );
 };
-
 export default GoalsAndProgressTab;

@@ -6,7 +6,8 @@ import { When } from "react-if";
 import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
-  OVERLAPPING_CRITERIA_ID
+  OVERLAPPING_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -166,7 +167,11 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       const matchingPolygon = Array.isArray(sitePolygonData)
         ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
         : null;
-      const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+      const excludedFromValidationCriterias = [
+        COMPLETED_DATA_CRITERIA_ID,
+        ESTIMATED_AREA_CRITERIA_ID,
+        WITHIN_COUNTRY_CRITERIA_ID
+      ];
       const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
       const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
       let isValid = false;
@@ -182,7 +187,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         label: matchingPolygon?.poly_name ?? null,
         showWarning:
           nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
-          nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID)
+          nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
+          nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
       };
     });
   };

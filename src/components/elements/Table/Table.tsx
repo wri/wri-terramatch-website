@@ -131,7 +131,9 @@ function Table<TData extends RowData>({
       onTableStateChange?.({ sorting, filters });
     },
     getRowId: (row: any) => row.uuid,
-    debugTable: process.env.NODE_ENV === "development",
+
+    // Uncomment for local debug testing fo the table.
+    // debugTable: process.env.NODE_ENV === "development",
 
     autoResetAll: resetOnDataChange
   });
