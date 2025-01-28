@@ -1,6 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -22,7 +21,6 @@ const RequestResetPage = () => {
     resolver: yupResolver(RequestResetDataSchema),
     mode: "onSubmit"
   });
-  const [isToggled, setIsToggled] = useState(false);
 
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
@@ -32,12 +30,10 @@ const RequestResetPage = () => {
   const [, { isLoading, requestFailed, isSuccess, requestEmail }] = useRequestPassword();
 
   useValueChanged(isSuccess, () => {
-    if (isSuccess && isToggled)
-      router.push(`${baseAuthPath}/reset-password/confirm?email=${encodeURIComponent(requestEmail)}`);
+    if (isSuccess) router.push(`${baseAuthPath}/reset-password/confirm?email=${encodeURIComponent(requestEmail)}`);
   });
 
   const handleSave = async (data: RequestResetData) => {
-    setIsToggled(true);
     requestPasswordReset({
       body: { emailAddress: data.email, callbackUrl: window.location.origin + `${baseAuthPath}/reset-password` }
     });
