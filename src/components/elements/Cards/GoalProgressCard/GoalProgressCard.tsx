@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { withFrameworkShow } from "@/context/framework.provider";
@@ -54,11 +54,18 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {label}
           </Text>
           <When condition={!!totalValue}>
-            <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
+            <If condition={totalValue === "no data"}>
+              <Then>
+                <img src="/images/graphic-6.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
+              </Then>
+              <Else>
+                <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
+              </Else>
+            </If>
           </When>
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
-            <When condition={!!limit || !!totalValue}>
+            <When condition={(!!limit || !!totalValue) && totalValue !== "no data"}>
               <Text variant="text-16-light">of {limit?.toLocaleString() ?? totalValue?.toLocaleString()}</Text>
             </When>
             <When condition={!!labelValue}>
@@ -69,7 +76,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <LinearProgressBar
             color="primary"
             value={progressValue}
-            className={classNames("mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200", {
+            className={classNames("mt-2  bg-primary-200", {
               "opacity-0": !limit
             })}
           />
