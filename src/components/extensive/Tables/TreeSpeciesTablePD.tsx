@@ -30,6 +30,16 @@ export interface TreeSpeciesTablePDProps {
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
+  data?: any;
+  typeTable?:
+    | "treeCount"
+    | "treeCount/Goal"
+    | "speciesCount/Goal"
+    | "nonTreeCount"
+    | "seedCount"
+    | "treeCountSite"
+    | "saplingsCount";
+  visibleRows?: number;
 }
 
 export interface TreeSpeciesTableRowData {
@@ -48,7 +58,10 @@ const TreeSpeciesTablePD = ({
   setTotalCount,
   collection,
   headerName = "species Name",
-  secondColumnWidth = ""
+  secondColumnWidth = "",
+  typeTable,
+  visibleRows = 5,
+  data
 }: TreeSpeciesTablePDProps) => {
   const queryParams: any = {};
 
@@ -190,27 +203,29 @@ const TreeSpeciesTablePD = ({
         }
       };
 
-      const icons = (speciesTypes || []).map((type: string) => {
-        const config = iconConfigs[type];
-        return config ? (
-          <ToolTip
-            key={type}
-            title=""
-            content={config.tooltip}
-            colorBackground="white"
-            placement="right"
-            textVariantContent="text-14"
-          >
-            <Icon
-              name={config.icon}
-              className={classNames(
-                "h-7 w-7",
-                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-              )}
-            />
-          </ToolTip>
-        ) : null;
-      });
+      const icons = Array.isArray(speciesTypes)
+        ? speciesTypes.map((type: string) => {
+            const config = iconConfigs[type];
+            return config ? (
+              <ToolTip
+                key={type}
+                title=""
+                content={config.tooltip}
+                colorBackground="white"
+                placement="right"
+                textVariantContent="text-14"
+              >
+                <Icon
+                  name={config.icon}
+                  className={classNames(
+                    "h-7 w-7",
+                    value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                  )}
+                />
+              </ToolTip>
+            ) : null;
+          })
+        : null;
 
       return (
         <div className="font-inherit flex items-center gap-1">
@@ -415,12 +430,12 @@ const TreeSpeciesTablePD = ({
   return (
     <div>
       <Table
-        data={tableData}
-        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
+        data={data ?? tableData}
+        columns={columnTable[typeTable ?? (getCollectionType(collection ?? "") as ModelNameType)]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
-        visibleRows={5}
+        visibleRows={visibleRows}
       />
     </div>
   );
