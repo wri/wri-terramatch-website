@@ -27,7 +27,7 @@ type ChartsData = {
   hbf: JSX.Element[];
 };
 
-const CharData = (values: ChartDataItem) => {
+const ChartData = (values: ChartDataItem) => {
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -100,13 +100,13 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
 
   const chartsDataMapping: ChartsData = {
     terrafund: [
-      <CharData
+      <ChartData
         key={"terrafund-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <CharData
+      <ChartData
         key={"terrafund-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
@@ -114,30 +114,30 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       />
     ],
     ppc: [
-      <CharData
+      <ChartData
         key={"ppc-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         graph={false}
         hectares={true}
       />,
-      <CharData
+      <ChartData
         key={"ppc-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={false}
       />,
-      <CharData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
+      <ChartData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
     ],
     hbf: [
-      <CharData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />,
-      <CharData
+      <ChartData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />,
+      <ChartData
         key={"hbf-2"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <CharData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
+      <ChartData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
     ]
   };
   return (
