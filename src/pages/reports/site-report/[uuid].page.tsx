@@ -100,41 +100,6 @@ const SiteReportDetailPage = () => {
     }
   ];
 
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      nonTreeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      nonTreeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "0"
-    }
-  ];
-
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
       <LoadingContainer loading={isLoading}>
@@ -204,11 +169,17 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.TF]}>
-                      <LongTextField title={t("Survival Rate")}>N/A</LongTextField>
-                      <LongTextField title={t("Description of Survival Rate Calculation")}>N/A</LongTextField>
-                      <LongTextField title={t("Explanation of Survival Rate")}>N/A</LongTextField>
-                      <LongTextField title={t("Maintenance Activities")}>N/A</LongTextField>
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
+                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Description of Survival Rate Calculation")}>
+                        {siteReport.survival_calculation}
+                      </LongTextField>
+                      <LongTextField title={t("Explanation of Survival Rate")}>
+                        {siteReport.survival_description}
+                      </LongTextField>
+                      <LongTextField title={t("Maintenance Activities")}>
+                        {siteReport.maintenance_activities}
+                      </LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.HBF]}>
                       <Text variant="text-20-bold">{t("Trees Planted")}</Text>
@@ -263,7 +234,7 @@ const SiteReportDetailPage = () => {
                         />
                       </div>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.TF]}>
+                    <ContextCondition frameworksHide={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                       <Text variant="text-20-bold">{t("Seeds Planted")}</Text>
                       <GoalProgressCard
                         hasProgress={false}
@@ -315,7 +286,7 @@ const SiteReportDetailPage = () => {
                         />
                       </div>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.TF]}>
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                       <Text variant="text-20-bold">{t("Tree Replanting")}</Text>
                       <GoalProgressCard
                         hasProgress={false}
@@ -327,7 +298,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_tree_replanting_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -336,34 +307,8 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
-                        />
-                      </div>
-                      <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
-                      <GoalProgressCard
-                        hasProgress={false}
-                        classNameCard="!pl-0"
-                        items={[
-                          {
-                            iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
-                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
-                            variantLabel: "text-14",
-                            classNameLabel: " text-neutral-650 uppercase !w-auto",
-                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
-                          }
-                        ]}
-                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
-                      />
-                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
-                          collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
+                          collection="replanting"
+                          framework={siteReport.framework_key}
                         />
                       </div>
                     </ContextCondition>
