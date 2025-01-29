@@ -65,41 +65,6 @@ const SiteReportDetailPage = () => {
     "Site Workdays"
   );
 
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
-
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
       <LoadingContainer loading={isLoading}>
@@ -219,7 +184,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 100000
+                            value: siteReport.total_trees_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -228,9 +193,8 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="saplings-planted"
-                          typeTable="saplingsCount"
-                          data={dataTreeCount}
+                          collection="tree-planted"
+                          framework={siteReport.framework_key}
                         />
                       </div>
                     </ContextCondition>
