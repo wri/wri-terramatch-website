@@ -114,7 +114,6 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               frameworksShow={[Framework.HBF]}
               label={t("workdays CREATED")}
               value={205}
-              totalValue={"no data"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -123,7 +122,13 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <GoalProgressCard
               label={t("Hectares RESTORED")}
               value={129}
-              totalValue={site.framework_key === Framework.PPC ? "no data" : "300 ha"}
+              totalValue={
+                site.framework_key === Framework.TF ||
+                site.framework_key === Framework.TF_LANDSCAPES ||
+                site.framework_key === Framework.HBF
+                  ? "300 ha"
+                  : ""
+              }
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -133,9 +138,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               label={t("Trees Restored")}
               frameworksHide={[Framework.HBF]}
               value={113250}
-              totalValue={
-                site.framework_key === Framework.TF || site.framework_key === Framework.PPC ? "no data" : "300,000"
-              }
+              // totalValue={
+              //   site.framework_key === Framework.TF || site.framework_key === Framework.PPC ? "no data" : "300,000"
+              // }
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
