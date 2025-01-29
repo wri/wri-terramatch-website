@@ -222,7 +222,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 100000
+                            value: siteReport.total_trees_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -232,8 +232,7 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="tree-planted"
-                          typeTable="treeCount"
-                          data={dataTreeCount}
+                          framework={siteReport.framework_key}
                         />
                       </div>
                     </ContextCondition>
@@ -276,7 +275,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_seeds_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -285,9 +284,8 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="seeds-planted"
-                          typeTable="saplingsCount"
-                          data={dataTreeCount}
+                          collection="seeding"
+                          framework={siteReport.framework_key}
                         />
                       </div>
                     </ContextCondition>
@@ -303,7 +301,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_non_tree_species_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -313,8 +311,7 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
+                          framework={siteReport.framework_key}
                         />
                       </div>
                     </ContextCondition>
@@ -382,18 +379,16 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 3200
+                            value: siteReport.num_trees_regenerating
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <Text variant="text-14" className="uppercase text-neutral-650">
-                        {t("Description of AND Activities:")}
+                        {t("Description of ANR Activities:")}
                       </Text>
                       <Text variant="text-16" className="mt-2 text-blueCustom-700">
-                        {t(
-                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum imperdiet consequat nulla, a dapibus nunc ultricies eget. Aliquam facilisis luctus nibh. Vivamus a lobortis nisl, scelerisque porttitor velit. Phasellus nec hendrerit felis. Proin commodo tortor consequat tortor pulvinar auctor. Nam rhoncus urna dolor, nec scelerisque elit blandit quis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam sollicitudin lobortis leo, eget laoreet magna fermentum ut. Suspendisse volutpat scelerisque felis, non commodo arcu laoreet vel. Sed facilisis volutpat est, a venenatis orci rhoncus cursus."
-                        )}
+                        {t(siteReport.regeneration_description ?? "No description")}
                       </Text>
                     </div>
                     {/* <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
