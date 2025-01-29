@@ -40,13 +40,9 @@ interface ChartDataItem {
   };
   chartData: any;
   graph?: boolean;
+  hectares?: boolean;
 }
-// interface ChartData {
-//   name?: string;
-//   value?: number;
-//   totalValue?: number;
-//   hectares?: boolean;
-// }
+
 type ChartsData = {
   terrafund: JSX.Element[];
   ppc: JSX.Element[];
@@ -59,7 +55,8 @@ const CharData = (values: ChartDataItem) => {
       label={values.cardValues.label}
       value={values.cardValues.value}
       totalValue={values.cardValues.totalValue}
-      hectares={values.chartData.hectares}
+      hectares={values.hectares}
+      graph={values.graph}
       classNameLabel="text-neutral-650 uppercase mb-3"
       labelVariant="text-14"
       classNameCard="text-center flex flex-col items-center"
@@ -158,8 +155,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       value: site.total_hectares_restored_sum,
       totalName: t("TOTAL HECTARES RESTORED"),
       totalValue: parseFloat(site.hectares_to_restore_goal)
-    },
-    hectares: true
+    }
   };
   const chartDataTreesRestored = {
     chartData: [
@@ -174,48 +170,71 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     cardValues: {
       label: t("TREES RESTORED"),
       value: site.trees_restored_count
-    },
-    hectares: false
+    }
   };
   const chartDataWorkdays = {
     chartData: [{ name: t("WORKDAYS CREATED"), value: site.workday_count }],
     cardValues: {
       label: t("WORKDAYS CREATED"),
       value: site.workday_count
-    },
-    hectares: false
+    }
   };
   const chartDataSaplings = {
     chartData: [
-      { name: t("SAPLINGS RESTORED"), value: 100 },
-      {
-        name: t("TOTAL SAPLINGS RESTORED"),
-        value: 200
-      }
+      { name: t("SAPLINGS RESTORED"), value: site.sapling_species_count }
+      // {
+      //   name: t("TOTAL SAPLINGS RESTORED"),
+      //   value: 200
+      // }
     ],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: 100,
-      totalName: t("TOTAL SAPLINGS RESTORED"),
-      totalValue: 200
-    },
-    hectares: false
+      value: site.sapling_species_count
+      // totalName: t("TOTAL SAPLINGS RESTORED"),
+      // totalValue: 200
+    }
   };
 
   const chartsDataMapping: ChartsData = {
     terrafund: [
-      <CharData key={"terrafund-1"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
-      <CharData key={"terrafund-2"} cardValues={chartDataTreesRestored.cardValues} chartData={chartDataTreesRestored} />
+      <CharData
+        key={"terrafund-1"}
+        cardValues={chartDataHectares.cardValues}
+        chartData={chartDataHectares}
+        hectares={true}
+      />,
+      <CharData
+        key={"terrafund-2"}
+        cardValues={chartDataTreesRestored.cardValues}
+        chartData={chartDataTreesRestored}
+        graph={false}
+      />
     ],
     ppc: [
-      <CharData key={"ppc-1"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
-      <CharData key={"ppc-2"} cardValues={chartDataTreesRestored.cardValues} chartData={chartDataTreesRestored} />,
+      <CharData
+        key={"ppc-1"}
+        cardValues={chartDataHectares.cardValues}
+        chartData={chartDataHectares}
+        graph={false}
+        hectares={true}
+      />,
+      <CharData
+        key={"ppc-2"}
+        cardValues={chartDataTreesRestored.cardValues}
+        chartData={chartDataTreesRestored}
+        graph={false}
+      />,
       <CharData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
     ],
     hbf: [
-      <CharData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} />,
-      <CharData key={"hbf-2"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
-      <CharData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} />
+      <CharData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />,
+      <CharData
+        key={"hbf-2"}
+        cardValues={chartDataHectares.cardValues}
+        chartData={chartDataHectares}
+        hectares={true}
+      />,
+      <CharData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
     ]
   };
 

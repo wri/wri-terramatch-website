@@ -8,7 +8,6 @@ interface ChartDataItem {
 
 export interface ProgressGoalsData {
   chartData: ChartDataItem[];
-  hectares?: boolean;
 }
 
 interface ProgressGoalsDoughnutChartProps {

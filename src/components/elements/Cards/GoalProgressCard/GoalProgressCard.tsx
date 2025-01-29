@@ -42,7 +42,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   classNameCard,
   classNameLabelValue,
   chart,
-  hectares,
+  hectares = false,
   graph = true,
   ...rest
 }) => {
