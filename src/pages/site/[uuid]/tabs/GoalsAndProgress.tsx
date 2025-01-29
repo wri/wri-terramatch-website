@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
+import React from "react";
 import { Else, If, Then, When } from "react-if";
 
+import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -29,6 +31,43 @@ export const LABEL_LEGEND = [
     color: "bg-secondary-600"
   }
 ];
+interface ChartDataItem {
+  cardValues: {
+    label: string;
+    value: number;
+    totalName?: string;
+    totalValue?: number;
+  };
+  chartData: any;
+  graph?: boolean;
+}
+// interface ChartData {
+//   name?: string;
+//   value?: number;
+//   totalValue?: number;
+//   hectares?: boolean;
+// }
+type ChartsData = {
+  terrafund: JSX.Element[];
+  ppc: JSX.Element[];
+  hbf: JSX.Element[];
+};
+
+const CharData = (values: ChartDataItem) => {
+  return (
+    <GoalProgressCard
+      label={values.cardValues.label}
+      value={values.cardValues.value}
+      totalValue={values.cardValues.totalValue}
+      hectares={values.chartData.hectares}
+      classNameLabel="text-neutral-650 uppercase mb-3"
+      labelVariant="text-14"
+      classNameCard="text-center flex flex-col items-center"
+      classNameLabelValue="justify-center"
+      chart={<ProgressGoalsDoughnutChart key={"items"} data={values.chartData} />}
+    />
+  );
+};
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
@@ -104,63 +143,90 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       nonTreeCount: "7,500"
     }
   ];
+  const chartDataHectares = {
+    chartData: [
+      { name: t("HECTARES RESTORED"), value: site.total_hectares_restored_sum },
+      site.framework_key !== Framework.PPC
+        ? {
+            name: t("TOTAL HECTARES RESTORED"),
+            value: parseFloat(site.hectares_to_restore_goal)
+          }
+        : {}
+    ],
+    cardValues: {
+      label: t("HECTARES RESTORED"),
+      value: site.total_hectares_restored_sum,
+      totalName: t("TOTAL HECTARES RESTORED"),
+      totalValue: parseFloat(site.hectares_to_restore_goal)
+    },
+    hectares: true
+  };
+  const chartDataTreesRestored = {
+    chartData: [
+      { name: t("TREES RESTORED"), value: site.trees_restored_count },
+      site.framework_key == Framework.HBF
+        ? {
+            name: t("TOTAL TREES RESTORED"),
+            value: 0
+          }
+        : {}
+    ],
+    cardValues: {
+      label: t("TREES RESTORED"),
+      value: site.trees_restored_count
+    },
+    hectares: false
+  };
+  const chartDataWorkdays = {
+    chartData: [{ name: t("WORKDAYS CREATED"), value: site.workday_count }],
+    cardValues: {
+      label: t("WORKDAYS CREATED"),
+      value: site.workday_count
+    },
+    hectares: false
+  };
+  const chartDataSaplings = {
+    chartData: [
+      { name: t("SAPLINGS RESTORED"), value: 100 },
+      {
+        name: t("TOTAL SAPLINGS RESTORED"),
+        value: 200
+      }
+    ],
+    cardValues: {
+      label: t("SAPLINGS RESTORED"),
+      value: 100,
+      totalName: t("TOTAL SAPLINGS RESTORED"),
+      totalValue: 200
+    },
+    hectares: false
+  };
+
+  const chartsDataMapping: ChartsData = {
+    terrafund: [
+      <CharData key={"terrafund-1"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
+      <CharData key={"terrafund-2"} cardValues={chartDataTreesRestored.cardValues} chartData={chartDataTreesRestored} />
+    ],
+    ppc: [
+      <CharData key={"ppc-1"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
+      <CharData key={"ppc-2"} cardValues={chartDataTreesRestored.cardValues} chartData={chartDataTreesRestored} />,
+      <CharData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
+    ],
+    hbf: [
+      <CharData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} />,
+      <CharData key={"hbf-2"} cardValues={chartDataHectares.cardValues} chartData={chartDataHectares} />,
+      <CharData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} />
+    ]
+  };
 
   return (
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
           <div className="flex w-full flex-wrap items-start justify-between gap-8">
-            <GoalProgressCard
-              frameworksShow={[Framework.HBF]}
-              label={t("workdays CREATED")}
-              value={205}
-              totalValue={"no data"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Hectares RESTORED")}
-              value={129}
-              totalValue={site.framework_key === Framework.PPC ? "no data" : "300 ha"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Trees Restored")}
-              frameworksHide={[Framework.HBF]}
-              value={113250}
-              totalValue={
-                site.framework_key === Framework.TF || site.framework_key === Framework.PPC ? "no data" : "300,000"
-              }
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("saplings Restored ")}
-              frameworksShow={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.PPC]}
-              label={t("workdays CREATED")}
-              value={site.combined_workday_count}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-
+            {chartsDataMapping[site.framework_key as keyof ChartsData].map((chart, index) => (
+              <React.Fragment key={index}>{chart}</React.Fragment>
+            ))}
             <GoalProgressCard
               label={t("Trees restored")}
               value={site.trees_restored_count}

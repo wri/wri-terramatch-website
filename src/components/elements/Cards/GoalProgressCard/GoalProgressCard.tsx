@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
-import { Else, If, Then, When } from "react-if";
+import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { withFrameworkShow } from "@/context/framework.provider";
@@ -22,6 +22,9 @@ export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<
   labelVariant?: TextVariants;
   classNameCard?: string;
   classNameLabelValue?: string;
+  chart?: JSX.Element;
+  hectares?: boolean;
+  graph?: boolean;
 }
 
 const GoalProgressCard: FC<GoalProgressCardProps> = ({
@@ -38,6 +41,9 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   labelVariant,
   classNameCard,
   classNameLabelValue,
+  chart,
+  hectares,
+  graph = true,
   ...rest
 }) => {
   const value = _val ?? 0;
@@ -53,20 +59,13 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
           </Text>
-          <When condition={!!totalValue}>
-            <If condition={totalValue === "no data"}>
-              <Then>
-                <img src="/images/graphic-6.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
-              </Then>
-              <Else>
-                <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
-              </Else>
-            </If>
-          </When>
+          {graph ? chart : null}
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
-            <When condition={(!!limit || !!totalValue) && totalValue !== "no data"}>
-              <Text variant="text-16-light">of {limit?.toLocaleString() ?? totalValue?.toLocaleString()}</Text>
+            <When condition={!!limit || !!totalValue}>
+              <Text variant="text-16-light">
+                of {limit?.toLocaleString() ?? totalValue?.toLocaleString()} {hectares ? "ha" : null}
+              </Text>
             </When>
             <When condition={!!labelValue}>
               <Text variant="text-16-light">{labelValue}</Text>
