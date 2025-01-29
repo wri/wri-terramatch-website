@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import Button from "@/components/elements/Button/Button";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
@@ -14,6 +13,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { Framework } from "@/context/framework.provider";
 
 interface ProjectOverviewTabProps {
   project: any;
@@ -22,38 +22,7 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const router = useRouter();
-  const jobsCreatedData = {
-    chartData: [
-      { name: "Jobs Created", value: project.total_jobs_created },
-      {
-        name: "Total Jobs Created Goal",
-        value: project.jobs_created_goal
-      }
-    ],
-    hectares: false
-  };
 
-  const hectaresData = {
-    chartData: [
-      { name: "Hectares Restored", value: project.total_hectares_restored_sum },
-      {
-        name: "Total Hectares Restored Goal",
-        value: project.total_hectares_restored_goal
-      }
-    ],
-    hectares: true
-  };
-  const treesRestoredData = {
-    chartData: [
-      { name: "Trees Restored", value: project.trees_restored_count },
-      {
-        name: "Total Trees Restored Goal",
-        value: project.trees_grown_goal
-      }
-    ],
-    hectares: false
-  };
-  console.log("project", project);
   return (
     <PageBody>
       <PageRow>
@@ -73,42 +42,39 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         >
           <div className="flex w-full text-darkCustom">
             <div className="grid w-[55%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
-              {/* <GoalProgressCard
+              <GoalProgressCard
                 frameworksShow={[Framework.PPC]}
                 label={t("Workday Count (PPC)")}
                 value={project.combined_workday_count}
-              /> */}
-              <ProgressGoalsDoughnutChart data={jobsCreatedData} />
-              <ProgressGoalsDoughnutChart data={hectaresData} />
-              <ProgressGoalsDoughnutChart data={treesRestoredData} />
-              {/* <GoalProgressCard
+              />
+              <GoalProgressCard
                 frameworksHide={[Framework.PPC]}
                 label={t("Jobs Created")}
                 value={project.total_jobs_created}
                 limit={project.jobs_created_goal}
-              /> */}
-              {/* <GoalProgressCard
+              />
+              <GoalProgressCard
                 label={t("Trees Restored")}
                 value={project.trees_restored_count}
                 limit={project.trees_grown_goal}
                 className="flex-1"
-              /> */}
+              />
               <div></div>
-              {/* <GoalProgressCard
+              <GoalProgressCard
                 label={t("Hectares Under Restoration")}
                 value={project.total_hectares_restored_sum}
                 limit={project.total_hectares_restored_goal}
-              /> */}
+              />
             </div>
             <div>
               <GoalProgressCard
                 label={t("Hectares Restored")}
                 hasProgress={false}
                 items={[
-                  { iconName: IconNames.TREE_CIRCLE_PD, label: t("Trees Planted"), value: project.trees_planted_count },
-                  { iconName: IconNames.LEAF_CIRCLE_PD, label: t("Seeds Planted"), value: project.seeds_planted_count },
+                  { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: project.trees_planted_count },
+                  { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: project.seeds_planted_count },
                   {
-                    iconName: IconNames.REFRESH_CIRCLE_PD,
+                    iconName: IconNames.REFRESH_CIRCLE,
                     label: t("Trees Regenerating"),
                     value: project.regenerated_trees_count
                   }
