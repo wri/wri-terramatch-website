@@ -138,9 +138,6 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               label={t("Trees Restored")}
               frameworksHide={[Framework.HBF]}
               value={113250}
-              // totalValue={
-              //   site.framework_key === Framework.TF || site.framework_key === Framework.PPC ? "no data" : "300,000"
-              // }
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
