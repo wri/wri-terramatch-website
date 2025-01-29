@@ -9,7 +9,8 @@ export const LAYERS_NAMES = {
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
   DELETED_GEOMETRIES: "deleted_geometries",
-  CENTROIDS: "centroids"
+  CENTROIDS: "centroids",
+  LANDSCAPES: "landscape_geom"
 };
 export const layersList: LayerType[] = [
   {
@@ -178,6 +179,21 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": "#ff5a5f",
+          "line-width": 2
+        }
+      }
+    ],
+    hover: false
+  },
+  {
+    geoserverLayerName: LAYERS_NAMES.LANDSCAPES,
+    name: `${LAYERS_NAMES.LANDSCAPES}`,
+    styles: [
+      {
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#F0AD11",
           "line-width": 2
         }
       }
