@@ -58,6 +58,7 @@ import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addBorderCountry,
+  addBorderLandscape,
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
@@ -67,6 +68,7 @@ import {
   addSourcesToLayers,
   drawTemporaryPolygon,
   removeBorderCountry,
+  removeBorderLandscape,
   removeMediaLayer,
   removePopups,
   startDrawing,
@@ -121,6 +123,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
+  selectedLandscapes?: string[];
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
@@ -172,7 +175,16 @@ export const MapContainer = ({
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
+  const {
+    polygonsData,
+    bbox,
+    setPolygonFromMap,
+    polygonFromMap,
+    sitePolygonData,
+    selectedCountry,
+    selectedLandscapes,
+    setLoader
+  } = props;
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -311,6 +323,23 @@ export const MapContainer = ({
       });
     }
   }, [selectedCountry, styleLoaded, sourcesAdded]);
+  useEffect(() => {
+    if (!map.current || !sourcesAdded) return;
+    const setupBorders = () => {
+      if (selectedLandscapes && selectedLandscapes.length > 0) {
+        addBorderLandscape(map.current, selectedLandscapes);
+      } else {
+        removeBorderLandscape(map.current);
+      }
+    };
+    if (map.current.isStyleLoaded()) {
+      setupBorders();
+    } else {
+      map.current.once("render", () => {
+        setupBorders();
+      });
+    }
+  }, [selectedLandscapes, styleLoaded, sourcesAdded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
