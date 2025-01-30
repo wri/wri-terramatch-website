@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Cell, Label, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
+import React from "react";
+import { Cell, Label, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 interface ChartDataItem {
   name: string;
@@ -13,89 +13,50 @@ export interface ProgressGoalsData {
 interface ProgressGoalsDoughnutChartProps {
   data?: ProgressGoalsData;
 }
-const percentage = (value: number, total: number) => ((value / total) * 100).toFixed(0);
 
-const formattedValue = (value: number) =>
-  value.toLocaleString("en-US", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1
-  });
-
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    const value = payload[0].value;
-
-    return (
-      <div className="shadow-lg flex flex-col items-center justify-center rounded  border bg-white p-1 text-center">
-        <p className="text-sm font-medium">{payload[0].name}</p>
-        <p className="text-gray-600 text-sm">{`${formattedValue(value)}`}</p>
-      </div>
-    );
-  }
-  return null;
-};
-
-const renderActiveShape = (props: any) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
-  return (
-    <g>
-      <Sector
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius + 10}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        fill={fill}
-      />
-    </g>
-  );
+const percentage = (current: number, total: number) => {
+  const percentValue = Math.min((current / total) * 100, 100);
+  return percentValue.toFixed(0);
 };
 
 const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({ data }) => {
   const { chartData } = data as any;
 
-  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+  const currentValue = chartData[0]?.value || 0;
+  const totalValue = chartData[1]?.value || 0;
 
-  const total = chartData.reduce((sum: any, item: any) => sum + item.value, 0);
+  const remainingValue = Math.max(totalValue - currentValue, 0);
 
-  const enhancedChartData = chartData.map((item: any) => ({
-    ...item,
-    total
-  }));
+  const transformedData =
+    currentValue > totalValue
+      ? [{ value: 1, isProgress: true }]
+      : [
+          { value: currentValue, isProgress: true },
+          { value: remainingValue, isProgress: false }
+        ];
 
-  const onPieEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
-
-  const onPieLeave = () => {
-    setActiveIndex(undefined);
-  };
-
-  const COLORS = ["#27A9E0FF", "#D8EAF6"];
+  const COLORS = ["#27A9E0", "#DFF2FB"];
 
   return (
     <div className="relative flex h-[180px] w-full flex-col items-center justify-center pt-0">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Tooltip content={<CustomTooltip />} />
           <Pie
-            data={enhancedChartData}
+            data={transformedData}
             cx="50%"
             cy="50%"
-            innerRadius={40}
-            outerRadius={70}
+            innerRadius={45}
+            outerRadius={75}
             paddingAngle={0}
             dataKey="value"
-            onMouseEnter={onPieEnter}
-            onMouseLeave={onPieLeave}
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape}
+            startAngle={90}
+            endAngle={-270}
           >
-            {chartData[1]?.value ? (
+            {totalValue > 0 && (
               <Label
                 position="center"
-                content={({ viewBox }) => {
+                content={(props: any) => {
+                  const { viewBox } = props;
                   const { cx, cy } = viewBox;
                   return (
                     <text
@@ -105,43 +66,25 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
                       dominantBaseline="middle"
                       className="text-20-semibold !font-semibold !text-darkCustom"
                     >
-                      <tspan x={cx} dy="-10" className="text-sm font-medium" style={{ fontSize: "10px" }}>
-                        {percentage(chartData[0]?.value, chartData[1]?.value)}%
+                      <tspan x={cx} dy="-4" className="text-16 !font-bold !text-blueCustom-700">
+                        {currentValue > totalValue ? "100+" : percentage(currentValue, totalValue)}%
                       </tspan>
-                      <tspan x={cx} dy="20" className="text-sm font-medium" style={{ fontSize: "10px" }}>
+                      <tspan x={cx} dy="16" className="text-12-light !text-darkCustom">
                         complete
                       </tspan>
                     </text>
                   );
                 }}
               />
-            ) : null}
-            {chartData.map((entry: any, index: any) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            )}
+            {transformedData.map((entry: any, index: any) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                className={currentValue > totalValue ? "opacity-80" : ""}
+              />
             ))}
           </Pie>
-          {/* <Legend
-            content={
-              <div>
-                <span>
-                  <b>{formattedValue(Math.round(chartData[0]?.value)) ?? 0} </b>
-                </span>
-                <span>
-                  of {formattedValue(Math.round(chartData[1]?.value)) ?? 0} {hectares ? "ha" : null}
-                </span>
-              </div>
-            }
-            layout="horizontal"
-            align="center"
-            verticalAlign="bottom"
-            wrapperStyle={{
-              fontSize: "12px",
-              marginTop: "5px",
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: "30px"
-            }}
-          /> */}
         </PieChart>
       </ResponsiveContainer>
     </div>
