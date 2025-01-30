@@ -13,7 +13,10 @@ import {
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import List from "@/components/extensive/List/List";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
+import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
@@ -30,6 +33,7 @@ import {
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
+import { CARD_IMPACT_STORY_MOCKED_DATA } from "../mockedData/impactStory";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
@@ -110,6 +114,54 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setCurrentBbox(modalBbox);
   };
 
+  const columnsModalImpactStories = [
+    {
+      header: "Impact Story",
+      accessorKey: "title",
+      enableSorting: true
+    },
+    {
+      header: "Country",
+      cell: (props: any) => {
+        const value = props.getValue().split("_");
+        return (
+          <div className="flex items-center gap-2">
+            <img src={`/flags/bj.svg`} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
+            <Text variant="text-14">{value[0]}</Text>
+          </div>
+        );
+      },
+      accessorKey: "country",
+      enableSorting: true
+    },
+    {
+      header: "Organization",
+      accessorKey: "organization",
+      enableSorting: true
+    },
+    {
+      header: "Date Created",
+      accessorKey: "date",
+      enableSorting: false
+    },
+    {
+      header: "",
+      accessorKey: "link",
+      enableSorting: false,
+      cell: ({ row }: { row: { original: { uuid: string } } }) => {
+        const uuid = row.original.uuid;
+        const handleClick = () => {
+          ModalStoryOpen(uuid);
+        };
+
+        return (
+          <button onClick={handleClick}>
+            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
+          </button>
+        );
+      }
+    }
+  ];
   const ModalMap = () => {
     const { map } = dashboardMapFunctions;
     const bounds = (map.current as mapboxgl.Map).getBounds();
@@ -210,6 +262,29 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </ModalExpand>
     );
   };
+
+  const ModalTableImpactStories = () => {
+    openModal(
+      "modalExpand",
+      <ModalExpand id="modalExpand" title={t("IMPACT STORIES")} popUpContent={textTooltipTable} closeModal={closeModal}>
+        <div className="w-full px-6">
+          <Table
+            columns={columnsModalImpactStories}
+            data={CARD_IMPACT_STORY_MOCKED_DATA}
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
+            hasPagination={true}
+            invertSelectPagination={true}
+            initialTableState={{ pagination: { pageSize: 10 } }}
+          />
+        </div>
+      </ModalExpand>
+    );
+  };
+
+  const ModalStoryOpen = (uuid: string) => {
+    openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} />);
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-[730px] small:w-1/2 small:max-w-max">
       <PageRow className="w-full gap-4 p-0">
@@ -364,6 +439,60 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
             }
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
+        </PageCard>
+        <PageCard
+          className="border-0 px-4 py-6"
+          classNameSubTitle="mt-4"
+          gap={6}
+          isUserAllowed={isUserAllowed}
+          subtitleMore={true}
+          title={t("IMPACT STORIES")}
+          tooltip={" "}
+          tooltipTrigger="click"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+          headerChildren={
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTableImpactStories();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                  {t("See All")}
+                </Text>
+              </div>
+            </Button>
+          }
+        >
+          <List
+            items={CARD_IMPACT_STORY_MOCKED_DATA}
+            render={item => (
+              <button
+                onClick={() => ModalStoryOpen(item.uuid)}
+                className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored"
+              >
+                <img
+                  src={item.image ?? "/images/no-image-available.png"}
+                  alt={item.title}
+                  className="h-20 w-20 rounded-md object-cover"
+                />
+                <div className="flex flex-col items-start gap-2">
+                  <Text variant="text-14-bold" className="group-hover:text-primary">
+                    {item.title}
+                  </Text>
+                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                    <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization} Organization
+                  </Text>
+                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                    <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.country}
+                  </Text>
+                </div>
+              </button>
+            )}
+            className="flex flex-col gap-4"
           />
         </PageCard>
       </PageRow>
