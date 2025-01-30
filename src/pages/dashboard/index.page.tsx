@@ -63,7 +63,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, frameworks, setLastUpdatedAt, isInitialized, setIsInitialized } = useDashboardContext();
+  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -84,10 +84,9 @@ const Dashboard = () => {
     activeCountries,
     activeProjects,
     polygonsData,
-    countryBbox,
     projectBbox,
-    landscapeBbox,
-    isUserAllowed
+    isUserAllowed,
+    generalBbox
   } = useDashboardData(filters);
 
   const dataToggle = [
@@ -104,19 +103,11 @@ const Dashboard = () => {
   }, [totalSectionHeader]);
 
   useEffect(() => {
-    if (landscapeBbox && !isInitialized) {
-      setCurrentBbox(landscapeBbox);
+    if (generalBbox) {
+      setCurrentBbox(generalBbox);
     }
-  }, [landscapeBbox, isInitialized]);
+  }, [generalBbox]);
 
-  useEffect(() => {
-    if (countryBbox) {
-      setCurrentBbox(countryBbox);
-      if (isInitialized) {
-        setIsInitialized(false);
-      }
-    }
-  }, [countryBbox, isInitialized]);
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);
@@ -292,17 +283,38 @@ const Dashboard = () => {
     <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
-          <When condition={filters.country.id !== 0 && !filters.uuid}>
+          <When condition={(filters.country.id !== 0 || filters.landscapes.length > 0) && !filters.uuid}>
             <div className="flex items-center gap-2">
-              <Text variant="text-14-light" className="uppercase text-black ">
+              <Text variant="text-14-light" className="uppercase text-black">
                 {t("results for:")}
               </Text>
-              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
-              <Text variant="text-24-semibold" className="text-black">
-                {t(filters.country?.data.label)}
-              </Text>
+
+              <When condition={filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid}>
+                <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
+                <Text variant="text-24-semibold" className="text-black">
+                  {t(filters.country?.data.label)}
+                </Text>
+              </When>
+
+              <When condition={filters.landscapes.length === 1 && filters.country.id === 0 && !filters.uuid}>
+                <Text variant="text-24-semibold" className="text-black">
+                  {filters.landscapes[0]}
+                </Text>
+              </When>
+
+              <When
+                condition={
+                  (filters.landscapes.length > 1 && filters.country.id === 0) ||
+                  (filters.landscapes.length > 0 && filters.country.id !== 0)
+                }
+              >
+                <Text variant="text-24-semibold" className="text-black">
+                  {filters.country.id === 0 ? t("Multiple Landscapes") : t("Multiple Countries/Landscapes")}
+                </Text>
+              </When>
             </div>
           </When>
+
           <When condition={filters.uuid}>
             <div>
               <DashboardBreadcrumbs

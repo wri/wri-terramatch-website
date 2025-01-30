@@ -78,12 +78,16 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
+  const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
 
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
   }, [filters.country]);
+  useEffect(() => {
+    setSelectedLandscapes(filters.landscapes || []);
+  }, [filters.landscapes]);
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
   useEffect(() => {
     if (initialBbox) {
@@ -143,6 +147,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               showImagesButton={showImagesButton}
               bbox={dashboardBbox}
               selectedCountry={selectedCountry}
+              selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
             />
           </LoadingContainerOpacity>
@@ -242,6 +247,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               bbox={currentBbox}
               selectedCountry={selectedCountry}
               setLoader={setDashboardMapLoaded}
+              selectedLandscapes={selectedLandscapes}
             />
           </LoadingContainerOpacity>
           <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">

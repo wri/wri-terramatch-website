@@ -65,76 +65,6 @@ const SiteReportDetailPage = () => {
     "Site Workdays"
   );
 
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
-
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      nonTreeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      nonTreeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "0"
-    }
-  ];
-
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
       <LoadingContainer loading={isLoading}>
@@ -204,11 +134,17 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.TF]}>
-                      <LongTextField title={t("Survival Rate")}>N/A</LongTextField>
-                      <LongTextField title={t("Description of Survival Rate Calculation")}>N/A</LongTextField>
-                      <LongTextField title={t("Explanation of Survival Rate")}>N/A</LongTextField>
-                      <LongTextField title={t("Maintenance Activities")}>N/A</LongTextField>
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
+                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Description of Survival Rate Calculation")}>
+                        {siteReport.survival_calculation}
+                      </LongTextField>
+                      <LongTextField title={t("Explanation of Survival Rate")}>
+                        {siteReport.survival_description}
+                      </LongTextField>
+                      <LongTextField title={t("Maintenance Activities")}>
+                        {siteReport.maintenance_activities}
+                      </LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.HBF]}>
                       <Text variant="text-20-bold">{t("Trees Planted")}</Text>
@@ -222,7 +158,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 100000
+                            value: siteReport.total_trees_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -232,8 +168,9 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="tree-planted"
-                          typeTable="treeCount"
-                          data={dataTreeCount}
+                          framework={siteReport.framework_key}
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </div>
                     </ContextCondition>
@@ -249,7 +186,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 100000
+                            value: siteReport.total_trees_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -258,13 +195,14 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="saplings-planted"
-                          typeTable="saplingsCount"
-                          data={dataTreeCount}
+                          collection="tree-planted"
+                          framework={siteReport.framework_key}
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </div>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.TF]}>
+                    <ContextCondition frameworksHide={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                       <Text variant="text-20-bold">{t("Seeds Planted")}</Text>
                       <GoalProgressCard
                         hasProgress={false}
@@ -276,7 +214,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_seeds_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -285,9 +223,10 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="seeds-planted"
-                          typeTable="saplingsCount"
-                          data={dataTreeCount}
+                          collection="seeding"
+                          framework={siteReport.framework_key}
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </div>
                     </ContextCondition>
@@ -303,7 +242,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_non_tree_species_planted_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -313,12 +252,13 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
+                          framework={siteReport.framework_key}
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </div>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.TF]}>
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                       <Text variant="text-20-bold">{t("Tree Replanting")}</Text>
                       <GoalProgressCard
                         hasProgress={false}
@@ -330,7 +270,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
+                            value: siteReport.total_tree_replanting_count
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -339,34 +279,10 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           modelName="site-report"
                           modelUUID={siteReportUUID}
-                          collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
-                        />
-                      </div>
-                      <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
-                      <GoalProgressCard
-                        hasProgress={false}
-                        classNameCard="!pl-0"
-                        items={[
-                          {
-                            iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
-                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
-                            variantLabel: "text-14",
-                            classNameLabel: " text-neutral-650 uppercase !w-auto",
-                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 5250
-                          }
-                        ]}
-                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
-                      />
-                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
-                          collection="non-tree"
-                          typeTable="nonTreeCount"
-                          data={dataNonTreeCount}
+                          collection="replanting"
+                          framework={siteReport.framework_key}
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </div>
                     </ContextCondition>
@@ -382,18 +298,16 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: 3200
+                            value: siteReport.num_trees_regenerating
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <Text variant="text-14" className="uppercase text-neutral-650">
-                        {t("Description of AND Activities:")}
+                        {t("Description of ANR Activities:")}
                       </Text>
                       <Text variant="text-16" className="mt-2 text-blueCustom-700">
-                        {t(
-                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum imperdiet consequat nulla, a dapibus nunc ultricies eget. Aliquam facilisis luctus nibh. Vivamus a lobortis nisl, scelerisque porttitor velit. Phasellus nec hendrerit felis. Proin commodo tortor consequat tortor pulvinar auctor. Nam rhoncus urna dolor, nec scelerisque elit blandit quis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam sollicitudin lobortis leo, eget laoreet magna fermentum ut. Suspendisse volutpat scelerisque felis, non commodo arcu laoreet vel. Sed facilisis volutpat est, a venenatis orci rhoncus cursus."
-                        )}
+                        {t(siteReport.regeneration_description ?? "No description")}
                       </Text>
                     </div>
                     {/* <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>

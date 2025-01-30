@@ -311,7 +311,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               frameworksShow={[Framework.HBF]}
               label={t("workdays CREATED")}
               value={205}
-              totalValue={"no data"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"
@@ -405,7 +404,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 100000
+                      value: project.trees_planted_count
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -413,7 +412,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "85%"
+                      value: `${project.survival_rate}%`
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -488,11 +487,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
               <TreeSpeciesTablePD
-                typeTable="treeCount"
-                data={dataTreeCount}
                 modelUUID={project.uuid}
                 modelName="project"
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.TF]}>

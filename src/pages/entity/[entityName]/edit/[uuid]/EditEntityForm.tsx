@@ -5,13 +5,10 @@ import { useMemo } from "react";
 import WizardForm from "@/components/extensive/WizardForm";
 import EntityProvider from "@/context/entity.provider";
 import { useFrameworkContext } from "@/context/framework.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  usePutV2FormsENTITYUUID,
-  usePutV2FormsENTITYUUIDSubmit
-} from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, pluralEntityNameToSingular } from "@/helpers/entity";
+import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
   useGetCustomFormSteps,
   useNormalizedFormDefaultValue
@@ -34,7 +31,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
 
-  const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
+  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
       if (mode === "edit" || mode?.includes("provide-feedback")) {
@@ -102,12 +99,8 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
         onCloseForm={() => router.push("/home")}
         onChange={(data, closeAndSave?: boolean) =>
           updateEntity({
-            pathParams: { uuid: entityUUID, entity: entityName },
-            // @ts-ignore
-            body: {
-              answers: normalizedFormData(data, formSteps!),
-              ...(closeAndSave ? { continue_later_action: true } : {})
-            }
+            answers: normalizedFormData(data, formSteps!),
+            ...(closeAndSave ? { continue_later_action: true } : {})
           })
         }
         formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
