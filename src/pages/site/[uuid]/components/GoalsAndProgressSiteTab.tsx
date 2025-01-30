@@ -4,7 +4,7 @@ import React from "react";
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressSiteTabProps {
   site: any;
@@ -133,9 +133,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       <ChartData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
     ]
   };
+  const terrafund = ALL_TF.includes(site.framework_key as Framework) ? "terrafund" : site.framework_key;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-8">
-      {chartsDataMapping[site.framework_key as keyof ChartsData].map((chart, index) => (
+      {chartsDataMapping[terrafund as keyof ChartsData]?.map((chart, index) => (
         <React.Fragment key={index}>{chart}</React.Fragment>
       ))}
       <GoalProgressCard
