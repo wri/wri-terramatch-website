@@ -45,16 +45,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const {
-    filters,
-    setFilters,
-    setSearchTerm,
-    searchTerm,
-    setFrameworks,
-    setDashboardCountries,
-    lastUpdatedAt,
-    setIsInitialized
-  } = useDashboardContext();
+  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries, lastUpdatedAt } =
+    useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
 
   const optionsCohort = [
@@ -157,9 +149,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   useEffect(() => {
     setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
-    if (landscapes && country) {
-      setIsInitialized(true);
-    }
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],

@@ -63,7 +63,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, frameworks, setLastUpdatedAt, isInitialized, setIsInitialized } = useDashboardContext();
+  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -84,10 +84,9 @@ const Dashboard = () => {
     activeCountries,
     activeProjects,
     polygonsData,
-    countryBbox,
     projectBbox,
-    landscapeBbox,
-    isUserAllowed
+    isUserAllowed,
+    generalBbox
   } = useDashboardData(filters);
 
   const dataToggle = [
@@ -104,19 +103,11 @@ const Dashboard = () => {
   }, [totalSectionHeader]);
 
   useEffect(() => {
-    if (landscapeBbox && !isInitialized) {
-      setCurrentBbox(landscapeBbox);
+    if (generalBbox) {
+      setCurrentBbox(generalBbox);
     }
-  }, [landscapeBbox, isInitialized]);
+  }, [generalBbox]);
 
-  useEffect(() => {
-    if (countryBbox) {
-      setCurrentBbox(countryBbox);
-      if (isInitialized) {
-        setIsInitialized(false);
-      }
-    }
-  }, [countryBbox, isInitialized]);
   useEffect(() => {
     refetchTotalSectionHeader();
   }, [filters]);

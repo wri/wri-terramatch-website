@@ -35533,6 +35533,70 @@ export const useGetV2DashboardBboxLandscape = <TData = GetV2DashboardBboxLandsca
   );
 };
 
+export type GetV2DashboardBboxCountryLandscapeQueryParams = {
+  /**
+   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
+   */
+  landscapes: string;
+  /**
+   * Country iso name
+   */
+  country?: string;
+};
+
+export type GetV2DashboardBboxCountryLandscapeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxCountryLandscapeResponse = {
+  bbox?: number[];
+};
+
+export type GetV2DashboardBboxCountryLandscapeVariables = {
+  queryParams: GetV2DashboardBboxCountryLandscapeQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxCountryLandscape = (
+  variables: GetV2DashboardBboxCountryLandscapeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardBboxCountryLandscapeResponse,
+    GetV2DashboardBboxCountryLandscapeError,
+    undefined,
+    {},
+    GetV2DashboardBboxCountryLandscapeQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/country-landscape", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxCountryLandscape = <TData = GetV2DashboardBboxCountryLandscapeResponse>(
+  variables: GetV2DashboardBboxCountryLandscapeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardBboxCountryLandscapeResponse,
+      GetV2DashboardBboxCountryLandscapeError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardBboxCountryLandscapeResponse,
+    GetV2DashboardBboxCountryLandscapeError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/bbox/country-landscape",
+      operationId: "getV2DashboardBboxCountryLandscape",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardBboxCountryLandscape({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountryCountryPathParams = {
   /**
    * ISO code of the country
@@ -39175,6 +39239,11 @@ export type QueryOperation =
       path: "/v2/dashboard/bbox/landscape";
       operationId: "getV2DashboardBboxLandscape";
       variables: GetV2DashboardBboxLandscapeVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/country-landscape";
+      operationId: "getV2DashboardBboxCountryLandscape";
+      variables: GetV2DashboardBboxCountryLandscapeVariables;
     }
   | {
       path: "/v2/dashboard/country/{country}";
