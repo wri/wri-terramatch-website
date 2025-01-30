@@ -76,7 +76,9 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               options={restorationStrategyOptions}
               selectedValues={project.restoration_strategy}
             />
-            <LongTextField title={t("Detailed Intervention Types")}>{project.history}</LongTextField>
+            <LongTextField frameworksShow={[Framework.HBF]} title={t("Detailed Intervention Types")}>
+              {project.detailed_intervention_types}
+            </LongTextField>
             <LongTextField title={t("Planting Start Date")}>{format(project.planting_start_date)}</LongTextField>
             <LongTextField frameworksHide={[Framework.PPC]} title={t("Planting End Date")}>
               {format(project.planting_end_date)}

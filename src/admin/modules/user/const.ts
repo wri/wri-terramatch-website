@@ -1,6 +1,17 @@
 import { getCountriesOptions } from "@/constants/options/countries";
 import { Framework } from "@/context/framework.provider";
 
+export const frameworkAdminPrimaryRoleChoices = [
+  {
+    id: "project-developer",
+    name: "Project Developer"
+  },
+  {
+    id: "project-manager",
+    name: "Project Manager"
+  }
+];
+
 export const userPrimaryRoleChoices = [
   {
     id: "admin-ppc",

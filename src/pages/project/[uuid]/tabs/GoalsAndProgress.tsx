@@ -311,7 +311,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               frameworksShow={[Framework.HBF]}
               label={t("workdays CREATED")}
               value={205}
-              totalValue={"no data"}
               classNameLabel="text-neutral-650 uppercase mb-3"
               labelVariant="text-14"
               classNameCard="text-center flex flex-col items-center"

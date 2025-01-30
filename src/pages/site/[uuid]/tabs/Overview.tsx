@@ -40,6 +40,7 @@ import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/gene
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { FileType, UploadedFile } from "@/types/common";
+import { getErrorMessageFromPayload } from "@/utils/errors";
 import Log from "@/utils/log";
 
 import SiteArea from "../components/SiteArea";
@@ -172,7 +173,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         }
         openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
+        const errorMessage = getErrorMessageFromPayload(error);
+        openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     } finally {
       hideLoader();

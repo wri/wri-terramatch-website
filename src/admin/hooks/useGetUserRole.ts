@@ -8,6 +8,7 @@ export const useGetUserRole = () => {
     role: user.primaryRole,
     isSuperAdmin: user.primaryRole === "admin-super",
     isPPCAdmin: user.primaryRole === "admin-ppc",
-    isPPCTerrafundAdmin: user.primaryRole === "admin-terrafund"
+    isPPCTerrafundAdmin: user.primaryRole === "admin-terrafund",
+    isFrameworkAdmin: user.primaryRole && user.primaryRole.includes("admin-")
   };
 };

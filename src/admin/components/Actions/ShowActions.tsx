@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { get } from "lodash";
+import { useMemo } from "react";
 import {
   Button,
   DeleteWithConfirmButton,
@@ -13,6 +14,7 @@ import {
 } from "react-admin";
 import { When } from "react-if";
 
+import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import ShowTitle from "../ShowTitle";
@@ -38,6 +40,7 @@ const ShowActions = ({
   toggleTestStatus,
   deleteProps = {}
 }: IProps) => {
+  const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
   const record = useRecordContext<any>();
   const resource = useResourceContext();
 
@@ -47,6 +50,27 @@ const ShowActions = ({
     deleteProps.confirmTitle = `Delete ${resourceName} ${record?.[titleSource]}`;
     deleteProps.confirmContent = `You are about to delete this ${resourceName}. This action will permanently remove the item from the system, and it cannot be undone. Are you sure you want to delete this item?`;
   }
+
+  const showEdit = useMemo(() => {
+    if (resource === "user") {
+      if (isSuperAdmin) {
+        return true;
+      }
+      if (record?.role === "admin-super") {
+        return false;
+      }
+      if (record?.role === "project-developer" || record?.role === "project-manager") {
+        return true;
+      }
+      if (isFrameworkAdmin) {
+        if (record?.role === role) {
+          return true;
+        }
+        return false;
+      }
+    }
+    return record && hasEdit;
+  }, [record, resource, hasEdit, isFrameworkAdmin, isSuperAdmin]);
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -78,7 +102,7 @@ const ShowActions = ({
             icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
         )}
-        {record && hasEdit && (
+        {showEdit && (
           <EditButton
             className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
             icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
