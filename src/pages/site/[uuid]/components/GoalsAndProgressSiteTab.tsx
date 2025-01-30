@@ -9,7 +9,7 @@ import { ALL_TF, Framework } from "@/context/framework.provider";
 interface GoalsAndProgressSiteTabProps {
   site: any;
 }
-interface ChartDataItem {
+interface ProgressDataCardItem {
   cardValues: {
     label: string;
     value: number;
@@ -27,7 +27,7 @@ type ChartsData = {
   hbf: JSX.Element[];
 };
 
-const ChartData = (values: ChartDataItem) => {
+const ProgressDataCard = (values: ProgressDataCardItem) => {
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -93,13 +93,13 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
 
   const chartsDataMapping: ChartsData = {
     terrafund: [
-      <ChartData
+      <ProgressDataCard
         key={"terrafund-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <ChartData
+      <ProgressDataCard
         key={"terrafund-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
@@ -107,30 +107,45 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       />
     ],
     ppc: [
-      <ChartData
+      <ProgressDataCard
         key={"ppc-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         graph={false}
         hectares={true}
       />,
-      <ChartData
+      <ProgressDataCard
         key={"ppc-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={false}
       />,
-      <ChartData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
+      <ProgressDataCard
+        key={"ppc-3"}
+        cardValues={chartDataWorkdays.cardValues}
+        chartData={chartDataWorkdays}
+        graph={false}
+      />
     ],
     hbf: [
-      <ChartData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />,
-      <ChartData
+      <ProgressDataCard
+        key={"hbf-1"}
+        cardValues={chartDataWorkdays.cardValues}
+        chartData={chartDataWorkdays}
+        graph={false}
+      />,
+      <ProgressDataCard
         key={"hbf-2"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <ChartData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
+      <ProgressDataCard
+        key={"hbf-3"}
+        cardValues={chartDataSaplings.cardValues}
+        chartData={chartDataSaplings}
+        graph={false}
+      />
     ]
   };
   const terrafund = ALL_TF.includes(site.framework_key as Framework) ? "terrafund" : site.framework_key;
