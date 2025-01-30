@@ -74,7 +74,7 @@ const AuditLogTable: FC<{
       if (fullColumns) {
         return isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
       } else {
-        return "grid-cols-[20%_20%_40%]";
+        return "grid-cols-[30%_30%_40%]";
       }
     } else {
       return isAdmin ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]" : "grid-cols-[14%_10%_10%_15%_30%_21%]";
@@ -125,7 +125,7 @@ const AuditLogTable: FC<{
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {generateUserName(item.first_name, item.last_name)}
             </Text>
-            <When condition={auditData?.entity !== "site-polygon" && !fullColumns}>
+            <When condition={auditData?.entity !== "site-polygon" && !!fullColumns}>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {formattedTextStatus(item.status as string) ?? "-"}
               </Text>
@@ -136,12 +136,12 @@ const AuditLogTable: FC<{
                 auditData?.entity
               )}
             </Text>
-            <When condition={!fullColumns}>
+            <When condition={!!fullColumns}>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                 {item.comment ?? "-"}
               </Text>
             </When>
-            <When condition={!fullColumns}>
+            <When condition={!!fullColumns}>
               <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
                 {item?.attachments?.map((attachmentItem: V2FileRead) => (
                   <Text
