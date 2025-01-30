@@ -46,6 +46,7 @@ const ChartData = (values: ChartDataItem) => {
 
 const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
   const t = useT();
+  const totaTreesRestoredCount = site?.trees_planted_count + site?.regenerated_trees_count + site?.seeds_planted_count;
   const chartDataHectares = {
     chartData: [
       { name: t("HECTARES RESTORED"), value: site.total_hectares_restored_sum },
@@ -64,10 +65,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataTreesRestored = {
-    chartData: [{ name: t("TREES RESTORED"), value: site.trees_restored_count }],
+    chartData: [{ name: t("TREES RESTORED"), value: totaTreesRestoredCount }],
     cardValues: {
       label: t("TREES RESTORED"),
-      value: site.trees_restored_count
+      value: totaTreesRestoredCount
     }
   };
   const chartDataWorkdays = {
@@ -83,10 +84,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataSaplings = {
-    chartData: [{ name: t("SAPLINGS RESTORED"), value: site.trees_restored_count }],
+    chartData: [{ name: t("SAPLINGS RESTORED"), value: totaTreesRestoredCount }],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: site.trees_restored_count
+      value: totaTreesRestoredCount
     }
   };
 
@@ -139,7 +140,7 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       ))}
       <GoalProgressCard
         label={t("Trees restored")}
-        value={site.trees_restored_count}
+        value={totaTreesRestoredCount}
         limit={site.trees_grown_goal}
         hasProgress={false}
         items={[
