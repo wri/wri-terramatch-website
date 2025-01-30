@@ -26,7 +26,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     const value = payload[0].value;
 
     return (
-      <div className="shadow-lg flex flex-col items-center justify-center rounded  border bg-white p-1 text-center">
+      <div className="shadow-lg absolute z-50 flex flex-col items-center justify-center rounded  border bg-white p-1 text-center">
         <p className="text-sm font-medium">{payload[0].name}</p>
         <p className="text-gray-600 text-sm">{`${formattedValue(value)}`}</p>
       </div>
@@ -75,7 +75,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
   const COLORS = ["#27A9E0FF", "#D8EAF6"];
 
   return (
-    <div className="relative flex h-[180px] w-full flex-col items-center justify-center pt-0">
+    <div className="relative h-[150px] w-[150px] overflow-hidden">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Tooltip content={<CustomTooltip />} />
@@ -83,8 +83,8 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
             data={enhancedChartData}
             cx="50%"
             cy="50%"
-            innerRadius={40}
-            outerRadius={70}
+            innerRadius={35}
+            outerRadius={65}
             paddingAngle={0}
             dataKey="value"
             onMouseEnter={onPieEnter}
@@ -96,19 +96,13 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
               <Label
                 position="center"
                 content={({ viewBox }) => {
-                  const { cx, cy } = viewBox;
+                  const { cx, cy } = viewBox as any;
                   return (
-                    <text
-                      x={cx}
-                      y={cy}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="text-20-semibold !font-semibold !text-darkCustom"
-                    >
-                      <tspan x={cx} dy="-10" className="text-sm font-medium" style={{ fontSize: "10px" }}>
+                    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" className="text-20-semibold">
+                      <tspan x={cx} dy="-10" className="text-blue-900 font-bold" style={{ fontSize: "13px" }}>
                         {percentage(chartData[0]?.value, chartData[1]?.value)}%
                       </tspan>
-                      <tspan x={cx} dy="20" className="text-sm font-medium" style={{ fontSize: "10px" }}>
+                      <tspan x={cx} dy="20" className="text-gray-600" style={{ fontSize: "12px" }}>
                         complete
                       </tspan>
                     </text>
@@ -120,28 +114,6 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          {/* <Legend
-            content={
-              <div>
-                <span>
-                  <b>{formattedValue(Math.round(chartData[0]?.value)) ?? 0} </b>
-                </span>
-                <span>
-                  of {formattedValue(Math.round(chartData[1]?.value)) ?? 0} {hectares ? "ha" : null}
-                </span>
-              </div>
-            }
-            layout="horizontal"
-            align="center"
-            verticalAlign="bottom"
-            wrapperStyle={{
-              fontSize: "12px",
-              marginTop: "5px",
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: "30px"
-            }}
-          /> */}
         </PieChart>
       </ResponsiveContainer>
     </div>

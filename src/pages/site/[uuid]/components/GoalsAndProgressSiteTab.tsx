@@ -64,15 +64,7 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataTreesRestored = {
-    chartData: [
-      { name: t("TREES RESTORED"), value: site.trees_restored_count },
-      site.framework_key == Framework.HBF
-        ? {
-            name: t("TOTAL TREES RESTORED"),
-            value: 0
-          }
-        : {}
-    ],
+    chartData: [{ name: t("TREES RESTORED"), value: site.trees_restored_count }],
     cardValues: {
       label: t("TREES RESTORED"),
       value: site.trees_restored_count
@@ -91,10 +83,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataSaplings = {
-    chartData: [{ name: t("SAPLINGS RESTORED"), value: site.sapling_species_count }],
+    chartData: [{ name: t("SAPLINGS RESTORED"), value: site.trees_restored_count }],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: site.sapling_species_count
+      value: site.trees_restored_count
     }
   };
 
