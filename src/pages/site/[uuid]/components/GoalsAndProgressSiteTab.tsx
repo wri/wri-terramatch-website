@@ -4,12 +4,12 @@ import React from "react";
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 
 interface GoalsAndProgressSiteTabProps {
   site: any;
 }
-interface ChartDataItem {
+interface ProgressDataCardItem {
   cardValues: {
     label: string;
     value: number;
@@ -27,7 +27,7 @@ type ChartsData = {
   hbf: JSX.Element[];
 };
 
-const ChartData = (values: ChartDataItem) => {
+const ProgressDataCard = (values: ProgressDataCardItem) => {
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -46,6 +46,7 @@ const ChartData = (values: ChartDataItem) => {
 
 const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
   const t = useT();
+  const totaTreesRestoredCount = site?.trees_planted_count + site?.regenerated_trees_count + site?.seeds_planted_count;
   const chartDataHectares = {
     chartData: [
       { name: t("HECTARES RESTORED"), value: site.total_hectares_restored_sum },
@@ -64,18 +65,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataTreesRestored = {
-    chartData: [
-      { name: t("TREES RESTORED"), value: site.trees_restored_count },
-      site.framework_key == Framework.HBF
-        ? {
-            name: t("TOTAL TREES RESTORED"),
-            value: 0
-          }
-        : {}
-    ],
+    chartData: [{ name: t("TREES RESTORED"), value: totaTreesRestoredCount }],
     cardValues: {
       label: t("TREES RESTORED"),
-      value: site.trees_restored_count
+      value: totaTreesRestoredCount
     }
   };
   const chartDataWorkdays = {
@@ -91,22 +84,22 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
     }
   };
   const chartDataSaplings = {
-    chartData: [{ name: t("SAPLINGS RESTORED"), value: site.sapling_species_count }],
+    chartData: [{ name: t("SAPLINGS RESTORED"), value: totaTreesRestoredCount }],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: site.sapling_species_count
+      value: totaTreesRestoredCount
     }
   };
 
   const chartsDataMapping: ChartsData = {
     terrafund: [
-      <ChartData
+      <ProgressDataCard
         key={"terrafund-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <ChartData
+      <ProgressDataCard
         key={"terrafund-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
@@ -114,40 +107,56 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       />
     ],
     ppc: [
-      <ChartData
+      <ProgressDataCard
         key={"ppc-1"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         graph={false}
         hectares={true}
       />,
-      <ChartData
+      <ProgressDataCard
         key={"ppc-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={false}
       />,
-      <ChartData key={"ppc-3"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />
+      <ProgressDataCard
+        key={"ppc-3"}
+        cardValues={chartDataWorkdays.cardValues}
+        chartData={chartDataWorkdays}
+        graph={false}
+      />
     ],
     hbf: [
-      <ChartData key={"hbf-1"} cardValues={chartDataWorkdays.cardValues} chartData={chartDataWorkdays} graph={false} />,
-      <ChartData
+      <ProgressDataCard
+        key={"hbf-1"}
+        cardValues={chartDataWorkdays.cardValues}
+        chartData={chartDataWorkdays}
+        graph={false}
+      />,
+      <ProgressDataCard
         key={"hbf-2"}
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
       />,
-      <ChartData key={"hbf-3"} cardValues={chartDataSaplings.cardValues} chartData={chartDataSaplings} graph={false} />
+      <ProgressDataCard
+        key={"hbf-3"}
+        cardValues={chartDataSaplings.cardValues}
+        chartData={chartDataSaplings}
+        graph={false}
+      />
     ]
   };
+  const framework = ALL_TF.includes(site.framework_key as Framework) ? "terrafund" : site.framework_key;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-8">
-      {chartsDataMapping[site.framework_key as keyof ChartsData].map((chart, index) => (
+      {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
         <React.Fragment key={index}>{chart}</React.Fragment>
       ))}
       <GoalProgressCard
         label={t("Trees restored")}
-        value={site.trees_restored_count}
+        value={totaTreesRestoredCount}
         limit={site.trees_grown_goal}
         hasProgress={false}
         items={[

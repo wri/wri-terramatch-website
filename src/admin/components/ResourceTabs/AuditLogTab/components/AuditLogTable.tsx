@@ -47,16 +47,21 @@ const AuditLogTable: FC<{
   auditLogData: { data: AuditStatusResponse[] };
   auditData?: { entity: string; entity_uuid: string };
   refresh?: () => void;
-}> = ({ auditLogData, auditData, refresh }) => {
+  fullColumns?: boolean;
+}> = ({ auditLogData, auditData, refresh, fullColumns = true }) => {
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
 
-  const getColumnTitles = (entity: string, isAdmin: boolean) => {
+  const getColumnTitles = (entity: string, isAdmin: boolean, fullColumns: boolean) => {
     if (entity === "site-polygon") {
-      return isAdmin
-        ? ["Date", "User", "Action", "Comments", "Attachments", ""]
-        : ["Date", "User", "Action", "Comments", "Attachments"];
+      if (fullColumns) {
+        return isAdmin
+          ? ["Date", "User", "Action", "Comments", "Attachments", ""]
+          : ["Date", "User", "Action", "Comments", "Attachments"];
+      } else {
+        return ["Date", "User", "Action"];
+      }
     } else {
       return isAdmin
         ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
@@ -66,13 +71,17 @@ const AuditLogTable: FC<{
 
   const getGridColumnSize = (entity: string, isAdmin: boolean) => {
     if (entity === "site-polygon") {
-      return isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+      if (fullColumns) {
+        return isAdmin ? "grid-cols-[14%_20%_15%_27%_19%_5%]" : "grid-cols-[14%_20%_15%_30%_21%]";
+      } else {
+        return "grid-cols-[30%_30%_40%]";
+      }
     } else {
       return isAdmin ? "grid-cols-[14%_10%_10%_15%_27%_19%_5%]" : "grid-cols-[14%_10%_10%_15%_30%_21%]";
     }
   };
 
-  const columnTitles = getColumnTitles(auditData?.entity as string, isAdmin);
+  const columnTitles = getColumnTitles(auditData?.entity as string, isAdmin, fullColumns);
   const gridColumnSize = getGridColumnSize(auditData?.entity as string, isAdmin);
 
   const { openNotification } = useNotificationContext();
@@ -116,7 +125,7 @@ const AuditLogTable: FC<{
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {generateUserName(item.first_name, item.last_name)}
             </Text>
-            <When condition={auditData?.entity !== "site-polygon"}>
+            <When condition={auditData?.entity !== "site-polygon" && !!fullColumns}>
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {formattedTextStatus(item.status as string) ?? "-"}
               </Text>
@@ -127,25 +136,29 @@ const AuditLogTable: FC<{
                 auditData?.entity
               )}
             </Text>
-            <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-              {item.comment ?? "-"}
-            </Text>
-            <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
-              {item?.attachments?.map((attachmentItem: V2FileRead) => (
-                <Text
-                  key={attachmentItem.uuid}
-                  variant="text-12-light"
-                  className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
-                  as={"span"}
-                  onClick={() => {
-                    attachmentItem.url && window.open(attachmentItem.url, "_blank");
-                  }}
-                >
-                  {attachmentItem.file_name}
-                </Text>
-              ))}
-            </div>
-            <When condition={isAdmin}>
+            <When condition={!!fullColumns}>
+              <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                {item.comment ?? "-"}
+              </Text>
+            </When>
+            <When condition={!!fullColumns}>
+              <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
+                {item?.attachments?.map((attachmentItem: V2FileRead) => (
+                  <Text
+                    key={attachmentItem.uuid}
+                    variant="text-12-light"
+                    className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
+                    as={"span"}
+                    onClick={() => {
+                      attachmentItem.url && window.open(attachmentItem.url, "_blank");
+                    }}
+                  >
+                    {attachmentItem.file_name}
+                  </Text>
+                ))}
+              </div>
+            </When>
+            <When condition={isAdmin && fullColumns}>
               <div className="justify-cente flex items-center border-b border-b-grey-750 py-2">
                 <Menu
                   container={menuOverflowContainerRef.current}

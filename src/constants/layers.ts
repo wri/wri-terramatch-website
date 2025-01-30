@@ -193,7 +193,7 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#F0AD11",
+          "line-color": "#fC5a5f",
           "line-width": 2
         }
       }
