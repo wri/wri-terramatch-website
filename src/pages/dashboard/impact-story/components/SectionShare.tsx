@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -12,14 +13,14 @@ import ShareSection from "./ShareSection";
 
 const SectionShare = ({ uuid, className }: { uuid: string; className?: string }) => {
   const { openModal, closeModal } = useModalContext();
+  const t = useT();
   const data = CARD_IMPACT_STORY_MOCKED_DATA.find(item => item.uuid === uuid);
 
   const openModalShare = () => {
     openModal(
       ModalId.MODAL_SHARE_IMPACT_STORY,
       <ModalShareImpactStory
-        title={"Confirm Polygon Deletion"}
-        content="Do you want to delete this polygon?"
+        title=""
         onClose={() => closeModal(ModalId.MODAL_SHARE_IMPACT_STORY)}
         onConfirm={() => {}}
       />
@@ -34,7 +35,7 @@ const SectionShare = ({ uuid, className }: { uuid: string; className?: string })
         iconProps={{ name: IconNames.SHARE_IMPACT_STORY, className: "w-6 h-6" }}
         onClick={() => openModalShare()}
       >
-        Share
+        {t("Share")}
       </Button>
       <ShareSection label="LANGUAGES" />
       <ShareSection label="COUNTRY" value={data?.country} />
