@@ -148,10 +148,10 @@ const GoalsAndProgressSiteTab = ({ site }: GoalsAndProgressSiteTabProps) => {
       />
     ]
   };
-  const terrafund = ALL_TF.includes(site.framework_key as Framework) ? "terrafund" : site.framework_key;
+  const framework = ALL_TF.includes(site.framework_key as Framework) ? "terrafund" : site.framework_key;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-8">
-      {chartsDataMapping[terrafund as keyof ChartsData]?.map((chart, index) => (
+      {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
         <React.Fragment key={index}>{chart}</React.Fragment>
       ))}
       <GoalProgressCard
