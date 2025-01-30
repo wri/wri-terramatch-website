@@ -52,7 +52,11 @@ function Pagination(props: PaginationProps) {
       ) : (
         <div />
       )}
-      <PageSelector variantText={props.variant?.VariantPageText} {...props} variant={props.variant} />
+      {props.hasPageSizeSelector ? (
+        <PageSelector variantText={props.variant?.VariantPageText} {...props} variant={props.variant} />
+      ) : (
+        <div />
+      )}
     </div>
   );
 }
