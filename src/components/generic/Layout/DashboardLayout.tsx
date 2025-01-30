@@ -8,6 +8,7 @@ import {
   useEffect,
   useState
 } from "react";
+import { When } from "react-if";
 
 import { DashboardProvider } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -51,6 +52,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
     }
   }, [dashboardCountries, router.asPath]);
 
+  const isImpactStoryPage = router.pathname.includes("dashboard/impact-story");
   const isProjectInsightsPage = router.pathname.includes("dashboard/project-insights");
   const isProjectListPage = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname === "dashboard/project";
@@ -69,15 +71,17 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
         <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className}`}>
           {dashboardCountries && (
             <>
-              <HeaderDashboard
-                isProjectInsightsPage={isProjectInsightsPage}
-                isProjectListPage={isProjectListPage}
-                isProjectPage={isProjectPage}
-                isHomepage={isHomepage}
-                dashboardCountries={dashboardCountries.data}
-                defaultSelectedCountry={selectedCountry}
-                setSelectedCountry={setSelectedCountry}
-              />
+              <When condition={!isImpactStoryPage}>
+                <HeaderDashboard
+                  isProjectInsightsPage={isProjectInsightsPage}
+                  isProjectListPage={isProjectListPage}
+                  isProjectPage={isProjectPage}
+                  isHomepage={isHomepage}
+                  dashboardCountries={dashboardCountries.data}
+                  defaultSelectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                />
+              </When>
               {childrenWithProps}
             </>
           )}

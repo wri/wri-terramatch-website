@@ -170,6 +170,7 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
+        1000: "#6C3BAA",
         500: "#4249E6",
         100: "#8096D3",
         60: "#ddddfb",
@@ -250,6 +251,7 @@ module.exports = {
       base: "1rem", //16px
       md: "1.125rem", //18px
       lg: "1.25rem", //20px
+      "2lg": "1.375rem", //22px
       xl: "1.5rem", //24px
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
@@ -259,6 +261,7 @@ module.exports = {
       //Wide extra
       "6xl": "2.75rem", //44px
       "7xl": "3rem", //48px
+      "8xl": "3.5rem", //56px
       "13xl": "4.5rem", //72px
       "14xl": "4.75rem", //76px
       "15xl": "5rem" //80px
@@ -286,7 +289,8 @@ module.exports = {
       treesHeaderWithOverlay:
         "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
       mapsImg: "url('/images/Maps.svg')",
-      dashboardHeader: 'url("/images/dashboard-header.webp")'
+      dashboardHeader: 'url("/images/dashboard-header.webp")',
+      impactStoryBg: 'url("/images/Impact Story - Landing Page.png")'
     }
   },
   plugins: [

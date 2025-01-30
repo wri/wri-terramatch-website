@@ -19,7 +19,7 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col justify-between bg-blueCustom-700 p-3">
       <div className="flex flex-col items-center gap-8 text-darkCustom-200">
-        <a className="mb-10 mt-4 cursor-pointer" href="/home">
+        <a className="mt-4 mb-10 cursor-pointer" href="/home">
           <Icon name={IconNames.TERRAFUND_lOGO_MINI} />
         </a>
         <Tooltip content={t("DASHBOARDS")} placement="right">
@@ -29,7 +29,8 @@ const Sidebar = () => {
                 router.asPath.includes("/dashboard") &&
                 !router.asPath.includes("/dashboard/project-list") &&
                 !router.asPath.includes("/dashboard/project-insights") &&
-                !router.asPath.includes("/dashboard/learn-more")
+                !router.asPath.includes("/dashboard/learn-more") &&
+                !router.asPath.includes("/dashboard/impact-story")
             })}
             href="/dashboard"
           >
@@ -61,6 +62,21 @@ const Sidebar = () => {
             <Text variant={"text-8"} className="text-center">
               {t("PROJECT")} <br />
               {t("INSIGHTS")}
+            </Text>
+          </a>
+        </Tooltip>
+
+        <Tooltip content={t("IMPACT STORY")} placement="right">
+          <a
+            className={classNames("flex cursor-pointer flex-col items-center gap-1", {
+              "text-white": router.asPath.includes("/dashboard/impact-story")
+            })}
+            href="/dashboard/impact-story"
+          >
+            <Icon name={IconNames.DASHBOARD_IMPACT_STORY} className="h-8 w-8" />
+            <Text variant={"text-8"} className="text-center uppercase">
+              {t("Impact")} <br />
+              {t("Story")}
             </Text>
           </a>
         </Tooltip>
