@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import React from "react";
 import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -10,6 +11,8 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { Framework } from "@/context/framework.provider";
 import { TextVariants } from "@/types/common";
+
+import GoalsAndProgressSiteTab from "../components/GoalsAndProgressSiteTab";
 
 interface GoalsAndProgressTabProps {
   site: any;
@@ -109,91 +112,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap items-start justify-between gap-8">
-            <GoalProgressCard
-              frameworksShow={[Framework.HBF]}
-              label={t("workdays CREATED")}
-              value={205}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Hectares RESTORED")}
-              value={129}
-              totalValue={
-                site.framework_key === Framework.TF ||
-                site.framework_key === Framework.TF_LANDSCAPES ||
-                site.framework_key === Framework.HBF
-                  ? "300 ha"
-                  : ""
-              }
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Trees Restored")}
-              frameworksHide={[Framework.HBF]}
-              value={113250}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("saplings Restored ")}
-              frameworksShow={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.PPC]}
-              label={t("workdays CREATED")}
-              value={site.combined_workday_count}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-
-            <GoalProgressCard
-              label={t("Trees restored")}
-              value={site.trees_restored_count}
-              limit={site.trees_grown_goal}
-              hasProgress={false}
-              items={[
-                {
-                  iconName: IconNames.TREE_CIRCLE_PD,
-                  label: t("Trees Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: site.trees_planted_count
-                },
-                {
-                  iconName: IconNames.LEAF_CIRCLE_PD,
-                  label: t("Seeds Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: site.seeds_planted_count
-                },
-                {
-                  iconName: IconNames.REFRESH_CIRCLE_PD,
-                  label: t("Trees Regenerating:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: site.regenerated_trees_count
-                }
-              ]}
-              className="pr-[41px] lg:pr-[150px]"
-            />
-          </div>
+          <GoalsAndProgressSiteTab site={site} />
         </PageCard>
       </PageRow>
 
