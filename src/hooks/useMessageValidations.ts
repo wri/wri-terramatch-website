@@ -59,6 +59,30 @@ export const useMessageValidators = () => {
       },
     [t]
   );
+  const getTargetCountryMessage = useMemo(
+    () =>
+      (extraInfo: any): string[] => {
+        if (!extraInfo) return [];
+
+        try {
+          const infoObject = JSON.parse(extraInfo);
+          if (infoObject && typeof infoObject === "object" && "country_name" in infoObject) {
+            const countryName = infoObject.country_name || "Unknown Country";
+            return [
+              t("Target Country: The polygon should be located inside {country}", {
+                country: countryName
+              })
+            ];
+          } else {
+            return [t("Error: Country information is missing in extra info.")];
+          }
+        } catch (error) {
+          Log.error("Failed to get target country message", error);
+          return [t("Error parsing extra info.")];
+        }
+      },
+    [t]
+  );
   const getDataMessage = useMemo(
     () => (extraInfo: string | undefined) => {
       if (!extraInfo) return [];
@@ -159,11 +183,13 @@ export const useMessageValidators = () => {
         return getIntersectionMessages(extraInfo);
       } else if (criteria_id === 14) {
         return getDataMessage(extraInfo);
+      } else if (criteria_id === 7) {
+        return getTargetCountryMessage(extraInfo);
       } else {
         return [];
       }
     },
-    [getProjectGoalMessage, getIntersectionMessages, getDataMessage]
+    [getProjectGoalMessage, getIntersectionMessages, getDataMessage, getTargetCountryMessage]
   );
 
   return {

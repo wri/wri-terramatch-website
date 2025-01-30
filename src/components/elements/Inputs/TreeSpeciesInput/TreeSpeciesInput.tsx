@@ -78,6 +78,16 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
   const displayPreviousCounts = props.withPreviousCounts && isReport;
   const hasCountActive = props.withNumbers;
+  const totalReportedColumn =
+    collection === "nursery-seedling"
+      ? t("NEW SEEDLINGS PRODUCED THIS REPORT:")
+      : isReport
+      ? t("TOTAL PLANTED THIS REPORT:")
+      : hasCountActive
+      ? t("TREES TO BE PLANTED:")
+      : "";
+  const totalToDateColumn =
+    collection === "nursery-seedling" ? t("TOTAL SEEDLINGS PRODUCED TO DATE:") : t("TOTAL PLANTED TO DATE:");
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
@@ -304,7 +314,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("TOTAL PLANTED THIS REPORT:") : hasCountActive ? t("TREES TO BE PLANTED:") : ""}
+              {totalReportedColumn}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {hasCountActive
@@ -317,7 +327,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           <When condition={displayPreviousCounts}>
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
-                {t("TOTAL PLANTED TO DATE:")}
+                {totalToDateColumn}
               </Text>
               <Text variant="text-20-bold" className="text-primary">
                 {totalWithPrevious.toLocaleString()}

@@ -7,13 +7,10 @@ import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import EntityProvider from "@/context/entity.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  usePutV2FormsENTITYUUID
-} from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
   useGetCustomFormSteps,
   useNormalizedFormDefaultValue
@@ -39,7 +36,7 @@ export const EntityEdit = () => {
   const entityName = ResourceEntityMapping[resource] as EntityName;
   const entityUUID = id as string;
 
-  const { mutate: updateEntity, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
+  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
 
   const {
     data: formResponse,
@@ -79,12 +76,7 @@ export const EntityEdit = () => {
               steps={formSteps!}
               errors={error}
               onBackFirstStep={() => navigate("..")}
-              onChange={data =>
-                updateEntity({
-                  pathParams: { uuid: entityUUID, entity: entityName },
-                  body: { answers: normalizedFormData(data, formSteps!) }
-                })
-              }
+              onChange={data => updateEntity({ answers: normalizedFormData(data, formSteps!) })}
               formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
               onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
               defaultValues={defaultValues}

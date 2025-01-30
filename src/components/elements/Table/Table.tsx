@@ -57,6 +57,7 @@ export interface TableProps<TData>
   onRowClick?: (row: TData) => void;
   contentClassName?: string;
   classNameTableWrapper?: string;
+  galleryType?: string;
 }
 
 export interface TableState {
@@ -91,6 +92,7 @@ function Table<TData extends RowData>({
   resetOnDataChange = true, // maintains default behavior
   onRowClick,
   contentClassName,
+  galleryType,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -139,6 +141,8 @@ function Table<TData extends RowData>({
   });
 
   const tableState = getState();
+  const defaultPageSize = galleryType === "treeSpeciesPD" ? 8 : initialTableState?.pagination?.pageSize || 5;
+  const rowCount = Object.keys(getRowModel().rowsById).length;
 
   useEffect(() => {
     setSorting(initialTableState?.sorting ?? []);
@@ -300,10 +304,11 @@ function Table<TData extends RowData>({
           previousPage={previousPage}
           setPageIndex={setPageIndex}
           setPageSize={setPageSize}
-          defaultPageSize={initialTableState?.pagination?.pageSize || 5}
+          defaultPageSize={defaultPageSize}
           containerClassName="mt-6"
-          hasPageSizeSelector
+          hasPageSizeSelector={rowCount > defaultPageSize}
           invertSelect={invertSelectPagination}
+          galleryType={galleryType}
         />
       )}
     </div>

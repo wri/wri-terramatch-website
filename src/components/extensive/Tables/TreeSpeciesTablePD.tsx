@@ -40,6 +40,7 @@ export interface TreeSpeciesTablePDProps {
     | "treeCountSite"
     | "saplingsCount";
   visibleRows?: number;
+  galleryType?: string;
 }
 
 export interface TreeSpeciesTableRowData {
@@ -61,6 +62,7 @@ const TreeSpeciesTablePD = ({
   secondColumnWidth = "",
   typeTable,
   visibleRows = 5,
+  galleryType,
   data
 }: TreeSpeciesTablePDProps) => {
   const queryParams: any = {};
@@ -436,6 +438,7 @@ const TreeSpeciesTablePD = ({
         hasPagination
         invertSelectPagination
         visibleRows={visibleRows}
+        galleryType={galleryType}
       />
     </div>
   );
