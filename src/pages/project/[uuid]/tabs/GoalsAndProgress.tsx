@@ -10,7 +10,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
-import GoalsAndProgressProjectTab from "@/pages/site/[uuid]/components/GoalsAndProgressProjectTab";
+import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 
 interface GoalsAndProgressProps {
   project: any;
@@ -297,7 +297,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     <PageBody className="text-darkCustom">
       <PageRow>
         <PageCard title={t("Project Progress & Goals")}>
-          <GoalsAndProgressProjectTab project={project} />
+          <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
 

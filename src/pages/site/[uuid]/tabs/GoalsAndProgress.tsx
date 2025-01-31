@@ -12,7 +12,7 @@ import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD
 import { Framework } from "@/context/framework.provider";
 import { TextVariants } from "@/types/common";
 
-import GoalsAndProgressSiteTab from "../components/GoalsAndProgressSiteTab";
+import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
 interface GoalsAndProgressTabProps {
   site: any;
@@ -112,7 +112,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     <PageBody>
       <PageRow>
         <PageCard title={t("Progress & Goals")}>
-          <GoalsAndProgressSiteTab site={site} />
+          <GoalsAndProgressEntityTab entity={site} />
         </PageCard>
       </PageRow>
 
