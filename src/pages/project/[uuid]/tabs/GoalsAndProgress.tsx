@@ -300,6 +300,10 @@ const dataTest = {
     {
       dueDate: "2021-10-01T00:00:00.000000Z",
       treeSpeciesAmount: 21944
+    },
+    {
+      dueDate: "2021-11-05T12:00:00.000000Z",
+      treeSpeciesAmount: 10000
     }
   ],
   "seeding-records": [
@@ -310,6 +314,10 @@ const dataTest = {
     {
       dueDate: "2021-11-05T12:00:00.000000Z",
       treeSpeciesAmount: 9512
+    },
+    {
+      dueDate: "2022-12-05T12:00:00.000000Z",
+      treeSpeciesAmount: 100
     }
   ]
 };
@@ -508,7 +516,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   </div>
                 </div>
                 {/* <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" /> */}
-                <TreePlantingChart data={getNewRestorationGoalDataForChart(dataTest, false) as any} />
+                <TreePlantingChart data={getNewRestorationGoalDataForChart(dataTest) as any} />
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>

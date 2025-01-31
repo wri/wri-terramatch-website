@@ -266,12 +266,16 @@ interface NewRestorationData {
   }>;
 }
 
-export const getNewRestorationGoalDataForChart = (data: NewRestorationData, isPercentage: boolean): ChartCategory[] => {
+export const getNewRestorationGoalDataForChart = (data: NewRestorationData): ChartCategory[] => {
   const createChartPoints = (
     sourceData: Array<{ dueDate: string | null; treeSpeciesAmount: number }>,
     categoryName: string
   ): { sum: number; values: ChartDataPoint[] } => {
-    let sum = 0;
+    const nullSum = sourceData
+      .filter(item => item.dueDate === null)
+      .reduce((acc, item) => acc + item.treeSpeciesAmount, 0);
+
+    let sum = nullSum;
     const values = sourceData
       .filter(item => item.dueDate !== null)
       .map(item => {
@@ -283,11 +287,7 @@ export const getNewRestorationGoalDataForChart = (data: NewRestorationData, isPe
         };
       });
 
-    const nullSum = sourceData
-      .filter(item => item.dueDate === null)
-      .reduce((acc, item) => acc + item.treeSpeciesAmount, 0);
-
-    return { sum: sum + nullSum, values };
+    return { sum, values };
   };
 
   const chartData: ChartCategory[] = [];

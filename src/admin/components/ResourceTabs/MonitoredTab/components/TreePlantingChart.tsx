@@ -16,7 +16,6 @@ type ChartProps = {
   data: ChartData[];
 };
 
-// Colors for the different data series
 const COLORS = {
   "Tree Planted": "#2E7D32",
   "Seeding Records": "#1976D2"
@@ -73,28 +72,23 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
     </g>
   );
 };
-
 const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
   const dataMap = new Map(data.map(item => [item.name, item]));
 
-  // Extract and sort all time points in ascending order
-  const allTimePoints = data
-    .flatMap(series => series.values.map(v => v.time))
-    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const allTimePoints = data.flatMap(series => series.values.map(v => formatDate(v.time))).sort();
 
   const uniqueTimePoints = Array.from(new Set(allTimePoints));
 
   const formattedData: DataPoint[] = uniqueTimePoints.map(timePoint => {
-    const formattedTime = formatDate(timePoint);
-    const dataPoint: DataPoint = { time: formattedTime };
+    const dataPoint: DataPoint = { time: timePoint };
 
     if (dataMap.has("Tree Planted")) {
-      const value = dataMap.get("Tree Planted")?.values.find(v => formatDate(v.time) === formattedTime)?.value;
+      const value = dataMap.get("Tree Planted")?.values.find(v => formatDate(v.time) === timePoint)?.value;
       if (value !== undefined) dataPoint["Tree Planted"] = value;
     }
 
     if (dataMap.has("Seeding Records")) {
-      const value = dataMap.get("Seeding Records")?.values.find(v => formatDate(v.time) === formattedTime)?.value;
+      const value = dataMap.get("Seeding Records")?.values.find(v => formatDate(v.time) === timePoint)?.value;
       if (value !== undefined) dataPoint["Seeding Records"] = value;
     }
 

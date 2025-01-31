@@ -26,6 +26,23 @@ export type TreeSpeciesPaginated = {
   };
 };
 
+export type TreeSpeciesAggregated = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    treeSpeciesAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+  }[];
+};
+
 export type TreeSpeciesRead = {
   uuid?: string;
   name?: string;
