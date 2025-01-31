@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 
+import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
@@ -294,6 +295,13 @@ export const dataSeedCountGoalSiteReport = [
   }
 ];
 
+const getProgressData = (totalValue: number, progressValue: number) => {
+  return [
+    { name: "Total", value: totalValue, color: "#13487A" },
+    { name: "Progress", value: progressValue, color: "#7BBD31" }
+  ];
+};
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
@@ -357,12 +365,20 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     )}
                   </Text>
                   <div className="mb-2 flex items-center">
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
+                    <div className="relative h-9 w-[230px]">
+                      <div className="absolute inset-0 z-0 h-full w-full">
+                        <ProgressBarChart
+                          data={getProgressData(project.trees_grown_goal ?? 0, project.trees_planted_count ?? 0)}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <img
+                        src="/images/treeBackgroundShort.svg"
+                        id="treeBackgroundShort"
+                        alt="secondValue"
+                        className="z-1 absolute right-0 h-9 w-[231px]"
+                      />
+                    </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
                       {project.trees_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
@@ -456,11 +472,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   items={[
                     {
                       iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("Trees Planted:"),
+                      label: t("Number of Seeds Planted:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: project.seeds_planted_count
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -468,7 +484,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "80% "
+                      value: `${project.survival_rate}%`
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -511,16 +527,24 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     {t("Number of seeds Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
+                    <div className="relative h-9 w-[260px]">
+                      <div className="absolute inset-0 z-0 h-full w-full">
+                        <ProgressBarChart
+                          data={getProgressData(project.seeds_grown_goal ?? 0, project.seeds_planted_count ?? 0)}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <img
+                        src="/images/seedBackground.svg"
+                        id="seedBackground"
+                        alt="secondValue"
+                        className="z-1 absolute right-0 h-9 w-[261px]"
+                      />
+                    </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      5,250
+                      {project.seeds_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of 25,000
+                        of {project.seeds_grown_goal ? project.seeds_grown_goal.toLocaleString() : "0"}
                       </Text>
                     </Text>
                   </div>
@@ -554,9 +578,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    data={dataSeedCount}
-                    visibleRows={10}
-                    typeTable="seedCount"
+                    framework={project.framework_key}
+                    visibleRows={5}
+                    collection="seeding"
                   />
                 </ContextCondition>
               </div>
