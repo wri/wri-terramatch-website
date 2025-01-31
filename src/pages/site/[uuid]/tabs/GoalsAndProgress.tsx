@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import React from "react";
 import { Else, If, Then, When } from "react-if";
 
+import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -9,8 +10,11 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import Loader from "@/components/generic/Loading/Loader";
 import { Framework } from "@/context/framework.provider";
+import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { TextVariants } from "@/types/common";
+import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
@@ -35,7 +39,12 @@ export const LABEL_LEGEND = [
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-  console.log("site", site);
+  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
+    pathParams: {
+      uuid: site.uuid,
+      entity: "site"
+    }
+  });
 
   const dataSeedCount = [
     {
@@ -145,7 +154,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                     ))}
                   </div>
                 </div>
-                <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
+                {dataAggregated ? (
+                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                ) : (
+                  <Loader />
+                )}
               </div>
             </div>
             <div>
