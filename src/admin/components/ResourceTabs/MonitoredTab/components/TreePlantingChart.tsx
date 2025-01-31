@@ -1,7 +1,7 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { ChartCategory } from "@/utils/dashboardUtils";
+import { ChartCategory, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {
   time: string;
@@ -14,8 +14,8 @@ type ChartProps = {
 };
 
 const COLORS = {
-  "Tree Planted": "#2E7D32",
-  "Seeding Records": "#1976D2"
+  "Tree Planted": "#4AAAE0",
+  "Seeding Records": "#0C2733"
 };
 
 const formatDate = (dateString: string) => {
@@ -48,7 +48,6 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
 const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
   const year = payload.value.split("-")[0];
   const shouldDisplayYear = previousYear !== year;
-
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={16} textAnchor="middle" fill="#353535">
@@ -59,7 +58,7 @@ const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
 };
 
 const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
-  const formattedValue = payload.value.toLocaleString();
+  const formattedValue = formatNumberChart(payload.value);
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -94,12 +93,12 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formattedData} margin={{ top: 15, right: 20, left: 15, bottom: 5 }}>
-        <CartesianGrid vertical={false} stroke="#E1E4E9" />
+      <LineChart data={formattedData} margin={{ top: 25, right: 20, bottom: 5 }}>
+        <CartesianGrid vertical={true} horizontal={false} stroke="#E1E4E9" strokeDasharray="3 3" />
         <XAxis
           dataKey="time"
           tickLine={false}
-          axisLine={false}
+          axisLine={true}
           tick={props => {
             const index = props.index;
             const previousYear = index > 0 ? formattedData[index - 1].time.split("-")[0] : null;
@@ -108,7 +107,7 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
           interval={0}
           padding={{ left: 10 }}
         />
-        <YAxis tickLine={false} axisLine={false} tick={props => <CustomYAxisTick {...props} />} />
+        <YAxis tickLine={false} axisLine={true} tick={props => <CustomYAxisTick {...props} />} />
         <Tooltip content={CustomTooltip} cursor={{ stroke: "#a6a6a6", strokeWidth: 1, strokeDasharray: "4 4" }} />
         {Object.entries(COLORS).map(
           ([key, color]) =>
