@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -10,6 +9,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
@@ -491,9 +491,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                <When condition={!!dataAggregated}>
-                  {dataAggregated && <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />}
-                </When>
+                {dataAggregated ? (
+                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                ) : (
+                  <Loader />
+                )}
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>

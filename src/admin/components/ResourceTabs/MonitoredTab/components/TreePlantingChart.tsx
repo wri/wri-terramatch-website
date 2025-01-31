@@ -94,7 +94,7 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formattedData} margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
+      <LineChart data={formattedData} margin={{ top: 15, right: 20, left: 15, bottom: 5 }}>
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis
           dataKey="time"
