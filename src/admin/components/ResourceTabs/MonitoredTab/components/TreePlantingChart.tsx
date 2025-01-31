@@ -1,7 +1,7 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { ChartCategory } from "@/utils/dashboardUtils";
+import { ChartCategory, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {
   time: string;
@@ -14,8 +14,8 @@ type ChartProps = {
 };
 
 const COLORS = {
-  "Tree Planted": "#2E7D32",
-  "Seeding Records": "#1976D2"
+  "Tree Planted": "#4AAAE0",
+  "Seeding Records": "#0C2733"
 };
 
 const formatDate = (dateString: string) => {
@@ -48,7 +48,6 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
 const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
   const year = payload.value.split("-")[0];
   const shouldDisplayYear = previousYear !== year;
-
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={0} dy={16} textAnchor="middle" fill="#353535">
@@ -59,7 +58,7 @@ const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
 };
 
 const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
-  const formattedValue = payload.value.toLocaleString();
+  const formattedValue = formatNumberChart(payload.value);
 
   return (
     <g transform={`translate(${x},${y})`}>
