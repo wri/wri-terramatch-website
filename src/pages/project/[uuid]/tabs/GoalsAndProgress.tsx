@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 
+import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -10,6 +11,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
+import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: any;
@@ -289,6 +291,29 @@ export const dataSeedCountGoalSiteReport = [
   }
 ];
 
+const dataTest = {
+  "tree-planted": [
+    {
+      dueDate: null,
+      treeSpeciesAmount: 6840
+    },
+    {
+      dueDate: "2021-10-01T00:00:00.000000Z",
+      treeSpeciesAmount: 21944
+    }
+  ],
+  "seeding-records": [
+    {
+      dueDate: "2021-10-01T00:00:00.000000Z",
+      treeSpeciesAmount: 20203
+    },
+    {
+      dueDate: "2021-11-05T12:00:00.000000Z",
+      treeSpeciesAmount: 9512
+    }
+  ]
+};
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
 
@@ -443,9 +468,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
                     <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      113,257
+                      {project.trees_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of 300,000
+                        of {project.trees_grown_goal.toLocaleString()}
                       </Text>
                     </Text>
                   </div>
@@ -482,7 +507,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
+                {/* <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" /> */}
+                <TreePlantingChart data={getNewRestorationGoalDataForChart(dataTest, false) as any} />
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -498,19 +524,21 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <ContextCondition frameworksShow={[Framework.TF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataTreeCountGoal}
-                typeTable="treeCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataSpeciesCountGoal}
-                typeTable="speciesCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
           </div>

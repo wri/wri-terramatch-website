@@ -255,6 +255,54 @@ export const getRestorationGoalDataForChart = (
   return chartData;
 };
 
+interface NewRestorationData {
+  "tree-planted": Array<{
+    dueDate: string | null;
+    treeSpeciesAmount: number;
+  }>;
+  "seeding-records"?: Array<{
+    dueDate: string;
+    treeSpeciesAmount: number;
+  }>;
+}
+
+export const getNewRestorationGoalDataForChart = (data: NewRestorationData, isPercentage: boolean): ChartCategory[] => {
+  const createChartPoints = (
+    sourceData: Array<{ dueDate: string | null; treeSpeciesAmount: number }>,
+    categoryName: string
+  ): { sum: number; values: ChartDataPoint[] } => {
+    let sum = 0;
+    const values = sourceData
+      .filter(item => item.dueDate !== null)
+      .map(item => {
+        sum += item.treeSpeciesAmount;
+        return {
+          time: new Date(item.dueDate!),
+          value: sum,
+          name: categoryName
+        };
+      });
+
+    const nullSum = sourceData
+      .filter(item => item.dueDate === null)
+      .reduce((acc, item) => acc + item.treeSpeciesAmount, 0);
+
+    return { sum: sum + nullSum, values };
+  };
+
+  const chartData: ChartCategory[] = [];
+
+  const { values: treePlantedValues } = createChartPoints(data["tree-planted"], "Tree Planted");
+  chartData.push({ name: "Tree Planted", values: treePlantedValues });
+
+  if (data["seeding-records"]) {
+    const { values: seedingRecordsValues } = createChartPoints(data["seeding-records"], "Seeding Records");
+    chartData.push({ name: "Seeding Records", values: seedingRecordsValues });
+  }
+
+  return chartData;
+};
+
 export const formatNumberLocaleString = (value: number): string => {
   return value.toLocaleString();
 };
