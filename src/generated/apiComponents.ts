@@ -82,7 +82,7 @@ export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUID
   );
 };
 
-export type GetV2TreeSpeciesEntityUUIDAggregateReportsPathParams = {
+export type GetV2EntityUUIDAggregateReportsPathParams = {
   /**
    * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
    */
@@ -90,99 +90,9 @@ export type GetV2TreeSpeciesEntityUUIDAggregateReportsPathParams = {
   uuid: string;
 };
 
-export type GetV2TreeSpeciesEntityUUIDAggregateReportsQueryParams = {
-  /**
-   * The collection to filter tree species by.
-   */
-  ["filter[collection]"]?: string;
-};
+export type GetV2EntityUUIDAggregateReportsError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2TreeSpeciesEntityUUIDAggregateReportsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TreeSpeciesEntityUUIDAggregateReportsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    amount?: number;
-    type?: string;
-    collection?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2TreeSpeciesEntityUUIDAggregateReportsVariables = {
-  pathParams: GetV2TreeSpeciesEntityUUIDAggregateReportsPathParams;
-  queryParams?: GetV2TreeSpeciesEntityUUIDAggregateReportsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TreeSpeciesEntityUUIDAggregateReports = (
-  variables: GetV2TreeSpeciesEntityUUIDAggregateReportsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TreeSpeciesEntityUUIDAggregateReportsResponse,
-    GetV2TreeSpeciesEntityUUIDAggregateReportsError,
-    undefined,
-    {},
-    GetV2TreeSpeciesEntityUUIDAggregateReportsQueryParams,
-    GetV2TreeSpeciesEntityUUIDAggregateReportsPathParams
-  >({ url: "/v2/tree-species/{entity}/{uuid}/aggregate-reports", method: "get", ...variables, signal });
-
-export const useGetV2TreeSpeciesEntityUUIDAggregateReports = <
-  TData = GetV2TreeSpeciesEntityUUIDAggregateReportsResponse
->(
-  variables: GetV2TreeSpeciesEntityUUIDAggregateReportsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2TreeSpeciesEntityUUIDAggregateReportsResponse,
-      GetV2TreeSpeciesEntityUUIDAggregateReportsError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2TreeSpeciesEntityUUIDAggregateReportsResponse,
-    GetV2TreeSpeciesEntityUUIDAggregateReportsError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/tree-species/{entity}/{UUID}/aggregate-reports",
-      operationId: "getV2TreeSpeciesEntityUUIDAggregateReports",
-      variables
-    }),
-    ({ signal }) => fetchGetV2TreeSpeciesEntityUUIDAggregateReports({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2EntityUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2EntityUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2EntityUUIDResponse = {
+export type GetV2EntityUUIDAggregateReportsResponse = {
   ["tree-planted"]?: {
     /**
      * @format date-time
@@ -199,29 +109,38 @@ export type GetV2EntityUUIDResponse = {
   }[];
 };
 
-export type GetV2EntityUUIDVariables = {
-  pathParams: GetV2EntityUUIDPathParams;
+export type GetV2EntityUUIDAggregateReportsVariables = {
+  pathParams: GetV2EntityUUIDAggregateReportsPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2EntityUUID = (variables: GetV2EntityUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2EntityUUIDResponse, GetV2EntityUUIDError, undefined, {}, {}, GetV2EntityUUIDPathParams>({
-    url: "/v2/{entity}/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const fetchGetV2EntityUUIDAggregateReports = (
+  variables: GetV2EntityUUIDAggregateReportsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2EntityUUIDAggregateReportsResponse,
+    GetV2EntityUUIDAggregateReportsError,
+    undefined,
+    {},
+    {},
+    GetV2EntityUUIDAggregateReportsPathParams
+  >({ url: "/v2/{entity}/{uuid}/aggregate-reports", method: "get", ...variables, signal });
 
-export const useGetV2EntityUUID = <TData = GetV2EntityUUIDResponse>(
-  variables: GetV2EntityUUIDVariables,
+export const useGetV2EntityUUIDAggregateReports = <TData = GetV2EntityUUIDAggregateReportsResponse>(
+  variables: GetV2EntityUUIDAggregateReportsVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2EntityUUIDResponse, GetV2EntityUUIDError, TData>,
+    reactQuery.UseQueryOptions<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2EntityUUIDResponse, GetV2EntityUUIDError, TData>(
-    queryKeyFn({ path: "/v2/{entity}/{UUID}", operationId: "getV2EntityUUID", variables }),
-    ({ signal }) => fetchGetV2EntityUUID({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>(
+    queryKeyFn({
+      path: "/v2/{entity}/{UUID}/aggregate-reports",
+      operationId: "getV2EntityUUIDAggregateReports",
+      variables
+    }),
+    ({ signal }) => fetchGetV2EntityUUIDAggregateReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -38813,14 +38732,9 @@ export type QueryOperation =
       variables: GetV2TreeSpeciesEntityUUIDVariables;
     }
   | {
-      path: "/v2/tree-species/{entity}/{UUID}/aggregate-reports";
-      operationId: "getV2TreeSpeciesEntityUUIDAggregateReports";
-      variables: GetV2TreeSpeciesEntityUUIDAggregateReportsVariables;
-    }
-  | {
-      path: "/v2/{entity}/{UUID}";
-      operationId: "getV2EntityUUID";
-      variables: GetV2EntityUUIDVariables;
+      path: "/v2/{entity}/{UUID}/aggregate-reports";
+      operationId: "getV2EntityUUIDAggregateReports";
+      variables: GetV2EntityUUIDAggregateReportsVariables;
     }
   | {
       path: "/v2/admin/projects/multi";

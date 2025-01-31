@@ -1,19 +1,16 @@
 import React from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+import { ChartCategory } from "@/utils/dashboardUtils";
+
 type DataPoint = {
   time: string;
   "Tree Planted"?: number;
   "Seeding Records"?: number;
 };
 
-type ChartData = {
-  name: string;
-  values: { time: string; value: number; name: string }[];
-};
-
 type ChartProps = {
-  data: ChartData[];
+  data: ChartCategory[];
 };
 
 const COLORS = {
@@ -75,7 +72,7 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
 const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
   const dataMap = new Map(data.map(item => [item.name, item]));
 
-  const allTimePoints = data.flatMap(series => series.values.map(v => formatDate(v.time))).sort();
+  const allTimePoints = data.flatMap(series => series.values.map((v: any) => formatDate(v.time))).sort();
 
   const uniqueTimePoints = Array.from(new Set(allTimePoints));
 
@@ -83,12 +80,12 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
     const dataPoint: DataPoint = { time: timePoint };
 
     if (dataMap.has("Tree Planted")) {
-      const value = dataMap.get("Tree Planted")?.values.find(v => formatDate(v.time) === timePoint)?.value;
+      const value = dataMap.get("Tree Planted")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
       if (value !== undefined) dataPoint["Tree Planted"] = value;
     }
 
     if (dataMap.has("Seeding Records")) {
-      const value = dataMap.get("Seeding Records")?.values.find(v => formatDate(v.time) === timePoint)?.value;
+      const value = dataMap.get("Seeding Records")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
       if (value !== undefined) dataPoint["Seeding Records"] = value;
     }
 
@@ -97,7 +94,7 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={formattedData} margin={{ top: 5, right: 15 }}>
+      <LineChart data={formattedData} margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis
           dataKey="time"

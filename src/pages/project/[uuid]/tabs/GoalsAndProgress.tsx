@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { When } from "react-if";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -11,6 +12,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
+import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
@@ -291,40 +293,14 @@ export const dataSeedCountGoalSiteReport = [
   }
 ];
 
-const dataTest = {
-  "tree-planted": [
-    {
-      dueDate: null,
-      treeSpeciesAmount: 6840
-    },
-    {
-      dueDate: "2021-10-01T00:00:00.000000Z",
-      treeSpeciesAmount: 21944
-    },
-    {
-      dueDate: "2021-11-05T12:00:00.000000Z",
-      treeSpeciesAmount: 10000
-    }
-  ],
-  "seeding-records": [
-    {
-      dueDate: "2021-10-01T00:00:00.000000Z",
-      treeSpeciesAmount: 20203
-    },
-    {
-      dueDate: "2021-11-05T12:00:00.000000Z",
-      treeSpeciesAmount: 9512
-    },
-    {
-      dueDate: "2022-12-05T12:00:00.000000Z",
-      treeSpeciesAmount: 100
-    }
-  ]
-};
-
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-
+  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
+    pathParams: {
+      uuid: project.uuid,
+      entity: "project"
+    }
+  });
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -515,8 +491,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                {/* <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" /> */}
-                <TreePlantingChart data={getNewRestorationGoalDataForChart(dataTest) as any} />
+                <When condition={!!dataAggregated}>
+                  {dataAggregated && <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />}
+                </When>
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
