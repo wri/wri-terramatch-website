@@ -13,6 +13,7 @@ import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
+import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
@@ -304,97 +305,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
-        <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap items-start justify-between gap-8">
-            <GoalProgressCard
-              frameworksShow={[Framework.TF]}
-              label={t("JOBS CREATED")}
-              value={205}
-              totalValue={300}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.HBF]}
-              label={t("workdays CREATED")}
-              value={205}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Hectares RESTORED")}
-              value={129}
-              totalValue={"300 ha"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Trees Restored")}
-              frameworksHide={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("saplings Restored ")}
-              frameworksShow={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.PPC]}
-              label={t("workdays CREATED")}
-              value={project.combined_workday_count}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-
-            <GoalProgressCard
-              label={t("Trees restored")}
-              value={project.trees_restored_count}
-              limit={project.trees_grown_goal}
-              hasProgress={false}
-              items={[
-                {
-                  iconName: IconNames.TREE_CIRCLE_PD,
-                  label: t("Trees Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.trees_planted_count
-                },
-                {
-                  iconName: IconNames.LEAF_CIRCLE_PD,
-                  label: t("Seeds Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.seeds_planted_count
-                },
-                {
-                  iconName: IconNames.REFRESH_CIRCLE_PD,
-                  label: t("Trees Regenerating:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.regenerated_trees_count
-                }
-              ]}
-              className="pr-[41px] lg:pr-[150px]"
-            />
-          </div>
+        <PageCard title={t("Project Progress & Goals")}>
+          <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
 

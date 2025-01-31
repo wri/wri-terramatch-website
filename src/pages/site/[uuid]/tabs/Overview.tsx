@@ -41,7 +41,7 @@ import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 import Log from "@/utils/log";
 
-import GoalsAndProgressSiteTab from "../components/GoalsAndProgressSiteTab";
+import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
@@ -408,7 +408,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
               </Button>
             }
           >
-            <GoalsAndProgressSiteTab site={site} />
+            <GoalsAndProgressEntityTab entity={site} />
           </PageCard>
         </PageRow>
         <PageRow>

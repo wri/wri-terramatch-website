@@ -13,6 +13,7 @@ export interface ProgressGoalsData {
 interface ProgressGoalsDoughnutChartProps {
   data?: ProgressGoalsData;
 }
+
 const percentage = (current: number, total: number) => {
   const percentValue = Math.min((current / total) * 100, 100);
   return percentValue.toFixed(0);
@@ -33,6 +34,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
           { value: currentValue, isProgress: true },
           { value: remainingValue, isProgress: false }
         ];
+
   const COLORS = ["#27A9E0", "#DFF2FB"];
 
   return (

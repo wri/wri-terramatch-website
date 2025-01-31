@@ -15,13 +15,13 @@ import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
-import GoalsAndProgressTab from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
 import AuditLog from "./tabs/AuditLog";
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 const ButtonStates = {
   PROJECTS: 0,
