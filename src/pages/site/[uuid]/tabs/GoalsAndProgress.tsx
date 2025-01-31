@@ -35,41 +35,7 @@ export const LABEL_LEGEND = [
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-
-  const dataTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      treeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "7,500"
-    },
-    {
-      name: ["Non-scientific name", "tree"],
-      treeCount: "4,040"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "3,200"
-    },
-    {
-      name: ["Species scientific name", "new"],
-      treeCount: "3,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      treeCount: "0"
-    }
-  ];
+  console.log("site", site);
 
   const dataSeedCount = [
     {
@@ -129,12 +95,12 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   {
                     iconName: IconNames.TREE_CIRCLE_PD,
                     label: t(
-                      site.framework_key === Framework.HBF ? "number of SAPLINGS PLANTED" : "number of TREES PLANTED:"
+                      site.framework_key === Framework.HBF ? "number of SAPLINGS PLANTED:" : "number of TREES PLANTED:"
                     ),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: 100000
+                    value: site.trees_planted_count
                   },
                   ...(site.framework_key !== Framework.HBF
                     ? [
@@ -142,13 +108,13 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                           iconName: IconNames.SURVIVAL_RATE,
                           label: t(
                             site.framework_key === Framework.TF
-                              ? "Last Reported Survival Rate"
+                              ? "Last Reported Survival Rate:"
                               : "Estimated Survival Rate:"
                           ),
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value: "85%"
+                          value: site.survival_rate_planted ? `${site.survival_rate_planted}%` : "-"
                         }
                       ]
                     : []),
@@ -160,19 +126,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                     classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
                     value: 10,
                     limit: 12
-                  },
-                  ...(site.framework_key === Framework.TF
-                    ? [
-                        {
-                          iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                          label: t("PERCENTAGE of Native species:"),
-                          variantLabel: "text-14" as TextVariants,
-                          classNameLabel: " text-neutral-650 uppercase !w-auto",
-                          classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value: "3% "
-                        }
-                      ]
-                    : [])
+                  }
                 ]}
               />
               <div className="mt-2 border-t border-dashed border-neutral-480 pt-4">
@@ -197,10 +151,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <div>
               <TreeSpeciesTablePD
                 modelName="site"
-                data={dataTreeCount}
-                typeTable="treeCount"
                 modelUUID={site.uuid}
-                visibleRows={10}
+                framework={site.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </div>
           </div>
