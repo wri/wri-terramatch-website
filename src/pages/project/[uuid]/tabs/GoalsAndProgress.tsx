@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 
+import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -8,9 +9,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
+import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
+import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: any;
@@ -292,7 +296,12 @@ export const dataSeedCountGoalSiteReport = [
 
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-
+  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
+    pathParams: {
+      uuid: project.uuid,
+      entity: "project"
+    }
+  });
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -355,9 +364,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
                     <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      113,257
+                      {project.trees_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of 300,000
+                        of {project.trees_grown_goal.toLocaleString()}
                       </Text>
                     </Text>
                   </div>
@@ -394,7 +403,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
+                {dataAggregated ? (
+                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                ) : (
+                  <Loader />
+                )}
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -410,19 +423,21 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <ContextCondition frameworksShow={[Framework.TF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataTreeCountGoal}
-                typeTable="treeCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataSpeciesCountGoal}
-                typeTable="speciesCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
           </div>
