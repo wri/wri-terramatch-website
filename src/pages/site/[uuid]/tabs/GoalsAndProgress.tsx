@@ -39,49 +39,14 @@ export const LABEL_LEGEND = [
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
+  const [treeCount, setTreeCount] = React.useState(0);
+  const [speciesCount, setSpeciesCount] = React.useState(0);
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: site.uuid,
       entity: "site"
     }
   });
-
-  const dataSeedCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      seedCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      seedCount: "7,500"
-    }
-  ];
-  const dataNonTreeCount = [
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "Native species"],
-      nonTreeCount: "45,000"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "10,350"
-    },
-    {
-      name: ["Species scientific name", "tree"],
-      nonTreeCount: "7,500"
-    }
-  ];
 
   return (
     <PageBody>
@@ -191,7 +156,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14" as TextVariants,
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: site.seeds_planted_count.toLocaleString()
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -199,7 +164,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "80% "
+                      value: site.direct_seeding_survival_rate ? `${site.direct_seeding_survival_rate}%` : "-"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -207,7 +172,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 6
+                      value: speciesCount
                     }
                   ]}
                 />
@@ -223,7 +188,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: treeCount.toLocaleString()
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -231,7 +196,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "6"
+                      value: speciesCount
                     }
                   ]}
                 />
@@ -247,7 +212,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: site.seeds_planted_count.toLocaleString()
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -255,38 +220,32 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 6
-                    },
-                    {
-                      iconName: IconNames.LEARF_NATIVE_CIRCLE_PD,
-                      label: t("PERCENTAGE of Native species:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "1%"
+                      value: speciesCount
                     }
                   ]}
                 />
               </When>
             </div>
             <div>
-              <If condition={site.framework_key === Framework.TF}>
+              <If condition={site.framework_key === Framework.TF || site.framework_key === Framework.HBF}>
                 <Then>
                   <TreeSpeciesTablePD
                     modelName="site"
-                    data={dataNonTreeCount}
-                    typeTable="nonTreeCount"
+                    collection="non-tree"
                     modelUUID={site.uuid}
-                    visibleRows={10}
+                    visibleRows={5}
+                    setTotalSpecies={setSpeciesCount}
+                    setTotalCount={setTreeCount}
                   />
                 </Then>
                 <Else>
                   <TreeSpeciesTablePD
                     modelName="site"
-                    data={dataSeedCount}
-                    typeTable="seedCount"
+                    collection="seeding"
                     modelUUID={site.uuid}
-                    visibleRows={10}
+                    visibleRows={5}
+                    setTotalCount={setTreeCount}
+                    setTotalSpecies={setSpeciesCount}
                   />
                 </Else>
               </If>
