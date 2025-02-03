@@ -322,9 +322,24 @@ const PolygonDrawer = ({
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection record={selectedPolygon} entity={"Polygon"} refresh={refetch}></CommentarySection>
+            <CommentarySection
+              variantText="text-14-semibold"
+              record={selectedPolygon}
+              entity={"Polygon"}
+              refresh={refetch}
+            ></CommentarySection>
             {auditLogData && (
-              <AuditLogTable fullColumns={false} auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
+              <>
+                <Text variant="text-14-semibold" className="">
+                  Audit Log
+                </Text>
+                <AuditLogTable
+                  fullColumns={false}
+                  auditLogData={auditLogData}
+                  auditData={auditData}
+                  refresh={refetch}
+                />
+              </>
             )}
           </div>
         </Then>
