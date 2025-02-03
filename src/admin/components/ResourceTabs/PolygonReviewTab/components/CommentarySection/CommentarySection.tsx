@@ -4,6 +4,7 @@ import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
 import { useMyUser } from "@/connections/User";
+import { TextVariants } from "@/types/common";
 
 import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
 
@@ -12,19 +13,21 @@ const CommentarySection = ({
   entity,
   refresh,
   viewCommentsList = true,
-  loading = false
+  loading = false,
+  variantText = "text-16-bold"
 }: {
   record: any;
   entity: AuditLogEntity;
   refresh?: () => void;
   viewCommentsList?: boolean;
   loading?: boolean;
+  variantText?: TextVariants;
 }) => {
   const [, { user }] = useMyUser();
 
   return (
     <div className="flex flex-col gap-4">
-      <Text variant="text-16-bold">Send Comment</Text>
+      <Text variant={variantText}>Send Comment</Text>
       <CommentaryBox
         name={user?.firstName ?? ""}
         lastName={user?.lastName ?? ""}

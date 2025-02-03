@@ -115,9 +115,9 @@ const AuditLogTable: FC<{
         ))}
       </div>
       <div
-        className={classNames(`mr-[-7px] grid max-h-[50vh] min-h-[10vh] pr-[7px] ${gridColumnSize}`, {
-          "overflow-y-auto overflow-x-hidden": !fullColumns,
-          " overflow-auto ": fullColumns
+        className={classNames(`mr-[-7px] grid pr-[7px] ${gridColumnSize}`, {
+          "h-max min-h-max overflow-y-auto overflow-x-hidden pb-10": !fullColumns,
+          "max-h-[50vh] min-h-[10vh] overflow-auto ": fullColumns
         })}
         ref={menuOverflowContainerRef}
       >
