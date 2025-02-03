@@ -260,18 +260,18 @@ export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregat
   if (!data) return [];
 
   const createChartPoints = (
-    sourceData: Array<{ dueDate?: string | null; treeSpeciesAmount?: number }>,
+    sourceData: Array<{ dueDate?: string | null; aggregateAmount?: number }>,
     categoryName: string
   ): { sum: number; values: ChartDataPoint[] } => {
     const nullSum = sourceData
       .filter(item => item.dueDate === null)
-      .reduce((acc, item) => acc + (item.treeSpeciesAmount ?? 0), 0);
+      .reduce((acc, item) => acc + (item.aggregateAmount ?? 0), 0);
 
     let sum = nullSum;
     const values = sourceData
       .filter(item => item.dueDate) // Ignore null dueDates in chart
       .map(item => {
-        sum += item.treeSpeciesAmount ?? 0;
+        sum += item.aggregateAmount ?? 0;
         return {
           time: new Date(item.dueDate!), // Safe because we filter out nulls
           value: sum,
@@ -292,6 +292,15 @@ export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregat
     chartData.push({ name: "Seeding Records", values: seedingRecordsValues });
   }
 
+  if (data["trees-regenerating"]) {
+    const { values: treesRegeneratingValues } = createChartPoints(
+      data["trees-regenerating"] ?? [],
+      "Trees Regenerating"
+    );
+    chartData.push({ name: "Trees Regenerating", values: treesRegeneratingValues });
+  }
+
+  console.log("Chart Data", chartData);
   return chartData;
 };
 

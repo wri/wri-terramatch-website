@@ -7,6 +7,7 @@ type DataPoint = {
   time: string;
   "Tree Planted"?: number;
   "Seeding Records"?: number;
+  "Trees Regenerating"?: number;
 };
 
 type ChartProps = {
@@ -15,7 +16,8 @@ type ChartProps = {
 
 const COLORS = {
   "Tree Planted": "#4AAAE0",
-  "Seeding Records": "#0C2733"
+  "Seeding Records": "#0C2733",
+  "Trees Regenerating": "#7BBD31"
 };
 
 const formatDate = (dateString: string) => {
@@ -87,7 +89,10 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
       const value = dataMap.get("Seeding Records")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
       if (value !== undefined) dataPoint["Seeding Records"] = value;
     }
-
+    if (dataMap.has("Trees Regenerating")) {
+      const value = dataMap.get("Trees Regenerating")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
+      if (value !== undefined) dataPoint["Trees Regenerating"] = value;
+    }
     return dataPoint;
   });
 
