@@ -30,3 +30,12 @@ export const FILTER_SEARCH_MONITORING = {
   iconClassName: "w-5 h-5 text-darkCustom",
   input: "text-14-light w-full p-0 border-0 placeholder:text-darkCustom focus:ring-0 bg-transparent text-darkCustom"
 };
+
+export const FILTER_SEARCH_IMPACT_STORY = {
+  container:
+    "flex items-center gap-2 rounded-full pl-6 z-10 relative border-neutral-200 bg-white hover:shadow-monitored border",
+  icon: IconNames.SEARCH_PA,
+  iconClassName: "hidden",
+  input:
+    "text-16-light w-full px-0 py-3 border-0 placeholder:text-darkCustom focus:ring-0 bg-transparent text-darkCustom"
+};
