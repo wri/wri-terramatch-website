@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useState } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -304,6 +305,8 @@ const getProgressData = (totalValue: number, progressValue: number) => {
 
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
+  const [treeCount, setTreeCount] = useState(0);
+  const [speciesCount, setSpeciesCount] = useState(0);
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: project.uuid,
@@ -492,7 +495,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 6
+                      value: speciesCount
                     }
                   ]}
                 />
@@ -508,7 +511,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: treeCount
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -516,7 +519,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "6"
+                      value: speciesCount
                     }
                   ]}
                 />
@@ -569,9 +572,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    data={dataNonTreeCount}
-                    visibleRows={10}
-                    typeTable="nonTreeCount"
+                    collection="non-tree"
+                    visibleRows={5}
+                    setTotalCount={setTreeCount}
+                    setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
                 <ContextCondition frameworksHide={[Framework.TF]}>
@@ -581,6 +585,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     framework={project.framework_key}
                     visibleRows={5}
                     collection="seeding"
+                    setTotalCount={setTreeCount}
+                    setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
               </div>
@@ -603,9 +609,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
                   <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    5,250
+                    {project.regenerated_trees_count.toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of 25,000
+                      of {project.goal_trees_restored_anr?.toLocaleString()}
                     </Text>
                   </Text>
                 </div>
@@ -622,7 +628,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: 7000
+                    value: project.regenerated_trees_count.toLocaleString()
                   }
                 ]}
               />
@@ -631,9 +637,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <div className="mt-2">
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataTreeCountSite}
+                data={project.assisted_natural_regeneration_list.sort((a: any, b: any) => b.treeCount - a.treeCount)}
                 modelUUID={project.uuid}
-                visibleRows={10}
+                visibleRows={5}
                 typeTable="treeCountSite"
               />
             </div>
