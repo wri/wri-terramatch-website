@@ -47,6 +47,9 @@ export type GetV2TreeSpeciesEntityUUIDResponse = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
 };
 
 export type GetV2TreeSpeciesEntityUUIDVariables = {
@@ -98,14 +101,21 @@ export type GetV2EntityUUIDAggregateReportsResponse = {
      * @format date-time
      */
     dueDate?: string | null;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
   }[];
   ["seeding-records"]?: {
     /**
      * @format date-time
      */
     dueDate?: string;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
   }[];
 };
 

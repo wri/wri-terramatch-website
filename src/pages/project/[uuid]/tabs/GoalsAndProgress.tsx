@@ -5,7 +5,7 @@ import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/compo
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -308,6 +308,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const [treeCount, setTreeCount] = useState(0);
   const [speciesCount, setSpeciesCount] = useState(0);
   const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
+  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
+  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: project.uuid,
@@ -353,8 +356,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                      value: 10,
-                      limit: 12
+                      value: treePlantedSpeciesCount,
+                      limit: treePlantedSpeciesGoal
                     }
                   ]}
                 />
@@ -400,8 +403,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         variantLabel: "text-14",
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                        value: 10,
-                        limit: 12
+                        value: treePlantedSpeciesCount,
+                        limit: treePlantedSpeciesGoal
                       }
                     ]}
                   />
@@ -438,6 +441,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.TF]}>
@@ -448,6 +453,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
@@ -458,6 +465,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
           </div>
@@ -600,15 +609,26 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <div>
                 <Text variant="text-14" className="mb-2 uppercase text-neutral-650">
-                  {t("Estimated  Number of trees regenerating")}
+                  {t("Estimated Number of trees regenerating")}
                 </Text>
                 <div className="mb-2 flex items-center">
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
+                  <div className="relative h-9 w-[218px]">
+                    <div className="absolute inset-0 z-0 h-full w-full">
+                      <ProgressBarChart
+                        data={getProgressData(
+                          project.goal_trees_restored_anr ?? 0,
+                          project.regenerated_trees_count ?? 0
+                        )}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <img
+                      src="/images/regenerationBackground.svg"
+                      id="regenerationBackground"
+                      alt="secondValue"
+                      className="z-1 absolute right-0 h-9 w-[219px]"
+                    />
+                  </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
                     {project.regenerated_trees_count.toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
@@ -625,7 +645,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 items={[
                   {
                     iconName: IconNames.REFRESH_CIRCLE_PD,
-                    label: t("Estimated  Number of trees regenerating:"),
+                    label: t("Estimated Number of trees regenerating:"),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
@@ -656,12 +676,23 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   {t("number of Non-Trees PLANTED:")}
                 </Text>
                 <div className="mb-2 flex items-center">
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
+                  <div className="relative h-6 w-[212px]">
+                    <div className="absolute inset-0 z-0 h-full w-full">
+                      <ProgressBarChart
+                        data={getProgressData(
+                          project.goal_trees_restored_anr ?? 0,
+                          project.regenerated_trees_count ?? 0
+                        )}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <img
+                      src="/images/nonTreeBackground.svg"
+                      id="nonTreeBackground"
+                      alt="secondValue"
+                      className="z-1 absolute right-0 h-6 w-[213px]"
+                    />
+                  </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
                     8,400
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
