@@ -7,8 +7,8 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
+import { useResetPassword } from "@/connections/ResetPassword";
 import { resetPassword } from "@/generated/v3/userService/userServiceComponents";
-import { useResetPassword } from "@/store/apiSlice";
 
 import ResetPasswordForm from "./components/ResetPasswordForm";
 

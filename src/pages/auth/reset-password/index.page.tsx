@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
+import { useRequestPassword } from "@/connections/ResetPassword";
 import { requestPasswordReset } from "@/generated/v3/userService/userServiceComponents";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import RequestResetForm from "@/pages/auth/reset-password/components/RequestResetForm";
-import { useRequestPassword } from "@/store/apiSlice";
 
 import LoginLayout from "../layout";
 

@@ -54,34 +54,44 @@ export type OrganisationDto = {
   name: string | null;
 };
 
-export type RequestResetPasswordDto = {
+export type UserUpdateAttributes = {
+  /**
+   * New default locale for the given user
+   */
+  locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+};
+
+export type UserUpdate = {
+  type: "users";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UserUpdateAttributes;
+};
+
+export type UserUpdateBodyDto = {
+  data: UserUpdate;
+};
+
+export type ResetPasswordResponseDto = {
+  /**
+   * User id
+   *
+   * @example ac905c37-025c-4548-9851-f749ed15b5e1
+   */
+  uuid: string;
   /**
    * User email
    *
    * @example user@example.com
    */
   emailAddress: string;
-  /**
-   * Url to redirect the user to after the password reset is completed
-   *
-   * @example www.terramatch.com
-   */
-  callbackUrl: string;
 };
 
-export type ResetPasswordResponseOperationDto = {
-  /**
-   * User email
-   *
-   * @example user@example.com
-   */
-  message: string;
-  /**
-   * User Id
-   *
-   * @example 12345
-   */
-  userId: number;
+export type ResetPasswordRequest = {
+  emailAddress: string;
+  callbackUrl: string;
 };
 
 export type ResetPasswordDto = {};

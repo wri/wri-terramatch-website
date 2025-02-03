@@ -3,20 +3,11 @@ import { WritableDraft } from "immer";
 import isArray from "lodash/isArray";
 import { HYDRATE } from "next-redux-wrapper";
 import { Store } from "redux";
-import { createSelector } from "reselect";
 
 import { setAccessToken } from "@/admin/apiProvider/utils/token";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import {
-  requestPasswordResetFetchFailed,
-  requestPasswordResetIsFetching,
-  resetPasswordFetchFailed,
-  resetPasswordIsFetching
-} from "@/generated/v3/userService/userServicePredicates";
 import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
-import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
 
 export type PendingErrorState = {
   statusCode: number;
@@ -320,53 +311,3 @@ export default class ApiSlice {
     this.redux.dispatch(apiSlice.actions.setAbortDelayedJob(abort_delayed_job));
   }
 }
-
-export const selectResetPassword = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
-
-type RequestResetPasswordConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  isSuccess: boolean;
-  requestEmail: string;
-};
-
-const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
-  selector: createSelector(
-    [requestPasswordResetIsFetching, requestPasswordResetFetchFailed, selectResetPassword],
-    (isLoading, requestFailed, selector) => {
-      return {
-        isLoading: isLoading,
-        requestFailed: requestFailed,
-        isSuccess: (selector as any) != null,
-        requestEmail: (selector as any)?.emailAddress
-      };
-    }
-  )
-};
-
-type ResetPasswordConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  isSuccess: boolean;
-};
-
-const resetPasswordConnection: Connection<ResetPasswordConnection> = {
-  selector: createSelector(
-    [
-      resetPasswordIsFetching({ pathParams: { token: "" } }),
-      resetPasswordFetchFailed({ pathParams: { token: "" } }),
-      selectResetPassword
-    ],
-    (isLoggingIn, requestFailed, selector) => {
-      return {
-        isLoading: isLoggingIn,
-        requestFailed: requestFailed,
-        isSuccess: (selector as any) != null
-      };
-    }
-  )
-};
-
-export const useRequestPassword = connectionHook(requestPasswordConnection);
-
-export const useResetPassword = connectionHook(resetPasswordConnection);
