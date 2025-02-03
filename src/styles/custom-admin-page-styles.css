@@ -7,11 +7,23 @@
 }
 
 .filter-button-page-admin{
-  @apply !mb-4
+  @apply !mb-4 !bg-white !text-blueCustom-900
+}
+
+.filter-button-page-admin-blue{
+  @apply !mb-4 !bg-primary-500 !text-white
+}
+
+.filter-button-page-admin-blue:hover{
+  @apply !bg-primary-400
 }
 
 .filter-button-page-admin span {
   @apply text-sm font-bold tracking-normal opacity-100 text-blueCustom-900 lg:text-base wide:text-md;
+}
+
+.filter-button-page-admin-blue span {
+  @apply !text-white
 }
 
 .filter-button-page-admin button {
@@ -51,15 +63,15 @@
 }
 
 .RaCreateButton-root{
-  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px]
+  @apply text-blueCustom-900 bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px]
 }
 
 .RaCreateButton-root:hover {
-  @apply !bg-grey-800
+  @apply bg-grey-800
 }
 
 .RaCreateButton-root span {
-  @apply !text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
+  @apply text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
 .RaMenuItemLink-icon{

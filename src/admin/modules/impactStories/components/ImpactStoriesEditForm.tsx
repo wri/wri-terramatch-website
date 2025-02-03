@@ -42,7 +42,7 @@ const ImpactStoriesEditForm = () => {
           />
         </div>
         <Dropdown
-          label="Project Impact Category"
+          label="Impact Category"
           options={[
             {
               title: "Gender equity",
@@ -89,10 +89,11 @@ const ImpactStoriesEditForm = () => {
             className="text-14-light"
           />
         </div>
+        <Text variant={"text-14-bold"}>Content</Text>
         <QuillEditor />
         <div className="grid grid-cols-2 gap-x-4">
           <Input
-            label="Project Details"
+            label="Organization Details"
             name="title"
             type="text"
             labelClassName="capitalize text-14-bold"

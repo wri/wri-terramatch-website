@@ -12,7 +12,7 @@ import {
   WrapperField
 } from "react-admin";
 
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
@@ -27,7 +27,6 @@ import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoic
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
-import QuillEditor from "./QuillEditor";
 
 const IMPACT_STORY_TAGS = [
   { id: "1", label: "ppc" },
@@ -79,6 +78,98 @@ const ImpactStoriesDataGrid: FC = () => {
       author: "Faja Lobi",
       tags: [{ status: "Submitted", count: 3 }],
       date: "3/3/2020"
+    },
+    {
+      id: 3,
+      name: "Mangrove Restoration Initiative",
+      project: "Coastal Conservation Project",
+      author: "Marine Solutions",
+      tags: [{ status: "Approved", count: 4 }],
+      date: "5/15/2020"
+    },
+    {
+      id: 4,
+      name: "Indigenous Knowledge Integration",
+      project: "Amazon Rainforest Protection",
+      author: "Rainforest Alliance",
+      tags: [
+        { status: "Draft", count: 2 },
+        { status: "Submitted", count: 1 }
+      ],
+      date: "6/22/2020"
+    },
+    {
+      id: 5,
+      name: "Urban Garden Development",
+      project: "City Green Spaces Initiative",
+      author: "Urban Planners Co",
+      tags: [{ status: "Approved", count: 5 }],
+      date: "8/1/2020"
+    },
+    {
+      id: 6,
+      name: "Sustainable Farming Practices",
+      project: "Agricultural Transformation",
+      author: "Farm Solutions",
+      tags: [{ status: "Submitted", count: 2 }],
+      date: "9/12/2020"
+    },
+    {
+      id: 7,
+      name: "Wildlife Corridor Creation",
+      project: "Biodiversity Protection Plan",
+      author: "Wildlife Trust",
+      tags: [
+        { status: "Approved", count: 3 },
+        { status: "Draft", count: 1 }
+      ],
+      date: "10/30/2020"
+    },
+    {
+      id: 8,
+      name: "Clean Water Initiative",
+      project: "River Restoration Project",
+      author: "Water Resources Inc",
+      tags: [{ status: "Draft", count: 4 }],
+      date: "11/15/2020"
+    },
+    {
+      id: 9,
+      name: "Solar Power Implementation",
+      project: "Renewable Energy Drive",
+      author: "Green Energy Co",
+      tags: [
+        { status: "Submitted", count: 2 },
+        { status: "Approved", count: 1 }
+      ],
+      date: "12/5/2020"
+    },
+    {
+      id: 10,
+      name: "Forest Fire Prevention Program",
+      project: "Forest Protection Initiative",
+      author: "Forest Guard",
+      tags: [{ status: "Approved", count: 6 }],
+      date: "1/20/2021"
+    },
+    {
+      id: 11,
+      name: "Coastal Mangrove Restoration",
+      project: "Marine Ecosystem Protection",
+      author: "Ocean Conservation Group",
+      tags: [
+        { status: "Draft", count: 3 },
+        { status: "Submitted", count: 2 }
+      ],
+      date: "2/15/2021"
+    },
+    {
+      id: 12,
+      name: "Urban Beekeeping Program",
+      project: "City Pollinator Initiative",
+      author: "Bee Friendly Society",
+      tags: [{ status: "Submitted", count: 4 }],
+      date: "3/1/2021"
     }
   ];
 
@@ -179,10 +270,9 @@ export const ImpactStoriesList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+      <List actions={<ListActionsImpactStories onExport={onClickExportButton} />} filters={filters}>
         <ImpactStoriesDataGrid />
       </List>
-      <QuillEditor />
 
       <FrameworkSelectionDialog {...frameworkDialogProps} />
 

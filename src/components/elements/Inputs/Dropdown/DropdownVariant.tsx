@@ -66,7 +66,7 @@ export const VARIANT_DROPDOWN_SIMPLE: DropdownVariant = {
 
 export const VARIANT_DROPDOWN_IMPACT_STORY: DropdownVariant = {
   containerClassName: "relative",
-  className: "gap-2 !text-black",
+  className: "gap-2 !text-black border border-neutral-200 ",
   iconClassName: "w-3 h-[9px] fill-trasparent",
   iconName: IconNames.CHEVRON_DOWN_DASH,
   iconNameClear: IconNames.CLEAR,
