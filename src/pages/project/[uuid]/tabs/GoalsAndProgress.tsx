@@ -307,6 +307,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
   const [speciesCount, setSpeciesCount] = useState(0);
+  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
   const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
   const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
 
@@ -570,7 +571,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         variantLabel: "text-14",
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                        value: 6
+                        value: treeCount
                       }
                     ]}
                   />
@@ -687,18 +688,17 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                      value: 10,
-                      limit: 12
+                      value: totalNonTreeSpecies
                     }
                   ]}
                 />
               </div>
               <TreeSpeciesTablePD
                 modelName="project"
+                collection="non-tree"
                 modelUUID={project.uuid}
-                data={dataNonTreeCount}
-                visibleRows={10}
-                typeTable="nonTreeCount"
+                visibleRows={5}
+                setTotalNonTree={setTotalNonTreeSpecies}
               />
             </div>
           </PageCard>
