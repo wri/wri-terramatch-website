@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -39,8 +39,10 @@ export const LABEL_LEGEND = [
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-  const [treeCount, setTreeCount] = React.useState(0);
-  const [speciesCount, setSpeciesCount] = React.useState(0);
+  const [treeCount, setTreeCount] = useState(0);
+  const [speciesCount, setSpeciesCount] = useState(0);
+  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
+  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: site.uuid,
@@ -98,8 +100,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                     variantLabel: "text-14" as TextVariants,
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                    value: 10,
-                    limit: 12
+                    value: treePlantedSpeciesCount,
+                    limit: treePlantedSpeciesGoal
                   }
                 ]}
               />
@@ -134,6 +136,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </div>
           </div>
