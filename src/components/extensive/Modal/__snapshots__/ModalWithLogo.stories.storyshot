@@ -226,7 +226,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
               />
             </div>
             <button
-              className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content self-end"
+              className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content self-end border-[2.5px] border-primary"
               disabled={false}
               onClick={[Function]}
             >
