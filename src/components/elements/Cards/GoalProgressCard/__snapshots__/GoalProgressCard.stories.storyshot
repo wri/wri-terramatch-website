@@ -16,6 +16,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
       >
         Hectors Restored
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -57,6 +60,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
       >
         Trees Restored
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -69,6 +75,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
         >
           of 
           732
+           
         </p>
       </p>
       <div
@@ -181,6 +188,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
       >
         Workday (PPC)
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -193,6 +203,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
         >
           of 
           150
+           
         </p>
       </p>
       <div

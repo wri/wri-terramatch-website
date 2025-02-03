@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, Fragment, useRef } from "react";
 import { When } from "react-if";
@@ -114,7 +115,10 @@ const AuditLogTable: FC<{
         ))}
       </div>
       <div
-        className={`mr-[-7px] grid max-h-[50vh] min-h-[10vh] overflow-auto pr-[7px] ${gridColumnSize}`}
+        className={classNames(`mr-[-7px] grid pr-[7px] ${gridColumnSize}`, {
+          "h-max min-h-max overflow-y-auto overflow-x-hidden pb-10": !fullColumns,
+          "max-h-[50vh] min-h-[10vh] overflow-auto ": fullColumns
+        })}
         ref={menuOverflowContainerRef}
       >
         {auditLogData?.data?.map((item: AuditStatusResponse, index: number) => (
