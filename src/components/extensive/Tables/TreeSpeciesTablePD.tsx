@@ -28,6 +28,7 @@ export interface TreeSpeciesTablePDProps {
   framework?: string;
   setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
   setTotalSpecies?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalNonTree?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
@@ -59,6 +60,7 @@ const TreeSpeciesTablePD = ({
   framework,
   setTotalCount,
   setTotalSpecies,
+  setTotalNonTree,
   collection,
   headerName = "species Name",
   secondColumnWidth = "",
@@ -140,6 +142,9 @@ const TreeSpeciesTablePD = ({
     }
     if (setTotalSpecies) {
       setTotalSpecies(rows.length);
+    }
+    if (setTotalNonTree && collection == "non-tree") {
+      setTotalNonTree(rows.length);
     }
     return rows.map(row => {
       let speciesTypes = ["tree"];
