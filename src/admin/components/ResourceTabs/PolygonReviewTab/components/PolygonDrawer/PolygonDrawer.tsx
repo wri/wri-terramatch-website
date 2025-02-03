@@ -17,6 +17,8 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
+  GetV2AuditStatusENTITYUUIDResponse,
+  useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
@@ -25,6 +27,7 @@ import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@
 import { parseValidationData } from "@/helpers/polygonValidation";
 import Log from "@/utils/log";
 
+import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
@@ -49,6 +52,7 @@ export interface ICriteriaCheckItem {
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
 export const OVERLAPPING_CRITERIA_ID = 3;
+export const WITHIN_COUNTRY_CRITERIA_ID = 7;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -202,6 +206,7 @@ const PolygonDrawer = ({
       (criteria: any) =>
         criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
         criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+        criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
         criteria.valid !== 1
     );
   };
@@ -259,6 +264,19 @@ const PolygonDrawer = ({
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
+
+  const auditData = {
+    entity: "site-polygon",
+    entity_uuid: selectedPolygon?.poly_id as string
+  };
+
+  const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
+    pathParams: {
+      entity: "site-polygon",
+      uuid: selectedPolygon?.uuid as string
+    }
+  });
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -304,7 +322,10 @@ const PolygonDrawer = ({
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection record={selectedPolygon} entity={"Polygon"}></CommentarySection>
+            <CommentarySection record={selectedPolygon} entity={"Polygon"} refresh={refetch}></CommentarySection>
+            {auditLogData && (
+              <AuditLogTable fullColumns={false} auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
+            )}
           </div>
         </Then>
         <Else>

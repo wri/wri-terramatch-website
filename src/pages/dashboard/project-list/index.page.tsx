@@ -98,32 +98,34 @@ const ProjectList = () => {
   const { activeProjects } = useDashboardData(filters);
 
   const DATA_TABLE_PROJECT_LIST = activeProjects
-    ? activeProjects?.map(
-        (item: {
-          uuid: string;
-          name: string;
-          organisation: string;
-          programme: string;
-          country_slug: string;
-          project_country: string;
-          trees_under_restoration: number;
-          hectares_under_restoration: number;
-          jobs_created: number;
-        }) => ({
-          uuid: item.uuid,
-          project: item?.name,
-          organization: item?.organisation,
-          programme: getFrameworkName(frameworks, item?.programme),
-          country: {
-            country_slug: item?.country_slug,
-            label: item?.project_country,
-            image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
-          },
-          treesPlanted: item.trees_under_restoration.toLocaleString(),
-          restorationHectares: item.hectares_under_restoration.toLocaleString(),
-          jobsCreated: item.jobs_created.toLocaleString()
-        })
-      )
+    ? activeProjects
+        .map(
+          (item: {
+            uuid: string;
+            name: string;
+            organisation: string;
+            programme: string;
+            country_slug: string;
+            project_country: string;
+            trees_under_restoration: number;
+            hectares_under_restoration: number;
+            jobs_created: number;
+          }) => ({
+            uuid: item.uuid,
+            project: item?.name,
+            organization: item?.organisation,
+            programme: getFrameworkName(frameworks, item?.programme),
+            country: {
+              country_slug: item?.country_slug,
+              label: item?.project_country,
+              image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
+            },
+            treesPlanted: item.trees_under_restoration.toLocaleString(),
+            restorationHectares: item.hectares_under_restoration.toLocaleString(),
+            jobsCreated: item.jobs_created.toLocaleString()
+          })
+        )
+        .sort((a: { organization: string }, b: { organization: any }) => a.organization.localeCompare(b.organization))
     : [];
 
   return (

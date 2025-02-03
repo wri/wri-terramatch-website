@@ -1,7 +1,7 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
@@ -13,14 +13,9 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  useGetV2SeedingsENTITYUUID
-} from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { dataTreeCount, dataTreeCountGoal } from "@/pages/project/[uuid]/tabs/GoalsAndProgress";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -53,6 +48,13 @@ const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, resource } = useShowContext();
   const t = useT();
   const { framework } = useFrameworkContext();
+  const [totalCountNonTree, setTotalCountNonTree] = useState(0);
+  const [totalCountNurserySeedling, setTotalCountNurserySeedling] = useState(0);
+  const [totalCountSeeding, setTotalCountSeeding] = useState(0);
+  const [totalCountTreePlanted, setTotalCountTreePlanted] = useState(0);
+  const [totalCountReplanting, setTotalCountReplanting] = useState(0);
+  const modelName = resource?.replace("Report", "-report");
+  const modelUUID = record?.uuid;
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -61,18 +63,10 @@ const InformationTab: FC<IProps> = props => {
     }
   });
 
-  const { data: seedlings } = useGetV2SeedingsENTITYUUID({
-    pathParams: {
-      uuid: record?.uuid,
-      entity: resource?.replace("Report", "-report")
-    }
-  });
-
   const isLoading = ctxLoading || queryLoading;
 
   if (isLoading || !record) return null;
 
-  const totalSeedlings = seedlings?.data?.reduce((acc, curr) => acc + (curr?.amount ?? 0), 0);
   const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
@@ -141,91 +135,104 @@ const InformationTab: FC<IProps> = props => {
                           props.type === "project-reports"
                         }
                       >
-                        <div className="flex flex-col gap-11">
+                        <div className="flex flex-col gap-10">
                           <ContextCondition frameworksHide={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <Text variant="text-16-bold" className="capitalize">
-                                Non-Trees:
-                              </Text>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
+                                <Text variant="text-16-bold" className="capitalize">
+                                  Non-Trees Planted:
+                                </Text>
+                                <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                  {totalCountNonTree.toLocaleString() ?? 0}
+                                </Text>
+                              </div>
                               <TreeSpeciesTablePD
-                                modelName={
-                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  (props.type === "projects" || props.type === "sites")
-                                    ? "noGoal"
-                                    : "treeCount/Goal"
-                                }
-                                data={
-                                  (framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  (props.type === "projects" || props.type === "sites")
-                                    ? dataTreeCount
-                                    : dataTreeCountGoal
-                                }
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                collection="non-tree"
+                                setTotalCount={setTotalCountNonTree}
+                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
                           </ContextCondition>
                           <When condition={props.type === "projects" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.PPC]}>
-                              <div className="flex flex-col gap-4">
-                                <Text variant="text-16-bold" className="capitalize">
-                                  Nursery-Saplings:
-                                </Text>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
+                                  <Text variant="text-16-bold" className="capitalize">
+                                    Saplings Grown in Nurseries:
+                                  </Text>
+                                  <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                    {totalCountNurserySeedling.toLocaleString() ?? 0}
+                                  </Text>
+                                </div>
                                 <TreeSpeciesTablePD
-                                  modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                  data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="nursery-seedling"
+                                  setTotalCount={setTotalCountNurserySeedling}
+                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>
                             </ContextCondition>
                           </When>
                           <ContextCondition frameworksShow={[Framework.PPC]}>
-                            <div className="flex flex-col gap-4">
-                              <div className="flex items-center gap-1 py-8">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
-                                  Seedings:
+                                  Seeds Planted:
                                 </Text>
                                 <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                  {totalSeedlings ?? 0}
+                                  {totalCountSeeding.toLocaleString()}
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
-                                modelName={props.type === "projects" ? "noGoal" : "treeCount/Goal"}
-                                data={props.type === "projects" ? dataTreeCount : dataTreeCountGoal}
+                                modelUUID={modelUUID}
+                                modelName={modelName}
+                                collection="seeding"
+                                setTotalCount={setTotalCountSeeding}
+                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
                           </ContextCondition>
-                          <div className="flex flex-col gap-4">
-                            <Text variant="text-16-bold" className="capitalize">
-                              Trees Planted:
-                            </Text>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
+                              <Text variant="text-16-bold" className="capitalize">
+                                Trees Planted:
+                              </Text>
+                              <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                {totalCountTreePlanted.toLocaleString() ?? 0}
+                              </Text>
+                            </div>
                             <TreeSpeciesTablePD
-                              modelName={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects")
-                                  ? "noGoal"
-                                  : "treeCount/Goal"
-                              }
-                              data={
-                                ((framework.includes(Framework.TF) || framework.includes(Framework.ENTERPRISES)) &&
-                                  props.type === "sites") ||
-                                (framework.includes(Framework.PPC) && props.type === "projects")
-                                  ? dataTreeCount
-                                  : dataTreeCountGoal
-                              }
+                              modelUUID={modelUUID}
+                              modelName={modelName}
+                              collection="tree-planted"
+                              setTotalCount={setTotalCountTreePlanted}
+                              framework={record?.framework_key}
                               secondColumnWidth="45%"
                             />
                           </div>
                           <When condition={props.type === "site-reports" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
-                              <div className="flex flex-col gap-4">
-                                <Text variant="text-16-bold" className="capitalize">
-                                  Replanting:
-                                </Text>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
+                                  <Text variant="text-16-bold" className="capitalize">
+                                    Replanting:
+                                  </Text>
+                                  <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                    {totalCountReplanting.toLocaleString() ?? 0}
+                                  </Text>
+                                </div>
                                 <TreeSpeciesTablePD
-                                  modelName="treeCount/Goal"
-                                  data={dataTreeCountGoal}
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="replanting"
+                                  setTotalCount={setTotalCountReplanting}
+                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>

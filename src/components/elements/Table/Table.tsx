@@ -49,6 +49,7 @@ export interface TableProps<TData>
   initialTableState?: InitialTableState;
   variant?: TableVariant;
   hasPagination?: boolean;
+  resetOnDataChange?: boolean;
   onTableStateChange?: (state: TableState) => void;
   isLoading?: boolean;
   invertSelectPagination?: boolean;
@@ -56,6 +57,7 @@ export interface TableProps<TData>
   onRowClick?: (row: TData) => void;
   contentClassName?: string;
   classNameTableWrapper?: string;
+  galleryType?: string;
 }
 
 export interface TableState {
@@ -87,8 +89,10 @@ function Table<TData extends RowData>({
   invertSelectPagination = false,
   hasPagination = false,
   visibleRows = 10,
+  resetOnDataChange = true, // maintains default behavior
   onRowClick,
   contentClassName,
+  galleryType,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -129,16 +133,22 @@ function Table<TData extends RowData>({
       onTableStateChange?.({ sorting, filters });
     },
     getRowId: (row: any) => row.uuid,
-    debugTable: process.env.NODE_ENV === "development"
+
+    // Uncomment for local debug testing fo the table.
+    // debugTable: process.env.NODE_ENV === "development",
+
+    autoResetAll: resetOnDataChange
   });
 
   const tableState = getState();
+  const defaultPageSize = galleryType === "treeSpeciesPD" ? 8 : initialTableState?.pagination?.pageSize || 5;
+  const rowCount = Object.keys(getRowModel().rowsById).length;
 
   useEffect(() => {
     setSorting(initialTableState?.sorting ?? []);
     setPageSize(visibleRows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, visibleRows]);
+  }, [visibleRows]);
 
   return (
     <div className={classNames("w-full", variant.className, contentClassName)}>
@@ -294,10 +304,11 @@ function Table<TData extends RowData>({
           previousPage={previousPage}
           setPageIndex={setPageIndex}
           setPageSize={setPageSize}
-          defaultPageSize={initialTableState?.pagination?.pageSize || 5}
+          defaultPageSize={defaultPageSize}
           containerClassName="mt-6"
-          hasPageSizeSelector
+          hasPageSizeSelector={rowCount > defaultPageSize}
           invertSelect={invertSelectPagination}
+          galleryType={galleryType}
         />
       )}
     </div>

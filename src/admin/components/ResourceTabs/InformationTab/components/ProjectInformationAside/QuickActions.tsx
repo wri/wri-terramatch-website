@@ -27,7 +27,9 @@ const QuickActions: FC = () => {
       }
     }).then((response: any) => {
       if (entity === "shapefiles") {
-        downloadFileBlob(response, `${record.name} shapefiles.zip`);
+        const jsonString = JSON.stringify(response, null, 2);
+        const fileBlob = new Blob([jsonString], { type: "application/geo+json" });
+        downloadFileBlob(fileBlob, `${record.name}_polygons.geojson`);
       } else {
         downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
       }
@@ -71,6 +73,9 @@ const QuickActions: FC = () => {
         </Button>
         <Button variant="outlined" onClick={() => handleExport("sites")}>
           Export Site Reports
+        </Button>
+        <Button variant="outlined" onClick={() => handleExport("shapefiles")}>
+          Download Polygons
         </Button>
         <Divider sx={{ marginBottom: 2 }} />
       </Stack>

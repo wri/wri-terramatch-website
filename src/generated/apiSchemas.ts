@@ -26,6 +26,23 @@ export type TreeSpeciesPaginated = {
   };
 };
 
+export type TreeSpeciesAggregated = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    treeSpeciesAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+  }[];
+};
+
 export type TreeSpeciesRead = {
   uuid?: string;
   name?: string;
@@ -22202,21 +22219,27 @@ export type V2TaskRead = {
 };
 
 export type V2TaskActionRead = {
-  uuid?: number;
-  type?: string;
-  status?: string;
+  uuid?: string;
   /**
    * @format date-time
    */
   due_at?: string;
-  title?: string;
-  report_title?: string;
-  update_request_status?: string;
   /**
    * @format date-time
    */
   submitted_at?: string;
+  report_title?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  update_request_status?: string;
+  nothing_to_report?: boolean;
+  title?: string;
+  type?: string;
   parent_name?: string;
+  completion?: number;
 };
 
 export type StatusUpdate = {
@@ -22814,6 +22837,10 @@ export type DashboardGetPolygonStatusResponse = {
 };
 
 export type DashboardBBOXProject = {
+  bbox?: number[];
+};
+
+export type DashboardBBOXLandscape = {
   bbox?: number[];
 };
 

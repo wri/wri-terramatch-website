@@ -180,6 +180,8 @@ export const apiFormQuestionToFormField = (
     placeholder: question.placeholder,
     validation,
     condition: question.show_on_parent_condition,
+    is_parent_conditional_default: question.is_parent_conditional_default,
+    parent_id: question.parent_id,
     feedbackRequired
   };
 

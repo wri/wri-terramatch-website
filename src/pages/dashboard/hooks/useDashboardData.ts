@@ -6,7 +6,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardCountryCountry,
+  useGetV2DashboardBboxCountryLandscape,
   useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
@@ -27,7 +27,7 @@ import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
-  const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
+  const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
   const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
@@ -50,12 +50,15 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const { data: countryBbox } = useGetV2DashboardCountryCountry(
+  const { data: generalBbox } = useGetV2DashboardBboxCountryLandscape(
     {
-      pathParams: { country: filters.country.country_slug }
+      queryParams: {
+        landscapes: filters.landscapes?.join(","),
+        country: filters.country.country_slug
+      }
     },
     {
-      enabled: !!filters.country.country_slug
+      enabled: !!filters.landscapes?.length || !!filters.country.country_slug
     }
   );
   const [updateFilters, setUpdateFilters] = useState<any>({});
@@ -197,13 +200,14 @@ export const useDashboardData = (filters: any) => {
       });
     }
   }, [totalSectionHeader]);
+
   useEffect(() => {
-    if (countryBbox && Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
-      setCountryBboxParsed(countryBbox.bbox[1] as unknown as BBox);
+    if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
+      setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
     } else {
-      setCountryBboxParsed(undefined);
+      setGeneralBboxParsed(undefined);
     }
-  }, [countryBbox]);
+  }, [generalBbox]);
 
   return {
     dashboardHeader,
@@ -225,8 +229,8 @@ export const useDashboardData = (filters: any) => {
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData?.data ?? {},
-    countryBbox: countryBboxParsed,
     isUserAllowed,
-    projectBbox: projectBbox?.bbox
+    projectBbox: projectBbox?.bbox,
+    generalBbox: generalBboxParsed
   };
 };

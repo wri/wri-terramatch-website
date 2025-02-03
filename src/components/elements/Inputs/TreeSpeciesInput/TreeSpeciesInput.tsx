@@ -52,6 +52,24 @@ export type TreeSpeciesValue = {
   amount?: number;
 };
 
+const getColumnTitles = ({
+  collection,
+  isReport,
+  withNumbers
+}: Pick<TreeSpeciesInputProps, "collection" | "withNumbers"> & { isReport: boolean }) => {
+  if (collection === "nursery-seedling") {
+    return {
+      totalReportedColumn: isReport ? "NEW SEEDLINGS PRODUCED THIS REPORT:" : "SEEDLINGS TO BE PRODUCED:",
+      totalToDateColumn: "TOTAL SEEDLINGS PRODUCED TO DATE:"
+    };
+  }
+
+  return {
+    totalReportedColumn: isReport ? "TOTAL PLANTED THIS REPORT:" : withNumbers ? "TREES TO BE PLANTED:" : "",
+    totalToDateColumn: "TOTAL PLANTED TO DATE:"
+  };
+};
+
 const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const id = useId();
   const t = useT();
@@ -77,6 +95,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const handleBaseEntityTrees =
     props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
   const displayPreviousCounts = props.withPreviousCounts && isReport;
+  const { totalReportedColumn, totalToDateColumn } = getColumnTitles({ ...props, isReport });
 
   const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
@@ -303,16 +322,20 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {isReport ? t("TOTAL PLANTED THIS REPORT:") : t("TREES TO BE PLANTED:")}
+              {t(totalReportedColumn)}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
-              {props.withNumbers ? props.value.reduce((total, v) => total + (v.amount || 0), 0).toLocaleString() : "0"}
+              {props.withNumbers
+                ? props.value.reduce((total, { amount }) => total + (amount ?? 0), 0).toLocaleString()
+                : isReport
+                ? "0"
+                : ""}
             </Text>
           </div>
           <When condition={displayPreviousCounts}>
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
-                {t("TOTAL PLANTED TO DATE:")}
+                {t(totalToDateColumn)}
               </Text>
               <Text variant="text-20-bold" className="text-primary">
                 {totalWithPrevious.toLocaleString()}

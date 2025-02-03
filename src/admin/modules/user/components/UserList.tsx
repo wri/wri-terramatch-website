@@ -19,6 +19,7 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import { useCanUserEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -49,16 +50,19 @@ const filters = [
   />
 ];
 
-const tableMenu = [
-  {
-    id: "1",
-    render: () => <EditButton />
-  },
-  {
-    id: "2",
-    render: () => <ShowButton />
-  }
-];
+const EditItem = {
+  id: "1",
+  render: () => <EditButton />
+};
+
+const ShowItem = {
+  id: "2",
+  render: () => <ShowButton />
+};
+
+const readOnlyMenu = [ShowItem];
+
+const adminMenu = [EditItem, ShowItem];
 
 const UserDataGrid = () => {
   return (
@@ -82,16 +86,24 @@ const UserDataGrid = () => {
       <SelectField source="role" label="Type" choices={userPrimaryRoleChoices} />
       <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
       <DateField source="created_at" label="Date Added" locales="en-GB" />
-      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
-      </Menu>
+      <FunctionField
+        label="Actions"
+        render={(record: any) => {
+          const canEdit = useCanUserEdit(record, "user");
+          return (
+            <Menu menu={canEdit ? adminMenu : readOnlyMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+              <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+            </Menu>
+          );
+        }}
+      />
     </Datagrid>
   );
 };
 
 export const UserList = () => {
   const [exporting, setExporting] = useState<boolean>(false);
-  const { isSuperAdmin } = useGetUserRole();
+  const { isFrameworkAdmin } = useGetUserRole();
 
   const userDataProvider = useDataProvider<UserDataProvider>();
 
@@ -108,7 +120,10 @@ export const UserList = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActionsCreateFilter isSuperAdmin={isSuperAdmin} onExport={handleExport} />} filters={filters}>
+      <List
+        actions={<ListActionsCreateFilter canCreateUser={isFrameworkAdmin} onExport={handleExport} />}
+        filters={filters}
+      >
         <UserDataGrid />
       </List>
 

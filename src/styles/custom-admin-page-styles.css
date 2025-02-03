@@ -169,7 +169,7 @@
 }
 
 .MuiInputBase-root .MuiTablePagination-select {
-  @apply w-[70px] flex !py-0 items-center gap-4 !pl-5 !pr-0 bg-white focus:bg-white order-1 rounded-l-lg after:block after:content-[''] after:bg-primary-300 after:rounded-r-lg after:w-11 after:h-12
+  @apply w-[70px] flex !py-0 items-center gap-2 !pl-5 !pr-0 bg-white focus:bg-white order-1 rounded-l-lg after:block after:content-[''] after:bg-primary-300 after:rounded-r-lg after:w-11 after:h-12
 }
 
 .MuiInputBase-root .MuiTablePagination-select+input {
@@ -177,7 +177,7 @@
 }
 
 .MuiTablePagination-selectIcon {
-  @apply !right-3
+  @apply !right-[6%]
 }
 
 .MuiTablePagination-selectLabel {

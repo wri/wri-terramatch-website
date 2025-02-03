@@ -13,6 +13,7 @@ import {
 } from "react-admin";
 import { When } from "react-if";
 
+import { useCanUserEdit } from "@/admin/hooks/useCanUserEdit";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import ShowTitle from "../ShowTitle";
@@ -48,6 +49,8 @@ const ShowActions = ({
     deleteProps.confirmContent = `You are about to delete this ${resourceName}. This action will permanently remove the item from the system, and it cannot be undone. Are you sure you want to delete this item?`;
   }
 
+  const canEdit = useCanUserEdit(record, resource);
+
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <When condition={resource === "siteReport" || resource === "nurseryReport"}>
@@ -70,7 +73,7 @@ const ShowActions = ({
             <Icon className="h-5 w-5" name={record?.is_test ? IconNames.SORT_DOWN : IconNames.SORT_UP} />
           </Button>
         )}
-        {record && hasDelete && (
+        {canEdit && hasDelete && (
           <DeleteWithConfirmButton
             {...deleteProps}
             mutationMode="undoable"
@@ -78,7 +81,7 @@ const ShowActions = ({
             icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
         )}
-        {record && hasEdit && (
+        {canEdit && hasEdit && (
           <EditButton
             className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
             icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}

@@ -105,15 +105,11 @@ exports[`Storyshots Components/Elements/Inputs/TreeSpeciesInput Default 1`] = `
         <p
           className="uppercase text-black text-14-bold"
           data-testid="txt"
-        >
-          TREES TO BE PLANTED:
-        </p>
+        />
         <p
           className="text-primary text-20-bold"
           data-testid="txt"
-        >
-          0
-        </p>
+        />
       </div>
     </div>
     <div
