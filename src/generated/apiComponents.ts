@@ -98,14 +98,21 @@ export type GetV2EntityUUIDAggregateReportsResponse = {
      * @format date-time
      */
     dueDate?: string | null;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
   }[];
   ["seeding-records"]?: {
     /**
      * @format date-time
      */
     dueDate?: string;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
   }[];
 };
 
