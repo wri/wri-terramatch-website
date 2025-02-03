@@ -24,6 +24,9 @@ export type TreeSpeciesPaginated = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
 };
 
 export type TreeSpeciesAggregated = {

@@ -307,6 +307,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
   const [speciesCount, setSpeciesCount] = useState(0);
+  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
+  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: project.uuid,
@@ -352,8 +355,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                      value: 10,
-                      limit: 12
+                      value: treePlantedSpeciesCount,
+                      limit: treePlantedSpeciesGoal
                     }
                   ]}
                 />
@@ -399,8 +402,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         variantLabel: "text-14",
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                        value: 10,
-                        limit: 12
+                        value: treePlantedSpeciesCount,
+                        limit: treePlantedSpeciesGoal
                       }
                     ]}
                   />
@@ -437,6 +440,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.TF]}>
@@ -447,6 +452,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
@@ -457,6 +464,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
           </div>
