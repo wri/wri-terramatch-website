@@ -82,6 +82,72 @@ export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUID
   );
 };
 
+export type GetV2EntityUUIDAggregateReportsPathParams = {
+  /**
+   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type GetV2EntityUUIDAggregateReportsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2EntityUUIDAggregateReportsResponse = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    treeSpeciesAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    treeSpeciesAmount?: number;
+  }[];
+};
+
+export type GetV2EntityUUIDAggregateReportsVariables = {
+  pathParams: GetV2EntityUUIDAggregateReportsPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2EntityUUIDAggregateReports = (
+  variables: GetV2EntityUUIDAggregateReportsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2EntityUUIDAggregateReportsResponse,
+    GetV2EntityUUIDAggregateReportsError,
+    undefined,
+    {},
+    {},
+    GetV2EntityUUIDAggregateReportsPathParams
+  >({ url: "/v2/{entity}/{uuid}/aggregate-reports", method: "get", ...variables, signal });
+
+export const useGetV2EntityUUIDAggregateReports = <TData = GetV2EntityUUIDAggregateReportsResponse>(
+  variables: GetV2EntityUUIDAggregateReportsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>(
+    queryKeyFn({
+      path: "/v2/{entity}/{UUID}/aggregate-reports",
+      operationId: "getV2EntityUUIDAggregateReports",
+      variables
+    }),
+    ({ signal }) => fetchGetV2EntityUUIDAggregateReports({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminProjectsMultiQueryParams = {
   /**
    * comma separated list of values. eg ?ids=uuid1,uuid2
@@ -38664,6 +38730,11 @@ export type QueryOperation =
       path: "/v2/tree-species/{entity}/{UUID}";
       operationId: "getV2TreeSpeciesEntityUUID";
       variables: GetV2TreeSpeciesEntityUUIDVariables;
+    }
+  | {
+      path: "/v2/{entity}/{UUID}/aggregate-reports";
+      operationId: "getV2EntityUUIDAggregateReports";
+      variables: GetV2EntityUUIDAggregateReportsVariables;
     }
   | {
       path: "/v2/admin/projects/multi";

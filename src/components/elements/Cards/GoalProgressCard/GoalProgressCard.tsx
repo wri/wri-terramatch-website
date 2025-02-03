@@ -59,7 +59,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
           </Text>
-          {graph ? chart : null}
+          {graph ? <div className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center">{chart}</div> : null}
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
             <When condition={!!limit || !!totalValue}>

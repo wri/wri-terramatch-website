@@ -1,4 +1,5 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
+import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -118,7 +119,7 @@ interface ChartDataPoint {
   name: string;
 }
 
-interface ChartCategory {
+export interface ChartCategory {
   name: string;
   values: ChartDataPoint[];
 }
@@ -251,6 +252,45 @@ export const getRestorationGoalDataForChart = (
     "Non Profit"
   );
   addCategoryToChart(chartData, "Non Profit", nonProfitValues, nonProfitSum);
+
+  return chartData;
+};
+
+export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregateReportsResponse): ChartCategory[] => {
+  if (!data) return [];
+
+  const createChartPoints = (
+    sourceData: Array<{ dueDate?: string | null; treeSpeciesAmount?: number }>,
+    categoryName: string
+  ): { sum: number; values: ChartDataPoint[] } => {
+    const nullSum = sourceData
+      .filter(item => item.dueDate === null)
+      .reduce((acc, item) => acc + (item.treeSpeciesAmount ?? 0), 0);
+
+    let sum = nullSum;
+    const values = sourceData
+      .filter(item => item.dueDate) // Ignore null dueDates in chart
+      .map(item => {
+        sum += item.treeSpeciesAmount ?? 0;
+        return {
+          time: new Date(item.dueDate!), // Safe because we filter out nulls
+          value: sum,
+          name: categoryName
+        };
+      });
+
+    return { sum, values };
+  };
+
+  const chartData: ChartCategory[] = [];
+
+  const { values: treePlantedValues } = createChartPoints(data["tree-planted"] ?? [], "Tree Planted");
+  chartData.push({ name: "Tree Planted", values: treePlantedValues });
+
+  if (data["seeding-records"]) {
+    const { values: seedingRecordsValues } = createChartPoints(data["seeding-records"] ?? [], "Seeding Records");
+    chartData.push({ name: "Seeding Records", values: seedingRecordsValues });
+  }
 
   return chartData;
 };

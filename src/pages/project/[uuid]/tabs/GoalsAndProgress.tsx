@@ -1,5 +1,7 @@
 import { useT } from "@transifex/react";
 
+import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
+import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -8,8 +10,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
+import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
+import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
+import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: any;
@@ -289,103 +295,26 @@ export const dataSeedCountGoalSiteReport = [
   }
 ];
 
+const getProgressData = (totalValue: number, progressValue: number) => {
+  return [
+    { name: "Total", value: totalValue, color: "#13487A" },
+    { name: "Progress", value: progressValue, color: "#7BBD31" }
+  ];
+};
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-
+  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
+    pathParams: {
+      uuid: project.uuid,
+      entity: "project"
+    }
+  });
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
-        <PageCard title={t("Progress & Goals")}>
-          <div className="flex w-full flex-wrap items-start justify-between gap-8">
-            <GoalProgressCard
-              frameworksShow={[Framework.TF]}
-              label={t("JOBS CREATED")}
-              value={205}
-              totalValue={300}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.HBF]}
-              label={t("workdays CREATED")}
-              value={205}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Hectares RESTORED")}
-              value={129}
-              totalValue={"300 ha"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("Trees Restored")}
-              frameworksHide={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              label={t("saplings Restored ")}
-              frameworksShow={[Framework.HBF]}
-              value={113250}
-              totalValue={"300,000"}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-            <GoalProgressCard
-              frameworksShow={[Framework.PPC]}
-              label={t("workdays CREATED")}
-              value={project.combined_workday_count}
-              classNameLabel="text-neutral-650 uppercase mb-3"
-              labelVariant="text-14"
-              classNameCard="text-center flex flex-col items-center"
-              classNameLabelValue="justify-center"
-            />
-
-            <GoalProgressCard
-              label={t("Trees restored")}
-              value={project.trees_restored_count}
-              limit={project.trees_grown_goal}
-              hasProgress={false}
-              items={[
-                {
-                  iconName: IconNames.TREE_CIRCLE_PD,
-                  label: t("Trees Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.trees_planted_count
-                },
-                {
-                  iconName: IconNames.LEAF_CIRCLE_PD,
-                  label: t("Seeds Planted:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.seeds_planted_count
-                },
-                {
-                  iconName: IconNames.REFRESH_CIRCLE_PD,
-                  label: t("Trees Regenerating:"),
-                  variantLabel: "text-14",
-                  classNameLabel: " text-neutral-650 uppercase",
-                  value: project.regenerated_trees_count
-                }
-              ]}
-              className="pr-[41px] lg:pr-[150px]"
-            />
-          </div>
+        <PageCard title={t("Project Progress & Goals")}>
+          <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
 
@@ -436,16 +365,24 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     )}
                   </Text>
                   <div className="mb-2 flex items-center">
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.TREE_DASHABOARD} className="h-10 w-10 text-primary-200" />
+                    <div className="relative h-9 w-[230px]">
+                      <div className="absolute inset-0 z-0 h-full w-full">
+                        <ProgressBarChart
+                          data={getProgressData(project.trees_grown_goal ?? 0, project.trees_planted_count ?? 0)}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <img
+                        src="/images/treeBackgroundShort.svg"
+                        id="treeBackgroundShort"
+                        alt="secondValue"
+                        className="z-1 absolute right-0 h-9 w-[231px]"
+                      />
+                    </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      113,257
+                      {project.trees_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of 300,000
+                        of {project.trees_grown_goal.toLocaleString()}
                       </Text>
                     </Text>
                   </div>
@@ -482,7 +419,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                <img src="/images/graphic-2.png" alt="progress" className="mt-8 w-full" />
+                {dataAggregated ? (
+                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                ) : (
+                  <Loader />
+                )}
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -498,19 +439,21 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <ContextCondition frameworksShow={[Framework.TF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataTreeCountGoal}
-                typeTable="treeCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataSpeciesCountGoal}
-                typeTable="speciesCount/Goal"
                 modelUUID={project.uuid}
-                visibleRows={10}
+                framework={project.framework_key}
+                visibleRows={8}
+                collection="tree-planted"
+                galleryType={"treeSpeciesPD"}
               />
             </ContextCondition>
           </div>
@@ -529,11 +472,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   items={[
                     {
                       iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("Trees Planted:"),
+                      label: t("Number of Seeds Planted:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: project.seeds_planted_count
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -541,7 +484,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "80% "
+                      value: `${project.survival_rate}%`
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -584,16 +527,24 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     {t("Number of seeds Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
-                    <Icon name={IconNames.SEED_PLANTED} className="h-10 w-10 text-primary-200" />
+                    <div className="relative h-9 w-[260px]">
+                      <div className="absolute inset-0 z-0 h-full w-full">
+                        <ProgressBarChart
+                          data={getProgressData(project.seeds_grown_goal ?? 0, project.seeds_planted_count ?? 0)}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <img
+                        src="/images/seedBackground.svg"
+                        id="seedBackground"
+                        alt="secondValue"
+                        className="z-1 absolute right-0 h-9 w-[261px]"
+                      />
+                    </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      5,250
+                      {project.seeds_planted_count.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of 25,000
+                        of {project.seeds_grown_goal ? project.seeds_grown_goal.toLocaleString() : "0"}
                       </Text>
                     </Text>
                   </div>
@@ -627,9 +578,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    data={dataSeedCount}
-                    visibleRows={10}
-                    typeTable="seedCount"
+                    framework={project.framework_key}
+                    visibleRows={5}
+                    collection="seeding"
                   />
                 </ContextCondition>
               </div>

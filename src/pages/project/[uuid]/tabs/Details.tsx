@@ -45,6 +45,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const landUseTypesOptions = useGetOptions(project.land_use_types);
   const sdgsImpactedOptions = useGetOptions(project.sdgs_impacted);
   const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
+  const detailedInterventionTypeOptions = useGetOptions(project.detailed_intervention_types);
 
   const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
     pathParams: { uuid: project.uuid }
@@ -77,7 +78,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               selectedValues={project.restoration_strategy}
             />
             <LongTextField frameworksShow={[Framework.HBF]} title={t("Detailed Intervention Types")}>
-              {project.detailed_intervention_types}
+              {detailedInterventionTypeOptions.map(({ title }) => title).join(", ")}
             </LongTextField>
             <LongTextField title={t("Planting Start Date")}>{format(project.planting_start_date)}</LongTextField>
             <LongTextField frameworksHide={[Framework.PPC]} title={t("Planting End Date")}>
