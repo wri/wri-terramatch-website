@@ -300,7 +300,6 @@ export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregat
     chartData.push({ name: "Trees Regenerating", values: treesRegeneratingValues });
   }
 
-  console.log("Chart Data", chartData);
   return chartData;
 };
 

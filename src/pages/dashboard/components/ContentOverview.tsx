@@ -81,6 +81,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
+  const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
@@ -88,6 +89,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   useEffect(() => {
     setSelectedLandscapes(filters.landscapes || []);
   }, [filters.landscapes]);
+  useEffect(() => {
+    setProjectUUID(filters.uuid);
+  }, [filters.uuid]);
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
   useEffect(() => {
     if (initialBbox) {
@@ -149,6 +153,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
+              projectUUID={projectUUID}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
@@ -248,6 +253,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedCountry={selectedCountry}
               setLoader={setDashboardMapLoaded}
               selectedLandscapes={selectedLandscapes}
+              projectUUID={projectUUID}
             />
           </LoadingContainerOpacity>
           <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
