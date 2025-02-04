@@ -5,6 +5,7 @@ import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/compo
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -12,6 +13,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
+import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
@@ -303,6 +305,16 @@ const getProgressData = (totalValue: number, progressValue: number) => {
   ];
 };
 
+const isFrameworkTFOrRelated = (frameworkKey: string) => {
+  return (
+    frameworkKey === Framework.TF || frameworkKey === Framework.TF_LANDSCAPES || frameworkKey === Framework.ENTERPRISES
+  );
+};
+
+const isEmptyArray = (obj: any) => {
+  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
+};
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
@@ -366,7 +378,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 <>
                   <Text variant="text-14" className="uppercase text-neutral-650">
                     {t(
-                      project.framework_key === Framework.TF
+                      isFrameworkTFOrRelated(project.framework_key)
                         ? "Number of Trees Planted:"
                         : "Number of SAPLINGS Planted:"
                     )}
@@ -427,7 +439,13 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   </div>
                 </div>
                 {dataAggregated ? (
-                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  <BlurContainer
+                    className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
+                    isBlur={isEmptyArray(dataAggregated)}
+                    textType={TEXT_TYPES.NO_GRAPH}
+                  >
+                    <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  </BlurContainer>
                 ) : (
                   <Loader />
                 )}
@@ -445,7 +463,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
@@ -475,7 +493,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       <PageRow>
         <PageColumn>
           <PageCard
-            title={t(project.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
+            title={t(
+              isFrameworkTFOrRelated(project.framework_key) ? "Non-Tree Planting Progress" : "Seed Planting Progress"
+            )}
           >
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -510,7 +530,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </ContextCondition>
-              <ContextCondition frameworksShow={[Framework.TF]}>
+              <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -578,7 +598,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 </>
               </ContextCondition>
               <div className="mt-2">
-                <ContextCondition frameworksShow={[Framework.TF]}>
+                <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
@@ -588,7 +608,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
-                <ContextCondition frameworksHide={[Framework.TF]}>
+                <ContextCondition frameworksHide={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
