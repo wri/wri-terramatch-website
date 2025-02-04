@@ -13,13 +13,18 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: any;
+}
+
+interface NaturalRegenerationItem {
+  name: string;
+  treeCount: number;
 }
 
 export const LABEL_LEGEND = [
@@ -317,6 +322,17 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       entity: "project"
     }
   });
+
+  const formatNaturalGenerationData = project.assisted_natural_regeneration_list
+    .sort((a: NaturalRegenerationItem, b: NaturalRegenerationItem) => b.treeCount - a.treeCount)
+    .map((item: NaturalRegenerationItem) => {
+      return {
+        name: item.name,
+        treeCount: item.treeCount.toLocaleString()
+      };
+    });
+
+  const isTerrafund = ALL_TF.includes(project.framework_key as Framework);
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -365,11 +381,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <ContextCondition frameworksHide={[Framework.PPC]}>
                 <>
                   <Text variant="text-14" className="uppercase text-neutral-650">
-                    {t(
-                      project.framework_key === Framework.TF
-                        ? "Number of Trees Planted:"
-                        : "Number of SAPLINGS Planted:"
-                    )}
+                    {t(isTerrafund ? "Number of Trees Planted:" : "Number of SAPLINGS Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
                     <div className="relative h-9 w-[230px]">
@@ -445,7 +457,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={ALL_TF}>
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
@@ -474,9 +486,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
       <PageRow>
         <PageColumn>
-          <PageCard
-            title={t(project.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
-          >
+          <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")} className="h-full">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
                 <GoalProgressCard
@@ -510,7 +520,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </ContextCondition>
-              <ContextCondition frameworksShow={[Framework.TF]}>
+              <ContextCondition frameworksShow={ALL_TF}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -578,7 +588,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 </>
               </ContextCondition>
               <div className="mt-2">
-                <ContextCondition frameworksShow={[Framework.TF]}>
+                <ContextCondition frameworksShow={ALL_TF}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
@@ -588,7 +598,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
-                <ContextCondition frameworksHide={[Framework.TF]}>
+                <ContextCondition frameworksHide={ALL_TF}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
@@ -605,7 +615,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         </PageColumn>
 
         <PageColumn>
-          <PageCard title={t("Assisted Natural Regeneration Progress")}>
+          <PageCard title={t("Assisted Natural Regeneration Progress")} className="h-full">
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <div>
                 <Text variant="text-14" className="mb-2 uppercase text-neutral-650">
@@ -658,7 +668,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <div className="mt-2">
               <TreeSpeciesTablePD
                 modelName="project"
-                data={project.assisted_natural_regeneration_list.sort((a: any, b: any) => b.treeCount - a.treeCount)}
+                data={formatNaturalGenerationData}
                 modelUUID={project.uuid}
                 visibleRows={5}
                 typeTable="treeCountSite"
