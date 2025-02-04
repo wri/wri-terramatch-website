@@ -37,6 +37,12 @@ export const LABEL_LEGEND = [
   }
 ];
 
+const isFrameworkTFOrRelated = (frameworkKey: string) => {
+  return (
+    frameworkKey === Framework.TF || frameworkKey === Framework.TF_LANDSCAPES || frameworkKey === Framework.ENTERPRISES
+  );
+};
+
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
@@ -83,7 +89,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                         {
                           iconName: IconNames.SURVIVAL_RATE,
                           label: t(
-                            site.framework_key === Framework.TF
+                            isFrameworkTFOrRelated(site.framework_key)
                               ? "Last Reported Survival Rate:"
                               : "Estimated Survival Rate:"
                           ),
@@ -145,7 +151,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       </PageRow>
       <PageRow>
         <PageCard
-          title={t(site.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
+          title={t(
+            isFrameworkTFOrRelated(site.framework_key) ? "Non-Tree Planting Progress" : "Seed Planting Progress"
+          )}
         >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
@@ -181,7 +189,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   ]}
                 />
               </When>
-              <When condition={site.framework_key === Framework.TF}>
+              <When condition={isFrameworkTFOrRelated(site.framework_key)}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -231,7 +239,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </When>
             </div>
             <div>
-              <If condition={site.framework_key === Framework.TF || site.framework_key === Framework.HBF}>
+              <If condition={isFrameworkTFOrRelated(site.framework_key) || site.framework_key === Framework.HBF}>
                 <Then>
                   <TreeSpeciesTablePD
                     modelName="site"
