@@ -54,7 +54,10 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     project: {
       total_jobs_created: entity.total_jobs_created,
       jobs_created_goal: entity.jobs_created_goal,
-      total_hectares_restored_sum: entity.total_hectares_restored_sum,
+      total_hectares_restored_sum:
+        project && entity.framework_key == Framework.PPC
+          ? Math.round(entity.total_hectares_restored_sum)
+          : entity.total_hectares_restored_sum,
       total_hectares_restored_goal: entity.total_hectares_restored_goal,
       trees_restored_count: entity.trees_restored_count,
       trees_grown_goal: entity.trees_grown_goal,
