@@ -1,4 +1,4 @@
-import { useT } from "@transifex/react";
+import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -197,15 +197,15 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
-      return "Project Insights";
+      return <T _str="Project Insights" _tags="dash" />;
     }
     if (isProjectListPage) {
-      return "Project List";
+      return <T _str="Project List" _tags="dash" />;
     }
     if (isHomepage) {
-      return "Learn More";
+      return <T _str="Learn More" _tags="dash" />;
     }
-    return "TerraMatch Dashboards";
+    return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
   return (
@@ -217,7 +217,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
-          {t(getHeaderTitle())}
+          {getHeaderTitle()}
           <When condition={isProjectInsightsPage}>
             <ToolTip
               title={""}

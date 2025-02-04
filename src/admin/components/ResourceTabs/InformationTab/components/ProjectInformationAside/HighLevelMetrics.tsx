@@ -48,7 +48,7 @@ const HighLevelMetics: FC = () => {
           <NumberField source="total_hectares_restored_sum" emptyText="0" />
         </Labeled>
         <ContextCondition frameworksShow={[Framework.PPC]}>
-          <Labeled label="Trees Restored" sx={inlineLabelSx}>
+          <Labeled label="Trees RestoredX" sx={inlineLabelSx}>
             <NumberField
               source="trees_restored_ppc"
               emptyText="0"

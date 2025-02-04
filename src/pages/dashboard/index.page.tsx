@@ -11,13 +11,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { logout } from "@/connections/Login";
 import { useMyUser } from "@/connections/User";
-import {
-  CHART_TYPES,
-  JOBS_CREATED_CHART_TYPE,
-  ORGANIZATIONS_TYPES,
-  TERRAFUND_MRV_LINK,
-  TEXT_TYPES
-} from "@/constants/dashboardConsts";
+import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import {
   formatLabelsVolunteers,
@@ -38,7 +32,6 @@ import {
   NEW_PART_TIME_JOBS_TOOLTIP,
   NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
   NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
-  NUMBER_OF_TREES_PLANTED_TOOLTIP,
   TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
   TOTAL_VOLUNTEERS_TOOLTIP,
   VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
@@ -46,6 +39,13 @@ import {
 } from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { LABEL_LEGEND } from "./mockedData/dashboard";
+
+export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+
+export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
+
+export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
+  "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
 
 export interface DashboardTableDataProps {
   label: string;
