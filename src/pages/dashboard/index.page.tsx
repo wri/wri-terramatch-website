@@ -510,7 +510,7 @@ const Dashboard = () => {
                 isLoading={isLoadingJobsCreated}
               />
             </div>
-            <div className="blur">
+            <div className="hidden">
               <SecDashboard
                 title={t("Total Volunteers")}
                 data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
@@ -519,7 +519,8 @@ const Dashboard = () => {
               />
             </div>
 
-            <div className="grid w-full grid-cols-2 gap-12 blur">
+            <div className="hidden w-full grid-cols-2 gap-12">
+              {/* add grid and remove hidden*/}
               <SecDashboard
                 title={t("Volunteers Created by Gender")}
                 data={{}}
