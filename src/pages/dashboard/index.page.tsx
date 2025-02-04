@@ -280,7 +280,7 @@ const Dashboard = () => {
     total_non_profit_count: totalSectionHeader?.total_non_profit_count
   };
   return (
-    <div className="mb-4 mr-2 mt-4 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
+    <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap">
       <div className="overflow-hiden mx-auto w-full max-w-[730px] small:w-1/2 small:max-w-max">
         <PageRow className="gap-4 p-0">
           <When condition={(filters.country.id !== 0 || filters.landscapes.length > 0) && !filters.uuid}>
@@ -510,13 +510,16 @@ const Dashboard = () => {
                 isLoading={isLoadingJobsCreated}
               />
             </div>
-            <SecDashboard
-              title={t("Total Volunteers")}
-              data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
-              tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-            />
-            <div className="grid w-full grid-cols-2 gap-12">
+            <div className="blur">
+              <SecDashboard
+                title={t("Total Volunteers")}
+                data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
+                tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
+                isUserAllowed={isUserAllowed?.allowed}
+              />
+            </div>
+
+            <div className="grid w-full grid-cols-2 gap-12 blur">
               <SecDashboard
                 title={t("Volunteers Created by Gender")}
                 data={{}}
