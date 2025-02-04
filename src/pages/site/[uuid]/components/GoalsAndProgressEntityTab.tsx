@@ -48,7 +48,7 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
   const totaTreesRestoredCount =
-    entity?.trees_planted_count + entity?.regenerated_trees_count + entity?.seeds_planted_count;
+    entity?.trees_planted_count + entity?.approved_regenerated_trees_count + entity?.seeds_planted_count;
   const keyAttribute = project ? "project" : "site";
   const attribMapping: { [key: string]: any } = {
     project: {
@@ -65,7 +65,8 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       jobs_created_goal: null,
       total_hectares_restored_sum: entity.total_hectares_restored_sum,
       total_hectares_restored_goal: entity.hectares_to_restore_goal,
-      trees_restored_count: entity?.trees_planted_count + entity?.regenerated_trees_count + entity?.seeds_planted_count,
+      trees_restored_count:
+        entity?.trees_planted_count + entity?.approved_regenerated_trees_count + entity?.seeds_planted_count,
       trees_grown_goal: null,
       workday_count: entity.framework_key == Framework.PPC ? entity.combined_workday_count : entity.workday_count
     }
@@ -245,7 +246,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Trees Regenerating:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.regenerated_trees_count
+            value: entity.approved_regenerated_trees_count
           }
         ]}
         className="pr-[41px] lg:pr-[150px]"
