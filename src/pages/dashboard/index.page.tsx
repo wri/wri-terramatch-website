@@ -23,22 +23,29 @@ import {
 import ContentOverview from "./components/ContentOverview";
 import DashboardBreadcrumbs from "./components/DashboardBreadcrumbs";
 import SecDashboard from "./components/SecDashboard";
-import {
-  ACTIVE_COUNTRIES_TOOLTIP,
-  ACTIVE_PROJECTS_TOOLTIP,
-  JOBS_CREATED_BY_AGE_TOOLTIP,
-  JOBS_CREATED_BY_GENDER_TOOLTIP,
-  NEW_FULL_TIME_JOBS_TOOLTIP,
-  NEW_PART_TIME_JOBS_TOOLTIP,
-  NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS,
-  NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP,
-  TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP,
-  TOTAL_VOLUNTEERS_TOOLTIP,
-  VOLUNTEERS_CREATED_BY_AGE_TOOLTIP,
-  VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP
-} from "./constants/tooltips";
 import { useDashboardData } from "./hooks/useDashboardData";
-import { LABEL_LEGEND } from "./mockedData/dashboard";
+
+export const ACTIVE_COUNTRIES_TOOLTIP =
+  "For each country, this table shows the number of projects, trees planted, hectares under restoration, and jobs created to date.";
+export const ACTIVE_PROJECTS_TOOLTIP =
+  "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep.";
+export const JOBS_CREATED_BY_AGE_TOOLTIP =
+  "Total number of employees broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
+export const JOBS_CREATED_BY_GENDER_TOOLTIP = "Total number of employees broken down by gender.";
+export const NEW_FULL_TIME_JOBS_TOOLTIP =
+  "Number of full-time jobs created to date. TerraFund defines a full-time employee as people that are regularly paid for their work on the project and are working more than 35 hours per week throughout the year.";
+export const NEW_PART_TIME_JOBS_TOOLTIP =
+  "Number of people working part-time jobs to date. Terrafund defines a part-time job as a person working regularly, paid for work on the project but working under 35 hours per work week. Part-time includes all employees engaged on a temporary, casual, or seasonal basis.";
+export const NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS =
+  "Data is still being collected and checked. This visual will remain empty until data is properly quality assured.";
+export const NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP = "Number of trees planted in each year.";
+export const TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP =
+  "The 5 projects that have planted the most trees and the corresponding number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference.";
+export const TOTAL_VOLUNTEERS_TOOLTIP =
+  "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work.";
+export const VOLUNTEERS_CREATED_BY_AGE_TOOLTIP =
+  "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
+export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP = "Total number of volunteers broken down by gender.";
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
@@ -46,6 +53,21 @@ export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="u
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
   "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
+
+const LABEL_LEGEND = [
+  {
+    tooltip: { key: "Total", render: "Total" },
+    color: "bg-blueCustom-900"
+  },
+  {
+    tooltip: { key: "Non-Profit", render: "Non-Profit" },
+    color: "bg-secondary-600"
+  },
+  {
+    tooltip: { key: "Enterprise", render: "Enterprise" },
+    color: "bg-primary"
+  }
+];
 
 export interface DashboardTableDataProps {
   label: string;
