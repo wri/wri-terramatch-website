@@ -5,12 +5,14 @@ import { Else, If, Then, When } from "react-if";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
+import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { TextVariants } from "@/types/common";
@@ -36,6 +38,10 @@ export const LABEL_LEGEND = [
     color: "bg-secondary-600"
   }
 ];
+
+const isEmptyArray = (obj: any) => {
+  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
+};
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
@@ -118,7 +124,13 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   </div>
                 </div>
                 {dataAggregated ? (
-                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  <BlurContainer
+                    className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
+                    isBlur={isEmptyArray(dataAggregated)}
+                    textType={TEXT_TYPES.NO_GRAPH}
+                  >
+                    <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  </BlurContainer>
                 ) : (
                   <Loader />
                 )}
