@@ -72,6 +72,12 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
         pathParams: { entity, framework }
       })
         .then((data: any) => {
+          if (!data.url) {
+            return getExport({ pathParams: { entity, framework } });
+          }
+          return data;
+        })
+        .then(data => {
           downloadPresignedUrl(data.url, `${exportPrefix} - ${framework}.csv`);
         })
         .finally(() => setExporting(false));
