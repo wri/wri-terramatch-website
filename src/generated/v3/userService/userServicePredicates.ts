@@ -33,7 +33,7 @@ export const requestPasswordResetIsFetching = (store: ApiDataStore) =>
 export const requestPasswordResetFetchFailed = (store: ApiDataStore) =>
   fetchFailed<{}, {}>({ store, url: "/auth/v3/passwordResets", method: "post" });
 
-export const resetPasswordIsFetching = (variables: ResetPasswordVariables) => (store: ApiDataStore) =>
+export const resetPasswordIsFetching = (variables: Omit<ResetPasswordVariables, "body">) => (store: ApiDataStore) =>
   isFetching<{}, ResetPasswordPathParams>({
     store,
     url: "/auth/v3/passwordResets/{token}",
@@ -41,7 +41,7 @@ export const resetPasswordIsFetching = (variables: ResetPasswordVariables) => (s
     ...variables
   });
 
-export const resetPasswordFetchFailed = (variables: ResetPasswordVariables) => (store: ApiDataStore) =>
+export const resetPasswordFetchFailed = (variables: Omit<ResetPasswordVariables, "body">) => (store: ApiDataStore) =>
   fetchFailed<{}, ResetPasswordPathParams>({
     store,
     url: "/auth/v3/passwordResets/{token}",
