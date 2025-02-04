@@ -1,4 +1,4 @@
-import { useT } from "@transifex/react";
+import { T, useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -56,15 +56,15 @@ export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
 
 const LABEL_LEGEND = [
   {
-    tooltip: { key: "Total", render: "Total" },
+    tooltip: { key: "Total", render: <T _str="Total" _tags="dash" /> },
     color: "bg-blueCustom-900"
   },
   {
-    tooltip: { key: "Non-Profit", render: "Non-Profit" },
+    tooltip: { key: "Non-Profit", render: <T _str="Non-Profit" _tags="dash" /> },
     color: "bg-secondary-600"
   },
   {
-    tooltip: { key: "Enterprise", render: "Enterprise" },
+    tooltip: { key: "Enterprise", render: <T _str="Enterprise" _tags="dash" /> },
     color: "bg-primary"
   }
 ];
@@ -112,12 +112,12 @@ const Dashboard = () => {
   } = useDashboardData(filters);
 
   const dataToggle = [
-    { tooltip: { key: "Absolute", render: "Absolute" } },
-    { tooltip: { key: "Relative", render: "Relative" } }
+    { tooltip: { key: "Absolute", render: <T _str="Absolute" _tags="dash" /> } },
+    { tooltip: { key: "Relative", render: <T _str="Relative" _tags="dash" /> } }
   ];
   const dataToggleGraphic = [
-    { tooltip: { key: "Table", render: "Table" } },
-    { tooltip: { key: "Graph", render: "Graph" } }
+    { tooltip: { key: "Table", render: <T _str="Table" _tags="dash" /> } },
+    { tooltip: { key: "Graph", render: <T _str="Graph" _tags="dash" /> } }
   ];
 
   useEffect(() => {

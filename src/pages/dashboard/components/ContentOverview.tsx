@@ -17,7 +17,7 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
-import { CHART_TYPES, TERRAFUND_MRV_LINK } from "@/constants/dashboardConsts";
+import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
@@ -33,6 +33,9 @@ import {
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
+
+const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 
 interface RowData {
   country_slug: undefined;
