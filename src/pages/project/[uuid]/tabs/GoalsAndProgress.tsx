@@ -319,6 +319,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
   const [speciesCount, setSpeciesCount] = useState(0);
+  const [nonTreeCount, setNonTreeCount] = useState(0);
   const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
   const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
   const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
@@ -714,10 +715,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     />
                   </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    8,400
-                    <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of 90,000
-                    </Text>
+                    {nonTreeCount.toLocaleString()}
                   </Text>
                 </div>
                 <GoalProgressCard
@@ -741,6 +739,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 modelUUID={project.uuid}
                 visibleRows={5}
                 setTotalNonTree={setTotalNonTreeSpecies}
+                setTotalCount={setNonTreeCount}
               />
             </div>
           </PageCard>
