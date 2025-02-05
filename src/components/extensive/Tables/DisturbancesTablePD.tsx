@@ -85,12 +85,22 @@ const DisturbancesTablePD = ({
       return <div className="text-14">{value}</div>;
     }
   };
-
+  const getColumns = () => {
+    const finalColumns = [rowDisturbanceType];
+    if (disturbances?.data?.[0]?.extent) {
+      finalColumns.push(columnExtent);
+    }
+    if (disturbances?.data?.[0].intensity) {
+      finalColumns.push(columnIntensity);
+    }
+    finalColumns.push(columnDescription);
+    return finalColumns;
+  };
   return (
     <div>
       <Table
         data={tableData}
-        columns={[rowDisturbanceType, columnExtent, columnIntensity, columnDescription]}
+        columns={getColumns()}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
