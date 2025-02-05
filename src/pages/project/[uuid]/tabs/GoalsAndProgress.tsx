@@ -349,7 +349,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
 
       <PageRow>
-        <PageCard title={t("Tree Planting Progress")}>
+        <PageCard
+          title={t(project.framework_key == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+        >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
