@@ -37,8 +37,8 @@ const DisturbancesTablePD = ({
     if (!rows) return [];
     return rows.map(row => ({
       name: row.type,
-      extent: row.extent ?? "N/A",
       intensity: row.intensity ?? "N/A",
+      extent: row.extent ? `${row.extent}%` : "N/A",
       description: row.description ?? "N/A",
       uuid: row.uuid
     }));
@@ -56,9 +56,9 @@ const DisturbancesTablePD = ({
     }
   };
 
-  const columnExtent = {
-    accessorKey: "extent",
-    header: "Extent",
+  const columnIntensity = {
+    accessorKey: "intensity",
+    header: "Intensity",
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -66,9 +66,9 @@ const DisturbancesTablePD = ({
     }
   };
 
-  const columnIntensity = {
-    accessorKey: "intensity",
-    header: "Intensity",
+  const columnExtent = {
+    accessorKey: "extent",
+    header: "Extent (% of Site Affected)",
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -85,13 +85,14 @@ const DisturbancesTablePD = ({
       return <div className="text-14">{value}</div>;
     }
   };
+
   const getColumns = () => {
     const finalColumns = [rowDisturbanceType];
-    if (disturbances?.data?.[0]?.extent) {
-      finalColumns.push(columnExtent);
-    }
     if (disturbances?.data?.[0].intensity) {
       finalColumns.push(columnIntensity);
+    }
+    if (disturbances?.data?.[0]?.extent) {
+      finalColumns.push(columnExtent);
     }
     finalColumns.push(columnDescription);
     return finalColumns;
