@@ -36,8 +36,8 @@ const DisturbancesTablePD = ({
   const processDisturbanceData = (rows: any[]) => {
     if (!rows) return [];
     return rows.map(row => ({
-      name: row.type,
-      intensity: row.intensity ?? "N/A",
+      name: row.type ? row.type.charAt(0).toUpperCase() + row.type.slice(1) : "N/A",
+      intensity: row.intensity ? row.intensity.charAt(0).toUpperCase() + row.intensity.slice(1) : "N/A",
       extent: row.extent ? `${row.extent}%` : "N/A",
       description: row.description ?? "N/A",
       uuid: row.uuid
