@@ -142,7 +142,7 @@ const SecDashboard = ({
                 <div key={index} className="flex items-center gap-1">
                   <div className={classNames("h-2 w-2 rounded-full", item.color)} />
                   <Text variant="text-12" className="text-darkCustom">
-                    {t(item.tooltip.render)}
+                    {item.tooltip.render}
                   </Text>
                 </div>
               ))}
