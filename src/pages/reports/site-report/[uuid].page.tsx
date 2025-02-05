@@ -26,7 +26,7 @@ import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import useDemographicData from "@/hooks/useDemographicData";
@@ -131,7 +131,7 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.HBF]}>
+                    <ContextCondition frameworksHide={[...ALL_TF, Framework.HBF]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
