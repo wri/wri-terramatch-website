@@ -740,8 +740,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 collection="non-tree"
                 modelUUID={project.uuid}
                 visibleRows={5}
-                setTotalNonTree={setTotalNonTreeSpecies}
                 setTotalCount={setNonTreeCount}
+                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
               />
             </div>
           </PageCard>
