@@ -173,6 +173,7 @@ const ProcessBulkPolygonsControl = ({
     );
   };
   const runCheckPolygonsSelected = (selectedUUIDs: string[]) => {
+    showLoader();
     checkPolygons(
       {
         body: {
