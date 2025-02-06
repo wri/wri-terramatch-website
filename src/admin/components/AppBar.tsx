@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { AppBar as RaAppBar, AppBarProps, Link } from "react-admin";
 
 export const AppBar = (props: AppBarProps) => (
@@ -8,7 +7,5 @@ export const AppBar = (props: AppBarProps) => (
         <div className="ic-header" />
       </Link>
     </div>
-
-    <Typography flex="1" variant="h6" id="react-admin-title"></Typography>
   </RaAppBar>
 );

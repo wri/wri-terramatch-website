@@ -12,10 +12,9 @@ import {
 import { grey } from "@mui/material/colors";
 import { useT } from "@transifex/react";
 import { camelCase } from "lodash";
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { RaRecord, Show, ShowButton, useShowContext } from "react-admin";
 
-import ShowTitle from "@/admin/components/ShowTitle";
 import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 
@@ -129,8 +128,8 @@ function ShowReports() {
   );
 }
 
-const TaskShow: FC = () => (
-  <Show title={<ShowTitle moduleName="Task" getTitle={record => record?.project?.name} />}>
+const TaskShow = () => (
+  <Show>
     <ShowReports />
   </Show>
 );
