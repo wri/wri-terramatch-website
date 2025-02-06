@@ -74,13 +74,13 @@ const FloatNotification = () => {
           className={classNames(
             "absolute right-[107%] flex max-h-[80vh] w-[460px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300",
             { " bottom-[-4px] z-10  opacity-100": openModalNotification },
-            { " bottom-[-300px] -z-10  opacity-0": !openModalNotification }
+            { " bottom-[-300px] -z-10 !h-0  opacity-0": !openModalNotification }
           )}
         >
           <Text variant="text-20-bold" className="border-b border-grey-350 p-6 text-blueCustom-900">
             {t("Notifications")}
           </Text>
-          <div className="flex flex-col overflow-hidden px-6 pb-8 pt-6">
+          <div className="flex flex-col overflow-hidden px-6 pt-6 pb-8">
             <div className="mb-2 flex items-center justify-between">
               <Text variant="text-14-light" className="text-neutral-400">
                 {t("Actions Taken")}
