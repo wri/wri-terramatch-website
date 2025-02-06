@@ -53,6 +53,8 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
     </a>
   );
 
+  const NoGraph = () => <a>{t("Graph not available.")}</a>;
+
   const renderText = () => {
     switch (textType) {
       case TEXT_TYPES.LOGGED_USER:
@@ -61,6 +63,8 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
         return <LoginText />;
       case TEXT_TYPES.NO_DATA:
         return <NoDataText />;
+      case TEXT_TYPES.NO_GRAPH:
+        return <NoGraph />;
       default:
         return null;
     }

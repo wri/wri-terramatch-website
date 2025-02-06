@@ -69,16 +69,9 @@ export function calculateTotals(demographics: Demographic[], framework: Framewor
     return counts;
   }, initialCounts);
 
-  let total: number = 0;
-  let complete: boolean = false;
-
-  if (isHBFDemographicCounts(counts, framework)) {
-    total = counts.gender;
-    complete = counts.gender > 0;
-  } else {
-    total = Math.max(counts.age, counts.gender, counts.ethnicity);
-    complete = uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
-  }
+  const isHBF = isHBFDemographicCounts(counts, framework);
+  const total = isHBF ? counts.gender : Math.max(counts.age, counts.gender, counts.ethnicity);
+  const complete = isHBF ? counts.gender > 0 : uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
 
   return { counts, total, complete };
 }
@@ -102,8 +95,8 @@ export function useTableStatus(demographics: Demographic[]): { total: number; st
   );
 }
 
-function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics: Demographic[]) {
-  if (usesSubtype) {
+function mapRows(usesName: boolean, typeMap: Dictionary<string>, demographics: Demographic[]) {
+  if (usesName) {
     return demographics.map(
       ({ subtype, name, amount }, index): SectionRow => ({
         demographicIndex: index,
@@ -118,7 +111,7 @@ function mapRows(usesSubtype: boolean, typeMap: Dictionary<string>, demographics
   return Object.keys(typeMap).map((typeName): SectionRow => {
     // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
     // data in update requests that is still affected. TM-1098
-    const demographicIndex = findLastIndex(demographics, ({ name }) => name === typeName);
+    const demographicIndex = findLastIndex(demographics, ({ subtype }) => subtype === typeName);
     return {
       demographicIndex,
       typeName,
@@ -143,14 +136,12 @@ export function useSectionData(type: DemographicType | HBFDemographicType, demog
 
   return useMemo(
     function () {
-      const { title, addSubtypeLabel, typeMap } = demographicTypesMap[type];
-      const usesSubtype = addSubtypeLabel != null;
-      const rows = mapRows(usesSubtype, typeMap, demographics);
+      const { title, addNameLabel, typeMap } = demographicTypesMap[type];
+      const rows = mapRows(addNameLabel != null, typeMap, demographics);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
       const index = demographicTypes.indexOf(type);
       const position: Position = index == 0 ? "first" : index == DEMOGRAPHIC_TYPES.length - 1 ? "last" : null;
-      const subtypes = usesSubtype ? typeMap : undefined;
-      return { title, rows, total, position, subtypes };
+      return { title, rows, total, position };
     },
     [demographics, type, demographicTypes, demographicTypesMap]
   );

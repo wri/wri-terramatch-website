@@ -5,13 +5,15 @@ import { Else, If, Then, When } from "react-if";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
-import { Framework } from "@/context/framework.provider";
+import { TEXT_TYPES } from "@/constants/dashboardConsts";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
@@ -37,6 +39,10 @@ export const LABEL_LEGEND = [
   }
 ];
 
+const isEmptyArray = (obj: any) => {
+  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
+};
+
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
@@ -49,7 +55,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       entity: "site"
     }
   });
-
+  const isTerrafund = ALL_TF.includes(site.framework_key as Framework);
   return (
     <PageBody>
       <PageRow>
@@ -82,11 +88,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                     ? [
                         {
                           iconName: IconNames.SURVIVAL_RATE,
-                          label: t(
-                            site.framework_key === Framework.TF
-                              ? "Last Reported Survival Rate:"
-                              : "Estimated Survival Rate:"
-                          ),
+                          label: t(isTerrafund ? "Last Reported Survival Rate:" : "Estimated Survival Rate:"),
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
@@ -122,7 +124,13 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   </div>
                 </div>
                 {dataAggregated ? (
-                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  <BlurContainer
+                    className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
+                    isBlur={isEmptyArray(dataAggregated)}
+                    textType={TEXT_TYPES.NO_GRAPH}
+                  >
+                    <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  </BlurContainer>
                 ) : (
                   <Loader />
                 )}
@@ -144,9 +152,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         </PageCard>
       </PageRow>
       <PageRow>
-        <PageCard
-          title={t(site.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
-        >
+        <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <When condition={site.framework_key === Framework.PPC}>
@@ -181,7 +187,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   ]}
                 />
               </When>
-              <When condition={site.framework_key === Framework.TF}>
+              <When condition={isTerrafund}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -231,7 +237,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </When>
             </div>
             <div>
-              <If condition={site.framework_key === Framework.TF || site.framework_key === Framework.HBF}>
+              <If condition={isTerrafund || site.framework_key === Framework.HBF}>
                 <Then>
                   <TreeSpeciesTablePD
                     modelName="site"

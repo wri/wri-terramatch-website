@@ -95,15 +95,20 @@ const PolygonDrawer = ({
     statusSelectedPolygon,
     setStatusSelectedPolygon,
     setShouldRefetchValidation,
-    polygonCriteriaMap: polygonMap
+    polygonCriteriaMap: polygonMap,
+    setPolygonCriteriaMap
   } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       setCheckPolygonValidation(false);
+      setPolygonCriteriaMap((oldPolygonMap: any) => ({
+        ...oldPolygonMap,
+        [data.polygon_id]: data
+      }));
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),

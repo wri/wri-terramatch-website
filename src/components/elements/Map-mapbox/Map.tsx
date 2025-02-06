@@ -71,6 +71,7 @@ import {
   removeBorderLandscape,
   removeMediaLayer,
   removePopups,
+  setMapStyle,
   startDrawing,
   stopDrawing,
   zoomToBbox
@@ -124,6 +125,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   selectedLandscapes?: string[];
+  projectUUID?: string | undefined;
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
@@ -174,7 +176,7 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const {
     polygonsData,
     bbox,
@@ -183,8 +185,10 @@ export const MapContainer = ({
     sitePolygonData,
     selectedCountry,
     selectedLandscapes,
+    projectUUID,
     setLoader
   } = props;
+
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -219,7 +223,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap();
+    initMap(!!isDashboard);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -228,6 +232,7 @@ export const MapContainer = ({
       }
     };
   }, []);
+
   useEffect(() => {
     if (!map) return;
     if (location && location.lat !== 0 && location.lng !== 0) {
@@ -340,6 +345,16 @@ export const MapContainer = ({
       });
     }
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
+  useEffect(() => {
+    if (!map.current || !projectUUID) return;
+    if (map.current.isStyleLoaded()) {
+      setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+    } else {
+      map.current.once("render", () => {
+        setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+      });
+    }
+  }, [projectUUID, styleLoaded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
