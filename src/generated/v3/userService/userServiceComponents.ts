@@ -293,11 +293,11 @@ export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
 export type RequestPasswordResetResponse = {
   data?: {
     /**
-     * @example logins
+     * @example passwordResets
      */
     type?: string;
     /**
-     * @pattern ^\d{5}$
+     * @format uuid
      */
     id?: string;
     attributes?: Schemas.ResetPasswordResponseDto;
@@ -344,11 +344,11 @@ export type ResetPasswordError = Fetcher.ErrorWrapper<{
 export type ResetPasswordResponse = {
   data?: {
     /**
-     * @example logins
+     * @example passwordResets
      */
     type?: string;
     /**
-     * @pattern ^\d{5}$
+     * @format uuid
      */
     id?: string;
     attributes?: Schemas.ResetPasswordResponseDto;

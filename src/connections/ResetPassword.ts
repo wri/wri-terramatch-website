@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { requestPasswordReset, resetPassword } from "@/generated/v3/userService/userServiceComponents";
 import {
   requestPasswordResetFetchFailed,
   requestPasswordResetIsFetching,
@@ -10,7 +11,20 @@ import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 
-export const selectResetPassword = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
+export const RequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
+  requestPasswordReset({ body: { emailAddress, callbackUrl } });
+
+export const PasswordReset = (password: string, token: string) =>
+  resetPassword({
+    body: {
+      newPassword: password
+    },
+    pathParams: {
+      token: token
+    }
+  });
+
+export const selectResetPassword = (store: ApiDataStore) => Object.values(store.passwordResets)?.[0]?.attributes;
 
 type RequestResetPasswordConnection = {
   isLoading: boolean;
@@ -26,8 +40,8 @@ const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
       return {
         isLoading: isLoading,
         requestFailed: requestFailed,
-        isSuccess: (selector as any) != null,
-        requestEmail: (selector as any)?.emailAddress
+        isSuccess: selector?.emailAddress != null,
+        requestEmail: selector?.emailAddress
       };
     }
   )
@@ -50,7 +64,7 @@ const resetPasswordConnection: Connection<ResetPasswordConnection> = {
       return {
         isLoading: isLoggingIn,
         requestFailed: requestFailed,
-        isSuccess: (selector as any) != null
+        isSuccess: selector?.emailAddress != null
       };
     }
   )

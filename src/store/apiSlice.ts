@@ -7,7 +7,12 @@ import { Store } from "redux";
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import {
+  LoginDto,
+  OrganisationDto,
+  ResetPasswordResponseDto,
+  UserDto
+} from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
@@ -56,12 +61,20 @@ type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeTyp
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
-export const RESOURCES = ["delayedJobs", "establishmentTrees", "logins", "organisations", "users"] as const;
+export const RESOURCES = [
+  "delayedJobs",
+  "establishmentTrees",
+  "logins",
+  "organisations",
+  "users",
+  "passwordResets"
+] as const;
 
 type ApiResources = {
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
+  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
 };

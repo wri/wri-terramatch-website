@@ -7,8 +7,7 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { useResetPassword } from "@/connections/ResetPassword";
-import { resetPassword } from "@/generated/v3/userService/userServiceComponents";
+import { PasswordReset, useResetPassword } from "@/connections/ResetPassword";
 
 import ResetPasswordForm from "./components/ResetPasswordForm";
 
@@ -45,14 +44,7 @@ const ResetPasswordPage = () => {
       if (!router.query.token) {
         router.push("/");
       } else {
-        resetPassword({
-          body: {
-            newPassword: data.password
-          },
-          pathParams: {
-            token: (router.query.token as string)!
-          }
-        });
+        PasswordReset(data.password, (router.query.token as string)!);
       }
     } catch (err: any) {
       if (err.errors.length > 0) {

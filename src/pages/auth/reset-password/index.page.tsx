@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { useRequestPassword } from "@/connections/ResetPassword";
-import { requestPasswordReset } from "@/generated/v3/userService/userServiceComponents";
+import { RequestPasswordReset, useRequestPassword } from "@/connections/ResetPassword";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import RequestResetForm from "@/pages/auth/reset-password/components/RequestResetForm";
 
@@ -34,9 +33,7 @@ const RequestResetPage = () => {
   });
 
   const handleSave = async (data: RequestResetData) => {
-    requestPasswordReset({
-      body: { emailAddress: data.email, callbackUrl: window.location.origin + `${baseAuthPath}/reset-password` }
-    });
+    RequestPasswordReset(data.email, window.location.origin + `${baseAuthPath}/reset-password`);
   };
 
   return (

@@ -76,12 +76,6 @@ export type UserUpdateBodyDto = {
 
 export type ResetPasswordResponseDto = {
   /**
-   * User id
-   *
-   * @example ac905c37-025c-4548-9851-f749ed15b5e1
-   */
-  uuid: string;
-  /**
    * User email
    *
    * @example user@example.com
