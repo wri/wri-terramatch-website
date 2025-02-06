@@ -173,6 +173,23 @@ const Polygons = (props: IPolygonProps) => {
       }
     },
     {
+      id: "4",
+      render: () => (
+        <div className="flex items-center gap-2">
+          <Icon name={IconNames.COMMENT} className="h-6 w-6" />
+          <Text variant="text-12-bold">Comment</Text>
+        </div>
+      ),
+      onClick: () => {
+        setSelectedPolygon(item);
+        flyToPolygonBounds(item);
+        setPolygonFromMap({ isOpen: true, uuid: item.uuid });
+        setIsOpenPolygonDrawer(true);
+        setIsPolygonStatusOpen(false);
+        setSelectedPolygonsInCheckbox([]);
+      }
+    },
+    {
       id: "5",
       render: () => <div className="h-[1px] w-full bg-grey-750" />,
       MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER

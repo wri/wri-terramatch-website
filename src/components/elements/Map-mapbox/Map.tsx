@@ -58,6 +58,7 @@ import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addBorderCountry,
+  addBorderLandscape,
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
@@ -67,8 +68,10 @@ import {
   addSourcesToLayers,
   drawTemporaryPolygon,
   removeBorderCountry,
+  removeBorderLandscape,
   removeMediaLayer,
   removePopups,
+  setMapStyle,
   startDrawing,
   stopDrawing,
   zoomToBbox
@@ -121,6 +124,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
+  selectedLandscapes?: string[];
+  projectUUID?: string | undefined;
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
@@ -171,8 +176,19 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
-  const { polygonsData, bbox, setPolygonFromMap, polygonFromMap, sitePolygonData, selectedCountry, setLoader } = props;
+  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
+  const {
+    polygonsData,
+    bbox,
+    setPolygonFromMap,
+    polygonFromMap,
+    sitePolygonData,
+    selectedCountry,
+    selectedLandscapes,
+    projectUUID,
+    setLoader
+  } = props;
+
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -207,7 +223,7 @@ export const MapContainer = ({
     mapFunctions;
 
   useEffect(() => {
-    initMap();
+    initMap(!!isDashboard);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -216,6 +232,7 @@ export const MapContainer = ({
       }
     };
   }, []);
+
   useEffect(() => {
     if (!map) return;
     if (location && location.lat !== 0 && location.lng !== 0) {
@@ -311,6 +328,33 @@ export const MapContainer = ({
       });
     }
   }, [selectedCountry, styleLoaded, sourcesAdded]);
+  useEffect(() => {
+    if (!map.current || !sourcesAdded) return;
+    const setupBorders = () => {
+      if (selectedLandscapes && selectedLandscapes.length > 0) {
+        addBorderLandscape(map.current, selectedLandscapes);
+      } else {
+        removeBorderLandscape(map.current);
+      }
+    };
+    if (map.current.isStyleLoaded()) {
+      setupBorders();
+    } else {
+      map.current.once("render", () => {
+        setupBorders();
+      });
+    }
+  }, [selectedLandscapes, styleLoaded, sourcesAdded]);
+  useEffect(() => {
+    if (!map.current || !projectUUID) return;
+    if (map.current.isStyleLoaded()) {
+      setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+    } else {
+      map.current.once("render", () => {
+        setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+      });
+    }
+  }, [projectUUID, styleLoaded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");

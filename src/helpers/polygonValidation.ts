@@ -1,7 +1,8 @@
 import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
-  ICriteriaCheckItem
+  ICriteriaCheckItem,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 
@@ -26,6 +27,7 @@ export const isValidCriteriaData = (criteriaData: any) => {
     (criteria: any) =>
       criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
       criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+      criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
       criteria.valid !== 1
   );
 };
@@ -37,11 +39,17 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
 
   return criteriaData.criteria_list.some(
     (criteria: any) =>
-      (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID || criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID) &&
+      (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
+        criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID ||
+        criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID) &&
       criteria.valid === 0
   );
 };
 
 export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem) => {
-  return +item.id === COMPLETED_DATA_CRITERIA_ID || +item.id === ESTIMATED_AREA_CRITERIA_ID;
+  return (
+    +item.id === COMPLETED_DATA_CRITERIA_ID ||
+    +item.id === ESTIMATED_AREA_CRITERIA_ID ||
+    +item.id === WITHIN_COUNTRY_CRITERIA_ID
+  );
 };

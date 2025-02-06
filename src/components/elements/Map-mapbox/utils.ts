@@ -704,6 +704,10 @@ export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: 
   const filter = ["==", ["get", "iso"], country];
   map.setFilter(layerName, filter);
 };
+export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landscapes: string[]) => {
+  const filter = ["in", ["get", "landscape"], ["literal", landscapes]];
+  map.setFilter(layerName, filter);
+};
 export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
   if (!country || !map) return;
 
@@ -731,6 +735,43 @@ export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
     "source-layer": countryLayer.geoserverLayerName
   } as mapboxgl.AnyLayer);
   setFilterCountry(map, sourceName, country);
+};
+export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
+  if (!landscapes || !map) return;
+
+  const styleName = `${LAYERS_NAMES.LANDSCAPES}`;
+  const landscapeLayer = layersList.find(layer => layer.name === styleName);
+  if (!landscapeLayer) return;
+  const countryStyles = landscapeLayer.styles || [];
+  const sourceName = landscapeLayer.name;
+  const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName);
+
+  if (!map.getSource(sourceName)) {
+    map.addSource(sourceName, {
+      type: "vector",
+      tiles: [GEOSERVER_TILE_URL]
+    });
+  }
+  if (map.getLayer(sourceName)) {
+    map.removeLayer(sourceName);
+  }
+  const style = countryStyles[0];
+  map.addLayer({
+    ...style,
+    id: sourceName,
+    source: sourceName,
+    "source-layer": landscapeLayer.geoserverLayerName
+  } as mapboxgl.AnyLayer);
+  setFilterLandscape(map, sourceName, landscapes);
+};
+export const removeBorderLandscape = (map: mapboxgl.Map) => {
+  const layerName = `${LAYERS_NAMES.LANDSCAPES}`;
+  if (map.getLayer(layerName)) {
+    map.removeLayer(layerName);
+  }
+  if (map.getSource(layerName)) {
+    map.removeSource(layerName);
+  }
 };
 
 export const removeBorderCountry = (map: mapboxgl.Map) => {
@@ -1014,4 +1055,17 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
   })
     .setLngLat(lngLat)
     .addTo(map);
+};
+
+export const setMapStyle = (
+  style: MapStyle,
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string
+) => {
+  if (map && currentStyle !== style) {
+    map.setStyle(style);
+    updateMapProjection(map, style);
+    setCurrentStyle(style);
+  }
 };

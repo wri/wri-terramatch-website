@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   AutocompleteInput,
   Edit,
@@ -13,6 +14,7 @@ import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
   countriesChoices,
   directFrameworkChoices,
+  frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
@@ -22,7 +24,7 @@ import modules from "../..";
 import UserTitle from "./UserTitle";
 
 const UserEdit = () => {
-  const { isSuperAdmin } = useGetUserRole();
+  const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
   const schemaObject: any = {
     first_name: yup.string().nullable().required(),
     last_name: yup.string().nullable().required(),
@@ -32,7 +34,13 @@ const UserEdit = () => {
     organisation: yup.object()
   };
 
-  if (isSuperAdmin) schemaObject.role = yup.string().required();
+  const roleChoices = useMemo(() => {
+    if (isSuperAdmin) {
+      return userPrimaryRoleChoices;
+    }
+
+    return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
+  }, [isFrameworkAdmin]);
 
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>
@@ -51,7 +59,7 @@ const UserEdit = () => {
           <AutocompleteInput label="Organisation" optionText="name" fullWidth />
         </ReferenceInput>
 
-        {isSuperAdmin && <SelectInput source="role" label="Role" choices={userPrimaryRoleChoices} fullWidth />}
+        {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countriesChoices} fullWidth />
         <SelectArrayInput

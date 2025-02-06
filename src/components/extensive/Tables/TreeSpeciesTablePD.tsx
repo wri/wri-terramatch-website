@@ -27,9 +27,24 @@ export interface TreeSpeciesTablePDProps {
   modelName: string;
   framework?: string;
   setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalSpecies?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalNonTree?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalNonTreeSpecies?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalSpeciesGoal?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
+  data?: any;
+  typeTable?:
+    | "treeCount"
+    | "treeCount/Goal"
+    | "speciesCount/Goal"
+    | "nonTreeCount"
+    | "seedCount"
+    | "treeCountSite"
+    | "saplingsCount";
+  visibleRows?: number;
+  galleryType?: string;
 }
 
 export interface TreeSpeciesTableRowData {
@@ -46,9 +61,17 @@ const TreeSpeciesTablePD = ({
   modelName,
   framework,
   setTotalCount,
+  setTotalSpecies,
+  setTotalNonTree,
+  setTotalNonTreeSpecies,
+  setTotalSpeciesGoal,
   collection,
   headerName = "species Name",
-  secondColumnWidth = ""
+  secondColumnWidth = "",
+  typeTable,
+  visibleRows = 5,
+  galleryType,
+  data
 }: TreeSpeciesTablePDProps) => {
   const queryParams: any = {};
 
@@ -114,12 +137,25 @@ const TreeSpeciesTablePD = ({
 
   const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
     if (!rows) return [];
+    const total = rows.reduce(
+      (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
+      0
+    );
     if (setTotalCount) {
-      const total = rows.reduce(
-        (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
-        0
-      );
       setTotalCount(total);
+    }
+    if (setTotalSpecies) {
+      const plantedSpeciesCount = (apiResponse?.count_new_species ?? 0) + (apiResponse?.count_reported_species ?? 0);
+      setTotalSpecies(plantedSpeciesCount);
+    }
+    if (setTotalSpeciesGoal) {
+      setTotalSpeciesGoal(apiResponse?.count_stablished_species ?? 0);
+    }
+    if (setTotalNonTree && collection == "non-tree") {
+      setTotalNonTree(total);
+    }
+    if (setTotalNonTreeSpecies && collection == "non-tree") {
+      setTotalNonTreeSpecies(rows.length);
     }
     return rows.map(row => {
       let speciesTypes = ["tree"];
@@ -152,6 +188,9 @@ const TreeSpeciesTablePD = ({
     if (setTotalCount) {
       const total = rows.reduce((sum, row) => sum + row.amount, 0);
       setTotalCount(total);
+    }
+    if (setTotalSpecies) {
+      setTotalSpecies(rows.length);
     }
     return rows.map(row => {
       let speciesTypes = ["tree"];
@@ -190,27 +229,29 @@ const TreeSpeciesTablePD = ({
         }
       };
 
-      const icons = (speciesTypes || []).map((type: string) => {
-        const config = iconConfigs[type];
-        return config ? (
-          <ToolTip
-            key={type}
-            title=""
-            content={config.tooltip}
-            colorBackground="white"
-            placement="right"
-            textVariantContent="text-14"
-          >
-            <Icon
-              name={config.icon}
-              className={classNames(
-                "h-7 w-7",
-                value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
-              )}
-            />
-          </ToolTip>
-        ) : null;
-      });
+      const icons = Array.isArray(speciesTypes)
+        ? speciesTypes.map((type: string) => {
+            const config = iconConfigs[type];
+            return config ? (
+              <ToolTip
+                key={type}
+                title=""
+                content={config.tooltip}
+                colorBackground="white"
+                placement="right"
+                textVariantContent="text-14"
+              >
+                <Icon
+                  name={config.icon}
+                  className={classNames(
+                    "h-7 w-7",
+                    value[2] && value[2] === "approved" ? "text-tertiary-650" : "text-blueCustom-700 opacity-50"
+                  )}
+                />
+              </ToolTip>
+            ) : null;
+          })
+        : null;
 
       return (
         <div className="font-inherit flex items-center gap-1">
@@ -415,12 +456,13 @@ const TreeSpeciesTablePD = ({
   return (
     <div>
       <Table
-        data={tableData}
-        columns={columnTable[getCollectionType(collection ?? "") as ModelNameType]}
+        data={data ?? tableData}
+        columns={columnTable[typeTable ?? (getCollectionType(collection ?? "") as ModelNameType)]}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
         invertSelectPagination
-        visibleRows={5}
+        visibleRows={visibleRows}
+        galleryType={galleryType}
       />
     </div>
   );

@@ -16,6 +16,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
       >
         Hectors Restored
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -24,7 +27,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card No Progress 
          
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200 opacity-0"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2  bg-primary-200 opacity-0"
         role="progressbar"
       >
         <div
@@ -57,6 +60,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
       >
         Trees Restored
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -69,10 +75,11 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
         >
           of 
           732
+           
         </p>
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2  bg-primary-200"
         role="progressbar"
       >
         <div
@@ -181,6 +188,9 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
       >
         Workday (PPC)
       </p>
+      <div
+        className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center"
+      />
       <p
         className="flex w-full items-baseline text-24-bold"
         data-testid="txt"
@@ -193,10 +203,11 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
         >
           of 
           150
+           
         </p>
       </p>
       <div
-        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200"
+        className="h-[9px] w-full rounded-full bg-neutral-200 mt-2  bg-primary-200"
         role="progressbar"
       >
         <div

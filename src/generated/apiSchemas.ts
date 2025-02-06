@@ -24,6 +24,33 @@ export type TreeSpeciesPaginated = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
+};
+
+export type TreeSpeciesAggregated = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
 };
 
 export type TreeSpeciesRead = {
@@ -22820,6 +22847,10 @@ export type DashboardGetPolygonStatusResponse = {
 };
 
 export type DashboardBBOXProject = {
+  bbox?: number[];
+};
+
+export type DashboardBBOXLandscape = {
   bbox?: number[];
 };
 

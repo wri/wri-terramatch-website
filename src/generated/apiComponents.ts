@@ -17,6 +17,13 @@ export type GetV2TreeSpeciesEntityUUIDPathParams = {
   uuid: string;
 };
 
+export type GetV2TreeSpeciesEntityUUIDQueryParams = {
+  /**
+   * The collection to filter tree species by.
+   */
+  ["filter[collection]"]?: string;
+};
+
 export type GetV2TreeSpeciesEntityUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2TreeSpeciesEntityUUIDResponse = {
@@ -40,10 +47,14 @@ export type GetV2TreeSpeciesEntityUUIDResponse = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
 };
 
 export type GetV2TreeSpeciesEntityUUIDVariables = {
   pathParams: GetV2TreeSpeciesEntityUUIDPathParams;
+  queryParams?: GetV2TreeSpeciesEntityUUIDQueryParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntityUUIDVariables, signal?: AbortSignal) =>
@@ -52,7 +63,7 @@ export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntit
     GetV2TreeSpeciesEntityUUIDError,
     undefined,
     {},
-    {},
+    GetV2TreeSpeciesEntityUUIDQueryParams,
     GetV2TreeSpeciesEntityUUIDPathParams
   >({ url: "/v2/tree-species/{entity}/{uuid}", method: "get", ...variables, signal });
 
@@ -67,6 +78,79 @@ export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUID
   return reactQuery.useQuery<GetV2TreeSpeciesEntityUUIDResponse, GetV2TreeSpeciesEntityUUIDError, TData>(
     queryKeyFn({ path: "/v2/tree-species/{entity}/{UUID}", operationId: "getV2TreeSpeciesEntityUUID", variables }),
     ({ signal }) => fetchGetV2TreeSpeciesEntityUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2EntityUUIDAggregateReportsPathParams = {
+  /**
+   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  uuid: string;
+};
+
+export type GetV2EntityUUIDAggregateReportsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2EntityUUIDAggregateReportsResponse = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+};
+
+export type GetV2EntityUUIDAggregateReportsVariables = {
+  pathParams: GetV2EntityUUIDAggregateReportsPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2EntityUUIDAggregateReports = (
+  variables: GetV2EntityUUIDAggregateReportsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2EntityUUIDAggregateReportsResponse,
+    GetV2EntityUUIDAggregateReportsError,
+    undefined,
+    {},
+    {},
+    GetV2EntityUUIDAggregateReportsPathParams
+  >({ url: "/v2/{entity}/{uuid}/aggregate-reports", method: "get", ...variables, signal });
+
+export const useGetV2EntityUUIDAggregateReports = <TData = GetV2EntityUUIDAggregateReportsResponse>(
+  variables: GetV2EntityUUIDAggregateReportsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2EntityUUIDAggregateReportsResponse, GetV2EntityUUIDAggregateReportsError, TData>(
+    queryKeyFn({
+      path: "/v2/{entity}/{UUID}/aggregate-reports",
+      operationId: "getV2EntityUUIDAggregateReports",
+      variables
+    }),
+    ({ signal }) => fetchGetV2EntityUUIDAggregateReports({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -32372,6 +32456,66 @@ export const useGetV2AdminENTITYExportFRAMEWORK = <TData = Blob>(
   );
 };
 
+export type GetV2AdminENTITYExportFRAMEWORKPmPathParams = {
+  /**
+   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  /**
+   * allowed values terrafund/ppc and more frameworks
+   */
+  framework: string;
+};
+
+export type GetV2AdminENTITYExportFRAMEWORKPmError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminENTITYExportFRAMEWORKPmResponse = {
+  url?: string;
+};
+
+export type GetV2AdminENTITYExportFRAMEWORKPmVariables = {
+  pathParams: GetV2AdminENTITYExportFRAMEWORKPmPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminENTITYExportFRAMEWORKPm = (
+  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2AdminENTITYExportFRAMEWORKPmResponse,
+    GetV2AdminENTITYExportFRAMEWORKPmError,
+    undefined,
+    {},
+    {},
+    GetV2AdminENTITYExportFRAMEWORKPmPathParams
+  >({ url: "/v2/admin/{entity}/export/{framework}/pm", method: "get", ...variables, signal });
+
+export const useGetV2AdminENTITYExportFRAMEWORKPm = <TData = GetV2AdminENTITYExportFRAMEWORKPmResponse>(
+  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2AdminENTITYExportFRAMEWORKPmResponse,
+      GetV2AdminENTITYExportFRAMEWORKPmError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AdminENTITYExportFRAMEWORKPmResponse, GetV2AdminENTITYExportFRAMEWORKPmError, TData>(
+    queryKeyFn({
+      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm",
+      operationId: "getV2AdminENTITYExportFRAMEWORKPm",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminENTITYExportFRAMEWORKPm({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
@@ -35477,6 +35621,118 @@ export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectRe
   );
 };
 
+export type GetV2DashboardBboxLandscapeQueryParams = {
+  /**
+   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
+   */
+  landscapes: string;
+};
+
+export type GetV2DashboardBboxLandscapeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxLandscapeResponse = {
+  bbox?: number[];
+};
+
+export type GetV2DashboardBboxLandscapeVariables = {
+  queryParams: GetV2DashboardBboxLandscapeQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxLandscape = (
+  variables: GetV2DashboardBboxLandscapeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardBboxLandscapeResponse,
+    GetV2DashboardBboxLandscapeError,
+    undefined,
+    {},
+    GetV2DashboardBboxLandscapeQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/landscape", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxLandscape = <TData = GetV2DashboardBboxLandscapeResponse>(
+  variables: GetV2DashboardBboxLandscapeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>(
+    queryKeyFn({ path: "/v2/dashboard/bbox/landscape", operationId: "getV2DashboardBboxLandscape", variables }),
+    ({ signal }) => fetchGetV2DashboardBboxLandscape({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2DashboardBboxCountryLandscapeQueryParams = {
+  /**
+   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
+   */
+  landscapes: string;
+  /**
+   * Country iso name
+   */
+  country?: string;
+};
+
+export type GetV2DashboardBboxCountryLandscapeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardBboxCountryLandscapeResponse = {
+  bbox?: number[];
+};
+
+export type GetV2DashboardBboxCountryLandscapeVariables = {
+  queryParams: GetV2DashboardBboxCountryLandscapeQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2DashboardBboxCountryLandscape = (
+  variables: GetV2DashboardBboxCountryLandscapeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardBboxCountryLandscapeResponse,
+    GetV2DashboardBboxCountryLandscapeError,
+    undefined,
+    {},
+    GetV2DashboardBboxCountryLandscapeQueryParams,
+    {}
+  >({ url: "/v2/dashboard/bbox/country-landscape", method: "get", ...variables, signal });
+
+export const useGetV2DashboardBboxCountryLandscape = <TData = GetV2DashboardBboxCountryLandscapeResponse>(
+  variables: GetV2DashboardBboxCountryLandscapeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardBboxCountryLandscapeResponse,
+      GetV2DashboardBboxCountryLandscapeError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardBboxCountryLandscapeResponse,
+    GetV2DashboardBboxCountryLandscapeError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/bbox/country-landscape",
+      operationId: "getV2DashboardBboxCountryLandscape",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardBboxCountryLandscape({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardCountryCountryPathParams = {
   /**
    * ISO code of the country
@@ -37965,41 +38221,6 @@ export const usePutV2SitePolygonUuidMakeActive = (
   );
 };
 
-export type PatchV2UsersLocaleError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2UsersLocaleResponse = {
-  message?: string;
-};
-
-export type PatchV2UsersLocaleRequestBody = {
-  locale?: string;
-};
-
-export type PatchV2UsersLocaleVariables = {
-  body?: PatchV2UsersLocaleRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2UsersLocale = (variables: PatchV2UsersLocaleVariables, signal?: AbortSignal) =>
-  apiFetch<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleRequestBody, {}, {}, {}>({
-    url: "/v2/users/locale",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
-export const usePatchV2UsersLocale = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2UsersLocaleResponse, PatchV2UsersLocaleError, PatchV2UsersLocaleVariables>(
-    (variables: PatchV2UsersLocaleVariables) => fetchPatchV2UsersLocale({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PostV2TerrafundClipPolygonsPolygonUuidPathParams = {
   /**
    * The UUID of the polygon to clip polygons for.
@@ -38581,6 +38802,11 @@ export type QueryOperation =
       variables: GetV2TreeSpeciesEntityUUIDVariables;
     }
   | {
+      path: "/v2/{entity}/{UUID}/aggregate-reports";
+      operationId: "getV2EntityUUIDAggregateReports";
+      variables: GetV2EntityUUIDAggregateReportsVariables;
+    }
+  | {
       path: "/v2/admin/projects/multi";
       operationId: "getV2AdminProjectsMulti";
       variables: GetV2AdminProjectsMultiVariables;
@@ -39046,6 +39272,11 @@ export type QueryOperation =
       variables: GetV2AdminENTITYExportFRAMEWORKVariables;
     }
   | {
+      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm";
+      operationId: "getV2AdminENTITYExportFRAMEWORKPm";
+      variables: GetV2AdminENTITYExportFRAMEWORKPmVariables;
+    }
+  | {
       path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}";
       operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK";
       variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables;
@@ -39149,6 +39380,16 @@ export type QueryOperation =
       path: "/v2/dashboard/bbox/project";
       operationId: "getV2DashboardBboxProject";
       variables: GetV2DashboardBboxProjectVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/landscape";
+      operationId: "getV2DashboardBboxLandscape";
+      variables: GetV2DashboardBboxLandscapeVariables;
+    }
+  | {
+      path: "/v2/dashboard/bbox/country-landscape";
+      operationId: "getV2DashboardBboxCountryLandscape";
+      variables: GetV2DashboardBboxCountryLandscapeVariables;
     }
   | {
       path: "/v2/dashboard/country/{country}";

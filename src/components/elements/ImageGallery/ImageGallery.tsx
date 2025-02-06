@@ -428,7 +428,7 @@ const ImageGallery = ({
           defaultPageSize={defaultPageSize}
           hasPageSizeSelector
           invertSelect
-          isImageGallery
+          galleryType={"imageGallery"}
         />
       </div>
     </>

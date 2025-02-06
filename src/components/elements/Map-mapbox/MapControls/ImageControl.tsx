@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dispatch, SetStateAction } from "react";
 
@@ -18,6 +18,7 @@ const ImageControl = ({
   viewImages: boolean;
   setViewImages: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const t = useT();
   const { openModal, closeModal } = useModalContext();
 
   const openFormModalHandlerUploadImages = () => {

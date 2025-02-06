@@ -1,4 +1,4 @@
-import { useT } from "@transifex/react";
+import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -149,7 +149,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   useEffect(() => {
     setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
-
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
@@ -198,15 +197,15 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
-      return "Project Insights";
+      return <T _str="Project Insights" _tags="dash" />;
     }
     if (isProjectListPage) {
-      return "Project List";
+      return <T _str="Project List" _tags="dash" />;
     }
     if (isHomepage) {
-      return "Learn More";
+      return <T _str="Learn More" _tags="dash" />;
     }
-    return "TerraMatch Dashboards";
+    return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
   return (
@@ -218,7 +217,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
         <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
-          {t(getHeaderTitle())}
+          {getHeaderTitle()}
           <When condition={isProjectInsightsPage}>
             <ToolTip
               title={""}
@@ -248,11 +247,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   showSelectAll
                   showLabelAsMultiple
                   multiSelect
-                  prefix={<Text variant="text-14-light">{t("Landscape:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Landscape")}:</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="All Data"
-                  multipleText="Multiple Landscapes"
+                  placeholder={t("All Data")}
+                  multipleText={t("Multiple Landscapes")}
                   value={filters.landscapes}
                   onChange={value => {
                     handleChange("landscapes", value);
@@ -269,10 +268,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Dropdown
                   key={filters.country.id}
                   showClear
-                  prefix={<Text variant="text-14-light">{t("Country:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Country")}:</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="All Data"
+                  placeholder={t("All Data")}
                   value={filters.country?.id ? [filters.country.id] : undefined}
                   onChange={value => {
                     handleChangeCountry(value);
@@ -309,12 +308,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   showSelectAll
                   showLabelAsMultiple
                   showClear
-                  prefix={<Text variant="text-14-light">{t("Organization Type:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Organization Type")}:</Text>}
                   inputVariant="text-14-semibold"
                   multiSelect
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="All Data"
-                  multipleText="Multiple Organization Types"
+                  placeholder={t("All Data")}
+                  multipleText={t("Multiple Organizations Types")}
                   value={filters.organizations}
                   onChange={value => {
                     handleChange("organizations", value);
@@ -331,13 +330,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 <Dropdown
                   key={filters.cohort.length}
                   showClear
-                  prefix={<Text variant="text-14-light">{t("Cohort:")}</Text>}
+                  prefix={<Text variant="text-14-light">{t("Cohort")}:</Text>}
                   inputVariant="text-14-semibold"
                   variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder="All Data"
+                  placeholder={t("All Data")}
                   value={filters.cohort ? [filters.cohort] : []}
                   onChange={(value: OptionValue[]) => {
-                    console.log(value);
                     return setFilters(prevValues => ({
                       ...prevValues,
                       uuid: "",

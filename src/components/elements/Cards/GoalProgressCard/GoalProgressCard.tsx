@@ -22,6 +22,9 @@ export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<
   labelVariant?: TextVariants;
   classNameCard?: string;
   classNameLabelValue?: string;
+  chart?: JSX.Element;
+  hectares?: boolean;
+  graph?: boolean;
 }
 
 const GoalProgressCard: FC<GoalProgressCardProps> = ({
@@ -38,6 +41,9 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   labelVariant,
   classNameCard,
   classNameLabelValue,
+  chart,
+  hectares = false,
+  graph = true,
   ...rest
 }) => {
   const value = _val ?? 0;
@@ -53,13 +59,13 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
           </Text>
-          <When condition={!!totalValue}>
-            <img src="/images/graphic-5.png" alt="arrow-right" className="size-32 lg:size-40 mb-2" />
-          </When>
+          {graph ? <div className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center">{chart}</div> : null}
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>
             {value?.toLocaleString()}&nbsp;
             <When condition={!!limit || !!totalValue}>
-              <Text variant="text-16-light">of {limit?.toLocaleString() ?? totalValue?.toLocaleString()}</Text>
+              <Text variant="text-16-light">
+                of {limit?.toLocaleString() ?? totalValue?.toLocaleString()} {hectares ? "ha" : null}
+              </Text>
             </When>
             <When condition={!!labelValue}>
               <Text variant="text-16-light">{labelValue}</Text>
@@ -69,7 +75,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <LinearProgressBar
             color="primary"
             value={progressValue}
-            className={classNames("mt-2 w-[15vw] min-w-[15vw] max-w-[15vw] bg-primary-200", {
+            className={classNames("mt-2  bg-primary-200", {
               "opacity-0": !limit
             })}
           />

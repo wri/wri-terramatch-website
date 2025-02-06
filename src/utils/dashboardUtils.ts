@@ -1,4 +1,5 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
+import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 
 type DataPoint = {
@@ -118,7 +119,7 @@ interface ChartDataPoint {
   name: string;
 }
 
-interface ChartCategory {
+export interface ChartCategory {
   name: string;
   values: ChartDataPoint[];
 }
@@ -251,6 +252,85 @@ export const getRestorationGoalDataForChart = (
     "Non Profit"
   );
   addCategoryToChart(chartData, "Non Profit", nonProfitValues, nonProfitSum);
+
+  return chartData;
+};
+
+export type AggregateReportData = {
+  dueDate?: string | null;
+  aggregateAmount?: number;
+};
+
+export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregateReportsResponse): ChartCategory[] => {
+  if (!data) return [];
+
+  const allDates = new Set<string>();
+  const categories = ["tree-planted", "seeding-records", "trees-regenerating"] as const;
+
+  categories.forEach(category => {
+    data[category]?.forEach((item: AggregateReportData) => {
+      if (item.dueDate) {
+        allDates.add(new Date(item.dueDate).toISOString().split("T")[0]);
+      }
+    });
+  });
+
+  const sortedDates = Array.from(allDates).sort();
+
+  const createChartPoints = (
+    sourceData: AggregateReportData[],
+    categoryName: string
+  ): { sum: number; values: ChartDataPoint[] } => {
+    const nullSum = sourceData
+      .filter(item => item.dueDate === null)
+      .reduce((acc, item) => acc + (item.aggregateAmount ?? 0), 0);
+
+    let sum = nullSum;
+
+    const dateAmountMap = sourceData.reduce((acc, item) => {
+      if (item.dueDate) {
+        const dateKey = new Date(item.dueDate).toISOString().split("T")[0];
+        if (!acc[dateKey]) {
+          acc[dateKey] = 0;
+        }
+        acc[dateKey] += item.aggregateAmount ?? 0;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    const values = sortedDates.map(date => {
+      sum += dateAmountMap[date] ?? 0;
+      return {
+        time: new Date(date),
+        value: sum,
+        name: categoryName
+      };
+    });
+
+    return { sum, values };
+  };
+
+  const chartData: ChartCategory[] = [];
+
+  categories.forEach(category => {
+    const categoryData = data[category];
+    if (categoryData) {
+      const { values } = createChartPoints(
+        categoryData,
+        category
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")
+      );
+      chartData.push({
+        name: category
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" "),
+        values
+      });
+    }
+  });
 
   return chartData;
 };
