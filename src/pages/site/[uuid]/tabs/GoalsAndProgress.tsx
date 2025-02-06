@@ -47,6 +47,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
   const [treeCount, setTreeCount] = useState(0);
   const [speciesCount, setSpeciesCount] = useState(0);
+  const [totalNonTree, setTotalNonTree] = useState(0);
+  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
   const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
   const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
@@ -237,7 +239,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </When>
             </div>
             <div>
-              <If condition={isTerrafund || site.framework_key === Framework.HBF}>
+              <If condition={isTerrafund}>
                 <Then>
                   <TreeSpeciesTablePD
                     modelName="site"
@@ -259,6 +261,46 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   />
                 </Else>
               </If>
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
+      <PageRow frameworksShow={[Framework.HBF]}>
+        <PageCard title={t("Non-Tree Planting Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
+                    label: t("number of Non-Trees PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalNonTree.toLocaleString()
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalNonTreeSpecies
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTablePD
+                modelName="site"
+                collection="non-tree"
+                modelUUID={site.uuid}
+                visibleRows={5}
+                setTotalNonTree={setTotalNonTree}
+                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
+              />
             </div>
           </div>
         </PageCard>
