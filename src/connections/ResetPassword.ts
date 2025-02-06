@@ -10,19 +10,10 @@ import {
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
+import { selectorCache } from "@/utils/selectorCache";
 
 export const RequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
   requestPasswordReset({ body: { emailAddress, callbackUrl } });
-
-export const PasswordReset = (password: string, token: string) =>
-  resetPassword({
-    body: {
-      newPassword: password
-    },
-    pathParams: {
-      token: token
-    }
-  });
 
 export const selectResetPassword = (store: ApiDataStore) => Object.values(store.passwordResets)?.[0]?.attributes;
 
@@ -51,22 +42,38 @@ type ResetPasswordConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
   isSuccess: boolean;
+  resetPassword: (password: string) => void;
 };
 
-const resetPasswordConnection: Connection<ResetPasswordConnection> = {
-  selector: createSelector(
-    [
-      resetPasswordIsFetching({ pathParams: { token: "" } }),
-      resetPasswordFetchFailed({ pathParams: { token: "" } }),
-      selectResetPassword
-    ],
-    (isLoggingIn, requestFailed, selector) => {
-      return {
-        isLoading: isLoggingIn,
-        requestFailed: requestFailed,
-        isSuccess: selector?.emailAddress != null
-      };
-    }
+type ResetPasswordProps = {
+  token: string;
+};
+
+const resetPasswordConnection: Connection<ResetPasswordConnection, ResetPasswordProps> = {
+  selector: selectorCache(
+    ({ token }) => token,
+    ({ token }) =>
+      createSelector(
+        [
+          resetPasswordIsFetching({ pathParams: { token } }),
+          resetPasswordFetchFailed({ pathParams: { token } }),
+          selectResetPassword
+        ],
+        (isLoading, requestFailed, selector) => ({
+          isLoading,
+          requestFailed,
+          isSuccess: selector?.emailAddress != null,
+          resetPassword: (password: string) =>
+            resetPassword({
+              body: {
+                newPassword: password
+              },
+              pathParams: {
+                token: token
+              }
+            })
+        })
+      )
   )
 };
 
