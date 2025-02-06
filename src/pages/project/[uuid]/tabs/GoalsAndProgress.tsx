@@ -349,7 +349,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
 
       <PageRow>
-        <PageCard title={t("Tree Planting Progress")}>
+        <PageCard
+          title={t(project.framework_key == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+        >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -371,7 +373,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: `${project.survival_rate}%`
+                      value: project.direct_seeding_survival_rate ? `${project.direct_seeding_survival_rate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -520,7 +522,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: `${project.survival_rate}%`
+                      value: project.direct_seeding_survival_rate ? `${project.direct_seeding_survival_rate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -740,8 +742,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 collection="non-tree"
                 modelUUID={project.uuid}
                 visibleRows={5}
-                setTotalNonTree={setTotalNonTreeSpecies}
                 setTotalCount={setNonTreeCount}
+                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
               />
             </div>
           </PageCard>
