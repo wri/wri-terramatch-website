@@ -80,19 +80,29 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
   const formattedData: DataPoint[] = uniqueTimePoints.map(timePoint => {
     const dataPoint: DataPoint = { time: timePoint };
 
-    if (dataMap.has("Tree Planted")) {
-      const value = dataMap.get("Tree Planted")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
-      if (value !== undefined) dataPoint["Tree Planted"] = value;
-    }
+    const processDataSeries = (seriesName: keyof Omit<DataPoint, "time">) => {
+      if (dataMap.has(seriesName)) {
+        const seriesValues = dataMap.get(seriesName)!.values;
+        const matchingValue = seriesValues.find((v: any) => formatDate(v.time) === timePoint);
 
-    if (dataMap.has("Seeding Records")) {
-      const value = dataMap.get("Seeding Records")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
-      if (value !== undefined) dataPoint["Seeding Records"] = value;
-    }
-    if (dataMap.has("Trees Regenerating")) {
-      const value = dataMap.get("Trees Regenerating")?.values.find((v: any) => formatDate(v.time) === timePoint)?.value;
-      if (value !== undefined) dataPoint["Trees Regenerating"] = value;
-    }
+        const lastNonZeroValue = seriesValues
+          .filter((v: any) => formatDate(v.time) <= timePoint)
+          .filter((v: any) => v.value !== 0)
+          .sort((a: any, b: any) => new Date(a.time).getTime() - new Date(b.time).getTime())
+          .pop();
+
+        if (matchingValue) {
+          if (matchingValue.value === 0 && lastNonZeroValue) {
+            dataPoint[seriesName] = 0;
+          } else if (matchingValue.value !== 0) {
+            dataPoint[seriesName] = matchingValue.value;
+          }
+        }
+      }
+    };
+    processDataSeries("Tree Planted");
+    processDataSeries("Seeding Records");
+    processDataSeries("Trees Regenerating");
     return dataPoint;
   });
 
@@ -124,6 +134,7 @@ const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
                 stroke={color}
                 dot={{ stroke: color, strokeWidth: 2, r: 4 }}
                 strokeWidth={2}
+                connectNulls={true}
               />
             )
         )}
