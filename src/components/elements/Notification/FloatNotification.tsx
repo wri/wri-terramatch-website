@@ -1,7 +1,7 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -23,10 +23,13 @@ export interface FloatNotificationProps {
 }
 
 const FloatNotification = () => {
+  const firstRender = useRef(true);
   const t = useT();
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
+  const prevDelayedJobsRef = useRef<DelayedJobDto[]>([]);
+
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
     const newJobsData: DelayedJobData[] = delayedJobs
@@ -43,10 +46,20 @@ const FloatNotification = () => {
     triggerBulkUpdate(newJobsData);
   };
   useEffect(() => {
-    if (delayedJobs === undefined) return;
-    const notAcknowledgedJobs = delayedJobs.filter((job: DelayedJobDto) => !job.isAcknowledged);
-    setNotAcknowledgedJobs(notAcknowledgedJobs);
+    if (!delayedJobs) return;
+    const newJobs = delayedJobs.filter(job => !job.isAcknowledged);
+    const isNewJob = JSON.stringify(newJobs) !== JSON.stringify(prevDelayedJobsRef.current);
+
+    if (isNewJob) {
+      setNotAcknowledgedJobs(newJobs);
+      prevDelayedJobsRef.current = newJobs;
+      if (newJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
+        setOpenModalNotification(true);
+      }
+      firstRender.current = false;
+    }
   }, [delayedJobs]);
+
   useEffect(() => {
     if (!notAcknowledgedJobs.length) {
       setOpenModalNotification(false);
