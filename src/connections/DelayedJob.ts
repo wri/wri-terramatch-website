@@ -66,7 +66,7 @@ export const useDelayedJobs = () => {
   // Make sure stop polling when we unmount.
   useEffect(() => stopPolling, [stopPolling]);
 
-  const hasJobs = (connection[0] ? connection[1].delayedJobs ?? [] : []).length > 0;
+  const hasJobs = (connection[1].delayedJobs ?? []).length > 0;
   useEffect(() => {
     if (totalContent > 0) {
       startPolling();
