@@ -61,7 +61,6 @@ const FloatNotification = () => {
   }, [delayedJobs]);
 
   useEffect(() => {
-    console.log("Not Acknowledge", notAcknowledgedJobs);
     if (!notAcknowledgedJobs.length) {
       setOpenModalNotification(false);
     }
