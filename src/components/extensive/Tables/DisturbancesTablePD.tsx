@@ -88,7 +88,7 @@ const DisturbancesTablePD = ({
 
   const getColumns = () => {
     const finalColumns = [rowDisturbanceType];
-    if (disturbances?.data?.[0].intensity) {
+    if (disturbances?.data?.[0]?.intensity) {
       finalColumns.push(columnIntensity);
     }
     if (disturbances?.data?.[0]?.extent) {
