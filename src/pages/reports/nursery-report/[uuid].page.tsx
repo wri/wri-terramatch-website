@@ -37,16 +37,17 @@ const NurseryReportDetailPage = () => {
 
   const { data: nursery } = useGetV2ENTITYUUID(
     {
-      pathParams: { uuid: nurseryReport?.nursery_id?.uuid, entity: "nurseries" }
+      pathParams: { uuid: nurseryReport?.nursery?.uuid, entity: "nurseries" }
     },
     {
-      enabled: !!nurseryReport?.nursery_id?.uuid
+      enabled: !!nurseryReport?.nursery?.uuid
     }
   );
 
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: nurseryReport.task_uuid } });
 
   const reportTitle = nurseryReport.report_title ?? nurseryReport.title ?? t("Nursery Report");
+  const headerReportTitle = nursery?.data?.name ? `${nursery?.data?.name} ${reportTitle}` : "";
 
   const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -68,7 +69,7 @@ const NurseryReportDetailPage = () => {
             { title: reportTitle }
           ]}
         />
-        <NurseryReportHeader report={nurseryReport} title={reportTitle} />
+        <NurseryReportHeader report={nurseryReport} title={headerReportTitle} />
         <StatusBar entityName="nursery-reports" entity={nurseryReport} />
         <PageBody>
           <If condition={nurseryReport.nothing_to_report}>

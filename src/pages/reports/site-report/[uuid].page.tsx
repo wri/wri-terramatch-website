@@ -58,6 +58,7 @@ const SiteReportDetailPage = () => {
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
 
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
+  const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
     "site-report",
@@ -84,7 +85,7 @@ const SiteReportDetailPage = () => {
             { title: reportTitle }
           ]}
         />
-        <SiteReportHeader report={siteReport} reportTitle={reportTitle} />
+        <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
         <StatusBar entityName="site-reports" entity={siteReport} />
         <PageBody>
           <If condition={siteReport.nothing_to_report}>
