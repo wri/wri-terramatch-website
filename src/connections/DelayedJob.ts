@@ -2,10 +2,12 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
+import { useLogin } from "@/connections/Login";
 import { bulkUpdateJobs, listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import { bulkUpdateJobsFetchFailed, bulkUpdateJobsIsFetching } from "@/generated/v3/jobService/jobServicePredicates";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore } from "@/store/apiSlice";
 import { JobsDataStore } from "@/store/jobsSlice";
 import { AppStore } from "@/store/store";
@@ -35,23 +37,7 @@ const combinedSelector = createSelector(
   })
 );
 
-const combinedLoad = (connection: DelayedJobCombinedConnection) => {
-  if (!combinedIsLoaded(connection)) {
-    listDelayedJobs();
-  }
-};
-
-const combinedIsLoaded = ({
-  delayedJobs,
-  delayedJobsHasFailed,
-  bulkUpdateJobsIsLoading,
-  bulkUpdateJobsHasFailed
-}: DelayedJobCombinedConnection) =>
-  (delayedJobs != null || delayedJobsHasFailed) && !bulkUpdateJobsIsLoading && !bulkUpdateJobsHasFailed;
-
 const delayedJobsCombinedConnection: Connection<DelayedJobCombinedConnection> = {
-  load: combinedLoad,
-  isLoaded: combinedIsLoaded,
   selector: combinedSelector
 };
 
@@ -61,6 +47,7 @@ export const useDelayedJobs = () => {
   const connection = useConnection(delayedJobsCombinedConnection);
   const { totalContent } = useJobProgress();
   const intervalRef = useRef<NodeJS.Timer | undefined>();
+  const [, { isLoggedIn }] = useLogin();
 
   const stopPolling = useCallback(() => {
     if (intervalRef.current != null) {
@@ -76,11 +63,8 @@ export const useDelayedJobs = () => {
     }
   }, []);
 
-  // Make sure we call listDelayedJobs once on mount and stop polling when we unmount.
-  useEffect(() => {
-    listDelayedJobs();
-    return stopPolling;
-  }, [stopPolling]);
+  // Make sure stop polling when we unmount.
+  useEffect(() => stopPolling, [stopPolling]);
 
   const hasJobs = (connection[0] ? connection[1].delayedJobs ?? [] : []).length > 0;
   useEffect(() => {
@@ -97,6 +81,12 @@ export const useDelayedJobs = () => {
     if (hasJobs) startPolling();
     else stopPolling();
   }, [hasJobs, startPolling, stopPolling, totalContent]);
+
+  useValueChanged(isLoggedIn, () => {
+    // make sure we call the listDelayedJobs request when we first mount if we're logged in, or
+    // when we log in at least once.
+    if (isLoggedIn) listDelayedJobs();
+  });
 
   return connection;
 };
