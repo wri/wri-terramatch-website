@@ -47,7 +47,7 @@ export const makeStore = (queryClient?: QueryClient) => {
 
   if (typeof window !== "undefined" && (window as any).terramatch != null) {
     // Make some things available to the browser console for easy debugging.
-    (window as any).terramatch.getApiState = () => store.getState();
+    (window as any).terramatch.getState = () => store.getState();
   }
 
   return store;

@@ -1,9 +1,8 @@
 import { Alert, AlertTitle, CircularProgress } from "@mui/material";
 import { FC } from "react";
-import { useSelector } from "react-redux";
 
-import JobsSlice, { JobsDataStore } from "@/store/jobsSlice";
-import { AppStore } from "@/store/store";
+import { useJobProgress } from "@/connections/DelayedJob";
+import JobsSlice from "@/store/jobsSlice";
 
 type DelayedJobsProgressAlertProps = {
   show: boolean;
@@ -12,7 +11,7 @@ type DelayedJobsProgressAlertProps = {
 };
 
 const DelayedJobsProgressAlert: FC<DelayedJobsProgressAlertProps> = ({ show, title, setIsLoadingDelayedJob }) => {
-  const { totalContent, processedContent, progressMessage } = useSelector<AppStore, JobsDataStore>(({ jobs }) => jobs);
+  const { totalContent, processedContent, progressMessage } = useJobProgress();
 
   const abortDelayedJob = () => {
     JobsSlice.abortDelayedJob();
