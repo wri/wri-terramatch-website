@@ -28,6 +28,9 @@ export interface TreeSpeciesTablePDProps {
   framework?: string;
   setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
   setTotalSpecies?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalNonTree?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalNonTreeSpecies?: React.Dispatch<React.SetStateAction<number>>;
+  setTotalSpeciesGoal?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
@@ -59,6 +62,9 @@ const TreeSpeciesTablePD = ({
   framework,
   setTotalCount,
   setTotalSpecies,
+  setTotalNonTree,
+  setTotalNonTreeSpecies,
+  setTotalSpeciesGoal,
   collection,
   headerName = "species Name",
   secondColumnWidth = "",
@@ -131,15 +137,25 @@ const TreeSpeciesTablePD = ({
 
   const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
     if (!rows) return [];
+    const total = rows.reduce(
+      (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
+      0
+    );
     if (setTotalCount) {
-      const total = rows.reduce(
-        (sum, row) => sum + ((modelName === "site-report" ? row.amount : row.report_amount) || 0),
-        0
-      );
       setTotalCount(total);
     }
     if (setTotalSpecies) {
-      setTotalSpecies(rows.length);
+      const plantedSpeciesCount = (apiResponse?.count_new_species ?? 0) + (apiResponse?.count_reported_species ?? 0);
+      setTotalSpecies(plantedSpeciesCount);
+    }
+    if (setTotalSpeciesGoal) {
+      setTotalSpeciesGoal(apiResponse?.count_stablished_species ?? 0);
+    }
+    if (setTotalNonTree && collection == "non-tree") {
+      setTotalNonTree(total);
+    }
+    if (setTotalNonTreeSpecies && collection == "non-tree") {
+      setTotalNonTreeSpecies(rows.length);
     }
     return rows.map(row => {
       let speciesTypes = ["tree"];

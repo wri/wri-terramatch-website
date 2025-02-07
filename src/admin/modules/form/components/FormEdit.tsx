@@ -10,7 +10,6 @@ export const FormEditActions = () => {
 
   return !record?.published ? (
     <ShowActions
-      titleSource="project_name"
       hasEdit={false}
       deleteProps={{
         confirmTitle: `Delete Form "${record?.title}"?`,
@@ -21,18 +20,16 @@ export const FormEditActions = () => {
   ) : null;
 };
 
-export const FormEdit = () => {
-  return (
-    <Edit
-      mutationMode="pessimistic"
-      actions={<FormEditActions />}
-      title={<ShowTitle getTitle={record => record?.title} moduleName="Form" />}
-      sx={{ marginBottom: 2 }}
-    >
-      <TextField source="title" component="h5" variant="h5" className="mt-10" marginX="1rem" paddingTop="1.75rem" />
-      <SimpleForm toolbar={<FormToolbar isEdit />} noValidate paddingY="1.5rem">
-        <FormBuilderForm />
-      </SimpleForm>
-    </Edit>
-  );
-};
+export const FormEdit = () => (
+  <Edit
+    mutationMode="pessimistic"
+    actions={<FormEditActions />}
+    title={<ShowTitle moduleName="Form" />}
+    sx={{ marginBottom: 2 }}
+  >
+    <TextField source="title" component="h5" variant="h5" className="mt-10" marginX="1rem" paddingTop="1.75rem" />
+    <SimpleForm toolbar={<FormToolbar isEdit />} noValidate paddingY="1.5rem">
+      <FormBuilderForm />
+    </SimpleForm>
+  </Edit>
+);

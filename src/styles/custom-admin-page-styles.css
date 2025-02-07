@@ -272,9 +272,6 @@
   @apply !hidden !p-0 !m-0
 }
 
-.RaAppBar-toolbar h6 {
-  @apply !hidden
-}
 .logo-header {
    margin: 20px auto 20px 16px; 
 }

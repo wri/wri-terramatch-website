@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { When } from "react-if";
 
@@ -11,6 +12,7 @@ import SectionShare from "../components/SectionShare";
 const ImpactStoryLanding = () => {
   const router = useRouter();
   const uuid = router.query.uuid as string;
+  const t = useT();
   const data = CARD_IMPACT_STORY_MOCKED_DATA.find(item => item.uuid === uuid);
 
   return (
@@ -23,7 +25,7 @@ const ImpactStoryLanding = () => {
           className="text-14-bold flex items-center gap-x-2 py-1 uppercase leading-[normal] hover:text-primary"
         >
           <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-2.5 -rotate-90" />
-          Back to all stories
+          {t("Back to all stories")}
         </button>
       </div>
       <div className="flex h-full w-full flex-1 overflow-hidden">
@@ -36,7 +38,7 @@ const ImpactStoryLanding = () => {
               {data?.title}
             </Text>
             <Text variant="text-14-light" className="mt-4 leading-[normal] text-darkCustom">
-              <b>Date Added: </b>
+              <b>{t("Date Added: ")}</b>
               {data?.date}
             </Text>
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>

@@ -1,13 +1,12 @@
 import { Box, Typography } from "@mui/material";
-import { get } from "lodash";
 import {
   Button,
   DeleteWithConfirmButton,
   DeleteWithConfirmButtonProps,
   EditButton,
   Link,
-  RaRecord,
   TopToolbar,
+  useGetRecordRepresentation,
   useRecordContext,
   useResourceContext
 } from "react-admin";
@@ -19,8 +18,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ShowTitle from "../ShowTitle";
 
 interface IProps {
-  titleSource?: string;
-  getTitle?: (record: RaRecord) => string;
   resourceName?: string;
   moduleName?: string;
   hasDelete?: boolean;
@@ -30,8 +27,6 @@ interface IProps {
 }
 
 const ShowActions = ({
-  titleSource,
-  getTitle,
   resourceName,
   moduleName,
   hasDelete = true,
@@ -41,11 +36,10 @@ const ShowActions = ({
 }: IProps) => {
   const record = useRecordContext<any>();
   const resource = useResourceContext();
+  const title = useGetRecordRepresentation(resource)(record);
 
-  const title = titleSource ? get(record, titleSource) : "";
-
-  if (titleSource && resourceName) {
-    deleteProps.confirmTitle = `Delete ${resourceName} ${record?.[titleSource]}`;
+  if (resourceName != null) {
+    deleteProps.confirmTitle = `Delete ${resourceName} ${title}`;
     deleteProps.confirmContent = `You are about to delete this ${resourceName}. This action will permanently remove the item from the system, and it cannot be undone. Are you sure you want to delete this item?`;
   }
 
@@ -58,9 +52,9 @@ const ShowActions = ({
           <Icon name={IconNames.CHEVRON_LEFT_PA} className="mr-2 h-10 w-9" />
         </Link>
       </When>
-      <When condition={!!(title || getTitle)}>
+      <When condition={title != null}>
         <Typography variant="h4" component="h2" sx={{ flexGrow: 1 }}>
-          <ShowTitle moduleName={moduleName} getTitle={getTitle ? getTitle : () => title} />
+          <ShowTitle moduleName={moduleName} />
         </Typography>
       </When>
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>

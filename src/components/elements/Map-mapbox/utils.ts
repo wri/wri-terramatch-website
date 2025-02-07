@@ -1056,3 +1056,16 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
     .setLngLat(lngLat)
     .addTo(map);
 };
+
+export const setMapStyle = (
+  style: MapStyle,
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string
+) => {
+  if (map && currentStyle !== style) {
+    map.setStyle(style);
+    updateMapProjection(map, style);
+    setCurrentStyle(style);
+  }
+};

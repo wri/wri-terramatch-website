@@ -28,9 +28,9 @@ export const VARIANT_TABS_ABOUT_US: SecundaryTabsVariants = {
 };
 
 export const VARIANT_TABS_IMPACT_STORY: SecundaryTabsVariants = {
-  classNameContentList: "border-b-2 border-neutral-200 bg-transparent",
-  listClassName: "grid grid-cols-6 gap-4",
-  itemTabClassName: " px-2 pb-2 lg:pb-5 text-center border-b-4 text-neutral-700 bg-transparent",
+  classNameContentList: "border-b-2 border-neutral-200 bg-transparent overflow-scroll",
+  listClassName: "grid grid-cols-8 gap-4 overflow-scroll w-max",
+  itemTabClassName: " px-2 py-2 lg:pb-5 text-center border-b-4 text-neutral-700 bg-transparent",
   selectedTabClassName: "border-black  !text-black",
   textVariantSelected: "text-18",
   textVariantNotSelected: "text-18"

@@ -20,7 +20,7 @@ import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
-import { CHART_TYPES, TERRAFUND_MRV_LINK } from "@/constants/dashboardConsts";
+import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
@@ -37,6 +37,9 @@ import { CARD_IMPACT_STORY_MOCKED_DATA } from "../mockedData/impactStory";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
+
+const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 
 interface RowData {
   country_slug: undefined;
@@ -85,6 +88,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
+  const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
@@ -92,6 +96,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   useEffect(() => {
     setSelectedLandscapes(filters.landscapes || []);
   }, [filters.landscapes]);
+  useEffect(() => {
+    setProjectUUID(filters.uuid);
+  }, [filters.uuid]);
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
   useEffect(() => {
     if (initialBbox) {
@@ -201,6 +208,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
+              projectUUID={projectUUID}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
@@ -323,6 +331,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedCountry={selectedCountry}
               setLoader={setDashboardMapLoaded}
               selectedLandscapes={selectedLandscapes}
+              projectUUID={projectUUID}
             />
           </LoadingContainerOpacity>
           <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">

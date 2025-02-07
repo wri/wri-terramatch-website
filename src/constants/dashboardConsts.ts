@@ -43,10 +43,9 @@ export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degrad
 export const TEXT_TYPES = {
   LOGGED_USER: "textForLoggedUser",
   NOT_LOGGED_USER: "textForNotLoggedUser",
-  NO_DATA: "noData"
+  NO_DATA: "noData",
+  NO_GRAPH: "noGraph"
 };
-
-export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 
 export const DEFAULT_POLYGONS_DATA = {
   graphicTargetLandUseTypes: [],

@@ -669,7 +669,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
               ? "At least one entry in gender is required"
               : "The totals for each demographic type do not match",
           value => {
-            const { demographics } = value.length > 0 ? value[0] : {};
+            const { demographics } = value?.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
             return calculateTotals(demographics, framework).complete;

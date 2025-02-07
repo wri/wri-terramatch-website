@@ -9,7 +9,7 @@ export type HBFDemographicType = (typeof HBF_DEMOGRAPHIC_TYPES)[number];
 
 export interface Demographic {
   type: DemographicType | HBFDemographicType;
-  subtype?: string;
+  subtype: string;
   name?: string;
   amount: number;
 }
@@ -92,7 +92,7 @@ const ETHNICITIES: Dictionary<string> = {
 export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
   title: string;
   typeMap: Dictionary<string>;
-  addSubtypeLabel?: string;
+  addNameLabel?: string;
 }> = {
   gender: {
     title: "Gender",
@@ -105,14 +105,14 @@ export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
   ethnicity: {
     title: "Ethnicity",
     typeMap: ETHNICITIES,
-    addSubtypeLabel: "Add Ethnic Group"
+    addNameLabel: "Add Ethnic Group"
   }
 };
 
 export const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<{
   title: string;
   typeMap: Dictionary<string>;
-  addSubtypeLabel?: string;
+  addNameLabel?: string;
 }> = {
   gender: {
     title: "Gender",
