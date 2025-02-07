@@ -40,7 +40,7 @@ export const CopyFormToOtherEnv = () => {
     }
   });
   const { register, handleSubmit, formState, getValues } = formHook;
-  Log.info(getValues(), formState.errors);
+  Log.info("Copy form values", { ...getValues(), formErrors: formState.errors });
 
   const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
     const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
