@@ -30,6 +30,7 @@ import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provid
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import useDemographicData from "@/hooks/useDemographicData";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
@@ -55,7 +56,7 @@ const SiteReportDetailPage = () => {
   );
 
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
-  const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
+
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
 
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
@@ -65,6 +66,9 @@ const SiteReportDetailPage = () => {
     SITE_WORKDAY_COLLECTIONS,
     "Site Workdays"
   );
+
+  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const taskTitle = t("Reporting Task {window}", { window });
 
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
@@ -76,7 +80,7 @@ const SiteReportDetailPage = () => {
           links={[
             { title: t("My Projects"), path: "/my-projects" },
             { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
-            { title: siteReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
+            { title: taskTitle, path: `/project/${siteReport.project?.uuid}/reporting-task/${siteReport.task_uuid}` },
             { title: reportTitle }
           ]}
         />
