@@ -86,10 +86,6 @@ export type ApiDataStore = ApiResources & {
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
   };
-  total_content: number;
-  processed_content: number;
-  progress_message: string;
-  abort_delayed_job: boolean;
 };
 
 export const INITIAL_STATE = {
@@ -114,11 +110,7 @@ export const INITIAL_STATE = {
       acc[method] = {};
       return acc;
     }, {}) as ApiPendingStore
-  },
-  total_content: 0,
-  processed_content: 0,
-  progress_message: "",
-  abort_delayed_job: false
+  }
 } as ApiDataStore;
 
 type ApiFetchStartingProps = {
@@ -199,23 +191,7 @@ export const apiSlice = createSlice({
       }
     },
 
-    clearApiCache,
-
-    setTotalContent: (state, action: PayloadAction<number>) => {
-      state.total_content = action.payload;
-    },
-
-    setProgressContent: (state, action: PayloadAction<number>) => {
-      state.processed_content = action.payload;
-    },
-
-    setAbortDelayedJob: (state, action: PayloadAction<boolean>) => {
-      state.abort_delayed_job = action.payload;
-    },
-
-    setProgressMessage: (state, action: PayloadAction<string>) => {
-      state.progress_message = action.payload;
-    }
+    clearApiCache
   },
 
   extraReducers: builder => {
@@ -256,7 +232,7 @@ export default class ApiSlice {
   static redux: Store;
   static queryClient?: QueryClient;
 
-  static get apiDataStore(): ApiDataStore {
+  static get store(): ApiDataStore {
     return this.redux.getState().api;
   }
 
@@ -274,21 +250,5 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
-  }
-
-  static addTotalContent(total_content: number) {
-    this.redux.dispatch(apiSlice.actions.setTotalContent(total_content));
-  }
-
-  static addProgressContent(processed_content: number) {
-    this.redux.dispatch(apiSlice.actions.setProgressContent(processed_content));
-  }
-
-  static addProgressMessage(progress_message: string) {
-    this.redux.dispatch(apiSlice.actions.setProgressMessage(progress_message));
-  }
-
-  static abortDelayedJob(abort_delayed_job: boolean) {
-    this.redux.dispatch(apiSlice.actions.setAbortDelayedJob(abort_delayed_job));
   }
 }

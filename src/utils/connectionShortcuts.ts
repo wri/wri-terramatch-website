@@ -26,5 +26,5 @@ export function connectionLoader<TSelected, TProps extends OptionalProps>(connec
  * desirable. In almost every case, connectionHook or connectionLoader is what you really want.
  */
 export function connectionSelector<TSelected, TProps extends OptionalProps>(connection: Connection<TSelected, TProps>) {
-  return (props: TProps | Record<any, never> = {}) => connection.selector(ApiSlice.apiDataStore, props);
+  return (props: TProps | Record<any, never> = {}) => connection.selector(ApiSlice.store, props);
 }

@@ -4,19 +4,22 @@ import { PropsWithChildren, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { createLogger } from "redux-logger";
 
-import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "./apiSlice";
+import JobsSlice, { JobsDataStore, jobsSlice } from "./jobsSlice";
 
 // Action used only in test suites to dump some specific state into the store.
 export const __TEST_HYDRATE__ = "__TEST_HYDRATE__";
 
 export type AppStore = {
   api: ApiDataStore;
+  jobs: JobsDataStore;
 };
 
 export const makeStore = (queryClient?: QueryClient) => {
   const store = configureStore({
     reducer: {
-      api: apiSlice.reducer
+      api: apiSlice.reducer,
+      jobs: jobsSlice.reducer
     },
     middleware: getDefaultMiddleware => {
       const includeLogger =
@@ -40,6 +43,7 @@ export const makeStore = (queryClient?: QueryClient) => {
 
   ApiSlice.redux = store;
   ApiSlice.queryClient = queryClient;
+  JobsSlice.redux = store;
 
   if (typeof window !== "undefined" && (window as any).terramatch != null) {
     // Make some things available to the browser console for easy debugging.

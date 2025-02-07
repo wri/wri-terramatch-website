@@ -23,7 +23,7 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
-import ApiSlice from "@/store/apiSlice";
+import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -98,25 +98,18 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         t("Success! TerraMatch reviewed all polygons")
       );
       setIsLoadingDelayedJob?.(false);
-      ApiSlice.addTotalContent(0);
-      ApiSlice.addProgressContent(0);
-      ApiSlice.addProgressMessage("");
+      JobsSlice.reset();
     },
     onError: () => {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      if (ApiSlice.apiDataStore.abort_delayed_job) {
+      if (JobsSlice.store.abortDelayedJob) {
         displayNotification(
           t("The Check Polygons processing was cancelled."),
           "warning",
           t("You can try again later.")
         );
-
-        ApiSlice.abortDelayedJob(false);
-        ApiSlice.addTotalContent(0);
-        ApiSlice.addProgressContent(0);
-        ApiSlice.addProgressMessage("");
       } else {
         displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
       }
@@ -147,12 +140,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      if (ApiSlice.apiDataStore.abort_delayed_job) {
+      if (JobsSlice.store.abortDelayedJob) {
         displayNotification(t("The Fix Polygons processing was cancelled."), "warning", t("You can try again later."));
-        ApiSlice.abortDelayedJob(false);
-        ApiSlice.addTotalContent(0);
-        ApiSlice.addProgressContent(0);
-        ApiSlice.addProgressMessage("");
       } else {
         Log.error("Error clipping polygons:", error);
         displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));

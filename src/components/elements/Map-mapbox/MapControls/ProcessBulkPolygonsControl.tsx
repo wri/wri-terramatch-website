@@ -16,7 +16,7 @@ import {
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
-import ApiSlice from "@/store/apiSlice";
+import JobsSlice from "@/store/jobsSlice";
 
 const ProcessBulkPolygonsControl = ({
   entityData,
@@ -127,9 +127,7 @@ const ProcessBulkPolygonsControl = ({
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
 
                   setIsLoadingDelayedJob?.(false);
-                  ApiSlice.addTotalContent(0);
-                  ApiSlice.addProgressContent(0);
-                  ApiSlice.addProgressMessage("");
+                  JobsSlice.reset();
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -144,16 +142,12 @@ const ProcessBulkPolygonsControl = ({
                 onError: () => {
                   hideLoader();
                   setIsLoadingDelayedJob?.(false);
-                  if (ApiSlice.apiDataStore.abort_delayed_job) {
+                  if (JobsSlice.store.abortDelayedJob) {
                     openNotification(
                       "warning",
                       t("The Fix Polygons processing was cancelled."),
                       t("You can try again later.")
                     );
-                    ApiSlice.abortDelayedJob(false);
-                    ApiSlice.addTotalContent(0);
-                    ApiSlice.addProgressContent(0);
-                    ApiSlice.addProgressMessage("");
                   } else {
                     openNotification("error", t("Error!"), t("Failed to fix polygons"));
                   }
@@ -187,23 +181,17 @@ const ProcessBulkPolygonsControl = ({
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          ApiSlice.addTotalContent(0);
-          ApiSlice.addProgressContent(0);
-          ApiSlice.addProgressMessage("");
+          JobsSlice.reset();
         },
         onError: () => {
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          if (ApiSlice.apiDataStore.abort_delayed_job) {
+          if (JobsSlice.store.abortDelayedJob) {
             openNotification(
               "warning",
               t("The Check Polygons processing was cancelled."),
               t("You can try again later.")
             );
-            ApiSlice.abortDelayedJob(false);
-            ApiSlice.addTotalContent(0);
-            ApiSlice.addProgressContent(0);
-            ApiSlice.addProgressMessage("");
           } else {
             openNotification("error", t("Error!"), t("Failed to check polygons"));
           }

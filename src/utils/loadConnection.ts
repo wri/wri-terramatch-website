@@ -15,15 +15,15 @@ export async function loadConnection<SType, PType extends OptionalProps = undefi
     return loaded;
   };
 
-  const store = ApiSlice.apiDataStore;
+  const store = ApiSlice.store;
   if (predicate(store)) return selector(store, props);
 
   const unsubscribe = await new Promise<Unsubscribe>(resolve => {
     const unsubscribe = ApiSlice.redux.subscribe(() => {
-      if (predicate(ApiSlice.apiDataStore)) resolve(unsubscribe);
+      if (predicate(ApiSlice.store)) resolve(unsubscribe);
     });
   });
   unsubscribe();
 
-  return selector(ApiSlice.apiDataStore, props);
+  return selector(ApiSlice.store, props);
 }
