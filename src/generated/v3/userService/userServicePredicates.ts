@@ -4,7 +4,9 @@ import {
   UsersFindPathParams,
   UsersFindVariables,
   UserUpdatePathParams,
-  UserUpdateVariables
+  UserUpdateVariables,
+  ResetPasswordPathParams,
+  ResetPasswordVariables
 } from "./userServiceComponents";
 
 export const authLoginIsFetching = (store: ApiDataStore) =>
@@ -24,3 +26,25 @@ export const userUpdateIsFetching = (variables: Omit<UserUpdateVariables, "body"
 
 export const userUpdateFetchFailed = (variables: Omit<UserUpdateVariables, "body">) => (store: ApiDataStore) =>
   fetchFailed<{}, UserUpdatePathParams>({ store, url: "/users/v3/users/{uuid}", method: "patch", ...variables });
+
+export const requestPasswordResetIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/auth/v3/passwordResets", method: "post" });
+
+export const requestPasswordResetFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/auth/v3/passwordResets", method: "post" });
+
+export const resetPasswordIsFetching = (variables: Omit<ResetPasswordVariables, "body">) => (store: ApiDataStore) =>
+  isFetching<{}, ResetPasswordPathParams>({
+    store,
+    url: "/auth/v3/passwordResets/{token}",
+    method: "put",
+    ...variables
+  });
+
+export const resetPasswordFetchFailed = (variables: Omit<ResetPasswordVariables, "body">) => (store: ApiDataStore) =>
+  fetchFailed<{}, ResetPasswordPathParams>({
+    store,
+    url: "/auth/v3/passwordResets/{token}",
+    method: "put",
+    ...variables
+  });

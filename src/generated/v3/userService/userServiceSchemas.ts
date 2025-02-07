@@ -73,3 +73,19 @@ export type UserUpdate = {
 export type UserUpdateBodyDto = {
   data: UserUpdate;
 };
+
+export type ResetPasswordResponseDto = {
+  /**
+   * User email
+   *
+   * @example user@example.com
+   */
+  emailAddress: string;
+};
+
+export type ResetPasswordRequest = {
+  emailAddress: string;
+  callbackUrl: string;
+};
+
+export type ResetPasswordDto = {};
