@@ -20,6 +20,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
 import { getFullName } from "@/utils/user";
@@ -44,9 +45,11 @@ const NurseryReportDetailPage = () => {
   );
 
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: nurseryReport.task_uuid } });
-  const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
 
   const reportTitle = nurseryReport.report_title ?? nurseryReport.title ?? t("Nursery Report");
+
+  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const taskTitle = t("Reporting Task {window}", { window });
 
   return (
     <FrameworkProvider frameworkKey={nurseryReport.framework_key}>
@@ -58,7 +61,10 @@ const NurseryReportDetailPage = () => {
           links={[
             { title: t("My Projects"), path: "/my-projects" },
             { title: nurseryReport.project?.name ?? t("Project"), path: `/project/${nurseryReport.project?.uuid}` },
-            { title: nurseryReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
+            {
+              title: taskTitle,
+              path: `/project/${nurseryReport.project?.uuid}/reporting-task/${nurseryReport.task_uuid}`
+            },
             { title: reportTitle }
           ]}
         />
