@@ -58,7 +58,7 @@ const delayedJobsCombinedConnection: Connection<DelayedJobCombinedConnection> = 
 export const useJobProgress = () => useSelector<AppStore, JobsDataStore>(({ jobs }) => jobs);
 
 export const useDelayedJobs = () => {
-  const [loaded, connection] = useConnection(delayedJobsCombinedConnection);
+  const connection = useConnection(delayedJobsCombinedConnection);
   const { totalContent } = useJobProgress();
   const intervalRef = useRef<NodeJS.Timer | undefined>();
 
@@ -82,7 +82,7 @@ export const useDelayedJobs = () => {
     return stopPolling;
   }, [stopPolling]);
 
-  const hasJobs = (loaded ? connection.delayedJobs ?? [] : []).length > 0;
+  const hasJobs = (connection[0] ? connection[1].delayedJobs ?? [] : []).length > 0;
   useEffect(() => {
     console.log("checking polling", { totalContent, hasJobs });
 
@@ -100,7 +100,7 @@ export const useDelayedJobs = () => {
     else stopPolling();
   }, [hasJobs, startPolling, stopPolling, totalContent]);
 
-  return [loaded, connection];
+  return connection;
 };
 
 export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs({ body: { data: jobs } });
