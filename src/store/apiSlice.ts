@@ -230,9 +230,13 @@ authListenerMiddleware.startListening({
 
 export default class ApiSlice {
   static redux: Store;
-  static queryClient?: QueryClient;
+  private static _queryClient?: QueryClient;
 
-  static get store(): ApiDataStore {
+  static set queryClient(value: QueryClient | undefined) {
+    this._queryClient = value;
+  }
+
+  static get currentState(): ApiDataStore {
     return this.redux.getState().api;
   }
 
@@ -250,5 +254,7 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
+    this._queryClient?.getQueryCache()?.clear();
+    this._queryClient?.clear();
   }
 }

@@ -44,21 +44,25 @@ export const jobsSlice = createSlice({
 });
 
 export default class JobsSlice {
-  static redux: Store;
+  private static _redux: Store;
 
-  static get store(): JobsDataStore {
-    return this.redux.getState().jobs;
+  static set redux(value: Store) {
+    this._redux = value;
+  }
+
+  static get currentState(): JobsDataStore {
+    return this._redux.getState().jobs;
   }
 
   static setJobsProgress(totalContent: number, processedContent: number, progressMessage: string | null) {
-    this.redux.dispatch(jobsSlice.actions.setJobsProgress({ totalContent, processedContent, progressMessage }));
+    this._redux.dispatch(jobsSlice.actions.setJobsProgress({ totalContent, processedContent, progressMessage }));
   }
 
   static reset() {
-    this.redux.dispatch(jobsSlice.actions.reset());
+    this._redux.dispatch(jobsSlice.actions.reset());
   }
 
   static abortDelayedJob() {
-    this.redux.dispatch(jobsSlice.actions.abort());
+    this._redux.dispatch(jobsSlice.actions.abort());
   }
 }

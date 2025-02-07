@@ -142,7 +142,7 @@ const ProcessBulkPolygonsControl = ({
                 onError: () => {
                   hideLoader();
                   setIsLoadingDelayedJob?.(false);
-                  if (JobsSlice.store.abortDelayedJob) {
+                  if (JobsSlice.currentState.abortDelayedJob) {
                     openNotification(
                       "warning",
                       t("The Fix Polygons processing was cancelled."),
@@ -186,7 +186,7 @@ const ProcessBulkPolygonsControl = ({
         onError: () => {
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          if (JobsSlice.store.abortDelayedJob) {
+          if (JobsSlice.currentState.abortDelayedJob) {
             openNotification(
               "warning",
               t("The Check Polygons processing was cancelled."),

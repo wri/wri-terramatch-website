@@ -71,7 +71,7 @@ export function fetchFailed<TQueryParams extends {}, TPathParams extends {}>({
   return isErrorState(pending) ? pending : null;
 }
 
-const isPending = (method: Method, fullUrl: string) => ApiSlice.store.meta.pending[method][fullUrl] != null;
+const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
 
 async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };

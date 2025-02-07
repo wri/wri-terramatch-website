@@ -104,7 +104,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      if (JobsSlice.store.abortDelayedJob) {
+      if (JobsSlice.currentState.abortDelayedJob) {
         displayNotification(
           t("The Check Polygons processing was cancelled."),
           "warning",
@@ -140,7 +140,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      if (JobsSlice.store.abortDelayedJob) {
+      if (JobsSlice.currentState.abortDelayedJob) {
         displayNotification(t("The Fix Polygons processing was cancelled."), "warning", t("You can try again later."));
       } else {
         Log.error("Error clipping polygons:", error);

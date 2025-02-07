@@ -185,7 +185,7 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult.data?.attributes?.status === "pending";
     jobResult = await loadJob(signal, delayedJobId)
   ) {
-    if (JobsSlice.store.abortDelayedJob) {
+    if (JobsSlice.currentState.abortDelayedJob) {
       // Make sure the process that reacts to this promise chain failure has a chance to see this
       // value before it gets wiped out.
       setTimeout(() => JobsSlice.reset);
@@ -198,7 +198,7 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     }
 
     if (signal?.aborted) throw new Error("Aborted");
-    if (signal?.aborted || JobsSlice.store.abortDelayedJob) throw new Error("Aborted");
+    if (signal?.aborted || JobsSlice.currentState.abortDelayedJob) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }
 
