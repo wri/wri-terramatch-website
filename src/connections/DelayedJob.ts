@@ -84,8 +84,6 @@ export const useDelayedJobs = () => {
 
   const hasJobs = (connection[0] ? connection[1].delayedJobs ?? [] : []).length > 0;
   useEffect(() => {
-    console.log("checking polling", { totalContent, hasJobs });
-
     if (totalContent > 0) {
       startPolling();
       // Don't process the connection content because we need it to poll once before giving up; the
