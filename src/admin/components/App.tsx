@@ -166,6 +166,13 @@ const App = () => {
             />
           </>
         )}
+        <Resource
+          name={modules.impactStories.ResourceName}
+          list={modules.impactStories.List}
+          edit={modules.impactStories.Edit}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
+          options={{ label: "Impact Stories" }}
+        />
       </Admin>
     </LoadingProvider>
   );
