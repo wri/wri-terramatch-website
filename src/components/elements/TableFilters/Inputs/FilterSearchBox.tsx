@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Icon from "@/components/extensive/Icon/Icon";
@@ -11,6 +11,7 @@ export interface FilterSearchBoxProps
   placeholder?: string;
   variant?: FilterSearchBoxVariant;
   value?: string;
+  suffix?: ReactNode;
 
   onChange: (value: string) => void;
 }
@@ -22,6 +23,7 @@ const FilterSearchBox = ({
   value,
   onChange,
   className,
+  suffix,
   ...props
 }: PropsWithChildren<FilterSearchBoxProps>) => {
   return (
@@ -34,6 +36,7 @@ const FilterSearchBox = ({
         className={variant.input}
         value={value}
       />
+      {suffix}
     </div>
   );
 };

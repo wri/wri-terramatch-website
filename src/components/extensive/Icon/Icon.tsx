@@ -47,7 +47,8 @@ export enum IconNames {
   CALENDAR = "calendar",
   BRANCH_CIRCLE = "branch-circle",
   LIGHT_BULB_CIRCLE = "light-bulb-circle",
-  LINKEDLIN = "linkedin",
+  LINKEDIN = "linkedin",
+  TWITTER = "twitter",
   INFO_CIRCLE = "info-circle",
   INFO_CIRCLE_ALT = "info-circle-alt",
   INSTAGRAM = "instagram",
@@ -175,6 +176,7 @@ export enum IconNames {
   PROJECT_PROFILE = "project-profile",
   DASHBOARD_AIRTABLE = "dashboard-airtable",
   DASHBOARD_REPORTS = "dashboard-reports",
+  DASHBOARD_IMPACT_STORY = "dashboard-impact-story",
   ABOUT_US = "about-us",
   EXPAND = "expand",
   COLLAPSE = "collapse",
@@ -223,7 +225,10 @@ export enum IconNames {
   NON_TREES_PLANTED_CIRCLE = "non-trees-planted-circle",
   SEED_PLANTED = "seed-planted",
   TREES_REGENERATING = "trees-regenerating",
-  NON_TRESS_PLANTED = "non-trees-planted"
+  NON_TRESS_PLANTED = "non-trees-planted",
+  ARROW_UP_RIGHT = "arrow-up-right",
+  SHARE_IMPACT_STORY = "share-impact-story",
+  BRIEFCASE = "briefcase"
 }
 
 export interface IconProps {
