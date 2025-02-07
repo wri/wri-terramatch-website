@@ -13,8 +13,8 @@ const CardImpactStory = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <div className="flex flex-1 overflow-hidden">
-      <div className="mt-5 flex max-h-[62vh] min-h-0 flex-1 overflow-auto pb-4 duration-500 lg:mt-8">
+    <div className="-ml-2 flex flex-1 overflow-visible">
+      <div className="mt-5 flex max-h-[62vh] min-h-0 flex-1 overflow-auto pb-4 pl-2 duration-500 lg:mt-8">
         <div className="grid h-max w-full grid-cols-2 gap-x-10 gap-y-10 pb-6">
           {CARD_IMPACT_STORY_MOCKED_DATA.map((item, index) => {
             return (
