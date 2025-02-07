@@ -104,15 +104,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      if (JobsSlice.currentState.abortDelayedJob) {
-        displayNotification(
-          t("The Check Polygons processing was cancelled."),
-          "warning",
-          t("You can try again later.")
-        );
-      } else {
-        displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
-      }
+      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   });
 
@@ -140,12 +132,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       closeModal(ModalId.FIX_POLYGONS);
     },
     onError: error => {
-      if (JobsSlice.currentState.abortDelayedJob) {
-        displayNotification(t("The Fix Polygons processing was cancelled."), "warning", t("You can try again later."));
-      } else {
-        Log.error("Error clipping polygons:", error);
-        displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
-      }
+      Log.error("Error clipping polygons:", error);
+      displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
       hideLoader();
       setIsLoadingDelayedJob?.(false);
     }

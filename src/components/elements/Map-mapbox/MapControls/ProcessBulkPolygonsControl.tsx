@@ -142,15 +142,7 @@ const ProcessBulkPolygonsControl = ({
                 onError: () => {
                   hideLoader();
                   setIsLoadingDelayedJob?.(false);
-                  if (JobsSlice.currentState.abortDelayedJob) {
-                    openNotification(
-                      "warning",
-                      t("The Fix Polygons processing was cancelled."),
-                      t("You can try again later.")
-                    );
-                  } else {
-                    openNotification("error", t("Error!"), t("Failed to fix polygons"));
-                  }
+                  openNotification("error", t("Error!"), t("Failed to fix polygons"));
                 }
               }
             );
@@ -186,15 +178,7 @@ const ProcessBulkPolygonsControl = ({
         onError: () => {
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          if (JobsSlice.currentState.abortDelayedJob) {
-            openNotification(
-              "warning",
-              t("The Check Polygons processing was cancelled."),
-              t("You can try again later.")
-            );
-          } else {
-            openNotification("error", t("Error!"), t("Failed to check polygons"));
-          }
+          openNotification("error", t("Error!"), t("Failed to check polygons"));
         }
       }
     );

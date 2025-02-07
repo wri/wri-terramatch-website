@@ -185,13 +185,6 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult.data?.attributes?.status === "pending";
     jobResult = await loadJob(signal, delayedJobId)
   ) {
-    if (JobsSlice.currentState.abortDelayedJob) {
-      // Make sure the process that reacts to this promise chain failure has a chance to see this
-      // value before it gets wiped out.
-      setTimeout(() => JobsSlice.reset());
-      throw new Error("Delayed job aborted");
-    }
-
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
     if (totalContent != null && processedContent != null) {
       JobsSlice.setJobsProgress(totalContent, processedContent, progressMessage);
