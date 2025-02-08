@@ -17,6 +17,7 @@ const useHideOnScroll = (ref: RefObject<HTMLElement>, container?: HTMLElement | 
       container?.removeEventListener("scroll", hideElement);
       window.removeEventListener("scroll", hideElement);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [container]);
 };
 

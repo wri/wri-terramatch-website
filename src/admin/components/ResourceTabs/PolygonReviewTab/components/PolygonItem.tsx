@@ -66,7 +66,7 @@ const PolygonItem = ({
     } else if (criteriaData?.criteria_list && criteriaData.criteria_list.length === 0) {
       setValidationStatus("notChecked");
     }
-  }, [polygonMap]);
+  }, [polygonMap, uuid]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);

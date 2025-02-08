@@ -67,7 +67,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       handleCreate?.(fieldValues);
       closeModal(ModalId.FORM_MODAL);
     },
-    [generateUuids, value, onChange, handleCreate, closeModal]
+    [generateUuids, onChange, value, handleCreate, closeModal, additionalValues]
   );
 
   const onDeleteEntry = useCallback(

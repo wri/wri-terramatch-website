@@ -13,6 +13,7 @@ import { logout } from "@/connections/Login";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import {
   formatLabelsVolunteers,
   getFrameworkName,
@@ -122,17 +123,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
-  }, [totalSectionHeader]);
+  }, [setLastUpdatedAt, totalSectionHeader]);
 
-  useEffect(() => {
+  useValueChanged(generalBbox, () => {
     if (generalBbox) {
       setCurrentBbox(generalBbox);
     }
-  }, [generalBbox]);
+  });
 
-  useEffect(() => {
-    refetchTotalSectionHeader();
-  }, [filters]);
+  useValueChanged(filters, refetchTotalSectionHeader);
+
   const COLUMN_ACTIVE_PROGRAMME = [
     {
       header: "Country",

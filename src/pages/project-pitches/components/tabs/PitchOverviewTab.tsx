@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
@@ -21,11 +21,13 @@ import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import PitchEditModal from "@/pages/project-pitches/components/PitchEditModal";
 import TabContainer from "@/pages/project-pitches/components/tabs/TabContainer";
 import { UploadedFile } from "@/types/common";
 import { notEmpty } from "@/utils/array";
 import { formatOptionsList } from "@/utils/options";
+
 interface PitchOverviewTabProps {
   pitch: ProjectPitchRead;
 }
@@ -62,17 +64,14 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
     }
   };
 
-  useEffect(() => {
-    const getDataProjectPolygon = async () => {
-      if (projectPolygon?.project_polygon) {
-        setBbboxAndZoom();
-        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
-      } else {
-        setPolygonDataMap({ [FORM_POLYGONS]: [] });
-      }
-    };
-    getDataProjectPolygon();
-  }, [projectPolygon]);
+  useValueChanged(projectPolygon, async () => {
+    if (projectPolygon?.project_polygon) {
+      setBbboxAndZoom();
+      setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+    } else {
+      setPolygonDataMap({ [FORM_POLYGONS]: [] });
+    }
+  });
 
   return (
     <TabContainer>

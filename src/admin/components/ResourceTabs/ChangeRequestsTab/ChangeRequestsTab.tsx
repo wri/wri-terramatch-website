@@ -56,7 +56,10 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   // @ts-ignore
   const form = currentValues?.data?.form;
 
-  const formSteps = useMemo(() => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)), [form, t]);
+  const formSteps = useMemo(
+    () => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)),
+    [form, framework, t]
+  );
   const formChanges = useFormChanges(current, changes, formSteps ?? []);
   const numFieldsAffected = useMemo(
     () =>

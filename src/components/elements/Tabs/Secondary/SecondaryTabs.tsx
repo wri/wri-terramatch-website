@@ -1,12 +1,13 @@
 import { Tab as HTab } from "@headlessui/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useEffect, useRef } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useRef } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import Button from "../../Button/Button";
 import { SecundaryTabsVariants, VARIANT_TABS_PRIMARY } from "./SecuandaryTabsVariants";
@@ -71,11 +72,11 @@ const SecondaryTabs = ({
     setSelectedIndex && setSelectedIndex(index);
   };
 
-  useEffect(() => {
+  useValueChanged(selectedIndex, () => {
     if (selectedIndex !== undefined) {
       onTabChange(selectedIndex);
     }
-  }, [selectedIndex]);
+  });
 
   const handleScrollNext = () => {
     if (ContentListRef.current) {

@@ -17,6 +17,7 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
 
 import { PROJECT_INSIGHTS_SECTION_TOOLTIP } from "../constants/tooltips";
@@ -103,7 +104,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (frameworks) {
       setFrameworks(frameworks);
     }
-  }, [frameworks]);
+  }, [frameworks, setFrameworks]);
 
   const resetValues = () => {
     setFilters({
@@ -144,9 +145,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       undefined,
       { shallow: true }
     );
-  }, [filters]);
+  }, [filters, router]);
 
-  useEffect(() => {
+  useOnMount(() => {
     setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
     const newFilters = {
@@ -159,7 +160,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     };
 
     setFilters(newFilters);
-  }, []);
+  });
 
   const handleChange = (selectName: string, value: OptionValue[]) => {
     setFilters(prevValues => ({

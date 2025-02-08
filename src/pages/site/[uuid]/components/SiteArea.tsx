@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -10,6 +10,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useGetV2SitePolygonUuidVersions, usePutV2SitePolygonUuidMakeActive } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 interface SiteAreaProps {
   sites: any;
@@ -74,11 +75,11 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     openNotification("warning", t("Warning!"), t("Polygon version is already active"));
   };
 
-  useEffect(() => {
+  useValueChanged(shouldRefetchPolygonVersions, () => {
     if (shouldRefetchPolygonVersions) {
       refetchPolygonVersions();
     }
-  }, [shouldRefetchPolygonVersions]);
+  });
 
   const convertText = (text: string) => {
     return text?.replace(/-/g, " ");

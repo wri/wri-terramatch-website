@@ -170,6 +170,7 @@ const PolygonDrawer = ({
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);
 
   useEffect(() => {
@@ -195,7 +196,7 @@ const PolygonDrawer = ({
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
-  }, [polygonSelected, sitePolygonData]);
+  }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
     if (openEditNewPolygon) {
       setButtonToogle(true);
@@ -230,7 +231,7 @@ const PolygonDrawer = ({
 
     fetchCriteriaValidation();
     setSelectPolygonVersion(selectedPolygonData);
-  }, [buttonToogle, selectedPolygonData]);
+  }, [buttonToogle, polygonSelected, selectedPolygonData]);
 
   const {
     data: polygonVersions,
@@ -252,13 +253,13 @@ const PolygonDrawer = ({
       setIsLoadingDropdown(false);
     };
     onLoading();
-  }, [isOpenPolygonDrawer]);
+  }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
     if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
-  }, [selectPolygonVersion]);
+  }, [polygonSelected, selectPolygonVersion, selectedPolygonData]);
 
   const runFixPolygonOverlaps = () => {
     if (polygonSelected) {

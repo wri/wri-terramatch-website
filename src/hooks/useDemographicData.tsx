@@ -135,6 +135,6 @@ export default function useDemographicData(
       const title = t(`${titlePrefix} - {total}`, { total: total ?? "...loading" });
       return { grids, title };
     },
-    [data, collections, framework, t, titlePrefix]
+    [data, collections, framework, t, titlePrefix, variant, demographicalType]
   );
 }

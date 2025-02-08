@@ -7,6 +7,7 @@ import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import List from "@/components/extensive/List/List";
 import { FieldMapper } from "@/components/extensive/WizardForm/FieldMapper";
 import { FormField } from "@/components/extensive/WizardForm/types";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValueWithBoolean } from "@/types/common";
 
 export interface ConditionalInputProps extends Omit<InputProps, "defaultValue">, UseControllerProps {
@@ -41,7 +42,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.value, formHook]);
 
-  useEffect(() => {
+  useValueChanged(valueCondition, () => {
     if (valueCondition == true) {
       field.onChange(true);
       return;
@@ -71,7 +72,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     if (fieldsCount == fields?.length) {
       field.onChange(false);
     }
-  }, [valueCondition]);
+  });
 
   return (
     <>

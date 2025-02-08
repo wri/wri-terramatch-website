@@ -18,6 +18,7 @@ import {
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
 import { useDate } from "@/hooks/useDate";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
@@ -79,7 +80,7 @@ const OverviewMapArea = ({
     loading
   } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
-  useEffect(() => {
+  useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
     if (loading) {
@@ -90,9 +91,10 @@ const OverviewMapArea = ({
     } else {
       callCountryBBox();
     }
-  }, [loading]);
+  });
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedValues, sortOrder]);
   const callEntityBbox = async () => {
     if (type === "sites") {
@@ -129,7 +131,7 @@ const OverviewMapArea = ({
     if (entityBbox !== null) {
       setShouldRefetchPolygonData(false);
     }
-  }, [entityBbox, polygonsData]);
+  }, [entityBbox, polygonsData, setShouldRefetchPolygonData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
@@ -137,20 +139,20 @@ const OverviewMapArea = ({
     if (isOpen) {
       setSelectedPolygonsInCheckbox([]);
     }
-  }, [editPolygon]);
+  }, [editPolygon, setSelectedPolygonsInCheckbox]);
 
-  useEffect(() => {
+  useValueChanged(shouldRefetchPolygonData, () => {
     if (shouldRefetchPolygonData) {
       reloadSiteData?.();
       refetch();
     }
-  }, [shouldRefetchPolygonData]);
-  useEffect(() => {
+  });
+  useValueChanged(shouldRefetchValidation, () => {
     if (shouldRefetchValidation) {
       refetch();
       setShouldRefetchValidation(false);
     }
-  }, [shouldRefetchValidation]);
+  });
   useEffect(() => {
     if (polygonsData?.length > 0) {
       const dataMap = parsePolygonData(polygonsData);

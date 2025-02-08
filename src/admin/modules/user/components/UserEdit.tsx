@@ -40,7 +40,7 @@ const UserEdit = () => {
     }
 
     return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
-  }, [isFrameworkAdmin]);
+  }, [isSuperAdmin, role]);
 
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>

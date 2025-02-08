@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
@@ -11,8 +12,7 @@ import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL
 } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
@@ -34,7 +34,6 @@ import {
   TOTAL_NUMBER_OF_SITES_TOOLTIP
 } from "../constants/tooltips";
 import { CARD_IMPACT_STORY_MOCKED_DATA } from "../mockedData/impactStory";
-import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
@@ -108,7 +107,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
   useEffect(() => {
     setModalLoading("modalExpand", modalMapLoaded);
-  }, [modalMapLoaded]);
+  }, [modalMapLoaded, setModalLoading]);
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;

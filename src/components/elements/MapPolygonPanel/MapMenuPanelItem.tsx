@@ -73,7 +73,7 @@ const MapMenuPanelItem = ({
     } else {
       setValidationStatus(undefined);
     }
-  }, [polygonMap, setValidationStatus]);
+  }, [poly_id, polygonMap, setValidationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(
