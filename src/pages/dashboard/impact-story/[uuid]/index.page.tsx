@@ -41,7 +41,7 @@ const ImpactStoryLanding = () => {
               <b>{t("Date Added: ")}</b>
               {data?.date}
             </Text>
-            <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
+            <Text variant="text-16" className="mt-6 leading-8 text-darkCustom" containHtml>
               {data?.description}
             </Text>
             <When condition={data?.image}>
