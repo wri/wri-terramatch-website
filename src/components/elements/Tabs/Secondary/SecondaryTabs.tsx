@@ -104,12 +104,12 @@ const SecondaryTabs = ({
       <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
         {scrollable && scrollLeft > 0 && (
           <div
-            className="absolute top-0 left-0 z-50 bg-tabScrollLeft bg-cover bg-left bg-no-repeat pt-0 pr-9"
+            className="absolute top-0 left-0 z-50 border-b-2 border-transparent bg-tabScrollLeft bg-cover bg-left bg-no-repeat pt-0 pr-9"
             style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
           >
             <Button
               variant="secondary-blue"
-              className="sticky z-[2] h-full min-w-[2.5rem] rounded-none border-0 border-r border-b-2 border-neutral-200 p-3"
+              className="sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-r border-b-2 border-neutral-200 p-3"
               onClick={handleScrollPrev}
             >
               <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 -rotate-90" />
@@ -159,12 +159,12 @@ const SecondaryTabs = ({
         {scrollable &&
           scrollLeft < (ContentListRef.current?.scrollWidth ?? 0) - (ContentListRef.current?.clientWidth ?? 0) && (
             <div
-              className="absolute top-0 right-0 z-50 flex gap-2 bg-tabScrollRight bg-cover bg-right bg-no-repeat pt-0 pl-9"
+              className="absolute top-0 right-0 z-50 flex gap-2 border-b-2 border-transparent bg-tabScrollRight bg-cover bg-right bg-no-repeat pt-0 pl-9"
               style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
             >
               <Button
                 variant="secondary-blue"
-                className="sticky z-[2] h-full min-w-[2.5rem] rounded-none border-0 border-l border-b-2 border-neutral-200 p-3"
+                className="sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-l border-b-2 border-neutral-200 p-3"
                 onClick={handleScrollNext}
               >
                 <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 rotate-90" />
