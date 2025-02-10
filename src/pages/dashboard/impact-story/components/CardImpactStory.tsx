@@ -14,7 +14,7 @@ const CardImpactStory = () => {
 
   return (
     <div className="-ml-2 flex flex-1 overflow-visible">
-      <div className="mt-5 flex max-h-[62vh] min-h-0 flex-1 overflow-auto pb-4 pl-2 duration-500 lg:mt-8">
+      <div className="mt-5 flex max-h-[62vh] min-h-0 flex-1 overflow-scroll pb-4 pl-2 pr-2 duration-500 lg:mt-8">
         <div className="grid h-max w-full grid-cols-2 gap-x-10 gap-y-10 pb-6">
           {CARD_IMPACT_STORY_MOCKED_DATA.map((item, index) => {
             return (
@@ -32,7 +32,10 @@ const CardImpactStory = () => {
                   className="h-[39vh] w-full rounded-2xl object-cover"
                 />
                 <div className="w-full px-0 transition-all duration-300 group-hover:px-4">
-                  <Text variant="text-20-bold" className="mt-6 leading-[normal] transition-colors">
+                  <Text
+                    variant="text-20-bold"
+                    className="two-line-text mt-6 h-12 leading-[normal] transition-colors lg:h-15 wide:h-16"
+                  >
                     {t(item.title)}
                   </Text>
                   <Text variant="text-16-light" className="mt-3 flex items-center gap-1.5 capitalize text-grey-700">
