@@ -1,7 +1,7 @@
 import { Tab as HTab } from "@headlessui/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useEffect, useRef } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useEffect, useRef, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -46,6 +46,7 @@ const SecondaryTabs = ({
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const ContentListRef = useRef<HTMLDivElement>(null);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const tabItems = _tabItems.filter(item => {
     if (item.show != null) {
       return item.show.includes(framework);
@@ -80,22 +81,47 @@ const SecondaryTabs = ({
   const handleScrollNext = () => {
     if (ContentListRef.current) {
       ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + 75;
+      setScrollLeft(ContentListRef.current.scrollLeft);
     }
   };
 
   const handleScrollPrev = () => {
     if (ContentListRef.current) {
       ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - 75;
+      setScrollLeft(ContentListRef.current.scrollLeft);
     }
   };
+
+  useEffect(() => {
+    if (ContentListRef.current) {
+      console.log("ContentListRef.current", ContentListRef.current.scrollLeft);
+      setScrollLeft(ContentListRef.current.scrollLeft);
+    }
+  }, [ContentListRef.current]);
+
+  console.log("scrollLeft", scrollLeft, ContentListRef.current?.scrollIntoView);
 
   return (
     <div className="relative">
       <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
+        {scrollable && scrollLeft > 0 && (
+          <div
+            className="absolute top-0 left-0 z-10 pt-0 pr-4 backdrop-blur"
+            style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
+          >
+            <Button
+              variant="secondary-blue"
+              className="sticky z-[2] h-full min-w-[2.5rem] rounded-none border-0 border-r border-neutral-200 p-3"
+              onClick={handleScrollPrev}
+            >
+              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 -rotate-90" />
+            </Button>
+          </div>
+        )}
         <HTab.List
           {...divProps}
           className={classNames(className, "h-max w-full", variant.classNameContentList, {
-            "scroll-indicator-hide relative pr-[100px]": scrollable
+            "scroll-indicator-hide relative": scrollable
           })}
           ref={ContentListRef}
         >
@@ -132,25 +158,21 @@ const SecondaryTabs = ({
             )}
           />
         </HTab.List>
-        {scrollable && (
-          <div className="absolute top-0 right-0 z-10 flex gap-2 pt-0 pl-3 backdrop-blur">
-            <div className="absolute top-0 right-0 z-[1] h-full w-full blur-md" />
-            <Button
-              variant="secondary-blue"
-              className="sticky z-[2] h-10 w-10 min-w-[2.5rem] rounded-full border-none p-0 shadow-monitored"
-              onClick={handleScrollPrev}
+        {scrollable &&
+          scrollLeft < (ContentListRef.current?.scrollWidth ?? 0) - (ContentListRef.current?.clientWidth ?? 0) && (
+            <div
+              className="absolute top-0 right-0 z-10 flex gap-2 pt-0 pl-4 backdrop-blur"
+              style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
             >
-              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 -rotate-90" />
-            </Button>
-            <Button
-              variant="secondary-blue"
-              className="sticky z-[2] h-10 w-10 min-w-[2.5rem] rounded-full border-none p-0 shadow-monitored"
-              onClick={handleScrollNext}
-            >
-              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 rotate-90" />
-            </Button>
-          </div>
-        )}
+              <Button
+                variant="secondary-blue"
+                className="sticky z-[2] h-full min-w-[2.5rem] rounded-none border-0 border-l border-neutral-200 p-3"
+                onClick={handleScrollNext}
+              >
+                <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 rotate-90" />
+              </Button>
+            </div>
+          )}
         <List as={HTab.Panels} itemAs={HTab.Panel} items={tabItems} render={item => item.body} />
       </HTab.Group>
     </div>
