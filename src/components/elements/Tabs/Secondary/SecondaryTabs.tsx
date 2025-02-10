@@ -82,22 +82,18 @@ const SecondaryTabs = ({
   const handleScrollNext = () => {
     if (ContentListRef.current) {
       ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + 75;
-      setScrollLeft(ContentListRef.current.scrollLeft);
     }
   };
 
   const handleScrollPrev = () => {
     if (ContentListRef.current) {
       ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - 75;
-      setScrollLeft(ContentListRef.current.scrollLeft);
     }
   };
 
-  useValueChanged(ContentListRef.current, () => {
-    if (ContentListRef.current) {
-      setScrollLeft(ContentListRef.current.scrollLeft);
-    }
-  });
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    setScrollLeft(event.currentTarget.scrollLeft);
+  };
 
   return (
     <div className="relative">
@@ -122,6 +118,7 @@ const SecondaryTabs = ({
             "scroll-indicator-hide relative": scrollable
           })}
           ref={ContentListRef}
+          onScrollCapture={handleScroll}
         >
           <List
             as="div"
@@ -157,7 +154,7 @@ const SecondaryTabs = ({
           />
         </HTab.List>
         {scrollable &&
-          scrollLeft < (ContentListRef.current?.scrollWidth ?? 0) - (ContentListRef.current?.clientWidth ?? 0) && (
+          scrollLeft < (ContentListRef.current?.scrollWidth ?? 0) - (ContentListRef.current?.clientWidth ?? 0) - 2 && (
             <div
               className="absolute top-0 right-0 z-50 flex gap-2 border-b-2 border-transparent bg-tabScrollRight bg-cover bg-right bg-no-repeat pt-0 pl-9"
               style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
