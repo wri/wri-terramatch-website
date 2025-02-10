@@ -46,7 +46,7 @@ const UserCreate = () => {
     }
 
     return [...frameworkAdminPrimaryRoleChoices, userPrimaryRoleChoices.find(choice => choice.id === role)];
-  }, [isFrameworkAdmin]);
+  }, [isSuperAdmin, role]);
 
   return (
     <Create title="Create User">

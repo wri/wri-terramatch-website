@@ -22,7 +22,8 @@ import {
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
@@ -53,6 +54,40 @@ interface TransformedData {
   label: string | null;
   showWarning: boolean;
 }
+
+const getTransformedData = (
+  sitePolygonData: SitePolygonsDataResponse | undefined,
+  currentValidationSite: CheckedPolygon[]
+) => {
+  return currentValidationSite.map((checkedPolygon, index) => {
+    const matchingPolygon = Array.isArray(sitePolygonData)
+      ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
+      : null;
+    const excludedFromValidationCriterias = [
+      COMPLETED_DATA_CRITERIA_ID,
+      ESTIMATED_AREA_CRITERIA_ID,
+      WITHIN_COUNTRY_CRITERIA_ID
+    ];
+    const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
+    const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+    let isValid = false;
+    if (checkedPolygon?.nonValidCriteria?.length === 0) {
+      isValid = true;
+    } else if (failingCriterias?.length === 0) {
+      isValid = true;
+    }
+    return {
+      id: index + 1,
+      valid: checkedPolygon.checked && isValid,
+      checked: checkedPolygon.checked,
+      label: matchingPolygon?.poly_name ?? null,
+      showWarning:
+        nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
+        nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
+        nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
+    };
+  });
+};
 
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
@@ -139,37 +174,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     }
   });
 
-  const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
-    return currentValidationSite.map((checkedPolygon, index) => {
-      const matchingPolygon = Array.isArray(sitePolygonData)
-        ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
-        : null;
-      const excludedFromValidationCriterias = [
-        COMPLETED_DATA_CRITERIA_ID,
-        ESTIMATED_AREA_CRITERIA_ID,
-        WITHIN_COUNTRY_CRITERIA_ID
-      ];
-      const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
-      const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-      let isValid = false;
-      if (checkedPolygon?.nonValidCriteria?.length === 0) {
-        isValid = true;
-      } else if (failingCriterias?.length === 0) {
-        isValid = true;
-      }
-      return {
-        id: index + 1,
-        valid: checkedPolygon.checked && isValid,
-        checked: checkedPolygon.checked,
-        label: matchingPolygon?.poly_name ?? null,
-        showWarning:
-          nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
-          nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
-          nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
-      };
-    });
-  };
-
   const checkHasOverlaps = (currentValidationSite: CheckedPolygon[]) => {
     for (const record of currentValidationSite) {
       for (const criteria of record.nonValidCriteria) {
@@ -221,24 +225,24 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   useEffect(() => {
     if (currentValidationSite) {
       setHasOverlaps(checkHasOverlaps(currentValidationSite));
-      const transformedData = getTransformedData(currentValidationSite);
+      const transformedData = getTransformedData(sitePolygonData, currentValidationSite);
       setSitePolygonCheckData(transformedData);
     }
   }, [currentValidationSite, sitePolygonData]);
 
-  useEffect(() => {
+  useValueChanged(sitePolygonData, () => {
     if (sitePolygonData) {
       reloadSitePolygonValidation();
     }
-  }, [sitePolygonData]);
+  });
 
-  useEffect(() => {
+  useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Check Polygons");
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
-  }, [clickedValidation]);
+  });
 
   return (
     <div className="grid gap-2">

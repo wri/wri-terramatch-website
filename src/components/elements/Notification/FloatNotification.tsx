@@ -1,26 +1,17 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
-
-export interface FloatNotificationDataProps {
-  label: string;
-  site: string;
-  value: string;
-}
-
-export interface FloatNotificationProps {
-  data: FloatNotificationDataProps[];
-}
 
 const FloatNotification = () => {
   const firstRender = useRef(true);
@@ -28,7 +19,6 @@ const FloatNotification = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
-  const prevDelayedJobsRef = useRef<DelayedJobDto[]>([]);
 
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
@@ -45,26 +35,23 @@ const FloatNotification = () => {
       });
     triggerBulkUpdate(newJobsData);
   };
-  useEffect(() => {
+
+  useValueChanged(delayedJobs, () => {
     if (!delayedJobs) return;
-    const newJobs = delayedJobs.filter(job => !job.isAcknowledged);
-    const isNewJob = JSON.stringify(newJobs) !== JSON.stringify(prevDelayedJobsRef.current);
 
-    if (isNewJob) {
-      setNotAcknowledgedJobs(newJobs);
-      prevDelayedJobsRef.current = newJobs;
-      if (newJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
-        setOpenModalNotification(true);
-      }
-      firstRender.current = false;
+    setNotAcknowledgedJobs(delayedJobs);
+    if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
+      setOpenModalNotification(true);
     }
-  }, [delayedJobs]);
+    firstRender.current = false;
+  });
 
-  useEffect(() => {
-    if (!notAcknowledgedJobs.length) {
+  useValueChanged(notAcknowledgedJobs.length, () => {
+    if (notAcknowledgedJobs.length === 0) {
       setOpenModalNotification(false);
     }
-  }, [notAcknowledgedJobs]);
+  });
+
   const listOfPolygonsFixed = (data: Record<string, any> | null) => {
     if (data?.updated_polygons) {
       const updatedPolygonNames = data.updated_polygons

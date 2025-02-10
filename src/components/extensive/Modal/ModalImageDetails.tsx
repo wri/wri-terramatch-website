@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Image from "next/image";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -14,6 +14,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -66,9 +67,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
   const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
 
-  useEffect(() => {
+  useOnMount(() => {
     setInitialFormData({ ...formData });
-  }, []);
+  });
 
   const handleInputChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }));

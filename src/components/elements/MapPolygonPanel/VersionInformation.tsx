@@ -22,6 +22,7 @@ import {
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
@@ -91,6 +92,7 @@ const VersionInformation = ({
       uploadFiles();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {
@@ -267,9 +269,9 @@ const VersionInformation = ({
     });
   };
 
-  useEffect(() => {
+  useValueChanged(selectedPolyVersion, () => {
     recallEntityData?.();
-  }, [selectedPolyVersion]);
+  });
 
   const makeActivePolygon = async (polygon: any) => {
     const versionActive = (polygonVersionData as SitePolygonsDataResponse)?.find(

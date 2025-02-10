@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { fetchGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
@@ -138,7 +138,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setOpenEditNewPolygon(isOpen);
   };
 
-  const checkIsMonitoringPartner = async (projectUuid: string) => {
+  const checkIsMonitoringPartner = useCallback(async (projectUuid: string) => {
     try {
       const isMonitoringPartner: any = await fetchGetV2DashboardViewProjectUuid({
         pathParams: { uuid: projectUuid }
@@ -148,7 +148,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
       Log.error("Failed to check if monitoring partner:", error);
       setIsMonitoring(false);
     }
-  };
+  }, []);
 
   const contextValue: MapAreaType = {
     isMonitoring,

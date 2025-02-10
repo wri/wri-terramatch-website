@@ -57,6 +57,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   useEffect(() => {
     refetch();
     loadEntityList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle]);
 
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
