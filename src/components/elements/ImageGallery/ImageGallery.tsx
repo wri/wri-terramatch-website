@@ -10,7 +10,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/PaginationVariant";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import Loader from "@/components/generic/Loading/Loader";
 import { useModalContext } from "@/context/modal.provider";
 import { Option } from "@/types/common";
@@ -416,7 +416,7 @@ const ImageGallery = ({
           </>
         )}
         <Pagination
-          variant={VARIANT_PAGINATION_TEXT_16}
+          variant={VARIANT_PAGINATION_DASHBOARD}
           getCanNextPage={getCanNextPage}
           getCanPreviousPage={getCanPreviousPage}
           getPageCount={getPageCount}
