@@ -373,7 +373,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.direct_seeding_survival_rate ? `${project.direct_seeding_survival_rate}%` : "N/A"
+                      value: project.survival_rate ? `${project.survival_rate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
