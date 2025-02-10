@@ -72,16 +72,18 @@ const RHFMap = ({
       cacheTime: 0
     }
   );
-  const setBbboxAndZoom = async () => {
-    if (projectPolygon?.project_polygon?.poly_uuid) {
-      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
-      });
-      const bounds: any = bbox.bbox;
-      setPolygonBbox(bounds);
-    }
-  };
+
   useEffect(() => {
+    const setBbboxAndZoom = async () => {
+      if (projectPolygon?.project_polygon?.poly_uuid) {
+        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
+        });
+        const bounds: any = bbox.bbox;
+        setPolygonBbox(bounds);
+      }
+    };
+
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
@@ -93,8 +95,9 @@ const RHFMap = ({
         setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
       }
     };
+
     getDataProjectPolygon();
-  }, [projectPolygon, isRefetching]);
+  }, [projectPolygon, isRefetching, setSelectPolygonFromMap]);
 
   useEffect(() => {
     if (entity) {

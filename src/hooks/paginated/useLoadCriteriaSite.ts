@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   fetchGetV2EntityPolygons,
   fetchGetV2EntityPolygonsCount,
   fetchPostV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 
 interface LoadCriteriaSiteHook {
   data: any[];
@@ -100,9 +101,7 @@ const useLoadCriteriaSite = (
     });
   };
 
-  useEffect(() => {
-    loadInBatches();
-  }, []);
+  useOnMount(loadInBatches);
 
   return {
     data,

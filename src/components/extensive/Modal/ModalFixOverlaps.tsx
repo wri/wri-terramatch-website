@@ -116,7 +116,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
         };
       })
     );
-  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria]);
+  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria, selectedUUIDs]);
 
   return (
     <ModalBaseSubmit {...rest}>

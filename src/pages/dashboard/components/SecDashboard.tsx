@@ -21,6 +21,7 @@ import {
   DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED,
   TEXT_TYPES
 } from "@/constants/dashboardConsts";
+import { useOnMount } from "@/hooks/useOnMount";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
@@ -31,8 +32,7 @@ import MultiLineChart from "../charts/MultiLineChart";
 import SimpleBarChart from "../charts/SimpleBarChart";
 import GraphicDashboard from "./GraphicDashboard";
 import GraphicIconDashboard from "./GraphicIconDashboard";
-import { DashboardDataProps } from "./ObjectiveSec";
-import ObjectiveSec from "./ObjectiveSec";
+import ObjectiveSec, { DashboardDataProps } from "./ObjectiveSec";
 import ValueNumberDashboard from "./ValueNumberDashboard";
 
 interface secondOptionsDataItem {
@@ -102,11 +102,11 @@ const SecDashboard = ({
     router.push("/dashboard/project-list");
   };
 
-  useEffect(() => {
+  useOnMount(() => {
     if (data?.tableData) {
       setToggleValue(1);
     }
-  }, []);
+  });
 
   useEffect(() => {
     if (dataForChart && dataForChart?.message === "Job dispatched") {
@@ -120,7 +120,7 @@ const SecDashboard = ({
       const data = getRestorationGoalResumeData(dataForChart);
       setRestorationGoalResume(data);
     }
-  }, [dataForChart, toggleValue]);
+  }, [chartType, dataForChart, isProjectView, toggleValue]);
 
   return (
     <div className={className}>

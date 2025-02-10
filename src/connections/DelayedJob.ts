@@ -83,8 +83,8 @@ export const useDelayedJobs = () => {
   }, [hasJobs, startPolling, stopPolling, totalContent]);
 
   useValueChanged(isLoggedIn, () => {
-    // make sure we call the listDelayedJobs request when we first mount if we're logged in, or
-    // when we log in at least once.
+    // make sure we call the listDelayedJobs request at least once when we first mount if we're
+    // logged in, or when we log in with a fresh user.
     if (isLoggedIn) listDelayedJobs();
   });
 
