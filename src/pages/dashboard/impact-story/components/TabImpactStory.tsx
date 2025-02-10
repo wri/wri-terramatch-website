@@ -11,7 +11,7 @@ const TabImpactStory = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
-    <div className="-mt-2 w-full overflow-hidden bg-transparent">
+    <div className="-mt-2 w-full overflow-visible bg-transparent">
       <SecondaryTabs
         tabItems={[
           {
