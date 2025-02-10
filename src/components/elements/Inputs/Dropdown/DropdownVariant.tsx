@@ -63,3 +63,18 @@ export const VARIANT_DROPDOWN_SIMPLE: DropdownVariant = {
   optionLabelClassName: "text-14-semibold whitespace-nowrap",
   optionClassName: "gap-2"
 };
+
+export const VARIANT_DROPDOWN_IMPACT_STORY: DropdownVariant = {
+  containerClassName: "relative",
+  className: "gap-2 !text-black border border-neutral-200 ",
+  iconClassName: "w-3 h-[9px] fill-trasparent",
+  iconName: IconNames.CHEVRON_DOWN_DASH,
+  iconNameClear: IconNames.CLEAR,
+  iconClearClassName: "w-3 h-3",
+  iconClearContainerClassName: "p-1 border border-neutral-200 rounded",
+  titleContainerClassName: "flex-1 overflow-hidden",
+  titleClassname: "leading-normal text-ellipsis whitespace-nowrap overflow-hidden",
+  optionCheckboxClassName: "checked:text-blueCustom-700",
+  optionLabelClassName: "text-14-semibold whitespace-nowrap",
+  optionClassName: "gap-2"
+};
