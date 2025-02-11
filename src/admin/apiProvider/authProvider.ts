@@ -1,8 +1,10 @@
-import { AuthProvider } from "react-admin";
+import { AuthProvider, UserIdentity } from "react-admin";
 
 import { loadLogin, logout } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
 import Log from "@/utils/log";
+
+export type TMUserIdentity = UserIdentity & { primaryRole: string };
 
 export const authProvider: AuthProvider = {
   login: async () => {
@@ -29,7 +31,7 @@ export const authProvider: AuthProvider = {
     const { user } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole };
+    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole } as TMUserIdentity;
   },
 
   // get the user permissions (optional)

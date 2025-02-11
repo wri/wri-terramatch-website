@@ -125,11 +125,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             <TextField frameworksShow={[Framework.PPC]} label={t("Continent")} value={project.continent} />
             <TextField label={t("Country")} value={formatOptionsList(getCountriesOptions(t), project.country || [])} />
             <TextField frameworksShow={[Framework.HBF]} label={t("State")} value={project.states} />
-            <TextField
-              frameworksHide={[Framework.PPC]}
-              label={t("District")}
-              value={project.project_country_district}
-            />
+            <TextField frameworksHide={[Framework.PPC]} label={t("District")} value={project.project_county_district} />
           </PageCard>
           <ContextCondition frameworksShow={ALL_TF.concat([Framework.HBF])}>
             <PageCard title={t("Project Budget")}>
