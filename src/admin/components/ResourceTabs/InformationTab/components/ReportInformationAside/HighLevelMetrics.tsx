@@ -56,7 +56,7 @@ const HighLevelMetics: FC = () => {
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
                 <NumberField
-                  source={record.seeds_planted_count ? "trees_planted_count" : "total_seeds_planted_count"}
+                  source={record.seeds_planted_count ? "seeds_planted_count" : "total_seeds_planted_count"}
                   emptyText="0"
                 />
               </Labeled>
