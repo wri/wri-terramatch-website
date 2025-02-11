@@ -138,7 +138,7 @@ const useAuditLogActions = ({
       fetchCriteriaValidation();
       fetchCheckPolygons();
     }
-  }, [entityType, record, selected]);
+  }, [entityType, isPolygon, isSite, isSiteProject, record, selected, verifyEntity]);
 
   const isValidCriteriaData = (criteriaData: any) => {
     if (!criteriaData?.criteria_list?.length) {
@@ -190,6 +190,7 @@ const useAuditLogActions = ({
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle, record, entityListItem, selected]);
 
   const getValuesStatusEntity = (() => {

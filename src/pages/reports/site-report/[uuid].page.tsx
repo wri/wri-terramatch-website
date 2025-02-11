@@ -20,15 +20,17 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTablePD";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import useDemographicData from "@/hooks/useDemographicData";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
@@ -54,8 +56,9 @@ const SiteReportDetailPage = () => {
   );
 
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
-  const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
+
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
+  const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
   const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
     "site-report",
@@ -64,6 +67,9 @@ const SiteReportDetailPage = () => {
     SITE_WORKDAY_COLLECTIONS,
     "Site Workdays"
   );
+
+  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const taskTitle = t("Reporting Task {window}", { window });
 
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
@@ -75,11 +81,11 @@ const SiteReportDetailPage = () => {
           links={[
             { title: t("My Projects"), path: "/my-projects" },
             { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
-            { title: siteReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
+            { title: taskTitle, path: `/project/${siteReport.project?.uuid}/reporting-task/${siteReport.task_uuid}` },
             { title: reportTitle }
           ]}
         />
-        <SiteReportHeader report={siteReport} reportTitle={reportTitle} />
+        <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
         <StatusBar entityName="site-reports" entity={siteReport} />
         <PageBody>
           <If condition={siteReport.nothing_to_report}>
@@ -130,7 +136,7 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksHide={[Framework.HBF]}>
+                    <ContextCondition frameworksHide={[...ALL_TF, Framework.HBF]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
@@ -310,98 +316,10 @@ const SiteReportDetailPage = () => {
                         {t(siteReport.regeneration_description ?? "No description")}
                       </Text>
                     </div>
-                    {/* <ContextCondition frameworksHide={[Framework.HBF, Framework.PPC]}>
-                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
-                      <LongTextField title={t("Description of Survival Rate Calculation")}>
-                        {siteReport.survival_calculation}
-                      </LongTextField>
-                      <LongTextField title={t("Explanation of Survival Rate")}>
-                        {siteReport.survival_description}
-                      </LongTextField>
-                      <LongTextField title={t("Maintenance Activities")}>
-                        {siteReport.maintenance_activities}
-                      </LongTextField>
-                      <TreeSpeciesTableTF
-                        uuid={siteReportUUID}
-                        entity={"site-report" as EstablishmentEntityType}
-                        total={siteReport.total_trees_planted_count}
-                        totalText={t("TOTAL TREES PLANTED (ON REPORT)")}
-                        title={t("Trees Planted")}
-                        countColumnName={t("TREE COUNT")}
-                        collection="tree-planted"
-                      />
-                      <TreeSpeciesTableTF
-                        uuid={siteReportUUID}
-                        entity={"site-report" as EstablishmentEntityType}
-                        total={siteReport.total_non_tree_species_planted_count}
-                        totalText={t("TOTAL NON-TREES SPECIES PLANTED (ON REPORT)")}
-                        title={t("Non-Trees Planted")}
-                        countColumnName={t("NON-TREE COUNT")}
-                        collection="non-tree"
-                      />
-                      <TreeSpeciesTableTF
-                        uuid={siteReportUUID}
-                        entity={"site-report" as EstablishmentEntityType}
-                        total={siteReport.total_tree_replanting_count}
-                        totalText={t("TOTAL TREE REPLANTING (ON REPORT)")}
-                        title={t("Tree Replanting")}
-                        countColumnName={t("TREE REPLANTING COUNT")}
-                        collection="replanting"
-                      />
-                      <Box paddingX={3} paddingY={1}>
-                        <div className="flex items-center gap-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00000008]">
-                            <Icon name={IconNames.ASSISTED_NATURAL_REGENERATION} className="text-primary" />
-                          </div>
-                          <Text variant="text-16-semibold" className="text-grey-500">
-                            {t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT)")}:
-                          </Text>
-                          <Text variant="text-24-bold" className="text-black">
-                            {new Intl.NumberFormat("en-US").format(siteReport.total_trees_planted_count!) ?? "N/A"}
-                          </Text>
-                        </div>
-                      </Box>
-                      <Box paddingX={3} paddingY={1}>
-                        <Text variant="text-24-bold" className="text-darkCustom">
-                          {t("Assisted Natural Regeneration")}
-                        </Text>
-                      </Box>
-                      <Box paddingX={3} paddingY={1}>
-                        <Text variant="text-16-semibold" className="text-grey-500">
-                          {t("DESCRIPTION OF ANR ACTIVITIES")}:
-                        </Text>
-                        <Text variant="text-14-light" className="text-black">
-                          {siteReport.regeneration_description}
-                        </Text>
-                      </Box>
-                    </ContextCondition>
-                    <GenericField label={t("Trees Planted")} frameworksShow={[Framework.PPC, Framework.HBF]}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Trees Planted")}
-                        value={siteReport.total_trees_planted_count}
-                      />
-                      <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
-                    </GenericField>
-                    <GenericField label={t("Direct Seeding")} frameworksShow={[Framework.PPC]}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Direct Seedings")}
-                        value={siteReport.total_seeds_planted_count}
-                      />
-                      <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
-                    </GenericField>
-                    <GenericField label={t("Non-Tree Species Planted")} frameworksShow={[Framework.HBF]}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Non-Trees Planted")}
-                        value={siteReport.total_non_tree_species_planted_count}
-                      />
-                      <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="non-tree" />
-                    </GenericField>
-                    <GenericField label={t("Disturbances")}>
-                      <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
-                    </GenericField> */}
+                    <div>
+                      <Text variant="text-20-bold">{t("Disturbances")}</Text>
+                      <DisturbancesTablePD modelName="site-report" modelUUID={siteReportUUID} />
+                    </div>
                   </PageCard>
                 </PageColumn>
               </PageRow>

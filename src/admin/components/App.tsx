@@ -36,6 +36,7 @@ const App = () => {
               edit={modules.user.Edit}
               create={modules.user.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
+              recordRepresentation={record => `${record?.first_name} ${record?.last_name}`}
             />
             <Resource
               name={modules.organisation.ResourceName}
@@ -43,6 +44,7 @@ const App = () => {
               show={modules.organisation.Show}
               edit={modules.organisation.Edit}
               icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
+              recordRepresentation={record => record?.name}
             />
             <Resource
               name={modules.pitch.ResourceName}
@@ -50,6 +52,7 @@ const App = () => {
               show={modules.pitch.Show}
               edit={modules.pitch.Edit}
               icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
+              recordRepresentation={record => record?.project_name}
             />
             <Resource
               name={modules.fundingProgramme.ResourceName}
@@ -59,6 +62,7 @@ const App = () => {
               create={modules.fundingProgramme.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.FUNDING_PROGRAMMES} />}
               options={{ label: "Funding Programmes" }}
+              recordRepresentation={record => `Funding Programme "${record?.name}"`}
             />
             <Resource
               name={modules.reportingFramework.ResourceName}
@@ -74,6 +78,7 @@ const App = () => {
               list={modules.application.List}
               show={modules.application.Show}
               icon={() => <Icon className="h-8 w-8" name={IconNames.APPLICATIONS} />}
+              recordRepresentation={record => `${record?.id}`}
             />
             <Resource
               name={modules.stage.ResourceName}
@@ -87,6 +92,7 @@ const App = () => {
               edit={modules.form.Edit}
               icon={() => <Icon className="h-8 w-8" name={IconNames.FORMS} />}
               create={modules.form.Create}
+              recordRepresentation={record => record?.project_name}
             />
           </>
         )}
@@ -96,6 +102,7 @@ const App = () => {
           show={modules.project.Show}
           edit={modules.project.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
+          recordRepresentation={record => record?.name ?? "<no project name>"}
         />
         <Resource
           name={modules.site.ResourceName}
@@ -103,6 +110,7 @@ const App = () => {
           show={modules.site.Show}
           edit={modules.site.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.SITES} />}
+          recordRepresentation={record => record?.name ?? "<no site name>"}
         />
         <Resource
           name={modules.nursery.ResourceName}
@@ -110,6 +118,7 @@ const App = () => {
           show={modules.nursery.Show}
           edit={modules.nursery.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.NURSERIES} />}
+          recordRepresentation={record => record?.name ?? "<no nursery name>"}
         />
         <Resource
           name={modules.task.ResourceName}
@@ -117,6 +126,7 @@ const App = () => {
           show={modules.task.Show}
           icon={SummarizeIcon}
           options={{ label: "Tasks" }}
+          recordRepresentation={record => record?.project?.name}
         />
         <Resource
           name={modules.projectReport.ResourceName}
@@ -125,6 +135,7 @@ const App = () => {
           edit={modules.projectReport.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Project Reports" }}
+          recordRepresentation={record => record?.title}
         />
         <Resource
           name={modules.siteReport.ResourceName}
@@ -133,6 +144,7 @@ const App = () => {
           edit={modules.siteReport.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Site Reports" }}
+          recordRepresentation={record => record?.title}
         />
         <Resource
           name={modules.nurseryReport.ResourceName}
@@ -141,6 +153,7 @@ const App = () => {
           edit={modules.nurseryReport.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
           options={{ label: "Nursery Reports" }}
+          recordRepresentation={record => record?.title}
         />
         {isAdmin && (
           <>
@@ -153,6 +166,13 @@ const App = () => {
             />
           </>
         )}
+        <Resource
+          name={modules.impactStories.ResourceName}
+          list={modules.impactStories.List}
+          edit={modules.impactStories.Edit}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
+          options={{ label: "Impact Stories" }}
+        />
       </Admin>
     </LoadingProvider>
   );

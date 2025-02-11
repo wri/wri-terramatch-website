@@ -113,6 +113,7 @@ export const DashboardPopup = (event: any) => {
     } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       fetchPolygonData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isoCountry, layerName, itemUuid]);
   const learnMoreEvent = () => {
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {

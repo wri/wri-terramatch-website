@@ -5,120 +5,125 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
   className="h-[40px] w-full bg-neutral-150"
 >
   <div
-    aria-orientation="horizontal"
-    className="h-max w-full border-b-2 border-neutral-200 bg-white"
-    role="tablist"
+    className="relative"
   >
     <div
-      className="justify-between lg:justify-start lg:gap-30 flex h-full items-center m-auto"
+      aria-orientation="horizontal"
+      className="h-max w-full border-b-2 border-neutral-200 bg-white"
+      onScrollCapture={[Function]}
+      role="tablist"
     >
-      <button
-        aria-selected={true}
-        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-primary"
-        data-headlessui-state="selected"
-        id="headlessui-tabs-tab-:r3a:"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onMouseDown={[Function]}
-        role="tab"
-        tabIndex={0}
+      <div
+        className="justify-between lg:justify-start lg:gap-30 flex h-full items-center m-auto"
       >
-        <p
-          className="whitespace-nowrap text-16-bold"
-          data-testid="txt"
+        <button
+          aria-selected={true}
+          className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-primary"
+          data-headlessui-state="selected"
+          id="headlessui-tabs-tab-:r3a:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          role="tab"
+          tabIndex={0}
         >
-          Overview
-        </p>
-      </button>
-      <button
-        aria-selected={false}
-        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
-        data-headlessui-state=""
-        id="headlessui-tabs-tab-:r3b:"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onMouseDown={[Function]}
-        role="tab"
-        tabIndex={-1}
-      >
-        <p
-          className="whitespace-nowrap text-16-light"
-          data-testid="txt"
+          <p
+            className="whitespace-nowrap text-16-bold"
+            data-testid="txt"
+          >
+            Overview
+          </p>
+        </button>
+        <button
+          aria-selected={false}
+          className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
+          data-headlessui-state=""
+          id="headlessui-tabs-tab-:r3b:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          role="tab"
+          tabIndex={-1}
         >
-          Environmental Impact
-        </p>
-      </button>
-      <button
-        aria-selected={false}
-        className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
-        data-headlessui-state=""
-        id="headlessui-tabs-tab-:r3c:"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onMouseDown={[Function]}
-        role="tab"
-        tabIndex={-1}
-      >
-        <p
-          className="whitespace-nowrap text-16-light"
-          data-testid="txt"
+          <p
+            className="whitespace-nowrap text-16-light"
+            data-testid="txt"
+          >
+            Environmental Impact
+          </p>
+        </button>
+        <button
+          aria-selected={false}
+          className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
+          data-headlessui-state=""
+          id="headlessui-tabs-tab-:r3c:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onMouseDown={[Function]}
+          role="tab"
+          tabIndex={-1}
         >
-          Social Impact
-        </p>
-      </button>
-    </div>
-  </div>
-  <div>
-    <div
-      data-headlessui-state="selected"
-      id="headlessui-tabs-panel-:r3d:"
-      role="tabpanel"
-      tabIndex={0}
-    >
-      <div>
-        step 1 body
+          <p
+            className="whitespace-nowrap text-16-light"
+            data-testid="txt"
+          >
+            Social Impact
+          </p>
+        </button>
       </div>
     </div>
-    <span
-      id="headlessui-tabs-panel-:r3e:"
-      role="tabpanel"
-      style={
-        Object {
-          "borderWidth": "0",
-          "clip": "rect(0, 0, 0, 0)",
-          "height": 0,
-          "left": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "fixed",
-          "top": 1,
-          "whiteSpace": "nowrap",
-          "width": 1,
+    <div>
+      <div
+        data-headlessui-state="selected"
+        id="headlessui-tabs-panel-:r3d:"
+        role="tabpanel"
+        tabIndex={0}
+      >
+        <div>
+          step 1 body
+        </div>
+      </div>
+      <span
+        id="headlessui-tabs-panel-:r3e:"
+        role="tabpanel"
+        style={
+          Object {
+            "borderWidth": "0",
+            "clip": "rect(0, 0, 0, 0)",
+            "height": 0,
+            "left": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "fixed",
+            "top": 1,
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
         }
-      }
-      tabIndex={-1}
-    />
-    <span
-      id="headlessui-tabs-panel-:r3f:"
-      role="tabpanel"
-      style={
-        Object {
-          "borderWidth": "0",
-          "clip": "rect(0, 0, 0, 0)",
-          "height": 0,
-          "left": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "fixed",
-          "top": 1,
-          "whiteSpace": "nowrap",
-          "width": 1,
+        tabIndex={-1}
+      />
+      <span
+        id="headlessui-tabs-panel-:r3f:"
+        role="tabpanel"
+        style={
+          Object {
+            "borderWidth": "0",
+            "clip": "rect(0, 0, 0, 0)",
+            "height": 0,
+            "left": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "fixed",
+            "top": 1,
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
         }
-      }
-      tabIndex={-1}
-    />
+        tabIndex={-1}
+      />
+    </div>
   </div>
 </div>
 `;

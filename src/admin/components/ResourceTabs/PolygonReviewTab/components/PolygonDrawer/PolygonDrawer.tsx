@@ -95,15 +95,20 @@ const PolygonDrawer = ({
     statusSelectedPolygon,
     setStatusSelectedPolygon,
     setShouldRefetchValidation,
-    polygonCriteriaMap: polygonMap
+    polygonCriteriaMap: polygonMap,
+    setPolygonCriteriaMap
   } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       setCheckPolygonValidation(false);
+      setPolygonCriteriaMap((oldPolygonMap: any) => ({
+        ...oldPolygonMap,
+        [data.polygon_id]: data
+      }));
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -165,6 +170,7 @@ const PolygonDrawer = ({
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);
 
   useEffect(() => {
@@ -190,7 +196,7 @@ const PolygonDrawer = ({
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
-  }, [polygonSelected, sitePolygonData]);
+  }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
     if (openEditNewPolygon) {
       setButtonToogle(true);
@@ -225,7 +231,7 @@ const PolygonDrawer = ({
 
     fetchCriteriaValidation();
     setSelectPolygonVersion(selectedPolygonData);
-  }, [buttonToogle, selectedPolygonData]);
+  }, [buttonToogle, polygonSelected, selectedPolygonData]);
 
   const {
     data: polygonVersions,
@@ -247,13 +253,13 @@ const PolygonDrawer = ({
       setIsLoadingDropdown(false);
     };
     onLoading();
-  }, [isOpenPolygonDrawer]);
+  }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
     if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
-  }, [selectPolygonVersion]);
+  }, [polygonSelected, selectPolygonVersion, selectedPolygonData]);
 
   const runFixPolygonOverlaps = () => {
     if (polygonSelected) {
@@ -322,9 +328,24 @@ const PolygonDrawer = ({
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection record={selectedPolygon} entity={"Polygon"} refresh={refetch}></CommentarySection>
+            <CommentarySection
+              variantText="text-14-semibold"
+              record={selectedPolygon}
+              entity={"Polygon"}
+              refresh={refetch}
+            ></CommentarySection>
             {auditLogData && (
-              <AuditLogTable fullColumns={false} auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
+              <>
+                <Text variant="text-14-semibold" className="">
+                  Audit Log
+                </Text>
+                <AuditLogTable
+                  fullColumns={false}
+                  auditLogData={auditLogData}
+                  auditData={auditData}
+                  refresh={refetch}
+                />
+              </>
             )}
           </div>
         </Then>

@@ -39,6 +39,7 @@ export const PolygonHandler = () => {
       uploadFile();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, saveFlags]);
 
   const uploadFile = async () => {

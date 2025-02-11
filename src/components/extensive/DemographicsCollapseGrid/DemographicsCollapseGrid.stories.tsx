@@ -34,12 +34,12 @@ export const Default: Story = {
   args: {
     title: "A. Site Establishment Paid",
     demographics: [
-      { type: "gender", name: "female", amount: 70 },
-      { type: "gender", name: "male", amount: 30 },
-      { type: "gender", name: "unknown", amount: 30 },
-      { type: "age", name: "youth", amount: 30 },
-      { type: "age", name: "adult", amount: 30 },
-      { type: "age", name: "elder", amount: 30 },
+      { type: "gender", subtype: "female", amount: 70 },
+      { type: "gender", subtype: "male", amount: 30 },
+      { type: "gender", subtype: "unknown", amount: 30 },
+      { type: "age", subtype: "youth", amount: 30 },
+      { type: "age", subtype: "adult", amount: 30 },
+      { type: "age", subtype: "elder", amount: 30 },
       { type: "ethnicity", subtype: "indigenous", name: "XYZ", amount: 130 },
       { type: "ethnicity", subtype: "other", name: "German", amount: 30 },
       { type: "ethnicity", subtype: "unknown", amount: 50 }
@@ -60,12 +60,12 @@ export const VariantNarrow: Story = {
   args: {
     title: "A. Nursery Operations Volunteer",
     demographics: [
-      { type: "gender", name: "female", amount: 70 },
-      { type: "gender", name: "male", amount: 30 },
-      { type: "gender", name: "unknown", amount: 30 },
-      { type: "age", name: "youth", amount: 30 },
-      { type: "age", name: "adult", amount: 30 },
-      { type: "age", name: "elder", amount: 30 },
+      { type: "gender", subtype: "female", amount: 70 },
+      { type: "gender", subtype: "male", amount: 30 },
+      { type: "gender", subtype: "unknown", amount: 30 },
+      { type: "age", subtype: "youth", amount: 30 },
+      { type: "age", subtype: "adult", amount: 30 },
+      { type: "age", subtype: "elder", amount: 30 },
       { type: "ethnicity", subtype: "indigenous", name: "XYZ", amount: 130 },
       { type: "ethnicity", subtype: "other", name: "English", amount: 30 },
       { type: "ethnicity", subtype: "unknown", amount: 30 },
@@ -87,13 +87,13 @@ export const CompleteGreen: Story = {
   args: {
     title: "A. Site Establishment Paid",
     demographics: [
-      { type: "gender", name: "female", amount: 30 },
-      { type: "gender", name: "male", amount: 30 },
-      { type: "gender", name: "non-binary", amount: 30 },
-      { type: "age", name: "youth", amount: 10 },
-      { type: "age", name: "adult", amount: 40 },
-      { type: "age", name: "elder", amount: 10 },
-      { type: "age", name: "unknown", amount: 30 },
+      { type: "gender", subtype: "female", amount: 30 },
+      { type: "gender", subtype: "male", amount: 30 },
+      { type: "gender", subtype: "non-binary", amount: 30 },
+      { type: "age", subtype: "youth", amount: 10 },
+      { type: "age", subtype: "adult", amount: 40 },
+      { type: "age", subtype: "elder", amount: 10 },
+      { type: "age", subtype: "unknown", amount: 30 },
       { type: "ethnicity", subtype: "indigenous", amount: 50 },
       { type: "ethnicity", subtype: "other", name: "Indonesian", amount: 25 },
       { type: "ethnicity", subtype: "unknown", amount: 15 }
@@ -130,8 +130,8 @@ export const InProgressGreen: Story = {
   args: {
     title: "A. Site Establishment Paid",
     demographics: [
-      { type: "gender", name: "female", amount: 20 },
-      { type: "age", name: "adult", amount: 75 }
+      { type: "gender", subtype: "female", amount: 20 },
+      { type: "age", subtype: "adult", amount: 75 }
     ],
     variant: GRID_VARIANT_GREEN,
     demographicalType: "workdays"

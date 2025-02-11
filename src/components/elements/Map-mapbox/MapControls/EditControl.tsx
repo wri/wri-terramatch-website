@@ -1,8 +1,9 @@
 import { useT } from "@transifex/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useOnMount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -11,11 +12,11 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
   const t = useT();
   const [isEditing, setIsEditing] = React.useState(false);
   const { selectedPolyVersion } = useMapAreaContext();
-  useEffect(() => {
+  useOnMount(() => {
     return () => {
       onCancel();
     };
-  }, []);
+  });
   const handleSaveButton = () => {
     onSave();
     setIsEditing(false);

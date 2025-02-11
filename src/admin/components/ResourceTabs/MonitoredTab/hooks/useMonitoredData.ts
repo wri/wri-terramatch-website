@@ -234,16 +234,16 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     ? totalPolygonsApproved
     : totalPolygonsApproved! - Object?.keys(dataToMissingPolygonVerify ?? {})?.length;
 
-  const verifySlug = async (slug: string) =>
-    fetchGetV2IndicatorsEntityUuidSlugVerify({
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: slug!
-      }
-    });
-
   useEffect(() => {
+    const verifySlug = async (slug: string) =>
+      fetchGetV2IndicatorsEntityUuidSlugVerify({
+        pathParams: {
+          entity: entity!,
+          uuid: entity_uuid!,
+          slug: slug!
+        }
+      });
+
     const fetchSlugs = async () => {
       setIsLoadingVerify(true);
       const slugVerify = await Promise.all(SLUGS_INDICATORS.map(verifySlug));
@@ -269,13 +269,13 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
         });
       };
       setAnalysisToSlug(slugToAnalysis);
-      await setDropdownAnalysisOptions(updateTitleDropdownOptions);
+      setDropdownAnalysisOptions(updateTitleDropdownOptions);
       setIsLoadingVerify(false);
     };
     if (modalOpened(ModalId.MODAL_RUN_ANALYSIS)) {
       fetchSlugs();
     }
-  }, [entity]);
+  }, [entity, entity_uuid, modalOpened]);
 
   return {
     polygonsIndicator: filteredPolygons,

@@ -68,7 +68,6 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
   const { siteData } = useMapAreaContext();
   const context = useSitePolygonData();
   const [polygonsValidationData, setPolygonsValidationData] = useState<any[]>([]);
-  const sitePolygonData = context?.sitePolygonData ?? [];
 
   const { data: currentValidationSite } = useGetV2TerrafundValidationSite<CheckedPolygon[]>(
     {
@@ -83,10 +82,11 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
 
   useEffect(() => {
     if (currentValidationSite) {
+      const sitePolygonData = context?.sitePolygonData ?? [];
       const data = parseData(sitePolygonData, currentValidationSite, validationLabels);
       setPolygonsValidationData(data);
     }
-  }, [currentValidationSite, sitePolygonData]);
+  }, [context?.sitePolygonData, currentValidationSite]);
 
   return (
     <>

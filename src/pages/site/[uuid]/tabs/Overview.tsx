@@ -110,7 +110,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     if (site.project?.uuid) {
       checkIsMonitoringPartner(site.project?.uuid);
     }
-  }, [site]);
+  }, [checkIsMonitoringPartner, setSiteData, site]);
 
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
@@ -118,6 +118,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       setSaveFlags(false);
       closeModal(ModalId.ADD_POLYGONS);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {

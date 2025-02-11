@@ -38,12 +38,12 @@ const DemographicsSection = ({
   const [openMenu, setOpenMenu] = useState(false);
   const { framework } = useFrameworkContext();
   const t = useT();
-  const { title, rows, total, position, subtypes } = useSectionData(type, demographics);
+  const { title, rows, total, position } = useSectionData(type, demographics);
   const demographicTypes = framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
-  const { addSubtypeLabel } = demographicTypes[type];
+  const { addNameLabel, typeMap } = demographicTypes[type];
 
   const onRowChange = useCallback(
-    (index: number, name: string, amount: number, userLabel?: string) => {
+    (index: number, subtype: string, amount: number, userLabel?: string) => {
       if (onChange == null) return;
 
       // avoid mutation of existing data from our parent
@@ -51,11 +51,11 @@ const DemographicsSection = ({
       const demographic: Demographic =
         index >= 0
           ? { ...updatedDemographics[index] }
-          : // We can ignore subtype here because when a type uses subtypes, we never have a row
+          : // We can ignore name here because when a type uses names, we never have a row
             // that doesn't exist in the demographics array, so the index can never be < 0
-            { type, name, amount };
+            { type, subtype, amount };
 
-      if (subtypes != null) {
+      if (userLabel != null) {
         demographic.name = userLabel;
       }
       demographic.amount = amount;
@@ -67,7 +67,7 @@ const DemographicsSection = ({
 
       onChange(updatedDemographics);
     },
-    [demographics, onChange, type, subtypes]
+    [demographics, onChange, type]
   );
 
   const addRow = useCallback(
@@ -91,7 +91,7 @@ const DemographicsSection = ({
   );
 
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
-  const rowSpanCount = subtypes == null || onChange == null ? rows.length + 1 : rows.length + 2;
+  const rowSpanCount = addNameLabel == null || onChange == null ? rows.length + 1 : rows.length + 2;
   const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
 
@@ -101,7 +101,7 @@ const DemographicsSection = ({
         className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
           [variant.roundedTl]: position === "first",
           [variant.roundedBl]: position === "last",
-          [`!row-span-${rows.length > 6 ? "full" : rows.length + 2}`]: subtypes != null
+          [`!row-span-${rows.length > 6 ? "full" : rows.length + 2}`]: addNameLabel != null
         })}
         style={{ gridRow: firstColGridRow }}
       >
@@ -141,17 +141,18 @@ const DemographicsSection = ({
               : (amount, userLabel) => onRowChange(demographicIndex, typeName, amount, userLabel)
           }
           onDelete={onChange == null ? undefined : () => removeRow(demographicIndex)}
-          {...{ type, subtypes, label, userLabel, amount, variant }}
+          usesName={addNameLabel != null}
+          {...{ type, label, userLabel, amount, variant }}
         />
       ))}
-      <When condition={subtypes != null && onChange != null}>
+      <When condition={addNameLabel != null && onChange != null}>
         <div className={classNames("flex items-center bg-white", variant.secondCol)}>
           <div className="relative">
             <button
               className={"text-14-semibold text-customBlue-100 flex items-baseline gap-1 px-4 py-2 hover:text-primary"}
               onClick={() => setOpenMenu(!openMenu)}
             >
-              {addSubtypeLabel && t(addSubtypeLabel)}
+              {addNameLabel && t(addNameLabel)}
               <Icon
                 name={IconNames.IC_ARROW_COLLAPSE}
                 width={9}
@@ -161,16 +162,17 @@ const DemographicsSection = ({
             </button>
             <When condition={openMenu}>
               <div className="absolute z-10 -my-1 rounded-lg border border-neutral-200 bg-white p-2">
-                {subtypes &&
-                  Object.keys(subtypes).map(subtype => (
-                    <button
-                      key={subtype}
-                      className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"
-                      onClick={() => addRow(subtype)}
-                    >
-                      {t(subtypes[subtype])}
-                    </button>
-                  ))}
+                {addNameLabel == null
+                  ? null
+                  : Object.keys(typeMap).map(subtype => (
+                      <button
+                        key={subtype}
+                        className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"
+                        onClick={() => addRow(subtype)}
+                      >
+                        {t(typeMap[subtype])}
+                      </button>
+                    ))}
               </div>
             </When>
           </div>

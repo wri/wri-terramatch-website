@@ -64,10 +64,6 @@ export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
-        /**
-         * @example Bad Request
-         */
-        error?: string;
       };
     }
   | {
@@ -81,10 +77,6 @@ export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
 >;

@@ -15,7 +15,7 @@ interface ProgressGoalsDoughnutChartProps {
 }
 
 const percentage = (current: number, total: number) => {
-  const percentValue = Math.min((current / total) * 100, 100);
+  const percentValue = (current / total) * 100;
   return percentValue.toFixed(0);
 };
 
@@ -67,7 +67,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
                       className="text-20-semibold !font-semibold !text-darkCustom"
                     >
                       <tspan x={cx} dy="-4" className="text-16 !font-bold !text-blueCustom-700">
-                        {currentValue > totalValue ? "100+" : percentage(currentValue, totalValue)}%
+                        {percentage(currentValue, totalValue)}%
                       </tspan>
                       <tspan x={cx} dy="16" className="text-12-light !text-darkCustom">
                         complete

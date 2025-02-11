@@ -10,9 +10,10 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_TEXT_16 } from "@/components/extensive/Pagination/PaginationVariant";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import Loader from "@/components/generic/Loading/Loader";
 import { useModalContext } from "@/context/modal.provider";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option } from "@/types/common";
 
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
@@ -99,11 +100,12 @@ const ImageGallery = ({
           )
         : "Filter"
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [privacy, source]);
 
-  useEffect(() => {
+  useValueChanged(sortOrder, () => {
     setSortLabel(sortOrder === "asc" ? t("Oldest to Newest") : t("Newest to Oldest"));
-  }, [sortOrder]);
+  });
 
   const tabs = [
     { key: "0", render: "All Images" },
@@ -321,9 +323,10 @@ const ImageGallery = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize, modelName]);
 
-  useEffect(() => {
+  useValueChanged(activeIndex, () => {
     onChangeGeotagged(activeIndex);
-  }, [activeIndex]);
+  });
+
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
@@ -416,7 +419,7 @@ const ImageGallery = ({
           </>
         )}
         <Pagination
-          variant={VARIANT_PAGINATION_TEXT_16}
+          variant={VARIANT_PAGINATION_DASHBOARD}
           getCanNextPage={getCanNextPage}
           getCanPreviousPage={getCanPreviousPage}
           getPageCount={getPageCount}

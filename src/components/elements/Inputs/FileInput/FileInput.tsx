@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { UseFormReturn } from "react-hook-form";
@@ -34,6 +35,7 @@ export type FileInputProps = InputWrapperProps & {
   formHook?: UseFormReturn;
   updateFile?: (file: Partial<UploadedFile>) => void;
   entityData?: any;
+  classNameTextOr?: string;
 };
 
 export interface FileStatus {
@@ -148,7 +150,7 @@ const FileInput = (props: FileInputProps) => {
               <Text variant="text-12-bold" className="text-center text-primary">
                 {t("Click to upload")}
               </Text>
-              <Text variant="text-12-light" className="text-center">
+              <Text variant="text-12-light" className={classNames("text-center", props.classNameTextOr)}>
                 {t("or")}
               </Text>
               <When condition={props.descriptionInput === "string"}>

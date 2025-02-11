@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 
 import Notification from "@/components/elements/Notification/Notification";
 
@@ -38,13 +38,16 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
     open: false
   });
 
-  const openNotification = (type: Exclude<NotificationType, null>, title: string, message?: string | any) => {
-    setNotificationProps({ type, title, message: message ?? undefined, open: true });
-  };
+  const openNotification = useCallback(
+    (type: Exclude<NotificationType, null>, title: string, message?: string | any) => {
+      setNotificationProps({ type, title, message: message ?? undefined, open: true });
+    },
+    []
+  );
 
-  const closeNotification = () => {
+  const closeNotification = useCallback(() => {
     setNotificationProps(prev => ({ ...prev, open: false }));
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -52,7 +55,7 @@ const NotificationProvider = ({ children }: NotificationProviderProps) => {
       closeNotification,
       notificationProps
     }),
-    [notificationProps]
+    [closeNotification, notificationProps, openNotification]
   );
 
   return (

@@ -47,6 +47,9 @@ export type GetV2TreeSpeciesEntityUUIDResponse = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
 };
 
 export type GetV2TreeSpeciesEntityUUIDVariables = {
@@ -98,14 +101,21 @@ export type GetV2EntityUUIDAggregateReportsResponse = {
      * @format date-time
      */
     dueDate?: string | null;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
   }[];
   ["seeding-records"]?: {
     /**
      * @format date-time
      */
     dueDate?: string;
-    treeSpeciesAmount?: number;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
   }[];
 };
 
@@ -32446,6 +32456,66 @@ export const useGetV2AdminENTITYExportFRAMEWORK = <TData = Blob>(
   );
 };
 
+export type GetV2AdminENTITYExportFRAMEWORKPmPathParams = {
+  /**
+   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
+   */
+  entity: string;
+  /**
+   * allowed values terrafund/ppc and more frameworks
+   */
+  framework: string;
+};
+
+export type GetV2AdminENTITYExportFRAMEWORKPmError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminENTITYExportFRAMEWORKPmResponse = {
+  url?: string;
+};
+
+export type GetV2AdminENTITYExportFRAMEWORKPmVariables = {
+  pathParams: GetV2AdminENTITYExportFRAMEWORKPmPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminENTITYExportFRAMEWORKPm = (
+  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2AdminENTITYExportFRAMEWORKPmResponse,
+    GetV2AdminENTITYExportFRAMEWORKPmError,
+    undefined,
+    {},
+    {},
+    GetV2AdminENTITYExportFRAMEWORKPmPathParams
+  >({ url: "/v2/admin/{entity}/export/{framework}/pm", method: "get", ...variables, signal });
+
+export const useGetV2AdminENTITYExportFRAMEWORKPm = <TData = GetV2AdminENTITYExportFRAMEWORKPmResponse>(
+  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2AdminENTITYExportFRAMEWORKPmResponse,
+      GetV2AdminENTITYExportFRAMEWORKPmError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AdminENTITYExportFRAMEWORKPmResponse, GetV2AdminENTITYExportFRAMEWORKPmError, TData>(
+    queryKeyFn({
+      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm",
+      operationId: "getV2AdminENTITYExportFRAMEWORKPm",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminENTITYExportFRAMEWORKPm({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
@@ -39200,6 +39270,11 @@ export type QueryOperation =
       path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}";
       operationId: "getV2AdminENTITYExportFRAMEWORK";
       variables: GetV2AdminENTITYExportFRAMEWORKVariables;
+    }
+  | {
+      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm";
+      operationId: "getV2AdminENTITYExportFRAMEWORKPm";
+      variables: GetV2AdminENTITYExportFRAMEWORKPmVariables;
     }
   | {
       path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}";

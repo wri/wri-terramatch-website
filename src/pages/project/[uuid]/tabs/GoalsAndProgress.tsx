@@ -1,24 +1,32 @@
 import { useT } from "@transifex/react";
+import { useState } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
+import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: any;
+}
+
+interface NaturalRegenerationItem {
+  name: string;
+  treeCount: number;
 }
 
 export const LABEL_LEGEND = [
@@ -302,14 +310,36 @@ const getProgressData = (totalValue: number, progressValue: number) => {
   ];
 };
 
+const isEmptyArray = (obj: any) => {
+  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
+};
+
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
+  const [treeCount, setTreeCount] = useState(0);
+  const [speciesCount, setSpeciesCount] = useState(0);
+  const [nonTreeCount, setNonTreeCount] = useState(0);
+  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
+  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
+  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: project.uuid,
       entity: "project"
     }
   });
+
+  const formatNaturalGenerationData = project.assisted_natural_regeneration_list
+    .sort((a: NaturalRegenerationItem, b: NaturalRegenerationItem) => b.treeCount - a.treeCount)
+    .map((item: NaturalRegenerationItem) => {
+      return {
+        name: item.name,
+        treeCount: item.treeCount.toLocaleString()
+      };
+    });
+
+  const isTerrafund = ALL_TF.includes(project.framework_key as Framework);
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -319,7 +349,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
 
       <PageRow>
-        <PageCard title={t("Tree Planting Progress")}>
+        <PageCard
+          title={t(project.framework_key == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+        >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -341,7 +373,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: `${project.survival_rate}%`
+                      value: project.survival_rate ? `${project.survival_rate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -349,8 +381,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                      value: 10,
-                      limit: 12
+                      value: treePlantedSpeciesCount,
+                      limit: treePlantedSpeciesGoal
                     }
                   ]}
                 />
@@ -358,11 +390,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <ContextCondition frameworksHide={[Framework.PPC]}>
                 <>
                   <Text variant="text-14" className="uppercase text-neutral-650">
-                    {t(
-                      project.framework_key === Framework.TF
-                        ? "Number of Trees Planted:"
-                        : "Number of SAPLINGS Planted:"
-                    )}
+                    {t(isTerrafund ? "Number of Trees Planted:" : "Number of SAPLINGS Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
                     <div className="relative h-9 w-[230px]">
@@ -396,8 +424,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         variantLabel: "text-14",
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                        value: 10,
-                        limit: 12
+                        value: treePlantedSpeciesCount,
+                        limit: treePlantedSpeciesGoal
                       }
                     ]}
                   />
@@ -420,7 +448,13 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   </div>
                 </div>
                 {dataAggregated ? (
-                  <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  <BlurContainer
+                    className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
+                    isBlur={isEmptyArray(dataAggregated)}
+                    textType={TEXT_TYPES.NO_GRAPH}
+                  >
+                    <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
+                  </BlurContainer>
                 ) : (
                   <Loader />
                 )}
@@ -434,9 +468,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.TF]}>
+            <ContextCondition frameworksShow={ALL_TF}>
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
@@ -444,6 +480,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
@@ -454,6 +492,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
+                setTotalSpecies={setTreePlantedSpeciesCount}
+                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
           </div>
@@ -461,9 +501,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
       <PageRow>
         <PageColumn>
-          <PageCard
-            title={t(project.framework_key === Framework.TF ? "Non-Tree Planting Progress" : "Seed Planting Progress")}
-          >
+          <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")} className="h-full">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
                 <GoalProgressCard
@@ -484,7 +522,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: `${project.survival_rate}%`
+                      value: project.direct_seeding_survival_rate ? `${project.direct_seeding_survival_rate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -492,12 +530,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 6
+                      value: speciesCount
                     }
                   ]}
                 />
               </ContextCondition>
-              <ContextCondition frameworksShow={[Framework.TF]}>
+              <ContextCondition frameworksShow={ALL_TF}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -508,7 +546,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: 5250
+                      value: treeCount
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -516,7 +554,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: "6"
+                      value: speciesCount
                     }
                   ]}
                 />
@@ -558,29 +596,32 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                         variantLabel: "text-14",
                         classNameLabel: " text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                        value: 6
+                        value: treeCount
                       }
                     ]}
                   />
                 </>
               </ContextCondition>
               <div className="mt-2">
-                <ContextCondition frameworksShow={[Framework.TF]}>
+                <ContextCondition frameworksShow={ALL_TF}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    data={dataNonTreeCount}
-                    visibleRows={10}
-                    typeTable="nonTreeCount"
+                    collection="non-tree"
+                    visibleRows={5}
+                    setTotalCount={setTreeCount}
+                    setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
-                <ContextCondition frameworksHide={[Framework.TF]}>
+                <ContextCondition frameworksHide={ALL_TF}>
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
                     framework={project.framework_key}
                     visibleRows={5}
                     collection="seeding"
+                    setTotalCount={setTreeCount}
+                    setTotalSpecies={setSpeciesCount}
                   />
                 </ContextCondition>
               </div>
@@ -589,23 +630,34 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         </PageColumn>
 
         <PageColumn>
-          <PageCard title={t("Assisted Natural Regeneration Progress")}>
+          <PageCard title={t("Assisted Natural Regeneration Progress")} className="h-full">
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <div>
                 <Text variant="text-14" className="mb-2 uppercase text-neutral-650">
-                  {t("Estimated  Number of trees regenerating")}
+                  {t("Estimated Number of trees regenerating")}
                 </Text>
                 <div className="mb-2 flex items-center">
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.TREES_REGENERATING} className="h-10 w-10 text-primary-200" />
+                  <div className="relative h-9 w-[218px]">
+                    <div className="absolute inset-0 z-0 h-full w-full">
+                      <ProgressBarChart
+                        data={getProgressData(
+                          project.goal_trees_restored_anr ?? 0,
+                          project.regenerated_trees_count ?? 0
+                        )}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <img
+                      src="/images/regenerationBackground.svg"
+                      id="regenerationBackground"
+                      alt="secondValue"
+                      className="z-1 absolute right-0 h-9 w-[219px]"
+                    />
+                  </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    5,250
+                    {project.regenerated_trees_count.toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of 25,000
+                      of {project.goal_trees_restored_anr?.toLocaleString()}
                     </Text>
                   </Text>
                 </div>
@@ -618,11 +670,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 items={[
                   {
                     iconName: IconNames.REFRESH_CIRCLE_PD,
-                    label: t("Estimated  Number of trees regenerating:"),
+                    label: t("Estimated Number of trees regenerating:"),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: 7000
+                    value: project.regenerated_trees_count.toLocaleString()
                   }
                 ]}
               />
@@ -631,9 +683,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             <div className="mt-2">
               <TreeSpeciesTablePD
                 modelName="project"
-                data={dataTreeCountSite}
+                data={formatNaturalGenerationData}
                 modelUUID={project.uuid}
-                visibleRows={10}
+                visibleRows={5}
                 typeTable="treeCountSite"
               />
             </div>
@@ -649,17 +701,25 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   {t("number of Non-Trees PLANTED:")}
                 </Text>
                 <div className="mb-2 flex items-center">
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
-                  <Icon name={IconNames.NON_TRESS_PLANTED} className="h-10 w-10 text-primary-200" />
+                  <div className="relative h-6 w-[212px]">
+                    <div className="absolute inset-0 z-0 h-full w-full">
+                      <ProgressBarChart
+                        data={getProgressData(
+                          project.goal_trees_restored_anr ?? 0,
+                          project.regenerated_trees_count ?? 0
+                        )}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <img
+                      src="/images/nonTreeBackground.svg"
+                      id="nonTreeBackground"
+                      alt="secondValue"
+                      className="z-1 absolute right-0 h-6 w-[213px]"
+                    />
+                  </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    8,400
-                    <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of 90,000
-                    </Text>
+                    {nonTreeCount.toLocaleString()}
                   </Text>
                 </div>
                 <GoalProgressCard
@@ -672,18 +732,18 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                      value: 10,
-                      limit: 12
+                      value: totalNonTreeSpecies
                     }
                   ]}
                 />
               </div>
               <TreeSpeciesTablePD
                 modelName="project"
+                collection="non-tree"
                 modelUUID={project.uuid}
-                data={dataNonTreeCount}
-                visibleRows={10}
-                typeTable="nonTreeCount"
+                visibleRows={5}
+                setTotalCount={setNonTreeCount}
+                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
               />
             </div>
           </PageCard>

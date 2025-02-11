@@ -18,10 +18,6 @@ export type ListDelayedJobsError = Fetcher.ErrorWrapper<{
      * @example Unauthorized
      */
     message: string;
-    /**
-     * @example Unauthorized
-     */
-    error?: string;
   };
 }>;
 
@@ -65,10 +61,6 @@ export type DelayedJobsFindError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
   | {
@@ -82,10 +74,6 @@ export type DelayedJobsFindError = Fetcher.ErrorWrapper<
          * @example Not Found
          */
         message: string;
-        /**
-         * @example Not Found
-         */
-        error?: string;
       };
     }
 >;
@@ -131,10 +119,6 @@ export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
-        /**
-         * @example Bad Request
-         */
-        error?: string;
       };
     }
   | {
@@ -148,10 +132,6 @@ export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
   | {
@@ -165,10 +145,6 @@ export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
          * @example Not Found
          */
         message: string;
-        /**
-         * @example Not Found
-         */
-        error?: string;
       };
     }
 >;

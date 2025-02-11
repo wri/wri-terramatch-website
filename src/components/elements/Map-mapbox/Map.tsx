@@ -34,6 +34,8 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useOnMount } from "@/hooks/useOnMount";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
@@ -71,6 +73,7 @@ import {
   removeBorderLandscape,
   removeMediaLayer,
   removePopups,
+  setMapStyle,
   startDrawing,
   stopDrawing,
   zoomToBbox
@@ -124,6 +127,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   role?: any;
   selectedCountry?: string | null;
   selectedLandscapes?: string[];
+  projectUUID?: string | undefined;
   setLoader?: (value: boolean) => void;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
@@ -174,7 +178,7 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(MapStyle.Satellite);
+  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const {
     polygonsData,
     bbox,
@@ -183,8 +187,10 @@ export const MapContainer = ({
     sitePolygonData,
     selectedCountry,
     selectedLandscapes,
+    projectUUID,
     setLoader
   } = props;
+
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -218,8 +224,8 @@ export const MapContainer = ({
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
 
-  useEffect(() => {
-    initMap();
+  useOnMount(() => {
+    initMap(!!isDashboard);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -227,7 +233,8 @@ export const MapContainer = ({
         map.current = null;
       }
     };
-  }, []);
+  });
+
   useEffect(() => {
     if (!map) return;
     if (location && location.lat !== 0 && location.lng !== 0) {
@@ -235,7 +242,7 @@ export const MapContainer = ({
     }
   }, [map, location]);
 
-  useEffect(() => {
+  useValueChanged(isUserDrawingEnabled, () => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
         startDrawing(draw.current, map.current);
@@ -246,7 +253,7 @@ export const MapContainer = ({
         stopDrawing(draw.current, map.current);
       }
     }
-  }, [isUserDrawingEnabled]);
+  });
 
   useEffect(() => {
     if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
@@ -287,25 +294,26 @@ export const MapContainer = ({
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
 
-  useEffect(() => {
+  useValueChanged(currentStyle, () => {
     if (currentStyle) {
       setChangeStyle(false);
     }
-  }, [currentStyle]);
+  });
 
-  useEffect(() => {
+  useValueChanged(changeStyle, () => {
     if (!changeStyle) {
       setStyleLoaded(false);
     }
-  }, [changeStyle]);
+  });
 
-  useEffect(() => {
+  useValueChanged(bbox, () => {
     if (bbox && map.current && map && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  }, [bbox]);
+  });
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
     const setupBorders = () => {
@@ -322,6 +330,7 @@ export const MapContainer = ({
         setupBorders();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountry, styleLoaded, sourcesAdded]);
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
@@ -339,7 +348,19 @@ export const MapContainer = ({
         setupBorders();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
+  useEffect(() => {
+    if (!map.current || !projectUUID) return;
+    if (map.current.isStyleLoaded()) {
+      setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+    } else {
+      map.current.once("render", () => {
+        setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectUUID, styleLoaded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
@@ -438,13 +459,14 @@ export const MapContainer = ({
         removeMediaLayer(map.current);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
 
-  useEffect(() => {
+  useValueChanged(showMediaPopups, () => {
     if (geojson && map.current && draw.current) {
       addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
     }
-  }, [showMediaPopups]);
+  });
 
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {
@@ -475,6 +497,7 @@ export const MapContainer = ({
         newPolygonData
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPolygonsInCheckbox, styleLoaded]);
 
   const handleEditPolygon = async () => {
@@ -561,7 +584,7 @@ export const MapContainer = ({
     drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
   };
 
-  useEffect(() => {
+  useValueChanged(selectedPolyVersion, () => {
     if (map?.current?.getSource("temp-polygon-source") || map?.current?.getLayer("temp-polygon-source-line")) {
       map?.current.removeLayer("temp-polygon-source-line");
       map?.current?.removeLayer("temp-polygon-source");
@@ -571,7 +594,7 @@ export const MapContainer = ({
     if (selectedPolyVersion) {
       addGeometryVersion();
     }
-  }, [selectedPolyVersion]);
+  });
 
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">

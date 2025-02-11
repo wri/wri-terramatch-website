@@ -1,32 +1,25 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
 
-export interface FloatNotificationDataProps {
-  label: string;
-  site: string;
-  value: string;
-}
-
-export interface FloatNotificationProps {
-  data: FloatNotificationDataProps[];
-}
-
 const FloatNotification = () => {
+  const firstRender = useRef(true);
   const t = useT();
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
+
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
     const newJobsData: DelayedJobData[] = delayedJobs
@@ -42,16 +35,23 @@ const FloatNotification = () => {
       });
     triggerBulkUpdate(newJobsData);
   };
-  useEffect(() => {
-    if (delayedJobs === undefined) return;
-    const notAcknowledgedJobs = delayedJobs.filter((job: DelayedJobDto) => !job.isAcknowledged);
-    setNotAcknowledgedJobs(notAcknowledgedJobs);
-  }, [delayedJobs]);
-  useEffect(() => {
-    if (!notAcknowledgedJobs.length) {
+
+  useValueChanged(delayedJobs, () => {
+    if (!delayedJobs) return;
+
+    setNotAcknowledgedJobs(delayedJobs);
+    if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
+      setOpenModalNotification(true);
+    }
+    firstRender.current = false;
+  });
+
+  useValueChanged(notAcknowledgedJobs.length, () => {
+    if (notAcknowledgedJobs.length === 0) {
       setOpenModalNotification(false);
     }
-  }, [notAcknowledgedJobs]);
+  });
+
   const listOfPolygonsFixed = (data: Record<string, any> | null) => {
     if (data?.updated_polygons) {
       const updatedPolygonNames = data.updated_polygons
@@ -74,13 +74,13 @@ const FloatNotification = () => {
           className={classNames(
             "absolute right-[107%] flex max-h-[80vh] w-[460px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300",
             { " bottom-[-4px] z-10  opacity-100": openModalNotification },
-            { " bottom-[-300px] -z-10  opacity-0": !openModalNotification }
+            { " bottom-[-300px] -z-10 !h-0  opacity-0": !openModalNotification }
           )}
         >
           <Text variant="text-20-bold" className="border-b border-grey-350 p-6 text-blueCustom-900">
             {t("Notifications")}
           </Text>
-          <div className="flex flex-col overflow-hidden px-6 pb-8 pt-6">
+          <div className="flex flex-col overflow-hidden px-6 pt-6 pb-8">
             <div className="mb-2 flex items-center justify-between">
               <Text variant="text-14-light" className="text-neutral-400">
                 {t("Actions Taken")}

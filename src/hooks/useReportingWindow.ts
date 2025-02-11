@@ -40,5 +40,6 @@ export const useReportingWindow = (dueDate: string) => {
     }
 
     return `${start} - ${end} ${year}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dueDate]);
 };

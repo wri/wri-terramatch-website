@@ -60,6 +60,9 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "validationPolygon" })}>
         <Menu.ResourceItem name={modules.validatePolygonFile.ResourceName} />
       </div>
+      <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
+        <Menu.ResourceItem name={modules.impactStories.ResourceName} />
+      </div>
     </Menu>
   );
 };
