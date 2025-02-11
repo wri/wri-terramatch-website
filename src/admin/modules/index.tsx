@@ -19,6 +19,7 @@ import FundingProgrammeCreate from "./fundingProgrammes/components/FundingProgra
 import FundingProgrammeEdit from "./fundingProgrammes/components/FundingProgrammeEdit";
 import { FundingProgrammeList } from "./fundingProgrammes/components/FundingProgrammeList";
 import { FundingProgrammeShow } from "./fundingProgrammes/components/FundingProgrammeShow";
+import { ImpactStoriesCreate } from "./impactStories/components/ImpactStoriesCreate";
 import { ImpactStoriesList } from "./impactStories/components/ImpactStoriesList";
 import { NurseriesList } from "./nurseries/components/NurseriesList";
 import NurseryShow from "./nurseries/components/NurseryShow";
@@ -161,6 +162,7 @@ const validatePolygonFile = {
 const impactStories = {
   ResourceName: "impactStories",
   List: ImpactStoriesList,
+  Create: ImpactStoriesCreate,
   Edit: <div>Edit</div>
 };
 

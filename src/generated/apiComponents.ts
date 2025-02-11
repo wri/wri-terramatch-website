@@ -38795,6 +38795,421 @@ export const useGetV2IndicatorsEntityUuidSlugExport = <TData = undefined>(
   );
 };
 
+export type GetV2AdminImpactStoriesQueryParams = {
+  /**
+   * Search term to use on the collection
+   */
+  search?: string;
+  /**
+   * Multiple filters can be applied. Syntax: ?filter[status]=published
+   */
+  filter?: string;
+  /**
+   * Sorting can be applied, default is ascending or use - for descending. Example: ?sort=-created_at
+   */
+  sort?: string;
+  /**
+   * Number of results per page
+   */
+  per_page?: number;
+  /**
+   * Page number for results
+   */
+  page?: number;
+};
+
+export type GetV2AdminImpactStoriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminImpactStoriesResponse = {
+  data?: {
+    /**
+     * @example 123e4567-e89b-12d3-a456-426614174000
+     */
+    uuid?: string;
+    /**
+     * @example Empowering Local Communities
+     */
+    title?: string;
+    /**
+     * @example This is an inspiring story of impact...
+     */
+    content?: string;
+    /**
+     * @example published
+     */
+    status?: "draft" | "published" | "archived";
+    /**
+     * @format date-time
+     * @example 2024-09-02T15:04:05Z
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     * @example 2024-09-02T15:04:05Z
+     */
+    updated_at?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    from?: number;
+    to?: number;
+    current_page?: number;
+    last_page?: number;
+    per_page?: number;
+    total?: number;
+    path?: string;
+    links?: {
+      url?: string;
+      label?: string;
+      active?: boolean;
+    }[];
+  };
+};
+
+export type GetV2AdminImpactStoriesVariables = {
+  queryParams?: GetV2AdminImpactStoriesQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Fetches a list of impact stories with filtering and sorting options.
+ */
+export const fetchGetV2AdminImpactStories = (variables: GetV2AdminImpactStoriesVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2AdminImpactStoriesResponse,
+    GetV2AdminImpactStoriesError,
+    undefined,
+    {},
+    GetV2AdminImpactStoriesQueryParams,
+    {}
+  >({ url: "/v2/admin/impact-stories", method: "get", ...variables, signal });
+
+/**
+ * Fetches a list of impact stories with filtering and sorting options.
+ */
+export const useGetV2AdminImpactStories = <TData = GetV2AdminImpactStoriesResponse>(
+  variables: GetV2AdminImpactStoriesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AdminImpactStoriesResponse, GetV2AdminImpactStoriesError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AdminImpactStoriesResponse, GetV2AdminImpactStoriesError, TData>(
+    queryKeyFn({ path: "/v2/admin/impact-stories", operationId: "getV2AdminImpactStories", variables }),
+    ({ signal }) => fetchGetV2AdminImpactStories({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2AdminImpactStoriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2AdminImpactStoriesResponse = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type PostV2AdminImpactStoriesRequestBody = {
+  /**
+   * @example Empowering Local Communities
+   */
+  title: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content: string;
+  /**
+   * @example draft
+   */
+  status?: "draft" | "published" | "archived";
+};
+
+export type PostV2AdminImpactStoriesVariables = {
+  body: PostV2AdminImpactStoriesRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Creates a new impact story.
+ */
+export const fetchPostV2AdminImpactStories = (variables: PostV2AdminImpactStoriesVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2AdminImpactStoriesResponse,
+    PostV2AdminImpactStoriesError,
+    PostV2AdminImpactStoriesRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/admin/impact-stories", method: "post", ...variables, signal });
+
+/**
+ * Creates a new impact story.
+ */
+export const usePostV2AdminImpactStories = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2AdminImpactStoriesResponse,
+      PostV2AdminImpactStoriesError,
+      PostV2AdminImpactStoriesVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2AdminImpactStoriesResponse,
+    PostV2AdminImpactStoriesError,
+    PostV2AdminImpactStoriesVariables
+  >(
+    (variables: PostV2AdminImpactStoriesVariables) =>
+      fetchPostV2AdminImpactStories({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2AdminImpactStoriesIdPathParams = {
+  /**
+   * UUID of the impact story
+   */
+  id: string;
+};
+
+export type GetV2AdminImpactStoriesIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminImpactStoriesIdResponse = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type GetV2AdminImpactStoriesIdVariables = {
+  pathParams: GetV2AdminImpactStoriesIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves details of a single impact story.
+ */
+export const fetchGetV2AdminImpactStoriesId = (variables: GetV2AdminImpactStoriesIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2AdminImpactStoriesIdResponse,
+    GetV2AdminImpactStoriesIdError,
+    undefined,
+    {},
+    {},
+    GetV2AdminImpactStoriesIdPathParams
+  >({ url: "/v2/admin/impact-stories/{id}", method: "get", ...variables, signal });
+
+/**
+ * Retrieves details of a single impact story.
+ */
+export const useGetV2AdminImpactStoriesId = <TData = GetV2AdminImpactStoriesIdResponse>(
+  variables: GetV2AdminImpactStoriesIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2AdminImpactStoriesIdResponse, GetV2AdminImpactStoriesIdError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2AdminImpactStoriesIdResponse, GetV2AdminImpactStoriesIdError, TData>(
+    queryKeyFn({ path: "/v2/admin/impact-stories/{id}", operationId: "getV2AdminImpactStoriesId", variables }),
+    ({ signal }) => fetchGetV2AdminImpactStoriesId({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2AdminImpactStoriesIdPathParams = {
+  /**
+   * UUID of the impact story to update
+   */
+  id: string;
+};
+
+export type PutV2AdminImpactStoriesIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2AdminImpactStoriesIdResponse = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type PutV2AdminImpactStoriesIdRequestBody = {
+  /**
+   * @example Updated Title
+   */
+  title?: string;
+  /**
+   * @example Updated content of the impact story.
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+};
+
+export type PutV2AdminImpactStoriesIdVariables = {
+  body?: PutV2AdminImpactStoriesIdRequestBody;
+  pathParams: PutV2AdminImpactStoriesIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Updates the details of an existing impact story.
+ */
+export const fetchPutV2AdminImpactStoriesId = (variables: PutV2AdminImpactStoriesIdVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2AdminImpactStoriesIdResponse,
+    PutV2AdminImpactStoriesIdError,
+    PutV2AdminImpactStoriesIdRequestBody,
+    {},
+    {},
+    PutV2AdminImpactStoriesIdPathParams
+  >({ url: "/v2/admin/impact-stories/{id}", method: "put", ...variables, signal });
+
+/**
+ * Updates the details of an existing impact story.
+ */
+export const usePutV2AdminImpactStoriesId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2AdminImpactStoriesIdResponse,
+      PutV2AdminImpactStoriesIdError,
+      PutV2AdminImpactStoriesIdVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PutV2AdminImpactStoriesIdResponse,
+    PutV2AdminImpactStoriesIdError,
+    PutV2AdminImpactStoriesIdVariables
+  >(
+    (variables: PutV2AdminImpactStoriesIdVariables) =>
+      fetchPutV2AdminImpactStoriesId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2AdminImpactStoriesIdPathParams = {
+  id: string;
+};
+
+export type DeleteV2AdminImpactStoriesIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2AdminImpactStoriesIdVariables = {
+  pathParams: DeleteV2AdminImpactStoriesIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Deletes an existing impact story.
+ */
+export const fetchDeleteV2AdminImpactStoriesId = (
+  variables: DeleteV2AdminImpactStoriesIdVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<undefined, DeleteV2AdminImpactStoriesIdError, undefined, {}, {}, DeleteV2AdminImpactStoriesIdPathParams>({
+    url: "/v2/admin/impact-stories/{id}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
+/**
+ * Deletes an existing impact story.
+ */
+export const useDeleteV2AdminImpactStoriesId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<undefined, DeleteV2AdminImpactStoriesIdError, DeleteV2AdminImpactStoriesIdVariables>,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<undefined, DeleteV2AdminImpactStoriesIdError, DeleteV2AdminImpactStoriesIdVariables>(
+    (variables: DeleteV2AdminImpactStoriesIdVariables) =>
+      fetchDeleteV2AdminImpactStoriesId({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -39540,4 +39955,14 @@ export type QueryOperation =
       path: "/v2/indicators/{entity}/{uuid}/{slug}/export";
       operationId: "getV2IndicatorsEntityUuidSlugExport";
       variables: GetV2IndicatorsEntityUuidSlugExportVariables;
+    }
+  | {
+      path: "/v2/admin/impact-stories";
+      operationId: "getV2AdminImpactStories";
+      variables: GetV2AdminImpactStoriesVariables;
+    }
+  | {
+      path: "/v2/admin/impact-stories/{id}";
+      operationId: "getV2AdminImpactStoriesId";
+      variables: GetV2AdminImpactStoriesIdVariables;
     };
