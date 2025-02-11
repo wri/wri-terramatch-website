@@ -43,13 +43,25 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
             type="button"
           >
             <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
+              className="flex items-center gap-2"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 16,
+                  }
                 }
-              }
-            />
+              />
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
+                }
+              />
+            </div>
             <span
               className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
             >
@@ -137,13 +149,25 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           type="button"
         >
           <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 16,
+            className="flex items-center gap-2"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
               }
-            }
-          />
+            />
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
+          </div>
           <span
             className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
           >
@@ -221,13 +245,25 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
             type="button"
           >
             <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
+              className="flex items-center gap-2"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 16,
+                  }
                 }
-              }
-            />
+              />
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
+                }
+              />
+            </div>
             <span
               className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
             >
@@ -361,13 +397,25 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
           type="button"
         >
           <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 16,
+            className="flex items-center gap-2"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
               }
-            }
-          />
+            />
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
+          </div>
           <span
             className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
           >

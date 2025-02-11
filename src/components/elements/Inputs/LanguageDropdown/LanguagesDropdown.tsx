@@ -10,10 +10,13 @@ import List from "@/components/extensive/List/List";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
 
+import { LanguagesDropdownVariant, VARIANT_LANGUAGES_DROPDOWN } from "./LanguagesDropdownVariant";
+
 export interface DropdownProps {
   defaultValue?: OptionValue;
   onChange?: (value: string) => void;
   className?: string;
+  variant?: LanguagesDropdownVariant;
 }
 
 const LANGUAGES: Option[] = [
@@ -28,6 +31,8 @@ const languageForLocale = (locale?: string | null) => LANGUAGES.find(({ value })
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const variantClass = props.variant ?? VARIANT_LANGUAGES_DROPDOWN;
 
   const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
   let buttonRef = useRef<any>();
@@ -43,31 +48,36 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
 
   return (
-    <Popover className={classNames(props.className, "relative w-fit")}>
-      <Popover.Button ref={buttonRef} className="flex items-center justify-between p-2">
-        <Icon name={IconNames.EARTH} width={16} className="mr-2 fill-neutral-700" />
-        <span className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom">
-          {t(selected?.title)}
-        </span>
-        <Icon
-          name={IconNames.TRIANGLE_DOWN}
-          width={8}
-          className="fill-neutral-700 transition ui-open:rotate-180 ui-open:transform"
-        />
+    <Popover
+      className={classNames(props.className, variantClass.classContent, {
+        [variantClass.classContentOpen]: isOpen
+      })}
+    >
+      <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover} onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex items-center gap-2">
+          <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
+          <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowDashboardClass} />
+        </div>
+        <span className={variantClass.classText}>{t(selected?.title)}</span>
+        <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowNavbarClass} />
       </Popover.Button>
 
-      <Popover.Panel className="border-1 absolute right-0 z-50 mt-4 w-[130px]  border border-neutral-300 bg-white shadow">
+      <Popover.Panel className={variantClass.classPanel}>
         <List
           items={LANGUAGES}
           render={item => (
             <Text
               variant={selected.value === item.value ? "text-body-900" : "text-body-600"}
-              className={classNames("px-3 py-1 uppercase text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200")}
+              className={variantClass.classItem}
               onClick={() => onChange(item)}
             >
+              {selected.value === item.value && (
+                <Icon name={IconNames.CHECK} width={16} className={variantClass.classIconSelected} />
+              )}
               {t(item.title)}
             </Text>
           )}
+          className={variantClass.classList}
         />
       </Popover.Panel>
     </Popover>
