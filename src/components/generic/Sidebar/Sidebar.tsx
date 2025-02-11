@@ -3,6 +3,8 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import React from "react";
 
+import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
+import { VARIANT_LANGUAGES_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdownVariant";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -93,22 +95,25 @@ const Sidebar = () => {
           </a>
         </Tooltip>
       </div>
-      <Menu
-        className="flex w-full justify-center"
-        placement={MENU_PLACEMENT_RIGHT_TOP}
-        menu={[
-          {
-            id: "1",
-            render: () => (
-              <Text variant="text-14" className="flex cursor-pointer items-center" onClick={logout}>
-                {isLoggedIn ? t("Sign out") : t("Sign in")}
-              </Text>
-            )
-          }
-        ]}
-      >
-        <Icon name={IconNames.IC_USER} className="h-8 w-8" />
-      </Menu>
+      <div className="flex flex-col items-center justify-center gap-4 pb-7">
+        <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} />
+        <Menu
+          className="flex w-full justify-center"
+          placement={MENU_PLACEMENT_RIGHT_TOP}
+          menu={[
+            {
+              id: "1",
+              render: () => (
+                <Text variant="text-14" className="flex cursor-pointer items-center" onClick={logout}>
+                  {isLoggedIn ? t("Sign out") : t("Sign in")}
+                </Text>
+              )
+            }
+          ]}
+        >
+          <Icon name={IconNames.IC_USER} className="h-8 w-8" />
+        </Menu>
+      </div>
     </div>
   );
 };
