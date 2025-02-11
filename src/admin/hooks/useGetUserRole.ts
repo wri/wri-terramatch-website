@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { useGetIdentity } from "react-admin";
 
-export const getRoleData = (primaryRole: string) => ({
+import { TMUserIdentity } from "@/admin/apiProvider/authProvider";
+
+export const getRoleData = (primaryRole?: string) => ({
   role: primaryRole,
   isSuperAdmin: primaryRole === "admin-super",
   isPPCAdmin: primaryRole === "admin-ppc",
@@ -10,7 +12,6 @@ export const getRoleData = (primaryRole: string) => ({
 });
 
 export const useGetUserRole = () => {
-  const { data } = useGetIdentity();
-  const user: any = data ?? {};
-  return useMemo(() => getRoleData(user.primaryRole), [user.primaryRole]);
+  const user = useGetIdentity().data as TMUserIdentity | undefined;
+  return useMemo(() => getRoleData(user?.primaryRole), [user?.primaryRole]);
 };
