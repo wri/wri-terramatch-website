@@ -19,7 +19,7 @@ import {
 import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import { useCanUserEdit } from "@/admin/hooks/useCanUserEdit";
+import { userCanEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -65,6 +65,8 @@ const readOnlyMenu = [ShowItem];
 const adminMenu = [EditItem, ShowItem];
 
 const UserDataGrid = () => {
+  const roleData = useGetUserRole();
+
   return (
     <Datagrid rowClick={"show"}>
       <FunctionField
@@ -89,7 +91,7 @@ const UserDataGrid = () => {
       <FunctionField
         label="Actions"
         render={(record: any) => {
-          const canEdit = useCanUserEdit(record, "user");
+          const canEdit = userCanEdit(record, "user", roleData);
           return (
             <Menu menu={canEdit ? adminMenu : readOnlyMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
               <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
