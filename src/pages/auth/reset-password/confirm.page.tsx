@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { RequestPasswordReset, useRequestPassword } from "@/connections/ResetPassword";
+import { sendRequestPasswordReset, useRequestPassword } from "@/connections/ResetPassword";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useQueryString } from "@/hooks/useQueryString";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -34,7 +34,7 @@ const SignupConfirmPage = () => {
   });
 
   const handleResend = async () =>
-    RequestPasswordReset(email, window.location.origin + `${baseAuthPath}/reset-password`);
+    sendRequestPasswordReset(email, window.location.origin + `${baseAuthPath}/reset-password`);
 
   return (
     <BackgroundLayout>

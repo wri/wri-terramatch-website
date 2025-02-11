@@ -12,7 +12,7 @@ import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export const RequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
+export const sendRequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
   requestPasswordReset({ body: { emailAddress, callbackUrl } });
 
 export const selectResetPassword = (store: ApiDataStore) => Object.values(store.passwordResets)?.[0]?.attributes;
