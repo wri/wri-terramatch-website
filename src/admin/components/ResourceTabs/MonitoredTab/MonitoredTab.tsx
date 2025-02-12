@@ -11,15 +11,13 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
 }
 
-const MonitoredTab: FC<IProps> = ({ label, type, ...rest }) => {
-  return (
-    <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
-      <div className="flex w-full flex-col gap-4 p-3">
-        <HeaderMonitoredTab type={type} />
-        <DataCard type={type} />
-      </div>
-    </TabbedShowLayout.Tab>
-  );
-};
+const MonitoredTab: FC<IProps> = ({ label, type, ...rest }) => (
+  <TabbedShowLayout.Tab label={label ?? "Monitored Data"} {...rest}>
+    <div className="flex w-full flex-col gap-4 p-3">
+      <HeaderMonitoredTab type={type} />
+      <DataCard type={type} />
+    </div>
+  </TabbedShowLayout.Tab>
+);
 
 export default MonitoredTab;

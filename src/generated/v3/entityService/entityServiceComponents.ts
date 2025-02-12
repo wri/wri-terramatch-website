@@ -7,6 +7,85 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
+export type EntityGetPathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity: "projects" | "sites";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type EntityGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityGetVariables = {
+  pathParams: EntityGetPathParams;
+};
+
+export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    | {
+        data?: {
+          /**
+           * @example projects
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectFullDto;
+        };
+      }
+    | {
+        data?: {
+          /**
+           * @example sites
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteFullDto;
+        };
+      },
+    EntityGetError,
+    undefined,
+    {},
+    {},
+    EntityGetPathParams
+  >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
+
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
 };

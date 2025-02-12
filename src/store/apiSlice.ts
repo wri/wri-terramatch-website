@@ -5,7 +5,7 @@ import isArray from "lodash/isArray";
 import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
-import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { EstablishmentsTreesDto, ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import {
   LoginDto,
@@ -57,7 +57,7 @@ export type StoreResource<AttributeType> = {
   relationships?: Relationships;
 };
 
-type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeType>>;
+export type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeType>>;
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
@@ -66,21 +66,27 @@ export const RESOURCES = [
   "establishmentTrees",
   "logins",
   "organisations",
-  "users",
-  "passwordResets"
+  "passwordResets",
+  "projects",
+  "sites",
+  "users"
 ] as const;
 
 type ApiResources = {
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
-  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   organisations: StoreResourceMap<OrganisationDto>;
+  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
+  projects: StoreResourceMap<ProjectFullDto>;
+  sites: StoreResourceMap<SiteFullDto>;
   users: StoreResourceMap<UserDto>;
 };
 
+export type ResourceType = (typeof RESOURCES)[number];
+
 export type JsonApiResource = {
-  type: (typeof RESOURCES)[number];
+  type: ResourceType;
   id: string;
   attributes: Attributes;
   relationships?: { [key: string]: { data: Relationship | Relationship[] } };
@@ -130,11 +136,20 @@ type ApiFetchStartingProps = {
   url: string;
   method: Method;
 };
+
 type ApiFetchFailedProps = ApiFetchStartingProps & {
   error: PendingErrorState;
 };
+
 type ApiFetchSucceededProps = ApiFetchStartingProps & {
   response: JsonApiResponse;
+};
+
+// This may get more sophisticated in the future, but for now this is good enough
+type PruneCacheProps = {
+  resource: ResourceType;
+  // If ids is null, the whole cache for this resource is removed.
+  ids?: string[];
 };
 
 const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
@@ -162,10 +177,12 @@ export const apiSlice = createSlice({
       const { url, method } = action.payload;
       state.meta.pending[method][url] = true;
     },
+
     apiFetchFailed: (state, action: PayloadAction<ApiFetchFailedProps>) => {
       const { url, method, error } = action.payload;
       state.meta.pending[method][url] = error;
     },
+
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
       if (isLogin(action.payload)) {
@@ -201,6 +218,17 @@ export const apiSlice = createSlice({
 
       if (url.endsWith("users/v3/users/me") && method === "GET") {
         state.meta.meUserId = (response.data as JsonApiResource).id;
+      }
+    },
+
+    pruneCache: (state, action: PayloadAction<PruneCacheProps>) => {
+      const { resource, ids } = action.payload;
+      if (ids == null) {
+        state[resource] = {};
+      } else {
+        for (const id of ids) {
+          delete state[resource][id];
+        }
       }
     },
 
@@ -263,6 +291,10 @@ export default class ApiSlice {
 
   static fetchSucceeded(props: ApiFetchSucceededProps) {
     this.redux.dispatch(apiSlice.actions.apiFetchSucceeded(props));
+  }
+
+  static pruneCache(resource: ResourceType, ids?: string[]) {
+    this.redux.dispatch(apiSlice.actions.pruneCache({ resource, ids }));
   }
 
   static clearApiCache() {
