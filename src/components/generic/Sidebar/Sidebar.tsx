@@ -3,6 +3,8 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import React from "react";
 
+import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
+import { VARIANT_LANGUAGES_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdownVariant";
 import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
 import { VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdownVariant";
 import Menu from "@/components/elements/Menu/Menu";
@@ -11,10 +13,20 @@ import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { logout, useLogin } from "@/connections/Login";
+import { useMyUser, ValidLocale } from "@/connections/User";
 
 const Sidebar = () => {
   const router = useRouter();
   const [, { isLoggedIn }] = useLogin();
+  const [, { setLocale }] = useMyUser();
+
+  const changeLanguageHandler = (lang: string) => {
+    if (setLocale != null) {
+      setLocale(lang as ValidLocale);
+    } else {
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
+    }
+  };
 
   const t = useT();
 
@@ -97,6 +109,7 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col items-center justify-center gap-4 pb-7">
         <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} />
+        <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} onChange={changeLanguageHandler} />
         <Menu
           className="flex w-full justify-center"
           placement={MENU_PLACEMENT_RIGHT_TOP}

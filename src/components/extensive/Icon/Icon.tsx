@@ -231,7 +231,9 @@ export enum IconNames {
   NON_TRESS_PLANTED = "non-trees-planted",
   ARROW_UP_RIGHT = "arrow-up-right",
   SHARE_IMPACT_STORY = "share-impact-story",
-  BRIEFCASE = "briefcase"
+  BRIEFCASE = "briefcase",
+  EARTH_DASHBOARD = "earth-dashboard",
+  CHECK = "check"
 }
 
 export interface IconProps {
