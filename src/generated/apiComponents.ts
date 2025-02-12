@@ -39210,6 +39210,51 @@ export const useDeleteV2AdminImpactStoriesId = (
   );
 };
 
+export type DeleteV2AdminImpactStoriesBulkDeleteError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2AdminImpactStoriesBulkDeleteRequestBody = {
+  uuids: string[];
+};
+
+export type DeleteV2AdminImpactStoriesBulkDeleteVariables = {
+  body: DeleteV2AdminImpactStoriesBulkDeleteRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2AdminImpactStoriesBulkDelete = (
+  variables: DeleteV2AdminImpactStoriesBulkDeleteVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2AdminImpactStoriesBulkDeleteError,
+    DeleteV2AdminImpactStoriesBulkDeleteRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/admin/impact-stories/bulk-delete", method: "delete", ...variables, signal });
+
+export const useDeleteV2AdminImpactStoriesBulkDelete = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2AdminImpactStoriesBulkDeleteError,
+      DeleteV2AdminImpactStoriesBulkDeleteVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2AdminImpactStoriesBulkDeleteError,
+    DeleteV2AdminImpactStoriesBulkDeleteVariables
+  >(
+    (variables: DeleteV2AdminImpactStoriesBulkDeleteVariables) =>
+      fetchDeleteV2AdminImpactStoriesBulkDelete({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";

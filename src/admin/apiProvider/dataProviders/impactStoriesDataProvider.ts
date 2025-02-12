@@ -1,7 +1,9 @@
 import { DataProvider } from "react-admin";
 
 import {
+  DeleteV2AdminImpactStoriesBulkDeleteError,
   DeleteV2AdminImpactStoriesIdError,
+  fetchDeleteV2AdminImpactStoriesBulkDelete,
   fetchDeleteV2AdminImpactStoriesId,
   //   fetchDeleteV2AdminReportingFrameworksUUID,
   fetchGetV2AdminImpactStories,
@@ -28,7 +30,7 @@ export const impactStoriesDataProvider: DataProvider = {
       const response = await fetchGetV2AdminImpactStories({
         queryParams: raListParamsToQueryParams(params, [])
       });
-
+      console.log("responde", response);
       return apiListResponseToRAListResult(response);
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminImpactStoriesError);
@@ -42,9 +44,8 @@ export const impactStoriesDataProvider: DataProvider = {
         pathParams: { id: params.id }
       });
       const response = { data: list };
-
       //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
+      return { data: { ...response.data, id: response.data.id } };
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminImpactStoriesIdError);
     }
@@ -85,6 +86,17 @@ export const impactStoriesDataProvider: DataProvider = {
       return { data: { id: params.id } };
     } catch (err) {
       throw getFormattedErrorForRA(err as DeleteV2AdminImpactStoriesIdError);
+    }
+  },
+  // @ts-ignore
+  async deleteMany(_, params) {
+    try {
+      await fetchDeleteV2AdminImpactStoriesBulkDelete({
+        body: { uuids: params.ids.map(String) }
+      });
+      return { data: params.ids };
+    } catch (err) {
+      throw getFormattedErrorForRA(err as DeleteV2AdminImpactStoriesBulkDeleteError);
     }
   }
 };

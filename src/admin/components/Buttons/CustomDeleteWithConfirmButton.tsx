@@ -8,7 +8,6 @@ interface CustomDeleteWithConfirmButtonProps extends DeleteWithConfirmButtonProp
 const CustomDeleteWithConfirmButton: FC<CustomDeleteWithConfirmButtonProps> = ({ source, ...rest }) => {
   const { resource } = useListContext();
   const record = useRecordContext();
-  console.log("record", record);
 
   const confirmTitle = `Delete ${resource} ${record[source]}`;
   const confirmContent = `You are about to delete this ${resource}. This action will permanently remove the item from the system, and it cannot be undone. Are you sure you want to delete this item?`;
