@@ -5,6 +5,7 @@ import { DetailedHTMLProps, Fragment, HTMLAttributes } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
+import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { logout, useLogin } from "@/connections/Login";
@@ -80,6 +81,9 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
             {t("Sign in")}
           </NavbarItem>
         </Else>
+      </If>
+      <If condition={isLoggedIn}>
+        <MyAccountDropdown isLoggedIn={isLoggedIn} />
       </If>
       <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
