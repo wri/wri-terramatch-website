@@ -45,7 +45,7 @@ export const VARIANT_LANGUAGES_DROPDOWN_SECONDARY: LanguagesDropdownVariant = {
   classPanel:
     "shadow-all border-1 absolute bottom-0 left-full z-50 ml-3 w-[140px] bg-white shadow rounded-lg overflow-hidden",
   classList: "divide-y divide-grey-950",
-  classItem: "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2",
+  classItem: "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2 cursor-pointer",
   classIconSelected: "text-black",
   classContent: "relative w-fit",
   classContentOpen: "!opacity-100",
