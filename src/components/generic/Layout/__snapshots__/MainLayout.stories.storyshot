@@ -34,38 +34,55 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
             className="absolute top-4 left-[50%] translate-x-[-50%]"
           >
             <div
-              className="block sm:hidden relative w-fit"
-              data-headlessui-state=""
+              onKeyDownCapture={[Function]}
             >
-              <button
-                aria-expanded={false}
-                className="flex items-center justify-between p-2"
+              <div
+                className="block sm:hidden relative w-fit"
                 data-headlessui-state=""
-                id="headlessui-popover-button-:r3m:"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-                onKeyUp={[Function]}
-                onMouseDown={[Function]}
-                type="button"
               >
-                <div
-                  className="flex items-start gap-2"
+                <button
+                  aria-expanded={false}
+                  className="flex items-center justify-between p-2"
+                  data-headlessui-state=""
+                  id="headlessui-popover-button-:r3m:"
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  type="button"
                 >
-                  <div>
+                  <div
+                    className="flex items-start gap-2"
+                  >
+                    <div>
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 16,
+                          }
+                        }
+                      />
+                      <span
+                        className="hidden"
+                      >
+                        En
+                      </span>
+                    </div>
                     <div
                       style={
                         Object {
                           "height": undefined,
-                          "width": 16,
+                          "width": 8,
                         }
                       }
                     />
-                    <span
-                      className="hidden"
-                    >
-                      En
-                    </span>
                   </div>
+                  <span
+                    className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+                  >
+                    English
+                  </span>
                   <div
                     style={
                       Object {
@@ -74,21 +91,8 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
                       }
                     }
                   />
-                </div>
-                <span
-                  className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
-                >
-                  English
-                </span>
-                <div
-                  style={
-                    Object {
-                      "height": undefined,
-                      "width": 8,
-                    }
-                  }
-                />
-              </button>
+                </button>
+              </div>
             </div>
           </div>
           <div>
@@ -193,38 +197,55 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
             </a>
           </div>
           <div
-            className="hidden sm:block relative w-fit"
-            data-headlessui-state=""
+            onKeyDownCapture={[Function]}
           >
-            <button
-              aria-expanded={false}
-              className="flex items-center justify-between p-2"
+            <div
+              className="hidden sm:block relative w-fit"
               data-headlessui-state=""
-              id="headlessui-popover-button-:r3r:"
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              type="button"
             >
-              <div
-                className="flex items-start gap-2"
+              <button
+                aria-expanded={false}
+                className="flex items-center justify-between p-2"
+                data-headlessui-state=""
+                id="headlessui-popover-button-:r3r:"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                type="button"
               >
-                <div>
+                <div
+                  className="flex items-start gap-2"
+                >
+                  <div>
+                    <div
+                      style={
+                        Object {
+                          "height": undefined,
+                          "width": 16,
+                        }
+                      }
+                    />
+                    <span
+                      className="hidden"
+                    >
+                      En
+                    </span>
+                  </div>
                   <div
                     style={
                       Object {
                         "height": undefined,
-                        "width": 16,
+                        "width": 8,
                       }
                     }
                   />
-                  <span
-                    className="hidden"
-                  >
-                    En
-                  </span>
                 </div>
+                <span
+                  className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+                >
+                  English
+                </span>
                 <div
                   style={
                     Object {
@@ -233,21 +254,8 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
                     }
                   }
                 />
-              </div>
-              <span
-                className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
-              >
-                English
-              </span>
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 8,
-                  }
-                }
-              />
-            </button>
+              </button>
+            </div>
           </div>
         </div>
         <button
