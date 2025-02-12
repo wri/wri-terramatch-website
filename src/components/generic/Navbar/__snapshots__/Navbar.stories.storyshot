@@ -156,23 +156,16 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           type="button"
         >
           <div
-            className="flex items-start gap-2"
+            className="flex items-center gap-2"
           >
-            <div>
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 16,
-                  }
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
                 }
-              />
-              <span
-                className="hidden"
-              >
-                En
-              </span>
-            </div>
+              }
+            />
             <div
               style={
                 Object {
@@ -213,16 +206,23 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           type="button"
         >
           <div
-            className="flex items-center gap-2"
+            className="flex items-start gap-2"
           >
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
+            <div>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 16,
+                  }
                 }
-              }
-            />
+              />
+              <span
+                className="hidden"
+              >
+                En
+              </span>
+            </div>
             <div
               style={
                 Object {
