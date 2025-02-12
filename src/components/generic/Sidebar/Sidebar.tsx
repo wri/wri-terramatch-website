@@ -23,8 +23,12 @@ const Sidebar = () => {
   const changeLanguageHandler = (lang: string) => {
     if (setLocale != null) {
       setLocale(lang as ValidLocale);
+      window.location.reload();
     } else {
-      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
@@ -108,8 +112,8 @@ const Sidebar = () => {
         </Tooltip>
       </div>
       <div className="flex flex-col items-center justify-center gap-4 pb-7">
-        <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} />
         <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} onChange={changeLanguageHandler} />
+        <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />
         <Menu
           className="flex w-full justify-center"
           placement={MENU_PLACEMENT_RIGHT_TOP}

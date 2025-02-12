@@ -134,7 +134,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         </a>
       </div>
       <div
-        className="hidden sm:block relative w-fit"
+        className="relative w-fit"
         data-headlessui-state=""
       >
         <button
@@ -142,6 +142,56 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
           className="flex items-center justify-between p-2"
           data-headlessui-state=""
           id="headlessui-popover-button-:r45:"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          type="button"
+        >
+          <div
+            className="flex items-center gap-2"
+          >
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 16,
+                }
+              }
+            />
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
+          </div>
+          <span
+            className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+          >
+            MY ACCOUNT
+          </span>
+          <div
+            style={
+              Object {
+                "height": undefined,
+                "width": 8,
+              }
+            }
+          />
+        </button>
+      </div>
+      <div
+        className="hidden sm:block relative w-fit"
+        data-headlessui-state=""
+      >
+        <button
+          aria-expanded={false}
+          className="flex items-center justify-between p-2"
+          data-headlessui-state=""
+          id="headlessui-popover-button-:r4a:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -237,7 +287,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
             aria-expanded={false}
             className="flex items-center justify-between p-2"
             data-headlessui-state=""
-            id="headlessui-popover-button-:r4a:"
+            id="headlessui-popover-button-:r4f:"
             onClick={[Function]}
             onKeyDown={[Function]}
             onKeyUp={[Function]}
@@ -389,7 +439,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
           aria-expanded={false}
           className="flex items-center justify-between p-2"
           data-headlessui-state=""
-          id="headlessui-popover-button-:r4f:"
+          id="headlessui-popover-button-:r4k:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
