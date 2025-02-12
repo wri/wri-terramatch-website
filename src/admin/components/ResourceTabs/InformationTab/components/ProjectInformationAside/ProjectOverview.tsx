@@ -1,10 +1,11 @@
 import { Check } from "@mui/icons-material";
 import { Box, Button, Card, Divider, Grid, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
-import { BooleanField, Labeled, TextField, useShowContext } from "react-admin";
+import { Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
@@ -21,31 +22,25 @@ const ProjectOverview: FC = () => {
         <Grid spacing={2} marginBottom={2} container>
           <Grid item xs={8}>
             <Labeled label="Organisation">
-              <TextField source="organisation.name" />
+              <TextField source="organisationName" />
             </Labeled>
           </Grid>
 
           <Grid xs={4} item>
             <Labeled label="Status">
-              <TextField source="readable_status" />
-            </Labeled>
-          </Grid>
-
-          <Grid xs={4} item>
-            <Labeled label="Monitored Data">
-              <BooleanField source="has_monitoring_data" looseValue />
+              <ReadableStatusField prop="status" />
             </Labeled>
           </Grid>
 
           <Grid xs={4} item>
             <Labeled label="Funding Programme">
-              <FrameworkField />
+              <FrameworkField prop="frameworkKey" />
             </Labeled>
           </Grid>
 
           <Grid xs={4} item>
             <Labeled label="Change Request Status">
-              <TextField source="readable_update_request_status" />
+              <ReadableStatusField prop="updateRequestStatus" />
             </Labeled>
           </Grid>
         </Grid>

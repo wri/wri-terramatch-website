@@ -3,6 +3,148 @@
  *
  * @version 1.0
  */
+export type ANRDto = {
+  /**
+   * Site name
+   */
+  name: string;
+  treeCount: number;
+};
+
+export type ProjectFullDto = {
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: Record<string, any> | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * Indicates that this resource has the full resource definition.
+   *
+   * @example false
+   */
+  lightResource: Record<string, any>;
+  /**
+   * True for projects that are test data and do not represent actual planting on the ground.
+   */
+  isTest: boolean;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  continent: string | null;
+  country: string | null;
+  states: string[] | null;
+  /**
+   * @format date-time
+   */
+  plantingEndDate: string | null;
+  budget: number | null;
+  history: string | null;
+  objectives: string | null;
+  environmentalGoals: string | null;
+  socioeconomicGoals: string | null;
+  sdgsImpacted: string | null;
+  totalHectaresRestoredGoal: number | null;
+  totalHectaresRestoredSum: number;
+  treesGrownGoal: number | null;
+  survivalRate: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
+  treesPlantedCount: number;
+  seedsPlantedCount: number;
+  regeneratedTreesCount: number;
+  workdayCount: number;
+  selfReportedWorkdayCount: number;
+  combinedWorkdayCount: number;
+  totalJobsCreated: number;
+  totalSites: number;
+  totalNurseries: number;
+  totalProjectReports: number;
+  totalOverdueReports: number;
+  descriptionOfProjectTimeline: string | null;
+  sitingStrategyDescription: string | null;
+  sitingStrategy: string | null;
+  landholderCommEngage: string | null;
+  projPartnerInfo: string | null;
+  seedlingsSource: string | null;
+  landTenureProjectArea: string[] | null;
+  projImpactBiodiv: string | null;
+  projImpactFoodsec: string | null;
+  proposedGovPartners: string | null;
+  treesRestoredPpc: number;
+  detailedInterventionTypes: string[] | null;
+  /**
+   * The list of tree counts regenerating naturally by site name
+   */
+  assistedNaturalRegenerationList: ANRDto[];
+  goalTreesRestoredAnr: number | null;
+};
+
+export type SiteFullDto = {
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: Record<string, any> | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * Indicates that this resource has the full resource definition.
+   *
+   * @example false
+   */
+  lightResource: Record<string, any>;
+  totalSiteReports: number;
+};
+
 export type PreviousPlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row

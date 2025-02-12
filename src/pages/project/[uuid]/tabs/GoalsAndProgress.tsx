@@ -464,7 +464,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelUUID={project.uuid}
                 modelName="project"
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -476,7 +475,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -488,7 +486,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -617,7 +614,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    framework={project.framework_key}
                     visibleRows={5}
                     collection="seeding"
                     setTotalCount={setTreeCount}

@@ -18,7 +18,7 @@ const ShowTitle = (props: IProps) => {
   const title = (
     <>
       {titleGetter(record)}
-      {record?.is_test && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
+      {(record?.is_test || record?.isTest) && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
     </>
   );
 

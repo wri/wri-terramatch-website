@@ -15,9 +15,10 @@ type SelectorOptions<TQueryParams, TPathParams> = {
 
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
-  users: userServiceUrl,
+  entities: entityServiceUrl,
   jobs: jobServiceUrl,
-  trees: entityServiceUrl
+  trees: entityServiceUrl,
+  users: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {

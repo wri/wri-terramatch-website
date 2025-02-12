@@ -68,7 +68,7 @@ export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
 
 export function RecordFrameworkProvider({ children }: { children: ReactNode }) {
   const { record } = useShowContext();
-  return <FrameworkProvider frameworkKey={record?.framework_key}>{children}</FrameworkProvider>;
+  return <FrameworkProvider frameworkKey={record?.framework_key ?? record?.frameworkKey}>{children}</FrameworkProvider>;
 }
 
 export default FrameworkProvider;
