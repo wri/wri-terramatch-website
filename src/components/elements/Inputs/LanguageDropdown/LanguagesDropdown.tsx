@@ -31,7 +31,6 @@ const languageForLocale = (locale?: string | null) => LANGUAGES.find(({ value })
 const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
   const variantClass = props.variant ?? VARIANT_LANGUAGES_DROPDOWN;
 
   const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
@@ -48,14 +47,13 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   };
 
   return (
-    <Popover
-      className={classNames(props.className, variantClass.classContent, {
-        [variantClass.classContentOpen]: isOpen
-      })}
-    >
-      <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover} onClick={() => setIsOpen(!isOpen)}>
-        <div className="flex items-center gap-2">
-          <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
+    <Popover className={classNames(props.className, variantClass.classContent)}>
+      <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover}>
+        <div className="flex items-start gap-2">
+          <div>
+            <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
+            <span className={variantClass.classTextDashboard}>{t(selected?.title.slice(0, 2))}</span>
+          </div>
           <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowDashboardClass} />
         </div>
         <span className={variantClass.classText}>{t(selected?.title)}</span>
