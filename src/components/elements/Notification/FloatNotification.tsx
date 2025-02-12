@@ -73,7 +73,7 @@ const FloatNotification = () => {
       <div className="relative">
         <div
           className={classNames(
-            "absolute right-[107%] flex max-h-[61vh] w-[460px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300",
+            "absolute right-[107%] flex max-h-[61vh] w-[414px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300",
             { " bottom-[-4px] z-10  opacity-100": openModalNotification },
             { " bottom-[-300px] -z-10 !h-0  opacity-0": !openModalNotification }
           )}
@@ -108,7 +108,7 @@ const FloatNotification = () => {
                         {item.name}
                       </Text>
                       <button className="absolute right-0 hover:text-primary">
-                        <ToolTip content={t("Clear")}>
+                        <ToolTip content={t("Cancel")}>
                           <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                         </ToolTip>
                       </button>
