@@ -9,6 +9,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const redirect = useRedirect();
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
+  console.log("currentData", currentData);
   const initialValues = {
     content: currentData?.content ? JSON.parse(currentData.content) : "",
     title: currentData?.title || "",

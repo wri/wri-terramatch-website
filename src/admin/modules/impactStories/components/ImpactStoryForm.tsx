@@ -1,4 +1,3 @@
-// import { UploadFile } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import { memo } from "react";
 import { ReferenceInput, required } from "react-admin";
@@ -144,7 +143,6 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             accept={["image/png", "image/svg+xml", "image/jpeg"]}
             placeholder={
               <Box paddingY={2}>
-                {/* <UploadFile color="primary" /> */}
                 <Typography variant="subtitle1" color="primary" marginBottom={0.5} marginTop={2}>
                   Click to upload or drag and drop
                 </Typography>
@@ -156,20 +154,6 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
               </Box>
             }
           />
-          {/* <FileInput
-            onChange={handlers.handleFileChange}
-            variant={VARIANT_FILE_INPUT_IMPACT_STORY}
-            files={[]}
-            allowMultiple={false}
-            label="Thumbnail"
-            labelClassName="capitalize text-14-bold"
-            classNameTextOr="hidden"
-            descriptionInput={
-              <Text variant="text-12-bold" className="text-center text-primary">
-                documents or images to help reviewer
-              </Text>
-            }
-          /> */}
         </div>
 
         <div>

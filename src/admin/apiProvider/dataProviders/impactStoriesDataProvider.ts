@@ -47,11 +47,18 @@ export const impactStoriesDataProvider: DataProvider = {
   },
   //@ts-ignore
   async create(__, params) {
+    const uploadKeys = ["thumbnail"];
+    const body: any = lo.omit(params.data, uploadKeys);
     try {
       const response = await fetchPostV2AdminImpactStories({
-        body: params.data
+        body: body
       });
-
+      // @ts-expect-error
+      const uuid = response.data.uuid as string;
+      await handleUploads(params, uploadKeys, {
+        uuid,
+        model: "impact-story"
+      });
       // @ts-expect-error
       return { data: { ...response.data, id: response.id } };
     } catch (err) {
@@ -61,7 +68,7 @@ export const impactStoriesDataProvider: DataProvider = {
   //@ts-ignore
   async update(__, params) {
     const uuid = params.id as string;
-    const uploadKeys = ["thumbnail"]; // Add any other file fields if needed
+    const uploadKeys = ["thumbnail"];
     const body = lo.omit(params.data, uploadKeys);
 
     try {
