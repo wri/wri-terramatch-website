@@ -1,3 +1,4 @@
+import lo from "lodash";
 import { DataProvider } from "react-admin";
 
 import {
@@ -17,6 +18,7 @@ import {
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { handleUploads } from "../utils/upload";
 
 // @ts-ignore
 export const impactStoriesDataProvider: DataProvider = {
@@ -58,18 +60,29 @@ export const impactStoriesDataProvider: DataProvider = {
   },
   //@ts-ignore
   async update(__, params) {
+    const uuid = params.id as string;
+    const uploadKeys = ["thumbnail"]; // Add any other file fields if needed
+    const body = lo.omit(params.data, uploadKeys);
+
     try {
-      const response = await fetchPutV2AdminImpactStoriesId({
-        body: params.data,
-        pathParams: { id: params.id as string }
+      await handleUploads(params, uploadKeys, {
+        uuid,
+        model: "impact-story"
       });
+
+      const response = await fetchPutV2AdminImpactStoriesId({
+        body,
+        pathParams: { id: uuid }
+      });
+
       console.log("Params", params.data);
       // @ts-expect-error
-      return { data: { ...response.data, id: response.id } };
+      return { data: { ...response.data, id: response.data.uuid } };
     } catch (err) {
       throw getFormattedErrorForRA(err as PutV2AdminImpactStoriesIdError);
     }
   },
+
   //@ts-ignore
   async delete(__, params) {
     try {

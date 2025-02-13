@@ -136,8 +136,8 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
         <div className="grid grid-cols-2 gap-x-4">
           <FileUploadInput
-            source="banner"
-            label="Upload Banner Images"
+            source="thumbnail"
+            label="Upload Impact Story Images"
             validate={[required(), maxFileSize(1)]}
             isRequired
             accept={["image/png", "image/svg+xml", "image/jpeg"]}

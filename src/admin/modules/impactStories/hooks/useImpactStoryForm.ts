@@ -24,14 +24,6 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     [setValue]
   );
 
-  const handleFileChange = useCallback(
-    (files: File[]) => {
-      console.log("file", files);
-      setValue("thumbnail", files[0]);
-    },
-    [setValue]
-  );
-
   const handleContentChange = useCallback(
     (content: string) => {
       setValue("content", JSON.stringify(content));
@@ -79,7 +71,6 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     initialValues,
     handlers: {
       handleImpactCategoryChange,
-      handleFileChange,
       handleContentChange,
       handleTitleChange,
       handleDateChange,
