@@ -1,7 +1,5 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="fi:chevron-right">
-<path id="Vector" d="M18 7L12 7L7 7" stroke="#002633" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_2" d="M16 12C14.4379 12 12 12 12 12L9 12" stroke="#002633" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Vector_3" d="M14 17L12 17L11 17" stroke="#002633" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
+<svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.5 1L6.5 1L1.5 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.5 6C8.9379 6 6.5 6 6.5 6L3.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8.5 11L6.5 11L5.5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
