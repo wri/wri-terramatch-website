@@ -149,16 +149,17 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-4 pb-7">
+      <div
+        className={classNames("flex flex-col items-center justify-center gap-4 pb-7", "mobile:flex-row mobile:pb-0")}
+      >
         <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} onChange={changeLanguageHandler} />
         {!isMobile && <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />}
+        {isMobile && (
+          <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
+            <Icon name={IconNames.IC_MENU} className="h-6 w-6" />
+          </button>
+        )}
       </div>
-
-      {isMobile && (
-        <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
-          <Icon name={IconNames.IC_MENU} className="h-6 w-6" />
-        </button>
-      )}
     </div>
   );
 };
