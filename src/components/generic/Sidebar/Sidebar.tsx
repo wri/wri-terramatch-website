@@ -77,7 +77,7 @@ const Sidebar = () => {
   const renderNavItem = ({ path, icon, label, disabled }: NavItem) => {
     if (!isMobile) {
       return (
-        <Tooltip content={t(disabled ? "COMING SOON" : label)} placement="right">
+        <Tooltip content={t(disabled ? "COMING SOON" : label)} placement="right" key={label}>
           <a
             className={classNames("flex cursor-pointer flex-col items-center gap-1 mobile:flex-row", {
               "text-white":
@@ -101,6 +101,7 @@ const Sidebar = () => {
     }
     return (
       <a
+        key={label}
         className={classNames(
           "flex items-center justify-between mobile:border-b mobile:border-grey-1000 mobile:p-4 ",
           "mobile:w-full  mobile:!text-black",
