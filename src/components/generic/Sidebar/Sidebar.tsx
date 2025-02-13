@@ -106,7 +106,7 @@ const Sidebar = () => {
         key={label + "mobile"}
         className={classNames(
           "flex items-center justify-between mobile:border-b mobile:border-grey-1000 mobile:p-4 ",
-          "mobile:w-full  mobile:!text-black",
+          "mobile:w-full  mobile:!text-black ",
           {
             "text-white":
               (label !== "DASHBOARDS" && router.asPath.includes(path)) ||
@@ -115,7 +115,8 @@ const Sidebar = () => {
                 !router.asPath.includes("/dashboard/project-insights") &&
                 !router.asPath.includes("/dashboard/learn-more") &&
                 !router.asPath.includes("/dashboard/impact-story")),
-            "cursor-not-allowed opacity-50": disabled
+            "cursor-not-allowed opacity-50": disabled,
+            "mobile:hidden": !isOpen
           }
         )}
         href={disabled ? undefined : path}
@@ -143,7 +144,7 @@ const Sidebar = () => {
             "left-0 flex flex-col items-center gap-8 mobile:bg-white",
             "mobile:absolute mobile:top-full mobile:w-full mobile:gap-0 mobile:py-4 mobile:transition-all mobile:duration-300",
             {
-              "!mobile:h-0 mobile:bottom-full mobile:opacity-0": !isOpen,
+              "bottom-full mobile:bottom-full mobile:!h-0 mobile:opacity-0": !isOpen,
               "mobile:top-0 mobile:opacity-100": isOpen
             }
           )}
