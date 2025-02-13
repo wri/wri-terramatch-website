@@ -20,9 +20,11 @@ import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
 
-import { PROJECT_INSIGHTS_SECTION_TOOLTIP } from "../constants/tooltips";
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
+
+export const PROJECT_INSIGHTS_SECTION_TOOLTIP =
+  "In 2025, the Project Insights section will contain additional analyses showing trends and insights.";
 
 interface HeaderDashboardProps {
   isProjectInsightsPage?: boolean;
@@ -236,7 +238,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           </Text>
         </Text>
         <Text variant="text-16" className="absolute top-3 right-3 text-white ">
-          {t(lastUpdatedAt ? `Last Updated on ${new Date(lastUpdatedAt).toISOString().split("T")[0]}` : "")}
+          {t("Last Updated on {date}", {
+            date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
+          })}
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
