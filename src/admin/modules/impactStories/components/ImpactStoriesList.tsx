@@ -3,6 +3,7 @@ import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
+  DateField,
   EditButton,
   List,
   ReferenceInput,
@@ -14,7 +15,6 @@ import {
 
 import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
-import ChipFieldArray from "@/admin/components/Fields/ChipFieldArray";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -25,11 +25,6 @@ import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoic
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
-
-const IMPACT_STORY_TAGS = [
-  { id: "1", label: "ppc" },
-  { id: "2", label: "project-tag" }
-];
 
 const monitoringDataChoices = [
   {
@@ -62,10 +57,10 @@ const ImpactStoriesDataGrid: FC = () => {
   return (
     <Datagrid>
       <TextField source="title" label="Impact Story" />
-      <ChipFieldArray source="status" label="Status" data={IMPACT_STORY_TAGS} />
+      <TextField source="status" label="Status" />
       <TextField source="organization.name" label="Organization" />
-      <TextField source="organization.country" label="Country" />
-      <TextField source="created_at" label="Date Created" />
+      <TextField source="organization.countries" label="Country" />
+      <DateField source="created_at" label="Date Created" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
