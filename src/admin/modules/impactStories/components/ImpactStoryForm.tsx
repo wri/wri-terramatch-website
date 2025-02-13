@@ -97,6 +97,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
             onChange={e => handlers.handleTitleChange(e.target.value)}
+            required
           />
           <Input
             label="Date"
@@ -106,6 +107,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
             onChange={e => handlers.handleDateChange(e.target.value)}
+            required
           />
         </div>
 
@@ -114,6 +116,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             source="organization.uuid"
             reference={modules.organisation.ResourceName}
             defaultValue={initialValues.orgUuid}
+            required
           >
             <StyledAutocompleteInput optionText="name" fullWidth label={false} placeholder="Select an organization" />
           </ReferenceInput>
@@ -128,6 +131,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           className="text-14-light"
           multiSelect={true}
           variant={VARIANT_DROPDOWN_IMPACT_STORY}
+          required
         />
 
         <div className="grid grid-cols-2 gap-x-4">
