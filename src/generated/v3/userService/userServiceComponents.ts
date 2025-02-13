@@ -340,3 +340,46 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     {},
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+
+export type VerifyUserError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type VerifyUserResponse = {
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.VerificationUserResponseDto;
+  };
+};
+
+export type VerifyUserVariables = {
+  body: Schemas.VerificationUserRequest;
+};
+
+/**
+ * Receive a token to verify a user
+ */
+export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
+  userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
+    url: "/auth/v3/verifications",
+    method: "post",
+    ...variables,
+    signal
+  });

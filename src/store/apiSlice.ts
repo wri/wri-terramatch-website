@@ -11,7 +11,8 @@ import {
   LoginDto,
   OrganisationDto,
   ResetPasswordResponseDto,
-  UserDto
+  UserDto,
+  VerificationUserResponseDto
 } from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
@@ -67,7 +68,8 @@ export const RESOURCES = [
   "logins",
   "organisations",
   "users",
-  "passwordResets"
+  "passwordResets",
+  "verifications"
 ] as const;
 
 type ApiResources = {
@@ -75,6 +77,7 @@ type ApiResources = {
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
+  verifications: StoreResourceMap<VerificationUserResponseDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
 };
