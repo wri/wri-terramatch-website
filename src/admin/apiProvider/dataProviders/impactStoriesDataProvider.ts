@@ -3,21 +3,16 @@ import { DataProvider } from "react-admin";
 import {
   DeleteV2AdminImpactStoriesIdError,
   fetchDeleteV2AdminImpactStoriesId,
-  //   fetchDeleteV2AdminReportingFrameworksUUID,
   fetchGetV2AdminImpactStories,
   fetchGetV2AdminImpactStoriesId,
   fetchPostV2AdminImpactStories,
   fetchPostV2AdminImpactStoriesBulkDelete,
   fetchPutV2AdminImpactStoriesId,
-  //   fetchGetV2AdminReportingFrameworks,
-  //   fetchPostV2AdminReportingFrameworks,
-  //   fetchPutV2AdminReportingFrameworksUUID,
   GetV2AdminImpactStoriesError,
   GetV2AdminImpactStoriesIdError,
   PostV2AdminImpactStoriesBulkDeleteError,
   PostV2AdminImpactStoriesError,
   PutV2AdminImpactStoriesIdError
-  //   GetV2AdminReportingFrameworksError
 } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA } from "../utils/error";
@@ -30,7 +25,6 @@ export const impactStoriesDataProvider: DataProvider = {
       const response = await fetchGetV2AdminImpactStories({
         queryParams: raListParamsToQueryParams(params, [])
       });
-      console.log("responde", response);
       return apiListResponseToRAListResult(response);
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminImpactStoriesError);
@@ -39,7 +33,6 @@ export const impactStoriesDataProvider: DataProvider = {
   // @ts-ignore
   async getOne(_, params) {
     try {
-      //To be replaced with fetchGetV2AdminReportingFrameworksUUID When implemented
       const list = await fetchGetV2AdminImpactStoriesId({
         pathParams: { id: params.id }
       });
