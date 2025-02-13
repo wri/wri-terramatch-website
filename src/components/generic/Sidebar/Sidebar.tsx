@@ -77,31 +77,33 @@ const Sidebar = () => {
   const renderNavItem = ({ path, icon, label, disabled }: NavItem) => {
     if (!isMobile) {
       return (
-        <Tooltip content={t(disabled ? "COMING SOON" : label)} placement="right" key={label}>
-          <a
-            className={classNames("flex cursor-pointer flex-col items-center gap-1 mobile:flex-row", {
-              "text-white":
-                (label !== "Dashboards" && router.asPath.includes(path)) ||
-                (label === "Dashboards" &&
-                  !router.asPath.includes("/dashboard/project-list") &&
-                  !router.asPath.includes("/dashboard/project-insights") &&
-                  !router.asPath.includes("/dashboard/learn-more") &&
-                  !router.asPath.includes("/dashboard/impact-story")),
-              "cursor-not-allowed opacity-50": disabled
-            })}
-            href={disabled ? undefined : path}
-          >
-            <Icon name={icon} className="h-8 w-8" />
-            <Text variant={isMobile ? "text-14-semibold" : "text-8"} className="text-center uppercase" containHtml>
-              {t(label)}
-            </Text>
-          </a>
-        </Tooltip>
+        <div key={label + "tooltip"}>
+          <Tooltip content={t(disabled ? "COMING SOON" : label)} placement="right">
+            <a
+              className={classNames("flex cursor-pointer flex-col items-center gap-1 mobile:flex-row", {
+                "text-white":
+                  (label !== "Dashboards" && router.asPath.includes(path)) ||
+                  (label === "Dashboards" &&
+                    !router.asPath.includes("/dashboard/project-list") &&
+                    !router.asPath.includes("/dashboard/project-insights") &&
+                    !router.asPath.includes("/dashboard/learn-more") &&
+                    !router.asPath.includes("/dashboard/impact-story")),
+                "cursor-not-allowed opacity-50": disabled
+              })}
+              href={disabled ? undefined : path}
+            >
+              <Icon name={icon} className="h-8 w-8" />
+              <Text variant={isMobile ? "text-14-semibold" : "text-8"} className="text-center uppercase" containHtml>
+                {t(label)}
+              </Text>
+            </a>
+          </Tooltip>
+        </div>
       );
     }
     return (
       <a
-        key={label}
+        key={label + "mobile"}
         className={classNames(
           "flex items-center justify-between mobile:border-b mobile:border-grey-1000 mobile:p-4 ",
           "mobile:w-full  mobile:!text-black",
