@@ -1,11 +1,13 @@
+// import { UploadFile } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 import { memo } from "react";
-import { ReferenceInput } from "react-admin";
+import { ReferenceInput, required } from "react-admin";
 
+import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
+import { maxFileSize } from "@/admin/utils/forms";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_IMPACT_STORY } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
-import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
-import { VARIANT_FILE_INPUT_IMPACT_STORY } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 
@@ -31,7 +33,6 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
 
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
-  console.log("initialValues", initialValues.orgUuid);
   return (
     <div>
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
@@ -82,7 +83,27 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
         />
 
         <div className="grid grid-cols-2 gap-x-4">
-          <FileInput
+          <FileUploadInput
+            source="banner"
+            label="Upload Banner Images"
+            validate={[required(), maxFileSize(1)]}
+            isRequired
+            accept={["image/png", "image/svg+xml", "image/jpeg"]}
+            placeholder={
+              <Box paddingY={2}>
+                {/* <UploadFile color="primary" /> */}
+                <Typography variant="subtitle1" color="primary" marginBottom={0.5} marginTop={2}>
+                  Click to upload or drag and drop
+                </Typography>
+                <Typography variant="caption">
+                  Recommended aspect ratio is 17:7
+                  <br />
+                  SVG, PNG or JPG (max. 1MB)
+                </Typography>
+              </Box>
+            }
+          />
+          {/* <FileInput
             onChange={handlers.handleFileChange}
             variant={VARIANT_FILE_INPUT_IMPACT_STORY}
             files={[]}
@@ -95,7 +116,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
                 documents or images to help reviewer
               </Text>
             }
-          />
+          /> */}
         </div>
 
         <div>

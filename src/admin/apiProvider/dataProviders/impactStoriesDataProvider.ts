@@ -1,20 +1,20 @@
 import { DataProvider } from "react-admin";
 
 import {
-  DeleteV2AdminImpactStoriesBulkDeleteError,
   DeleteV2AdminImpactStoriesIdError,
-  fetchDeleteV2AdminImpactStoriesBulkDelete,
   fetchDeleteV2AdminImpactStoriesId,
   //   fetchDeleteV2AdminReportingFrameworksUUID,
   fetchGetV2AdminImpactStories,
   fetchGetV2AdminImpactStoriesId,
   fetchPostV2AdminImpactStories,
+  fetchPostV2AdminImpactStoriesBulkDelete,
   fetchPutV2AdminImpactStoriesId,
   //   fetchGetV2AdminReportingFrameworks,
   //   fetchPostV2AdminReportingFrameworks,
   //   fetchPutV2AdminReportingFrameworksUUID,
   GetV2AdminImpactStoriesError,
   GetV2AdminImpactStoriesIdError,
+  PostV2AdminImpactStoriesBulkDeleteError,
   PostV2AdminImpactStoriesError,
   PutV2AdminImpactStoriesIdError
   //   GetV2AdminReportingFrameworksError
@@ -70,7 +70,7 @@ export const impactStoriesDataProvider: DataProvider = {
         body: params.data,
         pathParams: { id: params.id as string }
       });
-
+      console.log("Params", params.data);
       // @ts-expect-error
       return { data: { ...response.data, id: response.id } };
     } catch (err) {
@@ -91,12 +91,12 @@ export const impactStoriesDataProvider: DataProvider = {
   // @ts-ignore
   async deleteMany(_, params) {
     try {
-      await fetchDeleteV2AdminImpactStoriesBulkDelete({
+      await fetchPostV2AdminImpactStoriesBulkDelete({
         body: { uuids: params.ids.map(String) }
       });
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminImpactStoriesBulkDeleteError);
+      throw getFormattedErrorForRA(err as PostV2AdminImpactStoriesBulkDeleteError);
     }
   }
 };

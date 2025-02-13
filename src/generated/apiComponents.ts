@@ -39210,35 +39210,35 @@ export const useDeleteV2AdminImpactStoriesId = (
   );
 };
 
-export type DeleteV2AdminImpactStoriesBulkDeleteError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2AdminImpactStoriesBulkDeleteError = Fetcher.ErrorWrapper<undefined>;
 
-export type DeleteV2AdminImpactStoriesBulkDeleteRequestBody = {
+export type PostV2AdminImpactStoriesBulkDeleteRequestBody = {
   uuids: string[];
 };
 
-export type DeleteV2AdminImpactStoriesBulkDeleteVariables = {
-  body: DeleteV2AdminImpactStoriesBulkDeleteRequestBody;
+export type PostV2AdminImpactStoriesBulkDeleteVariables = {
+  body: PostV2AdminImpactStoriesBulkDeleteRequestBody;
 } & ApiContext["fetcherOptions"];
 
-export const fetchDeleteV2AdminImpactStoriesBulkDelete = (
-  variables: DeleteV2AdminImpactStoriesBulkDeleteVariables,
+export const fetchPostV2AdminImpactStoriesBulkDelete = (
+  variables: PostV2AdminImpactStoriesBulkDeleteVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
     undefined,
-    DeleteV2AdminImpactStoriesBulkDeleteError,
-    DeleteV2AdminImpactStoriesBulkDeleteRequestBody,
+    PostV2AdminImpactStoriesBulkDeleteError,
+    PostV2AdminImpactStoriesBulkDeleteRequestBody,
     {},
     {},
     {}
-  >({ url: "/v2/admin/impact-stories/bulk-delete", method: "delete", ...variables, signal });
+  >({ url: "/v2/admin/impact-stories/bulk-delete", method: "post", ...variables, signal });
 
-export const useDeleteV2AdminImpactStoriesBulkDelete = (
+export const usePostV2AdminImpactStoriesBulkDelete = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       undefined,
-      DeleteV2AdminImpactStoriesBulkDeleteError,
-      DeleteV2AdminImpactStoriesBulkDeleteVariables
+      PostV2AdminImpactStoriesBulkDeleteError,
+      PostV2AdminImpactStoriesBulkDeleteVariables
     >,
     "mutationFn"
   >
@@ -39246,11 +39246,11 @@ export const useDeleteV2AdminImpactStoriesBulkDelete = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<
     undefined,
-    DeleteV2AdminImpactStoriesBulkDeleteError,
-    DeleteV2AdminImpactStoriesBulkDeleteVariables
+    PostV2AdminImpactStoriesBulkDeleteError,
+    PostV2AdminImpactStoriesBulkDeleteVariables
   >(
-    (variables: DeleteV2AdminImpactStoriesBulkDeleteVariables) =>
-      fetchDeleteV2AdminImpactStoriesBulkDelete({ ...fetcherOptions, ...variables }),
+    (variables: PostV2AdminImpactStoriesBulkDeleteVariables) =>
+      fetchPostV2AdminImpactStoriesBulkDelete({ ...fetcherOptions, ...variables }),
     options
   );
 };

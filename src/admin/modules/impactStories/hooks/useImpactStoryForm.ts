@@ -9,7 +9,6 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const redirect = useRedirect();
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
-  console.log("current", currentData);
   const initialValues = {
     content: currentData?.content ? JSON.parse(currentData.content) : "",
     title: currentData?.title || "",
@@ -27,6 +26,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
 
   const handleFileChange = useCallback(
     (files: File[]) => {
+      console.log("file", files);
       setValue("thumbnail", files[0]);
     },
     [setValue]
@@ -63,7 +63,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const handlePreview = useCallback(() => {
     const values = getValues();
     notify("Preview mode activated");
-    console.log("Preview values:", values);
+    console.log("values", values);
   }, [getValues, notify]);
 
   const handleDelete = useCallback(async () => {
