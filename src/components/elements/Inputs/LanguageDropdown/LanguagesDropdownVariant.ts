@@ -51,5 +51,5 @@ export const VARIANT_LANGUAGES_DROPDOWN_SECONDARY: LanguagesDropdownVariant = {
   classContent:
     "relative w-fit mobile:px-1.5 mobile:py-0.5 mobile:bg-white mobile:bg-opacity-20 mobile:border mobile:border-white mobile:rounded-lg mobile:border-opacity-40",
   classContentOpen: "!opacity-100",
-  classTextDashboard: "text-12 whitespace-nowrap uppercase text-white "
+  classTextDashboard: "text-12 whitespace-nowrap uppercase text-white mobile:text-14"
 };
