@@ -11,7 +11,8 @@ module.exports = {
         md: "1400px",
         wide: "2500px",
         lg: "1900px",
-        sm: "1200px"
+        sm: "1200px",
+        mobile: { max: "1200px" }
       },
       width: {
         "fit-content": "fit-content"
