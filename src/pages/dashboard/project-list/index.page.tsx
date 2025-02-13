@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
 import Table from "@/components/elements/Table/Table";
@@ -36,24 +37,26 @@ export interface DashboardDataProps {
 }
 
 const ProjectList = () => {
+  const t = useT();
+
   const columns = [
     {
-      header: "Project",
+      header: t("Project"),
       accessorKey: "project",
       meta: { width: "23%" }
     },
     {
-      header: "Organization",
+      header: t("Organization"),
       accessorKey: "organization",
       meta: { width: "19%" }
     },
     {
-      header: "Programme",
+      header: t("Programme"),
       accessorKey: "programme",
       meta: { width: "13%" }
     },
     {
-      header: "Country",
+      header: t("Country"),
       accessorKey: "country",
       cell: (props: any) => {
         const { label, image } = props.getValue();
@@ -67,15 +70,15 @@ const ProjectList = () => {
       meta: { width: "13%" }
     },
     {
-      header: "Trees Planted",
+      header: t("Trees Planted"),
       accessorKey: "treesPlanted"
     },
     {
-      header: "Restoration Hectares",
+      header: t("Restoration Hectares"),
       accessorKey: "restorationHectares"
     },
     {
-      header: "Jobs Created",
+      header: t("Jobs Created"),
       accessorKey: "jobsCreated"
     },
     {
