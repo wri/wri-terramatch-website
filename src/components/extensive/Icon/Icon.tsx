@@ -233,7 +233,8 @@ export enum IconNames {
   SHARE_IMPACT_STORY = "share-impact-story",
   BRIEFCASE = "briefcase",
   EARTH_DASHBOARD = "earth-dashboard",
-  CHECK = "check"
+  CHECK = "check",
+  IC_MENU = "ic-menu"
 }
 
 export interface IconProps {
