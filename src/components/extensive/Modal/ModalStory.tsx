@@ -50,7 +50,12 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
             </Text>
             <Text variant="text-14-light" className="mt-4 leading-[normal] text-darkCustom">
               <b>Date Added: </b>
-              {data?.date}
+              {new Date(data?.date).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                timeZone: "UTC"
+              })}
             </Text>
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
               {data?.content}
