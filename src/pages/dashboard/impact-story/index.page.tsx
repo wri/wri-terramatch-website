@@ -19,15 +19,15 @@ const ImpactStory = () => {
           <FilterSearchBox
             onChange={() => {}}
             placeholder={t("Search by country or organization")}
-            suffix={<Button className="text-16-bold h-full rounded-full py-4 capitalize">Search</Button>}
+            suffix={<Button className="text-16-bold h-full rounded-full py-4 capitalize">{t("Search")}</Button>}
             variant={FILTER_SEARCH_IMPACT_STORY}
             className="w-[35%]"
           />
         </div>
         <Text variant="text-16-light" className="text-grey-500 lg:text-lg wide:text-2lg">
-          Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to
-          the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an
-          impact story, please email our support team at&nbsp;
+          {t(
+            "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at"
+          )}
           <a
             href="mailto:info@terramatch.org"
             target="_blank"
