@@ -13,6 +13,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     content: currentData?.content ? JSON.parse(currentData.content) : "",
     title: currentData?.title || "",
     date: currentData?.date || "",
+    thumbnail: currentData?.thumbnail,
     categories: currentData?.category ? JSON.parse(currentData.category) : "",
     orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
   };

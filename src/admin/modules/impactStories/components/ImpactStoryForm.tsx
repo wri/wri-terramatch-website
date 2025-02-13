@@ -138,6 +138,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <FileUploadInput
             source="thumbnail"
             label="Upload Impact Story Images"
+            defaultValue={initialValues.thumbnail}
             validate={[required(), maxFileSize(1)]}
             isRequired
             accept={["image/png", "image/svg+xml", "image/jpeg"]}
