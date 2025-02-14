@@ -13,11 +13,13 @@ class QuillEditor extends Component<QuillEditorProps> {
   private quill?: Quill;
 
   componentDidMount() {
-    this.initializeQuill();
+    if (typeof window !== "undefined") {
+      this.initializeQuill();
+    }
   }
 
   componentDidUpdate(prevProps: QuillEditorProps) {
-    if (prevProps.value !== this.props.value && this.quill) {
+    if (this.quill && prevProps.value !== this.props.value) {
       this.quill.root.innerHTML = this.props.value || "";
     }
   }
@@ -32,7 +34,7 @@ class QuillEditor extends Component<QuillEditorProps> {
             ["bold", "italic", "underline"],
             ["link", "blockquote"],
             [{ list: "ordered" }, { list: "bullet" }],
-            ["video"] // Add video button
+            ["video"]
           ],
           videoResize: {}
         }
