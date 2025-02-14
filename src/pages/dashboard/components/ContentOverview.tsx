@@ -14,9 +14,9 @@ import {
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
+// import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
-import ModalStory from "@/components/extensive/Modal/ModalStory";
+// import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
@@ -297,7 +297,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   };
 
   const ModalStoryOpen = (uuid: string) => {
-    openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} />);
+    // openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} />);
   };
 
   return (

@@ -7,7 +7,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { CARD_IMPACT_STORY_MOCKED_DATA } from "../../mockedData/impactStory";
-import SectionShare from "../components/SectionShare";
+// import SectionShare from "../components/SectionShare";
 
 const ImpactStoryLanding = () => {
   const router = useRouter();
@@ -29,9 +29,9 @@ const ImpactStoryLanding = () => {
         </button>
       </div>
       <div className="flex h-full w-full flex-1 overflow-hidden">
-        <div className="absolute ml-13 mt-[20vh] w-1/6">
+        {/* <div className="absolute ml-13 mt-[20vh] w-1/6">
           <SectionShare uuid={uuid} className="my-auto" />
-        </div>
+        </div> */}
         <div className="flex-1 overflow-y-auto p-8">
           <div className="mx-auto w-2/4">
             <Text variant="text-40-bold" className="leading-[normal] text-darkCustom">

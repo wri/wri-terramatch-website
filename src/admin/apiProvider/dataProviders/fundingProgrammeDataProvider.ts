@@ -152,7 +152,6 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
           }
         });
       }
-
       await handleUploads(params, uploadKeys, {
         //@ts-ignore
         uuid: resp.data.uuid,

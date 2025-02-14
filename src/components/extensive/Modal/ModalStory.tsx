@@ -4,21 +4,31 @@ import { twMerge as tw } from "tailwind-merge";
 import Text from "@/components/elements/Text/Text";
 import { useModalContext } from "@/context/modal.provider";
 import SectionShare from "@/pages/dashboard/impact-story/components/SectionShare";
-import { CARD_IMPACT_STORY_MOCKED_DATA } from "@/pages/dashboard/mockedData/impactStory";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBase, ModalProps } from "./Modal";
 import { ModalId } from "./ModalConst";
 
+export interface ImpactStoryData {
+  title: string;
+  date: string;
+  content: string;
+  category: string[];
+  thumbnail?: string;
+  organization?: {
+    name?: string;
+    country?: string;
+  };
+  status: string;
+}
+
 export interface ModalStoryProps extends ModalProps {
-  uuid: string;
+  data: ImpactStoryData;
   preview?: boolean;
 }
 
-const ModalStory = ({ uuid, className, preview, ...rest }: ModalStoryProps) => {
+const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
   const { closeModal } = useModalContext();
-  const data = CARD_IMPACT_STORY_MOCKED_DATA.find(item => item.uuid === uuid);
-
   const handleClose = () => {
     closeModal(ModalId.MODAL_STORY);
   };
@@ -33,21 +43,30 @@ const ModalStory = ({ uuid, className, preview, ...rest }: ModalStoryProps) => {
       </button>
       <div className="flex w-full flex-col gap-2 overflow-hidden px-28">
         <div className="flex gap-8 overflow-y-auto pr-10">
-          <SectionShare uuid={uuid} className="min-w-max" />
+          <SectionShare data={data.organization} className="min-w-max" />
           <div className="w-wekit h-max pb-15">
             <Text variant="text-40-bold" className="leading-[normal] text-darkCustom">
               {data?.title}
             </Text>
             <Text variant="text-14-light" className="mt-4 leading-[normal] text-darkCustom">
               <b>Date Added: </b>
-              {data?.date}
+              {new Date(data?.date).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                timeZone: "UTC"
+              })}
             </Text>
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
-              {data?.description}
+              {data?.content}
             </Text>
-            <When condition={data?.image}>
+            <When condition={data?.thumbnail}>
               <div className="mt-8">
-                <img src={data?.image} alt={data?.title} className="h-[45vh] w-full rounded-2xl lg:h-[50vh]" />
+                <img
+                  src={data.thumbnail}
+                  alt={data.title}
+                  className="h-[45vh] w-full rounded-2xl object-cover lg:h-[50vh]"
+                />
               </div>
             </When>
           </div>
