@@ -11,11 +11,93 @@ export type ANRDto = {
   treeCount: number;
 };
 
-export type ProjectFullDto = {
+export type ProjectLightDto = {
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * Indicates that this resource does not have the full resource definition.
+   *
+   * @example true
+   */
+  lightResource: boolean;
+};
+
+export type SiteLightDto = {
   /**
    * Framework key for this project
    */
   frameworkKey: Record<string, any> | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * Indicates that this resource does not have the full resource definition.
+   *
+   * @example true
+   */
+  lightResource: boolean;
+};
+
+export type ProjectFullDto = {
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
   /**
    * Framework UUID. Will be removed after the FE is refactored to not use these IDs
    *
@@ -52,7 +134,7 @@ export type ProjectFullDto = {
    *
    * @example false
    */
-  lightResource: Record<string, any>;
+  lightResource: boolean;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -62,6 +144,7 @@ export type ProjectFullDto = {
   continent: string | null;
   country: string | null;
   states: string[] | null;
+  projectCountyDistrict: string | null;
   /**
    * @format date-time
    */
@@ -106,6 +189,7 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  directSeedingSurvivalRate: number | null;
 };
 
 export type SiteFullDto = {
@@ -141,7 +225,7 @@ export type SiteFullDto = {
    *
    * @example false
    */
-  lightResource: Record<string, any>;
+  lightResource: boolean;
   totalSiteReports: number;
 };
 

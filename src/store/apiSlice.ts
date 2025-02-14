@@ -1,11 +1,18 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { QueryClient } from "@tanstack/react-query";
+import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
-import { EstablishmentsTreesDto, ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  EstablishmentsTreesDto,
+  ProjectFullDto,
+  ProjectLightDto,
+  SiteFullDto,
+  SiteLightDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import {
   LoginDto,
@@ -33,6 +40,11 @@ export type Method = (typeof METHODS)[number];
 
 export type ApiPendingStore = {
   [key in Method]: Record<string, Pending>;
+};
+
+// This one is a map of resource -> queryString -> pageAfter (pagination cursor) -> list of ids from that page.
+export type ApiFilteredIndexStore = {
+  [key in ResourceType]: Record<string, Record<string, string[]>>;
 };
 
 type AttributeValue = string | number | boolean;
@@ -72,14 +84,22 @@ export const RESOURCES = [
   "users"
 ] as const;
 
+// The store for entities may contain either light DTOs or full DTOs depending on where the
+// data came from. This type allows us to specify that the shape of the objects in the store
+// conform to the light DTO and all full DTO members are optional. The connections that use
+// this section of the store should explicitly cast their member object to either the light
+// or full version depending on what the connection is expected to produce. See Entity.ts connection
+// for more.
+type EntityType<LightDto, FullDto> = LightDto & Partial<Omit<FullDto, keyof LightDto>>;
+
 type ApiResources = {
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
-  projects: StoreResourceMap<ProjectFullDto>;
-  sites: StoreResourceMap<SiteFullDto>;
+  projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
+  sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
   users: StoreResourceMap<UserDto>;
 };
 
@@ -92,15 +112,26 @@ export type JsonApiResource = {
   relationships?: { [key: string]: { data: Relationship | Relationship[] } };
 };
 
+export type ResponseMeta = {
+  page?: {
+    cursor: string;
+    total: number;
+  };
+};
+
 export type JsonApiResponse = {
   data: JsonApiResource[] | JsonApiResource;
   included?: JsonApiResource[];
+  meta?: ResponseMeta;
 };
 
 export type ApiDataStore = ApiResources & {
   meta: {
     /** Stores the state of in-flight and failed requests */
     pending: ApiPendingStore;
+
+    /** Stores the IDs that were returned for paginated, filtered index queries */
+    filterIndexIds: ApiFilteredIndexStore;
 
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
@@ -128,7 +159,12 @@ export const INITIAL_STATE = {
     pending: METHODS.reduce((acc: Partial<ApiPendingStore>, method) => {
       acc[method] = {};
       return acc;
-    }, {}) as ApiPendingStore
+    }, {}) as ApiPendingStore,
+
+    filterIndexIds: RESOURCES.reduce(
+      (acc, resource) => ({ ...acc, [resource]: {} }),
+      {} as Partial<ApiFilteredIndexStore>
+    )
   }
 } as ApiDataStore;
 
@@ -148,8 +184,10 @@ type ApiFetchSucceededProps = ApiFetchStartingProps & {
 // This may get more sophisticated in the future, but for now this is good enough
 type PruneCacheProps = {
   resource: ResourceType;
-  // If ids is null, the whole cache for this resource is removed.
+  // If ids and searchQuery are null, the whole cache for this resource is removed.
   ids?: string[];
+  // If searchQuery is specified, the search index meta cache is removed for this query.
+  searchQuery?: string;
 };
 
 const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
@@ -166,6 +204,9 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
 
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
+
+const isPaginatedResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
+  method === "GET" && response.meta?.page != null && response.meta.page.total > 0;
 
 export const apiSlice = createSlice({
   name: "api",
@@ -185,6 +226,24 @@ export const apiSlice = createSlice({
 
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
+      // All response objects from the v3 api conform to JsonApiResponse
+      let { data, included } = response;
+      if (!isArray(data)) data = [data];
+
+      if (isPaginatedResponse(action.payload)) {
+        const search = new URL(url).searchParams;
+        const pageAfter = search.get("page[after]");
+        search.delete("page[after]");
+        search.sort();
+        const searchQuery = search.toString();
+
+        const { type } = data[0];
+        let cache = state.meta.filterIndexIds[type][searchQuery];
+        if (cache == null) cache = state.meta.filterIndexIds[type][searchQuery] = {};
+
+        cache[pageAfter ?? ""] = data.map(({ id }) => id);
+      }
+
       if (isLogin(action.payload)) {
         // After a successful login, clear the entire cache; we want all mounted components to
         // re-fetch their data with the new login credentials.
@@ -193,9 +252,6 @@ export const apiSlice = createSlice({
         delete state.meta.pending[method][url];
       }
 
-      // All response objects from the v3 api conform to JsonApiResponse
-      let { data, included } = response;
-      if (!isArray(data)) data = [data];
       if (included != null) {
         // For the purposes of this reducer, data and included are the same: they both get merged
         // into the data cache.
@@ -206,14 +262,36 @@ export const apiSlice = createSlice({
         // there isn't a way to enforce that with TS against this dynamic data structure, so we
         // use the dreaded any.
         const { type, id, attributes, relationships: responseRelationships } = resource;
-        const storeResource: StoreResource<any> = { attributes };
-        if (responseRelationships != null) {
-          storeResource.relationships = {};
-          for (const [key, { data }] of Object.entries(responseRelationships)) {
-            storeResource.relationships[key] = Array.isArray(data) ? data : [data];
+        let useResponseResource = true;
+
+        const cached = state[type][id] as StoreResource<any>;
+        if (cached != null) {
+          const { updatedAt: cachedUpdatedAt, lightResource: cachedLightResource } = cached.attributes;
+          const { updatedAt: responseUpdatedAt, lightResource: responseLightResource } = attributes;
+          if (
+            cachedUpdatedAt != null &&
+            responseUpdatedAt != null &&
+            responseLightResource === true &&
+            cachedLightResource === false
+          ) {
+            // if the cached value in the store is a full resource and the resource in the response
+            // is a light resource, we only want to replace what's in the store if the updatedAt
+            // stamp on the response resource is newer.
+            useResponseResource =
+              compareDesc(new Date(responseUpdatedAt as string), new Date(cachedUpdatedAt as string)) > 0;
           }
         }
-        state[type][id] = storeResource;
+
+        if (useResponseResource) {
+          const storeResource: StoreResource<any> = { attributes };
+          if (responseRelationships != null) {
+            storeResource.relationships = {};
+            for (const [key, { data }] of Object.entries(responseRelationships)) {
+              storeResource.relationships[key] = Array.isArray(data) ? data : [data];
+            }
+          }
+          state[type][id] = storeResource;
+        }
       }
 
       if (url.endsWith("users/v3/users/me") && method === "GET") {
@@ -222,13 +300,20 @@ export const apiSlice = createSlice({
     },
 
     pruneCache: (state, action: PayloadAction<PruneCacheProps>) => {
-      const { resource, ids } = action.payload;
-      if (ids == null) {
+      const { resource, ids, searchQuery } = action.payload;
+      if (ids == null && searchQuery == null) {
         state[resource] = {};
-      } else {
+        return;
+      }
+
+      if (ids != null) {
         for (const id of ids) {
           delete state[resource][id];
         }
+      }
+
+      if (searchQuery != null) {
+        delete state.meta.filterIndexIds[resource][searchQuery];
       }
     },
 
@@ -295,6 +380,10 @@ export default class ApiSlice {
 
   static pruneCache(resource: ResourceType, ids?: string[]) {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, ids }));
+  }
+
+  static pruneIndex(resource: ResourceType, searchQuery: string) {
+    this.redux.dispatch(apiSlice.actions.pruneCache({ resource, searchQuery }));
   }
 
   static clearApiCache() {

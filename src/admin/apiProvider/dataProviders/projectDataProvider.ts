@@ -1,6 +1,6 @@
 import { DataProvider, HttpError } from "react-admin";
 
-import { loadProject } from "@/connections/Entity";
+import { loadFullProject } from "@/connections/Entity";
 import {
   DeleteV2AdminProjectsUUIDError,
   fetchDeleteV2AdminProjectsUUID,
@@ -31,12 +31,12 @@ export const projectDataProvider: DataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
-    const { entity: project, fetchFailure } = await loadProject({ uuid: params.id });
+    const { entity: project, fetchFailure } = await loadFullProject({ uuid: params.id });
     if (fetchFailure != null) {
       throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
     }
 
-    return { data: { ...project, uuid: params.id, id: params.id } };
+    return { data: { ...project, id: project!.uuid } };
   },
 
   // @ts-ignore
