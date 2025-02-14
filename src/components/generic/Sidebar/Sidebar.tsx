@@ -132,7 +132,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between bg-blueCustom-700 p-3 mobile:relative mobile:z-10 mobile:h-15 mobile:flex-row mobile:items-center">
+    <div className="flex flex-col justify-between bg-blueCustom-700 p-3 mobile:relative mobile:z-20 mobile:h-15 mobile:flex-row mobile:items-center">
       <div className="flex flex-col items-center gap-8 text-darkCustom-200 mobile:flex-row">
         <a className="mt-4 mb-10 cursor-pointer mobile:m-0" href="/home">
           <Icon name={IconNames.TERRAFUND_lOGO_MINI} className="mobile:h-6 mobile:w-6" />

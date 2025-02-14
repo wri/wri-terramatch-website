@@ -281,7 +281,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             className={classNames(
               "flexl-col flex w-full max-w-full transform items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
               {
-                "mobile:-top-0": isFiltersOpen,
+                "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
                 "mobile:-top-full": !isFiltersOpen
               }
             )}
@@ -414,15 +414,26 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[5] w-full"
               />
             </div>
-            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center">
-              <Button
-                variant={isMobile ? "secondary" : "primary"}
-                className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
-                onClick={resetValues}
-                disabled={isProjectPage}
-              >
-                {t("Clear Filters")}
-              </Button>
+            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
+              <When condition={isMobile}>
+                <Button
+                  variant="primary"
+                  className="text-14-semibold min-h-10 w-full whitespace-nowrap p-1 py-2 text-white disabled:opacity-70"
+                  onClick={resetValues}
+                  disabled={isProjectPage}
+                >
+                  {t("Clear Filters")}
+                </Button>
+              </When>
+              <When condition={!isMobile}>
+                <button
+                  className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
+                  onClick={resetValues}
+                  disabled={isProjectPage}
+                >
+                  {t("Clear Filters")}
+                </button>
+              </When>
               <When condition={isProjectListPage}>
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
