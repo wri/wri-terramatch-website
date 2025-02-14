@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import dynamic from "next/dynamic";
 import { twMerge as tw } from "tailwind-merge";
 
 import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
@@ -6,8 +7,11 @@ import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocialImpactStory from "@/components/extensive/Icon/IconSocialImpactStory";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalShareImpactStory from "@/components/extensive/Modal/ModalShareImpactStory";
 import { useModalContext } from "@/context/modal.provider";
+
+const ModalShareImpactStory = dynamic(() => import("@/components/extensive/Modal/ModalShareImpactStory"), {
+  ssr: false
+});
 
 import ShareSection from "./ShareSection";
 
