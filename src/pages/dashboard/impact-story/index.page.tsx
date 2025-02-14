@@ -26,7 +26,7 @@ const ImpactStory = () => {
         </div>
         <Text variant="text-16-light" className="text-grey-500 lg:text-lg wide:text-2lg">
           {t(
-            "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at"
+            "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at "
           )}
           &nbsp;
           <a

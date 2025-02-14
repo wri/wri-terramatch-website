@@ -39255,6 +39255,192 @@ export const usePostV2AdminImpactStoriesBulkDelete = (
   );
 };
 
+export type GetV2ImpactStoriesQueryParams = {
+  /**
+   * Search term to use on the collection
+   */
+  search?: string;
+  /**
+   * Multiple filters can be applied. Syntax: ?filter[status]=published
+   */
+  filter?: string;
+  /**
+   * Sorting can be applied, default is ascending or use - for descending. Example: ?sort=-created_at
+   */
+  sort?: string;
+  /**
+   * Number of results per page
+   */
+  per_page?: number;
+  /**
+   * Page number for results
+   */
+  page?: number;
+};
+
+export type GetV2ImpactStoriesError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ImpactStoriesResponse = {
+  data?: {
+    /**
+     * @example 123e4567-e89b-12d3-a456-426614174000
+     */
+    uuid?: string;
+    /**
+     * @example Empowering Local Communities
+     */
+    title?: string;
+    /**
+     * @example This is an inspiring story of impact...
+     */
+    content?: string;
+    /**
+     * @example published
+     */
+    status?: "draft" | "published" | "archived";
+    /**
+     * @format date-time
+     * @example 2024-09-02T15:04:05Z
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     * @example 2024-09-02T15:04:05Z
+     */
+    updated_at?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    from?: number;
+    to?: number;
+    current_page?: number;
+    last_page?: number;
+    per_page?: number;
+    total?: number;
+    path?: string;
+    links?: {
+      url?: string;
+      label?: string;
+      active?: boolean;
+    }[];
+  };
+};
+
+export type GetV2ImpactStoriesVariables = {
+  queryParams?: GetV2ImpactStoriesQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Fetches a list of impact stories with filtering and sorting options.
+ */
+export const fetchGetV2ImpactStories = (variables: GetV2ImpactStoriesVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2ImpactStoriesResponse, GetV2ImpactStoriesError, undefined, {}, GetV2ImpactStoriesQueryParams, {}>({
+    url: "/v2/impact-stories",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+/**
+ * Fetches a list of impact stories with filtering and sorting options.
+ */
+export const useGetV2ImpactStories = <TData = GetV2ImpactStoriesResponse>(
+  variables: GetV2ImpactStoriesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ImpactStoriesResponse, GetV2ImpactStoriesError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ImpactStoriesResponse, GetV2ImpactStoriesError, TData>(
+    queryKeyFn({ path: "/v2/impact-stories", operationId: "getV2ImpactStories", variables }),
+    ({ signal }) => fetchGetV2ImpactStories({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2ImpactStoriesIdPathParams = {
+  /**
+   * UUID of the impact story
+   */
+  id: string;
+};
+
+export type GetV2ImpactStoriesIdError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2ImpactStoriesIdResponse = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type GetV2ImpactStoriesIdVariables = {
+  pathParams: GetV2ImpactStoriesIdPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves details of a single impact story.
+ */
+export const fetchGetV2ImpactStoriesId = (variables: GetV2ImpactStoriesIdVariables, signal?: AbortSignal) =>
+  apiFetch<GetV2ImpactStoriesIdResponse, GetV2ImpactStoriesIdError, undefined, {}, {}, GetV2ImpactStoriesIdPathParams>({
+    url: "/v2/impact-stories/{id}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+/**
+ * Retrieves details of a single impact story.
+ */
+export const useGetV2ImpactStoriesId = <TData = GetV2ImpactStoriesIdResponse>(
+  variables: GetV2ImpactStoriesIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2ImpactStoriesIdResponse, GetV2ImpactStoriesIdError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2ImpactStoriesIdResponse, GetV2ImpactStoriesIdError, TData>(
+    queryKeyFn({ path: "/v2/impact-stories/{id}", operationId: "getV2ImpactStoriesId", variables }),
+    ({ signal }) => fetchGetV2ImpactStoriesId({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/tree-species/{entity}/{UUID}";
@@ -40010,4 +40196,14 @@ export type QueryOperation =
       path: "/v2/admin/impact-stories/{id}";
       operationId: "getV2AdminImpactStoriesId";
       variables: GetV2AdminImpactStoriesIdVariables;
+    }
+  | {
+      path: "/v2/impact-stories";
+      operationId: "getV2ImpactStories";
+      variables: GetV2ImpactStoriesVariables;
+    }
+  | {
+      path: "/v2/impact-stories/{id}";
+      operationId: "getV2ImpactStoriesId";
+      variables: GetV2ImpactStoriesIdVariables;
     };
