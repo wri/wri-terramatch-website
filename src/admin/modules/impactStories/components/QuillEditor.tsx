@@ -1,7 +1,11 @@
-import "quill/dist/quill.snow.css";
-
-import Quill from "quill";
 import React, { Component, createRef } from "react";
+
+let Quill: any = null;
+
+if (typeof window !== "undefined") {
+  Quill = require("quill").default;
+  require("quill/dist/quill.snow.css");
+}
 
 interface QuillEditorProps {
   value?: string;
@@ -10,10 +14,10 @@ interface QuillEditorProps {
 
 class QuillEditor extends Component<QuillEditorProps> {
   private editorRef = createRef<HTMLDivElement>();
-  private quill?: Quill;
+  private quill?: any;
 
   componentDidMount() {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && Quill) {
       this.initializeQuill();
     }
   }
@@ -25,7 +29,7 @@ class QuillEditor extends Component<QuillEditorProps> {
   }
 
   initializeQuill() {
-    if (this.editorRef.current && !this.quill) {
+    if (this.editorRef.current && !this.quill && Quill) {
       this.quill = new Quill(this.editorRef.current, {
         theme: "snow",
         modules: {
@@ -35,8 +39,7 @@ class QuillEditor extends Component<QuillEditorProps> {
             ["link", "blockquote"],
             [{ list: "ordered" }, { list: "bullet" }],
             ["video"]
-          ],
-          videoResize: {}
+          ]
         }
       });
 
