@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
 <div
-  className="mx-auto flex max-w-[82vw] flex-wrap gap-8"
+  className="gap-8, mx-auto flex max-w-[82vw] flex-wrap mobile:m-0 mobile:w-full mobile:max-w-[100%]"
 >
   <div
     className="min-w-[500px] flex-1 space-y-8"
@@ -20,6 +20,9 @@ exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
           card title
         </p>
       </div>
+      <div
+        className="delay-400 duration-0 h-auto transition-all ease-in-out"
+      />
     </div>
   </div>
   <div
@@ -38,6 +41,9 @@ exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
           card title
         </p>
       </div>
+      <div
+        className="delay-400 duration-0 h-auto transition-all ease-in-out"
+      />
     </div>
   </div>
 </div>

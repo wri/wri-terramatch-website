@@ -17,6 +17,9 @@ exports[`Storyshots Components/Extensive/Page/Column Default 1`] = `
         card title
       </p>
     </div>
+    <div
+      className="delay-400 duration-0 h-auto transition-all ease-in-out"
+    />
   </div>
   <div
     className="w-full rounded-xl border border-neutral-200 bg-white p-8"
@@ -31,6 +34,9 @@ exports[`Storyshots Components/Extensive/Page/Column Default 1`] = `
         card title
       </p>
     </div>
+    <div
+      className="delay-400 duration-0 h-auto transition-all ease-in-out"
+    />
   </div>
   <div
     className="w-full rounded-xl border border-neutral-200 bg-white p-8"
@@ -45,6 +51,9 @@ exports[`Storyshots Components/Extensive/Page/Column Default 1`] = `
         card title
       </p>
     </div>
+    <div
+      className="delay-400 duration-0 h-auto transition-all ease-in-out"
+    />
   </div>
 </div>
 `;

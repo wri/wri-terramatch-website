@@ -20,6 +20,9 @@ exports[`Storyshots Components/Extensive/Page/Body Default 1`] = `
           card title
         </p>
       </div>
+      <div
+        className="delay-400 duration-0 h-auto transition-all ease-in-out"
+      />
     </div>
   </div>
   <div
@@ -38,6 +41,9 @@ exports[`Storyshots Components/Extensive/Page/Body Default 1`] = `
           card title
         </p>
       </div>
+      <div
+        className="delay-400 duration-0 h-auto transition-all ease-in-out"
+      />
     </div>
   </div>
 </div>
