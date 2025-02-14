@@ -26,17 +26,20 @@ import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
-import {
-  MAP_TOOLTIP,
-  RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
-  TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
-  TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
-  TOTAL_NUMBER_OF_SITES_TOOLTIP
-} from "../constants/tooltips";
 import { CARD_IMPACT_STORY_MOCKED_DATA } from "../mockedData/impactStory";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
 
+const TOTAL_NUMBER_OF_SITES_TOOLTIP =
+  "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons.";
+const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
+  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
+const MAP_TOOLTIP =
+  "Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos.";
+const TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP =
+  "Total hectares under restoration broken down by target land use types.";
+const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
+  "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare.";
 const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
 

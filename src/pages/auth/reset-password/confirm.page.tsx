@@ -7,9 +7,10 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { usePostAuthReset } from "@/generated/apiComponents";
+import { sendRequestPasswordReset, useRequestPassword } from "@/connections/ResetPassword";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useQueryString } from "@/hooks/useQueryString";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 const SignupConfirmPage = () => {
   const t = useT();
@@ -23,17 +24,17 @@ const SignupConfirmPage = () => {
     if (email == null) router.push(`${baseAuthPath}/reset-password`);
   });
 
-  const { mutateAsync: requestResetPassword } = usePostAuthReset({
-    onSuccess(_, variables) {
+  const [, { isSuccess }] = useRequestPassword();
+
+  useValueChanged(isSuccess, () => {
+    if (isSuccess) {
       timer.reset();
       timer.start();
     }
   });
 
   const handleResend = async () =>
-    requestResetPassword({
-      body: { email_address: email, callback_url: window.location.origin + `${baseAuthPath}/reset-password/` }
-    });
+    sendRequestPasswordReset(email, window.location.origin + `${baseAuthPath}/reset-password`);
 
   return (
     <BackgroundLayout>

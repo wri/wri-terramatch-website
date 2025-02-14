@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { usePatchAuthChange } from "@/generated/apiComponents";
+import { useResetPassword } from "@/connections/ResetPassword";
 
 import ResetPasswordForm from "./components/ResetPasswordForm";
 
@@ -21,11 +21,13 @@ export type ResetPasswordData = yup.InferType<typeof ResetPasswordDataSchema>;
 const ResetPasswordPage = () => {
   const router = useRouter();
   const t = useT();
-
-  const { mutateAsync: requestResetPassword, isLoading, error, isSuccess } = usePatchAuthChange();
   const form = useForm<ResetPasswordData>({
     resolver: yupResolver(ResetPasswordDataSchema),
     mode: "all"
+  });
+
+  const [, { isLoading, requestFailed, isSuccess, resetPassword }] = useResetPassword({
+    token: router.query.token as string
   });
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });
@@ -44,12 +46,7 @@ const ResetPasswordPage = () => {
       if (!router.query.token) {
         router.push("/");
       } else {
-        await requestResetPassword({
-          body: {
-            token: (router.query.token as string)!,
-            password: data.password
-          }
-        });
+        resetPassword(data.password);
       }
     } catch (err: any) {
       if (err.errors.length > 0) {
@@ -66,7 +63,7 @@ const ResetPasswordPage = () => {
           form={form}
           loading={isLoading}
           handleSave={handleSave}
-          apiError={error}
+          apiError={requestFailed}
           success={isSuccess}
         />
       </ContentLayout>

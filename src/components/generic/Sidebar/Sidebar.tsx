@@ -3,16 +3,32 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import React from "react";
 
-import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
+import { VARIANT_LANGUAGES_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdownVariant";
+import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
+import { VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdownVariant";
 import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { logout, useLogin } from "@/connections/Login";
+import { useLogin } from "@/connections/Login";
+import { useMyUser, ValidLocale } from "@/connections/User";
 
 const Sidebar = () => {
   const router = useRouter();
   const [, { isLoggedIn }] = useLogin();
+  const [, { setLocale }] = useMyUser();
+
+  const changeLanguageHandler = (lang: string) => {
+    if (setLocale != null) {
+      setLocale(lang as ValidLocale);
+      window.location.reload();
+    } else {
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
 
   const t = useT();
 
@@ -93,22 +109,10 @@ const Sidebar = () => {
           </a>
         </Tooltip>
       </div>
-      <Menu
-        className="flex w-full justify-center"
-        placement={MENU_PLACEMENT_RIGHT_TOP}
-        menu={[
-          {
-            id: "1",
-            render: () => (
-              <Text variant="text-14" className="flex cursor-pointer items-center" onClick={logout}>
-                {isLoggedIn ? t("Sign out") : t("Sign in")}
-              </Text>
-            )
-          }
-        ]}
-      >
-        <Icon name={IconNames.IC_USER} className="h-8 w-8" />
-      </Menu>
+      <div className="flex flex-col items-center justify-center gap-4 pb-7">
+        <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} onChange={changeLanguageHandler} />
+        <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />
+      </div>
     </div>
   );
 };

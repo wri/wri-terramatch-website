@@ -28,42 +28,65 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         className="absolute top-4 left-[50%] translate-x-[-50%]"
       >
         <div
-          className="block sm:hidden relative w-fit"
-          data-headlessui-state=""
+          onKeyDownCapture={[Function]}
         >
-          <button
-            aria-expanded={false}
-            className="flex items-center justify-between p-2"
+          <div
+            className="block sm:hidden relative w-fit"
             data-headlessui-state=""
-            id="headlessui-popover-button-:r40:"
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            type="button"
           >
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
-                }
-              }
-            />
-            <span
-              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+            <button
+              aria-expanded={false}
+              className="flex items-center justify-between p-2"
+              data-headlessui-state=""
+              id="headlessui-popover-button-:r40:"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              type="button"
             >
-              English
-            </span>
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 8,
+              <div
+                className="flex items-start gap-2"
+              >
+                <div>
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 16,
+                      }
+                    }
+                  />
+                  <span
+                    className="hidden"
+                  >
+                    En
+                  </span>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 8,
+                    }
+                  }
+                />
+              </div>
+              <span
+                className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+              >
+                English
+              </span>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
                 }
-              }
-            />
-          </button>
+              />
+            </button>
+          </div>
         </div>
       </div>
       <div>
@@ -122,42 +145,119 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         </a>
       </div>
       <div
-        className="hidden sm:block relative w-fit"
-        data-headlessui-state=""
+        onKeyDownCapture={[Function]}
       >
-        <button
-          aria-expanded={false}
-          className="flex items-center justify-between p-2"
+        <div
+          className="relative w-fit"
           data-headlessui-state=""
-          id="headlessui-popover-button-:r45:"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          type="button"
         >
-          <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 16,
-              }
-            }
-          />
-          <span
-            className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+          <button
+            aria-expanded={false}
+            className="flex items-center justify-between p-2"
+            data-headlessui-state=""
+            id="headlessui-popover-button-:r45:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            type="button"
           >
-            English
-          </span>
-          <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 8,
+            <div
+              className="flex items-center gap-2"
+            >
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 16,
+                  }
+                }
+              />
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
+                }
+              />
+            </div>
+            <span
+              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+            >
+              MY ACCOUNT
+            </span>
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
               }
-            }
-          />
-        </button>
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        onKeyDownCapture={[Function]}
+      >
+        <div
+          className="hidden sm:block relative w-fit"
+          data-headlessui-state=""
+        >
+          <button
+            aria-expanded={false}
+            className="flex items-center justify-between p-2"
+            data-headlessui-state=""
+            id="headlessui-popover-button-:r4a:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            type="button"
+          >
+            <div
+              className="flex items-start gap-2"
+            >
+              <div>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 16,
+                    }
+                  }
+                />
+                <span
+                  className="hidden"
+                >
+                  En
+                </span>
+              </div>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
+                }
+              />
+            </div>
+            <span
+              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+            >
+              English
+            </span>
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
+              }
+            />
+          </button>
+        </div>
       </div>
     </div>
     <button
@@ -206,42 +306,65 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
         className="absolute top-4 left-[50%] translate-x-[-50%]"
       >
         <div
-          className="block sm:hidden relative w-fit"
-          data-headlessui-state=""
+          onKeyDownCapture={[Function]}
         >
-          <button
-            aria-expanded={false}
-            className="flex items-center justify-between p-2"
+          <div
+            className="block sm:hidden relative w-fit"
             data-headlessui-state=""
-            id="headlessui-popover-button-:r4a:"
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            type="button"
           >
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
-                }
-              }
-            />
-            <span
-              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+            <button
+              aria-expanded={false}
+              className="flex items-center justify-between p-2"
+              data-headlessui-state=""
+              id="headlessui-popover-button-:r4f:"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              type="button"
             >
-              English
-            </span>
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 8,
+              <div
+                className="flex items-start gap-2"
+              >
+                <div>
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 16,
+                      }
+                    }
+                  />
+                  <span
+                    className="hidden"
+                  >
+                    En
+                  </span>
+                </div>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 8,
+                    }
+                  }
+                />
+              </div>
+              <span
+                className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+              >
+                English
+              </span>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
                 }
-              }
-            />
-          </button>
+              />
+            </button>
+          </div>
         </div>
       </div>
       <div>
@@ -346,42 +469,65 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
         </a>
       </div>
       <div
-        className="hidden sm:block relative w-fit"
-        data-headlessui-state=""
+        onKeyDownCapture={[Function]}
       >
-        <button
-          aria-expanded={false}
-          className="flex items-center justify-between p-2"
+        <div
+          className="hidden sm:block relative w-fit"
           data-headlessui-state=""
-          id="headlessui-popover-button-:r4f:"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          type="button"
         >
-          <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 16,
-              }
-            }
-          />
-          <span
-            className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+          <button
+            aria-expanded={false}
+            className="flex items-center justify-between p-2"
+            data-headlessui-state=""
+            id="headlessui-popover-button-:r4k:"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            type="button"
           >
-            English
-          </span>
-          <div
-            style={
-              Object {
-                "height": undefined,
-                "width": 8,
+            <div
+              className="flex items-start gap-2"
+            >
+              <div>
+                <div
+                  style={
+                    Object {
+                      "height": undefined,
+                      "width": 16,
+                    }
+                  }
+                />
+                <span
+                  className="hidden"
+                >
+                  En
+                </span>
+              </div>
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 8,
+                  }
+                }
+              />
+            </div>
+            <span
+              className="text-14-light mr-2 whitespace-nowrap text-sm uppercase text-darkCustom"
+            >
+              English
+            </span>
+            <div
+              style={
+                Object {
+                  "height": undefined,
+                  "width": 8,
+                }
               }
-            }
-          />
-        </button>
+            />
+          </button>
+        </div>
       </div>
     </div>
     <button
