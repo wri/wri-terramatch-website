@@ -28,6 +28,7 @@ const ImpactStory = () => {
           {t(
             "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at"
           )}
+          &nbsp;
           <a
             href="mailto:info@terramatch.org"
             target="_blank"

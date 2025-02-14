@@ -77,7 +77,11 @@ const Sidebar = () => {
     if (!isMobile) {
       return (
         <div key={label + "tooltip"}>
-          <Tooltip content={t(disabled ? "COMING SOON" : label)} placement="right">
+          <Tooltip
+            content={t(disabled ? "COMING SOON" : label.replace("<br />", " "))}
+            placement="right"
+            className="uppercase"
+          >
             <a
               className={classNames("flex cursor-pointer flex-col items-center gap-1 mobile:flex-row", {
                 "text-white":

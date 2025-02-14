@@ -32,31 +32,30 @@ const CardImpactStory = () => {
                   className="h-[39vh] w-full rounded-2xl object-cover"
                 />
                 <div className="w-full px-0 transition-all duration-300 group-hover:px-4">
-                  <Text
-                    variant="text-20-bold"
-                    className="two-line-text mt-6 h-12 leading-[normal] transition-colors lg:h-15 wide:h-16"
-                  >
-                    {t(item.title)}
-                  </Text>
-                  <Text variant="text-16-light" className="mt-3 flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.BRIEFCASE} className="h-4.5 w-4.5" /> {item.organization} Organization
-                  </Text>
-                  <Text variant="text-16-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.PIN} className="h-4.5 w-4.5" /> {item.country}
-                  </Text>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {item.tags.map((tag, index) => {
-                      return (
-                        <Text
-                          variant="text-12"
-                          className="rounded bg-grey-500 bg-opacity-10 py-1 px-1.5 capitalize leading-[normal] text-grey-500"
-                          as="span"
-                          key={index}
-                        >
-                          {t(tag)}
-                        </Text>
-                      );
-                    })}
+                  <div className="h-[147px] lg:h-[167px] wide:h-[180px]">
+                    <Text variant="text-20-bold" className="two-line-text mt-6 leading-[normal] transition-colors">
+                      {t(item.title)}
+                    </Text>
+                    <Text variant="text-16-light" className="mt-3 flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.BRIEFCASE} className="h-4.5 w-4.5" /> {item.organization} Organization
+                    </Text>
+                    <Text variant="text-16-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.PIN} className="h-4.5 w-4.5" /> {item.country}
+                    </Text>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {item.tags.map((tag, index) => {
+                        return (
+                          <Text
+                            variant="text-12"
+                            className="rounded bg-grey-500 bg-opacity-10 py-1 px-1.5 capitalize leading-[normal] text-grey-500"
+                            as="span"
+                            key={index}
+                          >
+                            {t(tag)}
+                          </Text>
+                        );
+                      })}
+                    </div>
                   </div>
                   <button
                     onClick={() => {
