@@ -7,6 +7,126 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
+export type EntityIndexPathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity: "projects" | "sites";
+};
+
+export type EntityIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The last record before the page being requested. The value is a polygon UUID. If not provided, the first page is returned.
+   */
+  ["page[after]"]?: string;
+};
+
+export type EntityIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type EntityIndexVariables = {
+  pathParams: EntityIndexPathParams;
+  queryParams?: EntityIndexQueryParams;
+};
+
+export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    | {
+        data?: {
+          /**
+           * @example projects
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectLightDto;
+          meta?: {
+            page?: {
+              /**
+               * The cursor for this record.
+               */
+              cursor?: string;
+            };
+          };
+        }[];
+        meta?: {
+          page?: {
+            /**
+             * The cursor for the first record on this page.
+             */
+            cursor?: string;
+            /**
+             * The total number of records on this page.
+             *
+             * @example 42
+             */
+            total?: number;
+          };
+        };
+      }
+    | {
+        data?: {
+          /**
+           * @example sites
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteLightDto;
+          meta?: {
+            page?: {
+              /**
+               * The cursor for this record.
+               */
+              cursor?: string;
+            };
+          };
+        }[];
+        meta?: {
+          page?: {
+            /**
+             * The cursor for the first record on this page.
+             */
+            cursor?: string;
+            /**
+             * The total number of records on this page.
+             *
+             * @example 42
+             */
+            total?: number;
+          };
+        };
+      },
+    EntityIndexError,
+    undefined,
+    {},
+    EntityIndexQueryParams,
+    EntityIndexPathParams
+  >({ url: "/entities/v3/{entity}", method: "get", ...variables, signal });
+
 export type EntityGetPathParams = {
   /**
    * Entity type to retrieve

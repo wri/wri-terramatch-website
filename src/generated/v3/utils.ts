@@ -37,6 +37,12 @@ export const resolveUrl = (
   queryParams: Record<string, string> = {},
   pathParams: Record<string, string> = {}
 ) => {
+  // URLSearchParams will gleefully stringify undefined to "undefined" if you leave the key in place.
+  // For our implementation, we never want to send the string "null" or "undefined" to the server in
+  // the query, so delete any keys that have such a value.
+  for (const key of Object.keys(queryParams)) {
+    if (queryParams[key] == null) delete queryParams[key];
+  }
   const searchParams = new URLSearchParams(queryParams);
   // Make sure the output string always ends up in the same order because we need the URL string
   // that is generated from a set of query / path params to be consistent even if the order of the

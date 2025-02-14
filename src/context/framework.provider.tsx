@@ -22,7 +22,7 @@ export const FrameworkContext = createContext<IFrameworkContext>({
   framework: Framework.UNDEFINED
 });
 
-type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string };
+type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string | null };
 
 const FrameworkProvider = ({ children, frameworkKey }: FrameworkProviderProps) => {
   const framework = useMemo(
