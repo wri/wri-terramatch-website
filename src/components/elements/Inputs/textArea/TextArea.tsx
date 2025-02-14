@@ -48,10 +48,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
   );
   const { textareaProps } = useTextAreaAuto(handleTextAreaChange, textValue?.toString());
   const mergedProps = { ...inputProps, ...textareaProps };
-  useEffect(() => {
-    formHook?.trigger(inputWrapperProps.name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formHook?.watch(inputWrapperProps.name)]);
+
   return (
     <InputWrapper
       inputId={id}
@@ -67,7 +64,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
       <textarea
         {...mergedProps}
         onChange={handleTextAreaChange}
-        {...formHook?.register(inputWrapperProps.name)}
+        {...formHook?.register(inputWrapperProps.name, { onChange: () => formHook?.trigger(inputWrapperProps.name) })}
         id={id}
         className={inputClasses}
       />
