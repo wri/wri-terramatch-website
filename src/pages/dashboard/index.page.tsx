@@ -1,4 +1,6 @@
+import { useMediaQuery } from "@mui/material";
 import { T, useT } from "@transifex/react";
+import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
@@ -87,6 +89,7 @@ const Dashboard = () => {
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
   const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
@@ -153,21 +156,52 @@ const Dashboard = () => {
       accessorKey: "project",
       enableSorting: false
     },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted",
-      enableSorting: false
-    },
-    {
-      header: "Hectares",
-      accessorKey: "restorationHectares",
-      enableSorting: false
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated",
-      enableSorting: false
-    }
+    ...(isMobile
+      ? []
+      : [
+          {
+            header: "Trees Planted",
+            accessorKey: "treesPlanted",
+            enableSorting: false
+          },
+          {
+            header: "Hectares",
+            accessorKey: "restorationHectares",
+            enableSorting: false
+          },
+          {
+            header: "Jobs Created",
+            accessorKey: "jobsCreated",
+            enableSorting: false
+          }
+        ]),
+    ...(!isMobile
+      ? []
+      : [
+          {
+            header: "",
+            accessorKey: "link",
+            enableSorting: false,
+            cell: ({ row }: { row: { original: { uuid: string } } }) => {
+              const uuid = row.original.uuid;
+              const handleClick = () => {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: uuid
+                }));
+              };
+
+              return (
+                <button onClick={handleClick}>
+                  <Icon
+                    name={IconNames.IC_ARROW_COLLAPSE}
+                    className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary"
+                  />
+                </button>
+              );
+            }
+          }
+        ])
   ];
 
   const COLUMN_ACTIVE_COUNTRY = [
@@ -356,15 +390,20 @@ const Dashboard = () => {
             textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
             logout={logout}
           >
-            <div className="grid w-full grid-cols-3 gap-4">
+            <div
+              className={classNames(
+                "grid w-full grid-cols-3 gap-4",
+                "mobile:flex mobile:flex-wrap mobile:justify-around mobile:gap-2 mobile:border-b mobile:border-grey-1000 mobile:pb-4"
+              )}
+            >
               {dashboardHeader.map((item, index) => (
-                <div key={index} className="rounded-lg bg-white px-4 py-3">
+                <div key={index} className="rounded-lg bg-white px-4 py-3 mobile:p-0">
                   <Text variant="text-12-light" className="text-darkCustom opacity-60">
-                    {t(item.label)}
+                    {t(isMobile ? item.label.replace("Hectares", "") : item.label)}
                   </Text>
 
                   <div className="flex items-center gap-2">
-                    <Text variant="text-20" className="text-darkCustom" as="span">
+                    <Text variant={isMobile ? "text-16" : "text-20"} className="text-darkCustom" as="span">
                       {t(item.value)}
                     </Text>
                     <ToolTip
@@ -427,7 +466,7 @@ const Dashboard = () => {
             </PageCard>
           </When>
           <PageCard
-            className="border-0 px-4 py-6"
+            className="border-0 px-4 py-6 mobile:px-0"
             classNameSubTitle="mt-4"
             gap={8}
             subtitleMore={true}
@@ -439,6 +478,7 @@ const Dashboard = () => {
             subtitle={t(
               `The numbers and reports below display data related to Indicator 1: Trees Restored described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
             )}
+            collapseChildren={isMobile ? true : false}
           >
             <SecDashboard
               title={t("Number of Trees Planted")}
@@ -477,7 +517,7 @@ const Dashboard = () => {
           </PageCard>
 
           <PageCard
-            className="border-0 px-4 py-6"
+            className="border-0 px-4 py-6 mobile:px-0"
             classNameSubTitle="mt-4"
             gap={8}
             isUserAllowed={isUserAllowed?.allowed}
@@ -490,8 +530,14 @@ const Dashboard = () => {
             subtitle={t(
               `The numbers and reports below display data related to Indicator 3: Jobs Created described in ${TERRAFUND_MRV_LINK}. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
             )}
+            collapseChildren={isMobile ? true : false}
           >
-            <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
+            <div
+              className={classNames(
+                "grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000",
+                "gap-4 mobile:grid-flow-row mobile:divide-y mobile:divide-x-0"
+              )}
+            >
               <SecDashboard
                 title={t("New Part-Time Jobs")}
                 data={{ value: jobsCreatedData?.total_pt }}
@@ -502,19 +548,19 @@ const Dashboard = () => {
               <SecDashboard
                 title={t("New Full-Time Jobs")}
                 data={{ value: jobsCreatedData?.total_ft }}
-                className="pl-12"
+                className="pl-12 mobile:pl-0 mobile:pt-4"
                 classNameBody="w-full place-content-center"
                 tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
               />
             </div>
-            <div className="grid w-full grid-cols-2">
+            <div className="grid w-full grid-cols-2 mobile:grid-cols-1 mobile:gap-10">
               <SecDashboard
                 title={t("Jobs Created by Gender")}
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
                 chartType="groupedBarChart"
-                classNameHeader="pl-[50px]"
+                classNameHeader="pl-[50px] mobile:pl-0"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}
@@ -525,7 +571,7 @@ const Dashboard = () => {
                 data={{}}
                 dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
                 chartType="groupedBarChart"
-                classNameHeader="pl-[50px]"
+                classNameHeader="pl-[50px] mobile:pl-0"
                 classNameBody="w-full place-content-center !justify-center flex-col gap-5"
                 tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
                 isUserAllowed={isUserAllowed?.allowed}

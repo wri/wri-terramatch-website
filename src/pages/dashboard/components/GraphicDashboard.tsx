@@ -33,7 +33,7 @@ const GraphicDashboard = ({ data, maxValue }: { data: DashboardTableDataProps[];
   };
 
   return (
-    <div className="w-full rounded-lg border border-grey-350 p-4">
+    <div className="w-full rounded-lg border border-grey-350 p-4 mobile:border-none mobile:p-0">
       {data.map((item, index) => {
         const widthBar = animatedWidths[index] || 0;
 

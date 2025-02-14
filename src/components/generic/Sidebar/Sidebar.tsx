@@ -41,8 +41,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     path: "/dashboard/impact-story",
     icon: IconNames.DASHBOARD_IMPACT_STORY,
-    label: "Impact<br />Story",
-    disabled: true
+    label: "Impact<br />Story"
   },
   {
     path: "/dashboard/learn-more",

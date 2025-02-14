@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React, { useEffect, useState } from "react";
@@ -91,6 +92,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   useEffect(() => {
     setSelectedCountry(filters.country.country_slug);
@@ -252,6 +254,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             hasPagination={true}
             invertSelectPagination={true}
             initialTableState={{ pagination: { pageSize: 10 } }}
+            classNameWrapper="mobile:px-0"
             onRowClick={row => {
               closeModal("modalExpand");
               if (row?.country_slug) {
@@ -290,6 +293,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             hasPagination={true}
             invertSelectPagination={true}
             initialTableState={{ pagination: { pageSize: 10 } }}
+            classNameWrapper="mobile:px-0"
           />
         </div>
       </ModalExpand>
@@ -353,7 +357,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         </div>
 
         <PageCard
-          className="border-0 px-4 py-6"
+          className="border-0 px-4 py-6 mobile:px-0"
           classNameSubTitle="mt-4"
           gap={8}
           isUserAllowed={isUserAllowed}
@@ -365,6 +369,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
           )}
           widthTooltip="w-52 lg:w-64"
+          collapseChildren={isMobile ? true : false}
         >
           <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
             <SecDashboard
@@ -404,7 +409,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         </PageCard>
 
         <PageCard
-          className="border-0 px-4 py-6"
+          className="border-0 px-4 py-6 mobile:px-0"
           classNameSubTitle="mt-4"
           gap={6}
           isUserAllowed={isUserAllowed}
@@ -422,9 +427,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             >
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("See All")}
-                </Text>
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
               </div>
             </Button>
           }
@@ -433,6 +440,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             visibleRows={50}
             columns={columns}
             data={data}
+            classNameWrapper="mobile:px-0"
             onRowClick={row => {
               if (row?.country_slug) {
                 setFilters(prevValues => ({
@@ -459,7 +467,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
         </PageCard>
         <PageCard
-          className="border-0 px-4 py-6"
+          className="border-0 px-4 py-6 mobile:px-0"
           classNameSubTitle="mt-4"
           gap={6}
           isUserAllowed={isUserAllowed}
@@ -477,9 +485,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             >
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("See All")}
-                </Text>
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
               </div>
             </Button>
           }

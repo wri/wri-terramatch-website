@@ -15,9 +15,9 @@ export const VARIANT_TOGGLE_PRIMARY = {
 };
 
 export const VARIANT_TOGGLE_DASHBOARD = {
-  container: "bg-white border-b border-grey-1000 p-0",
+  container: "bg-white border-b border-grey-1000 p-0 mobile:w-full mobile:mb-2",
   activeToggle: "uppercase bg-transparent border-b-2 border-blueCustom-700 h-[calc(100%_-_2px)] left-1",
-  textActive: "text-12-bold text-blueCustom-700 pb-1 uppercase",
-  textInactive: "text-12-light text-darkCustom-40 pb-1 uppercase",
+  textActive: "text-12-bold text-blueCustom-700 pb-1 uppercase mobile:text-14-bold mobile:w-1/2",
+  textInactive: "text-12-light text-darkCustom-40 pb-1 uppercase mobile:text-14-light mobile:w-1/2",
   heightBtn: 2
 };
