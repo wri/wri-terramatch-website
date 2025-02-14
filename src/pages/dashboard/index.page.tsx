@@ -465,7 +465,7 @@ const Dashboard = () => {
           </PageCard>
         </When>
         <PageCard
-          className="border-0 px-4 py-6 mobile:order-3 mobile:px-0"
+          className="border-0 px-4 py-6 mobile:order-3 mobile:px-0 mobile:pb-4 mobile:pt-0"
           classNameSubTitle="mt-4"
           gap={8}
           subtitleMore={true}
@@ -516,7 +516,7 @@ const Dashboard = () => {
         </PageCard>
 
         <PageCard
-          className="border-0 px-4 py-6 mobile:order-4 mobile:px-0"
+          className="border-0 px-4 py-6 mobile:order-4 mobile:px-0 mobile:py-4"
           classNameSubTitle="mt-4"
           gap={8}
           isUserAllowed={isUserAllowed?.allowed}
