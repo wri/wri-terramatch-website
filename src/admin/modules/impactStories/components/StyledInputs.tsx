@@ -16,7 +16,7 @@ export const StyledAutocompleteInput = (props: any) => (
       "& .MuiInputBase-root": {
         backgroundColor: "white",
         borderRadius: "0.375rem",
-        border: "1px solid #E5E7EB",
+        border: "1px solid #E3E3E3",
         padding: "0.5rem 1rem",
         fontSize: "0.875rem",
         lineHeight: "1.25rem",
@@ -42,7 +42,7 @@ export const StyledAutocompleteInput = (props: any) => (
 );
 
 export const StyledReferenceInput: React.FC<StyledReferenceInputProps> = ({ label, children }) => (
-  <div className="flex flex-col gap-y-1">
+  <div className="flex w-1/2 flex-col gap-y-1 pr-2">
     <Text variant="text-14-bold" className="capitalize">
       {label}
     </Text>

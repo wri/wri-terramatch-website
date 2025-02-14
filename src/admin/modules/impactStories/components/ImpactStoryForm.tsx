@@ -1,15 +1,15 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { memo } from "react";
 import { ReferenceInput, required } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
-import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import { maxFileSize } from "@/admin/utils/forms";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_IMPACT_STORY } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import { useModalContext } from "@/context/modal.provider";
@@ -17,6 +17,7 @@ import { useModalContext } from "@/context/modal.provider";
 import modules from "../..";
 import { useImpactStoryForm } from "../hooks/useImpactStoryForm";
 import QuillEditor from "./QuillEditor";
+import StyledFileUploadInput from "./StyledFileUploadInput";
 import { StyledAutocompleteInput, StyledReferenceInput } from "./StyledInputs";
 
 export interface ImpactCategory {
@@ -81,7 +82,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
   return (
-    <div>
+    <div className="w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
         {mode === "create" ? "Create Impact Story" : "Edit Impact Story"}
       </Text>
@@ -134,7 +135,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
         />
 
         <div className="grid grid-cols-2 gap-x-4">
-          <FileUploadInput
+          <StyledFileUploadInput
             source="thumbnail"
             label="Upload Impact Story Images"
             defaultValue={initialValues.thumbnail}
@@ -142,18 +143,21 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             isRequired
             accept={["image/png", "image/svg+xml", "image/jpeg"]}
             placeholder={
-              <Box paddingY={2}>
-                <Typography variant="subtitle1" color="primary" marginBottom={0.5} marginTop={2}>
-                  Click to upload or drag and drop
-                </Typography>
-                <Typography variant="caption">
-                  Recommended aspect ratio is 17:7
-                  <br />
-                  SVG, PNG or JPG (max. 1MB)
-                </Typography>
+              <Box className="flex flex-col items-center gap-y-2">
+                <Icon
+                  name={IconNames.UPLOAD_CLOUD_CUSTOM}
+                  className="h-8 w-8 rounded-full bg-neutral-250 p-2 text-black"
+                />
+                <Text variant="text-12-bold" className="text-primary">
+                  Click to upload
+                </Text>
+                <Text variant="text-12-bold" className="text-primary">
+                  documents or images to help reviewer
+                </Text>
               </Box>
             }
           />
+          <Text variant="text-14-bold">Uploaded</Text>
         </div>
 
         <div>
@@ -167,7 +171,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
               Delete
             </Button>
           )}
-          <div className="flex items-center gap-x-2">
+          <div className="ml-auto flex items-center gap-x-2">
             <Button variant="white-border" onClick={() => handlers.handleStatusChange("draft")}>
               Save as draft
             </Button>

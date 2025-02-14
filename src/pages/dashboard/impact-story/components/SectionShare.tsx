@@ -46,7 +46,6 @@ const SectionShare = ({ data, className }: { data: any; className?: string }) =>
       >
         {t("Share")}
       </Button>
-      <ShareSection label="LANGUAGES" />
       <ShareSection label="COUNTRY" value={data?.country} />
       <ShareSection label="ORGANIZATION" value={data?.name} />
       <ShareSection label="IMPACT CATEGORY" value={getCategoryTitles(data?.category)} />

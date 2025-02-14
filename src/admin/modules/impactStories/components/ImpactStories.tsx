@@ -17,7 +17,14 @@ const transformData = (data: any) => {
 };
 
 export const ImpactStoriesCreate: React.FC = () => (
-  <Create transform={transformData}>
+  <Create
+    transform={transformData}
+    sx={{
+      "& .MuiToolbar-regular": {
+        display: "none"
+      }
+    }}
+  >
     <SimpleForm>
       <ImpactStoryForm mode="create" />
     </SimpleForm>
@@ -25,7 +32,14 @@ export const ImpactStoriesCreate: React.FC = () => (
 );
 
 export const ImpactStoriesEdit: React.FC = () => (
-  <Edit transform={transformData}>
+  <Edit
+    transform={transformData}
+    sx={{
+      "& .MuiToolbar-regular": {
+        display: "none"
+      }
+    }}
+  >
     <SimpleForm>
       <ImpactStoryForm mode="edit" />
     </SimpleForm>
