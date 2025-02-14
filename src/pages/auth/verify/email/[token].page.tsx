@@ -19,27 +19,31 @@ const VerifyEmail = () => {
   const router = useRouter();
   const token = router.query.token as string;
   const [verified, setVerified] = useState(false);
+  const [load, setLoad] = useState(false);
 
-  const [, { requestFailed, isSuccess, sendVerifyUser }] = useVerificationUser({ token: token });
+  const [, { isSuccess, requestFailed, sendVerifyUser }] = useVerificationUser({ token: token });
 
-  useValueChanged(requestFailed, () => {
-    if (requestFailed != null) {
+  useValueChanged(isSuccess, () => {
+    if (isSuccess === undefined) return;
+    if (isSuccess) {
+      setVerified(true);
+    } else {
       Log.error("Failed to verify auth");
       router.push("/");
     }
   });
 
-  useValueChanged(isSuccess, () => {
-    if (isSuccess) {
-      setVerified(true);
-    }
+  useValueChanged(requestFailed, () => {
+    if (requestFailed) return router.push("/");
   });
 
   useOnMount(async () => {
     sendVerifyUser();
+    setLoad(true);
   });
 
   return (
+    load &&
     verified && (
       <BackgroundLayout>
         <ContentLayout>
