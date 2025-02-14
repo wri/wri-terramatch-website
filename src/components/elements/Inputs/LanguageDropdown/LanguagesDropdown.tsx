@@ -1,4 +1,5 @@
 import { Popover } from "@headlessui/react";
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -32,7 +33,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
   const router = useRouter();
   const variantClass = props.variant ?? VARIANT_LANGUAGES_DROPDOWN;
-
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
 
   const [selectedIndex, setSelectedIndex] = useState(LANGUAGES.findIndex(lang => lang.value === selected.value) || 0);
@@ -63,7 +64,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     <div onKeyDownCapture={handleKeyDown}>
       <Popover className={classNames(props.className, variantClass.classContent)}>
         <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover}>
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2 mobile:items-center">
             <div>
               <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
               <span className={variantClass.classTextDashboard}>{t(selected?.title.slice(0, 2))}</span>
@@ -87,7 +88,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
                 {selected.value === item.value && (
                   <Icon name={IconNames.CHECK} width={16} className={variantClass.classIconSelected} />
                 )}
-                {t(item.title)}
+                {t(isMobile ? item.title.slice(0, 2) : item.title)}
               </Text>
             )}
             className={variantClass.classList}

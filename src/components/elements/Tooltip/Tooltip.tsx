@@ -58,12 +58,11 @@ const ToolTip = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+  const handleScroll = () => {
+    setIsVisible(false);
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsVisible(false);
-    };
-
     window.addEventListener("scroll", handleScroll, true);
     return () => {
       window.removeEventListener("scroll", handleScroll, true);

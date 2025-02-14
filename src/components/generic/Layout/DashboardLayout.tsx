@@ -66,9 +66,9 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
           <Loader />
         </div>
       )}
-      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70">
+      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70 mobile:flex-col">
         <Sidebar />
-        <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className}`}>
+        <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className} mobile:bg-white`}>
           {dashboardCountries && (
             <>
               <When condition={!isImpactStoryPage}>

@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { When } from "react-if";
@@ -19,13 +20,14 @@ export interface ModalExpandProps extends ModalBaseProps {
 
 const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, closeModal, ...rest }) => {
   const t = useT();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   <Text variant="text-12-light" className="!font-light leading-[normal]"></Text>;
   return (
     <ExpandModalBase {...rest}>
       <div className="flex w-full items-center justify-between p-6">
         <div className="flex items-center gap-1">
-          <Text variant="text-28-bold" className="text-center uppercase">
+          <Text variant={isMobile ? "text-16-bold" : "text-28-bold"} className="text-center uppercase">
             {t(title)}
           </Text>
           <When condition={popUpContent}>
@@ -35,12 +37,14 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
           </When>
         </div>
 
-        <Button variant="white-button-map" onClick={() => closeModal(id)}>
+        <Button variant={isMobile ? "white-border" : "white-button-map"} onClick={() => closeModal(id)}>
           <div className="flex items-center gap-1">
             <Icon name={IconNames.COLLAPSE} className="h-[14px] w-[14px]" />
-            <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-              {t("Collapse")}
-            </Text>
+            {!isMobile && (
+              <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                {t("Collapse")}
+              </Text>
+            )}
           </div>
         </Button>
       </div>

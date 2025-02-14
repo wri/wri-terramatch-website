@@ -124,7 +124,12 @@ const SecDashboard = ({
 
   return (
     <div className={className}>
-      <div className={classNames("flex items-center justify-between", classNameHeader)}>
+      <div
+        className={classNames(
+          "flex items-center justify-between mobile:flex-col mobile:items-start mobile:gap-2",
+          classNameHeader
+        )}
+      >
         <div className="flex items-center gap-1">
           <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
@@ -156,7 +161,12 @@ const SecDashboard = ({
           />
         </When>
       </div>
-      <div className={classNames("relative mt-3 flex items-center justify-between", classNameBody)}>
+      <div
+        className={classNames(
+          "relative mt-3 flex items-center justify-between mobile:flex-col mobile:items-start",
+          classNameBody
+        )}
+      >
         {data?.value !== undefined && (
           <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
         )}
@@ -274,10 +284,11 @@ const SecDashboard = ({
                     hasPagination={false}
                     columns={tableColumns}
                     variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                    classNameWrapper="mobile:px-0"
                   />
                   <Text
                     variant="text-14"
-                    className="mt-1 cursor-pointer pl-4 pt-2 text-primary underline"
+                    className="mt-1 cursor-pointer pt-2 pl-4 text-primary underline"
                     onClick={handleViewAllClick}
                   >
                     {t("VIEW ALL PROJECTS")}

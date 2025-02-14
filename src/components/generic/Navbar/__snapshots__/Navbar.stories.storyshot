@@ -46,7 +46,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
               type="button"
             >
               <div
-                className="flex items-start gap-2"
+                className="flex items-start gap-2 mobile:items-center"
               >
                 <div>
                   <div
@@ -217,7 +217,7 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
             type="button"
           >
             <div
-              className="flex items-start gap-2"
+              className="flex items-start gap-2 mobile:items-center"
             >
               <div>
                 <div
@@ -324,7 +324,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
               type="button"
             >
               <div
-                className="flex items-start gap-2"
+                className="flex items-start gap-2 mobile:items-center"
               >
                 <div>
                   <div
@@ -487,7 +487,7 @@ exports[`Storyshots Components/Generic/Navbar Logged Out 1`] = `
             type="button"
           >
             <div
-              className="flex items-start gap-2"
+              className="flex items-start gap-2 mobile:items-center"
             >
               <div>
                 <div

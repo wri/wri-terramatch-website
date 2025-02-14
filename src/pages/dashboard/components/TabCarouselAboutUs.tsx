@@ -61,7 +61,7 @@ const TabCarouselAboutUs = () => {
   }, [aboutUs.length]);
 
   return (
-    <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px]">
+    <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px] mobile:px-4">
       <SecondaryTabs
         tabItems={[
           {
@@ -95,11 +95,12 @@ const TabCarouselAboutUs = () => {
         }}
         variant={VARIANT_TABS_ABOUT_US}
         selectedIndex={activeTab}
+        scrollable
       />
       <Carousel
         carouselItem={aboutUs => (
-          <div className="flex w-full items-center">
-            <div className="w-[61%] pr-16 text-darkCustom-150">
+          <div className="flex w-full items-center mobile:flex-col mobile:gap-4">
+            <div className="w-[61%] pr-16 text-darkCustom-150 mobile:w-full">
               <Text variant="text-36-bold" className="mb-6 text-darkCustom-150">
                 Using the platform
               </Text>
@@ -110,7 +111,11 @@ const TabCarouselAboutUs = () => {
                 {t("Open Dashboard")}
               </Button>
             </div>
-            <img src={aboutUs.url} alt={aboutUs.title || ""} className="w-[39%] rounded-2xl object-contain" />
+            <img
+              src={aboutUs.url}
+              alt={aboutUs.title || ""}
+              className="w-[39%] rounded-2xl object-contain mobile:w-full"
+            />
           </div>
         )}
         items={aboutUs}
