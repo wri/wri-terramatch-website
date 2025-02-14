@@ -5,6 +5,7 @@ import {
   Datagrid,
   DateField,
   EditButton,
+  FunctionField,
   List,
   ReferenceInput,
   SearchInput,
@@ -15,6 +16,7 @@ import {
 
 import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -57,7 +59,13 @@ const ImpactStoriesDataGrid: FC = () => {
   return (
     <Datagrid>
       <TextField source="title" label="Impact Story" />
-      <TextField source="status" label="Status" />
+      <FunctionField
+        source="status"
+        label="Status"
+        render={(record: any) => {
+          return <CustomChipField label={record.status} />;
+        }}
+      />
       <TextField source="organization.name" label="Organization" />
       <TextField source="organization.countries" label="Country" />
       <DateField source="created_at" label="Date Created" locales="en-GB" />
