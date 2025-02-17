@@ -1,6 +1,6 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import classNames from "classnames";
+// import classNames from "classnames";
 import { useRouter } from "next/router";
 import { When } from "react-if";
 
@@ -9,7 +9,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
 import { CARD_IMPACT_STORY_MOCKED_DATA } from "../../mockedData/impactStory";
-import SectionShare from "../components/SectionShare";
+// import SectionShare from "../components/SectionShare";
 
 const ImpactStoryLanding = () => {
   const router = useRouter();
@@ -32,14 +32,14 @@ const ImpactStoryLanding = () => {
         </button>
       </div>
       <div className="flex h-full w-full flex-1 overflow-hidden mobile:flex-col mobile:overflow-y-auto">
-        <div
+        {/* <div
           className={classNames(
             "absolute ml-13 mt-[20vh] w-1/6 ",
             "mobile:relative mobile:order-2 mobile:m-0 mobile:w-full mobile:p-4 mobile:pb-14"
           )}
         >
           <SectionShare uuid={uuid} className="my-auto" />
-        </div>
+        </div> */}
         <div className="flex-1 overflow-y-auto p-8 mobile:overflow-y-visible mobile:p-4">
           <div className="mx-auto w-2/4 mobile:m-0 mobile:w-full">
             <Text variant={isMobile ? "text-24-bold" : "text-40-bold"} className="leading-[normal] text-darkCustom">

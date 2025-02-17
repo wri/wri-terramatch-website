@@ -1,20 +1,29 @@
 import { useT } from "@transifex/react";
+import dynamic from "next/dynamic";
 import { twMerge as tw } from "tailwind-merge";
 
+import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocialImpactStory from "@/components/extensive/Icon/IconSocialImpactStory";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalShareImpactStory from "@/components/extensive/Modal/ModalShareImpactStory";
 import { useModalContext } from "@/context/modal.provider";
 
-import { CARD_IMPACT_STORY_MOCKED_DATA } from "../../mockedData/impactStory";
+const ModalShareImpactStory = dynamic(() => import("@/components/extensive/Modal/ModalShareImpactStory"), {
+  ssr: false
+});
+
 import ShareSection from "./ShareSection";
 
-const SectionShare = ({ uuid, className }: { uuid: string; className?: string }) => {
+const getCategoryTitles = (categories: string[]) => {
+  return categories
+    ?.map(value => IMPACT_CATEGORIES.find(item => item.value === value)?.title)
+    .filter((title): title is string => Boolean(title));
+};
+
+const SectionShare = ({ data, className }: { data: any; className?: string }) => {
   const { openModal, closeModal } = useModalContext();
   const t = useT();
-  const data = CARD_IMPACT_STORY_MOCKED_DATA.find(item => item.uuid === uuid);
 
   const openModalShare = () => {
     openModal(
@@ -37,10 +46,9 @@ const SectionShare = ({ uuid, className }: { uuid: string; className?: string })
       >
         {t("Share")}
       </Button>
-      <ShareSection label="LANGUAGES" />
       <ShareSection label="COUNTRY" value={data?.country} />
-      <ShareSection label="ORGANIZATION" value={data?.organization} />
-      <ShareSection label="IMPACT CATEGORY" value={data?.category} />
+      <ShareSection label="ORGANIZATION" value={data?.name} />
+      <ShareSection label="IMPACT CATEGORY" value={getCategoryTitles(data?.category)} />
       <div className="flex gap-x-4">
         <IconSocialImpactStory name={IconNames.INSTAGRAM} url={data?.instagram_url ?? ""} />
         <IconSocialImpactStory name={IconNames.TWITTER} url={data?.twitter_url ?? ""} />
