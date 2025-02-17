@@ -19,7 +19,7 @@ const TabImpactStory = () => {
   useValueChanged(currentCategory, () => {
     const finalFilters = {
       status: ["published"],
-      category: currentCategory ? currentCategory : ""
+      category: currentCategory ? [currentCategory] : ""
     };
 
     setQueryString(createQueryParams(finalFilters));
