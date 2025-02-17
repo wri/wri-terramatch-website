@@ -30,12 +30,12 @@ const ImpactStoryLanding = () => {
     title: data?.data?.title,
     date: data?.data?.date,
     content: data?.data?.content ? JSON.parse(data?.data?.content) : [],
-    category: data?.data?.category ? JSON.parse(data?.data?.category) : [],
+    category: data?.data?.category ? data?.data?.category : [],
     thumbnail:
       data?.data?.thumbnail instanceof File ? URL.createObjectURL(data?.data?.thumbnail) : data?.data?.thumbnail || "",
     organization: {
       name: data?.data?.organization?.name,
-      category: data?.data?.category ? JSON.parse(data?.data?.category) : [],
+      category: data?.data?.category ? data?.data?.category : [],
       country: data?.data?.organization?.countries,
       facebook_url: data?.data?.organization?.facebook_url,
       instagram_url: data?.data?.organization?.instagram_url,

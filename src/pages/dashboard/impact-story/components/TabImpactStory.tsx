@@ -10,25 +10,32 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 
 import CardImpactStory from "./CardImpactStory";
 
-const TabImpactStory = () => {
+interface TabImpactStoryProps {
+  searchTerm?: string;
+}
+
+const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<number>(0);
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
   const [queryString, setQueryString] = useState("");
 
-  useValueChanged(currentCategory, () => {
+  const updateQueryString = () => {
     const finalFilters = {
       status: ["published"],
-      category: currentCategory ? [currentCategory] : ""
+      category: currentCategory ? [currentCategory] : "",
+      search: searchTerm
     };
 
     setQueryString(createQueryParams(finalFilters));
-  });
+  };
+
+  useValueChanged(currentCategory, updateQueryString);
+  useValueChanged(searchTerm, updateQueryString);
 
   const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
     queryParams: queryString as any
   });
-  console.log("impactstory", impactStoriesResponse);
   const transformedStories =
     impactStoriesResponse?.data?.map((story: any) => ({
       uuid: story.uuid,

@@ -51,14 +51,14 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
       title: formValues.title ? formValues.title : formValues?.data?.title,
       date: formValues.date ? formValues.date : formValues?.data?.date,
       content: formValues.content ? JSON.parse(formValues.content) : JSON.parse(formValues.data?.content),
-      category: formValues.category ? JSON.parse(formValues.category) : JSON.parse(formValues.data?.category),
+      category: formValues.category ? formValues.category : formValues.data?.category,
       thumbnail:
         formValues.thumbnail instanceof File ? URL.createObjectURL(formValues.thumbnail) : formValues.thumbnail || "",
       organization: {
         name: formValues?.organization?.name
           ? formValues?.organization?.name
           : formValues?.data?.organization.name ?? "",
-        category: formValues?.category ? JSON.parse(formValues?.category) : JSON.parse(formValues?.data?.category),
+        category: formValues?.category ? formValues?.category : formValues?.data?.category,
         country: formValues?.organization?.countries
           ? formValues?.organization?.countries
           : formValues?.data?.organization?.countries,

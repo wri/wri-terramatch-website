@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
@@ -9,6 +10,12 @@ import TabImpactStory from "./components/TabImpactStory";
 
 const ImpactStory = () => {
   const t = useT();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+  };
+
   return (
     <div className="h-screen w-full bg-white bg-impactStoryBg bg-cover bg-center bg-no-repeat">
       <div className="flex w-full flex-col gap-y-6 overflow-hidden pr-[4.375rem] pl-13 pt-14 lg:gap-y-10 lg:pt-[4.375rem] lg:pl-[4.375rem]">
@@ -17,7 +24,7 @@ const ImpactStory = () => {
             {t("Impact Story")}
           </Text>
           <FilterSearchBox
-            onChange={() => {}}
+            onChange={handleSearch}
             placeholder={t("Search by country or organization")}
             suffix={<Button className="text-16-bold h-full rounded-full py-4 capitalize">{t("Search")}</Button>}
             variant={FILTER_SEARCH_IMPACT_STORY}
@@ -39,7 +46,7 @@ const ImpactStory = () => {
           </a>
           .
         </Text>
-        <TabImpactStory />
+        <TabImpactStory searchTerm={searchTerm} />
       </div>
     </div>
   );

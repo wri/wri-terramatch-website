@@ -9,19 +9,18 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const redirect = useRedirect();
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
-  console.log("currentData", currentData);
   const initialValues = {
     content: currentData?.content ? JSON.parse(currentData.content) : "",
     title: currentData?.title || "",
     date: currentData?.date || "",
     thumbnail: currentData?.thumbnail,
-    categories: currentData?.category ? JSON.parse(currentData.category) : "",
+    categories: currentData?.category ? currentData.category : "",
     orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
   };
 
   const handleImpactCategoryChange = useCallback(
     (selectedValues: string[]) => {
-      setValue("category", JSON.stringify(selectedValues));
+      setValue("category", selectedValues);
     },
     [setValue]
   );
