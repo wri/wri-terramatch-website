@@ -290,7 +290,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   onClick={() => {
                     setIsFiltersOpen(true);
                   }}
-                  className={classNames("relative z-[4] flex items-center justify-center gap-2 py-2")}
+                  className={classNames("relative z-[4] flex w-full items-center justify-center gap-2 py-2")}
                 >
                   <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
                   <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
@@ -304,7 +304,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           </div>
           <div
             className={classNames(
-              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
+              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
               {
                 "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
                 "mobile:-top-full": !isFiltersOpen
@@ -441,12 +441,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             </div>
             <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
               <When condition={isMobile}>
-                <Button
-                  variant="primary"
-                  className="text-14-semibold min-h-10 w-full whitespace-nowrap p-1 py-2 text-white disabled:opacity-70"
-                  onClick={resetValues}
-                  disabled={isProjectPage}
-                >
+                <Button variant="primary" fullWidth onClick={resetValues} disabled={isProjectPage}>
                   {t("Clear Filters")}
                 </Button>
               </When>
