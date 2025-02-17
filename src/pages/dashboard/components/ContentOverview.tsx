@@ -415,7 +415,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         widthTooltip="w-52 lg:w-64"
         collapseChildren={isMobile ? true : false}
       >
-        <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000">
+        <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000 mobile:divide-x-0">
           <SecDashboard
             title={t("Total Hectares Under Restoration")}
             data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
