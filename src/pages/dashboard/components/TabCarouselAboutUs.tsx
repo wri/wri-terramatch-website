@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
@@ -10,6 +11,8 @@ import Carousel from "@/components/extensive/Carousel/Carousel";
 const TabCarouselAboutUs = () => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<number>(0);
+  const isMobile = useMediaQuery("(max-width: 1200px)");
+
   const aboutUs = [
     {
       id: "1",
@@ -54,11 +57,14 @@ const TabCarouselAboutUs = () => {
     }
   ];
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTab(prevTab => (prevTab === aboutUs.length - 1 ? 0 : prevTab + 1));
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [aboutUs.length]);
+    if (!isMobile) {
+      const interval = setInterval(() => {
+        setActiveTab(prevTab => (prevTab === aboutUs.length - 1 ? 0 : prevTab + 1));
+      }, 10000);
+      return () => clearInterval(interval);
+    }
+    return () => {};
+  }, [aboutUs.length, isMobile]);
 
   return (
     <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px] mobile:px-4">
@@ -100,8 +106,8 @@ const TabCarouselAboutUs = () => {
       <Carousel
         carouselItem={aboutUs => (
           <div className="flex w-full items-center mobile:flex-col mobile:gap-4">
-            <div className="w-[61%] pr-16 text-darkCustom-150 mobile:w-full">
-              <Text variant="text-36-bold" className="mb-6 text-darkCustom-150">
+            <div className="w-[61%] pr-16 text-darkCustom-150 mobile:w-full mobile:pr-0">
+              <Text variant={isMobile ? "text-32-bold" : "text-36-bold"} className="mb-6 text-darkCustom-150">
                 Using the platform
               </Text>
               <Text variant="text-18-light" containHtml={true}>
