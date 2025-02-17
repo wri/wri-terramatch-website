@@ -307,7 +307,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           </div>
           <div
             className={classNames(
-              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
+              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
               {
                 "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
                 "mobile:-top-full": !isFiltersOpen
