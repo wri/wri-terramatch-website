@@ -31,7 +31,7 @@ export const VARIANT_PAGINATION_TEXT_16: VariantPagination = {
 export const VARIANT_PAGINATION_DASHBOARD: VariantPagination = {
   VariantPageText: "text-12",
   VariantPrePageText: "text-12-bold",
-  label: "order-1",
+  label: "order-1 mobile:hidden",
   value: "!w-14 !h-8 lg:!h-9 lg:!w-[68px] order-2 border border-grey-350 bg-white rounded-lg shadow-none",
   labelText: "Rows per page:",
   iconContent: "bg-white",
