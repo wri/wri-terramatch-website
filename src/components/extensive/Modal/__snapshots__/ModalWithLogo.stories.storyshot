@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalWithLogo Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[95%] w-[776px] margin-4 z-50"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white mobile:h-[calc(100%-60px)] mobile:w-full mobile:rounded-none mobile:mt-[60px] h-[95%] w-[776px] margin-4 z-50"
     content="You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?"
   >
     <header
