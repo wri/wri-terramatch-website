@@ -307,7 +307,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           </div>
           <div
             className={classNames(
-              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
+              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
               {
                 "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
                 "mobile:-top-full": !isFiltersOpen
@@ -335,7 +335,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 showSelectAll
                 showLabelAsMultiple
                 multiSelect
-                prefix={<Text variant="text-14-light">{t("Landscape")}:</Text>}
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Landscape") : t("Landscape:")}
+                  </Text>
+                }
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
@@ -356,7 +360,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 disabled={isProjectPage}
                 isMobile={isMobile}
                 showClear
-                prefix={<Text variant="text-14-light">{t("Country")}:</Text>}
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Country") : t("Country:")}
+                  </Text>
+                }
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
@@ -396,7 +404,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 showSelectAll
                 showLabelAsMultiple
                 showClear
-                prefix={<Text variant="text-14-light">{t("Organization Type")}:</Text>}
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Organization Type") : t("Organization Type:")}
+                  </Text>
+                }
                 inputVariant="text-14-semibold"
                 multiSelect
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
@@ -418,7 +430,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 disabled={isProjectPage}
                 isMobile={isMobile}
                 showClear
-                prefix={<Text variant="text-14-light">{t("Cohort")}:</Text>}
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Cohort") : t("Cohort:")}
+                  </Text>
+                }
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
