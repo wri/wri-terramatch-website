@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -33,24 +34,28 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
   const handleClose = () => {
     closeModal(ModalId.MODAL_STORY);
   };
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   return (
     <ModalBase
       {...rest}
-      className={tw("relative max-h-[85vh] w-[85vw] max-w-[85vw] border-none px-0 pt-16 pb-0", className)}
+      className={tw("relative max-h-[85vh] w-[85vw] max-w-[85vw] border-none px-0 pt-16 pb-0 mobile:h-full", className)}
     >
       <button className="absolute top-8 right-8 w-fit text-grey-500" onClick={handleClose}>
         <Icon name={IconNames.CLEAR} className="h-4 w-4 lg:h-5 lg:w-5" />
       </button>
-      <div className="flex w-full flex-col gap-2 overflow-hidden px-28">
-        <div className="flex gap-8 overflow-y-auto pr-10">
+      <div className="flex w-full flex-col gap-2 overflow-hidden px-28 mobile:p-4">
+        <div className="flex gap-8 overflow-y-auto pr-10 mobile:flex-col-reverse mobile:p-0">
           <SectionShare data={data.organization} className="min-w-max" />
           <div className="w-wekit h-max pb-15">
-            <Text variant="text-40-bold" className="leading-[normal] text-darkCustom">
+            <Text variant={isMobile ? "text-22-bold" : "text-40-bold"} className="leading-[normal] text-darkCustom">
               {data?.title}
             </Text>
-            <Text variant="text-14-light" className="mt-4 leading-[normal] text-darkCustom">
-              <b>Date Added: </b>
+            <Text
+              variant={isMobile ? "text-12-light" : "text-14-light"}
+              className="mt-4 leading-[normal] text-darkCustom"
+            >
+              <b className={isMobile ? "text-12-bold" : "text-14-bold"}>Date Added: </b>
               {new Date(data?.date).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "long",

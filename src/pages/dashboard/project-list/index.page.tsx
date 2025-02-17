@@ -162,12 +162,12 @@ const ProjectList = () => {
     : [];
 
   return (
-    <div className="h-full overflow-scroll bg-neutral-70 py-8 px-14 mobile:p-0">
+    <div className="h-full overflow-scroll bg-neutral-70 py-8 px-14 mobile:overflow-hidden mobile:p-0">
       <Table
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
         variant={VARIANT_TABLE_DASHBOARD_LIST}
-        contentClassName="h-full max-h-full overflow-auto pr-2 mobile:pr-0"
+        contentClassName="h-full max-h-full overflow-auto pr-2 mobile:pr-0 pb-[120px]"
         hasPagination={true}
         classNameWrapper="!overflow-visible mobile:px-0"
         invertSelectPagination={true}
@@ -190,7 +190,7 @@ const ProjectList = () => {
           });
         }}
         initialTableState={{ pagination: { pageSize: 10 } }}
-        classPagination="mobile:sticky mobile:bottom-0 mobile:bg-neutral-70 mobile:py-2"
+        classPagination="mobile:absolute mobile:bottom-0 mobile:bg-neutral-70 mobile:py-4 mobile:w-full mobile:shadow-dashboard"
       />
     </div>
   );

@@ -104,6 +104,7 @@ export enum IconNames {
   USER_INVESTOR = "ic-investor",
   NO_SUCCESS = "no-success",
   CLEAR = "clear",
+  CLEAR_DASHBOARD = "clear-dashboard",
   IC_ERROR = "ic-error",
   IC_ERROR_PANEL = "ic-error-panel",
   IC_WARNING = "ic-warning",

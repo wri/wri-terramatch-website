@@ -3,7 +3,9 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { When } from "react-if";
 
+import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import { VARIANT_LANGUAGES_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdownVariant";
 import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
@@ -136,7 +138,12 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between bg-blueCustom-700 p-3 mobile:relative mobile:z-20 mobile:h-15 mobile:flex-row mobile:items-center">
+    <div
+      className={classNames(
+        "flex flex-col justify-between bg-blueCustom-700 p-3",
+        "mobile:relative mobile:z-[60] mobile:h-15 mobile:flex-row mobile:items-center mobile:px-4"
+      )}
+    >
       <div className="flex flex-col items-center gap-8 text-darkCustom-200 mobile:flex-row">
         <a className="mt-4 mb-10 cursor-pointer mobile:m-0" href="/home">
           <Icon name={IconNames.TERRAFUND_lOGO_MINI} className="mobile:h-6 mobile:w-6" />
@@ -151,8 +158,33 @@ const Sidebar = () => {
               "mobile:top-0 mobile:opacity-100": isOpen
             }
           )}
+          style={isMobile ? { height: `${window.innerHeight - 60}px` } : {}}
         >
           {NAV_ITEMS.map(item => renderNavItem(item))}
+          <When condition={isMobile}>
+            <button
+              key={"logout mobile"}
+              className={classNames(
+                "flex items-center justify-between mobile:border-b mobile:border-grey-1000 mobile:p-4 ",
+                "mobile:w-full  mobile:!text-black ",
+                {
+                  "mobile:hidden": !isOpen
+                }
+              )}
+              onClick={() => {
+                removeAccessToken();
+                router.push("/auth/login");
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Icon name={IconNames.LOGOUT} className="h-4 w-4 opacity-60" />
+                <Text variant={isMobile ? "text-14-semibold" : "text-8"} className="text-center" containHtml>
+                  {t("Logout")}
+                </Text>
+              </div>
+              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90" />
+            </button>
+          </When>
         </div>
       </div>
 
@@ -163,7 +195,7 @@ const Sidebar = () => {
         {!isMobile && <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />}
         {isMobile && (
           <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
-            <Icon name={IconNames.IC_MENU} className="h-6 w-6" />
+            <Icon name={isOpen ? IconNames.CLEAR_DASHBOARD : IconNames.IC_MENU} className={classNames("h-5 w-5")} />
           </button>
         )}
       </div>
