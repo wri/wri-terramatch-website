@@ -25,13 +25,13 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
   <Text variant="text-12-light" className="!font-light leading-[normal]"></Text>;
   return (
     <ExpandModalBase {...rest}>
-      <div className="flex w-full items-center justify-between p-6">
+      <div className="flex w-full items-center justify-between p-6 mobile:p-4">
         <div className="flex items-center gap-1">
           <Text variant={isMobile ? "text-16-bold" : "text-28-bold"} className="text-center uppercase">
             {t(title)}
           </Text>
           <When condition={popUpContent}>
-            <Tooltip content={popUpContent || ""} width="w-[300px] lg:w-[325px]">
+            <Tooltip content={popUpContent || ""} width="w-[300px] lg:w-[325px]" trigger={isMobile ? "click" : "hover"}>
               <Icon name={IconNames.IC_INFO} />
             </Tooltip>
           </When>

@@ -15,9 +15,9 @@ import {
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-// import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
-// import ModalStory from "@/components/extensive/Modal/ModalStory";
+import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
@@ -300,8 +300,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = (uuid: string) => {
-    // openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} />);
+  const ModalStoryOpen = (uuid: any) => {
+    openModal(ModalId.MODAL_STORY, <ModalStory data={uuid} title={t("IMPACT STORY")} />);
   };
 
   return (
@@ -496,7 +496,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           items={CARD_IMPACT_STORY_MOCKED_DATA}
           render={item => (
             <button
-              onClick={() => ModalStoryOpen(item.uuid)}
+              onClick={() => ModalStoryOpen(item)}
               className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored"
             >
               <img
