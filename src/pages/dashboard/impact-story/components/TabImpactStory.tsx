@@ -1,26 +1,34 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_IMPACT_STORY } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
 import { useGetV2ImpactStories } from "@/generated/apiComponents";
+import { createQueryParams } from "@/utils/dashboardUtils";
 
 import CardImpactStory from "./CardImpactStory";
 
 const TabImpactStory = () => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<number>(0);
-
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
+  const [queryString, setQueryString] = useState("");
+
+  useEffect(() => {
+    const finalFilters = {
+      status: ["published"],
+      category: currentCategory ? currentCategory : ""
+    };
+
+    console.log("Current cat", currentCategory);
+    setQueryString(createQueryParams(finalFilters));
+  }, [currentCategory]);
 
   const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
-    queryParams: {
-      filter: ["status=published", ...(currentCategory ? [`category=${currentCategory}`] : [])].join(","),
-      per_page: 10
-    }
+    queryParams: queryString as any
   });
-
+  console.log("impactstory", impactStoriesResponse);
   const transformedStories =
     impactStoriesResponse?.data?.map((story: any) => ({
       uuid: story.uuid,
@@ -28,13 +36,15 @@ const TabImpactStory = () => {
       country: story.organization?.countries || "",
       organization: story.organization?.name,
       date: story.date,
-      category: JSON.parse(story.category || "[]"),
+      category: story.category ? story.category : [],
       description: story.content,
       image: story.thumbnail?.url,
-      tags: JSON.parse(story.category || "[]").map((cat: string) => {
-        const category = IMPACT_CATEGORIES.find(c => c.value === cat);
-        return category ? category.title : cat;
-      }),
+      tags: story.category
+        ? story.category.map((cat: string) => {
+            const category = IMPACT_CATEGORIES.find(c => c.value === cat);
+            return category ? category.title : cat;
+          })
+        : [],
       facebook_url: story.organization?.facebook_url,
       instagram_url: story.organization?.instagram_url,
       linkedin_url: story.organization?.linkedin_url,
