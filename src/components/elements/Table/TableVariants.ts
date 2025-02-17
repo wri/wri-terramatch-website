@@ -136,13 +136,13 @@ export const VARIANT_TABLE_ORGANISATION = {
 };
 
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
-  table: "border-collapse",
+  table: "border-collapse mobile:border-separate mobile:bg-neutral-200 border-spacing-x-0 !border-spacing-y-px",
   name: "border-airtable",
   tableWrapper:
     "border border-neutral-200 rounded-lg overflow-auto max-h-[260px] lg:max-h-[303px] wide:max-h-[321px] mobile:border-0",
   trHeader: "bg-neutral-150 sticky top-0 z-[1] mobile:bg-white mobile:border-t mobile:border-neutral-200",
   thHeader:
-    "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-14 px-3 border-t-0 mobile:py-3 mobile:first:pl-0 mobile:last:pr-0",
+    "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-14 mobile:text-12-semibold px-3 border-t-0 mobile:py-3 mobile:first:pl-0 mobile:last:pr-0 mobile:border-b-2",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
   tdBody: "text-14-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 mobile:first:pl-0 mobile:last:pr-0",
@@ -151,15 +151,15 @@ export const VARIANT_TABLE_DASHBOARD_COUNTRIES = {
 };
 
 export const VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL = {
-  table: "border-collapse",
+  table: "border-collapse mobile:border-separate mobile:bg-neutral-200 border-spacing-x-0 !border-spacing-y-px",
   name: "border-airtable",
   tableWrapper: "border border-neutral-200 rounded-lg overflow-auto max-h-[calc(90vh-208px)] mobile:border-0",
   trHeader: "bg-neutral-150 sticky top-0 z-10 mobile:bg-white mobile:border-t mobile:border-neutral-200",
   thHeader:
-    "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200 text-12 px-3 border-t-0 mobile:py-3 mobile:first:pl-0 mobile:last:pr-0",
+    "text-nowrap first:pl-3 first:pr-2 last:pl-2 last:pr-3 border-y border-neutral-200  mobile:text-12-semibold text-12 px-3 border-t-0 mobile:py-3 mobile:first:pl-0 mobile:last:pr-0",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-12-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 mobile:first:pl-0 mobile:last:pr-0",
+  tdBody: "text-14-light px-3 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 mobile:first:pl-0 mobile:last:pr-0",
   thead: "bg-blueCustom-100 ",
   paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };

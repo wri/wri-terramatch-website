@@ -76,6 +76,7 @@ export interface DashboardTableDataProps {
   label: string;
   valueText: string;
   value: number;
+  accessorKey?: string;
 }
 
 export interface GraphicLegendProps {
@@ -156,25 +157,21 @@ const Dashboard = () => {
       accessorKey: "project",
       enableSorting: false
     },
-    ...(isMobile
-      ? []
-      : [
-          {
-            header: "Trees Planted",
-            accessorKey: "treesPlanted",
-            enableSorting: false
-          },
-          {
-            header: "Hectares",
-            accessorKey: "restorationHectares",
-            enableSorting: false
-          },
-          {
-            header: "Jobs Created",
-            accessorKey: "jobsCreated",
-            enableSorting: false
-          }
-        ]),
+    {
+      header: "Trees Planted",
+      accessorKey: "treesPlanted",
+      enableSorting: false
+    },
+    {
+      header: "Hectares",
+      accessorKey: "restorationHectares",
+      enableSorting: false
+    },
+    {
+      header: "Jobs Created",
+      accessorKey: "jobsCreated",
+      enableSorting: false
+    },
     ...(!isMobile
       ? []
       : [
@@ -369,7 +366,6 @@ const Dashboard = () => {
             </When>
           </div>
         </When>
-
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
@@ -514,7 +510,6 @@ const Dashboard = () => {
             />
           </When>
         </PageCard>
-
         <PageCard
           className="border-0 px-4 py-6 mobile:order-4 mobile:px-0 mobile:py-4"
           classNameSubTitle="mt-4"

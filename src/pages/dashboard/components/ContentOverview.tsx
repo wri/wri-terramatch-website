@@ -240,13 +240,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={titleTable} popUpContent={textTooltipTable} closeModal={closeModal}>
-        <div className="w-full px-6 mobile:px-4">
+        <div className="w-full px-6 mobile:px-4 mobile:pb-5">
           <Table
             columns={columns.map(column => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
               return {
                 ...column,
-                enableSorting: Boolean(column.header?.length)
+                enableSorting: isMobile ? false : Boolean(column.header?.length)
               };
             })}
             data={data}
@@ -303,6 +303,10 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalStoryOpen = (uuid: any) => {
     openModal(ModalId.MODAL_STORY, <ModalStory data={uuid} title={t("IMPACT STORY")} />);
   };
+
+  const columnMobile = (columns as any[]).filter(
+    column => column.accessorKey === "country" || column.accessorKey === "project" || column.accessorKey === "link"
+  );
 
   return (
     <ContentDashboardtWrapper isLeftWrapper={false}>
@@ -390,7 +394,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         <SecDashboard
           title={t("Restoration Strategies Represented")}
           data={{}}
-          classNameBody="ml-[-40px] lg:ml-[-35px]"
+          classNameBody="ml-[-40px] lg:ml-[-35px] mobile:mx-[-33px]"
           chartType={CHART_TYPES.simpleBarChart}
           dataForChart={dataHectaresUnderRestoration}
           tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
@@ -437,7 +441,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       >
         <Table
           visibleRows={50}
-          columns={columns}
+          columns={isMobile ? columnMobile : columns}
           data={data}
           classNameWrapper="mobile:px-0"
           onRowClick={row => {
@@ -497,7 +501,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           render={item => (
             <button
               onClick={() => ModalStoryOpen(item)}
-              className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored"
+              className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
             >
               <img
                 src={item.image ?? "/images/no-image-available.png"}
@@ -505,7 +509,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                 className="h-20 w-20 rounded-md object-cover"
               />
               <div className="flex flex-col items-start gap-2">
-                <Text variant="text-14-bold" className="group-hover:text-primary">
+                <Text variant="text-14-bold" className="text-left group-hover:text-primary mobile:leading-[normal]">
                   {item.title}
                 </Text>
                 <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">

@@ -146,7 +146,7 @@ const Sidebar = () => {
     >
       <div className="flex flex-col items-center gap-8 text-darkCustom-200 mobile:flex-row">
         <a className="mt-4 mb-10 cursor-pointer mobile:m-0" href="/home">
-          <Icon name={IconNames.TERRAFUND_lOGO_MINI} className="mobile:h-6 mobile:w-6" />
+          <Icon name={IconNames.TERRAFUND_lOGO_MINI} className="h-8 w-8 mobile:h-6 mobile:w-6" />
         </a>
 
         <div
