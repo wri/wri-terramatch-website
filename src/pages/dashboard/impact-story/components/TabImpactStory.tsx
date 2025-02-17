@@ -1,10 +1,11 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_IMPACT_STORY } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
 import { useGetV2ImpactStories } from "@/generated/apiComponents";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import CardImpactStory from "./CardImpactStory";
@@ -15,15 +16,14 @@ const TabImpactStory = () => {
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
   const [queryString, setQueryString] = useState("");
 
-  useEffect(() => {
+  useValueChanged(currentCategory, () => {
     const finalFilters = {
       status: ["published"],
       category: currentCategory ? currentCategory : ""
     };
 
-    console.log("Current cat", currentCategory);
     setQueryString(createQueryParams(finalFilters));
-  }, [currentCategory]);
+  });
 
   const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
     queryParams: queryString as any
