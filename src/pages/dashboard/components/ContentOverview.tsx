@@ -110,11 +110,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     }
   }, [initialBbox]);
 
-  useEffect(() => {
-    console.log("Filters changed:", filters);
-  }, [filters]);
-
-  // Debug queryString
   const queryString = useMemo(() => {
     const finalFilters = {
       status: ["published"],
@@ -124,12 +119,10 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     return createQueryParams(finalFilters);
   }, [filters.country?.country_slug, filters.organizations]);
 
-  // Fetch impact stories
   const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
     queryParams: queryString as any
   });
 
-  // Memoize the transformation
   const transformedStories = useMemo(
     () =>
       impactStoriesResponse?.data?.map((story: any) => ({
@@ -152,10 +145,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       })) || [],
     [impactStoriesResponse?.data]
   );
-
-  useEffect(() => {
-    console.log("transformedStories", transformedStories);
-  }, [transformedStories]);
 
   useEffect(() => {
     setModalLoading("modalExpand", modalMapLoaded);
