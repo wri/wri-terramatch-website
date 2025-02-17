@@ -195,7 +195,7 @@ const Sidebar = () => {
         {!isMobile && <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />}
         {isMobile && (
           <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
-            <Icon name={IconNames.IC_MENU} className="h-6 w-6" />
+            <Icon name={isOpen ? IconNames.CLEAR_DASHBOARD : IconNames.IC_MENU} className={classNames("h-5 w-5")} />
           </button>
         )}
       </div>
