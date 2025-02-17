@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -23,10 +23,10 @@ import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContain
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useGetV2ImpactStories } from "@/generated/apiComponents";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
-import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import { createQueryParams, HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
-import { CARD_IMPACT_STORY_MOCKED_DATA } from "../mockedData/impactStory";
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
 import TooltipGridMap from "./TooltipGridMap";
@@ -110,6 +110,42 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     }
   }, [initialBbox]);
 
+  const queryString = useMemo(() => {
+    const finalFilters = {
+      status: ["published"],
+      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
+      organization_type: filters.organizations ? [filters.organizations] : []
+    };
+    return createQueryParams(finalFilters);
+  }, [filters.country?.country_slug, filters.organizations]);
+
+  const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
+    queryParams: queryString as any
+  });
+
+  const transformedStories = useMemo(
+    () =>
+      impactStoriesResponse?.data?.map((story: any) => ({
+        uuid: story.uuid,
+        title: story.title,
+        date: story.date,
+        content: story.content,
+        category: story.category,
+        thumbnail: story.thumbnail?.url ?? "",
+        organization: {
+          name: story.organization?.name ?? "",
+          category: story.category,
+          country: story.organization?.countries ?? "",
+          facebook_url: story.organization?.facebook_url ?? "",
+          instagram_url: story.organization?.instagram_url ?? "",
+          linkedin_url: story.organization?.linkedin_url ?? "",
+          twitter_url: story.organization?.twitter_url ?? ""
+        },
+        status: story.status
+      })) || [],
+    [impactStoriesResponse?.data]
+  );
+
   useEffect(() => {
     setModalLoading("modalExpand", modalMapLoaded);
   }, [modalMapLoaded, setModalLoading]);
@@ -146,12 +182,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           </div>
         );
       },
-      accessorKey: "country",
+      accessorKey: "organization.country",
       enableSorting: true
     },
     {
       header: "Organization",
-      accessorKey: "organization",
+      accessorKey: "organization.name",
       enableSorting: true
     },
     {
@@ -284,11 +320,16 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalTableImpactStories = () => {
     openModal(
       "modalExpand",
-      <ModalExpand id="modalExpand" title={t("IMPACT STORIES")} popUpContent={textTooltipTable} closeModal={closeModal}>
-        <div className="w-full px-6 mobile:px-4">
+      <ModalExpand
+        id="modalExpand"
+        title={t("IMPACT STORIES")}
+        popUpContent={props.textTooltipTable}
+        closeModal={closeModal}
+      >
+        <div className="w-full px-6">
           <Table
             columns={columnsModalImpactStories}
-            data={CARD_IMPACT_STORY_MOCKED_DATA}
+            data={transformedStories}
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
             hasPagination={true}
             invertSelectPagination={true}
@@ -300,8 +341,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = (uuid: any) => {
-    openModal(ModalId.MODAL_STORY, <ModalStory data={uuid} title={t("IMPACT STORY")} />);
+  const ModalStoryOpen = (storyData: any) => {
+    openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
   };
 
   return (
@@ -468,19 +509,14 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"
         classNameSubTitle="mt-4"
         gap={6}
-        isUserAllowed={isUserAllowed}
+        isUserAllowed={props.isUserAllowed}
         subtitleMore={true}
         title={t("IMPACT STORIES")}
         tooltip={" "}
         tooltipTrigger="click"
         iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
         headerChildren={
-          <Button
-            variant="white-border"
-            onClick={() => {
-              ModalTableImpactStories();
-            }}
-          >
+          <Button variant="white-border" onClick={ModalTableImpactStories}>
             <div className="flex items-center gap-1">
               <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
               {!isMobile && (
@@ -492,33 +528,43 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           </Button>
         }
       >
-        <List
-          items={CARD_IMPACT_STORY_MOCKED_DATA}
-          render={item => (
-            <button
-              onClick={() => ModalStoryOpen(item)}
-              className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored"
-            >
-              <img
-                src={item.image ?? "/images/no-image-available.png"}
-                alt={item.title}
-                className="h-20 w-20 rounded-md object-cover"
-              />
-              <div className="flex flex-col items-start gap-2">
-                <Text variant="text-14-bold" className="group-hover:text-primary">
-                  {item.title}
-                </Text>
-                <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                  <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization} Organization
-                </Text>
-                <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                  <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.country}
-                </Text>
-              </div>
-            </button>
-          )}
-          className="flex flex-col gap-4"
-        />
+        {isLoading ? (
+          <div className="flex h-48 items-center justify-center">
+            <span className="text-gray-500">{t("Loading...")}</span>
+          </div>
+        ) : transformedStories.length > 0 ? (
+          <List
+            items={transformedStories}
+            render={item => (
+              <button
+                onClick={() => ModalStoryOpen(item)}
+                className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored"
+              >
+                <img
+                  src={item.thumbnail || "/images/no-image-available.png"}
+                  alt={item.title}
+                  className="h-20 w-20 rounded-md object-cover"
+                />
+                <div className="flex flex-col items-start gap-2">
+                  <Text variant="text-14-bold" className="group-hover:text-primary">
+                    {item.title}
+                  </Text>
+                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                    <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name} Organization
+                  </Text>
+                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                    <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                  </Text>
+                </div>
+              </button>
+            )}
+            className="flex flex-col gap-4"
+          />
+        ) : (
+          <div className="flex h-48 items-center justify-center">
+            <span className="text-gray-500">{t("No impact stories found")}</span>
+          </div>
+        )}
       </PageCard>
     </ContentDashboardtWrapper>
   );
