@@ -36,6 +36,7 @@ interface HeaderDashboardProps {
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
   isHomepage?: boolean;
+  isImpactStoryPage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
@@ -47,6 +48,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     isProjectListPage,
     isProjectPage,
     isHomepage,
+    isImpactStoryPage,
     dashboardCountries,
     setSelectedCountry
   } = props;
@@ -229,6 +231,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isHomepage) {
       return <T _str="Learn More" _tags="dash" />;
     }
+    if (isImpactStoryPage) {
+      return <T _str="Impact Story" _tags="dash" />;
+    }
     return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
@@ -275,25 +280,27 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 />
               </BlurContainer>
             </When>
-            <BlurContainer
-              className={classNames("flex min-w-0 items-center justify-center", {
-                "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
-              })}
-            >
-              <button
-                onClick={() => {
-                  setIsFiltersOpen(true);
-                }}
-                className={classNames("relative z-[4] flex items-center justify-center gap-2 py-2")}
+            <When condition={!isImpactStoryPage}>
+              <BlurContainer
+                className={classNames("flex min-w-0 items-center justify-center", {
+                  "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
+                })}
               >
-                <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
-                <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
-                  <Text variant="text-14-bold" className="text-white">
-                    Filters
-                  </Text>
-                </When>
-              </button>
-            </BlurContainer>
+                <button
+                  onClick={() => {
+                    setIsFiltersOpen(true);
+                  }}
+                  className={classNames("relative z-[4] flex items-center justify-center gap-2 py-2")}
+                >
+                  <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
+                  <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
+                    <Text variant="text-14-bold" className="text-white">
+                      Filters
+                    </Text>
+                  </When>
+                </button>
+              </BlurContainer>
+            </When>
           </div>
           <div
             className={classNames(
