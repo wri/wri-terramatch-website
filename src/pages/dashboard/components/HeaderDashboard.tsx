@@ -36,6 +36,7 @@ interface HeaderDashboardProps {
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
   isHomepage?: boolean;
+  isImpactStoryPage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
@@ -47,6 +48,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     isProjectListPage,
     isProjectPage,
     isHomepage,
+    isImpactStoryPage,
     dashboardCountries,
     setSelectedCountry
   } = props;
@@ -229,6 +231,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isHomepage) {
       return <T _str="Learn More" _tags="dash" />;
     }
+    if (isImpactStoryPage) {
+      return <T _str="Impact Story" _tags="dash" />;
+    }
     return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
@@ -240,7 +245,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
+        <Text
+          variant={isMobile ? "text-24-bold" : "text-28-bold"}
+          className="relative w-full whitespace-nowrap text-white"
+        >
           {getHeaderTitle()}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -254,7 +262,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
-          <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
+          <Text variant={isMobile ? "text-16" : "text-18"} as={"span"} className="absolute top-1 text-white lg:top-2">
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
@@ -264,22 +272,42 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           })}
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
-          <BlurContainer className="hidden mobile:block">
-            <button
-              onClick={() => {
-                setIsFiltersOpen(true);
-              }}
-              className="relative z-[4] flex w-full items-center justify-center gap-2 py-2"
-            >
-              <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
-              <Text variant="text-14-bold" className="text-white">
-                Filters
-              </Text>
-            </button>
-          </BlurContainer>
+          <div className="hidden w-full items-center gap-2 mobile:flex">
+            <When condition={router.pathname !== "/dashboard"}>
+              <BlurContainer className="hidden lg:min-w-[287px] mobile:block">
+                <FilterSearchBox
+                  onChange={e => setSearchTerm(e)}
+                  placeholder="Search"
+                  variant={FILTER_SEARCH_BOX_AIRTABLE}
+                  value={searchTerm}
+                />
+              </BlurContainer>
+            </When>
+            <When condition={!isImpactStoryPage}>
+              <BlurContainer
+                className={classNames("flex min-w-0 items-center justify-center", {
+                  "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
+                })}
+              >
+                <button
+                  onClick={() => {
+                    setIsFiltersOpen(true);
+                  }}
+                  className={classNames("relative z-[4] flex w-full items-center justify-center gap-2 py-2")}
+                >
+                  <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
+                  <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
+                    <Text variant="text-14-bold" className="text-white">
+                      Filters
+                    </Text>
+                  </When>
+                </button>
+              </BlurContainer>
+            </When>
+          </div>
           <div
             className={classNames(
-              "flexl-col flex w-full max-w-full transform items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
+              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
               {
                 "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
                 "mobile:-top-full": !isFiltersOpen
@@ -416,12 +444,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             </div>
             <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
               <When condition={isMobile}>
-                <Button
-                  variant="primary"
-                  className="text-14-semibold min-h-10 w-full whitespace-nowrap p-1 py-2 text-white disabled:opacity-70"
-                  onClick={resetValues}
-                  disabled={isProjectPage}
-                >
+                <Button variant="primary" fullWidth onClick={resetValues} disabled={isProjectPage}>
                   {t("Clear Filters")}
                 </Button>
               </When>

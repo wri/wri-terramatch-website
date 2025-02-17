@@ -287,7 +287,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     openModal(
       "modalExpand",
       <ModalExpand id="modalExpand" title={titleTable} popUpContent={textTooltipTable} closeModal={closeModal}>
-        <div className="w-full px-6">
+        <div className="w-full px-6 mobile:px-4">
           <Table
             columns={columns.map(column => {
               column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;

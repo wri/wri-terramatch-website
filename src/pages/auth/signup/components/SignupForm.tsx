@@ -30,8 +30,8 @@ const SignUpForm = ({ form, loading, handleSave, role }: SignUpFormProps) => {
 
   return (
     <LoginLayout>
-      <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
-        <Form formType="signUp" onSubmit={form.handleSubmit(handleSave)}>
+      <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1 mobile:w-full">
+        <Form formType="signUp" onSubmit={form.handleSubmit(handleSave)} className="mobile:w-full">
           <Text variant="text-32-bold" className="mb-2 text-blueCustom-700">
             {t("Sign Up")}
           </Text>

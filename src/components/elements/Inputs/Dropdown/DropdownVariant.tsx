@@ -84,10 +84,12 @@ export const VARIANT_DROPDOWN_COLLAPSE: DropdownVariant = {
   containerClassName: "",
   className: "",
   iconClassName: "w-4",
+  iconClearClassName: "w-4",
   iconName: undefined,
   titleContainerClassName: "flex items-center gap-2",
   titleClassname: "",
-  optionsClassName: "static",
-  optionCheckboxClassName: "",
-  optionLabelClassName: ""
+  optionsClassName: "static bg-neutral-40",
+  optionClassName: "flex-row w-full",
+  optionCheckboxClassName: "w-4 h-4",
+  optionLabelClassName: "text-14-light"
 };

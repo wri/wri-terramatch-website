@@ -5,7 +5,7 @@ exports[`Storyshots Components/Elements/Table/PerPageSelector Default 1`] = `
   className="w-fit"
 >
   <div
-    className="space-y-2"
+    className="space-y-2 mobile:hidden"
     data-headlessui-state=""
   >
     <div

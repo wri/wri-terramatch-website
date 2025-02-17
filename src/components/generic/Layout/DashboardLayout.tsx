@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
 import {
   cloneElement,
@@ -58,7 +59,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   const isProjectPage = router.pathname === "dashboard/project";
   const isHomepage = router.pathname === "/dashboard/learn-more";
   const childrenWithProps = props.children ? cloneElement(props.children as ReactElement, { selectedCountry }) : null;
-
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   return (
     <DashboardProvider>
       {loading && (
@@ -66,17 +67,18 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
           <Loader />
         </div>
       )}
-      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70 mobile:flex-col">
+      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70 mobile:h-full mobile:w-full mobile:flex-col">
         <Sidebar />
         <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className} mobile:bg-white`}>
           {dashboardCountries && (
             <>
-              <When condition={!isImpactStoryPage}>
+              <When condition={!isImpactStoryPage || isMobile}>
                 <HeaderDashboard
                   isProjectInsightsPage={isProjectInsightsPage}
                   isProjectListPage={isProjectListPage}
                   isProjectPage={isProjectPage}
                   isHomepage={isHomepage}
+                  isImpactStoryPage={isImpactStoryPage}
                   dashboardCountries={dashboardCountries.data}
                   defaultSelectedCountry={selectedCountry}
                   setSelectedCountry={setSelectedCountry}

@@ -1,4 +1,5 @@
 import { Tab as HTab } from "@headlessui/react";
+import { useMediaQuery } from "@mui/material";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { DetailedHTMLProps, Fragment, HTMLAttributes, ReactElement, useRef, useState } from "react";
@@ -48,6 +49,8 @@ const SecondaryTabs = ({
   const { framework } = useFrameworkContext();
   const ContentListRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [selectedIndexTab, setSelectedIndexTab] = useState(0);
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const tabItems = _tabItems.filter(item => {
     if (item.show != null) {
       return item.show.includes(framework);
@@ -65,7 +68,7 @@ const SecondaryTabs = ({
 
   const onTabChange = (index: number) => {
     const key = tabItems[index].key;
-
+    setSelectedIndexTab(index);
     if (key) {
       router.query.tab = key;
       router.push(router, undefined, { shallow: true });
@@ -81,13 +84,25 @@ const SecondaryTabs = ({
 
   const handleScrollNext = () => {
     if (ContentListRef.current) {
-      ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + 75;
+      if (isMobile) {
+        const scrollWidth = ContentListRef.current.scrollWidth;
+        ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + scrollWidth / tabItems.length;
+        onTabChange(selectedIndexTab + 1);
+      } else {
+        ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + 75;
+      }
     }
   };
 
   const handleScrollPrev = () => {
     if (ContentListRef.current) {
-      ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - 75;
+      if (isMobile) {
+        const scrollWidth = ContentListRef.current.scrollWidth;
+        ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - scrollWidth / tabItems.length;
+        onTabChange(selectedIndexTab - 1);
+      } else {
+        ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - 75;
+      }
     }
   };
 
@@ -105,7 +120,10 @@ const SecondaryTabs = ({
           >
             <Button
               variant="secondary-blue"
-              className="sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-r border-b-2 border-neutral-200 p-3"
+              className={classNames(
+                "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-r border-b-2 border-neutral-200 p-3",
+                "mobile:max-w-8 mobile:h-8 mobile:w-8 mobile:rounded-lg mobile:border mobile:p-0 mobile:shadow-monitored"
+              )}
               onClick={handleScrollPrev}
             >
               <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 -rotate-90" />
@@ -161,7 +179,10 @@ const SecondaryTabs = ({
             >
               <Button
                 variant="secondary-blue"
-                className="sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-l border-b-2 border-neutral-200 p-3"
+                className={classNames(
+                  "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-l border-b-2 border-neutral-200 p-3",
+                  "mobile:max-w-8 mobile:h-8 mobile:w-8 mobile:rounded-lg mobile:border mobile:p-0 mobile:shadow-monitored"
+                )}
                 onClick={handleScrollNext}
               >
                 <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 rotate-90" />

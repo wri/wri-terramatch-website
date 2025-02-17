@@ -58,6 +58,7 @@ export interface TableProps<TData>
   contentClassName?: string;
   classNameTableWrapper?: string;
   galleryType?: string;
+  classPagination?: string;
 }
 
 export interface TableState {
@@ -93,6 +94,7 @@ function Table<TData extends RowData>({
   onRowClick,
   contentClassName,
   galleryType,
+  classPagination,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -305,7 +307,7 @@ function Table<TData extends RowData>({
           setPageIndex={setPageIndex}
           setPageSize={setPageSize}
           defaultPageSize={defaultPageSize}
-          containerClassName="mt-6"
+          containerClassName={classNames("mt-6", classPagination)}
           hasPageSizeSelector={rowCount > defaultPageSize}
           invertSelect={invertSelectPagination}
           galleryType={galleryType}
