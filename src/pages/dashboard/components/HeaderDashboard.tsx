@@ -264,19 +264,37 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           })}
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
-          <BlurContainer className="hidden mobile:block">
-            <button
-              onClick={() => {
-                setIsFiltersOpen(true);
-              }}
-              className="relative z-[4] flex w-full items-center justify-center gap-2 py-2"
+          <div className="hidden w-full items-center gap-2 mobile:flex">
+            <When condition={router.pathname !== "/dashboard"}>
+              <BlurContainer className="hidden lg:min-w-[287px] mobile:block">
+                <FilterSearchBox
+                  onChange={e => setSearchTerm(e)}
+                  placeholder="Search"
+                  variant={FILTER_SEARCH_BOX_AIRTABLE}
+                  value={searchTerm}
+                />
+              </BlurContainer>
+            </When>
+            <BlurContainer
+              className={classNames("flex min-w-0 items-center justify-center", {
+                "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
+              })}
             >
-              <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
-              <Text variant="text-14-bold" className="text-white">
-                Filters
-              </Text>
-            </button>
-          </BlurContainer>
+              <button
+                onClick={() => {
+                  setIsFiltersOpen(true);
+                }}
+                className={classNames("relative z-[4] flex items-center justify-center gap-2 py-2")}
+              >
+                <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
+                <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
+                  <Text variant="text-14-bold" className="text-white">
+                    Filters
+                  </Text>
+                </When>
+              </button>
+            </BlurContainer>
+          </div>
           <div
             className={classNames(
               "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:h-full mobile:flex-col mobile:bg-white",
