@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 
 import Button from "@/components/elements/Button/Button";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
@@ -11,8 +12,13 @@ const ImpactStory = () => {
   const t = useT();
   return (
     <div className="h-screen w-full bg-white bg-impactStoryBg bg-cover bg-center bg-no-repeat">
-      <div className="flex w-full flex-col gap-y-6 overflow-hidden pr-[4.375rem] pl-13 pt-14 lg:gap-y-10 lg:pt-[4.375rem] lg:pl-[4.375rem]">
-        <div className="flex items-center justify-between">
+      <div
+        className={classNames(
+          "flex w-full flex-col gap-y-6 overflow-hidden pr-[4.375rem] pl-13 pt-14 lg:gap-y-10 lg:pt-[4.375rem] lg:pl-[4.375rem]",
+          "mobile:p-4"
+        )}
+      >
+        <div className="flex items-center justify-between mobile:hidden">
           <Text variant="text-48-bold" className="leading-[normal] text-black">
             {t("Impact Story")}
           </Text>

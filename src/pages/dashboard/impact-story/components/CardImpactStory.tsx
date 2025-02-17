@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -15,7 +16,7 @@ const CardImpactStory = () => {
   return (
     <div className="-ml-2 flex flex-1 overflow-visible">
       <div className="mt-5 flex max-h-[62vh] min-h-0 flex-1 overflow-scroll pb-4 pl-2 pr-2 duration-500 lg:mt-8">
-        <div className="grid h-max w-full grid-cols-2 gap-x-10 gap-y-10 pb-6">
+        <div className="grid h-max w-full grid-cols-2 gap-x-10 gap-y-10 pb-6 mobile:grid-cols-1 mobile:gap-y-6 mobile:pb-4">
           {CARD_IMPACT_STORY_MOCKED_DATA.map((item, index) => {
             return (
               <div
@@ -29,10 +30,13 @@ const CardImpactStory = () => {
                 <img
                   src={item.image ?? "/images/no-image-available.png"}
                   alt={item.title}
-                  className="h-[39vh] w-full rounded-2xl object-cover"
+                  className={classNames(
+                    "h-[39vh] w-full rounded-2xl object-cover ",
+                    "mobile:h-[216px] mobile:rounded-lg"
+                  )}
                 />
                 <div className="w-full px-0 transition-all duration-300 group-hover:px-4">
-                  <div className="h-[147px] lg:h-[167px] wide:h-[180px]">
+                  <div className="h-[147px] lg:h-[167px] wide:h-[180px] mobile:h-auto">
                     <Text variant="text-20-bold" className="two-line-text mt-6 leading-[normal] transition-colors">
                       {t(item.title)}
                     </Text>

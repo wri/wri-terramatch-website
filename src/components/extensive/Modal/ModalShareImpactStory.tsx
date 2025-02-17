@@ -18,7 +18,7 @@ const ModalShareImpactStory: FC<ModalShareImpactStoryProps> = ({ onClose, onConf
   const t = useT();
 
   return (
-    <ModalBase {...rest} className={tw("w-[40vw] p-8", className)}>
+    <ModalBase {...rest} className={tw("w-[40vw] p-8 mobile:w-full", className)}>
       <div className="relative flex w-full flex-col gap-2">
         <button className="absolute top-0 right-0 w-fit text-grey-500" onClick={onClose}>
           <Icon name={IconNames.CLEAR} className="h-4 w-4 lg:h-5 lg:w-5" />
