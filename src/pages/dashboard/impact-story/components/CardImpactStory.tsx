@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -10,6 +11,7 @@ import { CARD_IMPACT_STORY_MOCKED_DATA } from "../../mockedData/impactStory";
 
 const CardImpactStory = () => {
   const router = useRouter();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const t = useT();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -37,13 +39,22 @@ const CardImpactStory = () => {
                 />
                 <div className="w-full px-0 transition-all duration-300 group-hover:px-4">
                   <div className="h-[147px] lg:h-[167px] wide:h-[180px] mobile:h-auto">
-                    <Text variant="text-20-bold" className="two-line-text mt-6 leading-[normal] transition-colors">
+                    <Text
+                      variant={isMobile ? "text-16-bold" : "text-20-bold"}
+                      className="two-line-text mt-6 leading-[normal] transition-colors"
+                    >
                       {t(item.title)}
                     </Text>
-                    <Text variant="text-16-light" className="mt-3 flex items-center gap-1.5 capitalize text-grey-700">
+                    <Text
+                      variant={isMobile ? "text-14-light" : "text-16-light"}
+                      className="mt-3 flex items-center gap-1.5 capitalize text-grey-700"
+                    >
                       <Icon name={IconNames.BRIEFCASE} className="h-4.5 w-4.5" /> {item.organization} Organization
                     </Text>
-                    <Text variant="text-16-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                    <Text
+                      variant={isMobile ? "text-14-light" : "text-16-light"}
+                      className="flex items-center gap-1.5 capitalize text-grey-700"
+                    >
                       <Icon name={IconNames.PIN} className="h-4.5 w-4.5" /> {item.country}
                     </Text>
                     <div className="mt-4 flex flex-wrap gap-2">
