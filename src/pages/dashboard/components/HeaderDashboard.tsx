@@ -245,7 +245,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
+        <Text
+          variant={isMobile ? "text-24-bold" : "text-28-bold"}
+          className="relative w-full whitespace-nowrap text-white"
+        >
           {getHeaderTitle()}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -259,7 +262,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
-          <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
+          <Text variant={isMobile ? "text-16" : "text-18"} as={"span"} className="absolute top-1 text-white lg:top-2">
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
