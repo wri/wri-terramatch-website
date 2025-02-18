@@ -8,12 +8,15 @@ import {
   SiteFullDto,
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-type EntityDtoType = ProjectFullDto | ProjectLightDto | SiteFullDto | SiteLightDto;
+export type EntityFullDto = ProjectFullDto | SiteFullDto;
+export type EntityLightDto = ProjectLightDto | SiteLightDto;
+export type EntityDtoType = EntityFullDto | EntityLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
   entity?: T;
@@ -25,29 +28,36 @@ type EntityConnectionProps = {
   uuid: string;
 };
 
-type EntityIndexConnection<T extends EntityDtoType> = {
+export type EntityIndexConnection<T extends EntityDtoType> = {
   entities?: T[];
+  indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
 };
 
-type EntityIndexConnectionProps = {
-  pageAfter?: string;
+export type EntityIndexConnectionProps = {
+  pageSize?: number;
+  pageNumber?: number;
 };
 
-type SupportedEntity = EntityGetPathParams["entity"];
+export type SupportedEntity = EntityGetPathParams["entity"];
 
 const entitySelector =
   <T extends EntityDtoType>(entityName: SupportedEntity) =>
   (store: ApiDataStore) =>
     store[entityName] as StoreResourceMap<T>;
 
-const idsSelector = (entityName: SupportedEntity) => (store: ApiDataStore) => store.meta.filterIndexIds[entityName];
+const pageMetaSelector = (entityName: SupportedEntity, props: EntityIndexConnectionProps) => (store: ApiDataStore) => {
+  const { queryParams } = entityIndexParams(entityName, props);
+  delete queryParams["page[number]"];
+  const query = getStableQuery(queryParams);
+  return store.meta.filterIndexMetas[entityName][query]?.[props.pageNumber ?? 0];
+};
 
 const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
-const entityIndexParams = (entity: SupportedEntity, pageAfter?: string) => ({
+const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectionProps) => ({
   pathParams: { entity },
-  queryParams: { "page[after]": pageAfter }
+  queryParams: { "page[number]": props?.pageNumber, "page[size]": props?.pageSize }
 });
 
 const entityIsLoaded =
@@ -90,37 +100,35 @@ const indexIsLoaded = <T extends EntityDtoType>({ entities, fetchFailure }: Enti
 const createEntityIndexConnection = <T extends EntityDtoType>(
   entityName: SupportedEntity
 ): Connection<EntityIndexConnection<T>, EntityIndexConnectionProps> => ({
-  load: (connection, { pageAfter }) => {
-    if (!indexIsLoaded(connection)) entityIndex(entityIndexParams(entityName, pageAfter));
+  load: (connection, props) => {
+    if (!indexIsLoaded(connection)) entityIndex(entityIndexParams(entityName, props));
   },
 
   isLoaded: indexIsLoaded,
 
   selector: selectorCache(
-    ({ pageAfter }) => pageAfter ?? "",
-    ({ pageAfter }) =>
+    ({ pageSize, pageNumber }) => `${pageNumber}|${pageSize}`,
+    props =>
       createSelector(
         [
-          idsSelector(entityName),
+          pageMetaSelector(entityName, props),
           entitySelector(entityName),
-          entityIndexFetchFailed(entityIndexParams(entityName, pageAfter))
+          entityIndexFetchFailed(entityIndexParams(entityName, props))
         ],
-        (idsCacheStore, entitiesStore, fetchFailure) => {
+        (pageMeta, entitiesStore, fetchFailure) => {
           // For now, we don't have filter support, so all search queries should be ""
           const refetch = () => ApiSlice.pruneIndex(entityName, "");
-
-          const ids = idsCacheStore[""]?.[pageAfter ?? ""];
-          if (ids == null) return { refetch, fetchFailure };
+          if (pageMeta == null) return { refetch, fetchFailure };
 
           const entities = [] as T[];
-          for (const id of ids) {
+          for (const id of pageMeta.ids) {
             // If we're missing any of the entities we're supposed to have, return nothing so the
             // index endpoint is queried again.
             if (entitiesStore[id] == null) return { refetch, fetchFailure };
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, refetch, fetchFailure };
+          return { entities, indexTotal: pageMeta.meta.total, refetch, fetchFailure };
         }
       )
   )

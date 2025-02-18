@@ -32,24 +32,28 @@ const getBaseUrl = (url: string) => {
   return baseUrl;
 };
 
-export const resolveUrl = (
-  url: string,
-  queryParams: Record<string, string> = {},
-  pathParams: Record<string, string> = {}
-) => {
+export const getStableQuery = (queryParams: Record<string, number | string | null | undefined>) => {
   // URLSearchParams will gleefully stringify undefined to "undefined" if you leave the key in place.
   // For our implementation, we never want to send the string "null" or "undefined" to the server in
   // the query, so delete any keys that have such a value.
   for (const key of Object.keys(queryParams)) {
     if (queryParams[key] == null) delete queryParams[key];
   }
-  const searchParams = new URLSearchParams(queryParams);
+  const searchParams = new URLSearchParams(queryParams as Record<string, string>);
   // Make sure the output string always ends up in the same order because we need the URL string
   // that is generated from a set of query / path params to be consistent even if the order of the
   // params in the source object changes.
   searchParams.sort();
-  let query = searchParams.toString();
-  if (query) query = `?${query}`;
+  return searchParams.toString();
+};
+
+export const resolveUrl = (
+  url: string,
+  queryParams: Record<string, string> = {},
+  pathParams: Record<string, string> = {}
+) => {
+  let query = getStableQuery(queryParams);
+  if (query.length > 0) query = `?${query}`;
 
   return `${getBaseUrl(url)}${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)]) + query}`;
 };

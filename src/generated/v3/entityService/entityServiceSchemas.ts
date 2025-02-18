@@ -86,6 +86,7 @@ export type SiteLightDto = {
    * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
+  uuid: string;
   /**
    * Framework key for this project
    */
@@ -230,6 +231,7 @@ export type SiteFullDto = {
    * @example false
    */
   lightResource: boolean;
+  uuid: string;
   /**
    * Framework key for this project
    */

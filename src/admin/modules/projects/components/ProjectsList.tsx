@@ -2,7 +2,6 @@ import { Stack } from "@mui/material";
 import { FC } from "react";
 import {
   AutocompleteInput,
-  BooleanField,
   Datagrid,
   DateField,
   EditButton,
@@ -29,6 +28,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -70,34 +70,34 @@ const ProjectDataGrid = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Project Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
-      />
-      <FunctionField
-        source="update_request_status"
-        label="Change Request Status"
-        sortable={false}
-        render={(record: any) => {
-          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
-          );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        render={({ status }: ProjectLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
         }}
       />
-      <TextField source="organisation.name" label="Organization" />
-      <DateField source="planting_start_date" label="Establishment" locales="en-GB" />
       <FunctionField
-        source="framework_key"
+        source="updateRequestStatus"
+        label="Change Request Status"
+        sortable={false}
+        render={({ updateRequestStatus }: ProjectLightDto) => {
+          const { title } =
+            getChangeRequestStatusOptions().find((option: any) => option.value === updateRequestStatus) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
+      <TextField source="organisationName" label="Organization" />
+      <DateField source="plantingStartDate" label="Establishment" locales="en-GB" />
+      <FunctionField
+        source="frameworkKey"
         label="Framework"
-        render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
-          record?.framework_key
+        render={({ frameworkKey }: ProjectLightDto) =>
+          frameworkInputChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey
         }
         sortable={false}
       />
-      <BooleanField source="has_monitoring_data" label="Monitored Data" sortable={false} looseValue />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
