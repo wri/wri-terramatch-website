@@ -11,7 +11,32 @@ export type ANRDto = {
   treeCount: number;
 };
 
+export type MediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string;
+  thumbUrl: string;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
 export type ProjectLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   /**
    * Framework key for this project
@@ -48,15 +73,13 @@ export type ProjectLightDto = {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Indicates that this resource does not have the full resource definition.
-   *
-   * @example true
-   */
-  lightResource: boolean;
 };
 
 export type SiteLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   /**
    * Framework key for this project
    */
@@ -84,15 +107,13 @@ export type SiteLightDto = {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Indicates that this resource does not have the full resource definition.
-   *
-   * @example true
-   */
-  lightResource: boolean;
 };
 
 export type ProjectFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   /**
    * Framework key for this project
@@ -129,12 +150,6 @@ export type ProjectFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Indicates that this resource has the full resource definition.
-   *
-   * @example false
-   */
-  lightResource: boolean;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -190,9 +205,24 @@ export type ProjectFullDto = {
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
   directSeedingSurvivalRate: number | null;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+  documentFiles: MediaDto[];
+  programmeSubmission: MediaDto[];
+  detailedProjectBudget: MediaDto;
+  proofOfLandTenureMou: MediaDto[];
 };
 
 export type SiteFullDto = {
+  /**
+   * Indicates that this resource has the full resource definition.
+   *
+   * @example false
+   */
+  lightResource: boolean;
   /**
    * Framework key for this project
    */
@@ -220,12 +250,6 @@ export type SiteFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Indicates that this resource has the full resource definition.
-   *
-   * @example false
-   */
-  lightResource: boolean;
   totalSiteReports: number;
 };
 
