@@ -385,6 +385,10 @@
   order: 100; /* Mueve el último botón al final */
 }
 
+.impact-story-form .MuiAutocomplete-root .MuiFormHelperText-root {
+  display: none !important;
+}
+
 
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{
