@@ -30,6 +30,7 @@ const ImpactStoryLanding = () => {
   const data: any = storyData;
 
   const transformedData = {
+    uuid: data?.data?.uuid,
     title: data?.data?.title,
     date: data?.data?.date,
     content: data?.data?.content ? JSON.parse(data?.data?.content) : [],
@@ -69,7 +70,7 @@ const ImpactStoryLanding = () => {
       <div className="border-b-[0.375rem] border-grey-950 py-6 px-13 mobile:p-4">
         <button
           onClick={() => {
-            router.back();
+            router.push("/dashboard/impact-story?tab=view-all");
           }}
           className="text-14-bold flex items-center gap-x-2 py-1 uppercase leading-[normal] hover:text-primary"
         >
@@ -84,7 +85,7 @@ const ImpactStoryLanding = () => {
             "mobile:relative mobile:order-2 mobile:m-0 mobile:w-full mobile:p-4 mobile:pb-14"
           )}
         >
-          <SectionShare data={transformedData.organization} className="my-auto" />
+          <SectionShare data={transformedData} className="my-auto" />
         </div>
         <div className="flex-1 overflow-y-auto p-8 mobile:overflow-y-visible mobile:p-4">
           <div className="mx-auto w-2/4 mobile:m-0 mobile:w-full">

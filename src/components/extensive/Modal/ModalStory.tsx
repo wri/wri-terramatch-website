@@ -12,6 +12,7 @@ import { ModalBase, ModalProps } from "./Modal";
 import { ModalId } from "./ModalConst";
 
 export interface ImpactStoryData {
+  uuid: string;
   title: string;
   date: string;
   content: string;
@@ -50,7 +51,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
       <div className="flex w-full flex-col gap-2 overflow-hidden px-28 mobile:p-4">
         <div className="flex gap-8 overflow-y-auto pr-10 mobile:flex-col mobile:p-0">
           <SectionShare
-            data={data.organization}
+            data={data}
             className="w-max  max-w-[25%] mobile:order-2 mobile:w-full mobile:max-w-full mobile:pb-4"
           />
           <div className="w-wekit h-max pb-15 mobile:order-1">
