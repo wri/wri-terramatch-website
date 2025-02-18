@@ -27,7 +27,7 @@ export const VARIANT_MY_ACCOUNT_DROPDOWN: MyAccountDropdownVariant = {
   classPanel: "border-1 absolute right-0 z-50 mt-4 w-auto  border border-neutral-300 bg-white shadow",
   classList: "",
   classItem:
-    "px-3 py-1 text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200 whitespace-nowrap flex items-center gap-2",
+    "px-3 py-1 text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200 whitespace-nowrap flex items-center gap-2 cursor-pointer",
   classIconSelected: "w-3 h-3",
   classContent: "relative w-fit",
   classContentOpen: ""

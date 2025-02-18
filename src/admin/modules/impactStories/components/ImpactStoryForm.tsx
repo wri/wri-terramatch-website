@@ -82,7 +82,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
   return (
-    <div className="w-full">
+    <div className="impact-story-form w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
         {mode === "create" ? "Create Impact Story" : "Edit Impact Story"}
       </Text>

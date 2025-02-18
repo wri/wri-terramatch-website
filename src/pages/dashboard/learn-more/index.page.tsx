@@ -1,5 +1,6 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useEffect, useRef } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -244,7 +245,10 @@ const Homepage = () => {
       </div>
 
       <div
-        className="flex w-full items-center gap-12 bg-white pt-16 pb-20 pl-13 pr-26 transition-all duration-500 ease-in-out mobile:flex-col-reverse mobile:px-4"
+        className={classNames(
+          "flex w-full items-center gap-12 bg-white pt-16 pb-20 pl-13 pr-26 transition-all duration-500 ease-in-out",
+          "mobile:flex-col-reverse mobile:px-4 mobile:pt-4"
+        )}
         ref={third}
       >
         <div className="w-2/5 pr-5 mobile:w-full">

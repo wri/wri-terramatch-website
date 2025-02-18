@@ -17,7 +17,8 @@ import {
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate
+  useGetV2DashboardVolunteersSurvivalRate,
+  useGetV2ImpactStories
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
@@ -208,6 +209,41 @@ export const useDashboardData = (filters: any) => {
       setGeneralBboxParsed(undefined);
     }
   }, [generalBbox]);
+  const queryString = useMemo(() => {
+    const finalFilters = {
+      status: ["published"],
+      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
+      organizationType: filters.organizations ? filters.organizations : []
+    };
+    return createQueryParams(finalFilters);
+  }, [filters.country?.country_slug, filters.organizations]);
+
+  const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
+    queryParams: queryString as any
+  });
+
+  const transformedStories = useMemo(
+    () =>
+      impactStoriesResponse?.data?.map((story: any) => ({
+        uuid: story.uuid,
+        title: story.title,
+        date: story.date,
+        content: story.content,
+        category: story.category,
+        thumbnail: story.thumbnail?.url ?? "",
+        organization: {
+          name: story.organization?.name ?? "",
+          category: story.category,
+          country: story.organization?.countries ?? "",
+          facebook_url: story.organization?.facebook_url ?? "",
+          instagram_url: story.organization?.instagram_url ?? "",
+          linkedin_url: story.organization?.linkedin_url ?? "",
+          twitter_url: story.organization?.twitter_url ?? ""
+        },
+        status: story.status
+      })) || [],
+    [impactStoriesResponse?.data]
+  );
 
   return {
     dashboardHeader,
@@ -231,6 +267,8 @@ export const useDashboardData = (filters: any) => {
     polygonsData: polygonsData?.data ?? {},
     isUserAllowed,
     projectBbox: projectBbox?.bbox,
-    generalBbox: generalBboxParsed
+    generalBbox: generalBboxParsed,
+    transformedStories,
+    isLoadingImpactStories
   };
 };
