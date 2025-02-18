@@ -27,7 +27,7 @@ export const VARIANT_LANGUAGES_DROPDOWN: LanguagesDropdownVariant = {
   arrowNavbarClass: "transition fill-neutral-700 ui-open:rotate-180 ui-open:transform",
   classPanel: "border-1 absolute right-0 z-50 mt-4 w-[130px]  border border-neutral-300 bg-white shadow",
   classList: "",
-  classItem: "px-3 py-1 uppercase text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200",
+  classItem: "px-3 py-1 uppercase text-neutral-900 first:pt-2  last:pb-2 hover:bg-neutral-200 cursor-pointer",
   classIconSelected: "hidden",
   classContent: "relative w-fit",
   classContentOpen: "",
