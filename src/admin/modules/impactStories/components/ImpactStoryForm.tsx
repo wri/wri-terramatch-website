@@ -161,7 +161,9 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
         </div>
 
         <div>
-          <Text variant="text-14-bold">Content</Text>
+          <Text variant="text-14-bold" className="mb-2">
+            Content
+          </Text>
           <QuillEditor value={initialValues.content} onChange={handlers.handleContentChange} />
         </div>
 
