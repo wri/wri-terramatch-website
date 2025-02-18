@@ -113,7 +113,9 @@ const Dashboard = () => {
     polygonsData,
     projectBbox,
     isUserAllowed,
-    generalBbox
+    generalBbox,
+    transformedStories,
+    isLoadingImpactStories
   } = useDashboardData(filters);
 
   const dataToggle = [
@@ -642,6 +644,8 @@ const Dashboard = () => {
         polygonsData={polygonsData}
         bbox={filters.uuid ? projectBbox : currentBbox}
         projectCounts={projectCounts}
+        transformedStories={transformedStories}
+        isLoading={isLoadingImpactStories}
       />
     </div>
   );

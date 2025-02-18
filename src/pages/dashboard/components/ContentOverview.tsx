@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -23,9 +23,8 @@ import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContain
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useGetV2ImpactStories } from "@/generated/apiComponents";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
-import { createQueryParams, HectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
@@ -65,6 +64,8 @@ interface ContentOverviewProps<TData> {
     total_enterprise_count: number;
     total_non_profit_count: number;
   };
+  transformedStories: any;
+  isLoading: boolean;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -80,7 +81,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     bbox: initialBbox,
     projectCounts,
     isUserAllowed = true,
-    isLoadingHectaresUnderRestoration = false
+    isLoadingHectaresUnderRestoration = false,
+    transformedStories,
+    isLoading
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -109,43 +112,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       setCurrentBbox(initialBbox);
     }
   }, [initialBbox]);
-
-  const queryString = useMemo(() => {
-    console.log("filters.organizations", filters.organizations);
-    const finalFilters = {
-      status: ["published"],
-      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organizationType: filters.organizations ? filters.organizations : []
-    };
-    return createQueryParams(finalFilters);
-  }, [filters.country?.country_slug, filters.organizations]);
-
-  const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
-    queryParams: queryString as any
-  });
-
-  const transformedStories = useMemo(
-    () =>
-      impactStoriesResponse?.data?.map((story: any) => ({
-        uuid: story.uuid,
-        title: story.title,
-        date: story.date,
-        content: story.content,
-        category: story.category,
-        thumbnail: story.thumbnail?.url ?? "",
-        organization: {
-          name: story.organization?.name ?? "",
-          category: story.category,
-          country: story.organization?.countries ?? "",
-          facebook_url: story.organization?.facebook_url ?? "",
-          instagram_url: story.organization?.instagram_url ?? "",
-          linkedin_url: story.organization?.linkedin_url ?? "",
-          twitter_url: story.organization?.twitter_url ?? ""
-        },
-        status: story.status
-      })) || [],
-    [impactStoriesResponse?.data]
-  );
 
   useEffect(() => {
     setModalLoading("modalExpand", modalMapLoaded);
