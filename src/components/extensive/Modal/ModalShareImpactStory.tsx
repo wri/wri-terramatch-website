@@ -31,7 +31,6 @@ const ModalShareImpactStory: FC<ModalShareImpactStoryProps> = ({
       onClose();
     } catch (err) {
       console.error("Failed to copy:", err);
-      // You could add error handling here (e.g., show an error toast)
     }
   }, [shareUrl, onCopySuccess, onClose]);
 
@@ -71,7 +70,7 @@ const ModalShareImpactStory: FC<ModalShareImpactStoryProps> = ({
           </div>
           <div className="flex flex-col gap-3">
             <Text variant="text-18-semibold" className="text-darkCustom">
-              {t("Share Link")}
+              {t("Share on Social media")}
             </Text>
             <div className="flex w-full items-center justify-between gap-2 rounded-md border border-grey-350 bg-background py-1 pl-4 pr-1">
               <Text variant="text-16-light" className="truncate leading-[normal] text-darkCustom">

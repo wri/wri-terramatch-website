@@ -9,6 +9,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocialImpactStory from "@/components/extensive/Icon/IconSocialImpactStory";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 
 import ShareSection from "./ShareSection";
 
@@ -46,6 +47,7 @@ const getCategoryTitles = (categories: string[] = []) => {
 
 const SectionShare = ({ data, className }: SectionShareProps) => {
   const { openModal, closeModal } = useModalContext();
+  const { openNotification } = useNotificationContext();
   const t = useT();
 
   const isButtonDisabled = useMemo(() => {
@@ -56,7 +58,7 @@ const SectionShare = ({ data, className }: SectionShareProps) => {
   }, [data]);
 
   const handleCopySuccess = () => {
-    console.log("Link copied!");
+    openNotification("success", t("Link Copied!"));
   };
   const socialMediaLinks = useMemo(() => {
     if (!data?.organization) return [];
