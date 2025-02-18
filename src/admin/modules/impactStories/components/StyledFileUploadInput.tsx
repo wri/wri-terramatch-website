@@ -16,8 +16,14 @@ const StyledFileUploadInput = (props: any) => {
         "& .RaLabeled-label span": {
           fontSize: "14px",
           fontWeight: "bold",
-          color: "black",
-          fontFamily: "Inter"
+          color: "rgba(0, 0, 0, 0.87)",
+          fontFamily: "Inter",
+          "@media (min-width: 1900px)": {
+            fontSize: "16px"
+          },
+          "@media (min-width: 2500px)": {
+            fontSize: "18px"
+          }
         },
         "& .RaFileInput-dropZone": {
           backgroundColor: "white",
