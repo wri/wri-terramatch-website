@@ -17,7 +17,7 @@ import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { ContextCondition } from "@/context/ContextCondition";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -34,6 +34,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
   const { format } = useDate();
   const { openModal } = useModalContext();
+  const { framework } = useFrameworkContext();
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
@@ -55,6 +56,46 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
       <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
     );
   };
+
+  const downloadButtons: JSX.Element[] = [];
+  if (framework === Framework.PPC) {
+    project.file.forEach(({ url, fileName }) => {
+      downloadButtons.push(
+        <ButtonField
+          key={url}
+          label={t("Files")}
+          subtitle={fileName}
+          subtitleClassName="break-words whitespace-normal max-w-[450px]"
+          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+          style={{ marginBottom: "10px" }}
+        />
+      );
+    });
+    project.otherAdditionalDocuments.forEach(({ url, fileName }) => {
+      downloadButtons.push(
+        <ButtonField
+          key={url}
+          label={t("Other Documents")}
+          subtitle={fileName}
+          subtitleClassName="break-words whitespace-normal max-w-[450px]"
+          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+          style={{ marginBottom: "10px" }}
+        />
+      );
+    });
+  } else if (framework === Framework.TF_LANDSCAPES) {
+    project.proofOfLandTenureMou.forEach(({ url, fileName }) => {
+      downloadButtons.push(
+        <ButtonField
+          key={url}
+          label={t("Land Tenure MOU")}
+          subtitle={fileName}
+          subtitleClassName="break-words whitespace-normal max-w-[450px]"
+          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+        />
+      );
+    });
+  }
 
   return (
     <PageBody>
@@ -130,76 +171,14 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 buttonProps={{
                   as: Link,
                   children: t("Download"),
-                  // TODO: files in the v3 response.
-                  // href: project?.detailed_project_budget?.url || "",
+                  href: project.detailedProjectBudget?.url ?? "",
                   download: true
                 }}
               />
             </PageCard>
           </ContextCondition>
           <PageCard title={t("Files")}>
-            {/* TODO: files in v3 response */}
-            {/*<If*/}
-            {/*  condition={*/}
-            {/*    !project.file.length || !project.other_additional_documents.length || !project?.proof_of_land_tenure_mou*/}
-            {/*  }*/}
-            {/*>*/}
-            {/*  <Then>*/}
-            {/*    <h3>{t("Files not found")}</h3>*/}
-            {/*  </Then>*/}
-            {/*  <Else>*/}
-            {/*    <Then>*/}
-            {/*      <ContextCondition frameworksShow={[Framework.PPC]}>*/}
-            {/*        {project.file?.map((document: any, index: any) => (*/}
-            {/*          <ButtonField*/}
-            {/*            key={index}*/}
-            {/*            label={t("Files")}*/}
-            {/*            subtitle={document?.file_name}*/}
-            {/*            subtitleClassName="break-words whitespace-normal max-w-[450px]"*/}
-            {/*            buttonProps={{*/}
-            {/*              as: Link,*/}
-            {/*              children: t("Download"),*/}
-            {/*              href: document?.url || "",*/}
-            {/*              download: true*/}
-            {/*            }}*/}
-            {/*            style={{ marginBottom: "10px" }}*/}
-            {/*          />*/}
-            {/*        ))}*/}
-            {/*        {project.other_additional_documents?.map((document: any, index: any) => (*/}
-            {/*          <ButtonField*/}
-            {/*            key={index}*/}
-            {/*            label={t("Other Documents")}*/}
-            {/*            subtitle={document?.file_name}*/}
-            {/*            subtitleClassName="break-words whitespace-normal max-w-[450px]"*/}
-            {/*            buttonProps={{*/}
-            {/*              as: Link,*/}
-            {/*              children: t("Download"),*/}
-            {/*              href: document?.url || "",*/}
-            {/*              download: true*/}
-            {/*            }}*/}
-            {/*            style={{ marginBottom: "10px" }}*/}
-            {/*          />*/}
-            {/*        ))}*/}
-            {/*      </ContextCondition>*/}
-            {/*      <ContextCondition frameworksShow={[Framework.TF_LANDSCAPES]}>*/}
-            {/*        {project?.proof_of_land_tenure_mou?.map((document: any, index: any) => (*/}
-            {/*          <ButtonField*/}
-            {/*            key={index}*/}
-            {/*            label={t("Land Tenure MOU")}*/}
-            {/*            subtitle={document?.file_name}*/}
-            {/*            subtitleClassName="break-words whitespace-normal max-w-[450px]"*/}
-            {/*            buttonProps={{*/}
-            {/*              as: Link,*/}
-            {/*              children: t("Download"),*/}
-            {/*              href: document?.url || "",*/}
-            {/*              download: true*/}
-            {/*            }}*/}
-            {/*          />*/}
-            {/*        ))}*/}
-            {/*      </ContextCondition>*/}
-            {/*    </Then>*/}
-            {/*  </Else>*/}
-            {/*</If>*/}
+            {downloadButtons.length === 0 ? <h3>{t("Files not found")}</h3> : <>{downloadButtons}</>}
           </PageCard>
           {/* TODO: project application association / DTO */}
           {/*<When condition={!!project.application}>*/}
