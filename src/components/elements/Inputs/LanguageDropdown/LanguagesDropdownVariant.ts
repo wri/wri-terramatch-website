@@ -15,6 +15,7 @@ export interface LanguagesDropdownVariant {
   classContent: string;
   classContentOpen: string;
   classTextDashboard: string;
+  iconSelected?: IconNames;
 }
 
 export const VARIANT_LANGUAGES_DROPDOWN: LanguagesDropdownVariant = {
@@ -46,8 +47,10 @@ export const VARIANT_LANGUAGES_DROPDOWN_SECONDARY: LanguagesDropdownVariant = {
   classPanel:
     "shadow-all border-1 absolute sm:bottom-0 sm:left-full z-50 ml-3 w-[140px] bg-white shadow rounded-lg overflow-hidden mobile:top-full mobile:w-auto mobile:left-0 mobile:m-0 mobile:mt-2",
   classList: "divide-y divide-grey-950",
-  classItem: "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2 cursor-pointer",
-  classIconSelected: "text-black",
+  classItem:
+    "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2 cursor-pointer mobile:uppercase mobile:justify-between",
+  classIconSelected: "text-black mobile:order-last mobile:h-4 mobile:w-4",
+  iconSelected: IconNames.CHECK,
   classContent:
     "relative w-fit mobile:px-1.5 mobile:py-0.5 mobile:bg-white mobile:bg-opacity-20 mobile:border mobile:border-white mobile:rounded-lg mobile:border-opacity-40",
   classContentOpen: "!opacity-100",
