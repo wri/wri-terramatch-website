@@ -181,7 +181,6 @@ export const countValuesPerYear = (data: DataPoint[]): Record<string, number> =>
 
 export const createQueryParams = (filters: any) => {
   const queryParams = new URLSearchParams();
-  console.log("filters ", filters, JSON.stringify(filters));
   Object.entries(filters).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach(v => queryParams.append(`filter[${key}][]`, v));
