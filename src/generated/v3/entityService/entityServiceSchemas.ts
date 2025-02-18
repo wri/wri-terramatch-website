@@ -11,6 +11,12 @@ export type ANRDto = {
   treeCount: number;
 };
 
+export type ProjectApplicationDto = {
+  uuid: string;
+  fundingProgrammeName: string;
+  projectPitchUuid: string;
+};
+
 export type MediaDto = {
   uuid: string;
   collectionName: string;
@@ -205,6 +211,7 @@ export type ProjectFullDto = {
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
   directSeedingSurvivalRate: number | null;
+  application: ProjectApplicationDto;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];

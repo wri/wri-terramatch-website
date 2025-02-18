@@ -1,3 +1,4 @@
+import { Paper } from "@mui/material";
 import { useT } from "@transifex/react";
 import Link from "next/link";
 
@@ -180,25 +181,26 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           <PageCard title={t("Files")}>
             {downloadButtons.length === 0 ? <h3>{t("Files not found")}</h3> : <>{downloadButtons}</>}
           </PageCard>
-          {/* TODO: project application association / DTO */}
-          {/*<When condition={!!project.application}>*/}
-          {/*  <Paper className="min-w-[500px]">*/}
-          {/*    <ButtonField*/}
-          {/*      label={t("Funding Application: {title}", { title: project.application?.funding_programme_name })}*/}
-          {/*      buttonProps={{ as: Link, children: t("View"), href: `/applications/${project.application?.uuid}` }}*/}
-          {/*    />*/}
-          {/*  </Paper>*/}
-          {/*  <Paper className="min-w-[500px]">*/}
-          {/*    <ButtonField*/}
-          {/*      label={t("Project pitch")}*/}
-          {/*      buttonProps={{*/}
-          {/*        as: Link,*/}
-          {/*        children: t("View"),*/}
-          {/*        href: `/project-pitches/${project.application?.project_pitch_uuid}`*/}
-          {/*      }}*/}
-          {/*    />*/}
-          {/*  </Paper>*/}
-          {/*</When>*/}
+          {project.application && (
+            <>
+              <Paper className="min-w-[500px]">
+                <ButtonField
+                  label={t("Funding Application: {title}", { title: project.application.fundingProgrammeName })}
+                  buttonProps={{ as: Link, children: t("View"), href: `/applications/${project.application.uuid}` }}
+                />
+              </Paper>
+              <Paper className="min-w-[500px]">
+                <ButtonField
+                  label={t("Project pitch")}
+                  buttonProps={{
+                    as: Link,
+                    children: t("View"),
+                    href: `/project-pitches/${project.application.projectPitchUuid}`
+                  }}
+                />
+              </Paper>
+            </>
+          )}
           <PageCard
             title={t("Monitoring Partners") + `${partners?.data.length! > 0 ? `(${partners?.data.length})` : ""}`}
             headerChildren={
