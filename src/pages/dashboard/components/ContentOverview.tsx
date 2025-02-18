@@ -111,10 +111,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   }, [initialBbox]);
 
   const queryString = useMemo(() => {
+    console.log("filters.organizations", filters.organizations);
     const finalFilters = {
       status: ["published"],
       country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organization_type: filters.organizations ? [filters.organizations] : []
+      organizationType: filters.organizations ? filters.organizations : []
     };
     return createQueryParams(finalFilters);
   }, [filters.country?.country_slug, filters.organizations]);
