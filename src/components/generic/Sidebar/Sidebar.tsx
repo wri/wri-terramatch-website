@@ -23,35 +23,6 @@ interface NavItem {
   disabled?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  {
-    path: "/dashboard",
-    icon: IconNames.DASHBOARDS,
-    label: "Dashboards"
-  },
-  {
-    path: "/dashboard/project-list",
-    icon: IconNames.PROJECT_PROFILE,
-    label: "Project<br />List"
-  },
-  {
-    path: "/dashboard/project-insights",
-    icon: IconNames.DASHBOARD_AIRTABLE,
-    label: "Project<br />Insights",
-    disabled: true
-  },
-  {
-    path: "/dashboard/impact-story",
-    icon: IconNames.DASHBOARD_IMPACT_STORY,
-    label: "Impact<br />Story"
-  },
-  {
-    path: "/dashboard/learn-more",
-    icon: IconNames.ABOUT_US,
-    label: "Learn More"
-  }
-];
-
 const Sidebar = () => {
   const router = useRouter();
   const [, { isLoggedIn }] = useLogin();
@@ -61,6 +32,38 @@ const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const [isOpen, setIsOpen] = useState(!isMobile);
 
+  const NAV_ITEMS: NavItem[] = [
+    {
+      path: "/dashboard",
+      icon: IconNames.DASHBOARDS,
+      label: "Dashboards"
+    },
+    {
+      path: "/dashboard/project-list",
+      icon: IconNames.PROJECT_PROFILE,
+      label: "Project<br />List"
+    },
+    ...(isMobile
+      ? []
+      : [
+          {
+            path: "/dashboard/project-insights",
+            icon: IconNames.DASHBOARD_AIRTABLE,
+            label: "Project<br />Insights",
+            disabled: true
+          }
+        ]),
+    {
+      path: "/dashboard/impact-story",
+      icon: IconNames.DASHBOARD_IMPACT_STORY,
+      label: "Impact<br />Story"
+    },
+    {
+      path: "/dashboard/learn-more",
+      icon: IconNames.ABOUT_US,
+      label: "Learn More"
+    }
+  ];
   const changeLanguageHandler = (lang: string) => {
     if (setLocale) {
       setLocale(lang as ValidLocale);
@@ -144,8 +147,8 @@ const Sidebar = () => {
         "mobile:relative mobile:z-[60] mobile:h-15 mobile:flex-row mobile:items-center mobile:px-4"
       )}
     >
-      <div className="flex flex-col items-center gap-8 text-darkCustom-200 mobile:flex-row">
-        <a className="mt-4 mb-10 cursor-pointer mobile:m-0" href="/home">
+      <div className="flex max-w-[55px] flex-col items-center gap-8 text-darkCustom-200 lg:max-w-[70px] wide:max-w-[84px] mobile:flex-row">
+        <a className="mt-4 mb-5 cursor-pointer lg:mb-10 mobile:m-0" href="/home">
           <Icon name={IconNames.TERRAFUND_lOGO_MINI} className="h-8 w-8 mobile:h-6 mobile:w-6" />
         </a>
 

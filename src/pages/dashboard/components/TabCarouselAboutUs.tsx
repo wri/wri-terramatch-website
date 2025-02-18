@@ -67,33 +67,33 @@ const TabCarouselAboutUs = () => {
   }, [aboutUs.length, isMobile]);
 
   return (
-    <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px] mobile:px-4">
+    <div className="w-full overflow-auto bg-white py-[58px] pl-[52px] pr-[105px] mobile:px-4 mobile:pb-0">
       <SecondaryTabs
         tabItems={[
           {
             key: "about-us",
             title: t("High-Level Metrics"),
-            body: <div className="h-12 w-full"></div>
+            body: <div className="h-12 w-full mobile:h-8"></div>
           },
           {
             key: "our-mission",
             title: t("Filter Data"),
-            body: <div className="h-12 w-full"></div>
+            body: <div className="h-12 w-full mobile:h-8"></div>
           },
           {
             key: "3",
             title: t("View the Map"),
-            body: <div className="h-12 w-full"></div>
+            body: <div className="h-12 w-full mobile:h-8"></div>
           },
           {
             key: "Project Profiles",
             title: t("Project Profiles"),
-            body: <div className="h-12 w-full"></div>
+            body: <div className="h-12 w-full mobile:h-8"></div>
           },
           {
             key: "4",
             title: t("Coming Soon"),
-            body: <div className="h-12 w-full"></div>
+            body: <div className="h-12 w-full mobile:h-8"></div>
           }
         ]}
         setSelectedIndex={e => {
@@ -110,10 +110,14 @@ const TabCarouselAboutUs = () => {
               <Text variant={isMobile ? "text-32-bold" : "text-36-bold"} className="mb-6 text-darkCustom-150">
                 Using the platform
               </Text>
-              <Text variant="text-18-light" containHtml={true}>
+              <Text variant="text-18-light" containHtml={true} className="mobile:min-h-[190px]">
                 {aboutUs.description}
               </Text>
-              <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
+              <Button
+                variant="about-us"
+                className="mt-6 mobile:mb-3"
+                onClick={() => (window.location.href = "/dashboard")}
+              >
                 {t("Open Dashboard")}
               </Button>
             </div>
