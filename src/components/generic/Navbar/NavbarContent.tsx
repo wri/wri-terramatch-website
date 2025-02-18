@@ -2,13 +2,13 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { DetailedHTMLProps, Fragment, HTMLAttributes } from "react";
-import { Else, If, Then, When } from "react-if";
+import { If, Then, When } from "react-if";
 
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { logout, useLogin } from "@/connections/Login";
+import { useLogin } from "@/connections/Login";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser, ValidLocale } from "@/connections/User";
 import { useNavbarContext } from "@/context/navbar.provider";
@@ -70,17 +70,12 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
       <When condition={navItems.length > 0}>
         <div className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block" />
       </When>
-      <If condition={isLoggedIn}>
+      <If condition={!isLoggedIn}>
         <Then>
-          <NavbarItem href="/" iconName={IconNames.LOGIN} onClick={logout}>
-            {t("Logout")}
-          </NavbarItem>
-        </Then>
-        <Else>
           <NavbarItem href="/auth/login" iconName={IconNames.LOGIN} onClick={handleClose}>
             {t("Sign in")}
           </NavbarItem>
-        </Else>
+        </Then>
       </If>
       <If condition={isLoggedIn}>
         <MyAccountDropdown isLoggedIn={isLoggedIn} />
