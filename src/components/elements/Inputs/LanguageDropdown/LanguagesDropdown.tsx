@@ -78,7 +78,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
         </Popover.Button>
         <Popover.Panel className={variantClass.classPanel}>
           <List
-            items={isMobile ? mobileLanguages : LANGUAGES}
+            items={isMobile || router.pathname.includes("dashboard") ? mobileLanguages : LANGUAGES}
             render={(item, index) => (
               <Text
                 variant={selected.value === item.value ? "text-body-900" : "text-body-600"}
