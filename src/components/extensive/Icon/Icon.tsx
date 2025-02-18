@@ -104,6 +104,7 @@ export enum IconNames {
   USER_INVESTOR = "ic-investor",
   NO_SUCCESS = "no-success",
   CLEAR = "clear",
+  CLEAR_DASHBOARD = "clear-dashboard",
   IC_ERROR = "ic-error",
   IC_ERROR_PANEL = "ic-error-panel",
   IC_WARNING = "ic-warning",
@@ -233,7 +234,8 @@ export enum IconNames {
   SHARE_IMPACT_STORY = "share-impact-story",
   BRIEFCASE = "briefcase",
   EARTH_DASHBOARD = "earth-dashboard",
-  CHECK = "check"
+  CHECK = "check",
+  IC_MENU = "ic-menu"
 }
 
 export interface IconProps {

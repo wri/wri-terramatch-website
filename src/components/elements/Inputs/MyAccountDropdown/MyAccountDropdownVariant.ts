@@ -35,7 +35,7 @@ export const VARIANT_MY_ACCOUNT_DROPDOWN: MyAccountDropdownVariant = {
 
 export const VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY: MyAccountDropdownVariant = {
   classIcon: "text-white w-8 h-8",
-  classButtonPopover: "flex flex-col items-start outline-none",
+  classButtonPopover: "flex flex-col items-start outline-none opacity-50 aria-expanded:opacity-100",
   classText: "hidden",
   icon: IconNames.IC_USER,
   arrowIcon: IconNames.CHEVRON_DOWN,
@@ -43,8 +43,9 @@ export const VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY: MyAccountDropdownVariant = {
   arrowNavbarClass: "hidden",
   classPanel: "border-1 absolute bottom-0 left-full z-50 ml-4 w-auto bg-white shadow rounded-lg overflow-hidden",
   classList: "divide-y divide-grey-950",
-  classItem: "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2 whitespace-nowrap",
+  classItem:
+    "py-2 px-3 hover:bg-neutral-200 text-black !font-normal flex items-center gap-2 whitespace-nowrap cursor-pointer",
   classIconSelected: "w-3 h-3",
-  classContent: "relative w-fit opacity-50",
+  classContent: "relative w-fit",
   classContentOpen: "!opacity-100"
 };

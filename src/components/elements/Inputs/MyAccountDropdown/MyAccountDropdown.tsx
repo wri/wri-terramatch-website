@@ -24,8 +24,8 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
   const rootPath = router.asPath.split("?")[0].split("/")[1];
   const isOnDashboard = rootPath === "dashboard";
   const [loaded, { isAdmin }] = useMyUser();
-  const [isOpen, setIsOpen] = useState(false);
   const variantClass = props.variant ?? VARIANT_MY_ACCOUNT_DROPDOWN;
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   let buttonRef = useRef<any>();
 
@@ -74,35 +74,50 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
     }, 1000);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      onChange(OptionMyAccount[selectedIndex]);
+    }
+    if (event.key === "ArrowDown") {
+      setSelectedIndex(prev => (prev + 1) % OptionMyAccount.length);
+    } else if (event.key === "ArrowUp") {
+      setSelectedIndex(prev => (prev - 1 + OptionMyAccount.length) % OptionMyAccount.length);
+    }
+  };
+
   return (
-    <Popover
-      className={classNames(props.className, variantClass.classContent, {
-        [variantClass.classContentOpen]: isOpen
-      })}
-    >
-      <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover} onClick={() => setIsOpen(!isOpen)}>
-        <div className="flex items-center gap-2">
-          <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
-          <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowDashboardClass} />
-        </div>
-        <span className={variantClass.classText}>{t("MY ACCOUNT")}</span>
-        <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowNavbarClass} />
-      </Popover.Button>
+    <div onKeyDownCapture={handleKeyDown}>
+      <Popover className={classNames(props.className, variantClass.classContent)}>
+        <Popover.Button ref={buttonRef} className={variantClass.classButtonPopover}>
+          <div className="flex items-center gap-2">
+            <Icon name={variantClass.icon} width={16} className={variantClass.classIcon} />
+            <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowDashboardClass} />
+          </div>
+          <span className={variantClass.classText}>{t("MY ACCOUNT")}</span>
+          <Icon name={variantClass.arrowIcon} width={8} className={variantClass.arrowNavbarClass} />
+        </Popover.Button>
 
-      <Popover.Panel className={variantClass.classPanel}>
-        <List
-          items={OptionMyAccount}
-          render={item => (
-            <Text variant="text-14" className={variantClass.classItem} onClick={() => onChange(item)}>
-              <Icon name={item.icon} width={16} className={variantClass.classIconSelected} />
+        <Popover.Panel className={variantClass.classPanel}>
+          <List
+            items={OptionMyAccount}
+            render={(item, index) => (
+              <Text
+                variant="text-14"
+                className={classNames(variantClass.classItem, {
+                  "bg-neutral-200": selectedIndex === index
+                })}
+                onClick={() => onChange(item)}
+              >
+                <Icon name={item.icon} width={16} className={variantClass.classIconSelected} />
 
-              {t(item.title)}
-            </Text>
-          )}
-          className={variantClass.classList}
-        />
-      </Popover.Panel>
-    </Popover>
+                {t(item.title)}
+              </Text>
+            )}
+            className={variantClass.classList}
+          />
+        </Popover.Panel>
+      </Popover>
+    </div>
   );
 };
 

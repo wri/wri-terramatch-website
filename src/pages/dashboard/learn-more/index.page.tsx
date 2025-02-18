@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useEffect, useRef } from "react";
 
@@ -12,6 +13,7 @@ const Homepage = () => {
   const first = useRef<HTMLDivElement>(null);
   const second = useRef<HTMLDivElement>(null);
   const third = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const t = useT();
 
@@ -61,14 +63,14 @@ const Homepage = () => {
 
   return (
     <div className="overflow-auto">
-      <div className="w-full bg-white pb-20 pl-13 pr-26 pt-16">
+      <div className="w-full bg-white pt-16 pb-20 pl-13 pr-26 mobile:px-4">
         <Icon
           name={IconNames.WRI_LOGO}
-          className="h-[30px] w-[108px] lg:h-[50px] lg:w-[150px] wide:h-[85px] wide:w-[200px]"
+          className="h-[30px] w-[108px] lg:h-[50px] lg:w-[150px] wide:h-[85px] wide:w-[200px] mobile:h-[40px] mobile:w-[130px]"
         />
         <div className="mt-5 grid gap-16">
-          <div className="flex w-full gap-12">
-            <div className="h-min w-3/5 text-darkCustom">
+          <div className="flex w-full gap-12 mobile:flex-col">
+            <div className="h-min w-3/5 text-darkCustom mobile:w-full">
               <div className="grid gap-6 lg:gap-8">
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
                   Welcome to the TerraMatch Dashboard! Here, restoration champions of all shapes and sizes – local
@@ -99,23 +101,31 @@ const Homepage = () => {
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
                   Each project reports 12 times over six years.
                 </Text>
-                <Button variant="about-us" className="mt-6" onClick={() => (window.location.href = "/dashboard")}>
+                <Button
+                  variant="about-us"
+                  className="mt-6 mobile:mt-0"
+                  onClick={() => (window.location.href = "/dashboard")}
+                >
                   {t("Open Dashboard")}
                 </Button>
               </div>
             </div>
-            <div className="w-2/5 pr-5">
-              <div className="grid h-fit w-full grid-cols-2 gap-4">
+            <div className="w-2/5 pr-5 mobile:w-full mobile:pr-0">
+              <div className="grid h-fit w-full grid-cols-2 gap-4 mobile:grid-cols-1">
                 <img
                   src="/images/upcoming-opportunities-explainer.webp"
                   alt="tree"
-                  className="h-full w-full rounded-2xl object-cover"
+                  className="h-full w-full rounded-2xl object-cover mobile:h-[164px]"
                 />
-                <img src="/images/usign-platform.png" alt="tree" className="h-full w-full rounded-2xl object-cover" />
+                <img
+                  src="/images/usign-platform.png"
+                  alt="tree"
+                  className="h-full w-full rounded-2xl object-cover mobile:h-[164px]"
+                />
                 <img
                   src="/images/priceless-planet-coalition-explainer.webp"
                   alt="tree"
-                  className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] "
+                  className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] mobile:col-span-1 mobile:h-[164px]"
                 />
               </div>
             </div>
@@ -124,16 +134,19 @@ const Homepage = () => {
       </div>
 
       <div
-        className="flex flex-col bg-tree bg-cover px-13 pb-9 pt-13 transition-all duration-500 ease-in-out"
+        className="flex flex-col bg-tree bg-cover px-13 pb-9 pt-13 transition-all duration-500 ease-in-out mobile:px-4"
         ref={first}
       >
-        <Text variant="text-40-bold" className="leading-[normal] text-darkCustom-150">
+        <Text variant={isMobile ? "text-32-bold" : "text-40-bold"} className="leading-[normal] text-darkCustom-150">
           Accessing the
         </Text>
-        <Text variant="text-40-bold" className="mb-10 leading-[normal] text-darkCustom-150">
+        <Text
+          variant={isMobile ? "text-32-bold" : "text-40-bold"}
+          className="mb-10 leading-[normal] text-darkCustom-150"
+        >
           platform
         </Text>
-        <div className="mb-8 flex gap-12">
+        <div className="mb-8 flex gap-12 mobile:flex-col">
           <div className="flex flex-1 flex-col gap-4">
             <Icon name={IconNames.VISIT_DASHBOARD} className="h-16 w-16" />
             <Text variant="text-24" className="text-darkCustom">
@@ -204,14 +217,14 @@ const Homepage = () => {
             </Text>
           </div>
         </div>
-        <div className="flex w-fit items-center gap-1 gap-2 rounded-full bg-yellow px-3 py-1.5 transition-all duration-500 ease-in-out">
-          <Icon name={IconNames.ORANGE_DOTS} className="h-5 w-5" />
+        <div className="flex w-fit items-center gap-2 rounded-full bg-yellow px-3 py-1.5 transition-all duration-500 ease-in-out mobile:items-start mobile:rounded-2xl mobile:py-4">
+          <Icon name={IconNames.ORANGE_DOTS} className="h-5 w-5 shrink-0" />
           <div>
-            <Text variant="text-14">
+            <Text variant={isMobile ? "text-12" : "text-14"}>
               Are you interested in becoming a funder, a restoration champion, or getting involved in another way? If
               so, or if you have any other questions,
             </Text>
-            <Text variant="text-14">
+            <Text variant={isMobile ? "text-12" : "text-14"}>
               please email our support team at{" "}
               <a
                 href="mailto:info@terramatch.org"
@@ -231,31 +244,31 @@ const Homepage = () => {
       </div>
 
       <div
-        className="flex w-full items-center gap-12 bg-white pb-20 pl-13 pr-26 pt-16 transition-all duration-500 ease-in-out"
+        className="flex w-full items-center gap-12 bg-white pt-16 pb-20 pl-13 pr-26 transition-all duration-500 ease-in-out mobile:flex-col-reverse mobile:px-4"
         ref={third}
       >
-        <div className="w-2/5 pr-5">
-          <div className="grid h-fit w-full grid-cols-2 gap-4">
+        <div className="w-2/5 pr-5 mobile:w-full">
+          <div className="grid h-fit w-full grid-cols-2 gap-4 mobile:grid-cols-1">
             <img
               src="/images/learn-more-data-1.jpg"
               alt="tree"
-              className="h-full max-h-[170px]  w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
+              className="h-full max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
             />
             <img
               src="/images/learn-more-data-3.jpg"
               alt="tree"
-              className="h-full max-h-[170px]  w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
+              className="h-full max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
             />
             <img
               src="/images/learn-more-data-2.jpg"
               alt="tree"
-              className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] "
+              className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] mobile:col-span-1"
             />
           </div>
         </div>
-        <div className="h-min w-3/5 text-darkCustom">
+        <div className="h-min w-3/5 text-darkCustom mobile:w-full">
           <div className="grid gap-2">
-            <Text variant="text-36-bold" className="text-darkCustom-150">
+            <Text variant={isMobile ? "text-32-bold" : "text-36-bold"} className="text-darkCustom-150">
               About the data
             </Text>
             <Text variant="text-14-light" as="p" className="text-darkCustom-150">

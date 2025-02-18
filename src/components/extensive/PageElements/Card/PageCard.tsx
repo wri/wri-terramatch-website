@@ -33,6 +33,7 @@ export interface PageCardProps
   iconClassName?: string;
   widthTooltip?: string;
   isUserAllowed?: boolean;
+  collapseChildren?: boolean;
 }
 
 const PageCard = ({
@@ -51,10 +52,12 @@ const PageCard = ({
   tooltip,
   widthTooltip,
   isUserAllowed = true,
+  collapseChildren = false,
   ...props
 }: PageCardProps) => {
   const [collapseSubtile, setCollapseSubtile] = useState(true);
   const [subtitleText, setSubtitleText] = useState(subtitle);
+  const [openCollapseChildren, setOpenCollapseChildren] = useState(true);
   const t = useT();
   const [, { user }] = useMyUser();
 
@@ -97,34 +100,62 @@ const PageCard = ({
               </Text>
             </When>
             <When condition={!!title}>{headerChildren}</When>
-          </div>
-        </When>
-        <When condition={!!subtitle}>
-          <div className={classNames(subtitleMore && " ")}>
-            <Text
-              variant={variantSubTitle ? variantSubTitle : "text-light-subtitle-400"}
-              className={classNames("mt-3 text-darkCustom", classNameSubTitle)}
-              containHtml={subtitleMore}
-              as="span"
-            >
-              {subtitleText}
-            </Text>
-            <When condition={subtitleMore && (subtitle?.length ?? 0) > maxLength}>
-              <button
-                className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
-                onClick={() => setCollapseSubtile(!collapseSubtile)}
-              >
-                &nbsp;
-                {collapseSubtile ? t("...See More") : t("See Less")}
+            <When condition={collapseChildren}>
+              <button onClick={() => setOpenCollapseChildren(!openCollapseChildren)}>
+                <Icon
+                  name={IconNames.IC_ARROW_COLLAPSE}
+                  className={classNames(
+                    "h-4 w-4 text-darkCustom transition-transform duration-300 ease-in-out hover:text-primary",
+                    {
+                      "rotate-180": !openCollapseChildren
+                    }
+                  )}
+                />
               </button>
             </When>
           </div>
         </When>
-        <When condition={!!children || isEmpty}>
-          <div className={classNames(`space-y-${gap}`, (title || subtitle) && "mt-8")}>
-            {isEmpty && !!emptyStateProps ? <EmptyField {...emptyStateProps} /> : children}
-          </div>
-        </When>
+        <div
+          className={classNames("delay-400 duration-0 h-auto transition-all ease-in-out", {
+            "bg-red-500 !h-0 opacity-0": collapseChildren && !openCollapseChildren
+          })}
+        >
+          <When condition={!!subtitle}>
+            <div
+              className={classNames(subtitleMore && " ", {
+                hidden: collapseChildren && !openCollapseChildren
+              })}
+            >
+              <Text
+                variant={variantSubTitle ? variantSubTitle : "text-light-subtitle-400"}
+                className={classNames("mt-3 text-darkCustom", classNameSubTitle)}
+                containHtml={subtitleMore}
+                as="span"
+              >
+                {subtitleText}
+              </Text>
+              <When condition={subtitleMore && (subtitle?.length ?? 0) > maxLength}>
+                <button
+                  className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
+                  onClick={() => setCollapseSubtile(!collapseSubtile)}
+                >
+                  &nbsp;
+                  {collapseSubtile ? t("...See More") : t("See Less")}
+                </button>
+              </When>
+            </div>
+          </When>
+
+          <When condition={!!children || isEmpty}>
+            <div
+              className={classNames(`space-y-${gap}`, (title || subtitle) && "mt-8", {
+                hidden: collapseChildren && !openCollapseChildren
+              })}
+            >
+              {isEmpty && !!emptyStateProps ? <EmptyField {...emptyStateProps} /> : children}
+            </div>
+          </When>
+        </div>
       </BlurContainer>
     </Paper>
   );

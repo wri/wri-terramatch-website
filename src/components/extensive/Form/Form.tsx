@@ -20,13 +20,14 @@ interface FormFooterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElemen
   formType?: string;
 }
 
-const Form = ({ children, formType, ...rest }: FormProps) => {
+const Form = ({ children, formType, className, ...rest }: FormProps) => {
   return (
     <form
       {...rest}
-      className={
-        formType ? "" : "flex w-full flex-col gap-8 rounded-lg border-2 border-neutral-100 bg-white px-14 py-14"
-      }
+      className={classNames(
+        formType ? "" : "flex w-full flex-col gap-8 rounded-lg border-2 border-neutral-100 bg-white px-14 py-14",
+        className
+      )}
     >
       {children}
     </form>

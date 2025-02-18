@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+// import { t } from "@transifex/native";
 import React from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -8,16 +8,16 @@ import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
 import { VARIANT_FILE_INPUT_IMPACT_STORY } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalStory from "@/components/extensive/Modal/ModalStory";
-import { useModalContext } from "@/context/modal.provider";
 
+// import { ModalId } from "@/components/extensive/Modal/ModalConst";
+// import ModalStory from "@/components/extensive/Modal/ModalStory";
+// import { useModalContext } from "@/context/modal.provider";
 import QuillEditor from "./QuillEditor";
 
 const ImpactStoriesEditForm = () => {
-  const { openModal } = useModalContext();
+  // const { openModal } = useModalContext();
   const ModalStoryOpen = (uuid: string) => {
-    openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} preview={true} />);
+    // openModal(ModalId.MODAL_STORY, <ModalStory uuid={uuid} title={t("IMPACT STORY")} preview={true} />);
   };
   return (
     <div>

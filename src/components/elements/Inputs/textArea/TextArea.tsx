@@ -64,7 +64,7 @@ const TextArea = ({ formHook, className, onChange: externalOnChange, ...inputWra
       <textarea
         {...mergedProps}
         onChange={handleTextAreaChange}
-        {...formHook?.register(inputWrapperProps.name)}
+        {...formHook?.register(inputWrapperProps.name, { onChange: () => formHook?.trigger(inputWrapperProps.name) })}
         id={id}
         className={inputClasses}
       />

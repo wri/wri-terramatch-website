@@ -10,6 +10,7 @@ export interface DropdownVariant {
   iconNameClear?: IconNames;
   iconClearContainerClassName?: string;
   iconClearClassName?: string;
+  optionsClassName?: string;
   optionCheckboxClassName?: string;
   optionLabelClassName?: string;
   optionClassName?: string;
@@ -77,4 +78,18 @@ export const VARIANT_DROPDOWN_IMPACT_STORY: DropdownVariant = {
   optionCheckboxClassName: "checked:text-blueCustom-700",
   optionLabelClassName: "text-14-semibold whitespace-nowrap",
   optionClassName: "gap-2"
+};
+
+export const VARIANT_DROPDOWN_COLLAPSE: DropdownVariant = {
+  containerClassName: "",
+  className: "",
+  iconClassName: "w-4",
+  iconClearClassName: "w-4",
+  iconName: undefined,
+  titleContainerClassName: "flex items-center gap-2",
+  titleClassname: "hidden",
+  optionsClassName: "static bg-neutral-40 rounded-none",
+  optionClassName: "flex-row w-full",
+  optionCheckboxClassName: "w-4 h-4",
+  optionLabelClassName: "text-14-light"
 };
