@@ -182,10 +182,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: ({ row }: { row: { original: { uuid: string } } }) => {
-        const uuid = row.original.uuid;
+      cell: ({ row }: { row: any }) => {
         const handleClick = () => {
-          ModalStoryOpen(uuid);
+          ModalStoryOpen(row.original);
         };
 
         return (
