@@ -70,6 +70,15 @@ strong {
   font-size: inherit
 }
 
+@media (max-width: 1200px) {
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
+
 
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
