@@ -23,35 +23,6 @@ interface NavItem {
   disabled?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  {
-    path: "/dashboard",
-    icon: IconNames.DASHBOARDS,
-    label: "Dashboards"
-  },
-  {
-    path: "/dashboard/project-list",
-    icon: IconNames.PROJECT_PROFILE,
-    label: "Project<br />List"
-  },
-  {
-    path: "/dashboard/project-insights",
-    icon: IconNames.DASHBOARD_AIRTABLE,
-    label: "Project<br />Insights",
-    disabled: true
-  },
-  {
-    path: "/dashboard/impact-story",
-    icon: IconNames.DASHBOARD_IMPACT_STORY,
-    label: "Impact<br />Story"
-  },
-  {
-    path: "/dashboard/learn-more",
-    icon: IconNames.ABOUT_US,
-    label: "Learn More"
-  }
-];
-
 const Sidebar = () => {
   const router = useRouter();
   const [, { isLoggedIn }] = useLogin();
@@ -61,6 +32,38 @@ const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const [isOpen, setIsOpen] = useState(!isMobile);
 
+  const NAV_ITEMS: NavItem[] = [
+    {
+      path: "/dashboard",
+      icon: IconNames.DASHBOARDS,
+      label: "Dashboards"
+    },
+    {
+      path: "/dashboard/project-list",
+      icon: IconNames.PROJECT_PROFILE,
+      label: "Project<br />List"
+    },
+    ...(isMobile
+      ? []
+      : [
+          {
+            path: "/dashboard/project-insights",
+            icon: IconNames.DASHBOARD_AIRTABLE,
+            label: "Project<br />Insights",
+            disabled: true
+          }
+        ]),
+    {
+      path: "/dashboard/impact-story",
+      icon: IconNames.DASHBOARD_IMPACT_STORY,
+      label: "Impact<br />Story"
+    },
+    {
+      path: "/dashboard/learn-more",
+      icon: IconNames.ABOUT_US,
+      label: "Learn More"
+    }
+  ];
   const changeLanguageHandler = (lang: string) => {
     if (setLocale) {
       setLocale(lang as ValidLocale);
