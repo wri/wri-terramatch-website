@@ -116,35 +116,6 @@ exports[`Storyshots Components/Generic/Navbar Logged In 1`] = `
         className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block"
       />
       <div
-        className="font-regular uppercase xl:w-full hover:opacity-50"
-      >
-        <a
-          href="/"
-          onClick={[Function]}
-          onMouseEnter={[Function]}
-          onTouchStart={[Function]}
-        >
-          <div
-            className="flex items-center"
-          >
-            <div
-              style={
-                Object {
-                  "height": undefined,
-                  "width": 16,
-                }
-              }
-            />
-            <span
-              className="whitespace-nowrap text-darkCustom text-14-light"
-              data-testid="txt"
-            >
-              Logout
-            </span>
-          </div>
-        </a>
-      </div>
-      <div
         onKeyDownCapture={[Function]}
       >
         <div
