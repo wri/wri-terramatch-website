@@ -42,9 +42,14 @@ export type ApiPendingStore = {
   [key in Method]: Record<string, Pending>;
 };
 
+export type ApiFilteredIndexCache = {
+  ids: string[];
+  meta: Required<ResponseMeta>["page"];
+};
+
 // This one is a map of resource -> queryString -> pageAfter (pagination cursor) -> list of ids from that page.
 export type ApiFilteredIndexStore = {
-  [key in ResourceType]: Record<string, Record<string, string[]>>;
+  [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
 };
 
 type AttributeValue = string | number | boolean;
@@ -114,7 +119,7 @@ export type JsonApiResource = {
 
 export type ResponseMeta = {
   page?: {
-    cursor: string;
+    number: number;
     total: number;
   };
 };
@@ -131,7 +136,7 @@ export type ApiDataStore = ApiResources & {
     pending: ApiPendingStore;
 
     /** Stores the IDs that were returned for paginated, filtered index queries */
-    filterIndexIds: ApiFilteredIndexStore;
+    filterIndexMetas: ApiFilteredIndexStore;
 
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
@@ -161,7 +166,7 @@ export const INITIAL_STATE = {
       return acc;
     }, {}) as ApiPendingStore,
 
-    filterIndexIds: RESOURCES.reduce(
+    filterIndexMetas: RESOURCES.reduce(
       (acc, resource) => ({ ...acc, [resource]: {} }),
       {} as Partial<ApiFilteredIndexStore>
     )
@@ -232,16 +237,19 @@ export const apiSlice = createSlice({
 
       if (isPaginatedResponse(action.payload)) {
         const search = new URL(url).searchParams;
-        const pageAfter = search.get("page[after]");
-        search.delete("page[after]");
+        const pageNumber = Number(search.get("page[number]") ?? 0);
+        search.delete("page[number]");
         search.sort();
         const searchQuery = search.toString();
 
         const { type } = data[0];
-        let cache = state.meta.filterIndexIds[type][searchQuery];
-        if (cache == null) cache = state.meta.filterIndexIds[type][searchQuery] = {};
+        let cache = state.meta.filterIndexMetas[type][searchQuery];
+        if (cache == null) cache = state.meta.filterIndexMetas[type][searchQuery] = {};
 
-        cache[pageAfter ?? ""] = data.map(({ id }) => id);
+        cache[pageNumber ?? 0] = {
+          ids: data.map(({ id }) => id),
+          meta: action.payload.response.meta!.page!
+        };
       }
 
       if (isLogin(action.payload)) {
@@ -313,7 +321,7 @@ export const apiSlice = createSlice({
       }
 
       if (searchQuery != null) {
-        delete state.meta.filterIndexIds[resource][searchQuery];
+        delete state.meta.filterIndexMetas[resource][searchQuery];
       }
     },
 

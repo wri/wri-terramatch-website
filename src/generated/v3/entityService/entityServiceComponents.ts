@@ -24,9 +24,9 @@ export type EntityIndexQueryParams = {
    */
   ["page[size]"]?: number;
   /**
-   * The last record before the page being requested. The value is a polygon UUID. If not provided, the first page is returned.
+   * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
    */
-  ["page[after]"]?: string;
+  ["page[number]"]?: number;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -61,27 +61,19 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            */
           id?: string;
           attributes?: Schemas.ProjectLightDto;
-          meta?: {
-            page?: {
-              /**
-               * The cursor for this record.
-               */
-              cursor?: string;
-            };
-          };
         }[];
         meta?: {
           page?: {
             /**
-             * The cursor for the first record on this page.
-             */
-            cursor?: string;
-            /**
-             * The total number of records on this page.
+             * The total number of records available.
              *
              * @example 42
              */
             total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
           };
         };
       }
@@ -96,27 +88,19 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            */
           id?: string;
           attributes?: Schemas.SiteLightDto;
-          meta?: {
-            page?: {
-              /**
-               * The cursor for this record.
-               */
-              cursor?: string;
-            };
-          };
         }[];
         meta?: {
           page?: {
             /**
-             * The cursor for the first record on this page.
-             */
-            cursor?: string;
-            /**
-             * The total number of records on this page.
+             * The total number of records available.
              *
              * @example 42
              */
             total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
           };
         };
       },

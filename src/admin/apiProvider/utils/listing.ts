@@ -1,5 +1,7 @@
 import { GetListParams, GetListResult } from "react-admin";
 
+import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
   filter?: string;
@@ -14,6 +16,15 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
   }
 
   return replace.replaceWith;
+};
+
+export const raConnectionProps = (params: GetListParams, sortableList?: string[]) => {
+  const queryParams: EntityIndexConnectionProps = {
+    pageSize: params.pagination.perPage,
+    pageNumber: params.pagination.page
+  };
+
+  return queryParams;
 };
 
 export const raListParamsToQueryParams = (
@@ -60,6 +71,11 @@ interface ApiListResponse {
   data?: { [index: string]: any; uuid?: string }[];
   meta?: any;
 }
+
+export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({
+  data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
+  total: indexTotal
+});
 
 export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => {
   return {

@@ -1,35 +1,31 @@
 import { DataProvider, HttpError } from "react-admin";
 
-import { loadFullProject } from "@/connections/Entity";
+import { loadFullProject, loadProjectIndex } from "@/connections/Entity";
 import {
   DeleteV2AdminProjectsUUIDError,
   fetchDeleteV2AdminProjectsUUID,
-  fetchGetV2AdminProjects,
   fetchGetV2AdminProjectsMulti,
-  GetV2AdminProjectsError,
   GetV2AdminProjectsMultiError
 } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 const projectSortableList = ["name", "organisation_name", "planting_start_date"];
 
 // @ts-ignore
 export const projectDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminProjects({
-        queryParams: raListParamsToQueryParams(params, projectSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminProjectsError);
+    const connection = await loadProjectIndex(raConnectionProps(params, projectSortableList));
+    if (connection.fetchFailure != null) {
+      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
     }
+
+    return entitiesListResult(connection);
   },
 
-  // @ts-ignore
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getOne(_, params) {
     const { entity: project, fetchFailure } = await loadFullProject({ uuid: params.id });
     if (fetchFailure != null) {
