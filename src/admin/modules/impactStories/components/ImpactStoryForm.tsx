@@ -49,6 +49,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const handlePreviewClick = () => {
     const formValues = getValues();
     const previewData = {
+      uuid: formValues.uuid ? formValues.uuid : formValues?.data?.uuid,
       title: formValues.title ? formValues.title : formValues?.data?.title,
       date: formValues.date ? formValues.date : formValues?.data?.date,
       content: formValues.content ? JSON.parse(formValues.content) : JSON.parse(formValues.data?.content),
