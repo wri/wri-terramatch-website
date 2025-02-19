@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { ReferenceInput, required } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -42,9 +42,10 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
 ];
 
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
-  const { initialValues, handlers } = useImpactStoryForm(mode);
+  const { initialValues, handlers, status } = useImpactStoryForm(mode);
   const { openModal } = useModalContext();
-  const { getValues } = useFormContext();
+  const { getValues, trigger } = useFormContext();
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const handlePreviewClick = () => {
     const formValues = getValues();
@@ -85,6 +86,19 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
+  const handlePublish = async () => {
+    const isValid = await trigger();
+
+    if (!isValid) {
+      return;
+    }
+    handlers.handleStatusChange("published");
+  };
+  useEffect(() => {
+    if (status === "published") {
+      setIsPublishing(true);
+    }
+  }, [status]);
   return (
     <div className="impact-story-form w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
@@ -184,7 +198,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             <Button type="button" variant="white-border" onClick={handlePreviewClick}>
               Preview
             </Button>
-            <Button variant="primary" onClick={() => handlers.handleStatusChange("published")}>
+            <Button variant="primary" onClick={handlePublish} disabled={isPublishing}>
               Publish
             </Button>
           </div>
