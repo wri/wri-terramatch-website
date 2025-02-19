@@ -33,17 +33,6 @@ import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-const monitoringDataChoices = [
-  {
-    id: "0",
-    name: "No"
-  },
-  {
-    id: "1",
-    name: "Yes"
-  }
-];
-
 const tableMenu = [
   {
     id: "1",
@@ -117,13 +106,6 @@ export const ProjectsList: FC = () => {
       className="select-page-admin"
       choices={optionToChoices(getCountriesOptions())}
     />,
-    <SelectInput
-      key="monitoring_data"
-      label="Monitored Data"
-      source="monitoring_data"
-      className="select-page-admin"
-      choices={monitoringDataChoices}
-    />,
     <ReferenceInput
       key="organisation"
       source="organisation_uuid"
@@ -145,16 +127,16 @@ export const ProjectsList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       className="select-page-admin"
       label="Change Request Status"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
     />,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />

@@ -47,7 +47,7 @@ export type ApiFilteredIndexCache = {
   meta: Required<ResponseMeta>["page"];
 };
 
-// This one is a map of resource -> queryString -> pageAfter (pagination cursor) -> list of ids from that page.
+// This one is a map of resource -> queryString -> page number -> list of ids from that page.
 export type ApiFilteredIndexStore = {
   [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
 };
@@ -118,6 +118,7 @@ export type JsonApiResource = {
 };
 
 export type ResponseMeta = {
+  resourceType: ResourceType;
   page?: {
     number: number;
     total: number;
@@ -127,7 +128,7 @@ export type ResponseMeta = {
 export type JsonApiResponse = {
   data: JsonApiResource[] | JsonApiResource;
   included?: JsonApiResource[];
-  meta?: ResponseMeta;
+  meta: ResponseMeta;
 };
 
 export type ApiDataStore = ApiResources & {
@@ -211,7 +212,7 @@ const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
 const isPaginatedResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
-  method === "GET" && response.meta?.page != null && response.meta.page.total > 0;
+  method === "GET" && response.meta?.page != null;
 
 export const apiSlice = createSlice({
   name: "api",
@@ -232,7 +233,7 @@ export const apiSlice = createSlice({
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
       // All response objects from the v3 api conform to JsonApiResponse
-      let { data, included } = response;
+      let { data, included, meta } = response;
       if (!isArray(data)) data = [data];
 
       if (isPaginatedResponse(action.payload)) {
@@ -242,9 +243,8 @@ export const apiSlice = createSlice({
         search.sort();
         const searchQuery = search.toString();
 
-        const { type } = data[0];
-        let cache = state.meta.filterIndexMetas[type][searchQuery];
-        if (cache == null) cache = state.meta.filterIndexMetas[type][searchQuery] = {};
+        let cache = state.meta.filterIndexMetas[meta.resourceType][searchQuery];
+        if (cache == null) cache = state.meta.filterIndexMetas[meta.resourceType][searchQuery] = {};
 
         cache[pageNumber ?? 0] = {
           ids: data.map(({ id }) => id),

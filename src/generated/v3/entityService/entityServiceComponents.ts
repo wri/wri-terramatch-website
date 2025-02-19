@@ -27,6 +27,15 @@ export type EntityIndexQueryParams = {
    * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
    */
   ["page[number]"]?: number;
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  search?: string;
+  country?: string;
+  status?: string;
+  updateRequestStatus?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -51,6 +60,24 @@ export type EntityIndexVariables = {
 export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<
     | {
+        meta?: {
+          /**
+           * @example projects
+           */
+          type?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
         data?: {
           /**
            * @example projects
@@ -62,7 +89,13 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.ProjectLightDto;
         }[];
+      }
+    | {
         meta?: {
+          /**
+           * @example sites
+           */
+          type?: string;
           page?: {
             /**
              * The total number of records available.
@@ -76,8 +109,6 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             number?: number;
           };
         };
-      }
-    | {
         data?: {
           /**
            * @example sites
@@ -89,20 +120,6 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.SiteLightDto;
         }[];
-        meta?: {
-          page?: {
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            number?: number;
-          };
-        };
       },
     EntityIndexError,
     undefined,
@@ -158,6 +175,12 @@ export type EntityGetVariables = {
 export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =>
   entityServiceFetch<
     | {
+        meta?: {
+          /**
+           * @example projects
+           */
+          type?: string;
+        };
         data?: {
           /**
            * @example projects
@@ -171,6 +194,12 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
         };
       }
     | {
+        meta?: {
+          /**
+           * @example sites
+           */
+          type?: string;
+        };
         data?: {
           /**
            * @example sites
@@ -197,6 +226,12 @@ export type TreeScientificNamesSearchQueryParams = {
 export type TreeScientificNamesSearchError = Fetcher.ErrorWrapper<undefined>;
 
 export type TreeScientificNamesSearchResponse = {
+  meta?: {
+    /**
+     * @example treeSpeciesScientificNames
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example treeSpeciesScientificNames
@@ -265,6 +300,12 @@ export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
 >;
 
 export type EstablishmentTreesFindResponse = {
+  meta?: {
+    /**
+     * @example establishmentTrees
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example establishmentTrees

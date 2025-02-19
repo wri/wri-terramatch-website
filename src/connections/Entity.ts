@@ -1,6 +1,11 @@
 import { createSelector } from "reselect";
 
-import { entityGet, EntityGetPathParams, entityIndex } from "@/generated/v3/entityService/entityServiceComponents";
+import {
+  entityGet,
+  EntityGetPathParams,
+  entityIndex,
+  EntityIndexQueryParams
+} from "@/generated/v3/entityService/entityServiceComponents";
 import { entityGetFetchFailed, entityIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
 import {
   ProjectFullDto,
@@ -35,9 +40,16 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   refetch: () => void;
 };
 
+type EntityIndexFilterKey = keyof Omit<
+  EntityIndexQueryParams,
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
+>;
 export type EntityIndexConnectionProps = {
   pageSize?: number;
   pageNumber?: number;
+  sortField?: string;
+  sortDirection?: "ASC" | "DESC";
+  filter?: Record<EntityIndexFilterKey, string>;
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
@@ -55,9 +67,22 @@ const pageMetaSelector = (entityName: SupportedEntity, props: EntityIndexConnect
 };
 
 const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
+const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
+  const queryParams = { "page[number]": props?.pageNumber, "page[size]": props?.pageSize } as EntityIndexQueryParams;
+  if (props?.sortField != null) {
+    queryParams["sort[field]"] = props.sortField;
+    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
+  }
+  if (props?.filter != null) {
+    for (const [key, value] of Object.entries(props.filter)) {
+      queryParams[key as EntityIndexFilterKey] = value;
+    }
+  }
+  return queryParams;
+};
 const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectionProps) => ({
   pathParams: { entity },
-  queryParams: { "page[number]": props?.pageNumber, "page[size]": props?.pageSize }
+  queryParams: entityIndexQuery(props)
 });
 
 const entityIsLoaded =
@@ -97,6 +122,8 @@ const createGetEntityConnection = <T extends EntityDtoType>(
 const indexIsLoaded = <T extends EntityDtoType>({ entities, fetchFailure }: EntityIndexConnection<T>) =>
   entities != null || fetchFailure != null;
 
+const indexCacheKey = (props: EntityIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
+
 const createEntityIndexConnection = <T extends EntityDtoType>(
   entityName: SupportedEntity
 ): Connection<EntityIndexConnection<T>, EntityIndexConnectionProps> => ({
@@ -107,7 +134,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
   isLoaded: indexIsLoaded,
 
   selector: selectorCache(
-    ({ pageSize, pageNumber }) => `${pageNumber}|${pageSize}`,
+    props => indexCacheKey(props),
     props =>
       createSelector(
         [
