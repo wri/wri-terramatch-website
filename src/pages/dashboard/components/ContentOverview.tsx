@@ -141,11 +141,27 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     {
       header: "Country",
       cell: (props: any) => {
-        const value = props.getValue().split("_");
+        const value = props.getValue().split(",");
         return (
-          <div className="flex items-center gap-2">
-            <img src={`/flags/bj.svg`} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
-            <Text variant="text-14">{value[0]}</Text>
+          <div className="flex flex-wrap items-center gap-2">
+            {value.map((countryName: string, index: number) => {
+              const countryData = dashboardCountries.find(c => c.data.label === countryName);
+
+              return (
+                <div key={index} className="flex items-center gap-2">
+                  {countryData ? (
+                    <img
+                      src={countryData.data.icon}
+                      alt={`${countryName} flag`}
+                      className="h-3 w-5 min-w-[20px] object-cover"
+                    />
+                  ) : (
+                    "-"
+                  )}
+                  <Text variant="text-14">{countryName}</Text>
+                </div>
+              );
+            })}
           </div>
         );
       },
@@ -166,10 +182,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: ({ row }: { row: { original: { uuid: string } } }) => {
-        const uuid = row.original.uuid;
+      cell: ({ row }: { row: any }) => {
         const handleClick = () => {
-          ModalStoryOpen(uuid);
+          ModalStoryOpen(row.original);
         };
 
         return (
