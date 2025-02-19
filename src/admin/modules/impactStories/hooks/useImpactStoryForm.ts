@@ -3,7 +3,8 @@ import { useNotify, useRecordContext, useRedirect } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
 export const useImpactStoryForm = (mode: "create" | "edit") => {
-  const { setValue, getValues } = useFormContext();
+  const { setValue, getValues, watch } = useFormContext();
+  const status = watch("status");
   const record = useRecordContext();
   const notify = useNotify();
   const redirect = useRedirect();
@@ -78,6 +79,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
       handleStatusChange,
       handlePreview,
       handleDelete
-    }
+    },
+    status
   };
 };

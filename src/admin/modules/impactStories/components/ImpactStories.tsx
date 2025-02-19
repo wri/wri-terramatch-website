@@ -15,7 +15,6 @@ const transformData = (data: any) => {
 
   return Object.fromEntries(Object.entries(transformedData).filter(([_, value]) => value != null));
 };
-
 export const ImpactStoriesCreate: React.FC = () => (
   <Create
     transform={transformData}
