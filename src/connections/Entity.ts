@@ -63,7 +63,7 @@ const pageMetaSelector = (entityName: SupportedEntity, props: EntityIndexConnect
   const { queryParams } = entityIndexParams(entityName, props);
   delete queryParams["page[number]"];
   const query = getStableQuery(queryParams);
-  return store.meta.filterIndexMetas[entityName][query]?.[props.pageNumber ?? 0];
+  return store.meta.indices[entityName][query]?.[props.pageNumber ?? 0];
 };
 
 const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
