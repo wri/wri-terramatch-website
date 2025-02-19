@@ -27,7 +27,14 @@ const QuickActions: FC = () => {
       }
     }).then((response: any) => {
       if (entity === "shapefiles") {
-        downloadFileBlob(response, `${record.name}_polygons.geojson`);
+        const exportName = `${record.name}_polygons.geojson`;
+        if (response instanceof Blob) {
+          downloadFileBlob(response, exportName);
+        } else {
+          const jsonString = JSON.stringify(response, null, 2);
+          const fileBlob = new Blob([jsonString], { type: "application/geo+json" });
+          downloadFileBlob(fileBlob, exportName);
+        }
       } else {
         downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
       }
