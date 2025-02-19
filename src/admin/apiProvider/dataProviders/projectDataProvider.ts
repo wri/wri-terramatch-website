@@ -11,13 +11,11 @@ import {
 import { getFormattedErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
-const projectSortableList = ["name", "organisation_name", "planting_start_date"];
-
 // @ts-ignore
 export const projectDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
-    const connection = await loadProjectIndex(raConnectionProps(params, projectSortableList));
+    const connection = await loadProjectIndex(raConnectionProps(params));
     if (connection.fetchFailure != null) {
       throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
     }

@@ -22,6 +22,12 @@ export type AuthLoginError = Fetcher.ErrorWrapper<{
 }>;
 
 export type AuthLoginResponse = {
+  meta?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example logins
@@ -89,6 +95,12 @@ export type UsersFindError = Fetcher.ErrorWrapper<
 >;
 
 export type UsersFindResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example users
@@ -193,6 +205,12 @@ export type UserUpdateError = Fetcher.ErrorWrapper<
 >;
 
 export type UserUpdateResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example users
@@ -263,6 +281,12 @@ export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
 }>;
 
 export type RequestPasswordResetResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example passwordResets
@@ -310,6 +334,12 @@ export type ResetPasswordError = Fetcher.ErrorWrapper<{
 }>;
 
 export type ResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example passwordResets

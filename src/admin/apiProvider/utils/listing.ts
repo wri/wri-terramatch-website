@@ -18,11 +18,17 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
   return replace.replaceWith;
 };
 
-export const raConnectionProps = (params: GetListParams, sortableList?: string[]) => {
+export const raConnectionProps = (params: GetListParams) => {
   const queryParams: EntityIndexConnectionProps = {
     pageSize: params.pagination.perPage,
-    pageNumber: params.pagination.page
+    pageNumber: params.pagination.page,
+    filter: params.filter
   };
+
+  if (params.sort.field != null) {
+    queryParams.sortField = params.sort.field;
+    queryParams.sortDirection = (params.sort.order as "ASC" | "DESC") ?? "ASC";
+  }
 
   return queryParams;
 };
