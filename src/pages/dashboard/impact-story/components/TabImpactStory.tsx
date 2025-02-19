@@ -40,7 +40,10 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
     impactStoriesResponse?.data?.map((story: any) => ({
       uuid: story.uuid,
       title: story.title,
-      country: story.organization?.countries || "",
+      country:
+        story.organization?.countries.length > 0
+          ? story.organization.countries.map((c: any) => c.label).join(", ")
+          : "No country",
       organization: story.organization?.name,
       date: story.date,
       category: story.category ? story.category : [],

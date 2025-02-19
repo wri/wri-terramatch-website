@@ -40,7 +40,10 @@ const ImpactStoryLanding = () => {
     organization: {
       name: data?.data?.organization?.name,
       category: data?.data?.category ? data?.data?.category : [],
-      country: data?.data?.organization?.countries,
+      country:
+        data?.data?.organization?.countries.length > 0
+          ? data?.data?.organization.countries.map((c: any) => c.label).join(", ")
+          : "No country",
       facebook_url: data?.data?.organization?.facebook_url,
       instagram_url: data?.data?.organization?.instagram_url,
       linkedin_url: data?.data?.organization?.linkedin_url,

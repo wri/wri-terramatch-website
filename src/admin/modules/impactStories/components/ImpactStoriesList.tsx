@@ -67,7 +67,15 @@ const ImpactStoriesDataGrid: FC = () => {
         }}
       />
       <TextField source="organization.name" label="Organization" />
-      <TextField source="organization.countries" label="Country" />
+      <FunctionField
+        source="organization.countries"
+        label="Country"
+        render={(record: any) =>
+          record.organization?.countries.length > 0
+            ? record.organization.countries.map((c: any) => c.label).join(", ")
+            : "No country"
+        }
+      />
       <DateField source="created_at" label="Date Created" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>

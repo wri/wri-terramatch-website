@@ -61,9 +61,12 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           ? formValues?.organization?.name
           : formValues?.data?.organization.name ?? "",
         category: formValues?.category ? formValues?.category : formValues?.data?.category,
-        country: formValues?.organization?.countries
-          ? formValues?.organization?.countries
-          : formValues?.data?.organization?.countries,
+        country:
+          formValues?.organization?.countries.length > 0
+            ? formValues.organization.countries.map((c: any) => c.label).join(", ")
+            : formValues?.data?.organization?.countries.length > 0
+            ? formValues.data.organization.countries.map((c: any) => c.label).join(", ")
+            : "No country",
         facebook_url: formValues?.organization?.facebook_url
           ? formValues?.organization?.facebook_url
           : formValues?.data?.organization?.facebook_url,
