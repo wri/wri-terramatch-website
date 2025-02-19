@@ -60,6 +60,8 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
     }
   };
 
+  const mobileLanguages = LANGUAGES.filter(lang => lang.value !== "pt-BR" && lang.value !== "es-MX");
+
   return (
     <div onKeyDownCapture={handleKeyDown}>
       <Popover className={classNames(props.className, variantClass.classContent)}>
@@ -76,7 +78,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
         </Popover.Button>
         <Popover.Panel className={variantClass.classPanel}>
           <List
-            items={LANGUAGES}
+            items={isMobile || router.pathname.includes("dashboard") ? mobileLanguages : LANGUAGES}
             render={(item, index) => (
               <Text
                 variant={selected.value === item.value ? "text-body-900" : "text-body-600"}
@@ -85,8 +87,18 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
                 })}
                 onClick={() => onChange(item)}
               >
-                {selected.value === item.value && (
-                  <Icon name={IconNames.CHECK} width={16} className={variantClass.classIconSelected} />
+                {(isMobile || selected.value === item.value) && (
+                  <Icon
+                    name={
+                      isMobile
+                        ? selected.value === item.value
+                          ? IconNames.CHECK_LANGUAGES
+                          : IconNames.NO_CHECK_LANGUAGES
+                        : IconNames.CHECK
+                    }
+                    width={16}
+                    className={variantClass.classIconSelected}
+                  />
                 )}
                 {t(isMobile ? item.title.slice(0, 2) : item.title)}
               </Text>

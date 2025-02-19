@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -26,7 +25,6 @@ interface CardImpactStoryProps {
 }
 
 const CardImpactStory: React.FC<CardImpactStoryProps> = ({ stories }) => {
-  const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const t = useT();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -85,10 +83,10 @@ const CardImpactStory: React.FC<CardImpactStoryProps> = ({ stories }) => {
                     ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    router.push(`/dashboard/impact-story/${item.uuid}`);
-                  }}
+                <a
+                  href={`/dashboard/impact-story/${item.uuid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-18-semibold group/button mt-3.5 flex items-center gap-2 hover:text-primary"
                 >
                   {t("Read story")}
@@ -96,7 +94,7 @@ const CardImpactStory: React.FC<CardImpactStoryProps> = ({ stories }) => {
                     name={IconNames.ARROW_UP_RIGHT}
                     className="h-3 w-3 transition-transform delay-100 duration-100 group-hover/button:rotate-45 lg:h-4 lg:w-4 wide:h-5 wide:w-5"
                   />
-                </button>
+                </a>
               </div>
             </div>
           ))}
