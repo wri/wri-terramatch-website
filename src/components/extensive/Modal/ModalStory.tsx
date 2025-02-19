@@ -35,7 +35,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
     closeModal(ModalId.MODAL_STORY);
   };
   const isMobile = useMediaQuery("(max-width: 1200px)");
-  console.log("data.thumbnail", data);
+
   return (
     <ModalBase
       {...rest}
