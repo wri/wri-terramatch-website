@@ -15,6 +15,20 @@ import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBa
 import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
+const abortJob = (uuid: string) => {
+  const job: DelayedJobData[] = [
+    {
+      uuid: uuid,
+      type: "delayedJobs",
+      attributes: {
+        isAcknowledged: true
+      }
+    }
+  ];
+  JobsSlice.setAbortJob(true);
+  triggerBulkUpdate(job);
+};
+
 const FloatNotification = () => {
   const firstRender = useRef(true);
   const t = useT();
@@ -36,20 +50,6 @@ const FloatNotification = () => {
         };
       });
     triggerBulkUpdate(newJobsData);
-  };
-
-  const AbortJobUuid = (uuid: string) => {
-    const job: DelayedJobData[] = [
-      {
-        uuid: uuid,
-        type: "delayedJobs",
-        attributes: {
-          isAcknowledged: true
-        }
-      }
-    ];
-    JobsSlice.setAbortJob(true);
-    triggerBulkUpdate(job);
   };
 
   useValueChanged(delayedJobs, () => {
@@ -125,7 +125,7 @@ const FloatNotification = () => {
                       <button
                         className="absolute right-0 hover:text-primary"
                         onClick={() => {
-                          AbortJobUuid(item.uuid);
+                          abortJob(item.uuid);
                         }}
                       >
                         <ToolTip content={t("Cancel")}>
