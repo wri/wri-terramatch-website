@@ -8,6 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import JobsSlice from "@/store/jobsSlice";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
@@ -35,6 +36,20 @@ const FloatNotification = () => {
         };
       });
     triggerBulkUpdate(newJobsData);
+  };
+
+  const AbortJobUuid = (uuid: string) => {
+    const job: DelayedJobData[] = [
+      {
+        uuid: uuid,
+        type: "delayedJobs",
+        attributes: {
+          isAcknowledged: true
+        }
+      }
+    ];
+    JobsSlice.setAbortJob(true);
+    triggerBulkUpdate(job);
   };
 
   useValueChanged(delayedJobs, () => {
@@ -107,7 +122,12 @@ const FloatNotification = () => {
                       <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
                         {item.name}
                       </Text>
-                      <button className="absolute right-0 hover:text-primary">
+                      <button
+                        className="absolute right-0 hover:text-primary"
+                        onClick={() => {
+                          AbortJobUuid(item.uuid);
+                        }}
+                      >
                         <ToolTip content={t("Cancel")}>
                           <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                         </ToolTip>

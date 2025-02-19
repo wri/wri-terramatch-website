@@ -12,6 +12,7 @@ import {
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -47,7 +48,12 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     onError: () => {
       hideLoader();
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      if (JobsSlice.currentState.abortJob) {
+        displayNotification(t("The operation has been successfully canceled."), "warning", t("Canceled"));
+        JobsSlice.reset();
+      } else {
+        displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      }
     }
   });
 

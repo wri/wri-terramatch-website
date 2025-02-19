@@ -5,18 +5,24 @@ export type JobsDataStore = {
   totalContent: number;
   processedContent: number;
   progressMessage: string | null;
+  abortJob: boolean;
 };
 
 export const INITIAL_STATE: JobsDataStore = {
   totalContent: 0,
   processedContent: 0,
-  progressMessage: null
+  progressMessage: null,
+  abortJob: false
 };
 
 type JobsProgressProps = {
   totalContent: number;
   processedContent: number;
   progressMessage: string | null;
+};
+
+type abortJobProps = {
+  abortJob: boolean;
 };
 
 export const jobsSlice = createSlice({
@@ -29,6 +35,10 @@ export const jobsSlice = createSlice({
       state.totalContent = action.payload.totalContent;
       state.processedContent = action.payload.processedContent;
       state.progressMessage = action.payload.progressMessage;
+    },
+
+    setAbortJob: (state, action: PayloadAction<abortJobProps>) => {
+      state.abortJob = action.payload.abortJob;
     },
 
     reset: state => {
@@ -50,6 +60,10 @@ export default class JobsSlice {
 
   static setJobsProgress(totalContent: number, processedContent: number, progressMessage: string | null) {
     this._redux.dispatch(jobsSlice.actions.setJobsProgress({ totalContent, processedContent, progressMessage }));
+  }
+
+  static setAbortJob(abortJob: boolean) {
+    this._redux.dispatch(jobsSlice.actions.setAbortJob({ abortJob }));
   }
 
   static reset() {
