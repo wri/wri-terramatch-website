@@ -15,6 +15,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -160,6 +161,22 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
       )
   )
 });
+
+export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
+  SUPPORTED_ENTITIES.includes(entity as SupportedEntity);
+
+export const pruneEntityCache = (entity: EntityName, uuid: string) => {
+  // TEMPORARY check while we transition all entities to v3. Once that's done, SupportedEntity and
+  // EntityName will be equivalent and this prune call will be valid for all entities. At that time,
+  // this function may no longer be needed as well.
+  if (entityIsSupported(entity)) {
+    ApiSlice.pruneCache(entity, [uuid]);
+  }
+};
+
+// TEMPORARY while we transition all entities to v3. When adding a new entity to this connection,
+// please update this array.
+const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects"];
 
 // The "light" version of entity connections will return the full DTO if it's what's cached in the store. However,
 // the type of the entity will use the Light DTO. For the "full" version of the entity connection, if the version that's
