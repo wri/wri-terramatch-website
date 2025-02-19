@@ -5,7 +5,6 @@ import { twMerge as tw } from "tailwind-merge";
 import Text from "@/components/elements/Text/Text";
 import { useModalContext } from "@/context/modal.provider";
 import SectionShare from "@/pages/dashboard/impact-story/components/SectionShare";
-import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBase, ModalProps } from "./Modal";
@@ -17,7 +16,7 @@ export interface ImpactStoryData {
   date: string;
   content: string;
   category: string[];
-  thumbnail?: UploadedFile;
+  thumbnail?: string;
   organization?: {
     name?: string;
     country?: string;
@@ -73,10 +72,10 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
               {data?.content}
             </Text>
-            <When condition={data?.thumbnail?.url}>
+            <When condition={data?.thumbnail}>
               <div className="mt-8">
                 <img
-                  src={data.thumbnail?.url}
+                  src={data.thumbnail}
                   alt={data.title}
                   className="h-[45vh] w-full rounded-2xl object-cover lg:h-[50vh]"
                 />
