@@ -48,7 +48,7 @@ export type ApiFilteredIndexCache = {
 };
 
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
-export type ApiFilteredIndexStore = {
+export type ApiIndexStore = {
   [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
 };
 
@@ -136,8 +136,11 @@ export type ApiDataStore = ApiResources & {
     /** Stores the state of in-flight and failed requests */
     pending: ApiPendingStore;
 
-    /** Stores the IDs that were returned for paginated, filtered index queries */
-    filterIndexMetas: ApiFilteredIndexStore;
+    /**
+     * Stores the IDs and metadata that were returned for paginated (and often filtered and/or
+     * sorted) index queries.
+     **/
+    indices: ApiIndexStore;
 
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
@@ -167,10 +170,7 @@ export const INITIAL_STATE = {
       return acc;
     }, {}) as ApiPendingStore,
 
-    filterIndexMetas: RESOURCES.reduce(
-      (acc, resource) => ({ ...acc, [resource]: {} }),
-      {} as Partial<ApiFilteredIndexStore>
-    )
+    indices: RESOURCES.reduce((acc, resource) => ({ ...acc, [resource]: {} }), {} as Partial<ApiIndexStore>)
   }
 } as ApiDataStore;
 
@@ -243,8 +243,8 @@ export const apiSlice = createSlice({
         search.sort();
         const searchQuery = search.toString();
 
-        let cache = state.meta.filterIndexMetas[meta.resourceType][searchQuery];
-        if (cache == null) cache = state.meta.filterIndexMetas[meta.resourceType][searchQuery] = {};
+        let cache = state.meta.indices[meta.resourceType][searchQuery];
+        if (cache == null) cache = state.meta.indices[meta.resourceType][searchQuery] = {};
 
         cache[pageNumber ?? 0] = {
           ids: data.map(({ id }) => id),
@@ -321,7 +321,7 @@ export const apiSlice = createSlice({
       }
 
       if (searchQuery != null) {
-        delete state.meta.filterIndexMetas[resource][searchQuery];
+        delete state.meta.indices[resource][searchQuery];
       }
     },
 
