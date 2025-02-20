@@ -71,7 +71,7 @@ const ImpactStoriesDataGrid: FC = () => {
         source="organization.countries"
         label="Country"
         render={(record: any) =>
-          record.organization?.countries.length > 0
+          record.organization?.countries?.length > 0
             ? record.organization.countries.map((c: any) => c.label).join(", ")
             : "No country"
         }

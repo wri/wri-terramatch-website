@@ -41,7 +41,7 @@ const ImpactStoryLanding = () => {
       name: data?.data?.organization?.name,
       category: data?.data?.category ? data?.data?.category : [],
       country:
-        data?.data?.organization?.countries.length > 0
+        data?.data?.organization?.countries?.length > 0
           ? data?.data?.organization.countries.map((c: any) => c.label).join(", ")
           : "No country",
       facebook_url: data?.data?.organization?.facebook_url,

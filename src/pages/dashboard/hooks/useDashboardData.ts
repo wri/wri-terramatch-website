@@ -235,7 +235,7 @@ export const useDashboardData = (filters: any) => {
           name: story.organization?.name ?? "",
           category: story.category,
           country:
-            story.organization?.countries.length > 0
+            story.organization?.countries?.length > 0
               ? story.organization.countries.map((c: any) => c.label).join(", ")
               : "No country",
           countries_data: story.organization?.countries ?? [],
