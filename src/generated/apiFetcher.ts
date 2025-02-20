@@ -180,11 +180,18 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
   let jobResult;
+
+  const abortController = new AbortController();
+  signal = signal ?? abortController.signal;
+
   for (
     jobResult = await loadJob(signal, delayedJobId);
     jobResult.data?.attributes?.status === "pending";
     jobResult = await loadJob(signal, delayedJobId)
   ) {
+    if (jobResult.data.attributes.isAcknowledged) {
+      abortController.abort();
+    }
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
     if (totalContent != null && processedContent != null) {
       JobsSlice.setJobsProgress(totalContent, processedContent, progressMessage);

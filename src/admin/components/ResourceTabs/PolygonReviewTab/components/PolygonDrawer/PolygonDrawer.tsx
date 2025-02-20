@@ -25,6 +25,7 @@ import {
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
+import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
@@ -119,7 +120,12 @@ const PolygonDrawer = ({
     onError: () => {
       setCheckPolygonValidation(false);
       hideLoader();
-      openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
+      if (JobsSlice.currentState.abortJob) {
+        openNotification("warning", t("The operation has been successfully canceled."), t("Canceled"));
+        JobsSlice.reset();
+      } else {
+        openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
+      }
     }
   });
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;

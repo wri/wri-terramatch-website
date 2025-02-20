@@ -139,7 +139,12 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      if (JobsSlice.currentState.abortJob) {
+        displayNotification(t("The operation has been successfully canceled."), "warning", t("Canceled"));
+        JobsSlice.reset();
+      } else {
+        displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      }
     }
   });
 

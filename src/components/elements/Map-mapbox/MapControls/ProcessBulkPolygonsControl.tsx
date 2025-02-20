@@ -178,7 +178,12 @@ const ProcessBulkPolygonsControl = ({
         onError: () => {
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          openNotification("error", t("Error!"), t("Failed to check polygons"));
+          if (JobsSlice.currentState.abortJob) {
+            openNotification("warning", t("Canceled"), t("The operation has been successfully canceled."));
+            JobsSlice.reset();
+          } else {
+            openNotification("error", t("Error!"), t("Failed to check polygons"));
+          }
         }
       }
     );
