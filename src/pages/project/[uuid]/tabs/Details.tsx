@@ -119,9 +119,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               {detailedInterventionTypeOptions.map(({ title }) => title).join(", ")}
             </LongTextField>
             <LongTextField title={t("Planting Start Date")}>{format(project.plantingStartDate)}</LongTextField>
-            <LongTextField frameworksHide={[Framework.PPC]} title={t("Planting End Date")}>
-              {format(project.plantingEndDate)}
-            </LongTextField>
+            <LongTextField title={t("Planting End Date")}>{format(project.plantingEndDate)}</LongTextField>
           </PageCard>
 
           <PageCard frameworksShow={ALL_TF.concat([Framework.HBF])} title={t("Project Objectives")}>
