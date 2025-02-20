@@ -12,7 +12,7 @@ import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
-import ToolTip from "../Tooltip/Tooltip";
+// import ToolTip from "../Tooltip/Tooltip";
 
 const FloatNotification = () => {
   const firstRender = useRef(true);
@@ -107,11 +107,11 @@ const FloatNotification = () => {
                       <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
                         {item.name}
                       </Text>
-                      <button className="absolute right-0 hover:text-primary">
+                      {/* <button className="absolute right-0 hover:text-primary">
                         <ToolTip content={t("Cancel")}>
                           <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                         </ToolTip>
-                      </button>
+                      </button> */}
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Site: <b>{item.entityName}</b>
