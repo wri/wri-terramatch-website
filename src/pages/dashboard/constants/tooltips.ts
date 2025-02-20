@@ -9,21 +9,6 @@ export const JOBS_CREATED_TOOLTIP =
 
 export const TOP_20_TREE_SPECIES_PLANTED_TOOLTIP = "";
 
-export const MAP_TOOLTIP =
-  "Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos.";
-
-export const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
-  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
-
-export const TOTAL_NUMBER_OF_SITES_TOOLTIP =
-  "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons.";
-
-export const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
-  "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare.";
-
-export const TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP =
-  "Total hectares under restoration broken down by target land use types.";
-
 export const TREES_RESTORED_SECTION_TOOLTIP =
   "This section displays data related to Indicator 1: Trees Restored described in <a href='https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework' target='_blank'>TerraFund’s Monitoring, Reporting, and Verification framework</a>. Please refer to the linked framework for details on how these numbers are sourced and verified.";
 
@@ -36,9 +21,6 @@ export const JOBS_CREATED_SECTION_TOOLTIP = `This section displays data related 
 
 export const IMPACT_STORIES_TOOLTIP_TOOLTIP =
   "Short project success stories will be accessible by early 2025 through the relevant project pages.";
-
-export const PROJECT_INSIGHTS_SECTION_TOOLTIP =
-  "In 2025, the Project Insights section will contain additional analyses showing trends and insights.";
 
 export const PERMISSIONS_REQUIRED_TOOLTIP =
   "To ensure the protection of sensitive location data, this section is not accessible without the proper permissions. Click here to log in to TerraMatch.";

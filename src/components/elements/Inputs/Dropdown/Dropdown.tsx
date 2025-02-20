@@ -272,7 +272,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 as="div"
                 className={tw(
                   "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white outline-none lg:max-h-[250px] wide:max-h-[266px]",
-                  props.optionsClassName
+                  props.optionsClassName,
+                  variant.optionsClassName
                 )}
               >
                 <When condition={props.multiSelect && showSelectAll}>

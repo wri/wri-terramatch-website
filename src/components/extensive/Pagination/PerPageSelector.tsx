@@ -30,7 +30,12 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
   };
 
   return (
-    <Listbox as="div" className={classNames("space-y-2", props.className)} value={selected} onChange={onChangeHandler}>
+    <Listbox
+      as="div"
+      className={classNames("space-y-2 mobile:hidden", props.className)}
+      value={selected}
+      onChange={onChangeHandler}
+    >
       {({ open, value }) => (
         <>
           <div className="flex items-center gap-3">

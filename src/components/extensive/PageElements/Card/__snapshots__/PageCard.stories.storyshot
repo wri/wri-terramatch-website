@@ -18,14 +18,18 @@ exports[`Storyshots Components/Extensive/Page/Card Default 1`] = `
       </p>
     </div>
     <div
-      className=""
+      className="delay-400 duration-0 h-auto transition-all ease-in-out"
     >
-      <span
-        className="mt-3 text-darkCustom text-light-subtitle-400"
-        data-testid="txt"
+      <div
+        className=""
       >
-        Card subtitle
-      </span>
+        <span
+          className="mt-3 text-darkCustom text-light-subtitle-400"
+          data-testid="txt"
+        >
+          Card subtitle
+        </span>
+      </div>
     </div>
   </div>
 </div>

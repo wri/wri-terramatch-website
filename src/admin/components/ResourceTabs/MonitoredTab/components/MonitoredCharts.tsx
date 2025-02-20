@@ -6,12 +6,14 @@ import { When } from "react-if";
 import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import SecDashboard from "@/pages/dashboard/components/SecDashboard";
-import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 
 import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
 import { LoadingState } from "./MonitoredLoading";
 import { NoDataState } from "./NoDataState";
 import TreeLossBarChart from "./TreesLossBarChart";
+
+const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
+  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
 
 const ChartContainer = ({
   children,
