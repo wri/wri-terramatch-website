@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -24,6 +24,7 @@ import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
@@ -97,25 +98,26 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  useEffect(() => {
+  useValueChanged(filters.country, () => {
     setSelectedCountry(filters.country.country_slug);
-  }, [filters.country]);
-  useEffect(() => {
-    setSelectedLandscapes(filters.landscapes || []);
-  }, [filters.landscapes]);
-  useEffect(() => {
+  });
+  useValueChanged(filters.landscapes, () => {
+    setSelectedLandscapes(filters.landscapes ?? []);
+  });
+  useValueChanged(filters.uuid, () => {
     setProjectUUID(filters.uuid);
-  }, [filters.uuid]);
+  });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
-  useEffect(() => {
+  useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
     }
-  }, [initialBbox]);
+  });
 
-  useEffect(() => {
+  useValueChanged(modalMapLoaded, () => {
     setModalLoading("modalExpand", modalMapLoaded);
-  }, [modalMapLoaded, setModalLoading]);
+  });
+
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
