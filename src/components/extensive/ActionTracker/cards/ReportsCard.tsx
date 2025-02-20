@@ -2,12 +2,8 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import {
-  GetV2MyActionsResponse,
-  GetV2MyProjectsResponse,
-  useGetV2MyProjects,
-  usePutV2MyActionsUUIDComplete
-} from "@/generated/apiComponents";
+import { useProjectIndex } from "@/connections/Entity";
+import { GetV2MyActionsResponse, usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
@@ -24,7 +20,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
   const t = useT();
 
   const { mutate: clearAction } = usePutV2MyActionsUUIDComplete();
-  const { data: projects } = useGetV2MyProjects<{ data: GetV2MyProjectsResponse }>({});
+  const [, { entities: projects }] = useProjectIndex();
   const { format } = useDate();
 
   const reportActions = useMemo(() => {
@@ -110,10 +106,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         reportActions.length > 10
           ? {
               as: Link,
-              href:
-                (projects?.data.length ?? 0) > 1
-                  ? "/my-projects"
-                  : `project/${projects?.data?.[0]?.uuid}?tab=reporting-tasks`,
+              href: (projects?.length ?? 0) > 1 ? "/my-projects" : `project/${projects?.[0]?.uuid}?tab=reporting-tasks`,
               children: t("Reports")
             }
           : undefined

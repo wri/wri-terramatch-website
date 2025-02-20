@@ -16,13 +16,14 @@ import {
   useDeleteV2SitesUUID,
   useGetV2ProjectsUUIDSites
 } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 import { ModalId } from "../Modal/ModalConst";
 
 interface SitesTableProps {
-  project: any;
+  project: ProjectFullDto;
   hasAddButton?: boolean;
   onFetch?: (data: GetV2ProjectsUUIDSitesResponse) => void;
 }
@@ -170,7 +171,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           name: t("Add Site"),
           hide: !hasAddButton,
           as: Link,
-          href: `/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`
+          href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`
         }
       ]}
     ></ServerSideTable>

@@ -142,7 +142,6 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               <TreeSpeciesTablePD
                 modelName="site"
                 modelUUID={site.uuid}
-                framework={site.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}

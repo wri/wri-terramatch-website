@@ -2,6 +2,7 @@ import { isEqual } from "lodash";
 import { useEffect, useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import { pruneEntityCache } from "@/connections/Entity";
 import {
   PutV2FormsENTITYUUIDRequestBody,
   PutV2FormsENTITYUUIDResponse,
@@ -72,6 +73,9 @@ export const useFormUpdate = (entityName: EntityName, entityUUID: string) => {
 
   const updateEntity = (body: PutV2FormsENTITYUUIDResponse) => {
     dispatch({ type: "addUpdate", body });
+    // When an entity is updated via form, we want to forget the cached copy we might have from v3
+    // so it gets re-fetched when a component needs it.
+    pruneEntityCache(entityName, entityUUID);
   };
 
   return { updateEntity, error, isSuccess, isUpdating };

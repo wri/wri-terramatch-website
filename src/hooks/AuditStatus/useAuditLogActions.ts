@@ -138,7 +138,7 @@ const useAuditLogActions = ({
       fetchCriteriaValidation();
       fetchCheckPolygons();
     }
-  }, [entityType, isPolygon, isSite, isSiteProject, record, selected, verifyEntity]);
+  }, [entityType, isPolygon, isSite, isSiteProject, record?.uuid, selected, verifyEntity]);
 
   const isValidCriteriaData = (criteriaData: any) => {
     if (!criteriaData?.criteria_list?.length) {

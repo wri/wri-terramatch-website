@@ -3,6 +3,265 @@
  *
  * @version 1.0
  */
+export type ANRDto = {
+  /**
+   * Site name
+   */
+  name: string;
+  treeCount: number;
+};
+
+export type ProjectApplicationDto = {
+  uuid: string;
+  fundingProgrammeName: string;
+  projectPitchUuid: string;
+};
+
+export type MediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string;
+  thumbUrl: string;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
+export type ProjectLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type SiteLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: Record<string, any> | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type ProjectFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * True for projects that are test data and do not represent actual planting on the ground.
+   */
+  isTest: boolean;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  continent: string | null;
+  country: string | null;
+  states: string[] | null;
+  projectCountyDistrict: string | null;
+  /**
+   * @format date-time
+   */
+  plantingEndDate: string | null;
+  budget: number | null;
+  history: string | null;
+  objectives: string | null;
+  environmentalGoals: string | null;
+  socioeconomicGoals: string | null;
+  sdgsImpacted: string | null;
+  totalHectaresRestoredGoal: number | null;
+  totalHectaresRestoredSum: number;
+  treesGrownGoal: number | null;
+  survivalRate: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
+  treesPlantedCount: number;
+  seedsPlantedCount: number;
+  regeneratedTreesCount: number;
+  workdayCount: number;
+  selfReportedWorkdayCount: number;
+  combinedWorkdayCount: number;
+  totalJobsCreated: number;
+  totalSites: number;
+  totalNurseries: number;
+  totalProjectReports: number;
+  totalOverdueReports: number;
+  descriptionOfProjectTimeline: string | null;
+  sitingStrategyDescription: string | null;
+  sitingStrategy: string | null;
+  landholderCommEngage: string | null;
+  projPartnerInfo: string | null;
+  seedlingsSource: string | null;
+  landTenureProjectArea: string[] | null;
+  projImpactBiodiv: string | null;
+  projImpactFoodsec: string | null;
+  proposedGovPartners: string | null;
+  treesRestoredPpc: number;
+  detailedInterventionTypes: string[] | null;
+  /**
+   * The list of tree counts regenerating naturally by site name
+   */
+  assistedNaturalRegenerationList: ANRDto[];
+  goalTreesRestoredAnr: number | null;
+  directSeedingSurvivalRate: number | null;
+  application: ProjectApplicationDto;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+  documentFiles: MediaDto[];
+  programmeSubmission: MediaDto[];
+  detailedProjectBudget: MediaDto;
+  proofOfLandTenureMou: MediaDto[];
+};
+
+export type SiteFullDto = {
+  /**
+   * Indicates that this resource has the full resource definition.
+   *
+   * @example false
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: Record<string, any> | null;
+  /**
+   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
+   *
+   * @deprecated true
+   */
+  frameworkUuid: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  totalSiteReports: number;
+};
+
 export type PreviousPlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row

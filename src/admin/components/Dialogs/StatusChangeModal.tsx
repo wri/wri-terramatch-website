@@ -23,6 +23,7 @@ import {
   usePostV2AdminENTITYUUIDReminder,
   usePutV2AdminENTITYUUIDSTATUS
 } from "@/generated/apiComponents";
+import ApiSlice, { RESOURCES, ResourceType } from "@/store/apiSlice";
 import { optionToChoices } from "@/utils/options";
 
 interface StatusChangeModalProps extends DialogProps {
@@ -44,24 +45,24 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   const { openNotification } = useNotificationContext();
   const t = useT();
 
-  const resourceName = (() => {
+  const [resourceName, v3Resource] = useMemo(() => {
     switch (resource as keyof typeof modules) {
       case "project":
-        return "projects";
+        return ["projects", "projects"];
       case "site":
-        return "sites";
+        return ["sites", "sites"];
       case "nursery":
-        return "nurseries";
+        return ["nurseries", "nurseries"];
       case "projectReport":
-        return "project-reports";
+        return ["project-reports", "projectReports"];
       case "siteReport":
-        return "site-reports";
+        return ["site-reports", "siteReports"];
       case "nurseryReport":
-        return "nursery-reports";
+        return ["nursery-reports", "nurseryReports"];
       default:
-        return resource;
+        return [resource, resource];
     }
-  })();
+  }, [resource]);
 
   const dialogTitle = (() => {
     let name;
@@ -124,6 +125,12 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
   const { mutateAsync, isLoading } = usePutV2AdminENTITYUUIDSTATUS({
     onSuccess: () => {
+      const type = v3Resource as ResourceType;
+      if (RESOURCES.includes(type)) {
+        // Temporary until the entity update goes through v3. Then the prune isn't needed, and the
+        // refetch() will pull the updated resource from the store without an API request.
+        ApiSlice.pruneCache(type, [record.id]);
+      }
       refetch();
     }
   });

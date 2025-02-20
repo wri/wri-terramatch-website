@@ -1,17 +1,16 @@
-import { FC } from "react";
 import { FunctionField } from "react-admin";
 
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 
-const FrameworkField: FC = () => {
+const FrameworkField = ({ prop = "framework_key" }: { prop?: string }) => {
   const frameworkChoices = useFrameworkChoices();
 
   return (
     <FunctionField
-      source="framework_key"
+      source={prop}
       label="Framework"
       render={(record: any) =>
-        frameworkChoices.find((framework: any) => framework.id === record?.framework_key)?.name || record?.framework_key
+        frameworkChoices.find((framework: any) => framework.id === record?.[prop])?.name || record?.[prop]
       }
       sortable={false}
     />
