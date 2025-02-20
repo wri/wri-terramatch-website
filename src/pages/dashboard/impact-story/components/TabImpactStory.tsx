@@ -41,7 +41,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       uuid: story.uuid,
       title: story.title,
       country:
-        story.organization?.countries.length > 0
+        story.organization?.countries?.length > 0
           ? story.organization.countries.map((c: any) => c.label).join(", ")
           : "No country",
       organization: story.organization?.name,
