@@ -100,7 +100,7 @@ export type SiteLightDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
    * Update request status for this project
    */
@@ -245,7 +245,7 @@ export type SiteFullDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
    * Update request status for this project
    */
