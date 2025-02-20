@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
 import {
   cloneElement,
@@ -8,6 +9,7 @@ import {
   useEffect,
   useState
 } from "react";
+import { When } from "react-if";
 
 import { DashboardProvider } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -51,12 +53,13 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
     }
   }, [dashboardCountries, router.asPath]);
 
+  const isImpactStoryPage = router.pathname.includes("dashboard/impact-story");
   const isProjectInsightsPage = router.pathname.includes("dashboard/project-insights");
   const isProjectListPage = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname === "dashboard/project";
   const isHomepage = router.pathname === "/dashboard/learn-more";
   const childrenWithProps = props.children ? cloneElement(props.children as ReactElement, { selectedCountry }) : null;
-
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   return (
     <DashboardProvider>
       {loading && (
@@ -64,20 +67,23 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
           <Loader />
         </div>
       )}
-      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70">
+      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70 mobile:h-[100dvh] mobile:max-h-[100dvh] mobile:min-h-[100dvh] mobile:w-full mobile:flex-col">
         <Sidebar />
-        <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className}`}>
+        <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className} mobile:bg-white`}>
           {dashboardCountries && (
             <>
-              <HeaderDashboard
-                isProjectInsightsPage={isProjectInsightsPage}
-                isProjectListPage={isProjectListPage}
-                isProjectPage={isProjectPage}
-                isHomepage={isHomepage}
-                dashboardCountries={dashboardCountries.data}
-                defaultSelectedCountry={selectedCountry}
-                setSelectedCountry={setSelectedCountry}
-              />
+              <When condition={!isImpactStoryPage || isMobile}>
+                <HeaderDashboard
+                  isProjectInsightsPage={isProjectInsightsPage}
+                  isProjectListPage={isProjectListPage}
+                  isProjectPage={isProjectPage}
+                  isHomepage={isHomepage}
+                  isImpactStoryPage={isImpactStoryPage}
+                  dashboardCountries={dashboardCountries.data}
+                  defaultSelectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                />
+              </When>
               {childrenWithProps}
             </>
           )}

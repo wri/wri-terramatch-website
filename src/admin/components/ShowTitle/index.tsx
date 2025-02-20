@@ -1,5 +1,5 @@
 import { Chip } from "@mui/material";
-import { Link, RaRecord, useRecordContext, useResourceContext, useShowContext } from "react-admin";
+import { Link, useGetRecordRepresentation, useRecordContext, useResourceContext, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,18 +7,17 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 interface IProps {
   moduleName?: string;
-  getTitle: (record: RaRecord) => string;
 }
 
 const ShowTitle = (props: IProps) => {
   const record = useRecordContext();
   const { isLoading } = useShowContext();
-  const titleText = props.getTitle(record);
   const resource = useResourceContext();
+  const titleGetter = useGetRecordRepresentation(resource);
 
-  const title = titleText && (
+  const title = (
     <>
-      {titleText}
+      {titleGetter(record)}
       {record?.is_test && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
     </>
   );

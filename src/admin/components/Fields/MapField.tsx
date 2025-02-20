@@ -34,16 +34,17 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
     }
   );
 
-  const setBbboxAndZoom = async () => {
-    if (projectPolygon?.project_polygon?.poly_uuid) {
-      const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-        pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid }
-      });
-      const bounds: any = bbox.bbox;
-      setPolygonBbox(bounds);
-    }
-  };
   useEffect(() => {
+    const setBbboxAndZoom = async () => {
+      if (projectPolygon?.project_polygon?.poly_uuid) {
+        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
+          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid }
+        });
+        const bounds: any = bbox.bbox;
+        setPolygonBbox(bounds);
+      }
+    };
+
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });

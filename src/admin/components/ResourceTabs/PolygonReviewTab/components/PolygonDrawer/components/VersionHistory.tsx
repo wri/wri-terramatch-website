@@ -53,7 +53,7 @@ const VersionHistory = ({
   setStatusSelectedPolygon?: any;
   data: GetV2SitePolygonUuidVersionsResponse | [];
   isLoadingVersions: boolean;
-  refetch: () => void;
+  refetch: () => Promise<unknown>;
   isLoadingDropdown: boolean;
   setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
@@ -72,6 +72,7 @@ const VersionHistory = ({
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectPolygonVersion]);
 
   useEffect(() => {
@@ -79,6 +80,7 @@ const VersionHistory = ({
       uploadFiles();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {
@@ -305,7 +307,7 @@ const VersionHistory = ({
       };
       reloadVersionList();
     }
-  }, [polygonFromMap]);
+  }, [polygonFromMap, refetch, setIsLoadingDropdown]);
 
   return (
     <div className="flex flex-col gap-4">

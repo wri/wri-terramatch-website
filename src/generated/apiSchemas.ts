@@ -23776,3 +23776,62 @@ export type IndicatorPolygonsStatus = {
   approved?: number;
   ["needs-more-information"]?: number;
 };
+
+export type V2ImpactStoryRead = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type V2ImpactStoryUpdate = {
+  /**
+   * @example Updated Title
+   */
+  title?: string;
+  /**
+   * @example Updated content of the impact story.
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+};
+
+export type V2ImpactStoryCreate = {
+  /**
+   * @example Empowering Local Communities
+   */
+  title: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content: string;
+  /**
+   * @example draft
+   */
+  status?: "draft" | "published" | "archived";
+};

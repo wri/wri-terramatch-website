@@ -7,11 +7,23 @@
 }
 
 .filter-button-page-admin{
-  @apply !mb-4
+  @apply !mb-4 !bg-white !text-blueCustom-900
+}
+
+.filter-button-page-admin-blue{
+  @apply !mb-4 !bg-primary-500 !text-white
+}
+
+.filter-button-page-admin-blue:hover{
+  @apply !bg-primary-400
 }
 
 .filter-button-page-admin span {
   @apply text-sm font-bold tracking-normal opacity-100 text-blueCustom-900 lg:text-base wide:text-md;
+}
+
+.filter-button-page-admin-blue span {
+  @apply !text-white
 }
 
 .filter-button-page-admin button {
@@ -51,15 +63,15 @@
 }
 
 .RaCreateButton-root{
-  @apply !text-blueCustom-900 !bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px]
+  @apply text-blueCustom-900 bg-white !text-sm !font-bold lg:!text-base wide:!text-md !tracking-normal !px-4 !py-2 !rounded-lg !border !border-solid !border-neutral-300 !mb-4 !font-primary !leading-[normal] !h-[42px]
 }
 
 .RaCreateButton-root:hover {
-  @apply !bg-grey-800
+  @apply bg-grey-800
 }
 
 .RaCreateButton-root span {
-  @apply !text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
+  @apply text-blueCustom-900 !text-sm !font-bold lg:text-base wide:text-md tracking-normal;
 }
 
 .RaMenuItemLink-icon{
@@ -161,19 +173,42 @@
 }
 
 .MuiTablePagination-toolbar {
-  @apply !pl-0 after:content-['Per\00a0page'] after:order-2 after:-ml-6 after:text-neutral-1000 after:text-base after:font-bold after:lg:text-md after:wide:text-lg
+  @apply text-xs font-bold lg:text-sm wide:text-base !pl-0 after:content-['Rows\00a0per\00a0page:'] after:order-[-1] after:text-neutral-1000 after:font-bold after:lg:text-sm after:wide:text-base;
+  letter-spacing: normal;
 }
 
 .MuiTablePagination-spacer {
   @apply hidden
 }
 
+.MuiTablePagination-selectIcon {
+  display: none;
+}
+
+.MuiTablePagination-select {
+  position: relative;
+  padding-right: 8px;
+}
+
+.MuiTablePagination-select::after {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 17 16' fill='currentColor' xmlns='http://www.w3.org/2000/svg' class='mb-%5B2px%5D fill-neutral-900 transition rotate-180 h-3 w-3 mb-0'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15.0882 3.92172L16.5 5.3335L8.49996 13.3335L7.08819 11.9218L7.08829 11.9217L0.49978 5.33315L1.91155 3.92138L8.50006 10.5099L15.0882 3.92172Z'%3E%3C/path%3E%3C/svg%3E");
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+}
+
+
 .MuiInputBase-root .MuiTablePagination-select {
-  @apply w-[70px] flex !py-0 items-center gap-2 !pl-5 !pr-0 bg-white focus:bg-white order-1 rounded-l-lg after:block after:content-[''] after:bg-primary-300 after:rounded-r-lg after:w-11 after:h-12
+  @apply font-bold leading-[normal] lg:!h-9 lg:!w-[68px] w-12 !h-8 flex !py-0 items-center gap-2 !pr-0 bg-white focus:bg-white order-1 !rounded-lg after:block after:content-[''] after:rounded-lg after:w-11 after:h-12 !border !border-grey-350 !border-solid
 }
 
 .MuiInputBase-root .MuiTablePagination-select+input {
-  @apply h-11 w-11
+  @apply flex flex-1 w-auto h-8 !text-xs font-bold lg:!text-sm wide:!text-base
 }
 
 .MuiTablePagination-selectIcon {
@@ -185,7 +220,7 @@
 }
 
 .MuiTablePagination-displayedRows {
-  @apply order-3 !ml-auto !text-grey-600 !text-base !font-bold
+  @apply order-3 !ml-auto !text-grey-600 !text-base !font-bold hidden
 }
 
 .MuiTablePagination-actions {
@@ -193,30 +228,57 @@
 }
 
 .MuiPagination-text li:first-child button{
-  @apply text-primary-500 w-6 h-6
+  @apply text-black w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid bg-white !font-light hover:text-primary ;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg' class='fill-primary h-3 w-3 !fill-black hover:!fill-primary cursor-pointer'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.3684 19.2442C11.8251 19.7071 11.8251 20.4535 11.3684 20.9164C10.9116 21.3771 10.1693 21.3771 9.71254 20.9164L0.341979 11.4659C-0.1148 11.0052 -0.114799 10.2567 0.341979 9.79598L9.71254 0.345506C10.1693 -0.115168 10.9116 -0.115168 11.3684 0.345507C11.8251 0.806181 11.8251 1.55477 11.3684 2.01544L2.82815 10.6308L11.3684 19.2442Z'%3E%3C/path%3E%3C/svg%3E");  /* flex items-center justify-center rounded-full hover:bg-opacity-60 bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center */
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .MuiPagination-text li:first-child button svg{
-  @apply w-6 h-6
+  @apply w-6 h-6 hidden
 }
 
 .MuiPagination-text li:last-child button{
-  @apply text-primary-500 w-6 h-6
+  @apply text-black w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid bg-white !font-light hover:text-primary ;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg' class='fill-primary h-3 w-3 !fill-black hover:!fill-primary cursor-pointer'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.342584 2.01765C-0.114195 1.55476 -0.114195 0.808391 0.342584 0.345505C0.799362 -0.115168 1.54162 -0.115168 1.9984 0.345505L11.369 9.79598C11.8257 10.2567 11.8257 11.0052 11.369 11.4659L1.9984 20.9164C1.54162 21.3771 0.799362 21.3771 0.342584 20.9164C-0.114195 20.4557 -0.114195 19.7071 0.342584 19.2465L8.88279 10.6311L0.342584 2.01765Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
+
 .MuiPagination-text li:last-child button svg{
-  @apply w-6 h-6
+  @apply w-6 h-6 hidden
 }
 
 .MuiPaginationItem-page{
   @apply !text-grey-600 !text-base !font-bold lg:text-md wide:text-lg
 }
 
-
-.MuiPagination-text li .Mui-selected{
-  @apply !bg-transparent !text-neutral-1000 text-base font-bold lg:text-md wide:text-lg
+.MuiPagination-text li .Mui-selected::after{
+  @apply content-['Page'] absolute right-full mr-2
 }
 
+.MuiPagination-text li .Mui-selected{
+  @apply !bg-transparent !block !text-neutral-1000 w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid !bg-white hover:text-primary leading-[normal] !text-xs font-bold lg:!text-sm wide:!text-base;
+}
+
+.MuiPagination-text li button {
+  @apply hidden;
+}
+
+.MuiPagination-ul > li:nth-last-child(2) {
+  @apply !bg-transparent h-8 flex items-center justify-center 
+         ;
+}
+.MuiPagination-ul > li:nth-last-child(2) button {
+  @apply !block !text-xs font-bold lg:!text-sm wide:!text-base !block before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal]  ;
+}
+
+.MuiPaginationItem-ellipsis{
+  @apply !hidden;
+}
 .MuiTabs-flexContainer a{
   @apply text-darkCustom text-sm lg:text-base wide:text-md capitalize !mx-4 !px-0 
 }
@@ -260,9 +322,6 @@
   @apply !hidden !p-0 !m-0
 }
 
-.RaAppBar-toolbar h6 {
-  @apply !hidden
-}
 .logo-header {
    margin: 20px auto 20px 16px; 
 }
@@ -312,6 +371,24 @@
      }
  }
 }
+
+.MuiPagination-ul {
+  display: flex;
+  flex-wrap: wrap; /* Asegura que los elementos se ajusten correctamente */
+}
+
+.MuiPagination-ul > li:first-child {
+  order: 99; /* Mueve el primer botón al final */
+}
+
+.MuiPagination-ul > li:last-child {
+  order: 100; /* Mueve el último botón al final */
+}
+
+.impact-story-form .MuiAutocomplete-root .MuiFormHelperText-root {
+  display: none !important;
+}
+
 
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -7,7 +8,7 @@ import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import EntityProvider from "@/context/entity.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
@@ -44,6 +45,8 @@ export const EntityEdit = () => {
     isError: loadError
   } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
+  const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+
   // @ts-ignore
   const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
@@ -67,6 +70,15 @@ export const EntityEdit = () => {
     return notFound();
   }
 
+  const bannerTitle = useMemo(() => {
+    if (entityName === "site-reports") {
+      return `${entityValue?.data?.site?.name} ${title}`;
+    } else if (entityName === "nursery-reports") {
+      return `${entityValue?.data?.nursery?.name} ${title}`;
+    }
+    return title;
+  }, [entityName, entityValue, title]);
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
@@ -80,7 +92,7 @@ export const EntityEdit = () => {
               formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
               onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
               defaultValues={defaultValues}
-              title={title}
+              title={bannerTitle}
               tabOptions={{
                 markDone: true,
                 disableFutureTabs: true

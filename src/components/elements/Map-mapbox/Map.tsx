@@ -34,6 +34,8 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useOnMount } from "@/hooks/useOnMount";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
@@ -222,7 +224,7 @@ export const MapContainer = ({
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
 
-  useEffect(() => {
+  useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
       if (map.current) {
@@ -231,7 +233,7 @@ export const MapContainer = ({
         map.current = null;
       }
     };
-  }, []);
+  });
 
   useEffect(() => {
     if (!map) return;
@@ -240,7 +242,7 @@ export const MapContainer = ({
     }
   }, [map, location]);
 
-  useEffect(() => {
+  useValueChanged(isUserDrawingEnabled, () => {
     if (map?.current && draw?.current) {
       if (isUserDrawingEnabled) {
         startDrawing(draw.current, map.current);
@@ -251,7 +253,7 @@ export const MapContainer = ({
         stopDrawing(draw.current, map.current);
       }
     }
-  }, [isUserDrawingEnabled]);
+  });
 
   useEffect(() => {
     if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
@@ -292,25 +294,26 @@ export const MapContainer = ({
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
 
-  useEffect(() => {
+  useValueChanged(currentStyle, () => {
     if (currentStyle) {
       setChangeStyle(false);
     }
-  }, [currentStyle]);
+  });
 
-  useEffect(() => {
+  useValueChanged(changeStyle, () => {
     if (!changeStyle) {
       setStyleLoaded(false);
     }
-  }, [changeStyle]);
+  });
 
-  useEffect(() => {
+  useValueChanged(bbox, () => {
     if (bbox && map.current && map && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  }, [bbox]);
+  });
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
     const setupBorders = () => {
@@ -327,6 +330,7 @@ export const MapContainer = ({
         setupBorders();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountry, styleLoaded, sourcesAdded]);
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
@@ -344,6 +348,7 @@ export const MapContainer = ({
         setupBorders();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
   useEffect(() => {
     if (!map.current || !projectUUID) return;
@@ -354,6 +359,7 @@ export const MapContainer = ({
         setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, styleLoaded]);
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
@@ -453,13 +459,14 @@ export const MapContainer = ({
         removeMediaLayer(map.current);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
 
-  useEffect(() => {
+  useValueChanged(showMediaPopups, () => {
     if (geojson && map.current && draw.current) {
       addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
     }
-  }, [showMediaPopups]);
+  });
 
   function handleAddGeojsonToDraw(polygonuuid: string) {
     if (polygonsData && map.current && draw.current) {
@@ -490,6 +497,7 @@ export const MapContainer = ({
         newPolygonData
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPolygonsInCheckbox, styleLoaded]);
 
   const handleEditPolygon = async () => {
@@ -576,7 +584,7 @@ export const MapContainer = ({
     drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
   };
 
-  useEffect(() => {
+  useValueChanged(selectedPolyVersion, () => {
     if (map?.current?.getSource("temp-polygon-source") || map?.current?.getLayer("temp-polygon-source-line")) {
       map?.current.removeLayer("temp-polygon-source-line");
       map?.current?.removeLayer("temp-polygon-source");
@@ -586,7 +594,7 @@ export const MapContainer = ({
     if (selectedPolyVersion) {
       addGeometryVersion();
     }
-  }, [selectedPolyVersion]);
+  });
 
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">

@@ -18,10 +18,6 @@ export type AuthLoginError = Fetcher.ErrorWrapper<{
      * @example Unauthorized
      */
     message: string;
-    /**
-     * @example Unauthorized
-     */
-    error?: string;
   };
 }>;
 
@@ -32,7 +28,7 @@ export type AuthLoginResponse = {
      */
     type?: string;
     /**
-     * @pattern ^\d{5}$
+     * @format uuid
      */
     id?: string;
     attributes?: Schemas.LoginDto;
@@ -56,7 +52,7 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
 
 export type UsersFindPathParams = {
   /**
-   * A valid user uuid or "me"
+   * A valid user UUID or "me"
    *
    * @example me
    */
@@ -75,10 +71,6 @@ export type UsersFindError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
   | {
@@ -92,10 +84,6 @@ export type UsersFindError = Fetcher.ErrorWrapper<
          * @example Not Found
          */
         message: string;
-        /**
-         * @example Not Found
-         */
-        error?: string;
       };
     }
 >;
@@ -145,7 +133,7 @@ export type UsersFindVariables = {
 };
 
 /**
- * Fetch a user by ID, or with the 'me' identifier
+ * Fetch a user by UUID, or with the 'me' identifier
  */
 export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
   userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
@@ -174,10 +162,6 @@ export type UserUpdateError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
-        /**
-         * @example Bad Request
-         */
-        error?: string;
       };
     }
   | {
@@ -191,10 +175,6 @@ export type UserUpdateError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
   | {
@@ -208,10 +188,6 @@ export type UserUpdateError = Fetcher.ErrorWrapper<
          * @example Not Found
          */
         message: string;
-        /**
-         * @example Not Found
-         */
-        error?: string;
       };
     }
 >;
@@ -262,7 +238,7 @@ export type UserUpdateVariables = {
 };
 
 /**
- * Update a user by ID
+ * Update a user by UUID
  */
 export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
   userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBodyDto, {}, {}, UserUpdatePathParams>({
@@ -271,3 +247,96 @@ export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal)
     ...variables,
     signal
   });
+
+export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type RequestPasswordResetResponse = {
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type RequestPasswordResetVariables = {
+  body: Schemas.ResetPasswordRequest;
+};
+
+/**
+ * Send password reset email with a token
+ */
+export const requestPasswordReset = (variables: RequestPasswordResetVariables, signal?: AbortSignal) =>
+  userServiceFetch<RequestPasswordResetResponse, RequestPasswordResetError, Schemas.ResetPasswordRequest, {}, {}, {}>({
+    url: "/auth/v3/passwordResets",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export type ResetPasswordPathParams = {
+  token: string;
+};
+
+export type ResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResetPasswordResponse = {
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type ResetPasswordVariables = {
+  body?: Schemas.ResetPasswordDto;
+  pathParams: ResetPasswordPathParams;
+};
+
+/**
+ * Reset password using the provided token
+ */
+export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortSignal) =>
+  userServiceFetch<
+    ResetPasswordResponse,
+    ResetPasswordError,
+    Schemas.ResetPasswordDto,
+    {},
+    {},
+    ResetPasswordPathParams
+  >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });

@@ -20,9 +20,9 @@ const LoginForm = ({ form, handleSave, loading }: LoginFormProps) => {
   const errors = form.formState.errors;
 
   return (
-    <Form formType={"login"} onSubmit={form.handleSubmit(handleSave)}>
-      <div className="w-[30vw]">
-        <Text variant="text-32-bold" className="text-blueCustom-700">
+    <Form formType={"login"} onSubmit={form.handleSubmit(handleSave)} className="mobile:w-full">
+      <div className="w-[30vw] mobile:w-full">
+        <Text variant={"text-32-bold"} className="text-blueCustom-700">
           {t("Sign in")}
         </Text>
         <Text variant="text-12-light" className="flex text-blueCustom-700">

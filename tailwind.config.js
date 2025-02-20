@@ -11,7 +11,8 @@ module.exports = {
         md: "1400px",
         wide: "2500px",
         lg: "1900px",
-        sm: "1200px"
+        sm: "1200px",
+        mobile: { max: "1200px" }
       },
       width: {
         "fit-content": "fit-content"
@@ -170,6 +171,7 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
+        1000: "#6C3BAA",
         500: "#4249E6",
         100: "#8096D3",
         60: "#ddddfb",
@@ -189,6 +191,7 @@ module.exports = {
         800: "#E9EDF0",
         850: "#F0F3FA",
         900: "#F6FAFD",
+        925: "#F7F9FA",
         950: "#ebebeb",
         1000: "#DFE3E8"
       },
@@ -235,7 +238,8 @@ module.exports = {
       "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
       monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
       "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
-      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
+      dashboard: "rgba(0, 0, 0, 0.35) 0px 5px 15px"
     },
     dropShadow: {
       table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
@@ -250,6 +254,7 @@ module.exports = {
       base: "1rem", //16px
       md: "1.125rem", //18px
       lg: "1.25rem", //20px
+      "2lg": "1.375rem", //22px
       xl: "1.5rem", //24px
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
@@ -259,6 +264,7 @@ module.exports = {
       //Wide extra
       "6xl": "2.75rem", //44px
       "7xl": "3rem", //48px
+      "8xl": "3.5rem", //56px
       "13xl": "4.5rem", //72px
       "14xl": "4.75rem", //76px
       "15xl": "5rem" //80px
@@ -286,7 +292,11 @@ module.exports = {
       treesHeaderWithOverlay:
         "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
       mapsImg: "url('/images/Maps.svg')",
-      dashboardHeader: 'url("/images/dashboard-header.webp")'
+      dashboardHeader: 'url("/images/dashboard-header.webp")',
+      impactStoryBg: 'url("/images/Impact Story - Landing Page.png")',
+      tabScrollLeft: 'url("/images/mask.png")',
+      tabScrollRight: 'url("/images/maskRight.png")',
+      mask: 'url("/images/mask.png")'
     }
   },
   plugins: [

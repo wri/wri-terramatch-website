@@ -9,6 +9,7 @@ import {
   FormDataConsumer,
   FormDataConsumerRenderParams,
   minLength,
+  NumberInput,
   required,
   TextInput,
   useInput
@@ -109,6 +110,28 @@ export const QuestionArrayInput = ({
               height="75px"
             />
           )}
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              const field = getFieldByUUID(scopedFormData.linked_field_key);
+              return field?.input_type == "long-text" ? (
+                <>
+                  <NumberInput
+                    source={getSource("min_character_limit")}
+                    label="Minimum Character Limit"
+                    defaultValue={90000}
+                  />
+                  <NumberInput
+                    source={getSource("max_character_limit")}
+                    label="Maximum Character Limit"
+                    defaultValue={90000}
+                  />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
           <BooleanInput
             source="validation.required"
             label="Required"

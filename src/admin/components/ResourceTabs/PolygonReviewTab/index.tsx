@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -167,16 +167,39 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
 
+  const onSave = (geojson: any, record: any) => {
+    storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
+  };
+  const mapFunctions = useMap(onSave);
+
+  const flyToPolygonBounds = useCallback(
+    async (uuid: string) => {
+      const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
+      const bboxArray = bbox?.bbox;
+      const { map } = mapFunctions;
+      if (bboxArray && map?.current) {
+        const bounds: LngLatBoundsLike = [
+          [bboxArray[0], bboxArray[1]],
+          [bboxArray[2], bboxArray[3]]
+        ];
+        map.current.fitBounds(bounds, {
+          padding: 100,
+          linear: false
+        });
+      } else {
+        Log.error("Bounding box is not in the expected format");
+      }
+    },
+    [mapFunctions]
+  );
+
   useEffect(() => {
     if (selectPolygonFromMap?.uuid) {
       setPolygonFromMap(selectPolygonFromMap);
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
-  }, [polygonList]);
-  const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
-  };
-  const mapFunctions = useMap(onSave);
+  }, [flyToPolygonBounds, polygonList, selectPolygonFromMap]);
+
   const {
     data: sitePolygonData,
     refetch,
@@ -234,24 +257,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openModal, closeModal } = useModalContext();
 
-  const flyToPolygonBounds = async (uuid: string) => {
-    const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
-    const bboxArray = bbox?.bbox;
-    const { map } = mapFunctions;
-    if (bboxArray && map?.current) {
-      const bounds: LngLatBoundsLike = [
-        [bboxArray[0], bboxArray[1]],
-        [bboxArray[2], bboxArray[3]]
-      ];
-      map.current.fitBounds(bounds, {
-        padding: 100,
-        linear: false
-      });
-    } else {
-      Log.error("Bounding box is not in the expected format");
-    }
-  };
-
   const deletePolygon = (uuid: string) => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
       .then((response: DeletePolygonProps | undefined) => {
@@ -288,6 +293,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       uploadFiles();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   useEffect(() => {
@@ -295,22 +301,22 @@ const PolygonReviewTab: FC<IProps> = props => {
       openNotification("error", t("Error uploading file"), t(errorMessage));
       setErrorMessage(null);
     }
-  }, [errorMessage]);
+  }, [errorMessage, openNotification, t]);
 
   useEffect(() => {
     setPolygonData(sitePolygonData);
-  }, [loading]);
+  }, [loading, setPolygonData, sitePolygonData]);
 
   useEffect(() => {
     setPolygonCriteriaMap(polygonCriteriaMap);
-  }, [polygonCriteriaMap]);
+  }, [polygonCriteriaMap, setPolygonCriteriaMap]);
 
   useEffect(() => {
     if (shouldRefetchValidation) {
       refetch();
       setShouldRefetchValidation(false);
     }
-  }, [shouldRefetchValidation]);
+  }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
     closeModal(ModalId.ADD_POLYGON);
@@ -578,9 +584,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const isLoading = ctxLoading;
-
-  if (isLoading) return null;
+  if (ctxLoading) return null;
 
   const tableItemMenu = (props: TableItemMenuProps) => [
     {

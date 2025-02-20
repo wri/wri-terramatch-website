@@ -7,7 +7,12 @@ import { Store } from "redux";
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { LoginDto, OrganisationDto, UserDto } from "@/generated/v3/userService/userServiceSchemas";
+import {
+  LoginDto,
+  OrganisationDto,
+  ResetPasswordResponseDto,
+  UserDto
+} from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
@@ -56,12 +61,20 @@ type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeTyp
 
 // The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
 // be added to this list.
-export const RESOURCES = ["delayedJobs", "establishmentTrees", "logins", "organisations", "users"] as const;
+export const RESOURCES = [
+  "delayedJobs",
+  "establishmentTrees",
+  "logins",
+  "organisations",
+  "users",
+  "passwordResets"
+] as const;
 
 type ApiResources = {
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
+  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
 };
@@ -86,10 +99,6 @@ export type ApiDataStore = ApiResources & {
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
   };
-  total_content: number;
-  processed_content: number;
-  progress_message: string;
-  abort_delayed_job: boolean;
 };
 
 export const INITIAL_STATE = {
@@ -114,11 +123,7 @@ export const INITIAL_STATE = {
       acc[method] = {};
       return acc;
     }, {}) as ApiPendingStore
-  },
-  total_content: 0,
-  processed_content: 0,
-  progress_message: "",
-  abort_delayed_job: false
+  }
 } as ApiDataStore;
 
 type ApiFetchStartingProps = {
@@ -199,23 +204,7 @@ export const apiSlice = createSlice({
       }
     },
 
-    clearApiCache,
-
-    setTotalContent: (state, action: PayloadAction<number>) => {
-      state.total_content = action.payload;
-    },
-
-    setProgressContent: (state, action: PayloadAction<number>) => {
-      state.processed_content = action.payload;
-    },
-
-    setAbortDelayedJob: (state, action: PayloadAction<boolean>) => {
-      state.abort_delayed_job = action.payload;
-    },
-
-    setProgressMessage: (state, action: PayloadAction<string>) => {
-      state.progress_message = action.payload;
-    }
+    clearApiCache
   },
 
   extraReducers: builder => {
@@ -254,9 +243,13 @@ authListenerMiddleware.startListening({
 
 export default class ApiSlice {
   static redux: Store;
-  static queryClient?: QueryClient;
+  private static _queryClient?: QueryClient;
 
-  static get apiDataStore(): ApiDataStore {
+  static set queryClient(value: QueryClient | undefined) {
+    this._queryClient = value;
+  }
+
+  static get currentState(): ApiDataStore {
     return this.redux.getState().api;
   }
 
@@ -274,21 +267,7 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
-  }
-
-  static addTotalContent(total_content: number) {
-    this.redux.dispatch(apiSlice.actions.setTotalContent(total_content));
-  }
-
-  static addProgressContent(processed_content: number) {
-    this.redux.dispatch(apiSlice.actions.setProgressContent(processed_content));
-  }
-
-  static addProgressMessage(progress_message: string) {
-    this.redux.dispatch(apiSlice.actions.setProgressMessage(progress_message));
-  }
-
-  static abortDelayedJob(abort_delayed_job: boolean) {
-    this.redux.dispatch(apiSlice.actions.setAbortDelayedJob(abort_delayed_job));
+    this._queryClient?.getQueryCache()?.clear();
+    this._queryClient?.clear();
   }
 }

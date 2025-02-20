@@ -36,7 +36,9 @@ const ModalRoot = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className={classNames("fixed inset-0 flex w-full items-center justify-center p-4")}>
+              <Dialog.Panel
+                className={classNames("fixed inset-0 flex w-full items-center justify-center p-4 mobile:p-0")}
+              >
                 {modal.content}
               </Dialog.Panel>
             </Transition.Child>

@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { When } from "react-if";
 
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -11,6 +11,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -83,12 +84,12 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     }
   });
 
-  useEffect(() => {
+  useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: editPolygon.uuid } });
     }
-  }, [clickedValidation]);
+  });
 
   return (
     <div className="flex gap-2">

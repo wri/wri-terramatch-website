@@ -656,7 +656,7 @@ const DataCard = ({
     if (selectPolygonFromMap?.isOpen) {
       setSelectPolygonFromMap?.({ isOpen: false, uuid: "" });
     }
-  }, [selectPolygonFromMap]);
+  }, [selectPolygonFromMap, setSelectPolygonFromMap]);
 
   const dateRunIndicator = polygonsIndicator?.[polygonsIndicator.length - 1]
     ? format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy")

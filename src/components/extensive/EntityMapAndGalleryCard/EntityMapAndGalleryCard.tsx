@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -25,6 +25,7 @@ import {
 } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -134,12 +135,12 @@ const EntityMapAndGalleryCard = ({
     return mapping?.[modelName] || [];
   }, [modelName, t]);
 
-  useEffect(() => {
+  useValueChanged(shouldRefetchMediaData, () => {
     if (shouldRefetchMediaData) {
       refetch();
       setShouldRefetchMediaData(false);
     }
-  }, [shouldRefetchMediaData]);
+  });
 
   const openFormModalHandlerUploadImages = () => {
     openModal(

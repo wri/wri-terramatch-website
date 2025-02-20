@@ -84,7 +84,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
 
       setModalOpen(false);
     },
-    [entity, choices]
+    [entity, role]
   );
 
   return {
@@ -95,7 +95,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
       } else {
         onExport(choices[0].id);
       }
-    }, [choices]),
+    }, [choices, onExport]),
     frameworkDialogProps: {
       open: modalOpen,
       onCancel: useCallback(() => setModalOpen(false), []),

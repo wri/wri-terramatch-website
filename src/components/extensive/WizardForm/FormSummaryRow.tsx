@@ -60,6 +60,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const mapFunctions = useMap();
   return useMemo<any[]>(
     () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props, t, entityPolygonData, bbox]
   );
 };

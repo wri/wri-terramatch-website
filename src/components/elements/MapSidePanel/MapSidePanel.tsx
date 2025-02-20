@@ -116,6 +116,7 @@ const MapSidePanel = ({
       }
       setClickedButton("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedButton, selected]);
 
   useEffect(() => {
@@ -222,6 +223,7 @@ const MapSidePanel = ({
             itemAs={Fragment}
             render={item => (
               <MapMenuPanelItem
+                key={item.uuid}
                 uuid={item.uuid}
                 title={item.title}
                 subtitle={item.subtitle}

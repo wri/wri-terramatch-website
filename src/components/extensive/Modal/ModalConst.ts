@@ -50,5 +50,7 @@ export const ModalId = {
   WELCOME_MODAL: "WelcomeModal",
   WARNING: "Warning",
   MODAL_RUN_ANALYSIS: "ModalRunAnalysis",
-  MODAL_NOTES: "ModalNotes"
+  MODAL_NOTES: "ModalNotes",
+  MODAL_SHARE_IMPACT_STORY: "ModalShareImpactStory",
+  MODAL_STORY: "ModalStory"
 };

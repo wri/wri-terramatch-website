@@ -99,7 +99,7 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
           <Text variant="text-10-light" className="mb-4 text-blueCustom-900 opacity-80">
             Last check at {formattedDate(lastValidationDate)}
           </Text>
-          <div ref={containerRef} className="flex max-h-[168px] flex-col gap-3 overflow-auto">
+          <div ref={containerRef} className="flex flex-col gap-3 overflow-auto">
             {menu.map(item => (
               <div key={item.id} className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2">

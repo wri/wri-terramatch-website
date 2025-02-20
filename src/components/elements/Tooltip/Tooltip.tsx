@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
+import { useOnMount } from "@/hooks/useOnMount";
 import { TextVariants } from "@/types/common";
 
 import Text from "../Text/Text";
@@ -57,12 +58,11 @@ const ToolTip = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+  const handleScroll = () => {
+    setIsVisible(false);
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsVisible(false);
-    };
-
     window.addEventListener("scroll", handleScroll, true);
     return () => {
       window.removeEventListener("scroll", handleScroll, true);
@@ -84,7 +84,7 @@ const ToolTip = ({
     }
   };
 
-  useEffect(() => {
+  useOnMount(() => {
     const handleResize = () => {
       updateTooltipPosition();
     };
@@ -93,7 +93,7 @@ const ToolTip = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  });
 
   const updateTooltipPosition = () => {
     const position = contentRef.current?.getBoundingClientRect();

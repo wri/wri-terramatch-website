@@ -12,7 +12,6 @@ import {
 } from "react-admin";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
-import ShowTitle from "@/admin/components/ShowTitle";
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
@@ -42,16 +41,7 @@ const renderFrameworks = (property: string) => (record: any) => {
 };
 
 export const UserShow = () => (
-  <Show
-    actions={
-      <ShowActions
-        getTitle={record => `${record?.first_name} ${record?.last_name}`}
-        deleteProps={{ confirmTitle: "Delete User" }}
-      />
-    }
-    title={<ShowTitle moduleName="User" getTitle={record => `${record?.first_name} ${record?.last_name}`} />}
-    aside={<UserShowAside />}
-  >
+  <Show actions={<ShowActions deleteProps={{ confirmTitle: "Delete User" }} />} aside={<UserShowAside />}>
     <SimpleShowLayout>
       <TextField source="first_name" label="First Name" emptyText="Not Provided" />
       <TextField source="last_name" label="Last Name" emptyText="Not Provided" />

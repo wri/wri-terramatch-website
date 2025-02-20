@@ -62,6 +62,9 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
       setModalLoading,
       modalOpened
     }),
+    // Only regenerate the context value if the set of current modals changes. This is more
+    // efficient than wrapping every callback above in useCallback()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [modals]
   );
 
