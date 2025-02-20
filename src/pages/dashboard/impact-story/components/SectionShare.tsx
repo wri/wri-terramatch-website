@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -8,14 +7,11 @@ import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocialImpactStory from "@/components/extensive/Icon/IconSocialImpactStory";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import ModalShareImpactStory from "@/components/extensive/Modal/ModalShareImpactStory";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 
 import ShareSection from "./ShareSection";
-
-const ModalShareImpactStory = dynamic(() => import("@/components/extensive/Modal/ModalShareImpactStory"), {
-  ssr: false
-});
 
 interface Organization {
   country?: string;

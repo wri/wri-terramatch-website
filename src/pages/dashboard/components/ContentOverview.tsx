@@ -141,15 +141,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     {
       header: "Country",
       cell: (props: any) => {
-        const value = props.getValue().split("_");
+        const countries = props.row.original.organization.countries_data || [];
+        if (countries.length === 0) {
+          return <Text variant="text-14">-</Text>;
+        }
+
         return (
-          <div className="flex items-center gap-2">
-            <img src={`/flags/bj.svg`} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
-            <Text variant="text-14">{value[0]}</Text>
+          <div className="flex flex-wrap items-center gap-2">
+            {countries.map((country: any, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-cover" />
+                <Text variant="text-14">{country.label}</Text>
+              </div>
+            ))}
           </div>
         );
       },
-      accessorKey: "organization.country",
+      accessorKey: "organization.countries_data",
       enableSorting: true
     },
     {
@@ -166,10 +174,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: ({ row }: { row: { original: { uuid: string } } }) => {
-        const uuid = row.original.uuid;
+      cell: ({ row }: { row: any }) => {
         const handleClick = () => {
-          ModalStoryOpen(uuid);
+          ModalStoryOpen(row.original);
         };
 
         return (
