@@ -103,7 +103,7 @@ graphs and tables below by clicking update analysis button to your right. `}
                 No. of Sites
               </Text>
               <Text variant="text-12-bold" className="pt-1 text-darkCustom">
-                {record?.project ? record?.project?.total_sites : record?.total_sites}
+                {record?.project ? record?.project?.total_sites : record?.totalSites}
               </Text>
             </div>
           </When>

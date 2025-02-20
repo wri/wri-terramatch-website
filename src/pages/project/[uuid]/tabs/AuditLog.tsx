@@ -11,11 +11,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 interface ReportingTasksProps {
-  project: any;
+  project: ProjectFullDto;
   label?: string;
   refresh?: () => void;
   enableChangeStatus?: number;

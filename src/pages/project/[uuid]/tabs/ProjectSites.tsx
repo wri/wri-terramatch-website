@@ -11,9 +11,10 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ProjectsUUIDSites } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
@@ -48,7 +49,7 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
                   )}
                   ctaProps={{
                     as: Link,
-                    href: `/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`,
+                    href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`,
                     children: "Add Site"
                   }}
                 />

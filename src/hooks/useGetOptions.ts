@@ -9,7 +9,7 @@ import { toArray } from "@/utils/array";
  * @param keys option keys
  * @returns Option[]
  */
-export const useGetOptions = (keys: string[]): Option[] => {
+export const useGetOptions = (keys?: string[] | null): Option[] => {
   const { locale } = useRouter();
   const _keys = toArray(keys);
 
