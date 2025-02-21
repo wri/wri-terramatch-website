@@ -228,7 +228,7 @@ export const useDashboardData = (filters: any) => {
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: JSON.parse(story.content),
+        content: story?.content ? JSON.parse(story.content) : "",
         category: story.category,
         thumbnail: story.thumbnail?.url ?? "",
         organization: {

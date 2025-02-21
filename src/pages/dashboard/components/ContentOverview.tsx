@@ -23,6 +23,7 @@ import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContain
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -317,8 +318,22 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = (storyData: any) => {
-    openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
+  const ModalStoryOpen = async (storyData: any) => {
+    try {
+      const response: any = await fetchGetV2ImpactStoriesId({
+        pathParams: {
+          id: storyData.uuid
+        }
+      });
+      const parsedData = {
+        ...response.data,
+        content: JSON.parse(response.data.content)
+      };
+      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
+    } catch (error) {
+      console.error("Error fetching story details:", error);
+      openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
+    }
   };
 
   const columnMobile = (columns as any[]).filter(
