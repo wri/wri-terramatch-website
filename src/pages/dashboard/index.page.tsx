@@ -334,6 +334,16 @@ const Dashboard = () => {
     total_enterprise_count: totalSectionHeader?.total_enterprise_count,
     total_non_profit_count: totalSectionHeader?.total_non_profit_count
   };
+  const getTooltipText = () => {
+    if (filters.country.id === 0) {
+      return ACTIVE_COUNTRIES_TOOLTIP;
+    } else if (DATA_ACTIVE_COUNTRY.length > 0) {
+      return ACTIVE_PROJECTS_TOOLTIP;
+    } else if (transformedStories.length > 0) {
+      return IMPACT_STORIES_TOOLTIP;
+    }
+    return NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS;
+  };
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
@@ -632,13 +642,7 @@ const Dashboard = () => {
           dashboardVolunteersSurvivalRate,
           hectaresUnderRestoration
         )}
-        textTooltipTable={t(
-          filters.country.id === 0
-            ? ACTIVE_COUNTRIES_TOOLTIP
-            : DATA_ACTIVE_COUNTRY.length > 0
-            ? ACTIVE_PROJECTS_TOOLTIP
-            : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
-        )}
+        textTooltipTable={t(getTooltipText())}
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}

@@ -42,7 +42,8 @@ const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
   "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare.";
 const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
-
+const IMPACT_STORIES_TOOLTIP =
+  "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at info@terramatch.org.";
 interface RowData {
   country_slug: undefined;
   uuid: string;
@@ -297,7 +298,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       <ModalExpand
         id="modalExpand"
         title={t("IMPACT STORIES")}
-        popUpContent={props.textTooltipTable}
+        popUpContent={t(IMPACT_STORIES_TOOLTIP)}
         closeModal={closeModal}
       >
         <div className="w-full px-6 mobile:px-4">
@@ -490,7 +491,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         isUserAllowed={props.isUserAllowed}
         subtitleMore={true}
         title={t("IMPACT STORIES")}
-        tooltip={" "}
+        tooltip={t(IMPACT_STORIES_TOOLTIP)}
         tooltipTrigger="click"
         iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
         headerChildren={
