@@ -429,7 +429,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </PageCard>
 
       <PageCard
-        className="border-0 px-4 py-6 mobile:order-6 mobile:px-0"
+        className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
         classNameSubTitle="mt-4"
         gap={6}
         isUserAllowed={isUserAllowed}

@@ -634,7 +634,7 @@ const Dashboard = () => {
           filters.country.id === 0
             ? "ACTIVE COUNTRIES"
             : filters.uuid
-            ? `Other Projects in ${filters?.country?.data?.label}`
+            ? `OTHER PROJECTS IN ${filters?.country?.data?.label.toUpperCase()}`
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
