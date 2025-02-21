@@ -72,15 +72,6 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
               {data?.content}
             </Text>
-            <When condition={data?.thumbnail?.src ?? data?.thumbnail?.url}>
-              <div className="mt-8">
-                <img
-                  src={data?.thumbnail?.src ?? data?.thumbnail?.url}
-                  alt={data.title}
-                  className="h-[45vh] w-full rounded-2xl object-cover lg:h-[50vh]"
-                />
-              </div>
-            </When>
           </div>
         </div>
       </div>
