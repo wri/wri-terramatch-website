@@ -40,7 +40,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
     <ModalBase
       {...rest}
       className={tw(
-        "relative max-h-[85vh] min-h-[550px] w-[85vw] max-w-[85vw] border-none px-0 pt-16 pb-0 lg:min-h-[600px] mobile:h-full",
+        "relative max-h-[85vh] min-h-[550px] w-[85vw] max-w-[85vw] !justify-between border-none px-0 pt-16 pb-0 lg:min-h-[600px] mobile:h-full",
         className
       )}
     >
@@ -72,15 +72,6 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
             <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
               {data?.content}
             </Text>
-            <When condition={data?.thumbnail?.src ?? data?.thumbnail?.url}>
-              <div className="mt-8">
-                <img
-                  src={data?.thumbnail?.src ?? data?.thumbnail?.url}
-                  alt={data.title}
-                  className="h-[45vh] w-full rounded-2xl object-cover lg:h-[50vh]"
-                />
-              </div>
-            </When>
           </div>
         </div>
       </div>
