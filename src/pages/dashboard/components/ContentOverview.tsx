@@ -511,33 +511,35 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <span className="text-gray-500">{t("Loading...")}</span>
           </div>
         ) : transformedStories.length > 0 ? (
-          <List
-            items={transformedStories}
-            render={item => (
-              <button
-                onClick={() => ModalStoryOpen(item)}
-                className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
-              >
-                <img
-                  src={item.thumbnail || "/images/no-image-available.png"}
-                  alt={item.title}
-                  className="h-20 w-20 rounded-md object-cover"
-                />
-                <div className="flex flex-col items-start gap-2">
-                  <Text variant="text-14-bold" className="text-left group-hover:text-primary mobile:leading-[normal]">
-                    {item.title}
-                  </Text>
-                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name} Organization
-                  </Text>
-                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
-                  </Text>
-                </div>
-              </button>
-            )}
-            className="flex flex-col gap-4"
-          />
+          <div className="-mr-2 h-[513px] overflow-scroll pr-2 wide:h-[560px]">
+            <List
+              items={transformedStories}
+              render={item => (
+                <button
+                  onClick={() => ModalStoryOpen(item)}
+                  className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
+                >
+                  <img
+                    src={item.thumbnail || "/images/no-image-available.png"}
+                    alt={item.title}
+                    className="h-20 w-20 rounded-md object-cover"
+                  />
+                  <div className="flex flex-col items-start gap-2">
+                    <Text variant="text-14-bold" className="text-left group-hover:text-primary mobile:leading-[normal]">
+                      {item.title}
+                    </Text>
+                    <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name}
+                    </Text>
+                    <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                    </Text>
+                  </div>
+                </button>
+              )}
+              className="flex flex-col gap-4"
+            />
+          </div>
         ) : (
           <div className="flex h-48 items-center justify-center">
             <span className="text-gray-500">{t("No impact stories found")}</span>
