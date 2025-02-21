@@ -48,7 +48,7 @@ const SecDashboard = ({
   classNameBody,
   classNameHeader,
   classNameTitle,
-  isProjectView = false,
+  shouldShowOnlyOneLine = false,
   variantTitle,
   tooltip,
   isTableProject,
@@ -66,7 +66,7 @@ const SecDashboard = ({
   classNameBody?: string;
   classNameHeader?: string;
   classNameTitle?: string;
-  isProjectView?: boolean;
+  shouldShowOnlyOneLine?: boolean;
   variantTitle?: TextVariants;
   data: DashboardDataProps;
   isTableProject?: boolean;
@@ -113,14 +113,14 @@ const SecDashboard = ({
       return;
     }
     if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
-      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, isProjectView);
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, shouldShowOnlyOneLine);
       setTreesPlantedByYear(data);
     }
     if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
       const data = getRestorationGoalResumeData(dataForChart);
       setRestorationGoalResume(data);
     }
-  }, [chartType, dataForChart, isProjectView, toggleValue]);
+  }, [chartType, dataForChart, shouldShowOnlyOneLine, toggleValue]);
 
   return (
     <div className={className}>

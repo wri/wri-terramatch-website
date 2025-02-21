@@ -501,7 +501,7 @@ const Dashboard = () => {
             title={t("Number of Trees Planted by Year")}
             type="toggle"
             secondOptionsData={dataToggle}
-            isProjectView={!!filters.uuid}
+            shouldShowOnlyOneLine={!!filters.uuid || filters.organizations.length === 1}
             classNameBody="ml-[-20px] lg:ml-[-15px]"
             data={{}}
             dataForChart={dashboardRestorationGoalData}
