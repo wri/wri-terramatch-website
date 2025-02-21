@@ -40,7 +40,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
     <ModalBase
       {...rest}
       className={tw(
-        "relative max-h-[85vh] min-h-[550px] w-[85vw] max-w-[85vw] border-none px-0 pt-16 pb-0 lg:min-h-[600px] mobile:h-full",
+        "relative max-h-[85vh] min-h-[550px] w-[85vw] max-w-[85vw] !justify-between border-none px-0 pt-16 pb-0 lg:min-h-[600px] mobile:h-full",
         className
       )}
     >
