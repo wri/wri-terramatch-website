@@ -511,7 +511,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <span className="text-gray-500">{t("Loading...")}</span>
           </div>
         ) : transformedStories.length > 0 ? (
-          <div className="-mr-2 h-[513px] overflow-scroll pr-2 wide:h-[560px]">
+          <div className="-mr-2 max-h-[513px] overflow-scroll pr-2 lg:max-h-[520px] wide:max-h-[560px]">
             <List
               items={transformedStories}
               render={item => (
