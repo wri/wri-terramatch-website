@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNotify, useRecordContext, useRedirect } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -10,14 +10,35 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const redirect = useRedirect();
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
-  const initialValues = {
-    content: currentData?.content ? JSON.parse(currentData.content) : "",
-    title: currentData?.title || "",
-    date: currentData?.date || "",
-    thumbnail: currentData?.thumbnail,
-    categories: currentData?.category ? currentData.category : "",
-    orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
-  };
+
+  // Memoize the initial values
+  const initialValues = useMemo(
+    () => ({
+      content: currentData?.content ? JSON.parse(currentData.content) : "",
+      title: currentData?.title || "",
+      date: currentData?.date || "",
+      thumbnail: currentData?.thumbnail,
+      categories: currentData?.category ? currentData.category : "",
+      orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
+    }),
+    [
+      currentData?.content,
+      currentData?.title,
+      currentData?.date,
+      currentData?.thumbnail,
+      currentData?.category,
+      currentData?.organization?.uuid,
+      mode,
+      record?.organization?.uuid
+    ]
+  );
+
+  // Initialize form values when component mounts or when initialValues change
+  useEffect(() => {
+    Object.entries(initialValues).forEach(([key, value]) => {
+      setValue(key, value);
+    });
+  }, [setValue, initialValues]);
 
   const handleImpactCategoryChange = useCallback(
     (selectedValues: string[]) => {

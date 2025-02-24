@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { ReferenceInput, required } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -48,6 +48,21 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { openModal } = useModalContext();
   const { getValues, trigger } = useFormContext();
   const { showLoader, hideLoader } = useLoading();
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [organizationUuid, setOrganizationUuid] = useState("");
+
+  useEffect(() => {
+    setTitle(initialValues.title);
+    setDate(initialValues.date);
+    setOrganizationUuid(initialValues.orgUuid);
+  }, [initialValues]);
+
+  useEffect(() => {
+    handlers.handleTitleChange(title);
+    handlers.handleDateChange(date);
+  }, [handlers, title, date]);
+
   useOnMount(() => hideLoader);
   const handlePreviewClick = () => {
     const formValues = getValues();
@@ -108,20 +123,20 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             label="Title of Story"
             name="title"
             type="text"
-            defaultValue={initialValues.title}
+            value={title}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
-            onChange={e => handlers.handleTitleChange(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             required
           />
           <Input
             label="Date"
             name="date"
             type="date"
-            defaultValue={initialValues.date}
+            value={date}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
-            onChange={e => handlers.handleDateChange(e.target.value)}
+            onChange={e => setDate(e.target.value)}
             required
           />
         </div>
@@ -130,7 +145,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <ReferenceInput
             source="organization.uuid"
             reference={modules.organisation.ResourceName}
-            defaultValue={initialValues.orgUuid}
+            value={organizationUuid}
             required
           >
             <StyledAutocompleteInput optionText="name" fullWidth label={false} placeholder="Select an organization" />
