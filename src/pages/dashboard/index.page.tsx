@@ -293,6 +293,13 @@ const Dashboard = () => {
   const DATA_ACTIVE_COUNTRY = mapActiveProjects();
   const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = mapActiveProjects(filters.uuid);
 
+  const getOrganizationByUuid = (uuid: string) => {
+    const project = activeProjects
+      ? activeProjects.find((project: any) => project.uuid === uuid)
+      : "Unknown Organization";
+    return project?.organisation;
+  };
+
   const parseJobCreatedByType = (data: any, type: string) => {
     if (!data) return { type, chartData: [] };
 
@@ -451,8 +458,10 @@ const Dashboard = () => {
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                  {t(`Organization: ${getOrganizationByUuid(filters.uuid)}`)}
+                  <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Organization: ${
+                    `Type: ${
                       ORGANIZATIONS_TYPES[
                         dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
                       ]
