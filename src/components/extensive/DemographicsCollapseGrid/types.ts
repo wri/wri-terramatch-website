@@ -1,18 +1,10 @@
 import { Dictionary } from "lodash";
 
+import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+export type DemographicEntity = "project-reports" | "site-reports";
+
 export type Status = "complete" | "not-started" | "in-progress";
-
-export const DEMOGRAPHIC_TYPES = ["gender", "age", "ethnicity"] as const;
-export const HBF_DEMOGRAPHIC_TYPES = ["gender", "age", "caste"] as const;
-export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
-export type HBFDemographicType = (typeof HBF_DEMOGRAPHIC_TYPES)[number];
-
-export interface Demographic {
-  type: DemographicType | HBFDemographicType;
-  subtype: string;
-  name?: string;
-  amount: number;
-}
 
 export interface DemographicGridVariantProps {
   header: string;
@@ -29,8 +21,11 @@ export interface DemographicGridVariantProps {
   tertiaryCol?: string;
 }
 
-export const DEMOGRAPHICAL_TYPE_KEYS = ["workdays", "restorationPartners"] as const;
-export type DemographicalType = (typeof DEMOGRAPHICAL_TYPE_KEYS)[number];
+type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
+  ? `${T}${Capitalize<KebabToCamelCase<U>>}`
+  : S;
+
+export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
 
 type DemographicalTypeProperties = {
   sectionLabel: string;
@@ -38,7 +33,7 @@ type DemographicalTypeProperties = {
   rowLabelPlural: string;
 };
 
-export const DEMOGRAPHICAL_TYPES: { [k in DemographicalType]: DemographicalTypeProperties } = {
+export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypeProperties } = {
   workdays: {
     sectionLabel: "Total Workdays",
     rowLabelSingular: "Day",
@@ -48,15 +43,20 @@ export const DEMOGRAPHICAL_TYPES: { [k in DemographicalType]: DemographicalTypeP
     sectionLabel: "Total Restoration Partners",
     rowLabelSingular: "Person",
     rowLabelPlural: "People"
+  },
+  jobs: {
+    sectionLabel: "Total Jobs",
+    rowLabelSingular: "Person",
+    rowLabelPlural: "People"
   }
 };
 
 export interface DemographicsCollapseGridProps {
   title?: string;
-  demographicalType: DemographicalType;
-  demographics: Demographic[];
+  type: DemographicType;
+  entries: DemographicEntryDto[];
   variant: DemographicGridVariantProps;
-  onChange?: (demographics: Demographic[]) => void;
+  onChange?: (demographics: DemographicEntryDto[]) => void;
 }
 
 const GENDERS: Dictionary<string> = {

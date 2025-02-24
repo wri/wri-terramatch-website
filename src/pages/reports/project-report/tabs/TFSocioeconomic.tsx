@@ -1,17 +1,15 @@
 import { useT } from "@transifex/react";
-import { Fragment } from "react";
 
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
+import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import Loader from "@/components/generic/Loading/Loader";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
-import useDemographicData from "@/hooks/useDemographicData";
 
 interface ReportOverviewTabProps {
   report: any;
@@ -20,22 +18,6 @@ interface ReportOverviewTabProps {
 
 const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
   const t = useT();
-  const { grids: gridsDirectWorkdays } = useDemographicData(
-    "project-report",
-    "workdays",
-    report.uuid,
-    ["direct"],
-    "Direct Workdays",
-    GRID_VARIANT_GREEN
-  );
-  const { grids: gridsConvergenceWorkdays } = useDemographicData(
-    "project-report",
-    "workdays",
-    report.uuid,
-    ["convergence"],
-    "Convergence Workdays",
-    GRID_VARIANT_GREEN
-  );
   const sumTotalJobs = (jobs: Array<string>) => jobs.reduce((acc, key) => acc + (report[key] || 0), 0);
 
   return (
@@ -44,11 +26,13 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
         <PageColumn>
           <PageCard title={Framework.HBF ? t("Direct Jobs") : t("New Jobs")} gap={4}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              {gridsDirectWorkdays.length == 0 ? (
-                <Loader />
-              ) : (
-                <Fragment>{gridsDirectWorkdays.map(({ collection, grid }) => grid)}</Fragment>
-              )}
+              <DemographicsDisplay
+                entity="project-reports"
+                uuid={report.uuid}
+                type="workdays"
+                collection="direct"
+                variant={GRID_VARIANT_GREEN}
+              />
               <LongTextField title={t("Description of Direct Jobs")}>{report.new_jobs_description}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.ENTERPRISES, Framework.TF, Framework.TF_LANDSCAPES]}>
@@ -196,11 +180,13 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
 
           <PageCard title={t("Convergence Jobs")} gap={4} frameworksShow={[Framework.HBF]}>
-            {gridsConvergenceWorkdays.length == 0 ? (
-              <Loader />
-            ) : (
-              <Fragment>{gridsConvergenceWorkdays.map(({ collection, grid }) => grid)}</Fragment>
-            )}
+            <DemographicsDisplay
+              entity="project-reports"
+              uuid={report.uuid}
+              type="workdays"
+              collection="convergence"
+              variant={GRID_VARIANT_GREEN}
+            />
             <LongTextField title={t("Description of Convergence Jobs")}>
               {report.convergence_jobs_description}
             </LongTextField>

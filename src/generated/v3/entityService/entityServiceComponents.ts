@@ -219,6 +219,84 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     EntityGetPathParams
   >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type EntityAssociationIndexPathParams = {
+  /**
+   * Entity type for associations
+   */
+  entity: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  /**
+   * Entity UUID for association
+   */
+  uuid: string;
+  /**
+   * Association type to retrieve
+   */
+  association: "demographics";
+};
+
+export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityAssociationIndexResponse = {
+  meta?: {
+    /**
+     * @example demographics
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example demographics
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DemographicDto;
+  };
+};
+
+export type EntityAssociationIndexVariables = {
+  pathParams: EntityAssociationIndexPathParams;
+};
+
+export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    EntityAssociationIndexResponse,
+    EntityAssociationIndexError,
+    undefined,
+    {},
+    {},
+    EntityAssociationIndexPathParams
+  >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
+
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
 };

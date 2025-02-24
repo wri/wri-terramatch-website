@@ -1,103 +1,51 @@
 import { Dictionary, findLastIndex, uniq } from "lodash";
 import { useMemo } from "react";
 
+import { useDemographics } from "@/connections/EntityAssocation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import {
-  Demographic,
-  DEMOGRAPHIC_TYPE_MAP,
-  DEMOGRAPHIC_TYPES,
-  DemographicType,
-  HBF_DEMOGRAPHIC_TYPE_MAP,
-  HBF_DEMOGRAPHIC_TYPES,
-  HBFDemographicType,
-  Status
-} from "./types";
+import { DEMOGRAPHIC_TYPE_MAP, DemographicEntity, DemographicType, HBF_DEMOGRAPHIC_TYPE_MAP, Status } from "./types";
 
-export type Position = "first" | "last" | null;
+type Position = "first" | "last" | undefined;
 
-interface DemographicCounts {
-  gender: number;
-  age: number;
-  ethnicity: number;
-}
-
-interface HBFDemographicCounts {
-  gender: number;
-  age: number;
-  caste: number;
-}
-
-function isHBFDemographicCounts(
-  counts: HBFDemographicCounts | DemographicCounts,
-  framework: Framework
-): counts is HBFDemographicCounts {
-  return framework === Framework.HBF;
-}
-
-export type FrameworkDemographicCountTypes<T extends Framework> = T extends Framework.HBF
-  ? HBFDemographicCounts
-  : DemographicCounts;
-
-function getInitialCounts<T extends Framework>(framework: T) {
-  return framework === Framework.HBF
-    ? ({
-        gender: 0,
-        age: 0,
-        caste: 0
-      } as HBFDemographicCounts)
-    : ({
-        gender: 0,
-        age: 0,
-        ethnicity: 0
-      } as DemographicCounts);
-}
-
-export interface SectionRow {
+export type SectionRow = {
   demographicIndex: number;
   typeName: string;
   label: string;
   userLabel?: string;
   amount: number;
-}
+};
 
-export function calculateTotals(demographics: Demographic[], framework: Framework) {
-  const initialCounts = getInitialCounts(framework);
-  const counts = demographics.reduce(function (counts, { type, amount }) {
-    const typedType = type as keyof FrameworkDemographicCountTypes<typeof framework>;
-    counts[typedType] += amount;
-    return counts;
-  }, initialCounts);
+const getInitialCounts = <T extends Framework>(framework: T): Dictionary<number> =>
+  framework === Framework.HBF ? { gender: 0, age: 0, caste: 0 } : { gender: 0, age: 0, ethnicity: 0 };
 
-  const isHBF = isHBFDemographicCounts(counts, framework);
+const addToCounts = (counts: Dictionary<number>, { type, amount }: DemographicEntryDto) =>
+  Object.keys(counts).includes(type) ? { ...counts, [type]: counts[type] + amount } : counts;
+
+export function calculateTotals(entries: DemographicEntryDto[], framework: Framework) {
+  const counts = entries.reduce(addToCounts, getInitialCounts(framework));
+  const isHBF = framework === Framework.HBF;
   const total = isHBF ? counts.gender : Math.max(counts.age, counts.gender, counts.ethnicity);
   const complete = isHBF ? counts.gender > 0 : uniq([counts.age, counts.gender, counts.ethnicity]).length === 1;
 
   return { counts, total, complete };
 }
 
-export function useTableStatus(demographics: Demographic[]): { total: number; status: Status } {
+export function useTableStatus(demographics: DemographicEntryDto[]): { total: number; status: Status } {
   const { framework } = useFrameworkContext();
-  return useMemo(
-    function () {
-      const { total, complete } = calculateTotals(demographics, framework);
-
-      let status: Status = "in-progress";
-      if (total === 0) {
-        status = "not-started";
-      } else if (complete) {
-        status = "complete";
-      }
-
-      return { total, status };
-    },
-    [demographics, framework]
-  );
+  return useMemo(() => {
+    const { total, complete } = calculateTotals(demographics, framework);
+    return {
+      total,
+      status: total === 0 ? "not-started" : complete ? "complete" : "in-progress"
+    };
+  }, [demographics, framework]);
 }
 
-function mapRows(usesName: boolean, typeMap: Dictionary<string>, demographics: Demographic[]) {
+function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: DemographicEntryDto[]) {
   if (usesName) {
-    return demographics.map(
+    return entries.map(
       ({ subtype, name, amount }, index): SectionRow => ({
         demographicIndex: index,
         typeName: name ?? "unknown",
@@ -111,38 +59,53 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, demographics: D
   return Object.keys(typeMap).map((typeName): SectionRow => {
     // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
     // data in update requests that is still affected. TM-1098
-    const demographicIndex = findLastIndex(demographics, ({ subtype }) => subtype === typeName);
+    const demographicIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
     return {
       demographicIndex,
       typeName,
       label: typeMap[typeName],
-      amount: demographicIndex >= 0 ? demographics[demographicIndex].amount : 0
+      amount: demographicIndex >= 0 ? entries[demographicIndex].amount : 0
     };
   });
 }
 
-function getDemographicTypes<T extends Framework>(framework: T): Readonly<string[]> {
-  return framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPES : DEMOGRAPHIC_TYPES;
-}
-
-function getDemographicTypesMap<T extends Framework>(framework: T) {
+function getDemographicTypes<T extends Framework>(framework: T) {
   return framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
 }
 
-export function useSectionData(type: DemographicType | HBFDemographicType, demographics: Demographic[]) {
+export function useSectionData(type: string, entries: DemographicEntryDto[]) {
   const { framework } = useFrameworkContext();
   const demographicTypes = getDemographicTypes(framework);
-  const demographicTypesMap = getDemographicTypesMap(framework);
 
   return useMemo(
     function () {
-      const { title, addNameLabel, typeMap } = demographicTypesMap[type];
-      const rows = mapRows(addNameLabel != null, typeMap, demographics);
+      const { title, addNameLabel, typeMap } = demographicTypes[type];
+      const rows = mapRows(addNameLabel != null, typeMap, entries);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
-      const index = demographicTypes.indexOf(type);
-      const position: Position = index == 0 ? "first" : index == DEMOGRAPHIC_TYPES.length - 1 ? "last" : null;
+      const entryTypes = Object.keys(demographicTypes);
+      const index = entryTypes.indexOf(type);
+      const position: Position = index == 0 ? "first" : index == entryTypes.length - 1 ? "last" : undefined;
       return { title, rows, total, position };
     },
-    [demographics, type, demographicTypes, demographicTypesMap]
+    [entries, type, demographicTypes]
   );
+}
+
+export default function useCollectionsTotal(
+  entity: DemographicEntity,
+  uuid: string,
+  type: DemographicType,
+  collections: string[]
+) {
+  const [, { associations: demographics }] = useDemographics({ entity, uuid });
+  const { framework } = useFrameworkContext();
+  return useMemo(() => {
+    if (demographics == null) return;
+
+    const counts = demographics
+      .filter(demographic => demographic.type === type && collections.includes(demographic.collection))
+      .reduce((counts, { entries }) => entries.reduce(addToCounts, counts), getInitialCounts(framework));
+
+    return framework === Framework.HBF ? Math.max(counts.gender, counts.age, counts.caste) : counts.gender;
+  }, [collections, demographics, framework, type]);
 }

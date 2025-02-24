@@ -5,7 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { Demographic, DemographicalType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicEntry, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { Entity } from "@/types/common";
 
 import { DataTableProps } from "../DataTable/DataTable";
@@ -13,7 +13,7 @@ import { DataTableProps } from "../DataTable/DataTable";
 export interface RHFDemographicsTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
-  demographicalType: DemographicalType;
+  demographicalType: DemographicType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   entity: Entity;
@@ -24,7 +24,7 @@ export interface RHFDemographicsTableProps
 // updates from update requests afterward honor that change.
 const SUBTYPE_SWAP_TYPES = ["gender", "age", "caste"];
 
-const ensureCorrectSubtypes = (demographics: Demographic[]) => {
+const ensureCorrectSubtypes = (demographics: DemographicEntry[]) => {
   // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that
   // updates from update requests afterward honor that change.
   for (let ii = 0; ii < demographics.length; ii++) {
@@ -48,10 +48,13 @@ const RHFDemographicsTable = ({
     field: { value, onChange }
   } = useController(props);
 
-  const demographics = useMemo(() => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as Demographic[]), [value]);
+  const demographics = useMemo(
+    () => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as DemographicEntry[]),
+    [value]
+  );
 
   const updateDemographics = useCallback(
-    (updatedDemographics: Demographic[]) => {
+    (updatedDemographics: DemographicEntry[]) => {
       // Clean up the data before calling onChange. While waiting for changes to propagate through
       // the form, it's possible for this function get called multiple times, adding the same type / subtype / name
       // set to the collection multiple times. Here, we take the last value for each combo, and discard
@@ -75,8 +78,8 @@ const RHFDemographicsTable = ({
   return (
     <InputWrapper {...props}>
       <DemographicsCollapseGrid
-        demographicalType={demographicalType}
-        demographics={demographics}
+        type={demographicalType}
+        entries={demographics}
         variant={GRID_VARIANT_GREEN}
         onChange={updateDemographics}
       />
