@@ -50,7 +50,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { showLoader, hideLoader } = useLoading();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
-  const [organizationUuid, setOrganizationUuid] = useState("");
+  const [organizationUuid, setOrganizationUuid] = useState(undefined);
 
   useEffect(() => {
     setTitle(initialValues.title);
