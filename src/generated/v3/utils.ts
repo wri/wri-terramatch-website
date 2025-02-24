@@ -54,7 +54,7 @@ export const serializeParams = (pathParams?: FetchParams, queryParams?: FetchPar
   return JSON.stringify(orderedParams);
 };
 
-export const getStableQuery = (queryParams: Record<string, number | string | null | undefined>) => {
+export const getStableQuery = (queryParams: FetchParams) => {
   // URLSearchParams will gleefully stringify undefined to "undefined" if you leave the key in place.
   // For our implementation, we never want to send the string "null" or "undefined" to the server in
   // the query, so delete any keys that have such a value.

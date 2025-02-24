@@ -15,6 +15,11 @@ export type EntityIndexPathParams = {
 };
 
 export type EntityIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
   /**
    * The size of page being requested
    *
@@ -27,11 +32,6 @@ export type EntityIndexQueryParams = {
    * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
    */
   ["page[number]"]?: number;
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
   search?: string;
   country?: string;
   status?: string;
@@ -407,3 +407,9 @@ export const establishmentTreesFind = (variables: EstablishmentTreesFindVariable
     {},
     EstablishmentTreesFindPathParams
   >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const operationsByTag = {
+  entities: { entityIndex, entityGet },
+  entityAssociations: { entityAssociationIndex },
+  trees: { treeScientificNamesSearch, establishmentTreesFind }
+};

@@ -95,7 +95,7 @@ export default function useCollectionsTotal(
   entity: DemographicEntity,
   uuid: string,
   type: DemographicType,
-  collections: string[]
+  collections: readonly string[]
 ) {
   const [, { associations: demographics }] = useDemographics({ entity, uuid });
   const { framework } = useFrameworkContext();
