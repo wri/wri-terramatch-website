@@ -52,13 +52,13 @@ const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in CollectionType]: DemographicalTypeConf
   },
   jobsPaid: {
     demographicType: "jobs",
-    collections: DemographicCollections.JOBS_PAID_PROJECT,
+    collections: DemographicCollections.JOBS_PROJECT,
     titlePrefix: "Project Jobs"
   },
   jobsVolunteer: {
-    demographicType: "jobs",
-    collections: DemographicCollections.JOBS_VOLUNTEER_PROJECT,
-    titlePrefix: "Project Jobs"
+    demographicType: "volunteers",
+    collections: DemographicCollections.VOLUNTEERS_PROJECT,
+    titlePrefix: "Project Volunteers"
   }
 };
 

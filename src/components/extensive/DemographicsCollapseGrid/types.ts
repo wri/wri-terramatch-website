@@ -50,6 +50,11 @@ export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypePrope
     sectionLabel: "Total Jobs",
     rowLabelSingular: "Job",
     rowLabelPlural: "Jobs"
+  },
+  volunteers: {
+    sectionLabel: "Total Volunteers",
+    rowLabelSingular: "Volunteer",
+    rowLabelPlural: "Volunteers"
   }
 };
 
@@ -145,9 +150,15 @@ const JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
+const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...HBF_DEMOGRAPHIC_TYPE_MAP,
+  age: JOBS_DEMOGRAPHICS_TYPE_MAP["age"]
+};
+
 const getTypeMap = (type: DemographicType, framework: Framework) => {
-  if (framework === Framework.HBF) return HBF_DEMOGRAPHIC_TYPE_MAP;
-  else return type === "jobs" ? JOBS_DEMOGRAPHICS_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+  const isJobsType = ["jobs", "volunteers"].includes(type);
+  if (framework === Framework.HBF) return isJobsType ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : HBF_DEMOGRAPHIC_TYPE_MAP;
+  else return isJobsType ? JOBS_DEMOGRAPHICS_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
 };
 
 export const useEntryTypeMap = (type: DemographicType) => {

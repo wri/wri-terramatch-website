@@ -324,8 +324,8 @@ export type DemographicCollections = {
    * @example direct-other
    */
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
-  JOBS_PAID_PROJECT: "full-time" | "part-time";
-  JOBS_VOLUNTEER_PROJECT: "volunteer";
+  JOBS_PROJECT: "full-time" | "part-time";
+  VOLUNTEERS_PROJECT: "volunteer";
 };
 
 export type DemographicDto = {
@@ -338,7 +338,7 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
-  type: "workdays" | "restoration-partners" | "jobs";
+  type: "workdays" | "restoration-partners" | "jobs" | "volunteers";
   collection: string;
   /**
    * The English human-readable title for this collection
