@@ -1,5 +1,7 @@
 import { Dictionary } from "lodash";
+import { useMemo } from "react";
 
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export type DemographicEntity = "project-reports" | "site-reports";
@@ -46,8 +48,8 @@ export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypePrope
   },
   jobs: {
     sectionLabel: "Total Jobs",
-    rowLabelSingular: "Person",
-    rowLabelPlural: "People"
+    rowLabelSingular: "Job",
+    rowLabelPlural: "Jobs"
   }
 };
 
@@ -83,17 +85,25 @@ const HBF_AGES: Dictionary<string> = {
   youth: "Youth (15-29)"
 };
 
+const JOBS_AGES: Dictionary<string> = {
+  youth: "Youth (18-35)",
+  "non-youth": "Non Youth (over 35)",
+  unknown: "Unknown"
+};
+
 const ETHNICITIES: Dictionary<string> = {
   indigenous: "Indigenous",
   other: "Other",
   unknown: "Unknown"
 };
 
-export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
+type TypeMapValue = {
   title: string;
   typeMap: Dictionary<string>;
   addNameLabel?: string;
-}> = {
+};
+
+const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
     typeMap: GENDERS
@@ -109,11 +119,7 @@ export const DEMOGRAPHIC_TYPE_MAP: Dictionary<{
   }
 };
 
-export const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<{
-  title: string;
-  typeMap: Dictionary<string>;
-  addNameLabel?: string;
-}> = {
+const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
     typeMap: HBF_GENDERS
@@ -126,4 +132,35 @@ export const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<{
     title: "Caste",
     typeMap: CASTES
   }
+};
+
+const JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  gender: {
+    title: "Gender",
+    typeMap: GENDERS
+  },
+  age: {
+    title: "Age",
+    typeMap: JOBS_AGES
+  }
+};
+
+const getTypeMap = (type: DemographicType, framework: Framework) => {
+  if (framework === Framework.HBF) return HBF_DEMOGRAPHIC_TYPE_MAP;
+  else return type === "jobs" ? JOBS_DEMOGRAPHICS_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+};
+
+export const useEntryTypeMap = (type: DemographicType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => getTypeMap(type, framework), [type, framework]);
+};
+
+export const useEntryTypes = (type: DemographicType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => Object.keys(getTypeMap(type, framework)), [framework, type]);
+};
+
+export const useEntryTypeDefinition = (type: DemographicType, entryType: string) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => getTypeMap(type, framework)[entryType], [entryType, framework, type]);
 };

@@ -12,7 +12,7 @@ export enum Framework {
   UNDEFINED = "undefined"
 }
 
-export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES];
+export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES] as const;
 
 interface IFrameworkContext {
   framework: Framework;
@@ -40,10 +40,10 @@ export const useFrameworkContext = () => useContext(FrameworkContext);
 
 export interface ShowHideProps {
   // The element will only be shown if the current framework is in this list.
-  frameworksShow?: Framework[];
+  frameworksShow?: readonly Framework[];
   // The element will only be shown if the current framework is not in this list. `hide` will be
   // ignored if `show` is also included.
-  frameworksHide?: Framework[];
+  frameworksHide?: readonly Framework[];
 }
 
 export const useFrameworkShowHide = ({ frameworksShow, frameworksHide }: ShowHideProps) => {

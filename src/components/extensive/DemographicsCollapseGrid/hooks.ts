@@ -5,7 +5,7 @@ import { useDemographics } from "@/connections/EntityAssocation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { DEMOGRAPHIC_TYPE_MAP, DemographicEntity, DemographicType, HBF_DEMOGRAPHIC_TYPE_MAP, Status } from "./types";
+import { DemographicEntity, DemographicType, Status, useEntryTypeMap } from "./types";
 
 type Position = "first" | "last" | undefined;
 
@@ -69,25 +69,20 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: Demogr
   });
 }
 
-function getDemographicTypes<T extends Framework>(framework: T) {
-  return framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
-}
-
-export function useSectionData(type: string, entries: DemographicEntryDto[]) {
-  const { framework } = useFrameworkContext();
-  const demographicTypes = getDemographicTypes(framework);
+export function useSectionData(type: DemographicType, entryType: string, entries: DemographicEntryDto[]) {
+  const demographicTypes = useEntryTypeMap(type);
 
   return useMemo(
     function () {
-      const { title, addNameLabel, typeMap } = demographicTypes[type];
+      const { title, addNameLabel, typeMap } = demographicTypes[entryType];
       const rows = mapRows(addNameLabel != null, typeMap, entries);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
       const entryTypes = Object.keys(demographicTypes);
-      const index = entryTypes.indexOf(type);
+      const index = entryTypes.indexOf(entryType);
       const position: Position = index == 0 ? "first" : index == entryTypes.length - 1 ? "last" : undefined;
       return { title, rows, total, position };
     },
-    [entries, type, demographicTypes]
+    [entries, entryType, demographicTypes]
   );
 }
 

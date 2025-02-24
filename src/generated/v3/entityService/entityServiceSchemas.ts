@@ -273,15 +273,13 @@ export type DemographicEntryDto = {
  * CONSTANTS
  */
 export type DemographicCollections = {
-  WORKDAYS_PROJECT:
+  WORKDAYS_PROJECT_PPC:
     | "paid-project-management"
     | "volunteer-project-management"
     | "paid-nursery-operations"
     | "volunteer-nursery-operations"
     | "paid-other-activities"
-    | "volunteer-other-activities"
-    | "direct"
-    | "convergence";
+    | "volunteer-other-activities";
   /**
    * @example paid-other-activities
    */
@@ -326,7 +324,8 @@ export type DemographicCollections = {
    * @example direct-other
    */
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
-  JOBS_PROJECT: "full-time" | "part-time" | "volunteer";
+  JOBS_PAID_PROJECT: "full-time" | "part-time";
+  JOBS_VOLUNTEER_PROJECT: "volunteer";
 };
 
 export type DemographicDto = {
