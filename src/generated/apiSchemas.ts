@@ -4665,30 +4665,6 @@ export type V2SeedingPaginated = {
   };
 };
 
-export type V2WorkdayRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
-};
-
-export type V2RestorationPartnerRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
-};
-
 export type V2DisturbanceRead = {
   uuid?: string;
   description?: string;
