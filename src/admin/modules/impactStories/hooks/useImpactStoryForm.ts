@@ -11,7 +11,6 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
 
-  // Memoize the initial values
   const initialValues = useMemo(
     () => ({
       content: currentData?.content ? JSON.parse(currentData.content) : "",
@@ -33,7 +32,6 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     ]
   );
 
-  // Initialize form values when component mounts or when initialValues change
   useEffect(() => {
     Object.entries(initialValues).forEach(([key, value]) => {
       setValue(key, value);

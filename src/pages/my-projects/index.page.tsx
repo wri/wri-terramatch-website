@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
 import { Fragment } from "react";
-import { Else, If, Then, When } from "react-if";
+import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import ProjectCard from "@/components/elements/Cards/ProjectCard/ProjectCard";
@@ -15,17 +15,17 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useProjectIndex } from "@/connections/Entity";
 import { useMyOrg } from "@/connections/Organisation";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { GetV2MyProjectsResponse, useDeleteV2ProjectsUUID, useGetV2MyProjects } from "@/generated/apiComponents";
+import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
 
 const MyProjectsPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
   const { openToast } = useToastContext();
 
-  const { data: projectsData, isLoading, refetch } = useGetV2MyProjects<{ data: GetV2MyProjectsResponse }>({});
-  const projects = projectsData?.data || [];
+  const [isLoaded, { entities: projects, refetch }] = useProjectIndex();
 
   const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
     onSuccess() {
@@ -37,61 +37,59 @@ const MyProjectsPage = () => {
     }
   });
 
+  const hasProjects = projects != null && projects.length > 0;
   return (
     <>
       <Head>
         <title>{t("My Projects")}</title>
       </Head>
       <PageHeader className="h-[203px]" title={t("My Projects")}>
-        <When condition={projects.length > 0}>
+        {hasProjects && (
           <Button as={Link} href="/project/reporting-framework-select">
             {t("Create Project")}
           </Button>
-        </When>
+        )}
       </PageHeader>
 
       <PageBody>
         <If condition={organisation?.status === "approved"}>
           <Then>
-            <LoadingContainer loading={isLoading}>
-              <If condition={projects.length > 0}>
-                <Then>
-                  <PageSection className="space-y-8">
-                    <Text variant="text-bold-headline-1000">
-                      {t("Projects I’m monitoring ({count})", { count: projects?.length })}
-                    </Text>
-                    <List
-                      as={Fragment}
-                      itemAs={Fragment}
-                      items={projects}
-                      render={project => (
-                        <ProjectCard
-                          project={project}
-                          onDelete={uuid => {
-                            deleteProject({ pathParams: { uuid } });
-                          }}
-                        />
-                      )}
-                    />
-                  </PageSection>
-                </Then>
-                <Else>
-                  <PageSection>
-                    <EmptyState
-                      title={t("Start monitoring your project")}
-                      subtitle={t(
-                        "Your organization currently has no projects. To begin monitoring your restoration activities, you need to create a project in TerraMatch."
-                      )}
-                      iconProps={{ name: IconNames.TREE_CIRCLE, className: "fill-success" }}
-                      ctaProps={{
-                        as: Link,
-                        href: "/project/reporting-framework-select",
-                        children: t("Create Project")
-                      }}
-                    />
-                  </PageSection>
-                </Else>
-              </If>
+            <LoadingContainer loading={!isLoaded}>
+              {hasProjects ? (
+                <PageSection className="space-y-8">
+                  <Text variant="text-bold-headline-1000">
+                    {t("Projects I’m monitoring ({count})", { count: projects.length })}
+                  </Text>
+                  <List
+                    as={Fragment}
+                    itemAs={Fragment}
+                    items={projects}
+                    render={project => (
+                      <ProjectCard
+                        project={project}
+                        onDelete={uuid => {
+                          deleteProject({ pathParams: { uuid } });
+                        }}
+                      />
+                    )}
+                  />
+                </PageSection>
+              ) : (
+                <PageSection>
+                  <EmptyState
+                    title={t("Start monitoring your project")}
+                    subtitle={t(
+                      "Your organization currently has no projects. To begin monitoring your restoration activities, you need to create a project in TerraMatch."
+                    )}
+                    iconProps={{ name: IconNames.TREE_CIRCLE, className: "fill-success" }}
+                    ctaProps={{
+                      as: Link,
+                      href: "/project/reporting-framework-select",
+                      children: t("Create Project")
+                    }}
+                  />
+                </PageSection>
+              )}
             </LoadingContainer>
           </Then>
           <Else>

@@ -22,7 +22,7 @@ export const FrameworkContext = createContext<IFrameworkContext>({
   framework: Framework.UNDEFINED
 });
 
-type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string };
+type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string | null };
 
 const FrameworkProvider = ({ children, frameworkKey }: FrameworkProviderProps) => {
   const framework = useMemo(
@@ -68,7 +68,7 @@ export function withFrameworkShow<T>(WrappedComponent: ComponentType<T>) {
 
 export function RecordFrameworkProvider({ children }: { children: ReactNode }) {
   const { record } = useShowContext();
-  return <FrameworkProvider frameworkKey={record?.framework_key}>{children}</FrameworkProvider>;
+  return <FrameworkProvider frameworkKey={record?.framework_key ?? record?.frameworkKey}>{children}</FrameworkProvider>;
 }
 
 export default FrameworkProvider;

@@ -202,7 +202,7 @@ export const getRestorationGoalResumeData = (data: DashboardTreeRestorationGoalR
 export const getRestorationGoalDataForChart = (
   data: RestorationData,
   isPercentage: boolean,
-  isProjectView: boolean
+  shouldShowOnlyOneLine: boolean
 ): ChartCategory[] => {
   const createChartPoints = (
     sourceData: TreeSpeciesData[] | undefined,
@@ -228,7 +228,7 @@ export const getRestorationGoalDataForChart = (
     values: ChartDataPoint[],
     sum: number
   ): void => {
-    const shouldAdd = !isProjectView || (isProjectView && sum > 0);
+    const shouldAdd = !shouldShowOnlyOneLine || (shouldShowOnlyOneLine && sum > 0);
     if (shouldAdd) {
       chartData.push({ name: categoryName, values });
     }
@@ -236,7 +236,7 @@ export const getRestorationGoalDataForChart = (
 
   const chartData: ChartCategory[] = [];
 
-  if (!isProjectView) {
+  if (!shouldShowOnlyOneLine) {
     const { values } = createChartPoints(data.treesUnderRestorationActualTotal, "Total");
     chartData.push({ name: "Total", values });
   }

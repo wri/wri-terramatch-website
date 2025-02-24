@@ -174,7 +174,6 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="tree-planted"
-                          framework={siteReport.framework_key}
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
@@ -202,7 +201,6 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="tree-planted"
-                          framework={siteReport.framework_key}
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
@@ -230,7 +228,6 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="seeding"
-                          framework={siteReport.framework_key}
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
@@ -258,7 +255,6 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="non-tree"
-                          framework={siteReport.framework_key}
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
@@ -286,7 +282,6 @@ const SiteReportDetailPage = () => {
                           modelName="site-report"
                           modelUUID={siteReportUUID}
                           collection="replanting"
-                          framework={siteReport.framework_key}
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
