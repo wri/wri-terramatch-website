@@ -39,7 +39,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Description of Jobs")}>{report.new_jobs_description}</LongTextField>
-              {DemographicCollections.JOBS_PAID_PROJECT.map(collection => (
+              {DemographicCollections.JOBS_PROJECT.map(collection => (
                 <DemographicsDisplay
                   key={collection}
                   entity="project-reports"
@@ -52,12 +52,12 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Volunteers")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Description of Volunteers")}>{report.volunteers_work_description}</LongTextField>
-            {DemographicCollections.JOBS_VOLUNTEER_PROJECT.map(collection => (
+            {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
               <DemographicsDisplay
                 key={collection}
                 entity="project-reports"
                 uuid={report.uuid}
-                type="jobs"
+                type="volunteers"
                 collection={collection}
               />
             ))}
