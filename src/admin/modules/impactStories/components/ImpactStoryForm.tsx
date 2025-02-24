@@ -142,13 +142,14 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
         </div>
 
         <StyledReferenceInput label="Organization Details">
-          <ReferenceInput
-            source="organization.uuid"
-            reference={modules.organisation.ResourceName}
-            value={organizationUuid}
-            required
-          >
-            <StyledAutocompleteInput optionText="name" fullWidth label={false} placeholder="Select an organization" />
+          <ReferenceInput source="organization.uuid" reference={modules.organisation.ResourceName} required>
+            <StyledAutocompleteInput
+              optionText="name"
+              fullWidth
+              label={false}
+              placeholder="Select an organization"
+              defaultValue={organizationUuid}
+            />
           </ReferenceInput>
         </StyledReferenceInput>
 
