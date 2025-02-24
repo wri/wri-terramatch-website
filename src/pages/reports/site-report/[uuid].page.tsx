@@ -26,10 +26,10 @@ import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTable
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -61,7 +61,12 @@ const SiteReportDetailPage = () => {
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
   const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
-  const workdaysTotal = useCollectionsTotal("site-reports", siteReportUUID, "workdays", SITE_WORKDAY_COLLECTIONS);
+  const workdaysTotal = useCollectionsTotal(
+    "site-reports",
+    siteReportUUID,
+    "workdays",
+    DemographicCollections.WORKDAYS_SITE
+  );
 
   const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -386,9 +391,9 @@ const SiteReportDetailPage = () => {
                     ) : (
                       <>
                         <Text variant="text-bold-headline-800">{`Site Reports - ${workdaysTotal}`}</Text>
-                        {SITE_WORKDAY_COLLECTIONS.map(collection => (
+                        {DemographicCollections.WORKDAYS_SITE.map(collection => (
                           <Fragment key={collection}>
-                            {collection === COLLECTION_SITE_PAID_OTHER && (
+                            {collection === DemographicCollections.WORKDAYS_SITE_OTHER && (
                               <TextField
                                 label={t("Other Activities Description")}
                                 value={siteReport.paid_other_activity_description}

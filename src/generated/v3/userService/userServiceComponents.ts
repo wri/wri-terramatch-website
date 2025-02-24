@@ -370,3 +370,9 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     {},
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate },
+  resetPassword: { requestPasswordReset, resetPassword }
+};

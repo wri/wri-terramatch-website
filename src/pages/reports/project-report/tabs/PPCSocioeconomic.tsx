@@ -11,12 +11,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import Loader from "@/components/generic/Loading/Loader";
-import { PROJECT_JOBS_COLLECTIONS } from "@/constants/jobsCollections";
-import {
-  COLLECTION_PROJECT_DIRECT_OTHER,
-  PROJECT_RESTORATION_PARTNER_COLLECTIONS
-} from "@/constants/restorationPartnerCollections";
-import { COLLECTION_PROJECT_PAID_OTHER, PROJECT_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 
 interface ReportOverviewTabProps {
   report: any;
@@ -28,7 +23,7 @@ interface DemographicsCardProps {
 }
 
 type DemographicalTypeConfig = {
-  collections: string[];
+  collections: readonly string[];
   titlePrefix: string;
   otherCollection?: string;
   otherTitle?: string;
@@ -37,21 +32,21 @@ type DemographicalTypeConfig = {
 
 const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in DemographicType]: DemographicalTypeConfig } = {
   workdays: {
-    collections: PROJECT_WORKDAY_COLLECTIONS,
+    collections: DemographicCollections.WORKDAYS_PROJECT,
     titlePrefix: "Project Workdays",
-    otherCollection: COLLECTION_PROJECT_PAID_OTHER,
+    otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
     otherTitle: "Other Activities Description",
     otherDescriptionProp: "paid_other_activity_description"
   },
   restorationPartners: {
-    collections: PROJECT_RESTORATION_PARTNER_COLLECTIONS,
+    collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT,
     titlePrefix: "Project Restoration Partners",
-    otherCollection: COLLECTION_PROJECT_DIRECT_OTHER,
+    otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
     otherTitle: "Other Restoration Partners Description",
     otherDescriptionProp: "other_restoration_partners_description"
   },
   jobs: {
-    collections: PROJECT_JOBS_COLLECTIONS,
+    collections: DemographicCollections.JOBS_PROJECT,
     titlePrefix: "Project Jobs"
   }
 };
