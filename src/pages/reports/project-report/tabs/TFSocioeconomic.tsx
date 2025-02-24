@@ -9,7 +9,8 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 
 interface ReportOverviewTabProps {
   report: any;
@@ -19,12 +20,13 @@ interface ReportOverviewTabProps {
 const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
   const t = useT();
   const sumTotalJobs = (jobs: Array<string>) => jobs.reduce((acc, key) => acc + (report[key] || 0), 0);
+  const { framework } = useFrameworkContext();
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <PageCard title={Framework.HBF ? t("Direct Jobs") : t("New Jobs")} gap={4}>
+          <PageCard title={framework === Framework.HBF ? t("Direct Jobs") : t("New Jobs")} gap={4}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <DemographicsDisplay
                 entity="project-reports"
@@ -35,43 +37,30 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               />
               <LongTextField title={t("Description of Direct Jobs")}>{report.new_jobs_description}</LongTextField>
             </ContextCondition>
-            <ContextCondition frameworksShow={[Framework.ENTERPRISES, Framework.TF, Framework.TF_LANDSCAPES]}>
+            <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Description of Jobs")}>{report.new_jobs_description}</LongTextField>
-              <TextField
-                label={t("Full-time Jobs")}
-                value={sumTotalJobs(["ft_women", "ft_men", "ft_other", "ft_youth", "ft_jobs_non_youth"]).toString()}
-              />
-              <TextField variantLabel="text-16-light" label={t("Full-time Women")} value={report.ft_women} />
-              <TextField variantLabel="text-16-light" label={t("Full-time Men")} value={report.ft_men} />
-              <TextField variantLabel="text-16-light" label={t("Full-time Other")} value={report.ft_other} />
-              <TextField variantLabel="text-16-light" label={t("Full-time Youth")} value={report.ft_youth} />
-              <TextField
-                variantLabel="text-16-light"
-                label={t("Full-time Non Youth")}
-                value={report.ft_jobs_non_youth}
-              />
-              <TextField
-                label={t("Part-time Jobs")}
-                value={sumTotalJobs(["pt_women", "pt_men", "pt_other", "pt_youth", "part_time_jobs_35plus"]).toString()}
-              />
-              <TextField variantLabel="text-16-light" label={t("Part-time Women")} value={report.pt_women} />
-              <TextField variantLabel="text-16-light" label={t("Part-time Men")} value={report.pt_men} />
-              <TextField variantLabel="text-16-light" label={t("Part-time Other")} value={report.pt_other} />
-              <TextField variantLabel="text-16-light" label={t("Part-time Youth")} value={report.pt_youth} />
-              <TextField
-                variantLabel="text-16-light"
-                label={t("Part-time Non Youth")}
-                value={report.part_time_jobs_35plus}
-              />
+              {DemographicCollections.JOBS_PAID_PROJECT.map(collection => (
+                <DemographicsDisplay
+                  key={collection}
+                  entity="project-reports"
+                  uuid={report.uuid}
+                  type="jobs"
+                  collection={collection}
+                />
+              ))}
             </ContextCondition>
           </PageCard>
           <PageCard title={t("Volunteers")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Description of Volunteers")}>{report.volunteers_work_description}</LongTextField>
-            <TextField label={t("Total Volunteers")} value={report.volunteer_total} />
-            <TextField label={t("Volunteers - Men")} value={report.volunteer_men} />
-            <TextField label={t("Volunteers - Women")} value={report.volunteer_women} />
-            <TextField label={t("Volunteers - Youth")} value={report.volunteer_youth} />
-            <TextField label={t("Volunteers - Non Youth")} value={report.volunteer_non_youth} />
+            {DemographicCollections.JOBS_VOLUNTEER_PROJECT.map(collection => (
+              <DemographicsDisplay
+                key={collection}
+                entity="project-reports"
+                uuid={report.uuid}
+                type="jobs"
+                collection={collection}
+              />
+            ))}
           </PageCard>
           <PageCard title={t("Other")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Income Generating Description")}>
@@ -112,15 +101,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             </LongTextField>
             <TextField
               label={t("Total Beneficiaries")}
-              value={sumTotalJobs([
-                "beneficiaries_men",
-                "beneficiaries_women",
-                "beneficiaries_other",
-                "beneficiaries_youth",
-                "beneficiaries_non_youth",
-                "beneficiaries_smallholder",
-                "beneficiaries_large_scale"
-              ]).toString()}
+              value={sumTotalJobs(["beneficiaries_men", "beneficiaries_women", "beneficiaries_other"]).toString()}
             />
             <TextField variantLabel="text-16-light" label={t("Beneficiaries - Men")} value={report.beneficiaries_men} />
             <TextField
@@ -161,9 +142,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               value={sumTotalJobs([
                 "beneficiaries_training_women",
                 "beneficiaries_training_men",
-                "beneficiaries_training_other",
-                "beneficiaries_training_youth",
-                "beneficiaries_training_non_youth"
+                "beneficiaries_training_other"
               ]).toString()}
             />
             <TextField label={t("Trainees - Women")} value={report.beneficiaries_training_women} />

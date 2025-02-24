@@ -1,13 +1,11 @@
 export class DemographicCollections {
-  public static readonly WORKDAYS_PROJECT = [
+  public static readonly WORKDAYS_PROJECT_PPC = [
     "paid-project-management",
     "volunteer-project-management",
     "paid-nursery-operations",
     "volunteer-nursery-operations",
     "paid-other-activities",
-    "volunteer-other-activities",
-    "direct",
-    "convergence"
+    "volunteer-other-activities"
   ] as const;
   public static readonly WORKDAYS_PROJECT_OTHER = "paid-other-activities" as const;
   public static readonly WORKDAYS_SITE = [
@@ -46,5 +44,6 @@ export class DemographicCollections {
     "indirect-other"
   ] as const;
   public static readonly RESTORATION_PARTNERS_PROJECT_OTHER = "direct-other" as const;
-  public static readonly JOBS_PROJECT = ["full-time", "part-time", "volunteer"] as const;
+  public static readonly JOBS_PAID_PROJECT = ["full-time", "part-time"] as const;
+  public static readonly JOBS_VOLUNTEER_PROJECT = ["volunteer"] as const;
 }

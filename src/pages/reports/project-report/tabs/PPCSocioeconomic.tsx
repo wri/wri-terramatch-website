@@ -17,12 +17,15 @@ interface ReportOverviewTabProps {
   report: any;
 }
 
+type CollectionType = "workdays" | "restorationPartners" | "jobsPaid" | "jobsVolunteer";
+
 interface DemographicsCardProps {
   report: any;
-  demographicType: DemographicType;
+  type: CollectionType;
 }
 
 type DemographicalTypeConfig = {
+  demographicType: DemographicType;
   collections: readonly string[];
   titlePrefix: string;
   otherCollection?: string;
@@ -30,31 +33,39 @@ type DemographicalTypeConfig = {
   otherDescriptionProp?: string;
 };
 
-const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in DemographicType]: DemographicalTypeConfig } = {
+const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in CollectionType]: DemographicalTypeConfig } = {
   workdays: {
-    collections: DemographicCollections.WORKDAYS_PROJECT,
+    demographicType: "workdays",
+    collections: DemographicCollections.WORKDAYS_PROJECT_PPC,
     titlePrefix: "Project Workdays",
     otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
     otherTitle: "Other Activities Description",
     otherDescriptionProp: "paid_other_activity_description"
   },
   restorationPartners: {
+    demographicType: "restorationPartners",
     collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT,
     titlePrefix: "Project Restoration Partners",
     otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
     otherTitle: "Other Restoration Partners Description",
     otherDescriptionProp: "other_restoration_partners_description"
   },
-  jobs: {
-    collections: DemographicCollections.JOBS_PROJECT,
+  jobsPaid: {
+    demographicType: "jobs",
+    collections: DemographicCollections.JOBS_PAID_PROJECT,
+    titlePrefix: "Project Jobs"
+  },
+  jobsVolunteer: {
+    demographicType: "jobs",
+    collections: DemographicCollections.JOBS_VOLUNTEER_PROJECT,
     titlePrefix: "Project Jobs"
   }
 };
 
-const DemographicsCard = ({ report, demographicType }: DemographicsCardProps) => {
+const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
   const t = useT();
-  const { collections, titlePrefix, otherCollection, otherTitle, otherDescriptionProp } =
-    DEMOGRAPHICAL_TYPE_CONFIGS[demographicType];
+  const { demographicType, collections, titlePrefix, otherCollection, otherTitle, otherDescriptionProp } =
+    DEMOGRAPHICAL_TYPE_CONFIGS[type];
 
   const demographicsTotal = useCollectionsTotal("project-reports", report.uuid, demographicType, collections);
   if (demographicsTotal == null) {
@@ -89,8 +100,8 @@ const PPCSocioeconomicTab = ({ report }: ReportOverviewTabProps) => (
   <PageBody>
     <PageRow>
       <PageColumn>
-        <DemographicsCard report={report} demographicType="workdays" />
-        <DemographicsCard report={report} demographicType="restorationPartners" />
+        <DemographicsCard report={report} type="workdays" />
+        <DemographicsCard report={report} type="restorationPartners" />
       </PageColumn>
     </PageRow>
   </PageBody>

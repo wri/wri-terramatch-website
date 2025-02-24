@@ -5,23 +5,16 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
-import {
-  DEMOGRAPHIC_TYPE_MAP,
-  DEMOGRAPHIC_TYPES,
-  DemographicsCollapseGridProps,
-  HBF_DEMOGRAPHIC_TYPE_MAP
-} from "./types";
+import { DEMOGRAPHIC_TYPES, DemographicsCollapseGridProps, useEntryTypes } from "./types";
 
 const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
-  const { framework } = useFrameworkContext();
   const { total, status } = useTableStatus(entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
@@ -32,10 +25,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
     [onChange, entries]
   );
 
-  const demographicTypes = useMemo(
-    () => Object.keys(framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP),
-    [framework]
-  );
+  const entryTypes = useEntryTypes(type);
 
   const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[type];
   const rowTitle = t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
@@ -83,7 +73,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
               variant.gridStyle
             )}
           >
-            {demographicTypes.map(entryType => (
+            {entryTypes.map(entryType => (
               <DemographicsSection
                 key={entryType}
                 demographicType={type}

@@ -1,22 +1,15 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import DemographicsRow from "@/components/extensive/DemographicsCollapseGrid/DemographicsRow";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import {
-  DEMOGRAPHIC_TYPE_MAP,
-  DEMOGRAPHIC_TYPES,
-  DemographicGridVariantProps,
-  DemographicType,
-  HBF_DEMOGRAPHIC_TYPE_MAP
-} from "./types";
+import { DEMOGRAPHIC_TYPES, DemographicGridVariantProps, DemographicType, useEntryTypeDefinition } from "./types";
 
 export interface DemographicsSectionProps {
   demographicType: DemographicType;
@@ -26,19 +19,11 @@ export interface DemographicsSectionProps {
   onChange?: (demographics: DemographicEntryDto[]) => void;
 }
 
-const useDemographicType = (entryType: string) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(
-    () => (framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP)[entryType],
-    [entryType, framework]
-  );
-};
-
 const DemographicsSection = ({ demographicType, entryType, entries, variant, onChange }: DemographicsSectionProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
-  const { title, rows, total, position } = useSectionData(entryType, entries);
-  const { addNameLabel, typeMap } = useDemographicType(entryType);
+  const { title, rows, total, position } = useSectionData(demographicType, entryType, entries);
+  const { addNameLabel, typeMap } = useEntryTypeDefinition(demographicType, entryType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
