@@ -262,6 +262,32 @@ export type SiteFullDto = {
   totalSiteReports: number;
 };
 
+export type DemographicEntryDto = {
+  type: string;
+  subtype: string;
+  name?: string;
+  amount: number;
+};
+
+export type DemographicDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  type: "workdays" | "restoration-partners" | "jobs";
+  collection: string;
+  /**
+   * The English human-readable title for this collection
+   */
+  collectionTitle: string;
+  entries: DemographicEntryDto[];
+};
+
 export type PreviousPlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row

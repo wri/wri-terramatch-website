@@ -103,9 +103,9 @@ export const getFormEntries = (
           type: f.type,
           value: (
             <DemographicsCollapseGrid
-              demographics={workday?.demographics ?? []}
+              entries={workday?.demographics ?? []}
               variant={GRID_VARIANT_NARROW}
-              demographicalType="workdays"
+              type="workdays"
             />
           )
         });
@@ -119,9 +119,9 @@ export const getFormEntries = (
           type: f.type,
           value: (
             <DemographicsCollapseGrid
-              demographics={restorationPartner?.demographics ?? []}
+              entries={restorationPartner?.demographics ?? []}
               variant={GRID_VARIANT_NARROW}
-              demographicalType="restorationPartners"
+              type="restorationPartners"
             />
           )
         });
