@@ -31,12 +31,11 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
     reOrderButtons,
     resource,
     source,
-    defaultExpanded,
     summaryChildren
   } = props;
 
   const { total, reOrder, remove } = useSimpleFormIterator();
-  const [expandAccordion, setExpandAccordion] = React.useState(defaultExpanded);
+  const [expandAccordion, setExpandAccordion] = React.useState(false);
   // Returns a boolean to indicate whether to disable the remove button for certain fields.
   // If disableRemove is a function, then call the function with the current record to
   // determining if the button should be disabled. Otherwise, use a boolean property that
@@ -127,6 +126,5 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
 
 export interface AccordionFormIteratorItemProps extends SimpleFormIteratorItemProps, Partial<ArrayInputContextValue> {
   summaryTitle: string;
-  defaultExpanded?: boolean;
   summaryChildren?: React.ReactNode;
 }
