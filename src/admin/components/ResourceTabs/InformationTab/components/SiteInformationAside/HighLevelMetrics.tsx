@@ -38,6 +38,11 @@ const HighLevelMetrics: FC = () => {
               <NumberField source="seeds_planted_count" emptyText="0" />
             </Labeled>
           </ContextCondition>
+          <ContextCondition frameworksShow={[Framework.PPC]}>
+            <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx} className="label-field-aside">
+              <NumberField source="approved_regenerated_trees_count" emptyText="0" />
+            </Labeled>
+          </ContextCondition>
           <ContextCondition frameworksShow={[Framework.TF]}>
             <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
               <NumberField source="hectares_to_restore_goal" emptyText="0" />
