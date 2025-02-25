@@ -56,6 +56,11 @@ const HighLevelMetics: FC = () => {
             />
           </Labeled>
         </ContextCondition>
+        <ContextCondition frameworksShow={[Framework.PPC]}>
+          <Labeled label="Trees Regenerated" sx={inlineLabelSx}>
+            <NumberField source="regeneratedTreesCount" emptyText="0" />
+          </Labeled>
+        </ContextCondition>
       </Stack>
     </Card>
   );

@@ -62,6 +62,16 @@ const HighLevelMetics: FC = () => {
               </Labeled>
             </When>
           </ContextCondition>
+          <ContextCondition frameworksShow={[Framework.PPC]}>
+            <When condition={resource === "projectReport" || resource === "siteReport"}>
+              <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx}>
+                <NumberField
+                  source={resource === "projectReport" ? "regenerated_trees_count" : "num_trees_regenerating"}
+                  emptyText="0"
+                />
+              </Labeled>
+            </When>
+          </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
             <When condition={resource !== "siteReport"}>
               <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
