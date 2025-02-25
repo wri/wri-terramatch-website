@@ -1,3 +1,4 @@
+import { defaults } from "lodash";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
@@ -58,8 +59,7 @@ export const EntityEdit = () => {
   const formSteps = useGetCustomFormSteps(formData.form, entity, framework);
 
   const defaultValues = useNormalizedFormDefaultValue(
-    // @ts-ignore
-    formData?.update_request?.content ?? formData?.answers,
+    defaults(formData?.update_request?.content ?? {}, formData?.answers),
     formSteps
   );
 
