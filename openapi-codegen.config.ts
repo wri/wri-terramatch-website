@@ -226,6 +226,11 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
     );
   });
 
+  if (nodes.length === 0) {
+    // If the file doesn't export anything, the build fails due to the `--isolatedModules` flag.
+    nodes.push(f.createExportAssignment(undefined, undefined, f.createObjectLiteralExpression(undefined, false)));
+  }
+
   await context.writeFile(filename + ".ts", printNodes(nodes));
 };
 
