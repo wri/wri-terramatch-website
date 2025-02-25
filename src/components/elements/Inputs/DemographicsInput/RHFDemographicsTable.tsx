@@ -5,7 +5,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { DemographicEntry, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity } from "@/types/common";
 
 import { DataTableProps } from "../DataTable/DataTable";
@@ -24,7 +25,7 @@ export interface RHFDemographicsTableProps
 // updates from update requests afterward honor that change.
 const SUBTYPE_SWAP_TYPES = ["gender", "age", "caste"];
 
-const ensureCorrectSubtypes = (demographics: DemographicEntry[]) => {
+const ensureCorrectSubtypes = (demographics: DemographicEntryDto[]) => {
   // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that
   // updates from update requests afterward honor that change.
   for (let ii = 0; ii < demographics.length; ii++) {
@@ -49,12 +50,14 @@ const RHFDemographicsTable = ({
   } = useController(props);
 
   const demographics = useMemo(
-    () => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as DemographicEntry[]),
+    () => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as DemographicEntryDto[]),
     [value]
   );
 
+  console.log("demographics", { demographics, value, demographicalType });
+
   const updateDemographics = useCallback(
-    (updatedDemographics: DemographicEntry[]) => {
+    (updatedDemographics: DemographicEntryDto[]) => {
       // Clean up the data before calling onChange. While waiting for changes to propagate through
       // the form, it's possible for this function get called multiple times, adding the same type / subtype / name
       // set to the collection multiple times. Here, we take the last value for each combo, and discard
