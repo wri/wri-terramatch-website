@@ -15,7 +15,7 @@ import { DEMOGRAPHIC_TYPES, DemographicsCollapseGridProps, useEntryTypes } from 
 const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
-  const { total, status } = useTableStatus(entries);
+  const { total, status } = useTableStatus(type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(

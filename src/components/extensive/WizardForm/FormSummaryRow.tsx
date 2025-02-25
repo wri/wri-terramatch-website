@@ -128,6 +128,38 @@ export const getFormEntries = (
         break;
       }
 
+      case FieldType.JobsTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              entries={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              type="jobs"
+            />
+          )
+        });
+        break;
+      }
+
+      case FieldType.VolunteersTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              entries={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              type="volunteers"
+            />
+          )
+        });
+        break;
+      }
+
       case FieldType.Map: {
         outputArr.push({
           title: f.label,

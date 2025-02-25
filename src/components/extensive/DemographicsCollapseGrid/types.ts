@@ -155,7 +155,7 @@ const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   age: JOBS_DEMOGRAPHICS_TYPE_MAP["age"]
 };
 
-const getTypeMap = (type: DemographicType, framework: Framework) => {
+export const getTypeMap = (type: DemographicType, framework: Framework) => {
   const isJobsType = ["jobs", "volunteers"].includes(type);
   if (framework === Framework.HBF) return isJobsType ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : HBF_DEMOGRAPHIC_TYPE_MAP;
   else return isJobsType ? JOBS_DEMOGRAPHICS_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
