@@ -3,7 +3,7 @@ import { FC } from "react";
 
 import { EntityName } from "@/types/common";
 
-import HighLevelMetics from "./HighLevelMetrics";
+import HighLevelMetrics from "./HighLevelMetrics";
 import QuickActions from "./QuickActions";
 import ReportOverview from "./ReportOverview";
 
@@ -19,7 +19,7 @@ const ReportInformationAside: FC<ReportInformationAsideProps> = ({ type, parent 
 
       <QuickActions type={type} />
 
-      <HighLevelMetics />
+      <HighLevelMetrics />
     </Stack>
   );
 };

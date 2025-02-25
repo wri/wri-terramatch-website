@@ -67,7 +67,12 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
   const { demographicType, collections, titlePrefix, otherCollection, otherTitle, otherDescriptionProp } =
     DEMOGRAPHICAL_TYPE_CONFIGS[type];
 
-  const demographicsTotal = useCollectionsTotal("project-reports", report.uuid, demographicType, collections);
+  const demographicsTotal = useCollectionsTotal({
+    entity: "project-reports",
+    uuid: report.uuid,
+    demographicType,
+    collections
+  });
   if (demographicsTotal == null) {
     return (
       <PageCard>

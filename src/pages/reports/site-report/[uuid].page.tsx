@@ -13,7 +13,7 @@ import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
 import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
-import useCollectionsTotal from "@/components/extensive/DemographicsCollapseGrid/hooks";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -61,12 +61,20 @@ const SiteReportDetailPage = () => {
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
   const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
-  const workdaysTotal = useCollectionsTotal(
-    "site-reports",
-    siteReportUUID,
-    "workdays",
-    DemographicCollections.WORKDAYS_SITE
-  );
+  const totalProps = {
+    entity: "site-reports",
+    uuid: siteReportUUID,
+    demographicType: "workdays"
+  } as Omit<CollectionsTotalProps, "collections">;
+  const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
+  const workdaysPaid = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("paid-"))
+  });
+  const workdaysVolunteer = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
+  });
 
   const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -367,8 +375,8 @@ const SiteReportDetailPage = () => {
                 </PageColumn>
                 <PageColumn frameworksShow={[Framework.PPC]}>
                   <PageCard title={t("Report Overview")}>
-                    <TextField label={t("Workdays Paid")} value={siteReport.workdays_paid} />
-                    <TextField label={t("Workdays Volunteer")} value={siteReport.workdays_volunteer} />
+                    <TextField label={t("Workdays Paid")} value={String(workdaysPaid ?? 0)} />
+                    <TextField label={t("Workdays Volunteer")} value={String(workdaysVolunteer ?? 0)} />
                   </PageCard>
                   <Paper>
                     <ButtonField
