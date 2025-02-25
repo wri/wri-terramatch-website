@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import { DemographicEntry, DemographicsCollapseGridProps } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicsCollapseGridProps } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import DemographicsCollapseGrid from "./DemographicsCollapseGrid";
 import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./DemographicVariant";
@@ -17,7 +18,7 @@ export default meta;
 
 const ControlWrapper = (args: DemographicsCollapseGridProps) => {
   const [demographics, setDemographics] = useState(args.entries);
-  const onChange = (updatedDemographics: DemographicEntry[]) => {
+  const onChange = (updatedDemographics: DemographicEntryDto[]) => {
     setDemographics(updatedDemographics);
   };
   return <DemographicsCollapseGrid {...{ ...args, demographics, onChange }} />;

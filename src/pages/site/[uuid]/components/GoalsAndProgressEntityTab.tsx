@@ -221,7 +221,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     ]
   };
   const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
-  const framework = ALL_TF.includes(frameworkKey) ? "terrafund" : frameworkKey;
+  const framework = ALL_TF.includes(frameworkKey as (typeof ALL_TF)[number]) ? "terrafund" : frameworkKey;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-8">
       {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (

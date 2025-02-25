@@ -122,7 +122,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             <LongTextField title={t("Planting End Date")}>{format(project.plantingEndDate)}</LongTextField>
           </PageCard>
 
-          <PageCard frameworksShow={ALL_TF.concat([Framework.HBF])} title={t("Project Objectives")}>
+          <PageCard frameworksShow={[...ALL_TF, Framework.HBF]} title={t("Project Objectives")}>
             <LongTextField title={t("Objectives")}>{project.objectives}</LongTextField>
             <LongTextField title={t("Environmental Goals")}>{project.environmentalGoals}</LongTextField>
             <LongTextField title={t("Socioeconomic Goals")}>{project.socioeconomicGoals}</LongTextField>
@@ -161,7 +161,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               value={project.projectCountyDistrict ?? ""}
             />
           </PageCard>
-          <ContextCondition frameworksShow={ALL_TF.concat([Framework.HBF])}>
+          <ContextCondition frameworksShow={[...ALL_TF, Framework.HBF]}>
             <PageCard title={t("Project Budget")}>
               <TextField label={t("Project Budget")} value={String(project.budget ?? "")} />
               <br />
