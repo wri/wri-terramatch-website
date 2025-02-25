@@ -172,11 +172,15 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Volunteers")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Description of Volunteers")}>{report.volunteers_work_description}</LongTextField>
-            <TextField label={t("Total Volunteer")} value={report.volunteer_total} />
-            <TextField label={t("Volunteer - Men")} value={report.volunteer_men} />
-            <TextField label={t("Volunteer - Women")} value={report.volunteer_women} />
-            <TextField label={t("Volunteer - Youth")} value={report.volunteer_youth} />
-            <TextField label={t("Volunteer - ST/ST/OBC")} value={report.volunteer_scstobc} />
+            {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
+              <DemographicsDisplay
+                key={collection}
+                entity="project-reports"
+                uuid={report.uuid}
+                type="volunteers"
+                collection={collection}
+              />
+            ))}
           </PageCard>
           <PageCard title={t("Other")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Income Generating Description")}>
