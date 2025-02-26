@@ -26,7 +26,7 @@ const SiteOverview: FC = () => {
     fetchCheckPolygons();
   }, [record]);
 
-  const isPPC = record.framework_key === "ppc";
+  const isPPC = record.frameworkKey === "ppc";
 
   return (
     <>
@@ -42,14 +42,14 @@ const SiteOverview: FC = () => {
 
           <When condition={isPPC}>
             <Labeled label="ID" className="label-field-aside">
-              <TextField source="ppc_external_id" />
+              <TextField source="ppcExternalId" />
             </Labeled>
           </When>
 
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={6} item>
               <Labeled label="Framework" className="label-field-aside">
-                <FrameworkField />
+                <FrameworkField prop="frameworkKey" />
               </Labeled>
             </Grid>
 
