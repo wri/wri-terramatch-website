@@ -14,7 +14,7 @@ import { DataTableProps } from "../DataTable/DataTable";
 export interface RHFDemographicsTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
-  demographicalType: DemographicType;
+  demographicType: DemographicType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   entity: Entity;
@@ -39,7 +39,7 @@ const ensureCorrectSubtypes = (demographics: DemographicEntryDto[]) => {
 };
 
 const RHFDemographicsTable = ({
-  demographicalType,
+  demographicType,
   onChangeCapture,
   entity,
   collection,
@@ -53,8 +53,6 @@ const RHFDemographicsTable = ({
     () => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as DemographicEntryDto[]),
     [value]
   );
-
-  console.log("demographics", { demographics, value, demographicalType });
 
   const updateDemographics = useCallback(
     (updatedDemographics: DemographicEntryDto[]) => {
@@ -81,7 +79,7 @@ const RHFDemographicsTable = ({
   return (
     <InputWrapper {...props}>
       <DemographicsCollapseGrid
-        type={demographicalType}
+        type={demographicType}
         entries={demographics}
         variant={GRID_VARIANT_GREEN}
         onChange={updateDemographics}
