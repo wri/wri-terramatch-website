@@ -48,9 +48,7 @@ const ProjectList = () => {
       accessorKey: "project",
       meta: { width: isMobile ? "90%" : "23%" },
       cell: ({ row }: { row: { original: { project: string; country: { image: string }; organization: string } } }) => {
-        console.log("row", row);
         const { project, country, organization } = row.original;
-        console.log("project", project, "country", country);
         if (isMobile) {
           return (
             <div className="flex items-start gap-2">

@@ -481,6 +481,32 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "jobs": {
+      return {
+        ...sharedProps,
+        type: FieldType.JobsTable,
+
+        fieldProps: {
+          required,
+          entity,
+          collection: question.collection
+        }
+      };
+    }
+
+    case "volunteers": {
+      return {
+        ...sharedProps,
+        type: FieldType.VolunteersTable,
+
+        fieldProps: {
+          required,
+          entity,
+          collection: question.collection
+        }
+      };
+    }
+
     case "select-image":
       return {
         ...sharedProps,
@@ -657,7 +683,9 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "workdays":
-    case "restorationPartners": {
+    case "restorationPartners":
+    case "jobs":
+    case "volunteers": {
       validation = yup
         .array()
         .min(0)
@@ -688,7 +716,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
             const { demographics } = value?.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
-            return calculateTotals(demographics, framework).complete;
+            return calculateTotals(demographics, framework, question.input_type).complete;
           }
         );
 

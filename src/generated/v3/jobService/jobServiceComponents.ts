@@ -195,3 +195,5 @@ export const bulkUpdateJobs = (variables: BulkUpdateJobsVariables, signal?: Abor
     ...variables,
     signal
   });
+
+export const operationsByTag = { delayedJobs: { listDelayedJobs, delayedJobsFind, bulkUpdateJobs } };

@@ -96,7 +96,7 @@ export const FormBuilderForm = () => {
       <When condition={!!formType}>
         <>
           <div>
-            <Accordion className="w-full" defaultExpanded>
+            <Accordion className="w-full">
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="body1">Form Introduction</Typography>
               </AccordionSummary>
@@ -164,7 +164,6 @@ export const FormBuilderForm = () => {
             validate={minLength(1, "At least one section is required")}
           >
             <AccordionFormIterator
-              defaultExpanded
               accordionSummaryTitle={(index, fields) =>
                 `Section ${index + 1} of ${fields.length} ${fields[index].title && `(${fields[index].title})`}`
               }
@@ -209,7 +208,7 @@ export const FormBuilderForm = () => {
           </ArrayInput>
 
           <div className="w-full">
-            <Accordion className="mt-8 w-full" defaultExpanded>
+            <Accordion className="mt-8 w-full">
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="body1">Form Submission Message</Typography>
               </AccordionSummary>

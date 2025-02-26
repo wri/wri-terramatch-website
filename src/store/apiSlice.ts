@@ -7,6 +7,7 @@ import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import {
+  DemographicDto,
   EstablishmentsTreesDto,
   ProjectFullDto,
   ProjectLightDto,
@@ -20,6 +21,7 @@ import {
   ResetPasswordResponseDto,
   UserDto
 } from "@/generated/v3/userService/userServiceSchemas";
+import { FetchParams, serializeParams } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
@@ -44,12 +46,24 @@ export type ApiPendingStore = {
 
 export type ApiFilteredIndexCache = {
   ids: string[];
-  meta: Required<ResponseMeta>["page"];
+  page: ResponseMeta["page"];
 };
 
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
 export type ApiIndexStore = {
   [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
+};
+
+export const indexMetaSelector = (
+  resource: ResourceType,
+  { pathParams, queryParams }: { pathParams?: FetchParams; queryParams?: FetchParams }
+) => {
+  const modifiedQuery = { ...queryParams };
+  const pageNumber = Number(modifiedQuery["page[number]"] ?? 0);
+  delete modifiedQuery["page[number]"];
+  const serialized = serializeParams(pathParams, queryParams);
+
+  return (store: ApiDataStore) => store.meta.indices[resource][serialized]?.[pageNumber];
 };
 
 type AttributeValue = string | number | boolean;
@@ -80,6 +94,7 @@ export type StoreResourceMap<AttributeType> = Record<string, StoreResource<Attri
 // be added to this list.
 export const RESOURCES = [
   "delayedJobs",
+  "demographics",
   "establishmentTrees",
   "logins",
   "organisations",
@@ -99,6 +114,7 @@ type EntityType<LightDto, FullDto> = LightDto & Partial<Omit<FullDto, keyof Ligh
 
 type ApiResources = {
   delayedJobs: StoreResourceMap<DelayedJobDto>;
+  demographics: StoreResourceMap<DemographicDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   logins: StoreResourceMap<LoginDto>;
   organisations: StoreResourceMap<OrganisationDto>;
@@ -185,6 +201,7 @@ type ApiFetchFailedProps = ApiFetchStartingProps & {
 
 type ApiFetchSucceededProps = ApiFetchStartingProps & {
   response: JsonApiResponse;
+  serializedParams: string;
 };
 
 // This may get more sophisticated in the future, but for now this is good enough
@@ -211,8 +228,8 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
-const isPaginatedResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
-  method === "GET" && response.meta?.page != null;
+const isIndexResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
+  method === "GET" && isArray(response.data);
 
 export const apiSlice = createSlice({
   name: "api",
@@ -236,19 +253,14 @@ export const apiSlice = createSlice({
       let { data, included, meta } = response;
       if (!isArray(data)) data = [data];
 
-      if (isPaginatedResponse(action.payload)) {
-        const search = new URL(url).searchParams;
-        const pageNumber = Number(search.get("page[number]") ?? 0);
-        search.delete("page[number]");
-        search.sort();
-        const searchQuery = search.toString();
+      if (isIndexResponse(action.payload)) {
+        let cache = state.meta.indices[meta.resourceType][action.payload.serializedParams];
+        if (cache == null) cache = state.meta.indices[meta.resourceType][action.payload.serializedParams] = {};
 
-        let cache = state.meta.indices[meta.resourceType][searchQuery];
-        if (cache == null) cache = state.meta.indices[meta.resourceType][searchQuery] = {};
-
-        cache[pageNumber ?? 0] = {
+        const pageNumber = Number(new URL(url).searchParams.get("page[number]") ?? 0);
+        cache[pageNumber] = {
           ids: data.map(({ id }) => id),
-          meta: action.payload.response.meta!.page!
+          page: action.payload.response.meta.page
         };
       }
 
