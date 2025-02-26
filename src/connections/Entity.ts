@@ -192,3 +192,19 @@ export const useLightProject = connectionHook(lightProjectConnection);
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+
+const fullSiteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
+export const loadFullSite = connectionLoader(fullSiteConnection);
+export const useFullSite = connectionHook(fullSiteConnection);
+
+const siteIndexConnection = createEntityIndexConnection<SiteLightDto>("sites");
+export const loadSiteIndex = connectionLoader(siteIndexConnection);
+export const useSiteIndex = connectionHook(siteIndexConnection);
+
+const siteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
+export const loadSite = connectionLoader(siteConnection);
+export const useSite = connectionHook(siteConnection);
+
+const lightSiteConnection = createGetEntityConnection<SiteLightDto>("sites", false);
+export const loadLightSite = connectionLoader(lightSiteConnection);
+export const useLightSite = connectionHook(lightSiteConnection);
