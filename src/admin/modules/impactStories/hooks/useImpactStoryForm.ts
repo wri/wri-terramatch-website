@@ -3,7 +3,7 @@ import { useNotify, useRecordContext, useRedirect } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
 export const useImpactStoryForm = (mode: "create" | "edit") => {
-  const { setValue, getValues, watch } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const status = watch("status");
   const record = useRecordContext();
   const notify = useNotify();
@@ -55,10 +55,8 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   );
 
   const handlePreview = useCallback(() => {
-    const values = getValues();
     notify("Preview mode activated");
-    console.log("values", values);
-  }, [getValues, notify]);
+  }, [notify]);
 
   const handleDelete = useCallback(async () => {
     try {
