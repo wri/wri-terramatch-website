@@ -16,14 +16,14 @@ import {
   useDeleteV2NurseriesUUID,
   useGetV2ProjectsUUIDNurseries
 } from "@/generated/apiComponents";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 import { ModalId } from "../Modal/ModalConst";
 
 interface NurseriesTableProps {
-  project: ProjectFullDto;
+  project: ProjectLightDto;
   hasAddButton?: boolean;
   onFetch?: (data: GetV2ProjectsUUIDNurseriesResponse) => void;
 }
