@@ -46,7 +46,6 @@ const WORKDAYS_CONVERGENCE: UseTotalProps = {
   collections: ["convergence"]
 };
 const RP_DIRECT: UseTotalProps = {
-  ...WORKDAYS_TOTAL,
   demographicType: "restorationPartners" as DemographicType,
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("direct-"))
 };
@@ -55,14 +54,16 @@ const RP_INDIRECT: UseTotalProps = {
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("indirect-"))
 };
 const JOBS: UseTotalProps = {
-  ...WORKDAYS_TOTAL,
   demographicType: "jobs" as DemographicType,
   collections: DemographicCollections.JOBS_PROJECT
 };
 const VOLUNTEERS: UseTotalProps = {
-  ...WORKDAYS_TOTAL,
   demographicType: "volunteers" as DemographicType,
   collections: DemographicCollections.VOLUNTEERS_PROJECT
+};
+const ALL_BENEFICIARIES: UseTotalProps = {
+  demographicType: "allBeneficiaries" as DemographicType,
+  collections: DemographicCollections.BENEFICIARIES_PROJECT_ALL
 };
 
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
@@ -81,6 +82,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const rpIndirect = useTotal(RP_INDIRECT, report);
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
+  const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
 
   return (
     <PageBody>
@@ -165,7 +167,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Direct Workdays")} value={workdaysDirect} />
               <TextField label={t("Convergence Workdays")} value={workdaysConvergence} />
               <TextField label={t("Volunteers")} value={volunteers} />
-              <TextField label={t("Community Partners")} value={report.total_community_partners} />
+              <TextField label={t("Community Partners")} value={beneficiaries} />
             </ContextCondition>
           </PageCard>
           <PageCard

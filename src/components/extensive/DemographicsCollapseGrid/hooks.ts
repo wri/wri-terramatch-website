@@ -1,4 +1,4 @@
-import { Dictionary, findLastIndex, uniq } from "lodash";
+import { Dictionary, findLastIndex, kebabCase, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { useDemographics } from "@/connections/EntityAssocation";
@@ -107,13 +107,12 @@ export type CollectionsTotalProps = {
 export default function useCollectionsTotal({ entity, uuid, demographicType, collections }: CollectionsTotalProps) {
   const [, { associations: demographics }] = useDemographics({ entity, uuid });
   const { framework } = useFrameworkContext();
-  return useMemo(
-    () =>
-      demographics == null
-        ? undefined
-        : demographics
-            .filter(demographic => demographic.type === demographicType && collections.includes(demographic.collection))
-            .reduce((total, { entries }) => total + calculateTotals(entries, framework, demographicType).total, 0),
-    [collections, demographics, framework, demographicType]
-  );
+  return useMemo(() => {
+    const apiType = kebabCase(demographicType);
+    return demographics == null
+      ? undefined
+      : demographics
+          .filter(demographic => demographic.type === apiType && collections.includes(demographic.collection))
+          .reduce((total, { entries }) => total + calculateTotals(entries, framework, demographicType).total, 0);
+  }, [collections, demographics, framework, demographicType]);
 }

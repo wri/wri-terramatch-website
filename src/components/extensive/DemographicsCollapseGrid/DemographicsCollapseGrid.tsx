@@ -10,7 +10,7 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 import Icon, { IconNames } from "../Icon/Icon";
 import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
-import { DEMOGRAPHIC_TYPES, DemographicsCollapseGridProps, useEntryTypes } from "./types";
+import { DemographicsCollapseGridProps, useDemographicLabels, useEntryTypes } from "./types";
 
 const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
 
   const entryTypes = useEntryTypes(type);
 
-  const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[type];
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(type);
   const rowTitle = t(`{total} ${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
