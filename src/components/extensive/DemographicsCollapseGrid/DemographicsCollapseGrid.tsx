@@ -27,8 +27,8 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
 
   const entryTypes = useEntryTypes(type);
 
-  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[type];
-  const rowTitle = t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[type];
+  const rowTitle = t(`{total} ${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (

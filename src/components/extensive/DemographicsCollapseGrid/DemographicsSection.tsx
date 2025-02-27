@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -79,7 +79,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[demographicType];
 
   return (
-    <Fragment>
+    <>
       <div
         className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
           [variant.roundedTl]: position === "first",
@@ -93,7 +93,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
 
       <div className={classNames("bg-white", variant.secondCol)}>
         <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
-          {t(sectionLabel)}
+          {t(`${sectionLabel} ${rowLabelPlural}`)}
         </Text>
       </div>
       <div
@@ -161,7 +161,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
         </div>
         <div className={classNames("bg-white", variant.roundedBr, variant.tertiaryCol)} />
       </When>
-    </Fragment>
+    </>
   );
 };
 
