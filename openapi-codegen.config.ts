@@ -14,7 +14,7 @@ import {
   ParameterObject,
   PathItemObject
 } from "openapi3-ts";
-import ts, { ClassElement, Expression } from "typescript";
+import ts, { ClassElement, Expression, PropertyAssignment } from "typescript";
 
 const f = ts.factory;
 
@@ -141,6 +141,27 @@ for (const [service, baseUrl] of Object.entries(SERVICES)) {
 
 export default defineConfig(config);
 
+const generateLiteral = (value: unknown) => {
+  if (_.isString(value)) return f.createStringLiteral(value);
+  else if (_.isNumber(value)) return f.createNumericLiteral(value);
+  else if (_.isArray(value)) {
+    const literals: Expression[] = [];
+    value.forEach(member => {
+      const literal = generateLiteral(member);
+      if (literal != null) literals.push(literal);
+    });
+    return f.createArrayLiteralExpression(literals, true);
+  } else if (_.isObject(value)) {
+    const properties: PropertyAssignment[] = [];
+    Object.entries(value).forEach(([key, value]) => {
+      const childLiteral = generateLiteral(value);
+      const name = key.includes("-") ? f.createStringLiteral(key) : key;
+      if (childLiteral != null) properties.push(f.createPropertyAssignment(name, childLiteral));
+    });
+    return f.createObjectLiteralExpression(properties, true);
+  }
+};
+
 const generateConstants = async (context: Context, config: ConfigBase) => {
   const sourceFile = ts.createSourceFile("index.ts", "", ts.ScriptTarget.Latest);
 
@@ -177,40 +198,21 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
 
     const members: ClassElement[] = [];
     Object.entries(componentSchema.properties).forEach(([propertyName, propertySchema]) => {
-      if (isReferenceObject(propertySchema) || propertySchema.type == null) return;
+      if (isReferenceObject(propertySchema) || propertySchema.type == null || propertySchema.example == null) return;
 
-      const modifiers = [
-        f.createModifier(ts.SyntaxKind.PublicKeyword),
-        f.createModifier(ts.SyntaxKind.StaticKeyword),
-        f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
-      ];
-      if (propertySchema.enum != null) {
-        const enumMembers: Expression[] = [];
-        propertySchema.enum.forEach(member => {
-          if (_.isString(member)) enumMembers.push(f.createStringLiteral(member));
-          else if (_.isNumber(member)) enumMembers.push(f.createNumericLiteral(member));
-        });
+      const literal = generateLiteral(propertySchema.example);
+      if (literal != null) {
         members.push(
           f.createPropertyDeclaration(
-            modifiers,
+            [
+              f.createModifier(ts.SyntaxKind.PublicKeyword),
+              f.createModifier(ts.SyntaxKind.StaticKeyword),
+              f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
+            ],
             propertyName,
             undefined,
             undefined,
-            f.createAsExpression(f.createArrayLiteralExpression(enumMembers, true), f.createTypeReferenceNode("const"))
-          )
-        );
-      } else if (["string", "number"].includes(propertySchema.type)) {
-        const expression =
-          propertySchema.type === "string"
-            ? f.createStringLiteral(propertySchema.example)
-            : f.createNumericLiteral(propertySchema.example);
-        members.push(
-          f.createPropertyDeclaration(
-            modifiers,
-            propertyName,
-            undefined,
-            undefined,
-            f.createAsExpression(expression, f.createTypeReferenceNode("const"))
+            f.createAsExpression(literal, f.createTypeReferenceNode("const"))
           )
         );
       }

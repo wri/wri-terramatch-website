@@ -273,61 +273,84 @@ export type DemographicEntryDto = {
  * CONSTANTS
  */
 export type DemographicCollections = {
-  WORKDAYS_PROJECT_PPC:
-    | "paid-project-management"
-    | "volunteer-project-management"
-    | "paid-nursery-operations"
-    | "volunteer-nursery-operations"
-    | "paid-other-activities"
-    | "volunteer-other-activities";
+  /**
+   * @example {"workdays":{"paid-project-management":"Paid Project Management","volunteer-project-management":"Volunteer Project Management","paid-nursery-operations":"Paid Nursery Operations","volunteer-nursery-operations":"Volunteer Nursery Operations","paid-other-activities":"Paid Other Activities","volunteer-other-activities":"Volunteer Other Activities","direct":"Direct Workdays","convergence":"Convergence Workdays","paid-site-establishment":"Paid Site Establishment","volunteer-site-establishment":"Volunteer Site Establishment","paid-planting":"Paid Planting","volunteer-planting":"Volunteer Planting","paid-site-maintenance":"Paid Site Maintenance","volunteer-site-maintenance":"Volunteer Site Maintenance","paid-site-monitoring":"Paid Site Monitoring","volunteer-site-monitoring":"Volunteer Site Monitoring"},"restoration-partners":{"direct-income":"Direct Income","indirect-income":"Indirect Income","direct-benefits":"Direct In-kind Benefits","indirect-benefits":"Indirect In-kind Benefits","direct-conservation-payments":"Direct Conservation Agreement Payments","indirect-conservation-payments":"Indirect Conservation Agreement Payments","direct-market-access":"Direct Increased Market Access","indirect-market-access":"Indirect Increased Market Access","direct-capacity":"Direct Increased Capacity","indirect-capacity":"Indirect Increased Capacity","direct-training":"Direct Training","indirect-training":"Indirect Training","direct-land-title":"Direct Newly Secured Land Title","indirect-land-title":"Indirect Newly Secured Land Title","direct-livelihoods":"Direct Traditional Livelihoods or Customer Rights","indirect-livelihoods":"Indirect Traditional Livelihoods or Customer Rights","direct-productivity":"Direct Increased Productivity","indirect-productivity":"Indirect Increased Productivity","direct-other":"Direct Other","indirect-other":"Indirect Other"},"jobs":{"full-time":"Full-time","part-time":"Part-time"},"volunteers":{"volunteer":"Volunteer"},"all-beneficiaries":{"all":"All Beneficiaries"},"training-beneficiaries":{"training":"Training Beneficiaries"}}
+   */
+  COLLECTION_TITLES: Record<string, any>;
+  /**
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_PROJECT_PPC: string[];
   /**
    * @example paid-other-activities
    */
   WORKDAYS_PROJECT_OTHER: string;
-  WORKDAYS_SITE:
-    | "paid-site-establishment"
-    | "volunteer-site-establishment"
-    | "paid-planting"
-    | "volunteer-planting"
-    | "paid-site-maintenance"
-    | "volunteer-site-maintenance"
-    | "paid-site-monitoring"
-    | "volunteer-site-monitoring"
-    | "paid-other-activities"
-    | "volunteer-other-activities";
+  /**
+   * @example paid-site-establishment
+   * @example volunteer-site-establishment
+   * @example paid-planting
+   * @example volunteer-planting
+   * @example paid-site-maintenance
+   * @example volunteer-site-maintenance
+   * @example paid-site-monitoring
+   * @example volunteer-site-monitoring
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_SITE: string[];
   /**
    * @example paid-other-activities
    */
   WORKDAYS_SITE_OTHER: string;
-  RESTORATION_PARTNERS_PROJECT:
-    | "direct-income"
-    | "indirect-income"
-    | "direct-benefits"
-    | "indirect-benefits"
-    | "direct-conservation-payments"
-    | "indirect-conservation-payments"
-    | "direct-market-access"
-    | "indirect-market-access"
-    | "direct-capacity"
-    | "indirect-capacity"
-    | "direct-training"
-    | "indirect-training"
-    | "direct-land-title"
-    | "indirect-land-title"
-    | "direct-livelihoods"
-    | "indirect-livelihoods"
-    | "direct-productivity"
-    | "indirect-productivity"
-    | "direct-other"
-    | "indirect-other";
+  /**
+   * @example direct-income
+   * @example indirect-income
+   * @example direct-benefits
+   * @example indirect-benefits
+   * @example direct-conservation-payments
+   * @example indirect-conservation-payments
+   * @example direct-market-access
+   * @example indirect-market-access
+   * @example direct-capacity
+   * @example indirect-capacity
+   * @example direct-training
+   * @example indirect-training
+   * @example direct-land-title
+   * @example indirect-land-title
+   * @example direct-livelihoods
+   * @example indirect-livelihoods
+   * @example direct-productivity
+   * @example indirect-productivity
+   * @example direct-other
+   * @example indirect-other
+   */
+  RESTORATION_PARTNERS_PROJECT: string[];
   /**
    * @example direct-other
    */
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
-  JOBS_PROJECT: "full-time" | "part-time";
-  VOLUNTEERS_PROJECT: "volunteer";
-  BENEFICIARIES_PROJECT_ALL: "all";
-  BENEFICIARIES_PROJECT_TRAINING: "training";
+  /**
+   * @example full-time
+   * @example part-time
+   */
+  JOBS_PROJECT: string[];
+  /**
+   * @example volunteer
+   */
+  VOLUNTEERS_PROJECT: string[];
+  /**
+   * @example all
+   */
+  BENEFICIARIES_PROJECT_ALL: string[];
+  /**
+   * @example training
+   */
+  BENEFICIARIES_PROJECT_TRAINING: string[];
 };
 
 export type DemographicDto = {
@@ -342,10 +365,6 @@ export type DemographicDto = {
   uuid: string;
   type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
   collection: string;
-  /**
-   * The English human-readable title for this collection
-   */
-  collectionTitle: string;
   entries: DemographicEntryDto[];
 };
 
