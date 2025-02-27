@@ -103,9 +103,9 @@ export const getFormEntries = (
           type: f.type,
           value: (
             <DemographicsCollapseGrid
-              demographics={workday?.demographics ?? []}
+              entries={workday?.demographics ?? []}
               variant={GRID_VARIANT_NARROW}
-              demographicalType="workdays"
+              type="workdays"
             />
           )
         });
@@ -119,9 +119,41 @@ export const getFormEntries = (
           type: f.type,
           value: (
             <DemographicsCollapseGrid
-              demographics={restorationPartner?.demographics ?? []}
+              entries={restorationPartner?.demographics ?? []}
               variant={GRID_VARIANT_NARROW}
-              demographicalType="restorationPartners"
+              type="restorationPartners"
+            />
+          )
+        });
+        break;
+      }
+
+      case FieldType.JobsTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              entries={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              type="jobs"
+            />
+          )
+        });
+        break;
+      }
+
+      case FieldType.VolunteersTable: {
+        const restorationPartner = values[f.name]?.[0] ?? {};
+        outputArr.push({
+          title: f.label,
+          type: f.type,
+          value: (
+            <DemographicsCollapseGrid
+              entries={restorationPartner?.demographics ?? []}
+              variant={GRID_VARIANT_NARROW}
+              type="volunteers"
             />
           )
         });

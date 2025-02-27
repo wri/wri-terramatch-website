@@ -64,7 +64,6 @@ export const QuestionArrayInput = ({
     <>
       <ArrayInput {...arrayInputProps}>
         <AccordionFormIterator
-          defaultExpanded
           accordionSummaryTitle={(index, fields) =>
             `${title} ${index + 1} of ${fields.length} ${fields[index].label ? `(${fields[index].label})` : ""}`
           }

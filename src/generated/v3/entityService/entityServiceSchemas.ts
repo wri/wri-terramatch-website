@@ -262,6 +262,91 @@ export type SiteFullDto = {
   totalSiteReports: number;
 };
 
+export type DemographicEntryDto = {
+  type: string;
+  subtype: string;
+  name?: string;
+  amount: number;
+};
+
+/**
+ * CONSTANTS
+ */
+export type DemographicCollections = {
+  WORKDAYS_PROJECT_PPC:
+    | "paid-project-management"
+    | "volunteer-project-management"
+    | "paid-nursery-operations"
+    | "volunteer-nursery-operations"
+    | "paid-other-activities"
+    | "volunteer-other-activities";
+  /**
+   * @example paid-other-activities
+   */
+  WORKDAYS_PROJECT_OTHER: string;
+  WORKDAYS_SITE:
+    | "paid-site-establishment"
+    | "volunteer-site-establishment"
+    | "paid-planting"
+    | "volunteer-planting"
+    | "paid-site-maintenance"
+    | "volunteer-site-maintenance"
+    | "paid-site-monitoring"
+    | "volunteer-site-monitoring"
+    | "paid-other-activities"
+    | "volunteer-other-activities";
+  /**
+   * @example paid-other-activities
+   */
+  WORKDAYS_SITE_OTHER: string;
+  RESTORATION_PARTNERS_PROJECT:
+    | "direct-income"
+    | "indirect-income"
+    | "direct-benefits"
+    | "indirect-benefits"
+    | "direct-conservation-payments"
+    | "indirect-conservation-payments"
+    | "direct-market-access"
+    | "indirect-market-access"
+    | "direct-capacity"
+    | "indirect-capacity"
+    | "direct-training"
+    | "indirect-training"
+    | "direct-land-title"
+    | "indirect-land-title"
+    | "direct-livelihoods"
+    | "indirect-livelihoods"
+    | "direct-productivity"
+    | "indirect-productivity"
+    | "direct-other"
+    | "indirect-other";
+  /**
+   * @example direct-other
+   */
+  RESTORATION_PARTNERS_PROJECT_OTHER: string;
+  JOBS_PROJECT: "full-time" | "part-time";
+  VOLUNTEERS_PROJECT: "volunteer";
+};
+
+export type DemographicDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  type: "workdays" | "restoration-partners" | "jobs" | "volunteers";
+  collection: string;
+  /**
+   * The English human-readable title for this collection
+   */
+  collectionTitle: string;
+  entries: DemographicEntryDto[];
+};
+
 export type PreviousPlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row

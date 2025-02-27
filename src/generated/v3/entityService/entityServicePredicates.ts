@@ -6,6 +6,8 @@ import {
   EntityIndexVariables,
   EntityGetPathParams,
   EntityGetVariables,
+  EntityAssociationIndexPathParams,
+  EntityAssociationIndexVariables,
   TreeScientificNamesSearchQueryParams,
   TreeScientificNamesSearchVariables,
   EstablishmentTreesFindPathParams,
@@ -33,6 +35,24 @@ export const entityGetIsFetching = (variables: Omit<EntityGetVariables, "body">)
 
 export const entityGetFetchFailed = (variables: Omit<EntityGetVariables, "body">) => (store: ApiDataStore) =>
   fetchFailed<{}, EntityGetPathParams>({ store, url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables });
+
+export const entityAssociationIndexIsFetching =
+  (variables: Omit<EntityAssociationIndexVariables, "body">) => (store: ApiDataStore) =>
+    isFetching<{}, EntityAssociationIndexPathParams>({
+      store,
+      url: "/entities/v3/{entity}/{uuid}/{association}",
+      method: "get",
+      ...variables
+    });
+
+export const entityAssociationIndexFetchFailed =
+  (variables: Omit<EntityAssociationIndexVariables, "body">) => (store: ApiDataStore) =>
+    fetchFailed<{}, EntityAssociationIndexPathParams>({
+      store,
+      url: "/entities/v3/{entity}/{uuid}/{association}",
+      method: "get",
+      ...variables
+    });
 
 export const treeScientificNamesSearchIsFetching =
   (variables: Omit<TreeScientificNamesSearchVariables, "body">) => (store: ApiDataStore) =>

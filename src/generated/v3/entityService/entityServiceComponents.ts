@@ -15,6 +15,11 @@ export type EntityIndexPathParams = {
 };
 
 export type EntityIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
   /**
    * The size of page being requested
    *
@@ -27,11 +32,6 @@ export type EntityIndexQueryParams = {
    * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
    */
   ["page[number]"]?: number;
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
   search?: string;
   country?: string;
   status?: string;
@@ -219,6 +219,84 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     EntityGetPathParams
   >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type EntityAssociationIndexPathParams = {
+  /**
+   * Entity type for associations
+   */
+  entity: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  /**
+   * Entity UUID for association
+   */
+  uuid: string;
+  /**
+   * Association type to retrieve
+   */
+  association: "demographics";
+};
+
+export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityAssociationIndexResponse = {
+  meta?: {
+    /**
+     * @example demographics
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example demographics
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DemographicDto;
+  };
+};
+
+export type EntityAssociationIndexVariables = {
+  pathParams: EntityAssociationIndexPathParams;
+};
+
+export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    EntityAssociationIndexResponse,
+    EntityAssociationIndexError,
+    undefined,
+    {},
+    {},
+    EntityAssociationIndexPathParams
+  >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
+
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
 };
@@ -329,3 +407,9 @@ export const establishmentTreesFind = (variables: EstablishmentTreesFindVariable
     {},
     EstablishmentTreesFindPathParams
   >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export const operationsByTag = {
+  entities: { entityIndex, entityGet },
+  entityAssociations: { entityAssociationIndex },
+  trees: { treeScientificNamesSearch, establishmentTreesFind }
+};

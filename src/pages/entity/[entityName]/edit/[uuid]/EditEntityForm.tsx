@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
@@ -60,7 +61,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   );
 
   const defaultValues = useNormalizedFormDefaultValue(
-    formData?.update_request?.content ?? formData?.answers,
+    defaults(formData?.update_request?.content ?? {}, formData?.answers),
     formSteps,
     entity.migrated
   );

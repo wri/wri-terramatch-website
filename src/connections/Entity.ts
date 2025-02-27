@@ -14,7 +14,7 @@ import {
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
@@ -59,13 +59,6 @@ const entitySelector =
   <T extends EntityDtoType>(entityName: SupportedEntity) =>
   (store: ApiDataStore) =>
     store[entityName] as StoreResourceMap<T>;
-
-const pageMetaSelector = (entityName: SupportedEntity, props: EntityIndexConnectionProps) => (store: ApiDataStore) => {
-  const { queryParams } = entityIndexParams(entityName, props);
-  delete queryParams["page[number]"];
-  const query = getStableQuery(queryParams);
-  return store.meta.indices[entityName][query]?.[props.pageNumber ?? 0];
-};
 
 const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
@@ -139,24 +132,24 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
     props =>
       createSelector(
         [
-          pageMetaSelector(entityName, props),
+          indexMetaSelector(entityName, entityIndexParams(entityName, props)),
           entitySelector(entityName),
           entityIndexFetchFailed(entityIndexParams(entityName, props))
         ],
-        (pageMeta, entitiesStore, fetchFailure) => {
+        (indexMeta, entitiesStore, fetchFailure) => {
           // For now, we don't have filter support, so all search queries should be ""
           const refetch = () => ApiSlice.pruneIndex(entityName, "");
-          if (pageMeta == null) return { refetch, fetchFailure };
+          if (indexMeta == null) return { refetch, fetchFailure };
 
           const entities = [] as T[];
-          for (const id of pageMeta.ids) {
+          for (const id of indexMeta.ids) {
             // If we're missing any of the entities we're supposed to have, return nothing so the
             // index endpoint is queried again.
             if (entitiesStore[id] == null) return { refetch, fetchFailure };
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, indexTotal: pageMeta.meta.total, refetch, fetchFailure };
+          return { entities, indexTotal: indexMeta.page?.total, refetch, fetchFailure };
         }
       )
   )
