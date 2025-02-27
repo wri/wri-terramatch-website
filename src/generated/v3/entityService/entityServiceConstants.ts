@@ -5,7 +5,9 @@ export class DemographicCollections {
     "paid-nursery-operations",
     "volunteer-nursery-operations",
     "paid-other-activities",
-    "volunteer-other-activities"
+    "volunteer-other-activities",
+    "direct",
+    "convergence"
   ] as const;
   public static readonly WORKDAYS_PROJECT_PPC = [
     "paid-project-management",

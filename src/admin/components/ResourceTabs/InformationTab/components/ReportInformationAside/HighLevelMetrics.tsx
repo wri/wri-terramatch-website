@@ -16,17 +16,17 @@ type CollectionValue = Record<DemographicResource, readonly string[] | undefined
 };
 const COLLECTIONS: Record<TotalsType, CollectionValue> = {
   workdays: {
-    projectReport: DemographicCollections.WORKDAYS_PROJECT_PPC,
+    projectReport: DemographicCollections.WORKDAYS_PROJECT,
     siteReport: DemographicCollections.WORKDAYS_SITE,
     demographicType: "workdays"
   },
   workdaysPaid: {
-    projectReport: DemographicCollections.WORKDAYS_PROJECT_PPC.filter(c => c.startsWith("paid-")),
+    projectReport: DemographicCollections.WORKDAYS_PROJECT.filter(c => c.startsWith("paid-")),
     siteReport: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("paid-")),
     demographicType: "workdays"
   },
   workdaysVolunteer: {
-    projectReport: DemographicCollections.WORKDAYS_PROJECT_PPC.filter(c => c.startsWith("volunteer-")),
+    projectReport: DemographicCollections.WORKDAYS_PROJECT.filter(c => c.startsWith("volunteer-")),
     siteReport: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-")),
     demographicType: "workdays"
   },

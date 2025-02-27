@@ -280,6 +280,8 @@ export type DemographicCollections = {
    * @example volunteer-nursery-operations
    * @example paid-other-activities
    * @example volunteer-other-activities
+   * @example direct
+   * @example convergence
    */
   WORKDAYS_PROJECT: string[];
   /**
