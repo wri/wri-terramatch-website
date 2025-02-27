@@ -274,9 +274,14 @@ export type DemographicEntryDto = {
  */
 export type DemographicCollections = {
   /**
-   * @example {"workdays":{"paid-project-management":"Paid Project Management","volunteer-project-management":"Volunteer Project Management","paid-nursery-operations":"Paid Nursery Operations","volunteer-nursery-operations":"Volunteer Nursery Operations","paid-other-activities":"Paid Other Activities","volunteer-other-activities":"Volunteer Other Activities","direct":"Direct Workdays","convergence":"Convergence Workdays","paid-site-establishment":"Paid Site Establishment","volunteer-site-establishment":"Volunteer Site Establishment","paid-planting":"Paid Planting","volunteer-planting":"Volunteer Planting","paid-site-maintenance":"Paid Site Maintenance","volunteer-site-maintenance":"Volunteer Site Maintenance","paid-site-monitoring":"Paid Site Monitoring","volunteer-site-monitoring":"Volunteer Site Monitoring"},"restoration-partners":{"direct-income":"Direct Income","indirect-income":"Indirect Income","direct-benefits":"Direct In-kind Benefits","indirect-benefits":"Indirect In-kind Benefits","direct-conservation-payments":"Direct Conservation Agreement Payments","indirect-conservation-payments":"Indirect Conservation Agreement Payments","direct-market-access":"Direct Increased Market Access","indirect-market-access":"Indirect Increased Market Access","direct-capacity":"Direct Increased Capacity","indirect-capacity":"Indirect Increased Capacity","direct-training":"Direct Training","indirect-training":"Indirect Training","direct-land-title":"Direct Newly Secured Land Title","indirect-land-title":"Indirect Newly Secured Land Title","direct-livelihoods":"Direct Traditional Livelihoods or Customer Rights","indirect-livelihoods":"Indirect Traditional Livelihoods or Customer Rights","direct-productivity":"Direct Increased Productivity","indirect-productivity":"Indirect Increased Productivity","direct-other":"Direct Other","indirect-other":"Indirect Other"},"jobs":{"full-time":"Full-time","part-time":"Part-time"},"volunteers":{"volunteer":"Volunteer"},"all-beneficiaries":{"all":"All Beneficiaries"},"training-beneficiaries":{"training":"Training Beneficiaries"}}
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
    */
-  COLLECTION_TITLES: Record<string, any>;
+  WORKDAYS_PROJECT: string[];
   /**
    * @example paid-project-management
    * @example volunteer-project-management
