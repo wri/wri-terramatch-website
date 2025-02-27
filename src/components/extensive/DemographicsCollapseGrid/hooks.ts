@@ -107,16 +107,13 @@ export type CollectionsTotalProps = {
 export default function useCollectionsTotal({ entity, uuid, demographicType, collections }: CollectionsTotalProps) {
   const [, { associations: demographics }] = useDemographics({ entity, uuid });
   const { framework } = useFrameworkContext();
-  return useMemo(() => {
-    if (demographics == null) return;
-
-    const counts = demographics
-      .filter(demographic => demographic.type === demographicType && collections.includes(demographic.collection))
-      .reduce(
-        (counts, { entries }) => entries.reduce(addToCounts, counts),
-        getInitialCounts(framework, demographicType)
-      );
-
-    return framework === Framework.HBF ? Math.max(counts.gender, counts.age, counts.caste) : counts.gender;
-  }, [collections, demographics, framework, demographicType]);
+  return useMemo(
+    () =>
+      demographics == null
+        ? undefined
+        : demographics
+            .filter(demographic => demographic.type === demographicType && collections.includes(demographic.collection))
+            .reduce((total, { entries }) => total + calculateTotals(entries, framework, demographicType).total, 0),
+    [collections, demographics, framework, demographicType]
+  );
 }
