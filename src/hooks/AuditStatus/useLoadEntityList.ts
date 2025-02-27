@@ -4,6 +4,7 @@ import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTa
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import { POLYGON, SITE } from "@/constants/entities";
 import {
+  fetchGetV2ProjectsUUIDNurseries,
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2ProjectsUUIDSites,
   fetchGetV2SitesSitePolygon
@@ -51,12 +52,17 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
     }
   };
 
-  const unnamedTitleAndSort = (list: EntityListItem[], nameProperty: keyof EntityListItem) => {
+  const unnamedTitleAndSort = (
+    list: EntityListItem[],
+    nameProperty: keyof EntityListItem,
+    entityType: AuditLogEntity
+  ) => {
     const unnamedItems = list?.map((item: EntityListItem) => {
       if (!item[nameProperty]) {
         return {
           ...item,
-          [nameProperty]: nameProperty === "poly_name" ? "Unnamed Polygon" : "Unnamed Site"
+          [nameProperty]:
+            entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
         };
       }
       return item;
@@ -71,7 +77,12 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
 
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
-    const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2ProjectsUUIDSitePolygonsAll;
+    const fetchToProject =
+      entityType == SITE
+        ? fetchGetV2ProjectsUUIDSites
+        : entityType == POLYGON
+        ? fetchGetV2ProjectsUUIDSitePolygonsAll
+        : fetchGetV2ProjectsUUIDNurseries;
     const fetchAction = isSiteProjectLevel ? fetchToProject : fetchGetV2SitesSitePolygon;
     const params = isSiteProjectLevel ? { uuid: entityUuid } : { site: entityUuid };
     const res = await fetchAction({
@@ -90,7 +101,7 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
         poly_id: item?.poly_id
       };
     };
-    const _list = unnamedTitleAndSort(_entityList, nameProperty);
+    const _list = unnamedTitleAndSort(_entityList, nameProperty, entityType);
     setEntityListItem(_list?.map((item: EntityListItem) => transformEntityListItem(item)));
     if (_list?.length > 0) {
       if (isFirstLoad.current) {

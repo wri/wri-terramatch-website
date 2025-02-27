@@ -62,7 +62,11 @@ const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus,
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle}
+                    setButtonToggle={setButtonToggle}
+                    framework={project?.frameworkKey as string}
+                  />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
                   </When>
