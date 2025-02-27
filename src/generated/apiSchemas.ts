@@ -21017,17 +21017,8 @@ export type ProjectReportRead = {
   new_jobs_description?: string;
   new_volunteers?: number;
   volunteers_work_description?: string;
-  beneficiaries?: number;
   beneficiaries_description?: string;
-  beneficiaries_women?: number;
-  beneficiaries_men?: number;
-  beneficiaries_non_youth?: number;
-  beneficiaries_youth?: number;
-  beneficiaries_smallholder?: number;
-  beneficiaries_large_scale?: number;
-  beneficiaries_income_increase?: number;
   beneficiaries_income_increase_description?: string;
-  beneficiaries_skills_knowledge_increase?: number;
   beneficiaries_skills_knowledge_increase_description?: string;
   ethnic_indigenous_1?: number;
   ethnic_indigenous_2?: number;
