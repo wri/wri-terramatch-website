@@ -13,6 +13,7 @@ import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectReportBreadcrumbs from "@/pages/reports/project-report/components/ProjectReportBreadcrumbs";
 import ProjectReportHeader from "@/pages/reports/project-report/components/ProjectReportHeader";
 
+import AuditLog from "./tabs/AuditLog";
 import NurseryReportsTab from "./tabs/NurseryReports";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
@@ -109,6 +110,11 @@ const ProjectReportDetailPage = () => {
               key: "uploaded-files",
               title: t("Uploaded Files"),
               body: <UploadedFilesTab report={report} />
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog projectReport={report} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
