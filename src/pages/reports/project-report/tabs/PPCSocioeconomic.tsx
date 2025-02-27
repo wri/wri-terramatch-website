@@ -17,7 +17,7 @@ interface ReportOverviewTabProps {
   report: any;
 }
 
-type CollectionType = "workdays" | "restorationPartners" | "jobsPaid" | "jobsVolunteer";
+type CollectionType = "workdays" | "restorationPartners";
 
 interface DemographicsCardProps {
   report: any;
@@ -49,16 +49,6 @@ const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in CollectionType]: DemographicalTypeConf
     otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
     otherTitle: "Other Restoration Partners Description",
     otherDescriptionProp: "other_restoration_partners_description"
-  },
-  jobsPaid: {
-    demographicType: "jobs",
-    collections: DemographicCollections.JOBS_PROJECT,
-    titlePrefix: "Project Jobs"
-  },
-  jobsVolunteer: {
-    demographicType: "volunteers",
-    collections: DemographicCollections.VOLUNTEERS_PROJECT,
-    titlePrefix: "Project Volunteers"
   }
 };
 

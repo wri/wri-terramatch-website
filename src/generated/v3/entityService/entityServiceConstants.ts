@@ -46,4 +46,6 @@ export class DemographicCollections {
   public static readonly RESTORATION_PARTNERS_PROJECT_OTHER = "direct-other" as const;
   public static readonly JOBS_PROJECT = ["full-time", "part-time"] as const;
   public static readonly VOLUNTEERS_PROJECT = ["volunteer"] as const;
+  public static readonly BENEFICIARIES_PROJECT_ALL = ["all"] as const;
+  public static readonly BENEFICIARIES_PROJECT_TRAINING = ["training"] as const;
 }

@@ -31,9 +31,12 @@ const addToCounts = (counts: Dictionary<number>, { type, amount }: DemographicEn
 
 export function calculateTotals(entries: DemographicEntryDto[], framework: Framework, type: DemographicType) {
   const counts = entries.reduce(addToCounts, getInitialCounts(framework, type));
-  const isHBF = framework === Framework.HBF;
-  const total = isHBF ? counts.gender : Math.max(...Object.values(counts));
-  const complete = isHBF ? counts.gender > 0 : uniq(Object.values(counts)).length === 1;
+  const typeMap = getTypeMap(type, framework);
+  const balancedCounts = Object.entries(counts)
+    .filter(([type]) => typeMap[type].balanced)
+    .map(([, count]) => count);
+  const total = Math.max(...balancedCounts);
+  const complete = uniq(balancedCounts).length === 1;
 
   return { counts, total, complete };
 }

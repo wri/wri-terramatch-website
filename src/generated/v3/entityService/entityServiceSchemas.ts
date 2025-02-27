@@ -326,6 +326,8 @@ export type DemographicCollections = {
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
   JOBS_PROJECT: "full-time" | "part-time";
   VOLUNTEERS_PROJECT: "volunteer";
+  BENEFICIARIES_PROJECT_ALL: "all";
+  BENEFICIARIES_PROJECT_TRAINING: "training";
 };
 
 export type DemographicDto = {
@@ -338,7 +340,7 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
-  type: "workdays" | "restoration-partners" | "jobs" | "volunteers";
+  type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
   collection: string;
   /**
    * The English human-readable title for this collection
