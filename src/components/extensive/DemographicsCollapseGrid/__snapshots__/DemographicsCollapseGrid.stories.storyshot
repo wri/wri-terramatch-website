@@ -13,7 +13,7 @@ exports[`Storyshots Components/Extensive/DemographicsCollapse Complete Green 1`]
         className="text-18-bold"
         data-testid="txt"
       >
-        A. Site Establishment Paid - 90 Days
+        A. Site Establishment Paid - 90 Total Workdays
       </p>
       <div
         className="flex items-baseline gap-2"
@@ -59,7 +59,7 @@ exports[`Storyshots Components/Extensive/DemographicsCollapse Default 1`] = `
         className="text-18-bold"
         data-testid="txt"
       >
-        A. Site Establishment Paid - 210 Days
+        A. Site Establishment Paid - 210 Total Workdays
       </p>
       <div
         className="flex items-baseline gap-2"
@@ -91,7 +91,7 @@ exports[`Storyshots Components/Extensive/DemographicsCollapse In Progress Green 
         className="text-18-bold"
         data-testid="txt"
       >
-        A. Site Establishment Paid - 75 Days
+        A. Site Establishment Paid - 75 Total Workdays
       </p>
       <div
         className="flex items-baseline gap-2"
@@ -129,7 +129,7 @@ exports[`Storyshots Components/Extensive/DemographicsCollapse Not Started Green 
         className="text-18-bold"
         data-testid="txt"
       >
-        A. Site Establishment Paid - 0 Days
+        A. Site Establishment Paid - 0 Total Workdays
       </p>
       <div
         className="flex items-baseline gap-2"
@@ -167,7 +167,7 @@ exports[`Storyshots Components/Extensive/DemographicsCollapse Variant Narrow 1`]
         className="text-18-bold"
         data-testid="txt"
       >
-        A. Nursery Operations Volunteer - 220 Days
+        A. Nursery Operations Volunteer - 220 Total Workdays
       </p>
       <div
         className="flex items-baseline gap-2"
