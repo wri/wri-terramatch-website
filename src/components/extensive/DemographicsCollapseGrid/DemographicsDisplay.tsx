@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { kebabCase } from "lodash";
 import { FC } from "react";
 
 import { getDemographicTitle } from "@/components/extensive/DemographicsCollapseGrid/constants";
@@ -27,7 +28,7 @@ const DemographicsDisplay: FC<DemographicsDisplayProps> = ({
   variant = GRID_VARIANT_DEFAULT
 }) => {
   const t = useT();
-  const [loaded, { association: demographic }] = useDemographic({ entity, uuid, type, collection });
+  const [loaded, { association: demographic }] = useDemographic({ entity, uuid, type: kebabCase(type), collection });
   const title = t(getDemographicTitle(type, collection));
 
   return !loaded ? null : (

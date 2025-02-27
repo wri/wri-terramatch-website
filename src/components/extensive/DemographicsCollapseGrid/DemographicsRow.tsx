@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DEMOGRAPHIC_TYPES, DemographicGridVariantProps, DemographicType } from "./types";
+import { DemographicGridVariantProps, DemographicType, useDemographicLabels } from "./types";
 
 export interface DemographicsRowProps {
   demographicType: DemographicType;
@@ -55,7 +55,7 @@ const DemographicsRow = ({
     [onChange, amount]
   );
 
-  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[demographicType];
+  const { rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
 
   return (
     <>

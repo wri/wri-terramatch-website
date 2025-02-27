@@ -9,7 +9,7 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { DEMOGRAPHIC_TYPES, DemographicGridVariantProps, DemographicType, useEntryTypeDefinition } from "./types";
+import { DemographicGridVariantProps, DemographicType, useDemographicLabels, useEntryTypeDefinition } from "./types";
 
 export interface DemographicsSectionProps {
   demographicType: DemographicType;
@@ -76,7 +76,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
   const rowSpanCount = addNameLabel == null || onChange == null ? rows.length + 1 : rows.length + 2;
   const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
-  const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[demographicType];
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
 
   return (
     <>

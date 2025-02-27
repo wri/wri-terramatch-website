@@ -39,13 +39,13 @@ type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
 
 export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
 
-type DemographicalTypeProperties = {
+type DemographicLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
   rowLabelPlural: string;
 };
 
-export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypeProperties } = {
+const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = {
   workdays: {
     sectionLabel: "Total",
     rowLabelSingular: "Workday",
@@ -76,6 +76,22 @@ export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypePrope
     rowLabelSingular: "Beneficiary",
     rowLabelPlural: "Beneficiaries"
   }
+};
+
+export const useDemographicLabels = (type: DemographicType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => {
+    const props = DEMOGRAPHIC_LABELS[type];
+    if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
+      return {
+        ...props,
+        rowLabelSingular: "Partner",
+        rowLabelPlural: "Partners"
+      } as DemographicLabelProperties;
+    }
+
+    return props;
+  }, [framework, type]);
 };
 
 export interface DemographicsCollapseGridProps {
@@ -233,14 +249,14 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
     typeMap: JOBS_AGES,
     balanced: false
   },
-  caste: {
-    title: "Caste",
-    typeMap: CASTES,
-    balanced: false
-  },
   farmer: {
     title: "Farmer",
     typeMap: HBF_FARMERS,
+    balanced: false
+  },
+  caste: {
+    title: "Caste",
+    typeMap: CASTES,
     balanced: false
   }
 };
