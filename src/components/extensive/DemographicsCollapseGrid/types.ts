@@ -2,11 +2,21 @@ import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export type DemographicEntity = "project-reports" | "site-reports";
 
 export type Status = "complete" | "not-started" | "in-progress";
+
+export type WorkdayCollection =
+  | (typeof DemographicCollections.WORKDAYS_PROJECT)[number]
+  | (typeof DemographicCollections.WORKDAYS_SITE)[number];
+export type RestorationPartnerCollection = (typeof DemographicCollections.RESTORATION_PARTNERS_PROJECT)[number];
+export type JobsCollection = (typeof DemographicCollections.JOBS_PROJECT)[number];
+export type VolunteersCollection = (typeof DemographicCollections.VOLUNTEERS_PROJECT)[number];
+export type AllBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_ALL)[number];
+export type TrainingBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_TRAINING)[number];
 
 export interface DemographicGridVariantProps {
   header: string;

@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
-import { kebabCase } from "lodash";
 import { FC } from "react";
 
+import { getDemographicTitle } from "@/components/extensive/DemographicsCollapseGrid/constants";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import {
@@ -10,8 +10,6 @@ import {
   DemographicType
 } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { useDemographic } from "@/connections/EntityAssocation";
-import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DemographicsDisplayProps = {
   entity: DemographicEntity;
@@ -29,12 +27,11 @@ const DemographicsDisplay: FC<DemographicsDisplayProps> = ({
   variant = GRID_VARIANT_DEFAULT
 }) => {
   const t = useT();
-  const [, { association: demographic }] = useDemographic({ entity, uuid, type, collection });
-  const collectionTitles = DemographicCollections.COLLECTION_TITLES[kebabCase(type) as DemographicDto["type"]];
-  const title = t(collectionTitles?.[collection as keyof typeof collectionTitles] ?? "Unknown");
+  const [loaded, { association: demographic }] = useDemographic({ entity, uuid, type, collection });
+  const title = t(getDemographicTitle(type, collection));
 
-  return demographic == null ? null : (
-    <DemographicsCollapseGrid {...{ variant, type, title }} entries={demographic.entries} />
+  return !loaded ? null : (
+    <DemographicsCollapseGrid {...{ variant, type, title }} entries={demographic?.entries ?? []} />
   );
 };
 
