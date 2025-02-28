@@ -109,16 +109,14 @@ const AuditLog = ({
 
   useValueChanged(isLoadingReports, () => {
     if (!isLoadingReports) {
-      console.log("test");
-      setSelectedReport(statusActionsMap[buttonToggle].list?.[0] ?? null);
+      setSelectedReport(statusActionsMap?.[buttonToggle]?.list?.[0] ?? null);
     }
     refetch();
   });
 
   useValueChanged(buttonToggle, () => {
     if (statusActionsMap[buttonToggle].list) {
-      console.log("test1");
-      setSelectedReport(statusActionsMap[buttonToggle].list[0] ?? null);
+      setSelectedReport(statusActionsMap?.[buttonToggle]?.list?.[0] ?? null);
     }
     refetch();
   });
