@@ -56,7 +56,7 @@ const AuditLog = ({
       list: reportsResponse?.data
         ?.filter(entity => entity.type == "project-report")
         .map(report => ({
-          title: report.report_title,
+          title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
           uuid: report.uuid,
           status: report.status,
           value: report.uuid,
@@ -69,7 +69,7 @@ const AuditLog = ({
       list: reportsResponse?.data
         ?.filter(entity => entity.type == "site-report")
         .map(report => ({
-          title: report.report_title,
+          title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
           uuid: report.uuid,
           status: report.status,
           value: report.uuid,
@@ -82,7 +82,7 @@ const AuditLog = ({
       list: reportsResponse?.data
         ?.filter(entity => entity.type == "nursery-report")
         .map(report => ({
-          title: report.report_title,
+          title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
           uuid: report.uuid,
           status: report.status,
           value: report.uuid,
@@ -107,18 +107,18 @@ const AuditLog = ({
     entityLevel: buttonToggle
   });
 
-  useValueChanged(isLoadingReports, async () => {
+  useValueChanged(isLoadingReports, () => {
     if (!isLoadingReports) {
       console.log("test");
-      await setSelectedReport(statusActionsMap[buttonToggle].list?.[0] ?? null);
+      setSelectedReport(statusActionsMap[buttonToggle].list?.[0] ?? null);
     }
     refetch();
   });
 
-  useValueChanged(buttonToggle, async () => {
+  useValueChanged(buttonToggle, () => {
     if (statusActionsMap[buttonToggle].list) {
       console.log("test1");
-      await setSelectedReport(statusActionsMap[buttonToggle].list[0] ?? null);
+      setSelectedReport(statusActionsMap[buttonToggle].list[0] ?? null);
     }
     refetch();
   });
