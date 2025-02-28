@@ -1,4 +1,4 @@
-import { Dictionary, findLastIndex, uniq } from "lodash";
+import { Dictionary, findLastIndex, kebabCase, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { useDemographics } from "@/connections/EntityAssocation";
@@ -31,9 +31,12 @@ const addToCounts = (counts: Dictionary<number>, { type, amount }: DemographicEn
 
 export function calculateTotals(entries: DemographicEntryDto[], framework: Framework, type: DemographicType) {
   const counts = entries.reduce(addToCounts, getInitialCounts(framework, type));
-  const isHBF = framework === Framework.HBF;
-  const total = isHBF ? counts.gender : Math.max(...Object.values(counts));
-  const complete = isHBF ? counts.gender > 0 : uniq(Object.values(counts)).length === 1;
+  const typeMap = getTypeMap(type, framework);
+  const balancedCounts = Object.entries(counts)
+    .filter(([type]) => typeMap[type].balanced)
+    .map(([, count]) => count);
+  const total = Math.max(...balancedCounts);
+  const complete = uniq(balancedCounts).length === 1;
 
   return { counts, total, complete };
 }
@@ -105,15 +108,11 @@ export default function useCollectionsTotal({ entity, uuid, demographicType, col
   const [, { associations: demographics }] = useDemographics({ entity, uuid });
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    if (demographics == null) return;
-
-    const counts = demographics
-      .filter(demographic => demographic.type === demographicType && collections.includes(demographic.collection))
-      .reduce(
-        (counts, { entries }) => entries.reduce(addToCounts, counts),
-        getInitialCounts(framework, demographicType)
-      );
-
-    return framework === Framework.HBF ? Math.max(counts.gender, counts.age, counts.caste) : counts.gender;
+    const apiType = kebabCase(demographicType);
+    return demographics == null
+      ? undefined
+      : demographics
+          .filter(demographic => demographic.type === apiType && collections.includes(demographic.collection))
+          .reduce((total, { entries }) => total + calculateTotals(entries, framework, demographicType).total, 0);
   }, [collections, demographics, framework, demographicType]);
 }

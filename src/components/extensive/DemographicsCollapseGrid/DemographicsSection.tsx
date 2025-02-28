@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -9,7 +9,7 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { DEMOGRAPHIC_TYPES, DemographicGridVariantProps, DemographicType, useEntryTypeDefinition } from "./types";
+import { DemographicGridVariantProps, DemographicType, useDemographicLabels, useEntryTypeDefinition } from "./types";
 
 export interface DemographicsSectionProps {
   demographicType: DemographicType;
@@ -76,10 +76,10 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
   // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
   const rowSpanCount = addNameLabel == null || onChange == null ? rows.length + 1 : rows.length + 2;
   const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
-  const { sectionLabel, rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[demographicType];
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
 
   return (
-    <Fragment>
+    <>
       <div
         className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
           [variant.roundedTl]: position === "first",
@@ -93,7 +93,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
 
       <div className={classNames("bg-white", variant.secondCol)}>
         <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
-          {t(sectionLabel)}
+          {t(`${sectionLabel} ${rowLabelPlural}`)}
         </Text>
       </div>
       <div
@@ -161,7 +161,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
         </div>
         <div className={classNames("bg-white", variant.roundedBr, variant.tertiaryCol)} />
       </When>
-    </Fragment>
+    </>
   );
 };
 

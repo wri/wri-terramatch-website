@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DEMOGRAPHIC_TYPES, DemographicGridVariantProps, DemographicType } from "./types";
+import { DemographicGridVariantProps, DemographicType, useDemographicLabels } from "./types";
 
 export interface DemographicsRowProps {
   demographicType: DemographicType;
@@ -55,7 +55,7 @@ const DemographicsRow = ({
     [onChange, amount]
   );
 
-  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHIC_TYPES[demographicType];
+  const { rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
 
   return (
     <>
@@ -92,7 +92,7 @@ const DemographicsRow = ({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onChange={onAmountChange}
-            className="text-14-light hover:shadow-blue-border-input w-16 border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
+            className="text-14-light hover:shadow-blue-border-input border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
           />
           <When condition={usesName}>
             <div className="absolute ml-20 cursor-pointer opacity-30 hover:opacity-60" onClick={onDelete}>

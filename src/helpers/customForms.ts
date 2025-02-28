@@ -455,49 +455,15 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "workdays": {
+    case "workdays":
+    case "restorationPartners":
+    case "jobs":
+    case "volunteers":
+    case "allBeneficiaries":
+    case "trainingBeneficiaries": {
       return {
         ...sharedProps,
-        type: FieldType.WorkdaysTable,
-
-        fieldProps: {
-          required,
-          entity,
-          collection: question.collection
-        }
-      };
-    }
-
-    case "restorationPartners": {
-      return {
-        ...sharedProps,
-        type: FieldType.RestorationPartnersTable,
-
-        fieldProps: {
-          required,
-          entity,
-          collection: question.collection
-        }
-      };
-    }
-
-    case "jobs": {
-      return {
-        ...sharedProps,
-        type: FieldType.JobsTable,
-
-        fieldProps: {
-          required,
-          entity,
-          collection: question.collection
-        }
-      };
-    }
-
-    case "volunteers": {
-      return {
-        ...sharedProps,
-        type: FieldType.VolunteersTable,
+        type: question.input_type,
 
         fieldProps: {
           required,
@@ -685,7 +651,9 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "workdays":
     case "restorationPartners":
     case "jobs":
-    case "volunteers": {
+    case "volunteers":
+    case "allBeneficiaries":
+    case "trainingBeneficiaries": {
       validation = yup
         .array()
         .min(0)

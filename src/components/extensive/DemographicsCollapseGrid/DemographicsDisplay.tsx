@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
+import { kebabCase } from "lodash";
 import { FC } from "react";
 
+import { getDemographicTitle } from "@/components/extensive/DemographicsCollapseGrid/constants";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import {
@@ -26,14 +28,11 @@ const DemographicsDisplay: FC<DemographicsDisplayProps> = ({
   variant = GRID_VARIANT_DEFAULT
 }) => {
   const t = useT();
-  const [, { association: demographic }] = useDemographic({ entity, uuid, type, collection });
+  const [loaded, { association: demographic }] = useDemographic({ entity, uuid, type: kebabCase(type), collection });
+  const title = t(getDemographicTitle(type, collection));
 
-  return demographic == null ? null : (
-    <DemographicsCollapseGrid
-      {...{ variant, type }}
-      title={t(demographic.collectionTitle)}
-      entries={demographic.entries}
-    />
+  return !loaded ? null : (
+    <DemographicsCollapseGrid {...{ variant, type, title }} entries={demographic?.entries ?? []} />
   );
 };
 
