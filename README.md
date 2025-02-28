@@ -57,7 +57,7 @@ When adding a new **service** app to the v3 API:
 * Follow directions below for all namespaces and resources in the new service
 
 When adding a new **namespace** to the V3 API:
-* In `geneated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
+* In `generated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
 
 When adding a new **resource** to the v3 API:
 * The resource needs to be specified in shape of the redux API store. In `apiSlice.ts`, add the new 

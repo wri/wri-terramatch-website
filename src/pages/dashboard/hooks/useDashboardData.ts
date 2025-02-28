@@ -213,10 +213,11 @@ export const useDashboardData = (filters: any) => {
     const finalFilters = {
       status: ["published"],
       country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organizationType: filters.organizations ? filters.organizations : []
+      organizationType: filters.organizations ? filters.organizations : [],
+      uuid: filters.uuid
     };
     return createQueryParams(finalFilters);
-  }, [filters.country?.country_slug, filters.organizations]);
+  }, [filters.country?.country_slug, filters.organizations, filters.uuid]);
 
   const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
     queryParams: queryString as any
@@ -228,13 +229,17 @@ export const useDashboardData = (filters: any) => {
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: story.content,
+        content: story?.content ? JSON.parse(story.content) : "",
         category: story.category,
         thumbnail: story.thumbnail?.url ?? "",
         organization: {
           name: story.organization?.name ?? "",
           category: story.category,
-          country: story.organization?.countries ?? "",
+          country:
+            story.organization?.countries?.length > 0
+              ? story.organization.countries.map((c: any) => c.label).join(", ")
+              : "No country",
+          countries_data: story.organization?.countries ?? [],
           facebook_url: story.organization?.facebook_url ?? "",
           instagram_url: story.organization?.instagram_url ?? "",
           linkedin_url: story.organization?.linkedin_url ?? "",

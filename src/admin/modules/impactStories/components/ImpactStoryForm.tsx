@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { ReferenceInput, required } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -12,7 +12,9 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useOnMount } from "@/hooks/useOnMount";
 
 import modules from "../..";
 import { useImpactStoryForm } from "../hooks/useImpactStoryForm";
@@ -44,8 +46,24 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
   const { openModal } = useModalContext();
-  const { getValues } = useFormContext();
+  const { getValues, trigger } = useFormContext();
+  const { showLoader, hideLoader } = useLoading();
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [organizationUuid, setOrganizationUuid] = useState(undefined);
 
+  useEffect(() => {
+    setTitle(initialValues.title);
+    setDate(initialValues.date);
+    setOrganizationUuid(initialValues.orgUuid);
+  }, [initialValues]);
+
+  useEffect(() => {
+    handlers.handleTitleChange(title);
+    handlers.handleDateChange(date);
+  }, [handlers, title, date]);
+
+  useOnMount(() => hideLoader);
   const handlePreviewClick = () => {
     const formValues = getValues();
     const previewData = {
@@ -61,9 +79,12 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           ? formValues?.organization?.name
           : formValues?.data?.organization.name ?? "",
         category: formValues?.category ? formValues?.category : formValues?.data?.category,
-        country: formValues?.organization?.countries
-          ? formValues?.organization?.countries
-          : formValues?.data?.organization?.countries,
+        country:
+          formValues?.organization?.countries?.length > 0
+            ? formValues.organization.countries.map((c: any) => c.label).join(", ")
+            : formValues?.data?.organization?.countries?.length > 0
+            ? formValues.data.organization.countries.map((c: any) => c.label).join(", ")
+            : "No country",
         facebook_url: formValues?.organization?.facebook_url
           ? formValues?.organization?.facebook_url
           : formValues?.data?.organization?.facebook_url,
@@ -82,6 +103,14 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
+  const handleSave = async (status: "draft" | "published") => {
+    const isValid = await trigger();
+    if (!isValid) {
+      return;
+    }
+    showLoader();
+    handlers.handleStatusChange(status);
+  };
   return (
     <div className="impact-story-form w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
@@ -94,32 +123,33 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             label="Title of Story"
             name="title"
             type="text"
-            defaultValue={initialValues.title}
+            value={title}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
-            onChange={e => handlers.handleTitleChange(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             required
           />
           <Input
             label="Date"
             name="date"
             type="date"
-            defaultValue={initialValues.date}
+            value={date}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
-            onChange={e => handlers.handleDateChange(e.target.value)}
+            onChange={e => setDate(e.target.value)}
             required
           />
         </div>
 
         <StyledReferenceInput label="Organization Details">
-          <ReferenceInput
-            source="organization.uuid"
-            reference={modules.organisation.ResourceName}
-            defaultValue={initialValues.orgUuid}
-            required
-          >
-            <StyledAutocompleteInput optionText="name" fullWidth label={false} placeholder="Select an organization" />
+          <ReferenceInput source="organization.uuid" reference={modules.organisation.ResourceName} required>
+            <StyledAutocompleteInput
+              optionText="name"
+              fullWidth
+              label={false}
+              placeholder="Select an organization"
+              defaultValue={organizationUuid}
+            />
           </ReferenceInput>
         </StyledReferenceInput>
 
@@ -175,13 +205,13 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             </Button>
           )}
           <div className="ml-auto flex items-center gap-x-2">
-            <Button variant="white-border" onClick={() => handlers.handleStatusChange("draft")}>
+            <Button variant="white-border" onClick={() => handleSave("draft")}>
               Save as draft
             </Button>
             <Button type="button" variant="white-border" onClick={handlePreviewClick}>
               Preview
             </Button>
-            <Button variant="primary" onClick={() => handlers.handleStatusChange("published")}>
+            <Button variant="primary" onClick={() => handleSave("published")}>
               Publish
             </Button>
           </div>

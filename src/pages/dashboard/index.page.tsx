@@ -23,7 +23,7 @@ import {
 } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
-import ContentOverview from "./components/ContentOverview";
+import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
 import DashboardBreadcrumbs from "./components/DashboardBreadcrumbs";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
@@ -293,6 +293,13 @@ const Dashboard = () => {
   const DATA_ACTIVE_COUNTRY = mapActiveProjects();
   const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = mapActiveProjects(filters.uuid);
 
+  const getOrganizationByUuid = (uuid: string) => {
+    const project = activeProjects
+      ? activeProjects.find((project: any) => project.uuid === uuid)
+      : "Unknown Organization";
+    return project?.organisation;
+  };
+
   const parseJobCreatedByType = (data: any, type: string) => {
     if (!data) return { type, chartData: [] };
 
@@ -333,6 +340,16 @@ const Dashboard = () => {
   const projectCounts = {
     total_enterprise_count: totalSectionHeader?.total_enterprise_count,
     total_non_profit_count: totalSectionHeader?.total_non_profit_count
+  };
+  const getTooltipText = () => {
+    if (filters.country.id === 0) {
+      return ACTIVE_COUNTRIES_TOOLTIP;
+    } else if (DATA_ACTIVE_COUNTRY.length > 0) {
+      return ACTIVE_PROJECTS_TOOLTIP;
+    } else if (transformedStories.length > 0) {
+      return IMPACT_STORIES_TOOLTIP;
+    }
+    return NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS;
   };
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
@@ -441,8 +458,10 @@ const Dashboard = () => {
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
+                  {t(`Organization: ${getOrganizationByUuid(filters.uuid)}`)}
+                  <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Organization: ${
+                    `Type: ${
                       ORGANIZATIONS_TYPES[
                         dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
                       ]
@@ -491,7 +510,7 @@ const Dashboard = () => {
             title={t("Number of Trees Planted by Year")}
             type="toggle"
             secondOptionsData={dataToggle}
-            isProjectView={!!filters.uuid}
+            shouldShowOnlyOneLine={!!filters.uuid || filters.organizations.length === 1}
             classNameBody="ml-[-20px] lg:ml-[-15px]"
             data={{}}
             dataForChart={dashboardRestorationGoalData}
@@ -624,7 +643,7 @@ const Dashboard = () => {
           filters.country.id === 0
             ? "ACTIVE COUNTRIES"
             : filters.uuid
-            ? `Other Projects in ${filters?.country?.data?.label}`
+            ? `OTHER PROJECTS IN ${filters?.country?.data?.label.toUpperCase()}`
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
@@ -632,13 +651,7 @@ const Dashboard = () => {
           dashboardVolunteersSurvivalRate,
           hectaresUnderRestoration
         )}
-        textTooltipTable={t(
-          filters.country.id === 0
-            ? ACTIVE_COUNTRIES_TOOLTIP
-            : DATA_ACTIVE_COUNTRY.length > 0
-            ? ACTIVE_PROJECTS_TOOLTIP
-            : NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS
-        )}
+        textTooltipTable={t(getTooltipText())}
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}

@@ -27,9 +27,14 @@ const QuickActions: FC = () => {
       }
     }).then((response: any) => {
       if (entity === "shapefiles") {
-        const jsonString = JSON.stringify(response, null, 2);
-        const fileBlob = new Blob([jsonString], { type: "application/geo+json" });
-        downloadFileBlob(fileBlob, `${record.name}_polygons.geojson`);
+        const exportName = `${record.name}_polygons.geojson`;
+        if (response instanceof Blob) {
+          downloadFileBlob(response, exportName);
+        } else {
+          const jsonString = JSON.stringify(response, null, 2);
+          const fileBlob = new Blob([jsonString], { type: "application/geo+json" });
+          downloadFileBlob(fileBlob, exportName);
+        }
       } else {
         downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
       }
@@ -66,7 +71,7 @@ const QuickActions: FC = () => {
 
       <Stack gap={3}>
         <Labeled label="Total Sites" sx={inlineLabelSx}>
-          <NumberField source="total_sites" />
+          <NumberField source="totalSites" />
         </Labeled>
         <Button variant="outlined" onClick={() => handleNavigate("site")}>
           View Sites
@@ -83,7 +88,7 @@ const QuickActions: FC = () => {
       <ContextCondition frameworksHide={[Framework.PPC]}>
         <Stack gap={3}>
           <Labeled label="Total Nurseries" sx={inlineLabelSx}>
-            <NumberField source="total_nurseries" />
+            <NumberField source="totalNurseries" />
           </Labeled>
           <Button variant="outlined" onClick={() => handleNavigate("nursery")}>
             View Nurseries
@@ -97,10 +102,10 @@ const QuickActions: FC = () => {
 
       <Stack gap={3}>
         <Labeled label="Total Project Reports" sx={inlineLabelSx}>
-          <NumberField source="total_project_reports" />
+          <NumberField source="totalProjectReports" />
         </Labeled>
         <Labeled label="Total Overdue Reports" sx={inlineLabelSx}>
-          <NumberField source="total_overdue_reports" />
+          <NumberField source="totalOverdueReports" />
         </Labeled>
         <Button variant="outlined" onClick={() => handleNavigate("projectReport")}>
           View Reports

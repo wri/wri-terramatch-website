@@ -2,7 +2,6 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -40,7 +39,10 @@ const ImpactStoryLanding = () => {
     organization: {
       name: data?.data?.organization?.name,
       category: data?.data?.category ? data?.data?.category : [],
-      country: data?.data?.organization?.countries,
+      country:
+        data?.data?.organization?.countries?.length > 0
+          ? data?.data?.organization.countries.map((c: any) => c.label).join(", ")
+          : "No country",
       facebook_url: data?.data?.organization?.facebook_url,
       instagram_url: data?.data?.organization?.instagram_url,
       linkedin_url: data?.data?.organization?.linkedin_url,
@@ -99,15 +101,6 @@ const ImpactStoryLanding = () => {
             <Text variant="text-16" className="mt-6 leading-8 text-darkCustom" containHtml>
               {transformedData.content}
             </Text>
-            <When condition={transformedData.thumbnail.url}>
-              <div className="mt-8">
-                <img
-                  src={transformedData.thumbnail.url}
-                  alt={transformedData.title}
-                  className="h-[45vh] w-full rounded-2xl lg:h-[50vh] mobile:h-[216px]"
-                />
-              </div>
-            </When>
           </div>
         </div>
       </div>

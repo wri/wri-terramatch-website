@@ -14,7 +14,7 @@ import {
   ParameterObject,
   PathItemObject
 } from "openapi3-ts";
-import ts from "typescript";
+import ts, { ClassElement, Expression, PropertyAssignment } from "typescript";
 
 const f = ts.factory;
 
@@ -134,11 +134,107 @@ for (const [service, baseUrl] of Object.entries(SERVICES)) {
       const { schemasFiles } = await generateSchemaTypes(context, { filenamePrefix: name });
       await generateFetchers(context, { filenamePrefix: name, schemasFiles });
       await generatePendingPredicates(context, { filenamePrefix: name });
+      await generateConstants(context, { filenamePrefix: name });
     }
   };
 }
 
 export default defineConfig(config);
+
+const generateLiteral = (value: unknown) => {
+  if (_.isString(value)) return f.createStringLiteral(value);
+  else if (_.isNumber(value)) return f.createNumericLiteral(value);
+  else if (_.isArray(value)) {
+    const literals: Expression[] = [];
+    value.forEach(member => {
+      const literal = generateLiteral(member);
+      if (literal != null) literals.push(literal);
+    });
+    return f.createArrayLiteralExpression(literals, true);
+  } else if (_.isObject(value)) {
+    const properties: PropertyAssignment[] = [];
+    Object.entries(value).forEach(([key, value]) => {
+      const childLiteral = generateLiteral(value);
+      const name = key.includes("-") ? f.createStringLiteral(key) : key;
+      if (childLiteral != null) properties.push(f.createPropertyAssignment(name, childLiteral));
+    });
+    return f.createObjectLiteralExpression(properties, true);
+  }
+};
+
+const generateConstants = async (context: Context, config: ConfigBase) => {
+  const sourceFile = ts.createSourceFile("index.ts", "", ts.ScriptTarget.Latest);
+
+  const printer = ts.createPrinter({
+    newLine: ts.NewLineKind.LineFeed,
+    removeComments: false
+  });
+
+  const printNodes = (nodes: ts.Node[]) =>
+    nodes
+      .map((node: ts.Node, i, nodes) => {
+        return (
+          printer.printNode(ts.EmitHint.Unspecified, node, sourceFile) +
+          (ts.isJSDoc(node) || (ts.isImportDeclaration(node) && nodes[i + 1] && ts.isImportDeclaration(nodes[i + 1]))
+            ? ""
+            : "\n")
+        );
+      })
+      .join("\n");
+
+  const filenamePrefix = c.snake(config.filenamePrefix ?? context.openAPIDocument.info.title) + "-";
+  const formatFilename = config.filenameCase ? c[config.filenameCase] : c.camel;
+  const filename = formatFilename(filenamePrefix + "-constants");
+  const nodes: ts.Node[] = [];
+
+  Object.entries(context.openAPIDocument.components?.schemas ?? {}).forEach(([componentName, componentSchema]) => {
+    if (
+      isReferenceObject(componentSchema) ||
+      componentSchema?.description !== "CONSTANTS" ||
+      componentSchema?.properties == null
+    ) {
+      return;
+    }
+
+    const members: ClassElement[] = [];
+    Object.entries(componentSchema.properties).forEach(([propertyName, propertySchema]) => {
+      if (isReferenceObject(propertySchema) || propertySchema.type == null || propertySchema.example == null) return;
+
+      const literal = generateLiteral(propertySchema.example);
+      if (literal != null) {
+        members.push(
+          f.createPropertyDeclaration(
+            [
+              f.createModifier(ts.SyntaxKind.PublicKeyword),
+              f.createModifier(ts.SyntaxKind.StaticKeyword),
+              f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
+            ],
+            propertyName,
+            undefined,
+            undefined,
+            f.createAsExpression(literal, f.createTypeReferenceNode("const"))
+          )
+        );
+      }
+    });
+    nodes.push(
+      f.createClassExpression(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+        componentName,
+        undefined,
+        undefined,
+        members
+      )
+    );
+  });
+
+  if (nodes.length === 0) {
+    // If the file doesn't export anything, the build fails due to the `--isolatedModules` flag.
+    nodes.push(f.createExportAssignment(undefined, undefined, f.createObjectLiteralExpression(undefined, false)));
+  }
+
+  await context.writeFile(filename + ".ts", printNodes(nodes));
+};
 
 /**
  * Generates Connection predicates for checking if a given request is in progress or failed.

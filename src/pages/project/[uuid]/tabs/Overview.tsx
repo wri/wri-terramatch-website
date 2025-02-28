@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import Button from "@/components/elements/Button/Button";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
@@ -12,15 +11,15 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 
 interface ProjectOverviewTabProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
-  const router = useRouter();
 
   return (
     <PageBody>
@@ -32,7 +31,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               as={Link}
               variant="secondary"
               className="m-auto"
-              href={`/project/${router.query.uuid}?tab=goals`}
+              href={`/project/${project.uuid}?tab=goals`}
               shallow
             >
               {t("View all")}
@@ -50,7 +49,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               <Button
                 as={Link}
                 variant="secondary"
-                href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                href={`/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
                 {t("Add New Site")}
               </Button>

@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -22,8 +22,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
@@ -42,6 +45,8 @@ const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
   "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare.";
 const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
+export const IMPACT_STORIES_TOOLTIP =
+  "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
 
 interface RowData {
   country_slug: undefined;
@@ -90,6 +95,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
+  const { showLoader, hideLoader } = useLoading();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
@@ -97,25 +103,26 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  useEffect(() => {
+  useValueChanged(filters.country, () => {
     setSelectedCountry(filters.country.country_slug);
-  }, [filters.country]);
-  useEffect(() => {
-    setSelectedLandscapes(filters.landscapes || []);
-  }, [filters.landscapes]);
-  useEffect(() => {
+  });
+  useValueChanged(filters.landscapes, () => {
+    setSelectedLandscapes(filters.landscapes ?? []);
+  });
+  useValueChanged(filters.uuid, () => {
     setProjectUUID(filters.uuid);
-  }, [filters.uuid]);
+  });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
-  useEffect(() => {
+  useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
     }
-  }, [initialBbox]);
+  });
 
-  useEffect(() => {
+  useValueChanged(modalMapLoaded, () => {
     setModalLoading("modalExpand", modalMapLoaded);
-  }, [modalMapLoaded, setModalLoading]);
+  });
+
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
@@ -141,15 +148,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     {
       header: "Country",
       cell: (props: any) => {
-        const value = props.getValue().split("_");
+        const countries = props.row.original.organization.countries_data || [];
+        if (countries.length === 0) {
+          return <Text variant="text-14">-</Text>;
+        }
+
         return (
-          <div className="flex items-center gap-2">
-            <img src={`/flags/bj.svg`} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
-            <Text variant="text-14">{value[0]}</Text>
+          <div className="flex flex-wrap items-center gap-2">
+            {countries.map((country: any, index: number) => (
+              <div key={index} className="flex items-center gap-2">
+                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-cover" />
+                <Text variant="text-14">{country.label}</Text>
+              </div>
+            ))}
           </div>
         );
       },
-      accessorKey: "organization.country",
+      accessorKey: "organization.countries_data",
       enableSorting: true
     },
     {
@@ -166,10 +181,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       header: "",
       accessorKey: "link",
       enableSorting: false,
-      cell: ({ row }: { row: { original: { uuid: string } } }) => {
-        const uuid = row.original.uuid;
+      cell: ({ row }: { row: any }) => {
         const handleClick = () => {
-          ModalStoryOpen(uuid);
+          ModalStoryOpen(row.original);
         };
 
         return (
@@ -290,7 +304,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       <ModalExpand
         id="modalExpand"
         title={t("IMPACT STORIES")}
-        popUpContent={props.textTooltipTable}
+        popUpContent={t(IMPACT_STORIES_TOOLTIP)}
         closeModal={closeModal}
       >
         <div className="w-full px-6 mobile:px-4">
@@ -308,8 +322,41 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = (storyData: any) => {
-    openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
+  const ModalStoryOpen = async (storyData: any) => {
+    try {
+      showLoader();
+      const response: any = await fetchGetV2ImpactStoriesId({
+        pathParams: {
+          id: storyData.uuid
+        }
+      });
+      const parsedData = {
+        uuid: response.data.uuid,
+        title: response.data.title,
+        date: response.data.date,
+        content: JSON.parse(response.data.content),
+        category: response.data.category,
+        thumbnail: response.data.thumbnail || "",
+        organization: {
+          name: response.data.organization?.name ?? "",
+          category: response.data.category,
+          country:
+            response.data.organization?.countries?.length > 0
+              ? response.data.organization.countries.map((c: any) => c.label).join(", ")
+              : "No country",
+          facebook_url: response.data.organization?.facebook_url ?? "",
+          instagram_url: response.data.organization?.instagram_url ?? "",
+          linkedin_url: response.data.organization?.linkedin_url ?? "",
+          twitter_url: response.data.organization?.twitter_url ?? ""
+        },
+        status: response.data.status
+      };
+      hideLoader();
+      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
+    } catch (error) {
+      console.error("Error fetching story details:", error);
+      openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
+    }
   };
 
   const columnMobile = (columns as any[]).filter(
@@ -420,7 +467,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       </PageCard>
 
       <PageCard
-        className="border-0 px-4 py-6 mobile:order-6 mobile:px-0"
+        className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
         classNameSubTitle="mt-4"
         gap={6}
         isUserAllowed={isUserAllowed}
@@ -483,7 +530,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         isUserAllowed={props.isUserAllowed}
         subtitleMore={true}
         title={t("IMPACT STORIES")}
-        tooltip={" "}
+        tooltip={t(IMPACT_STORIES_TOOLTIP)}
+        widthTooltip="w-64 lg:w-72"
         tooltipTrigger="click"
         iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
         headerChildren={
@@ -504,33 +552,35 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <span className="text-gray-500">{t("Loading...")}</span>
           </div>
         ) : transformedStories.length > 0 ? (
-          <List
-            items={transformedStories}
-            render={item => (
-              <button
-                onClick={() => ModalStoryOpen(item)}
-                className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
-              >
-                <img
-                  src={item.thumbnail || "/images/no-image-available.png"}
-                  alt={item.title}
-                  className="h-20 w-20 rounded-md object-cover"
-                />
-                <div className="flex flex-col items-start gap-2">
-                  <Text variant="text-14-bold" className="text-left group-hover:text-primary mobile:leading-[normal]">
-                    {item.title}
-                  </Text>
-                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name} Organization
-                  </Text>
-                  <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                    <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
-                  </Text>
-                </div>
-              </button>
-            )}
-            className="flex flex-col gap-4"
-          />
+          <div className="-mr-2 max-h-[513px] overflow-scroll pr-2 lg:max-h-[520px] wide:max-h-[560px]">
+            <List
+              items={transformedStories}
+              render={item => (
+                <button
+                  onClick={() => ModalStoryOpen(item)}
+                  className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
+                >
+                  <img
+                    src={item.thumbnail || "/images/no-image-available.png"}
+                    alt={item.title}
+                    className="h-20 w-20 rounded-md object-cover"
+                  />
+                  <div className="flex flex-col items-start gap-2">
+                    <Text variant="text-14-bold" className="text-left group-hover:text-primary mobile:leading-[normal]">
+                      {item.title}
+                    </Text>
+                    <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name}
+                    </Text>
+                    <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
+                      <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                    </Text>
+                  </div>
+                </button>
+              )}
+              className="flex flex-col gap-4"
+            />
+          </div>
         ) : (
           <div className="flex h-48 items-center justify-center">
             <span className="text-gray-500">{t("No impact stories found")}</span>

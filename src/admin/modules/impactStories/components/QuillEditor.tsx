@@ -40,7 +40,8 @@ class QuillEditor extends Component<QuillEditorProps> {
             [{ list: "ordered" }, { list: "bullet" }],
             ["video"]
           ]
-        }
+        },
+        bounds: document.body
       });
 
       this.quill.on("text-change", () => {
@@ -57,8 +58,36 @@ class QuillEditor extends Component<QuillEditorProps> {
 
   render() {
     return (
-      <div className="quill-editor-container">
-        <div ref={this.editorRef} style={{ minHeight: "200px" }}></div>
+      <div
+        className="quill-editor-container relative"
+        style={{
+          position: "relative",
+          zIndex: 1
+        }}
+      >
+        <style>{`
+          .quill-editor-container .ql-tooltip {
+            z-index: 1000;
+            position: absolute;
+            left: 0 !important;
+          }
+          
+          .quill-editor-container .ql-editor {
+            min-height: 200px;
+          }
+          
+          .quill-editor-container .ql-container {
+            position: relative;
+          }
+          
+          .quill-editor-container .ql-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: white;
+          }
+        `}</style>
+        <div ref={this.editorRef}></div>
       </div>
     );
   }

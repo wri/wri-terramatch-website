@@ -22,6 +22,12 @@ export type ListDelayedJobsError = Fetcher.ErrorWrapper<{
 }>;
 
 export type ListDelayedJobsResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example delayedJobs
@@ -79,6 +85,12 @@ export type DelayedJobsFindError = Fetcher.ErrorWrapper<
 >;
 
 export type DelayedJobsFindResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example delayedJobs
@@ -150,6 +162,12 @@ export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
 >;
 
 export type BulkUpdateJobsResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example delayedJobs
@@ -177,3 +195,5 @@ export const bulkUpdateJobs = (variables: BulkUpdateJobsVariables, signal?: Abor
     ...variables,
     signal
   });
+
+export const operationsByTag = { delayedJobs: { listDelayedJobs, delayedJobsFind, bulkUpdateJobs } };

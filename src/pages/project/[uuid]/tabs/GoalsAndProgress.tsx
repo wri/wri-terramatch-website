@@ -17,11 +17,12 @@ import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 interface NaturalRegenerationItem {
@@ -41,265 +42,6 @@ export const LABEL_LEGEND = [
   {
     label: { key: "Regenerating", render: "Regenerating" },
     color: "bg-secondary-600"
-  }
-];
-
-export const dataTreeCount = [
-  {
-    name: ["Species scientific name", "tree"],
-    treeCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    treeCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCount: "10,350"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCount: "7,500"
-  },
-  {
-    name: ["Non-scientific name", "non-scientific"],
-    treeCount: "4,040"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCount: "3,200"
-  },
-  {
-    name: ["Species scientific name", "new"],
-    treeCount: "3,000"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCount: "0"
-  }
-];
-
-export const dataSeedCount = [
-  {
-    name: ["Species scientific name", "tree"],
-    seedCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    seedCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCount: "10,350"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCount: "7,500"
-  }
-];
-export const dataNonTreeCount = [
-  {
-    name: ["Species scientific name", "tree"],
-    nonTreeCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    nonTreeCount: "45,000"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    nonTreeCount: "10,350"
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    nonTreeCount: "7,500"
-  }
-];
-
-export const dataTreeCountSite = [
-  {
-    name: "Site Name",
-    treeCount: "2,500"
-  },
-  {
-    name: "Site Name",
-    treeCount: "1,850"
-  },
-  {
-    name: "Site Name",
-    treeCount: "1,000"
-  },
-  {
-    name: "Site Name",
-    treeCount: "960"
-  },
-  {
-    name: "Site Name",
-    treeCount: "620"
-  },
-  {
-    name: "Site Name",
-    treeCount: "450"
-  },
-  {
-    name: "Site Name",
-    treeCount: "300"
-  }
-];
-
-export const dataTreeCountGoal = [
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["45,0000", "90,000"]
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    treeCountGoal: ["35,350", "70,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["10,350", "35,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["7,500", "21,000"]
-  },
-  {
-    name: ["Non-scientific name", "tree"],
-    treeCountGoal: ["4,040", "15,300"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["3,200", "8,000"]
-  },
-  {
-    name: ["Species scientific name", "new"],
-    treeCountGoal: ["3,000", "5,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["1,000", "4,500"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    treeCountGoal: ["0", "3,000"]
-  }
-];
-
-export const dataSpeciesCountGoal = [
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["45,0000", "90,000"]
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    speciesCountGoal: ["35,350", "70,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["10,350", "35,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["7,500", "21,000"]
-  },
-  {
-    name: ["Non-scientific name", "tree"],
-    speciesCountGoal: ["4,040", "15,300"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["3,200", "8,000"]
-  },
-  {
-    name: ["Species scientific name", "new"],
-    speciesCountGoal: ["3,000", "5,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["1,000", "4,500"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    speciesCountGoal: ["0", "3,000"]
-  }
-];
-
-export const dataSeedCountGoal = [
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["45,0000", "90,000"]
-  },
-  {
-    name: ["Species scientific name", "Native species"],
-    seedCountGoal: ["35,350", "70,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["10,350", "35,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["7,500", "21,000"]
-  },
-  {
-    name: ["Non-scientific name", "tree"],
-    seedCountGoal: ["4,040", "15,300"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["3,200", "8,000"]
-  },
-  {
-    name: ["Species scientific name", "new"],
-    seedCountGoal: ["3,000", "5,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["1,000", "4,500"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["0", "3,000"]
-  }
-];
-
-export const dataSeedCountGoalSiteReport = [
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["45,0000", "90,000"]
-  },
-  {
-    name: ["Species scientific name", "Native species", "approved"],
-    seedCountGoal: ["35,350", "70,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["10,350", "35,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["7,500", "21,000"]
-  },
-  {
-    name: ["Non-scientific name", "tree", "approved"],
-    seedCountGoal: ["4,040", "15,300"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["3,200", "8,000"]
-  },
-  {
-    name: ["Species scientific name", "new"],
-    seedCountGoal: ["3,000", "5,000"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["1,000", "4,500"]
-  },
-  {
-    name: ["Species scientific name", "tree"],
-    seedCountGoal: ["0", "3,000"]
   }
 ];
 
@@ -330,7 +72,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     }
   });
 
-  const formatNaturalGenerationData = project.assisted_natural_regeneration_list
+  const formatNaturalGenerationData = project.assistedNaturalRegenerationList
     .sort((a: NaturalRegenerationItem, b: NaturalRegenerationItem) => b.treeCount - a.treeCount)
     .map((item: NaturalRegenerationItem) => {
       return {
@@ -339,7 +81,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       };
     });
 
-  const isTerrafund = ALL_TF.includes(project.framework_key as Framework);
+  const isTerrafund = ALL_TF.includes(project.frameworkKey as (typeof ALL_TF)[number]);
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -350,7 +92,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
 
       <PageRow>
         <PageCard
-          title={t(project.framework_key == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+          title={t(project.frameworkKey == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
@@ -365,7 +107,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.trees_planted_count
+                      value: project.treesPlantedCount
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -373,7 +115,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.survival_rate ? `${project.survival_rate}%` : "N/A"
+                      value: project.survivalRate ? `${project.survivalRate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -396,7 +138,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     <div className="relative h-9 w-[230px]">
                       <div className="absolute inset-0 z-0 h-full w-full">
                         <ProgressBarChart
-                          data={getProgressData(project.trees_grown_goal ?? 0, project.trees_planted_count ?? 0)}
+                          data={getProgressData(project.treesGrownGoal ?? 0, project.treesPlantedCount ?? 0)}
                           className="h-full w-full"
                         />
                       </div>
@@ -408,9 +150,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       />
                     </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      {project.trees_planted_count.toLocaleString()}
+                      {project.treesPlantedCount.toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of {project.trees_grown_goal.toLocaleString()}
+                        of {(project.treesGrownGoal ?? 0).toLocaleString()}
                       </Text>
                     </Text>
                   </div>
@@ -464,7 +206,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelUUID={project.uuid}
                 modelName="project"
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -476,7 +217,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -488,7 +228,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <TreeSpeciesTablePD
                 modelName="project"
                 modelUUID={project.uuid}
-                framework={project.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -514,7 +253,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.seeds_planted_count
+                      value: project.seedsPlantedCount
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -522,7 +261,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.direct_seeding_survival_rate ? `${project.direct_seeding_survival_rate}%` : "N/A"
+                      value: project.directSeedingSurvivalRate != null ? `${project.directSeedingSurvivalRate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -566,12 +305,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   </Text>
                   <div className="mb-2 flex items-center">
                     <div className="relative h-9 w-[260px]">
-                      <div className="absolute inset-0 z-0 h-full w-full">
-                        <ProgressBarChart
-                          data={getProgressData(project.seeds_grown_goal ?? 0, project.seeds_planted_count ?? 0)}
-                          className="h-full w-full"
-                        />
-                      </div>
                       <img
                         src="/images/seedBackground.svg"
                         id="seedBackground"
@@ -580,10 +313,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       />
                     </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      {project.seeds_planted_count.toLocaleString()}
-                      <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of {project.seeds_grown_goal ? project.seeds_grown_goal.toLocaleString() : "0"}
-                      </Text>
+                      {project.seedsPlantedCount.toLocaleString()}
                     </Text>
                   </div>
                   <GoalProgressCard
@@ -617,7 +347,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <TreeSpeciesTablePD
                     modelName="project"
                     modelUUID={project.uuid}
-                    framework={project.framework_key}
                     visibleRows={5}
                     collection="seeding"
                     setTotalCount={setTreeCount}
@@ -640,10 +369,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <div className="relative h-9 w-[218px]">
                     <div className="absolute inset-0 z-0 h-full w-full">
                       <ProgressBarChart
-                        data={getProgressData(
-                          project.goal_trees_restored_anr ?? 0,
-                          project.regenerated_trees_count ?? 0
-                        )}
+                        data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
                         className="h-full w-full"
                       />
                     </div>
@@ -655,9 +381,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     />
                   </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    {project.regenerated_trees_count.toLocaleString()}
+                    {project.regeneratedTreesCount.toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of {project.goal_trees_restored_anr?.toLocaleString()}
+                      of {project.goalTreesRestoredAnr?.toLocaleString()}
                     </Text>
                   </Text>
                 </div>
@@ -674,7 +400,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: project.regenerated_trees_count.toLocaleString()
+                    value: project.regeneratedTreesCount.toLocaleString()
                   }
                 ]}
               />
@@ -704,10 +430,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <div className="relative h-6 w-[212px]">
                     <div className="absolute inset-0 z-0 h-full w-full">
                       <ProgressBarChart
-                        data={getProgressData(
-                          project.goal_trees_restored_anr ?? 0,
-                          project.regenerated_trees_count ?? 0
-                        )}
+                        data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
                         className="h-full w-full"
                       />
                     </div>

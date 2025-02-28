@@ -1,8 +1,10 @@
 import { useT } from "@transifex/react";
+import { defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
+import { pruneEntityCache } from "@/connections/Entity";
 import EntityProvider from "@/context/entity.provider";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
@@ -34,6 +36,10 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
+      // When an entity is submitted via form, we want to forget the cached copy we might have from
+      // v3 so it gets re-fetched when a component needs it.
+      pruneEntityCache(entityName, entityUUID);
+
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
       } else {
@@ -55,7 +61,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   );
 
   const defaultValues = useNormalizedFormDefaultValue(
-    formData?.update_request?.content ?? formData?.answers,
+    defaults(formData?.update_request?.content ?? {}, formData?.answers),
     formSteps,
     entity.migrated
   );

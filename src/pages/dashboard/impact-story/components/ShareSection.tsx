@@ -15,13 +15,13 @@ const ShareSection = ({ label, value }: { label: string; value?: string | string
         {value &&
           Array.isArray(value) &&
           value?.map((item, index) => (
-            <Text variant="text-16-bold" className="uppercase leading-[normal] text-primary" key={index}>
+            <Text variant="text-16" className="uppercase leading-[normal] text-primary" key={index}>
               {t(item)}
             </Text>
           ))}
       </When>
       <When condition={value && !Array.isArray(value)}>
-        <Text variant="text-16-bold" className="uppercase leading-[normal] text-primary">
+        <Text variant="text-16" className="uppercase leading-[normal] text-primary">
           {value}
         </Text>
       </When>

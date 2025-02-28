@@ -5,7 +5,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import { Framework } from "@/context/framework.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -17,7 +17,6 @@ export type ModelNameType =
   | "treeCountSite"
   | "treeCount/Goal"
   | "speciesCount/Goal"
-  | "saplingsCount"
   | "seedCount/Goal"
   | "saplingsCount"
   | "noGoal";
@@ -25,7 +24,6 @@ export type ModelNameType =
 export interface TreeSpeciesTablePDProps {
   modelUUID: string;
   modelName: string;
-  framework?: string;
   setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
   setTotalSpecies?: React.Dispatch<React.SetStateAction<number>>;
   setTotalNonTree?: React.Dispatch<React.SetStateAction<number>>;
@@ -59,7 +57,6 @@ export interface TreeSpeciesTableRowData {
 const TreeSpeciesTablePD = ({
   modelUUID,
   modelName,
-  framework,
   setTotalCount,
   setTotalSpecies,
   setTotalNonTree,
@@ -103,6 +100,8 @@ const TreeSpeciesTablePD = ({
       enabled: !!modelUUID && collection === "seeding"
     }
   );
+
+  const { framework } = useFrameworkContext();
 
   const getCollectionType = (collection: string) => {
     let result = "tree";
@@ -433,7 +432,7 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="grid grid-cols-2 gap-3">
             <Text variant="text-14-bold" className="flex gap-2">
-              {value.toLocaleString()}
+              {value?.toLocaleString()}
             </Text>
           </div>
         );

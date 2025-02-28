@@ -3,11 +3,12 @@ import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusResponse, ProjectLiteRead } from "@/generated/apiSchemas";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogProjectStatusProps {
-  record?: ProjectLiteRead | null;
+  record?: ProjectLiteRead | ProjectLightDto | null;
   auditLogData?: { data: AuditStatusResponse[] };
   auditData?: { entity: string; entity_uuid: string };
   refresh?: () => void;
@@ -31,7 +32,7 @@ const SiteAuditLogProjectStatus: FC<SiteAuditLogProjectStatusProps> = ({
       </Text>
     </div>
     <When condition={viewPD}>
-      <Text variant="text-16-bold">History and Discussion for {record && record?.name}</Text>
+      <Text variant="text-16-bold">History and Discussion for {record?.name}</Text>
       {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refresh} />}
     </When>
   </div>
