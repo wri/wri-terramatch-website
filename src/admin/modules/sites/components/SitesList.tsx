@@ -72,7 +72,7 @@ const SiteDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={(record: any) => <CustomChipField label={record.updateRequestStatus} />}
       />
       <FunctionField
         source="updateRequestStatus"
@@ -80,7 +80,7 @@ const SiteDataGrid: FC = () => {
         sortable={false}
         render={(record: any) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
@@ -95,7 +95,7 @@ const SiteDataGrid: FC = () => {
         source="frameworkKey"
         label="Framework"
         render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ||
           record?.framework_key
         }
         sortable={false}
