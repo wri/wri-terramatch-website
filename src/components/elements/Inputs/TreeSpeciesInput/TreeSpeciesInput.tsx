@@ -231,14 +231,14 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     >
       <div>
         {handleBaseEntityTrees && (
-          <div className="text-12 flex w-[66%] gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2">
+          <div className="text-12 flex w-[66%] items-start gap-1 rounded border border-tertiary-80 bg-tertiary-50 p-2 leading-[normal]">
             <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
             {t(
               "If you would like to add a species not included on the original Restoration Project, it will be flagged to the admin as new information pending review."
             )}
           </div>
         )}
-        <div className="mb-2 mt-8">
+        <div className="mt-8 mb-2">
           <Text variant="text-14-light" className="text-black">
             {t("Scientific Name:")}
           </Text>
@@ -271,9 +271,8 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 <button onClick={addValue} disabled={valueAutoComplete.length < 1}>
                   <Icon
                     name={IconNames.IC_ADD_BUTTON}
-                    className={classNames("h-10 w-10 text-neutral-500 hover:text-primary", {
-                      "hover:!text-red": valueAutoComplete.length < 1,
-                      "cursor-not-allowed": valueAutoComplete.length < 1
+                    className={classNames("text-back h-10 w-10 hover:text-primary", {
+                      "cursor-not-allowed text-[#9F9F9F] hover:!text-[#9F9F9F]": valueAutoComplete.length < 1
                     })}
                   />
                 </button>
@@ -300,9 +299,9 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
             <Text variant="text-14-semibold" className="mb-1 text-blueCustom-700">
               {t("No matches available")}
             </Text>
-            <div className="flex items-center gap-1">
+            <div className="flex items-start gap-1">
               <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="min-h-4 min-w-4 h-4 w-4 text-tertiary-600" />
-              <Text variant="text-14-light" className="text-blueCustom-700">
+              <Text variant="text-14-light" className="leading-[normal] text-blueCustom-700">
                 {t("You can add this species, but it will be pending review from Admin.")}
               </Text>
             </div>
@@ -356,7 +355,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               })}
             >
               <When condition={deleteIndex === value.uuid}>
-                <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center justify-between bg-neutral-250 px-4 shadow-monitored">
+                <div className="absolute top-0 right-0 z-10 flex h-full w-full items-center justify-between bg-neutral-250 px-4 shadow-monitored">
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t(`Are you sure you want to delete “${value.name}”?`)}
                   </Text>
@@ -377,7 +376,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 </div>
               </When>
               <When condition={editIndex === value.uuid}>
-                <div className="absolute right-0 top-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
+                <div className="absolute top-0 right-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
                   <Icon name={IconNames.EDIT_TA} className="min-h-6 min-w-6 h-6 w-6 text-primary" />
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t("Editing: {name}", { name: value.name })}
