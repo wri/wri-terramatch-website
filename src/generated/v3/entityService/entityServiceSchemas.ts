@@ -273,59 +273,91 @@ export type DemographicEntryDto = {
  * CONSTANTS
  */
 export type DemographicCollections = {
-  WORKDAYS_PROJECT_PPC:
-    | "paid-project-management"
-    | "volunteer-project-management"
-    | "paid-nursery-operations"
-    | "volunteer-nursery-operations"
-    | "paid-other-activities"
-    | "volunteer-other-activities";
+  /**
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   * @example direct
+   * @example convergence
+   */
+  WORKDAYS_PROJECT: string[];
+  /**
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_PROJECT_PPC: string[];
   /**
    * @example paid-other-activities
    */
   WORKDAYS_PROJECT_OTHER: string;
-  WORKDAYS_SITE:
-    | "paid-site-establishment"
-    | "volunteer-site-establishment"
-    | "paid-planting"
-    | "volunteer-planting"
-    | "paid-site-maintenance"
-    | "volunteer-site-maintenance"
-    | "paid-site-monitoring"
-    | "volunteer-site-monitoring"
-    | "paid-other-activities"
-    | "volunteer-other-activities";
+  /**
+   * @example paid-site-establishment
+   * @example volunteer-site-establishment
+   * @example paid-planting
+   * @example volunteer-planting
+   * @example paid-site-maintenance
+   * @example volunteer-site-maintenance
+   * @example paid-site-monitoring
+   * @example volunteer-site-monitoring
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_SITE: string[];
   /**
    * @example paid-other-activities
    */
   WORKDAYS_SITE_OTHER: string;
-  RESTORATION_PARTNERS_PROJECT:
-    | "direct-income"
-    | "indirect-income"
-    | "direct-benefits"
-    | "indirect-benefits"
-    | "direct-conservation-payments"
-    | "indirect-conservation-payments"
-    | "direct-market-access"
-    | "indirect-market-access"
-    | "direct-capacity"
-    | "indirect-capacity"
-    | "direct-training"
-    | "indirect-training"
-    | "direct-land-title"
-    | "indirect-land-title"
-    | "direct-livelihoods"
-    | "indirect-livelihoods"
-    | "direct-productivity"
-    | "indirect-productivity"
-    | "direct-other"
-    | "indirect-other";
+  /**
+   * @example direct-income
+   * @example indirect-income
+   * @example direct-benefits
+   * @example indirect-benefits
+   * @example direct-conservation-payments
+   * @example indirect-conservation-payments
+   * @example direct-market-access
+   * @example indirect-market-access
+   * @example direct-capacity
+   * @example indirect-capacity
+   * @example direct-training
+   * @example indirect-training
+   * @example direct-land-title
+   * @example indirect-land-title
+   * @example direct-livelihoods
+   * @example indirect-livelihoods
+   * @example direct-productivity
+   * @example indirect-productivity
+   * @example direct-other
+   * @example indirect-other
+   */
+  RESTORATION_PARTNERS_PROJECT: string[];
   /**
    * @example direct-other
    */
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
-  JOBS_PROJECT: "full-time" | "part-time";
-  VOLUNTEERS_PROJECT: "volunteer";
+  /**
+   * @example full-time
+   * @example part-time
+   */
+  JOBS_PROJECT: string[];
+  /**
+   * @example volunteer
+   */
+  VOLUNTEERS_PROJECT: string[];
+  /**
+   * @example all
+   */
+  BENEFICIARIES_PROJECT_ALL: string[];
+  /**
+   * @example training
+   */
+  BENEFICIARIES_PROJECT_TRAINING: string[];
 };
 
 export type DemographicDto = {
@@ -338,12 +370,8 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
-  type: "workdays" | "restoration-partners" | "jobs" | "volunteers";
+  type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
   collection: string;
-  /**
-   * The English human-readable title for this collection
-   */
-  collectionTitle: string;
   entries: DemographicEntryDto[];
 };
 

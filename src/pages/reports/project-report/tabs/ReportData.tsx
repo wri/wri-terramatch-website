@@ -6,7 +6,7 @@ import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
-import { DemographicEntity, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -24,49 +24,50 @@ interface ReportOverviewTabProps {
   dueAt?: string;
 }
 
-const WORKDAYS_TOTAL = {
-  entity: "project-reports" as DemographicEntity,
+type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid">;
+const WORKDAYS_TOTAL: UseTotalProps = {
   demographicType: "workdays" as DemographicType,
-  collections: DemographicCollections.WORKDAYS_PROJECT_PPC
+  collections: DemographicCollections.WORKDAYS_PROJECT
 };
-const WORKDAYS_PAID = {
+const WORKDAYS_PAID: UseTotalProps = {
   ...WORKDAYS_TOTAL,
   collections: WORKDAYS_TOTAL.collections.filter(c => c.startsWith("paid-"))
 };
-const WORKDAYS_VOLUNTEER = {
+const WORKDAYS_VOLUNTEER: UseTotalProps = {
   ...WORKDAYS_TOTAL,
   collections: WORKDAYS_TOTAL.collections.filter(c => c.startsWith("volunteer-"))
 };
-const WORKDAYS_DIRECT = {
+const WORKDAYS_DIRECT: UseTotalProps = {
   ...WORKDAYS_TOTAL,
   collections: ["direct"]
 };
-const WORKDAYS_CONVERGENCE = {
+const WORKDAYS_CONVERGENCE: UseTotalProps = {
   ...WORKDAYS_TOTAL,
   collections: ["convergence"]
 };
-const RP_DIRECT = {
-  ...WORKDAYS_TOTAL,
+const RP_DIRECT: UseTotalProps = {
   demographicType: "restorationPartners" as DemographicType,
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("direct-"))
 };
-const RP_INDIRECT = {
+const RP_INDIRECT: UseTotalProps = {
   ...RP_DIRECT,
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("indirect-"))
 };
-const JOBS = {
-  ...WORKDAYS_TOTAL,
+const JOBS: UseTotalProps = {
   demographicType: "jobs" as DemographicType,
-  collection: DemographicCollections.JOBS_PROJECT
+  collections: DemographicCollections.JOBS_PROJECT
 };
-const VOLUNTEERS = {
-  ...WORKDAYS_TOTAL,
+const VOLUNTEERS: UseTotalProps = {
   demographicType: "volunteers" as DemographicType,
-  collection: DemographicCollections.VOLUNTEERS_PROJECT
+  collections: DemographicCollections.VOLUNTEERS_PROJECT
+};
+const ALL_BENEFICIARIES: UseTotalProps = {
+  demographicType: "allBeneficiaries" as DemographicType,
+  collections: DemographicCollections.BENEFICIARIES_PROJECT_ALL
 };
 
-const useTotal = (props: Omit<CollectionsTotalProps, "uuid">, { uuid }: { uuid: string }) =>
-  String(useCollectionsTotal({ ...props, uuid }) ?? "N/A");
+const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
+  String(useCollectionsTotal({ ...props, entity: "project-reports", uuid }) ?? "N/A");
 
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
@@ -81,6 +82,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const rpIndirect = useTotal(RP_INDIRECT, report);
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
+  const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
 
   return (
     <PageBody>
@@ -165,7 +167,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Direct Workdays")} value={workdaysDirect} />
               <TextField label={t("Convergence Workdays")} value={workdaysConvergence} />
               <TextField label={t("Volunteers")} value={volunteers} />
-              <TextField label={t("Community Partners")} value={report.total_community_partners} />
+              <TextField label={t("Community Partners")} value={beneficiaries} />
             </ContextCondition>
           </PageCard>
           <PageCard

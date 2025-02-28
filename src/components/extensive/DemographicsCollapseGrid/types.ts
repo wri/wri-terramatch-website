@@ -2,11 +2,21 @@ import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export type DemographicEntity = "project-reports" | "site-reports";
 
 export type Status = "complete" | "not-started" | "in-progress";
+
+export type WorkdayCollection =
+  | (typeof DemographicCollections.WORKDAYS_PROJECT)[number]
+  | (typeof DemographicCollections.WORKDAYS_SITE)[number];
+export type RestorationPartnerCollection = (typeof DemographicCollections.RESTORATION_PARTNERS_PROJECT)[number];
+export type JobsCollection = (typeof DemographicCollections.JOBS_PROJECT)[number];
+export type VolunteersCollection = (typeof DemographicCollections.VOLUNTEERS_PROJECT)[number];
+export type AllBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_ALL)[number];
+export type TrainingBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_TRAINING)[number];
 
 export interface DemographicGridVariantProps {
   header: string;
@@ -29,33 +39,59 @@ type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
 
 export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
 
-type DemographicalTypeProperties = {
+type DemographicLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
   rowLabelPlural: string;
 };
 
-export const DEMOGRAPHIC_TYPES: { [k in DemographicType]: DemographicalTypeProperties } = {
+const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = {
   workdays: {
-    sectionLabel: "Total Workdays",
-    rowLabelSingular: "Day",
-    rowLabelPlural: "Days"
+    sectionLabel: "Total",
+    rowLabelSingular: "Workday",
+    rowLabelPlural: "Workdays"
   },
   restorationPartners: {
-    sectionLabel: "Total Restoration Partners",
-    rowLabelSingular: "Person",
-    rowLabelPlural: "People"
+    sectionLabel: "Total Restoration",
+    rowLabelSingular: "Partner",
+    rowLabelPlural: "Partners"
   },
   jobs: {
-    sectionLabel: "Total Jobs",
+    sectionLabel: "Total",
     rowLabelSingular: "Job",
     rowLabelPlural: "Jobs"
   },
   volunteers: {
-    sectionLabel: "Total Volunteers",
+    sectionLabel: "Total",
     rowLabelSingular: "Volunteer",
     rowLabelPlural: "Volunteers"
+  },
+  allBeneficiaries: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  trainingBeneficiaries: {
+    sectionLabel: "Total Training",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
   }
+};
+
+export const useDemographicLabels = (type: DemographicType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => {
+    const props = DEMOGRAPHIC_LABELS[type];
+    if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
+      return {
+        ...props,
+        rowLabelSingular: "Partner",
+        rowLabelPlural: "Partners"
+      } as DemographicLabelProperties;
+    }
+
+    return props;
+  }, [framework, type]);
 };
 
 export interface DemographicsCollapseGridProps {
@@ -102,63 +138,143 @@ const ETHNICITIES: Dictionary<string> = {
   unknown: "Unknown"
 };
 
+const FARMERS: Dictionary<string> = {
+  smallholder: "Smallholder",
+  "large-scale": "Large scale"
+};
+
+const HBF_FARMERS: Dictionary<string> = {
+  ...FARMERS,
+  marginalized: "Marginalized"
+};
+
 type TypeMapValue = {
   title: string;
   typeMap: Dictionary<string>;
+  // If true, this field is required to balance with other "balanced" fields for a demographic
+  // input to be considered complete.
+  balanced: boolean;
   addNameLabel?: string;
 };
 
 const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
-    typeMap: GENDERS
+    typeMap: GENDERS,
+    balanced: true
   },
   age: {
     title: "Age",
-    typeMap: AGES
+    typeMap: AGES,
+    balanced: true
   },
   ethnicity: {
     title: "Ethnicity",
     typeMap: ETHNICITIES,
-    addNameLabel: "Add Ethnic Group"
+    addNameLabel: "Add Ethnic Group",
+    balanced: true
   }
 };
 
 const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
-    typeMap: HBF_GENDERS
+    typeMap: HBF_GENDERS,
+    balanced: true
   },
   age: {
     title: "Age",
-    typeMap: HBF_AGES
+    typeMap: HBF_AGES,
+    balanced: false
   },
   caste: {
     title: "Caste",
-    typeMap: CASTES
+    typeMap: CASTES,
+    balanced: false
   }
 };
 
 const JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
-    typeMap: GENDERS
+    typeMap: GENDERS,
+    balanced: true
   },
   age: {
     title: "Age",
-    typeMap: JOBS_AGES
+    typeMap: JOBS_AGES,
+    balanced: true
   }
 };
 
 const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   ...HBF_DEMOGRAPHIC_TYPE_MAP,
-  age: JOBS_DEMOGRAPHICS_TYPE_MAP["age"]
+  age: {
+    title: "Age",
+    typeMap: JOBS_AGES,
+    balanced: false
+  }
+};
+
+const BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  gender: {
+    title: "Gender",
+    typeMap: GENDERS,
+    balanced: true
+  },
+  age: {
+    title: "Age",
+    typeMap: JOBS_AGES,
+    balanced: true
+  }
+};
+
+const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
+  farmer: {
+    title: "Farmer",
+    typeMap: FARMERS,
+    balanced: false
+  }
+};
+
+const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  gender: {
+    title: "Gender",
+    typeMap: GENDERS,
+    balanced: true
+  },
+  age: {
+    title: "Age",
+    typeMap: JOBS_AGES,
+    balanced: false
+  },
+  farmer: {
+    title: "Farmer",
+    typeMap: HBF_FARMERS,
+    balanced: false
+  },
+  caste: {
+    title: "Caste",
+    typeMap: CASTES,
+    balanced: false
+  }
 };
 
 export const getTypeMap = (type: DemographicType, framework: Framework) => {
-  const isJobsType = ["jobs", "volunteers"].includes(type);
-  if (framework === Framework.HBF) return isJobsType ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : HBF_DEMOGRAPHIC_TYPE_MAP;
-  else return isJobsType ? JOBS_DEMOGRAPHICS_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+  const isHbf = framework === Framework.HBF;
+
+  if (["jobs", "volunteers"].includes(type)) {
+    return isHbf ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : JOBS_DEMOGRAPHICS_TYPE_MAP;
+  } else if (type.endsWith("Beneficiaries")) {
+    if (type === "trainingBeneficiaries") {
+      return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+    } else {
+      return isHbf ? HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP : BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+    }
+  } else {
+    return isHbf ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+  }
 };
 
 export const useEntryTypeMap = (type: DemographicType) => {

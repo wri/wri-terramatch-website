@@ -96,66 +96,17 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.WorkdaysTable: {
-        const workday = values[f.name]?.[0] ?? {};
+      case FieldType.WorkdaysTable:
+      case FieldType.RestorationPartnersTable:
+      case FieldType.JobsTable:
+      case FieldType.VolunteersTable:
+      case FieldType.AllBeneficiariesTable:
+      case FieldType.TrainingBeneficiariesTable: {
+        const entries = (values[f.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              entries={workday?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              type="workdays"
-            />
-          )
-        });
-        break;
-      }
-
-      case FieldType.RestorationPartnersTable: {
-        const restorationPartner = values[f.name]?.[0] ?? {};
-        outputArr.push({
-          title: f.label,
-          type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              entries={restorationPartner?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              type="restorationPartners"
-            />
-          )
-        });
-        break;
-      }
-
-      case FieldType.JobsTable: {
-        const restorationPartner = values[f.name]?.[0] ?? {};
-        outputArr.push({
-          title: f.label,
-          type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              entries={restorationPartner?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              type="jobs"
-            />
-          )
-        });
-        break;
-      }
-
-      case FieldType.VolunteersTable: {
-        const restorationPartner = values[f.name]?.[0] ?? {};
-        outputArr.push({
-          title: f.label,
-          type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              entries={restorationPartner?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              type="volunteers"
-            />
-          )
+          value: <DemographicsCollapseGrid entries={entries} variant={GRID_VARIANT_NARROW} type={f.type} />
         });
         break;
       }
