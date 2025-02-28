@@ -50,10 +50,10 @@ const QuickActions: FC = () => {
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
           <Labeled label="Total Site Reports" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="site_reports_total" />
+            <NumberField source="totalSiteReports" />
           </Labeled>
           <Labeled label="Total Overdue Site Reports" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="overdue_site_reports_total" />
+            <NumberField source="overdueSiteReportsTotal" />
           </Labeled>
           <Button
             className="button-aside-page-admin"
