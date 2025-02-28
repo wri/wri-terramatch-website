@@ -75,7 +75,7 @@ const SiteDataGrid: FC = () => {
         render={(record: any) => <CustomChipField label={record.readable_status} />}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request"
         sortable={false}
         render={(record: any) => {
@@ -92,7 +92,7 @@ const SiteDataGrid: FC = () => {
       />
       <TextField source="project.name" label="Project Name" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
         render={(record: any) =>
           frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
@@ -144,9 +144,9 @@ export const SitesList: FC = () => {
       <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />,
@@ -158,9 +158,9 @@ export const SitesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       label="Change Request"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />,
