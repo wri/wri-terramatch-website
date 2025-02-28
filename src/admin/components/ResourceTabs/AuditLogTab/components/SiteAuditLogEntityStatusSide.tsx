@@ -43,12 +43,12 @@ const SiteAuditLogEntityStatusSide = ({
     <div className="flex flex-col gap-6 overflow-visible">
       <When condition={polygonList?.length}>
         <Dropdown
-          label={`Select ${entityType}`}
+          label={`Select ${removeUnderscore(entityType)}`}
           labelVariant="text-16-bold"
           labelClassName="capitalize"
           optionsClassName="max-w-full"
           value={[selectedPolygon?.uuid ?? ""]}
-          placeholder={`Select ${entityType}`}
+          placeholder={`Select ${removeUnderscore(entityType)}`}
           options={polygonList!}
           onChange={e => {
             setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
