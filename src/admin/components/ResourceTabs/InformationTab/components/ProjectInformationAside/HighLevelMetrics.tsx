@@ -10,7 +10,6 @@ const HighLevelMetics: FC = () => {
     flexDirection: "row",
     justifyContent: "space-between"
   };
-
   return (
     <Card sx={{ padding: 3.75 }}>
       <Typography variant="h5" marginBottom={2}>

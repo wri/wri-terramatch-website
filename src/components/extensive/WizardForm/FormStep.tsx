@@ -34,6 +34,7 @@ export const FormStep = ({
     formHook.clearErrors();
   }, [fields, formHook, title]);
 
+  console.log("fields", fields, formHook);
   return (
     <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-15", className)}>
       <div className="flex items-center justify-between">
