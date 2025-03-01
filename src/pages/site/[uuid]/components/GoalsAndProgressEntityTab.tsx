@@ -47,21 +47,23 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
-  const totaTreesRestoredCount =
-    entity?.trees_planted_count + entity?.approved_regenerated_trees_count + entity?.seeds_planted_count;
+  const totalTreesRestoredCount =
+    (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
+    (entity?.approved_regenerated_trees_count ?? entity?.regeneratedTreesCount) +
+    (entity?.seeds_planted_count ?? entity?.seedsPlantedCount);
   const keyAttribute = project ? "project" : "site";
   const attribMapping: { [key: string]: any } = {
     project: {
-      total_jobs_created: entity.total_jobs_created,
-      jobs_created_goal: entity.jobs_created_goal,
+      total_jobs_created: entity.totalJobsCreated,
+      jobs_created_goal: entity.jobsCreatedGoal,
       total_hectares_restored_sum:
-        project && entity.framework_key == Framework.PPC
-          ? Math.round(entity.total_hectares_restored_sum)
-          : entity.total_hectares_restored_sum,
-      total_hectares_restored_goal: entity.total_hectares_restored_goal,
-      trees_restored_count: entity.trees_restored_count,
-      trees_grown_goal: entity.trees_grown_goal,
-      workday_count: entity.framework_key == Framework.PPC ? entity.combined_workday_count : entity.workday_count
+        project && entity.frameworkKey == Framework.PPC
+          ? Math.round(entity.totalHectaresRestoredSum)
+          : entity.totalHectaresRestoredSum,
+      total_hectares_restored_goal: entity.totalHectaresRestoredGoal,
+      trees_restored_count: totalTreesRestoredCount,
+      trees_grown_goal: entity.treesGrownGoal,
+      workday_count: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
     },
     site: {
       total_jobs_created: null,
@@ -218,7 +220,8 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       />
     ]
   };
-  const framework = ALL_TF.includes(entity.framework_key as Framework) ? "terrafund" : entity.framework_key;
+  const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
+  const framework = ALL_TF.includes(frameworkKey as (typeof ALL_TF)[number]) ? "terrafund" : frameworkKey;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-8">
       {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
@@ -226,8 +229,8 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       ))}
       <GoalProgressCard
         label={t("Trees restored")}
-        value={project ? entity.trees_restored_count : totaTreesRestoredCount}
-        limit={entity.trees_grown_goal}
+        value={totalTreesRestoredCount}
+        limit={entity.trees_grown_goal ?? entity.treesGrownGoal}
         hasProgress={false}
         items={[
           {
@@ -235,21 +238,21 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Trees Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.trees_planted_count
+            value: entity.trees_planted_count ?? entity.treesPlantedCount
           },
           {
             iconName: IconNames.LEAF_CIRCLE_PD,
             label: t("Seeds Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.seeds_planted_count
+            value: entity.seeds_planted_count ?? entity.seedsPlantedCount
           },
           {
             iconName: IconNames.REFRESH_CIRCLE_PD,
             label: t("Trees Regenerating:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.approved_regenerated_trees_count
+            value: entity.approved_regenerated_trees_count ?? entity.regeneratedTreesCount
           }
         ]}
         className="pr-[41px] lg:pr-[150px]"

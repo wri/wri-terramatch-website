@@ -24,8 +24,8 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
   const errors = form.formState.errors;
 
   return (
-    <Form formType="reset-password">
-      <div className="w-[30vw] overflow-auto">
+    <Form formType="reset-password" className="mobile:w-full">
+      <div className="w-[30vw] overflow-auto mobile:w-full">
         <div className="mb-10 flex flex-col gap-2">
           <Text variant="text-32-bold" className="text-blue-700">
             {t("Reset Password")}

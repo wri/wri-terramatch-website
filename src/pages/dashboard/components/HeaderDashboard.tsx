@@ -1,11 +1,15 @@
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { VARIANT_DROPDOWN_HEADER } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
+import Button from "@/components/elements/Button/Button";
+import {
+  VARIANT_DROPDOWN_COLLAPSE,
+  VARIANT_DROPDOWN_HEADER
+} from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_ITEM_VARIANT_SEARCH } from "@/components/elements/MenuItem/MenuItemVariant";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
@@ -20,15 +24,19 @@ import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
 
-import { PROJECT_INSIGHTS_SECTION_TOOLTIP } from "../constants/tooltips";
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
+import ResponsiveDropdownContainer from "./ResponsiveDropdownContainer";
+
+export const PROJECT_INSIGHTS_SECTION_TOOLTIP =
+  "In 2025, the Project Insights section will contain additional analyses showing trends and insights.";
 
 interface HeaderDashboardProps {
   isProjectInsightsPage?: boolean;
   isProjectListPage?: boolean;
   isProjectPage?: boolean;
   isHomepage?: boolean;
+  isImpactStoryPage?: boolean;
   dashboardCountries: CountriesProps[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
@@ -40,6 +48,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     isProjectListPage,
     isProjectPage,
     isHomepage,
+    isImpactStoryPage,
     dashboardCountries,
     setSelectedCountry
   } = props;
@@ -49,6 +58,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries, lastUpdatedAt } =
     useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const optionsCohort = [
     { title: "Top 100", value: "terrafund" },
@@ -124,6 +135,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     });
     setSearchTerm("");
   };
+
   useEffect(() => {
     const query: any = {
       ...router.query,
@@ -137,15 +149,28 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     Object.keys(query).forEach(key => !query[key]?.length && delete query[key]);
 
-    router.push(
-      {
-        pathname: router.pathname,
-        query: query
-      },
-      undefined,
-      { shallow: true }
-    );
-  }, [filters, router]);
+    const currentQuery = JSON.stringify(router.query);
+    const newQuery = JSON.stringify(query);
+
+    if (currentQuery !== newQuery) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: query
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [
+    router,
+    filters.programmes,
+    filters.landscapes,
+    filters.country?.country_slug,
+    filters.organizations,
+    filters.cohort,
+    filters.uuid
+  ]);
 
   useOnMount(() => {
     setDashboardCountries(dashboardCountries);
@@ -206,6 +231,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     if (isHomepage) {
       return <T _str="Learn More" _tags="dash" />;
     }
+    if (isImpactStoryPage) {
+      return <T _str="Impact Story" _tags="dash" />;
+    }
     return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
@@ -213,11 +241,14 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     <header
       className={classNames("flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover", {
         "px-4 pb-4 pt-5": !isHomepage,
-        "bg-center px-14 py-10": isHomepage
+        "bg-center px-14 pt-5 pb-4": isHomepage
       })}
     >
       <div className="flex max-w-full flex-1 flex-wrap gap-3">
-        <Text variant={"text-28-bold"} className="relative w-full whitespace-nowrap text-white">
+        <Text
+          variant={isMobile ? "text-24-bold" : "text-28-bold"}
+          className="relative w-full whitespace-nowrap text-white"
+        >
           {getHeaderTitle()}
           <When condition={isProjectInsightsPage}>
             <ToolTip
@@ -231,139 +262,217 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
           </When>
-          <Text variant="text-18" as={"span"} className="absolute top-1 text-white lg:top-2">
+          <Text variant={isMobile ? "text-16" : "text-18"} as={"span"} className="absolute top-1 text-white lg:top-2">
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
         <Text variant="text-16" className="absolute top-3 right-3 text-white ">
-          {t(lastUpdatedAt ? `Last Updated on ${new Date(lastUpdatedAt).toISOString().split("T")[0]}` : "")}
+          {t("Last Updated on {date}", {
+            date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
+          })}
         </Text>
         <When condition={!isProjectInsightsPage && !isHomepage}>
-          <div className="flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible small:items-center">
-            <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap">
-              <BlurContainer className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.landscapes.length}
-                  showClear
-                  showSelectAll
-                  showLabelAsMultiple
-                  multiSelect
-                  prefix={<Text variant="text-14-light">{t("Landscape")}:</Text>}
-                  inputVariant="text-14-semibold"
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder={t("All Data")}
-                  multipleText={t("Multiple Landscapes")}
-                  value={filters.landscapes}
-                  onChange={value => {
-                    handleChange("landscapes", value);
-                  }}
-                  onClear={() => {
-                    handleChange("landscapes", []);
-                  }}
-                  options={landscapeOption}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[4]"
+          <div className="hidden w-full items-center gap-2 mobile:flex">
+            <When condition={router.pathname !== "/dashboard"}>
+              <BlurContainer className="hidden lg:min-w-[287px] mobile:block">
+                <FilterSearchBox
+                  onChange={e => setSearchTerm(e)}
+                  placeholder="Search"
+                  variant={FILTER_SEARCH_BOX_AIRTABLE}
+                  value={searchTerm}
                 />
               </BlurContainer>
-              <BlurContainer className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.country.id}
-                  showClear
-                  prefix={<Text variant="text-14-light">{t("Country")}:</Text>}
-                  inputVariant="text-14-semibold"
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder={t("All Data")}
-                  value={filters.country?.id ? [filters.country.id] : undefined}
-                  onChange={value => {
-                    handleChangeCountry(value);
-                  }}
-                  onClear={() => {
-                    setSelectedCountry(undefined);
-                    setFilters(prevValues => ({
-                      ...prevValues,
-                      uuid: "",
-                      country: {
-                        country_slug: "",
-                        id: 0,
-                        data: {
-                          label: "",
-                          icon: ""
-                        }
-                      }
-                    }));
-                  }}
-                  options={dashboardCountries.map((country: CountriesProps) => ({
-                    title: country.data.label,
-                    value: country.id,
-                    prefix: (
-                      <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
-                    )
-                  }))}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[3]"
-                />
-              </BlurContainer>
-              <BlurContainer className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.organizations.length}
-                  showSelectAll
-                  showLabelAsMultiple
-                  showClear
-                  prefix={<Text variant="text-14-light">{t("Organization Type")}:</Text>}
-                  inputVariant="text-14-semibold"
-                  multiSelect
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder={t("All Data")}
-                  multipleText={t("Multiple Organizations Types")}
-                  value={filters.organizations}
-                  onChange={value => {
-                    handleChange("organizations", value);
-                  }}
-                  onClear={() => {
-                    handleChange("organizations", []);
-                  }}
-                  options={organizationOptions}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[2]"
-                />
-              </BlurContainer>
-              <BlurContainer className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]" disabled={isProjectPage}>
-                <Dropdown
-                  key={filters.cohort.length}
-                  showClear
-                  prefix={<Text variant="text-14-light">{t("Cohort")}:</Text>}
-                  inputVariant="text-14-semibold"
-                  variant={VARIANT_DROPDOWN_HEADER}
-                  placeholder={t("All Data")}
-                  value={filters.cohort ? [filters.cohort] : []}
-                  onChange={(value: OptionValue[]) => {
-                    return setFilters(prevValues => ({
-                      ...prevValues,
-                      uuid: "",
-                      cohort: value[0] as string
-                    }));
-                  }}
-                  onClear={() => {
-                    setFilters(prevValues => ({
-                      ...prevValues,
-                      uuid: "",
-                      cohort: ""
-                    }));
-                  }}
-                  options={optionsCohort}
-                  optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[5]"
-                />
-              </BlurContainer>
-            </div>
-            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center">
-              <button
-                className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
-                onClick={resetValues}
-                disabled={isProjectPage}
+            </When>
+            <When condition={!isImpactStoryPage}>
+              <BlurContainer
+                className={classNames("flex min-w-0 items-center justify-center", {
+                  "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
+                })}
               >
-                {t("Clear Filters")}
+                <button
+                  onClick={() => {
+                    setIsFiltersOpen(true);
+                  }}
+                  className={classNames("relative z-[4] flex w-full items-center justify-center gap-2 py-2")}
+                >
+                  <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
+                  <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
+                    <Text variant="text-14-bold" className="text-white">
+                      Filters
+                    </Text>
+                  </When>
+                </button>
+              </BlurContainer>
+            </When>
+          </div>
+          <div
+            className={classNames(
+              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
+              {
+                "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
+                "mobile:-top-full": !isFiltersOpen
+              }
+            )}
+          >
+            <div className="hidden w-full items-center justify-center py-4 mobile:flex">
+              <Text variant={"text-16-bold"} className="text-black">
+                Filters
+              </Text>
+              <button
+                onClick={() => {
+                  setIsFiltersOpen(false);
+                }}
+              >
+                <Icon name={IconNames.CLEAR} className="absolute right-0 mr-2 h-4 w-4 text-black" />
               </button>
+            </div>
+            <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap mobile:w-full mobile:max-w-full mobile:flex-col">
+              <ResponsiveDropdownContainer
+                className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
+                disabled={isProjectPage}
+                isMobile={isMobile}
+                showClear
+                showSelectAll
+                showLabelAsMultiple
+                multiSelect
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Landscape") : t("Landscape:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                placeholder={t("All Data")}
+                multipleText={t("Multiple Landscapes")}
+                value={filters.landscapes}
+                onChange={value => {
+                  handleChange("landscapes", value);
+                }}
+                onClear={() => {
+                  handleChange("landscapes", []);
+                }}
+                options={landscapeOption}
+                optionClassName="hover:bg-grey-200"
+                containerClassName="z-[4] w-full"
+              />
+              <ResponsiveDropdownContainer
+                className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
+                disabled={isProjectPage}
+                isMobile={isMobile}
+                showClear
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Country") : t("Country:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                placeholder={t("All Data")}
+                value={filters.country?.id ? [filters.country.id] : undefined}
+                onChange={value => {
+                  handleChangeCountry(value);
+                }}
+                onClear={() => {
+                  setSelectedCountry(undefined);
+                  setFilters(prevValues => ({
+                    ...prevValues,
+                    uuid: "",
+                    country: {
+                      country_slug: "",
+                      id: 0,
+                      data: {
+                        label: "",
+                        icon: ""
+                      }
+                    }
+                  }));
+                }}
+                options={dashboardCountries.map((country: CountriesProps) => ({
+                  title: country.data.label,
+                  value: country.id,
+                  prefix: (
+                    <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
+                  )
+                }))}
+                optionClassName="hover:bg-grey-200"
+                containerClassName="z-[3] w-full"
+              />
+              <ResponsiveDropdownContainer
+                className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]"
+                disabled={isProjectPage}
+                isMobile={isMobile}
+                showSelectAll
+                showLabelAsMultiple
+                showClear
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Organization Type") : t("Organization Type:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                multiSelect
+                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                placeholder={t("All Data")}
+                multipleText={t("Multiple Organizations Types")}
+                value={filters.organizations}
+                onChange={value => {
+                  handleChange("organizations", value);
+                }}
+                onClear={() => {
+                  handleChange("organizations", []);
+                }}
+                options={organizationOptions}
+                optionClassName="hover:bg-grey-200"
+                containerClassName="z-[2] w-full"
+              />
+              <ResponsiveDropdownContainer
+                className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
+                disabled={isProjectPage}
+                isMobile={isMobile}
+                showClear
+                prefix={
+                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                    {isMobile ? t("Cohort") : t("Cohort:")}
+                  </Text>
+                }
+                inputVariant="text-14-semibold"
+                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                placeholder={t("All Data")}
+                value={filters.cohort ? [filters.cohort] : []}
+                onChange={(value: OptionValue[]) => {
+                  return setFilters(prevValues => ({
+                    ...prevValues,
+                    uuid: "",
+                    cohort: value[0] as string
+                  }));
+                }}
+                onClear={() => {
+                  setFilters(prevValues => ({
+                    ...prevValues,
+                    uuid: "",
+                    cohort: ""
+                  }));
+                }}
+                options={optionsCohort}
+                optionClassName="hover:bg-grey-200"
+                containerClassName="z-[5] w-full"
+              />
+            </div>
+            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
+              <When condition={isMobile}>
+                <Button variant="primary" fullWidth onClick={resetValues} disabled={isProjectPage}>
+                  {t("Clear Filters")}
+                </Button>
+              </When>
+              <When condition={!isMobile}>
+                <button
+                  className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
+                  onClick={resetValues}
+                  disabled={isProjectPage}
+                >
+                  {t("Clear Filters")}
+                </button>
+              </When>
               <When condition={isProjectListPage}>
                 <Menu
                   classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
@@ -411,14 +520,16 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     })
                   )}
                 >
-                  <BlurContainer className="lg:min-w-[287px]">
-                    <FilterSearchBox
-                      onChange={e => setSearchTerm(e)}
-                      placeholder="Search"
-                      variant={FILTER_SEARCH_BOX_AIRTABLE}
-                      value={searchTerm}
-                    />
-                  </BlurContainer>
+                  <When condition={!isMobile}>
+                    <BlurContainer className="lg:min-w-[287px]">
+                      <FilterSearchBox
+                        onChange={e => setSearchTerm(e)}
+                        placeholder="Search"
+                        variant={FILTER_SEARCH_BOX_AIRTABLE}
+                        value={searchTerm}
+                      />
+                    </BlurContainer>
+                  </When>
                 </Menu>
               </When>
             </div>

@@ -64,7 +64,10 @@ const ShowActions = ({
             className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
             onClick={() => toggleTestStatus(record)}
           >
-            <Icon className="h-5 w-5" name={record?.is_test ? IconNames.SORT_DOWN : IconNames.SORT_UP} />
+            <Icon
+              className="h-5 w-5"
+              name={record?.is_test || record?.isTest ? IconNames.SORT_DOWN : IconNames.SORT_UP}
+            />
           </Button>
         )}
         {canEdit && hasDelete && (

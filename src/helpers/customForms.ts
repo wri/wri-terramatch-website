@@ -182,6 +182,8 @@ export const apiFormQuestionToFormField = (
     condition: question.show_on_parent_condition,
     is_parent_conditional_default: question.is_parent_conditional_default,
     parent_id: question.parent_id,
+    min_character_limit: question.min_character_limit,
+    max_character_limit: question.max_character_limit,
     feedbackRequired
   };
 
@@ -453,23 +455,15 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "workdays": {
+    case "workdays":
+    case "restorationPartners":
+    case "jobs":
+    case "volunteers":
+    case "allBeneficiaries":
+    case "trainingBeneficiaries": {
       return {
         ...sharedProps,
-        type: FieldType.WorkdaysTable,
-
-        fieldProps: {
-          required,
-          entity,
-          collection: question.collection
-        }
-      };
-    }
-
-    case "restorationPartners": {
-      return {
-        ...sharedProps,
-        type: FieldType.RestorationPartnersTable,
+        type: question.input_type,
 
         fieldProps: {
           required,
@@ -571,6 +565,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
   const required = question.validation?.required || false;
   const max = question.validation?.max;
   const min = question.validation?.min;
+  const limitMin = question.min_character_limit;
+  const limitMax = question.max_character_limit;
 
   switch (question.input_type) {
     case "text":
@@ -590,6 +586,18 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
+      if (limitMin)
+        validation = validation.min(
+          limitMin,
+          t(`Your answer does not meet the minimum required characters ${limitMin} for this field.`)
+        );
+      if (limitMax)
+        validation = validation.max(
+          limitMax,
+          t(
+            `Your answer length exceeds the maximum number of characters ${limitMax} allowed for this field. Please edit your answer to fit within the required number of characters for this field.`
+          )
+        );
 
       return validation;
     }
@@ -641,7 +649,11 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "workdays":
-    case "restorationPartners": {
+    case "restorationPartners":
+    case "jobs":
+    case "volunteers":
+    case "allBeneficiaries":
+    case "trainingBeneficiaries": {
       validation = yup
         .array()
         .min(0)
@@ -672,7 +684,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
             const { demographics } = value?.length > 0 ? value[0] : {};
             if (demographics == null) return true;
 
-            return calculateTotals(demographics, framework).complete;
+            return calculateTotals(demographics, framework, question.input_type).complete;
           }
         );
 

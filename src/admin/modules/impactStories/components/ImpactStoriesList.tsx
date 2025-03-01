@@ -3,7 +3,9 @@ import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
+  DateField,
   EditButton,
+  FunctionField,
   List,
   ReferenceInput,
   SearchInput,
@@ -13,10 +15,8 @@ import {
 } from "react-admin";
 
 import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
-import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
-import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
-import ChipFieldArray from "@/admin/components/Fields/ChipFieldArray";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -27,11 +27,6 @@ import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoic
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
-
-const IMPACT_STORY_TAGS = [
-  { id: "1", label: "ppc" },
-  { id: "2", label: "project-tag" }
-];
 
 const monitoringDataChoices = [
   {
@@ -50,136 +45,38 @@ const tableMenu = [
   },
   {
     id: "2",
-    render: () => (
-      <WrapperField>
-        <CustomDeleteWithConfirmButton source="name" />
-      </WrapperField>
-    )
+    render: () => {
+      return (
+        <WrapperField>
+          <CustomDeleteWithConfirmButton source="title" />
+        </WrapperField>
+      );
+    }
   }
 ];
 
 const ImpactStoriesDataGrid: FC = () => {
-  const mockData = [
-    {
-      id: 1,
-      name: "Community Climate Ambassador Training",
-      project: "Faja Lobi reforestation project",
-      author: "Faja Lobi",
-      tags: [
-        { status: "Approved", count: 2 },
-        { status: "Draft", count: 1 }
-      ],
-      date: "3/3/2020"
-    },
-    {
-      id: 2,
-      name: "Native Seed Centre Shrub SPA",
-      project: "Faja Lobi reforestation project",
-      author: "Faja Lobi",
-      tags: [{ status: "Submitted", count: 3 }],
-      date: "3/3/2020"
-    },
-    {
-      id: 3,
-      name: "Mangrove Restoration Initiative",
-      project: "Coastal Conservation Project",
-      author: "Marine Solutions",
-      tags: [{ status: "Approved", count: 4 }],
-      date: "5/15/2020"
-    },
-    {
-      id: 4,
-      name: "Indigenous Knowledge Integration",
-      project: "Amazon Rainforest Protection",
-      author: "Rainforest Alliance",
-      tags: [
-        { status: "Draft", count: 2 },
-        { status: "Submitted", count: 1 }
-      ],
-      date: "6/22/2020"
-    },
-    {
-      id: 5,
-      name: "Urban Garden Development",
-      project: "City Green Spaces Initiative",
-      author: "Urban Planners Co",
-      tags: [{ status: "Approved", count: 5 }],
-      date: "8/1/2020"
-    },
-    {
-      id: 6,
-      name: "Sustainable Farming Practices",
-      project: "Agricultural Transformation",
-      author: "Farm Solutions",
-      tags: [{ status: "Submitted", count: 2 }],
-      date: "9/12/2020"
-    },
-    {
-      id: 7,
-      name: "Wildlife Corridor Creation",
-      project: "Biodiversity Protection Plan",
-      author: "Wildlife Trust",
-      tags: [
-        { status: "Approved", count: 3 },
-        { status: "Draft", count: 1 }
-      ],
-      date: "10/30/2020"
-    },
-    {
-      id: 8,
-      name: "Clean Water Initiative",
-      project: "River Restoration Project",
-      author: "Water Resources Inc",
-      tags: [{ status: "Draft", count: 4 }],
-      date: "11/15/2020"
-    },
-    {
-      id: 9,
-      name: "Solar Power Implementation",
-      project: "Renewable Energy Drive",
-      author: "Green Energy Co",
-      tags: [
-        { status: "Submitted", count: 2 },
-        { status: "Approved", count: 1 }
-      ],
-      date: "12/5/2020"
-    },
-    {
-      id: 10,
-      name: "Forest Fire Prevention Program",
-      project: "Forest Protection Initiative",
-      author: "Forest Guard",
-      tags: [{ status: "Approved", count: 6 }],
-      date: "1/20/2021"
-    },
-    {
-      id: 11,
-      name: "Coastal Mangrove Restoration",
-      project: "Marine Ecosystem Protection",
-      author: "Ocean Conservation Group",
-      tags: [
-        { status: "Draft", count: 3 },
-        { status: "Submitted", count: 2 }
-      ],
-      date: "2/15/2021"
-    },
-    {
-      id: 12,
-      name: "Urban Beekeeping Program",
-      project: "City Pollinator Initiative",
-      author: "Bee Friendly Society",
-      tags: [{ status: "Submitted", count: 4 }],
-      date: "3/1/2021"
-    }
-  ];
-
   return (
-    <Datagrid data={mockData}>
-      <TextField source="name" label="Impact Story" />
-      <TextField source="project" label="Project" />
-      <TextField source="author" label="Author" />
-      <ChipFieldArray source="tags" label="Tags" data={IMPACT_STORY_TAGS} />
-      <TextField source="date" label="Date Created" />
+    <Datagrid>
+      <TextField source="title" label="Impact Story" />
+      <FunctionField
+        source="status"
+        label="Status"
+        render={(record: any) => {
+          return <CustomChipField label={record.status} />;
+        }}
+      />
+      <TextField source="organization.name" label="Organization" />
+      <FunctionField
+        source="organization.countries"
+        label="Country"
+        render={(record: any) =>
+          record.organization?.countries?.length > 0
+            ? record.organization.countries.map((c: any) => c.label).join(", ")
+            : "No country"
+        }
+      />
+      <DateField source="created_at" label="Date Created" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -260,8 +157,6 @@ export const ImpactStoriesList: FC = () => {
     />
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("sites", frameworkInputChoices);
-
   return (
     <>
       <Stack gap={1} className="pb-6">
@@ -270,13 +165,9 @@ export const ImpactStoriesList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActionsImpactStories onExport={onClickExportButton} />} filters={filters}>
+      <List actions={<ListActionsImpactStories />} filters={filters}>
         <ImpactStoriesDataGrid />
       </List>
-
-      <FrameworkSelectionDialog {...frameworkDialogProps} />
-
-      <ExportProcessingAlert show={exporting} />
     </>
   );
 };

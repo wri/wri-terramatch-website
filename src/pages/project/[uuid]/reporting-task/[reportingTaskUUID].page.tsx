@@ -21,11 +21,11 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import { CompletionStatusMapping } from "@/components/extensive/Tables/ReportingTasksTable";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2TasksUUIDReportsResponse,
-  useGetV2ProjectsUUID,
   useGetV2TasksUUID,
   useGetV2TasksUUIDReports,
   usePutV2ENTITYUUIDNothingToReport
@@ -89,10 +89,7 @@ const ReportingTaskPage = () => {
   const reportingTask = reportingTaskData?.data as any;
 
   const { data: reportsData, isLoading } = useGetV2TasksUUIDReports({ pathParams: { uuid: reportingTaskUUID } });
-  const { data: projectData } = useGetV2ProjectsUUID({
-    pathParams: { uuid: projectUUID }
-  });
-  const project = (projectData?.data ?? {}) as any;
+  const [projectLoaded, { entity: project }] = useFullProject({ uuid: projectUUID });
 
   const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
     onSuccess: result => {
@@ -252,65 +249,67 @@ const ReportingTaskPage = () => {
   ];
 
   return (
-    <FrameworkProvider frameworkKey={project.framework_key}>
-      <LoadingContainer loading={isLoading}>
-        <ReportingTaskHeader {...{ project, reportingTask, reports }} />
-        <StatusBar status={StatusMapping?.[reportingTask?.status]} />
-        <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
-          <PageSection>
-            <PageCard title={t("Mandatory Project Report")}>
-              <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
-            </PageCard>
-          </PageSection>
-          <PageSection>
-            <PageCard title={t("Additional Reports")}>
-              <Table
-                data={reportsTableData}
-                columns={tableColumns}
-                onTableStateChange={state => setFilters(state.filters)}
-                hasPagination={true}
-                resetOnDataChange={false}
-                initialTableState={{ pagination: { pageSize: 15 } }}
-                columnFilters={[
-                  {
-                    type: "dropDown",
-                    accessorKey: "type",
-                    label: t("Report type"),
-                    options: [
-                      {
-                        title: t("Site"),
-                        value: "site-report"
-                      },
-                      {
-                        title: t("Nursery"),
-                        value: "nursery-report"
-                      }
-                    ],
-                    hide: project.framework_key === "ppc"
-                  },
-                  {
-                    type: "dropDown",
-                    accessorKey: "completion_status",
-                    label: t("Report Status"),
-                    options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
-                      title: status.statusText,
-                      value
-                    }))
-                  }
-                ]}
-              />
-            </PageCard>
-          </PageSection>
-          <WelcomeTour
-            tourId="reporting-tasks"
-            hasWelcomeModal={false}
-            tourSteps={tourSteps}
-            onStart={() => setTourEnabled(true)}
-            onFinish={() => setTourEnabled(false)}
-          />
-        </PageBody>
-      </LoadingContainer>
-    </FrameworkProvider>
+    projectLoaded && (
+      <FrameworkProvider frameworkKey={project?.frameworkKey}>
+        <LoadingContainer loading={isLoading}>
+          <ReportingTaskHeader {...{ project, reportingTask, reports }} />
+          <StatusBar status={StatusMapping?.[reportingTask?.status]} />
+          <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
+            <PageSection>
+              <PageCard title={t("Mandatory Project Report")}>
+                <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
+              </PageCard>
+            </PageSection>
+            <PageSection>
+              <PageCard title={t("Additional Reports")}>
+                <Table
+                  data={reportsTableData}
+                  columns={tableColumns}
+                  onTableStateChange={state => setFilters(state.filters)}
+                  hasPagination={true}
+                  resetOnDataChange={false}
+                  initialTableState={{ pagination: { pageSize: 15 } }}
+                  columnFilters={[
+                    {
+                      type: "dropDown",
+                      accessorKey: "type",
+                      label: t("Report type"),
+                      options: [
+                        {
+                          title: t("Site"),
+                          value: "site-report"
+                        },
+                        {
+                          title: t("Nursery"),
+                          value: "nursery-report"
+                        }
+                      ],
+                      hide: project?.frameworkKey === "ppc"
+                    },
+                    {
+                      type: "dropDown",
+                      accessorKey: "completion_status",
+                      label: t("Report Status"),
+                      options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
+                        title: status.statusText,
+                        value
+                      }))
+                    }
+                  ]}
+                />
+              </PageCard>
+            </PageSection>
+            <WelcomeTour
+              tourId="reporting-tasks"
+              hasWelcomeModal={false}
+              tourSteps={tourSteps}
+              onStart={() => setTourEnabled(true)}
+              onFinish={() => setTourEnabled(false)}
+            />
+          </PageBody>
+        </LoadingContainer>
+      </FrameworkProvider>
+    )
   );
 };
 

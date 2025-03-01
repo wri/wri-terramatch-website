@@ -1,7 +1,10 @@
+import { useMediaQuery } from "@mui/material";
+import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
+import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -36,48 +39,73 @@ export interface DashboardDataProps {
 }
 
 const ProjectList = () => {
+  const t = useT();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
+
   const columns = [
     {
-      header: "Project",
+      header: t("Project"),
       accessorKey: "project",
-      meta: { width: "23%" }
+      meta: { width: isMobile ? "90%" : "23%" },
+      cell: ({ row }: { row: { original: { project: string; country: { image: string }; organization: string } } }) => {
+        const { project, country, organization } = row.original;
+        if (isMobile) {
+          return (
+            <div className="flex items-start gap-2">
+              <img src={country.image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
+              <div>
+                <Text variant="text-14-light">{project}</Text>
+                <Text variant="text-14-light" className=" text-neutral-650">
+                  {organization}
+                </Text>
+              </div>
+            </div>
+          );
+        }
+        return project;
+      }
     },
-    {
-      header: "Organization",
-      accessorKey: "organization",
-      meta: { width: "19%" }
-    },
-    {
-      header: "Programme",
-      accessorKey: "programme",
-      meta: { width: "13%" }
-    },
-    {
-      header: "Country",
-      accessorKey: "country",
-      cell: (props: any) => {
-        const { label, image } = props.getValue();
-        return (
-          <div className="flex items-center gap-2">
-            <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
-            <Text variant="text-14-light">{label}</Text>
-          </div>
-        );
-      },
-      meta: { width: "13%" }
-    },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted"
-    },
-    {
-      header: "Restoration Hectares",
-      accessorKey: "restorationHectares"
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated"
-    },
+    ...(isMobile
+      ? []
+      : [
+          {
+            header: t("Organization"),
+            accessorKey: "organization",
+            meta: { width: "19%" }
+          },
+          {
+            header: t("Programme"),
+            accessorKey: "programme",
+            meta: { width: "13%" }
+          },
+          {
+            header: t("Country"),
+            accessorKey: "country",
+            cell: (props: any) => {
+              const { label, image } = props.getValue();
+              return (
+                <div className="flex items-center gap-2">
+                  <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
+                  <Text variant="text-14-light">{label}</Text>
+                </div>
+              );
+            },
+            meta: { width: "13%" }
+          },
+          {
+            header: t("Trees Planted"),
+            accessorKey: "treesPlanted"
+          },
+          {
+            header: t("Restoration Hectares"),
+            accessorKey: "restorationHectares"
+          },
+          {
+            header: t("Jobs Created"),
+            accessorKey: "jobsCreated"
+          }
+        ]),
+
     {
       header: "",
       accessorKey: "link",
@@ -86,7 +114,10 @@ const ProjectList = () => {
         return (
           <Icon
             name={IconNames.IC_ARROW_COLLAPSE}
-            className="h-3 w-3 rotate-90 text-darkCustom hover:cursor-pointer hover:text-primary"
+            className={classNames(
+              "h-3 w-3 rotate-90 text-darkCustom hover:cursor-pointer hover:text-primary",
+              "mobile:h-4 mobile:w-4"
+            )}
           />
         );
       }
@@ -129,16 +160,21 @@ const ProjectList = () => {
     : [];
 
   return (
-    <div className="h-full overflow-scroll bg-neutral-70 px-14 py-8">
+    <div className="h-full overflow-scroll bg-neutral-70 py-8 px-14 mobile:overflow-hidden mobile:p-0">
       <Table
         columns={columns}
         data={DATA_TABLE_PROJECT_LIST}
-        variant={VARIANT_TABLE_DASHBOARD}
-        contentClassName="h-full max-h-full overflow-auto pr-2"
+        variant={VARIANT_TABLE_DASHBOARD_LIST}
+        contentClassName="h-full max-h-full overflow-auto pr-2 mobile:pr-0 pb-[120px]"
         hasPagination={true}
-        classNameWrapper="!overflow-visible"
+        classNameWrapper="!overflow-visible mobile:px-0"
         invertSelectPagination={true}
-        onRowClick={(row: { uuid: string; country: { country_slug: string } }) => {
+        onRowClick={(row: {
+          project: string;
+          country: { image: string; country_slug: string };
+          organization: string;
+          uuid: string;
+        }) => {
           setFilters(prevValues => ({
             ...prevValues,
             uuid: row.uuid as string,
@@ -152,6 +188,7 @@ const ProjectList = () => {
           });
         }}
         initialTableState={{ pagination: { pageSize: 10 } }}
+        classPagination="mobile:absolute mobile:bottom-0 mobile:bg-neutral-70 mobile:py-4 mobile:w-full mobile:shadow-dashboard"
       />
     </div>
   );

@@ -330,9 +330,10 @@ const DataCard = ({
   const { openNotification } = useNotificationContext();
   const [exporting, setExporting] = useState<boolean>(false);
   const t = useT();
-  const totalHectaresRestoredGoal = record?.total_hectares_restored_goal
-    ? Number(record?.total_hectares_restored_goal)
-    : +record?.hectares_to_restore_goal;
+  const totalHectaresRestoredGoal = Number(
+    record?.total_hectares_restored_goal ?? record?.totalHectaresRestoredGoal ?? 0
+  );
+  const totalHectaresRestoredSum = record?.total_hectares_restored_sum ?? record?.totalHectaresRestoredSum;
   const landUseData = filteredPolygonsIndicator
     ? parsePolygonsIndicatorDataForLandUse(filteredPolygonsIndicator, totalHectaresRestoredGoal)
     : DEFAULT_POLYGONS_DATA;
@@ -710,7 +711,7 @@ const DataCard = ({
     !record?.project && sortedTreeCoverSiteValues.length > 0
       ? `<br><br>The sites that had the most disturbances are ${formatDescriptionIndicator(
           valuesItemsTreecover,
-          record.total_hectares_restored_sum,
+          totalHectaresRestoredSum,
           true
         )}`
       : "";
@@ -741,7 +742,7 @@ const DataCard = ({
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
       "[x_%]": calculatePercentage(
         sumTreeCoverData.treeCoverLossFires + sumTreeCoverData.treeCoverLoss,
-        record.total_hectares_restored_sum
+        totalHectaresRestoredSum
       ),
       "[sites]": sitesMostDisturbancesText
     },
@@ -753,7 +754,7 @@ const DataCard = ({
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
       "[x_%]": calculatePercentage(
         sumTreeCoverData.treeCoverLossFires + sumTreeCoverData.treeCoverLoss,
-        record.total_hectares_restored_sum
+        totalHectaresRestoredSum
       ),
       "[sites]": sitesMostDisturbancesText
     },

@@ -151,7 +151,6 @@ const InformationTab: FC<IProps> = props => {
                                 modelName={modelName}
                                 collection="non-tree"
                                 setTotalCount={setTotalCountNonTree}
-                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -172,7 +171,6 @@ const InformationTab: FC<IProps> = props => {
                                   modelName={modelName}
                                   collection="nursery-seedling"
                                   setTotalCount={setTotalCountNurserySeedling}
-                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -193,7 +191,6 @@ const InformationTab: FC<IProps> = props => {
                                 modelName={modelName}
                                 collection="seeding"
                                 setTotalCount={setTotalCountSeeding}
-                                framework={record?.framework_key}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -212,7 +209,6 @@ const InformationTab: FC<IProps> = props => {
                               modelName={modelName}
                               collection="tree-planted"
                               setTotalCount={setTotalCountTreePlanted}
-                              framework={record?.framework_key}
                               secondColumnWidth="45%"
                             />
                           </div>
@@ -232,7 +228,6 @@ const InformationTab: FC<IProps> = props => {
                                   modelName={modelName}
                                   collection="replanting"
                                   setTotalCount={setTotalCountReplanting}
-                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>

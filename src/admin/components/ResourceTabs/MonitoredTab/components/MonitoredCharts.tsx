@@ -6,12 +6,14 @@ import { When } from "react-if";
 import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import SecDashboard from "@/pages/dashboard/components/SecDashboard";
-import { TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP } from "@/pages/dashboard/constants/tooltips";
 
 import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
 import { LoadingState } from "./MonitoredLoading";
 import { NoDataState } from "./NoDataState";
 import TreeLossBarChart from "./TreesLossBarChart";
+
+const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
+  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
 
 const ChartContainer = ({
   children,
@@ -34,7 +36,9 @@ const ChartContainer = ({
 };
 
 interface RecordType {
-  total_hectares_restored_sum: number;
+  // Temporary until all entities have been moved to v3.
+  total_hectares_restored_sum?: number;
+  totalHectaresRestoredSum?: number;
 }
 
 const RestorationMetrics = ({
@@ -45,22 +49,25 @@ const RestorationMetrics = ({
   record: RecordType;
   totalHectaresRestoredGoal: number;
   strategiesData: any[];
-}) => (
-  <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-    <SecDashboard
-      title="Total Hectares Under Restoration"
-      data={{
-        value: parseFloat(record.total_hectares_restored_sum.toFixed(1)),
-        totalValue: totalHectaresRestoredGoal
-      }}
-      className="w-full place-content-center pl-8"
-      tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
-      showTreesRestoredGraph={false}
-      classNameBody="!mt-1.5"
-    />
-    <SimpleBarChart data={strategiesData} total={record.total_hectares_restored_sum} />
-  </div>
-);
+}) => {
+  const sum = record.total_hectares_restored_sum ?? record.totalHectaresRestoredSum ?? 0;
+  return (
+    <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
+      <SecDashboard
+        title="Total Hectares Under Restoration"
+        data={{
+          value: parseFloat(sum.toFixed(1)),
+          totalValue: totalHectaresRestoredGoal
+        }}
+        className="w-full place-content-center pl-8"
+        tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
+        showTreesRestoredGraph={false}
+        classNameBody="!mt-1.5"
+      />
+      <SimpleBarChart data={strategiesData} total={sum} />
+    </div>
+  );
+};
 
 interface MonitoredChartsProps {
   selected: React.Key[];

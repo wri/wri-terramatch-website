@@ -149,24 +149,18 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
       );
 
     case FieldType.WorkdaysTable:
-      return (
-        <RHFDemographicsTable
-          {...field.fieldProps}
-          {...sharedProps}
-          control={formHook.control}
-          onChangeCapture={onChange}
-          demographicalType="workdays"
-        />
-      );
-
     case FieldType.RestorationPartnersTable:
+    case FieldType.JobsTable:
+    case FieldType.VolunteersTable:
+    case FieldType.AllBeneficiariesTable:
+    case FieldType.TrainingBeneficiariesTable:
       return (
         <RHFDemographicsTable
           {...field.fieldProps}
           {...sharedProps}
           control={formHook.control}
           onChangeCapture={onChange}
-          demographicalType="restorationPartners"
+          demographicType={field.type}
         />
       );
 
