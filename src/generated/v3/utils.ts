@@ -1,7 +1,7 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { logout, selectLogin } from "@/connections/Login";
-import { entityServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
+import { entityServiceUrl, researchServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
@@ -17,6 +17,7 @@ const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   entities: entityServiceUrl,
   jobs: jobServiceUrl,
+  research: researchServiceUrl,
   trees: entityServiceUrl,
   users: userServiceUrl
 } as const;

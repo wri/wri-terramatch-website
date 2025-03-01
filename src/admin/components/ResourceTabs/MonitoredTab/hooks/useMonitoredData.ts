@@ -13,7 +13,10 @@ import {
   usePostV2IndicatorsSlug
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
+import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName } from "@/types/common";
+import { processTreeCoverData } from "@/utils/MonitoredIndicatorUtils";
 
 const dataPolygonOverview = [
   {
@@ -41,6 +44,11 @@ const dataPolygonOverview = [
 
 const DROPDOWN_OPTIONS = [
   {
+    title: "Tree Cover (TTC)",
+    value: "0",
+    slug: "treeCover"
+  },
+  {
     title: "Tree Cover Loss",
     value: "1",
     slug: "treeCoverLoss"
@@ -67,6 +75,262 @@ const DROPDOWN_OPTIONS = [
   }
 ];
 
+// Delete mock data when research Service API get correct data
+const MOCK_TREE_COVER_API_RESPONSE = {
+  meta: {
+    type: "sitePolygons",
+    page: {
+      total: 5,
+      cursor: "cursor-id-123"
+    }
+  },
+  data: [
+    {
+      type: "sitePolygons",
+      id: "poly-001",
+      attributes: {
+        name: "North Forest Zone",
+        status: "active",
+        siteId: "site-highland-restoration",
+        geometry: {},
+        plantStart: "2023-04-15T10:00:00.000Z",
+        plantEnd: "2024-04-15T10:00:00.000Z",
+        practice: "mixed native species",
+        targetSys: "native forest",
+        distr: "natural",
+        numTrees: 12500,
+        calcArea: 145.8,
+        indicators: [
+          {
+            indicatorSlug: "treeCover",
+            yearOfAnalysis: 2024,
+            projectPhase: "Establishment",
+            percentCover: 28.5,
+            plusMinusPercent: 2.1
+          },
+          {
+            indicatorSlug: "treeCoverLoss",
+            yearOfAnalysis: 2024,
+            value: {
+              "2023": "0.3",
+              "2024": "0.2"
+            }
+          }
+        ],
+        establishmentTreeSpecies: [
+          {
+            name: "Acacia binervia",
+            amount: 4500
+          },
+          {
+            name: "Eucalyptus globulus",
+            amount: 8000
+          }
+        ]
+      },
+      meta: {
+        page: {
+          cursor: "cursor-item-1"
+        }
+      }
+    },
+    {
+      type: "sitePolygons",
+      id: "poly-002",
+      attributes: {
+        name: "South Valley Corridor",
+        status: "active",
+        siteId: "site-highland-restoration",
+        geometry: {},
+        plantStart: "2023-06-22T10:00:00.000Z",
+        plantEnd: "2024-06-22T10:00:00.000Z",
+        practice: "assisted regeneration",
+        targetSys: "native forest",
+        distr: "natural",
+        numTrees: 7500,
+        calcArea: 98.2,
+        indicators: [
+          {
+            indicatorSlug: "treeCover",
+            yearOfAnalysis: 2024,
+            projectPhase: "Growth",
+            percentCover: 34.7,
+            plusMinusPercent: 1.8
+          },
+          {
+            indicatorSlug: "restorationByEcoRegion",
+            yearOfAnalysis: 2024,
+            value: {
+              "Northern Acacia-Commiphora bushlands and thickets": 0.104
+            }
+          }
+        ],
+        establishmentTreeSpecies: [
+          {
+            name: "Acacia binervia",
+            amount: 3000
+          },
+          {
+            name: "Eucalyptus globulus",
+            amount: 4500
+          }
+        ]
+      },
+      meta: {
+        page: {
+          cursor: "cursor-item-2"
+        }
+      }
+    },
+    {
+      type: "sitePolygons",
+      id: "poly-003",
+      attributes: {
+        name: "Eastern Ridge",
+        status: "planned",
+        siteId: "site-coastal-regeneration",
+        geometry: {},
+        plantStart: "2024-03-10T10:00:00.000Z",
+        plantEnd: "2025-03-10T10:00:00.000Z",
+        practice: "direct seeding",
+        targetSys: "agroforestry",
+        distr: "planned",
+        numTrees: 15000,
+        calcArea: 210.5,
+        indicators: [
+          {
+            indicatorSlug: "treeCover",
+            yearOfAnalysis: 2023,
+            projectPhase: "Planning",
+            percentCover: 12.3,
+            plusMinusPercent: 3.4
+          },
+          {
+            indicatorSlug: "treeCount",
+            yearOfAnalysis: 2023,
+            surveyType: "satellite",
+            surveyId: 125,
+            treeCount: 3200,
+            uncertaintyType: "standard deviation",
+            imagerySource: "Planet",
+            imageryId: "planet-123456",
+            projectPhase: "Planning",
+            confidence: 0.85
+          }
+        ],
+        establishmentTreeSpecies: [
+          {
+            name: "Acacia binervia",
+            amount: 7500
+          },
+          {
+            name: "Eucalyptus globulus",
+            amount: 7500
+          }
+        ]
+      },
+      meta: {
+        page: {
+          cursor: "cursor-item-3"
+        }
+      }
+    },
+    {
+      type: "sitePolygons",
+      id: "poly-004",
+      attributes: {
+        name: "Wetland Buffer Zone",
+        status: "monitoring",
+        siteId: "site-riverside-project",
+        geometry: {},
+        plantStart: "2022-09-01T10:00:00.000Z",
+        plantEnd: "2023-09-01T10:00:00.000Z",
+        practice: "mixed native species",
+        targetSys: "mangrove",
+        distr: "natural",
+        numTrees: 6500,
+        calcArea: 85.3,
+        indicators: [
+          {
+            indicatorSlug: "treeCover",
+            yearOfAnalysis: 2024,
+            projectPhase: "Maturation",
+            percentCover: 52.8,
+            plusMinusPercent: 1.2
+          },
+          {
+            indicatorSlug: "fieldMonitoring",
+            yearOfAnalysis: 2024,
+            treeCount: 5850,
+            projectPhase: "Maturation",
+            species: "mixed",
+            survivalRate: 0.9
+          }
+        ],
+        establishmentTreeSpecies: [
+          {
+            name: "Rhizophora mangle",
+            amount: 6500
+          }
+        ]
+      },
+      meta: {
+        page: {
+          cursor: "cursor-item-4"
+        }
+      }
+    },
+    {
+      type: "sitePolygons",
+      id: "poly-005",
+      attributes: {
+        name: "Western Hillside",
+        status: "active",
+        siteId: "site-mountain-reforestation",
+        geometry: {},
+        plantStart: "2023-08-15T10:00:00.000Z",
+        plantEnd: "2024-08-15T10:00:00.000Z",
+        practice: "assisted regeneration",
+        targetSys: "native forest",
+        distr: "natural",
+        numTrees: 10800,
+        calcArea: 132.7,
+        indicators: [
+          {
+            indicatorSlug: "treeCover",
+            yearOfAnalysis: 2024,
+            projectPhase: "Growth",
+            percentCover: 18.9,
+            plusMinusPercent: 2.6
+          },
+          {
+            indicatorSlug: "msuCarbon",
+            yearOfAnalysis: 2024,
+            carbonOutput: 128.5,
+            projectPhase: "Growth",
+            confidence: 0.92
+          }
+        ],
+        establishmentTreeSpecies: [
+          {
+            name: "Pinus sylvestris",
+            amount: 5400
+          },
+          {
+            name: "Quercus robur",
+            amount: 5400
+          }
+        ]
+      },
+      meta: {
+        page: {
+          cursor: "cursor-item-5"
+        }
+      }
+    }
+  ]
+};
+
 const SLUGS_INDICATORS = [
   "treeCoverLoss",
   "treeCoverLossFires",
@@ -92,10 +356,14 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
+  const [isLoadingTreeCover, setIsLoadingTreeCover] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
+  // The next two const were added for research service data, any type should change depending on API response
+  const [sitePolygonEntityData, setSitePolygonEntityData] = useState<any[]>([]);
+  const [treeCoverPolygonsData, setTreeCoverPolygonsData] = useState([]);
   const [analysisToSlug, setAnalysisToSlug] = useState<any>({
     treeCoverLoss: [],
     treeCoverLossFires: [],
@@ -122,6 +390,40 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   );
 
+  // 1st attempt: Fetch tree cover data using sitePolygonsIndex (research service)
+  const fetchTreeCoverData = async () => {
+    if (!entity_uuid) return;
+
+    setIsLoadingTreeCover(true);
+    try {
+      const response: any = await sitePolygonsIndex({
+        queryParams: {
+          ["page[size]"]: 100,
+          ["projectId[]"]: [entity_uuid],
+          includeTestProjects: false
+        }
+      });
+      if (response && response.data) {
+        setSitePolygonEntityData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching tree cover data:", error);
+      openNotification(
+        "error",
+        t("Error fetching tree cover data"),
+        t("Failed to fetch tree cover data. Please try again.")
+      );
+    } finally {
+      setIsLoadingTreeCover(false);
+    }
+  };
+
+  useValueChanged(entity_uuid, () => {
+    if (entity_uuid) {
+      fetchTreeCoverData();
+    }
+  });
+  //  --------end of 1st attempt---------
   const getComplementarySlug = (slug: string) => (slug === "treeCoverLoss" ? "treeCoverLossFires" : "treeCoverLoss");
 
   const { data: complementaryData } = useGetV2IndicatorsEntityUuidSlug(
@@ -189,6 +491,22 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       )
       .sort((a, b) => (a.poly_name || "").localeCompare(b.poly_name || ""));
   }, [indicatorData, searchTerm]);
+
+  // Filter sitePolygonEntityData based on search term
+  const filteredTreeCoverPolygons = useMemo(() => {
+    if (!sitePolygonEntityData || sitePolygonEntityData.length === 0) return [];
+
+    return sitePolygonEntityData
+      .filter(item => {
+        const polygonName = item.attributes?.name || "";
+        const siteName = item.attributes?.site?.name || "";
+        return (
+          polygonName.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+          siteName.toLowerCase().includes(searchTerm?.toLowerCase())
+        );
+      })
+      .sort((a, b) => (a.attributes?.name || "").localeCompare(b.attributes?.name || ""));
+  }, [sitePolygonEntityData, searchTerm]);
 
   useEffect(() => {
     if (!indicatorData) return;
@@ -277,6 +595,12 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   }, [entity, entity_uuid, modalOpened]);
 
+  // added for setting mocked data - Remove when apiResponse is loaded correctly
+  useEffect(() => {
+    const processedData: any = processTreeCoverData(MOCK_TREE_COVER_API_RESPONSE);
+    setTreeCoverPolygonsData(processedData);
+  }, [entity_uuid]);
+
   return {
     polygonsIndicator: filteredPolygons,
     polygonOptions,
@@ -287,11 +611,15 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
     isLoadingIndicator,
+    isLoadingTreeCover,
     setIsLoadingVerify,
     dropdownAnalysisOptions,
     analysisToSlug,
     polygonMissingAnalysis,
     treeCoverLossData,
-    treeCoverLossFiresData
+    treeCoverLossFiresData,
+    treeCoverPolygonsData,
+    sitePolygonEntityData: filteredTreeCoverPolygons,
+    refreshTreeCoverData: fetchTreeCoverData
   };
 };

@@ -129,6 +129,12 @@ type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
 
 const DROPDOWN_OPTIONS = [
   {
+    title: "Tree Cover",
+    value: "0",
+    slug: "treeCover",
+    description: "Tree cover"
+  },
+  {
     title: "Tree Cover Loss",
     value: "1",
     slug: "treeCoverLoss",
@@ -296,8 +302,14 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
-    useMonitoredData(type!, record.uuid);
+  const {
+    polygonsIndicator,
+    treeCoverLossData,
+    treeCoverLossFiresData,
+    isLoadingIndicator,
+    polygonOptions,
+    treeCoverPolygonsData
+  } = useMonitoredData(type!, record.uuid);
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
       ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
@@ -357,6 +369,117 @@ const DataCard = ({
     }
   }, []);
 
+  const TABLE_COLUMNS_TREE_COVER: CustomColumnDefInternal<RowData>[] = [
+    {
+      id: "mainInfo",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
+      header: "",
+      columns: [
+        {
+          accessorKey: "poly_name",
+          header: "Polygon Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0", width: "11%" } }
+        },
+        {
+          accessorKey: "size",
+          header: "Size (ha)",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value ? Number(value).toFixed(1) : "-";
+          }
+        },
+        {
+          accessorKey: "site_name",
+          header: "Site Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        },
+        {
+          accessorKey: "status",
+          header: "Status",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } },
+          cell: (props: any) => (
+            <CustomChipField
+              label={props.getValue()}
+              classNameChipField="!text-[12px] font-medium lg:!text-xs wide:!text-sm"
+            />
+          )
+        },
+        {
+          accessorKey: "plantstart",
+          header: () => (
+            <>
+              Plant
+              <br />
+              Start Date
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        }
+      ]
+    },
+    {
+      id: "treeCoverAnalysis",
+      header: "Tree Cover Analysis",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      columns: [
+        {
+          accessorKey: "yearOfAnalysis",
+          header: "Year of Analysis",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        },
+        {
+          accessorKey: "percentCover",
+          header: "Percent Cover",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? `${value.toFixed(1)}%` : "-";
+          }
+        },
+        {
+          accessorKey: "projectPhase",
+          header: "Project Phase",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        },
+        {
+          accessorKey: "plusMinusPercent",
+          header: () => (
+            <>
+              Plus/Minus
+              <br />
+              Percent
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? `±${value.toFixed(1)}%` : "-";
+          }
+        }
+      ]
+    },
+    {
+      id: "moreInfo",
+      header: " ",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, width: "5%" } },
+      columns: [
+        {
+          accessorKey: "more",
+          header: "",
+          enableSorting: false,
+          cell: props => (
+            <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+                <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+              </button>
+            </div>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        }
+      ]
+    }
+  ];
   const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
     {
       id: "mainInfo",
@@ -628,6 +751,7 @@ const DataCard = ({
   ];
 
   const TABLE_COLUMNS_MAPPING: Record<string, any> = {
+    treeCover: TABLE_COLUMNS_TREE_COVER,
     treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
     treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
     restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
@@ -734,6 +858,7 @@ const DataCard = ({
       : "";
 
   const monitoredDescriptionParams: Record<string, any> = {
+    treeCover: {},
     treeCoverLoss: {
       "[organization_name]": record?.organisation?.name,
       "[year_start]": 2015,
@@ -851,7 +976,7 @@ const DataCard = ({
             <div className="relative w-full px-6 pb-6">
               <Table
                 columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-                data={polygonsIndicator ?? []}
+                data={indicatorSlug === "treeCover" ? treeCoverPolygonsData : polygonsIndicator ?? []}
                 variant={VARIANT_TABLE_MONITORED}
                 classNameWrapper="!overflow-visible"
                 visibleRows={50}
