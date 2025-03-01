@@ -6,6 +6,7 @@ import { When } from "react-if";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
 import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
@@ -71,13 +72,13 @@ const SiteOverview: FC = () => {
 
             <Grid xs={6} item>
               <Labeled label="Status" className="label-field-aside">
-                <TextField source="readable_status" />
+                <ReadableStatusField prop="status" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
-                <TextField source="readable_update_request_status" />
+                <ReadableStatusField prop="updateRequestStatus" />
               </Labeled>
             </Grid>
           </Grid>

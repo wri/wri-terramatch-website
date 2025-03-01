@@ -5,7 +5,7 @@ import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } fro
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 
-const QuickActions: FC = () => {
+const SiteQuickActions: FC = () => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
 
@@ -29,6 +29,8 @@ const QuickActions: FC = () => {
     justifyContent: "space-between"
   };
 
+  console.log("record", record);
+
   return (
     <Card className="!shadow-none">
       <Box paddingX={3.75} paddingY={2}>
@@ -41,7 +43,11 @@ const QuickActions: FC = () => {
         <Button
           className="button-aside-page-admin"
           component={Link}
-          to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
+          to={createPath({
+            resource: modules.project.ResourceName,
+            type: "show",
+            id: record?.project?.uuid ?? record?.projectUuid
+          })}
           fullWidth
           label="Back To Project"
         />
@@ -73,4 +79,4 @@ const QuickActions: FC = () => {
   );
 };
 
-export default QuickActions;
+export default SiteQuickActions;

@@ -29,6 +29,7 @@ import { getCountriesOptions } from "@/constants/options/countries";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -72,7 +73,10 @@ const SiteDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.updateRequestStatus} />}
+        render={({ status }: SiteLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
       />
       <FunctionField
         source="updateRequestStatus"
@@ -90,7 +94,7 @@ const SiteDataGrid: FC = () => {
         label="Polygon Submitted"
         choices={optionToChoices(getPolygonsSubmittedTypes())}
       />
-      <TextField source="project.name" label="Project Name" />
+      <TextField source="projectName" label="Project Name" />
       <FunctionField
         source="frameworkKey"
         label="Framework"

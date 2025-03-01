@@ -107,6 +107,10 @@ export type SiteLightDto = {
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
    * @format date-time
    */
   createdAt: string;
@@ -252,6 +256,10 @@ export type SiteFullDto = {
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
    * @format date-time
    */
   createdAt: string;
@@ -260,6 +268,57 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
+  totalHectaresRestoredSum: number;
+  seedsPlantedCount: number;
+  overdueSiteReportsTotal: number;
+  selfReportedWorkdayCount: number;
+  treesPlantedCount: number;
+  regeneratedTreesCount: number;
+  combinedWorkdayCount: number;
+  workdayCount: number;
+  ppcExternalId: number | null;
+  sitingStrategy: string | null;
+  descriptionSitingStrategy: string | null;
+  hectaresToRestoreGoal: number | null;
+  description: string | null;
+  controlSite: boolean | null;
+  history: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  landTenures: string[] | null;
+  survivalRatePlanted: number | null;
+  directSeedingSurvivalRate: number | null;
+  aNatRegenerationTreesPerHectare: number | null;
+  aNatRegeneration: number | null;
+  landscapeCommunityContribution: string | null;
+  technicalNarrative: string | null;
+  plantingPattern: string | null;
+  soilCondition: string | null;
+  aimYearFiveCrownCover: number | null;
+  aimNumberOfMatureTrees: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  detailedInterventionTypes: string[] | null;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+  treeSpecies: MediaDto[];
+  documentFiles: MediaDto[];
+  stratificationForHeterogeneity: MediaDto;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
 };
 
 export type DemographicEntryDto = {
