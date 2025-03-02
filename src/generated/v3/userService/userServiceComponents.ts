@@ -419,3 +419,9 @@ export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal)
     ...variables,
     signal
   });
+
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate },
+  resetPassword: { requestPasswordReset, resetPassword }
+};

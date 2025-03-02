@@ -82,7 +82,6 @@ export const impactStoriesDataProvider: DataProvider = {
         pathParams: { id: uuid }
       });
 
-      console.log("Params", params.data);
       // @ts-expect-error
       return { data: { ...response.data, id: response.data.uuid } };
     } catch (err) {

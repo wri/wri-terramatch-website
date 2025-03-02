@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
@@ -59,11 +60,11 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     mode?.includes("provide-feedback") ? feedbackFields : undefined
   );
 
-  const defaultValues = useNormalizedFormDefaultValue(
-    formData?.update_request?.content ?? formData?.answers,
-    formSteps,
-    entity.migrated
+  const sourceData = useMemo(
+    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
+    [formData?.answers, formData?.update_request?.content]
   );
+  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps, entity.migrated);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
   const formTitle =

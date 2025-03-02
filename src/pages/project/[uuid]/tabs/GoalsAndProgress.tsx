@@ -81,7 +81,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       };
     });
 
-  const isTerrafund = ALL_TF.includes(project.frameworkKey as Framework);
+  const isTerrafund = ALL_TF.includes(project.frameworkKey as (typeof ALL_TF)[number]);
   return (
     <PageBody className="text-darkCustom">
       <PageRow>

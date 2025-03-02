@@ -12,6 +12,8 @@ import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
+import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -24,12 +26,11 @@ import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTable
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
-import useDemographicData from "@/hooks/useDemographicData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
@@ -60,13 +61,20 @@ const SiteReportDetailPage = () => {
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
   const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
-  const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
-    "site-report",
-    "workdays",
-    siteReportUUID,
-    SITE_WORKDAY_COLLECTIONS,
-    "Site Workdays"
-  );
+  const totalProps = {
+    entity: "site-reports",
+    uuid: siteReportUUID,
+    demographicType: "workdays"
+  } as Omit<CollectionsTotalProps, "collections">;
+  const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
+  const workdaysPaid = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("paid-"))
+  });
+  const workdaysVolunteer = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
+  });
 
   const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -367,8 +375,8 @@ const SiteReportDetailPage = () => {
                 </PageColumn>
                 <PageColumn frameworksShow={[Framework.PPC]}>
                   <PageCard title={t("Report Overview")}>
-                    <TextField label={t("Workdays Paid")} value={siteReport.workdays_paid} />
-                    <TextField label={t("Workdays Volunteer")} value={siteReport.workdays_volunteer} />
+                    <TextField label={t("Workdays Paid")} value={String(workdaysPaid ?? 0)} />
+                    <TextField label={t("Workdays Volunteer")} value={String(workdaysVolunteer ?? 0)} />
                   </PageCard>
                   <Paper>
                     <ButtonField
@@ -386,26 +394,28 @@ const SiteReportDetailPage = () => {
               <PageRow frameworksShow={[Framework.PPC]}>
                 <PageColumn>
                   <PageCard>
-                    {workdayGrids.length == 0 ? (
+                    {workdaysTotal == null ? (
                       <Loader />
                     ) : (
-                      <Fragment>
-                        <Text variant="text-bold-headline-800">{workdaysTitle}</Text>
-                        {workdayGrids.map(({ collection, grid }) => (
-                          <If key={collection} condition={collection === COLLECTION_SITE_PAID_OTHER}>
-                            <Then>
+                      <>
+                        <Text variant="text-bold-headline-800">{`Site Reports - ${workdaysTotal}`}</Text>
+                        {DemographicCollections.WORKDAYS_SITE.map(collection => (
+                          <Fragment key={collection}>
+                            {collection === DemographicCollections.WORKDAYS_SITE_OTHER && (
                               <TextField
                                 label={t("Other Activities Description")}
                                 value={siteReport.paid_other_activity_description}
                               />
-                              {grid}
-                            </Then>
-                            <Else>
-                              <Then key={collection}>{grid}</Then>
-                            </Else>
-                          </If>
+                            )}
+                            <DemographicsDisplay
+                              entity="site-reports"
+                              uuid={siteReportUUID}
+                              type="workdays"
+                              collection={collection}
+                            />
+                          </Fragment>
                         ))}
-                      </Fragment>
+                      </>
                     )}
                   </PageCard>
                 </PageColumn>

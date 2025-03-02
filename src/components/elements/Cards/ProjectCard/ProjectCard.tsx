@@ -18,13 +18,14 @@ import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 export interface ProjectCardProps
   extends PropsWithChildren,
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  project: any;
+  project: ProjectLightDto;
   onDelete: (uuid: string) => void;
 }
 
@@ -70,7 +71,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
   };
 
   return (
-    <FrameworkProvider frameworkKey={project.framework_key}>
+    <FrameworkProvider frameworkKey={project.frameworkKey}>
       <Paper {...rest} className={classNames(className, "p-0")}>
         <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6">
           <div className="flex flex-1 flex-col gap-2">
@@ -89,7 +90,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
             </div>
             <div className="flex">
               <Text variant="text-bold-subtitle-500">{t("Organisation")}:&#160;</Text>
-              <Text variant="text-light-subtitle-400">{project.organisation?.name}</Text>
+              <Text variant="text-light-subtitle-400">{project.organisationName}</Text>
             </div>
           </div>
           <div className="flex gap-4">
@@ -132,7 +133,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Site")}
                   </Button>
@@ -169,7 +170,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/nurseries/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Nursery")}
                   </Button>

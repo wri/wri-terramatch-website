@@ -4665,30 +4665,6 @@ export type V2SeedingPaginated = {
   };
 };
 
-export type V2WorkdayRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
-};
-
-export type V2RestorationPartnerRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
-};
-
 export type V2DisturbanceRead = {
   uuid?: string;
   description?: string;
@@ -20464,7 +20440,6 @@ export type SiteReportRead = {
      */
     created_at?: string;
   };
-  workdays_volunteer?: number;
   technical_narrative?: string;
   public_narrative?: string;
   shared_drive_link?: string;
@@ -21032,46 +21007,18 @@ export type ProjectReportRead = {
   pct_survival_to_date?: number;
   survival_calculation?: string;
   survival_comparison?: string;
-  ft_women?: number;
-  ft_men?: number;
-  ft_youth?: number;
-  ft_smallholder_farmers?: number;
-  ft_total?: number;
-  pt_women?: number;
-  pt_men?: number;
-  pt_youth?: number;
-  pt_smallholder_farmers?: number;
-  pt_total?: number;
   seasonal_women?: number;
   seasonal_men?: number;
   seasonal_youth?: number;
-  seasonal_smallholder_farmers?: number;
   seasonal_total?: number;
-  volunteer_women?: number;
-  volunteer_men?: number;
-  volunteer_youth?: number;
-  volunteer_smallholder_farmers?: number;
-  volunteer_total?: number;
   shared_drive_link?: string;
   planted_trees?: number;
   new_jobs_created?: number;
   new_jobs_description?: string;
   new_volunteers?: number;
   volunteers_work_description?: string;
-  ft_jobs_non_youth?: number;
-  ft_jobs_youth?: number;
-  volunteer_non_youth?: number;
-  beneficiaries?: number;
   beneficiaries_description?: string;
-  beneficiaries_women?: number;
-  beneficiaries_men?: number;
-  beneficiaries_non_youth?: number;
-  beneficiaries_youth?: number;
-  beneficiaries_smallholder?: number;
-  beneficiaries_large_scale?: number;
-  beneficiaries_income_increase?: number;
   beneficiaries_income_increase_description?: string;
-  beneficiaries_skills_knowledge_increase?: number;
   beneficiaries_skills_knowledge_increase_description?: string;
   ethnic_indigenous_1?: number;
   ethnic_indigenous_2?: number;

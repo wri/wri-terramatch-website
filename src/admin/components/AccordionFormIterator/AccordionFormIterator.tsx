@@ -38,7 +38,6 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
     getItemLabel = false,
     fullWidth,
     sx,
-    defaultExpanded,
     summaryChildren
   } = props;
 
@@ -143,7 +142,6 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
               resource={resource!}
               source={source!}
               inline={inline}
-              defaultExpanded={defaultExpanded}
               summaryChildren={summaryChildren}
             >
               {children}
@@ -167,7 +165,6 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
 
 export interface AccordionFormIteratorProps extends SimpleFormIteratorProps, Partial<UseFieldArrayReturn> {
   accordionSummaryTitle: (index: number, fields: any[]) => string;
-  defaultExpanded?: boolean;
   summaryChildren?: React.ReactNode;
 }
 

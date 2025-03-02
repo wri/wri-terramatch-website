@@ -64,7 +64,11 @@ const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...re
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle}
+                    setButtonToggle={setButtonToggle}
+                    framework={site?.framework_key}
+                  />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
                     <Text variant="text-14-light" className="mb-4">

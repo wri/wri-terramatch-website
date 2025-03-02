@@ -85,7 +85,11 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
               {!verifyEntity && (
-                <AuditLogSiteTabSelection buttonToggle={buttonToggle!} setButtonToggle={setButtonToggle} />
+                <AuditLogSiteTabSelection
+                  buttonToggle={buttonToggle!}
+                  setButtonToggle={setButtonToggle}
+                  framework={record?.frameworkKey}
+                />
               )}
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project && !verifyEntity}>
                 <Text variant="text-24-bold">Project Status</Text>

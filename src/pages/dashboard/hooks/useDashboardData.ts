@@ -213,10 +213,11 @@ export const useDashboardData = (filters: any) => {
     const finalFilters = {
       status: ["published"],
       country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organizationType: filters.organizations ? filters.organizations : []
+      organizationType: filters.organizations ? filters.organizations : [],
+      uuid: filters.uuid
     };
     return createQueryParams(finalFilters);
-  }, [filters.country?.country_slug, filters.organizations]);
+  }, [filters.country?.country_slug, filters.organizations, filters.uuid]);
 
   const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
     queryParams: queryString as any

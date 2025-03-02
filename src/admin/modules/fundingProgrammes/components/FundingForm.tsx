@@ -100,7 +100,6 @@ const FundingForm = () => {
 
       <ArrayInput source="stages" label="Stages">
         <AccordionFormIterator
-          defaultExpanded
           accordionSummaryTitle={(index, fields) =>
             `Stage ${index + 1} of ${fields.length} ${fields[index].name ? `$(${fields[index].name})` : ""}`
           }

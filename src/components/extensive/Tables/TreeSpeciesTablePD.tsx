@@ -432,7 +432,7 @@ const TreeSpeciesTablePD = ({
         return (
           <div className="grid grid-cols-2 gap-3">
             <Text variant="text-14-bold" className="flex gap-2">
-              {value.toLocaleString()}
+              {value?.toLocaleString()}
             </Text>
           </div>
         );

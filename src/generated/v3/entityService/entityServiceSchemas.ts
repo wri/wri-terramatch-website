@@ -262,6 +262,119 @@ export type SiteFullDto = {
   totalSiteReports: number;
 };
 
+export type DemographicEntryDto = {
+  type: string;
+  subtype: string;
+  name?: string;
+  amount: number;
+};
+
+/**
+ * CONSTANTS
+ */
+export type DemographicCollections = {
+  /**
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   * @example direct
+   * @example convergence
+   */
+  WORKDAYS_PROJECT: string[];
+  /**
+   * @example paid-project-management
+   * @example volunteer-project-management
+   * @example paid-nursery-operations
+   * @example volunteer-nursery-operations
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_PROJECT_PPC: string[];
+  /**
+   * @example paid-other-activities
+   */
+  WORKDAYS_PROJECT_OTHER: string;
+  /**
+   * @example paid-site-establishment
+   * @example volunteer-site-establishment
+   * @example paid-planting
+   * @example volunteer-planting
+   * @example paid-site-maintenance
+   * @example volunteer-site-maintenance
+   * @example paid-site-monitoring
+   * @example volunteer-site-monitoring
+   * @example paid-other-activities
+   * @example volunteer-other-activities
+   */
+  WORKDAYS_SITE: string[];
+  /**
+   * @example paid-other-activities
+   */
+  WORKDAYS_SITE_OTHER: string;
+  /**
+   * @example direct-income
+   * @example indirect-income
+   * @example direct-benefits
+   * @example indirect-benefits
+   * @example direct-conservation-payments
+   * @example indirect-conservation-payments
+   * @example direct-market-access
+   * @example indirect-market-access
+   * @example direct-capacity
+   * @example indirect-capacity
+   * @example direct-training
+   * @example indirect-training
+   * @example direct-land-title
+   * @example indirect-land-title
+   * @example direct-livelihoods
+   * @example indirect-livelihoods
+   * @example direct-productivity
+   * @example indirect-productivity
+   * @example direct-other
+   * @example indirect-other
+   */
+  RESTORATION_PARTNERS_PROJECT: string[];
+  /**
+   * @example direct-other
+   */
+  RESTORATION_PARTNERS_PROJECT_OTHER: string;
+  /**
+   * @example full-time
+   * @example part-time
+   */
+  JOBS_PROJECT: string[];
+  /**
+   * @example volunteer
+   */
+  VOLUNTEERS_PROJECT: string[];
+  /**
+   * @example all
+   */
+  BENEFICIARIES_PROJECT_ALL: string[];
+  /**
+   * @example training
+   */
+  BENEFICIARIES_PROJECT_TRAINING: string[];
+};
+
+export type DemographicDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
+  collection: string;
+  entries: DemographicEntryDto[];
+};
+
 export type PreviousPlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
