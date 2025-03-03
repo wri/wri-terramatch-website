@@ -29,8 +29,6 @@ const SiteQuickActions: FC = () => {
     justifyContent: "space-between"
   };
 
-  console.log("record", record);
-
   return (
     <Card className="!shadow-none">
       <Box paddingX={3.75} paddingY={2}>

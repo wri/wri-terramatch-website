@@ -16,7 +16,6 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
 
   const getReportsPath = (view: keyof typeof modules) => {
     if (!record) return;
-    console.log("record", record);
     const queryParams = new URLSearchParams({
       displayedFilters: JSON.stringify({ project_uuid: true }),
       filter: JSON.stringify({ project_uuid: record.project.uuid }),
