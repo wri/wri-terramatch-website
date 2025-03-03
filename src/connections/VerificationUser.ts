@@ -4,7 +4,7 @@ import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServicePredicates";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionLoader } from "@/utils/connectionShortcuts";
+import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectVerificationUser = (store: ApiDataStore) => Object.values(store.verifications)?.[0]?.attributes;
@@ -21,8 +21,7 @@ type VerificationUserProps = {
 
 const verificationUserConnection: Connection<VerificationUserConnection, VerificationUserProps> = {
   load: ({ isSuccess, requestFailed }, { token }) => {
-    console.log(isSuccess, requestFailed);
-    if (isSuccess === null && requestFailed === null) verifyUser({ body: { token } });
+    if (isSuccess == null && requestFailed == null) verifyUser({ body: { token } });
   },
 
   isLoaded: ({ isSuccess }) => isSuccess !== null,
@@ -40,4 +39,4 @@ const verificationUserConnection: Connection<VerificationUserConnection, Verific
   )
 };
 
-export const loadVerificationUser = connectionLoader(verificationUserConnection);
+export const useVerificationUser = connectionHook(verificationUserConnection);
