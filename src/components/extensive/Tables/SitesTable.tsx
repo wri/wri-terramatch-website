@@ -30,7 +30,7 @@ const SitesTable = ({ project, hasAddButton = true }: SitesTableProps) => {
   const [queryParams, setQueryParams] = useState<EntityIndexConnectionProps>({});
   const { openModal, closeModal } = useModalContext();
 
-  const [isLoaded, { entities: sites, refetch }] = useSiteIndex({
+  const [isLoaded, { entities: sites, refetch, indexTotal }] = useSiteIndex({
     filter: { projectUuid: project.uuid } as any,
     ...(queryParams as any)
   });
@@ -67,7 +67,7 @@ const SitesTable = ({ project, hasAddButton = true }: SitesTableProps) => {
 
   return (
     <ServerSideTable
-      meta={{ last_page: 3 }}
+      meta={{ last_page: indexTotal && queryParams.pageSize ? Math.ceil(indexTotal / queryParams.pageSize) : 1 }}
       data={sites ?? []}
       isLoading={!isLoaded}
       onQueryParamChange={param => {
