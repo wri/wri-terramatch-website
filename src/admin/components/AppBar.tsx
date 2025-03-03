@@ -1,14 +1,28 @@
-import { Typography } from "@mui/material";
-import { AppBar as RaAppBar, AppBarProps, Link } from "react-admin";
+import { AppBar as RaAppBar, AppBarProps, Link, Logout, MenuItemLink, UserMenu } from "react-admin";
 
-export const AppBar = (props: AppBarProps) => (
-  <RaAppBar {...props}>
-    <div className="logo-header">
-      <Link to="/" title="Homepage" aria-label="Homepage">
-        <div className="ic-header" />
-      </Link>
-    </div>
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+export const AppBar = (props: AppBarProps) => {
+  const CustomUserMenu = (props: any) => (
+    <UserMenu {...props}>
+      <MenuItemLink
+        to="#"
+        primaryText="Dashboard"
+        leftIcon={<Icon name={IconNames.IC_SWITCH} className="p-0.5" />}
+        onClick={() => {
+          window.location.href = "/dashboard";
+        }}
+      />
+      <Logout />
+    </UserMenu>
+  );
 
-    <Typography flex="1" variant="h6" id="react-admin-title"></Typography>
-  </RaAppBar>
-);
+  return (
+    <RaAppBar {...props} userMenu={<CustomUserMenu />}>
+      <div className="logo-header">
+        <Link to="/" title="Homepage" aria-label="Homepage">
+          <div className="ic-header" />
+        </Link>
+      </div>
+    </RaAppBar>
+  );
+};

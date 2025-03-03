@@ -19,7 +19,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] 
     Trash Removed 
   </p>
   <p
-    className="text-14-bold"
+    className="flex w-full justify-end text-14-bold"
     data-testid="txt"
   >
     530,000

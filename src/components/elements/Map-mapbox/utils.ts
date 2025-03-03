@@ -24,6 +24,7 @@ import Log from "@/utils/log";
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
+import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
 type EditPolygon = {
@@ -31,6 +32,11 @@ type EditPolygon = {
   uuid: string;
   primary_uuid?: string;
 };
+
+type DataPolygonOverview = {
+  status: string;
+  count: number;
+}[];
 
 type PopupComponentProps = {
   feature: mapboxgl.MapboxGeoJSONFeature;
@@ -698,6 +704,10 @@ export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: 
   const filter = ["==", ["get", "iso"], country];
   map.setFilter(layerName, filter);
 };
+export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landscapes: string[]) => {
+  const filter = ["in", ["get", "landscape"], ["literal", landscapes]];
+  map.setFilter(layerName, filter);
+};
 export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
   if (!country || !map) return;
 
@@ -725,6 +735,43 @@ export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
     "source-layer": countryLayer.geoserverLayerName
   } as mapboxgl.AnyLayer);
   setFilterCountry(map, sourceName, country);
+};
+export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
+  if (!landscapes || !map) return;
+
+  const styleName = `${LAYERS_NAMES.LANDSCAPES}`;
+  const landscapeLayer = layersList.find(layer => layer.name === styleName);
+  if (!landscapeLayer) return;
+  const countryStyles = landscapeLayer.styles || [];
+  const sourceName = landscapeLayer.name;
+  const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName);
+
+  if (!map.getSource(sourceName)) {
+    map.addSource(sourceName, {
+      type: "vector",
+      tiles: [GEOSERVER_TILE_URL]
+    });
+  }
+  if (map.getLayer(sourceName)) {
+    map.removeLayer(sourceName);
+  }
+  const style = countryStyles[0];
+  map.addLayer({
+    ...style,
+    id: sourceName,
+    source: sourceName,
+    "source-layer": landscapeLayer.geoserverLayerName
+  } as mapboxgl.AnyLayer);
+  setFilterLandscape(map, sourceName, landscapes);
+};
+export const removeBorderLandscape = (map: mapboxgl.Map) => {
+  const layerName = `${LAYERS_NAMES.LANDSCAPES}`;
+  if (map.getLayer(layerName)) {
+    map.removeLayer(layerName);
+  }
+  if (map.getSource(layerName)) {
+    map.removeSource(layerName);
+  }
 };
 
 export const removeBorderCountry = (map: mapboxgl.Map) => {
@@ -760,7 +807,15 @@ export const addLayerStyle = (
   moveDeleteLayers(map);
 };
 
-export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean) => {
+export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) => {
+  if (currentStyle === MapStyle.Street) {
+    map.setProjection("mercator");
+  } else if (currentStyle === MapStyle.Satellite) {
+    map.setProjection("globe");
+  }
+};
+
+export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, currentStyle = MapStyle.Satellite) => {
   if (map && bbox) {
     map.fitBounds(bbox, {
       padding: hasControls ? 100 : 30,
@@ -818,6 +873,35 @@ export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: s
     cb(result);
   });
 }
+
+export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOverview => {
+  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
+
+  const statusCountMap: Record<string, number> = {};
+
+  sitePolygonData.forEach(item => {
+    let statusKey = item.status?.toLowerCase();
+
+    if (statusKey) {
+      if (statusKey === "needs-more-information") {
+        statusKey = "Needs Info";
+      } else {
+        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
+      }
+
+      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
+    }
+  });
+
+  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
+    status,
+    count
+  }));
+
+  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+
+  return orderedData;
+};
 
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
@@ -971,4 +1055,17 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
   })
     .setLngLat(lngLat)
     .addTo(map);
+};
+
+export const setMapStyle = (
+  style: MapStyle,
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string
+) => {
+  if (map && currentStyle !== style) {
+    map.setStyle(style);
+    updateMapProjection(map, style);
+    setCurrentStyle(style);
+  }
 };

@@ -14,7 +14,7 @@ import {
   ParameterObject,
   PathItemObject
 } from "openapi3-ts";
-import ts from "typescript";
+import ts, { ClassElement, Expression, PropertyAssignment } from "typescript";
 
 const f = ts.factory;
 
@@ -27,28 +27,40 @@ type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 type Environment = {
   apiBaseUrl: string;
   userServiceUrl: string;
+  jobServiceUrl: string;
+  entityServiceUrl: string;
 };
 
 const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
   local: {
     apiBaseUrl: "http://localhost:8080",
-    userServiceUrl: "http://localhost:4010"
+    userServiceUrl: "http://localhost:4010",
+    jobServiceUrl: "http://localhost:4020",
+    entityServiceUrl: "http://localhost:4050"
   },
   dev: {
     apiBaseUrl: "https://api-dev.terramatch.org",
-    userServiceUrl: "https://api-dev.terramatch.org"
+    userServiceUrl: "https://api-dev.terramatch.org",
+    jobServiceUrl: "https://api-dev.terramatch.org",
+    entityServiceUrl: "https://api-dev.terramatch.org"
   },
   test: {
     apiBaseUrl: "https://api-test.terramatch.org",
-    userServiceUrl: "https://api-test.terramatch.org"
+    userServiceUrl: "https://api-test.terramatch.org",
+    jobServiceUrl: "https://api-test.terramatch.org",
+    entityServiceUrl: "https://api-test.terramatch.org"
   },
   staging: {
     apiBaseUrl: "https://api-staging.terramatch.org",
-    userServiceUrl: "https://api-staging.terramatch.org"
+    userServiceUrl: "https://api-staging.terramatch.org",
+    jobServiceUrl: "https://api-staging.terramatch.org",
+    entityServiceUrl: "https://api-staging.terramatch.org"
   },
   prod: {
     apiBaseUrl: "https://api.terramatch.org",
-    userServiceUrl: "https://api.terramatch.org"
+    userServiceUrl: "https://api.terramatch.org",
+    jobServiceUrl: "https://api.terramatch.org",
+    entityServiceUrl: "https://api.terramatch.org"
   }
 };
 
@@ -60,13 +72,17 @@ if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
 const DEFAULTS = ENVIRONMENTS[declaredEnv];
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
+const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
+const entityServiceUrl = process.env.NEXT_PUBLIC_ENTITY_SERVICE_URL ?? DEFAULTS.entityServiceUrl;
 
 // The services defined in the v3 Node BE codebase. Although the URL path for APIs in the v3 space
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
 // isolate the generated API integration by service to make it easier for a developer to find where
 // the associated BE code is for a given FE API integration.
 const SERVICES = {
-  "user-service": userServiceUrl
+  "user-service": userServiceUrl,
+  "job-service": jobServiceUrl,
+  "entity-service": entityServiceUrl
 };
 
 const config: Record<string, Config> = {
@@ -118,11 +134,107 @@ for (const [service, baseUrl] of Object.entries(SERVICES)) {
       const { schemasFiles } = await generateSchemaTypes(context, { filenamePrefix: name });
       await generateFetchers(context, { filenamePrefix: name, schemasFiles });
       await generatePendingPredicates(context, { filenamePrefix: name });
+      await generateConstants(context, { filenamePrefix: name });
     }
   };
 }
 
 export default defineConfig(config);
+
+const generateLiteral = (value: unknown) => {
+  if (_.isString(value)) return f.createStringLiteral(value);
+  else if (_.isNumber(value)) return f.createNumericLiteral(value);
+  else if (_.isArray(value)) {
+    const literals: Expression[] = [];
+    value.forEach(member => {
+      const literal = generateLiteral(member);
+      if (literal != null) literals.push(literal);
+    });
+    return f.createArrayLiteralExpression(literals, true);
+  } else if (_.isObject(value)) {
+    const properties: PropertyAssignment[] = [];
+    Object.entries(value).forEach(([key, value]) => {
+      const childLiteral = generateLiteral(value);
+      const name = key.includes("-") ? f.createStringLiteral(key) : key;
+      if (childLiteral != null) properties.push(f.createPropertyAssignment(name, childLiteral));
+    });
+    return f.createObjectLiteralExpression(properties, true);
+  }
+};
+
+const generateConstants = async (context: Context, config: ConfigBase) => {
+  const sourceFile = ts.createSourceFile("index.ts", "", ts.ScriptTarget.Latest);
+
+  const printer = ts.createPrinter({
+    newLine: ts.NewLineKind.LineFeed,
+    removeComments: false
+  });
+
+  const printNodes = (nodes: ts.Node[]) =>
+    nodes
+      .map((node: ts.Node, i, nodes) => {
+        return (
+          printer.printNode(ts.EmitHint.Unspecified, node, sourceFile) +
+          (ts.isJSDoc(node) || (ts.isImportDeclaration(node) && nodes[i + 1] && ts.isImportDeclaration(nodes[i + 1]))
+            ? ""
+            : "\n")
+        );
+      })
+      .join("\n");
+
+  const filenamePrefix = c.snake(config.filenamePrefix ?? context.openAPIDocument.info.title) + "-";
+  const formatFilename = config.filenameCase ? c[config.filenameCase] : c.camel;
+  const filename = formatFilename(filenamePrefix + "-constants");
+  const nodes: ts.Node[] = [];
+
+  Object.entries(context.openAPIDocument.components?.schemas ?? {}).forEach(([componentName, componentSchema]) => {
+    if (
+      isReferenceObject(componentSchema) ||
+      componentSchema?.description !== "CONSTANTS" ||
+      componentSchema?.properties == null
+    ) {
+      return;
+    }
+
+    const members: ClassElement[] = [];
+    Object.entries(componentSchema.properties).forEach(([propertyName, propertySchema]) => {
+      if (isReferenceObject(propertySchema) || propertySchema.type == null || propertySchema.example == null) return;
+
+      const literal = generateLiteral(propertySchema.example);
+      if (literal != null) {
+        members.push(
+          f.createPropertyDeclaration(
+            [
+              f.createModifier(ts.SyntaxKind.PublicKeyword),
+              f.createModifier(ts.SyntaxKind.StaticKeyword),
+              f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
+            ],
+            propertyName,
+            undefined,
+            undefined,
+            f.createAsExpression(literal, f.createTypeReferenceNode("const"))
+          )
+        );
+      }
+    });
+    nodes.push(
+      f.createClassExpression(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+        componentName,
+        undefined,
+        undefined,
+        members
+      )
+    );
+  });
+
+  if (nodes.length === 0) {
+    // If the file doesn't export anything, the build fails due to the `--isolatedModules` flag.
+    nodes.push(f.createExportAssignment(undefined, undefined, f.createObjectLiteralExpression(undefined, false)));
+  }
+
+  await context.writeFile(filename + ".ts", printNodes(nodes));
+};
 
 /**
  * Generates Connection predicates for checking if a given request is in progress or failed.
@@ -271,7 +383,10 @@ const createPredicateNodes = ({
               undefined,
               f.createIdentifier("variables"),
               undefined,
-              variablesType,
+              f.createTypeReferenceNode("Omit", [
+                variablesType,
+                f.createLiteralTypeNode(f.createStringLiteral("body"))
+              ]),
               undefined
             )
           ],

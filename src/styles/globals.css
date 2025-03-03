@@ -2,6 +2,10 @@
   @apply text-base font-light font-primary;
 }
 
+body{
+  @apply mobile:h-full mobile:w-full mobile:overflow-hidden;
+}
+
 input[type="radio"] {
   -webkit-appearance: none;
   @apply h-5 w-5 rounded-[50%] border-2 border-solid border-neutral-500 outline-none transition-all duration-300 ease-in-out checked:border-primary-500;
@@ -64,6 +68,15 @@ input[type=number]::-webkit-outer-spin-button {
 
 strong {
   font-size: inherit
+}
+
+@media (max-width: 1200px) {
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 }
 
 

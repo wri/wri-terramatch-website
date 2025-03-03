@@ -2,16 +2,16 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { DetailedHTMLProps, Fragment, HTMLAttributes } from "react";
-import { Else, If, Then, When } from "react-if";
+import { If, Then, When } from "react-if";
 
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
+import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useLogin } from "@/connections/Login";
 import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser, ValidLocale } from "@/connections/User";
 import { useNavbarContext } from "@/context/navbar.provider";
-import { useLogout } from "@/hooks/logout";
-import { OptionValue } from "@/types/common";
 
 import NavbarItem from "./NavbarItem";
 import { getNavbarItems } from "./navbarItems";
@@ -24,27 +24,25 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
   const [, { isLoggedIn }] = useLogin();
   const router = useRouter();
   const t = useT();
+  const [, { setLocale }] = useMyUser();
   const [, myOrg] = useMyOrg();
-  const logout = useLogout();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 
   const navItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
   const { linksDisabled } = useNavbarContext();
 
-  const setV1Lang = (lang: string) => {
-    let v1Lang = lang;
+  const changeLanguageHandler = (lang: string) => {
+    if (setLocale != null) {
+      // In this case, the Bootstrap component will notice the changed user locale and update our URL for us
+      // after the server round trip. We don't want to do it here because then it's a race condition
+      // that can cause the URL locale to flicker.
+      setLocale(lang as ValidLocale);
+    } else {
+      // In this case we don't have a user to store the locale on, so just go ahead and directly change the URL.
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
+    }
 
-    if (lang === "es-MX") v1Lang = "es";
-    if (lang === "fr-FR") v1Lang = "fr";
-
-    localStorage.setItem("i18nextLng", v1Lang);
-  };
-
-  const changeLanguageHandler = (lang: OptionValue) => {
-    //Change Locale without changing the route
-    router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang.toString() });
-    setV1Lang(lang as string);
     handleClose?.();
   };
 
@@ -72,19 +70,17 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
       <When condition={navItems.length > 0}>
         <div className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block" />
       </When>
-      <If condition={isLoggedIn}>
+      <If condition={!isLoggedIn}>
         <Then>
-          <NavbarItem href="/" iconName={IconNames.LOGIN} onClick={logout}>
-            {t("Logout")}
-          </NavbarItem>
-        </Then>
-        <Else>
           <NavbarItem href="/auth/login" iconName={IconNames.LOGIN} onClick={handleClose}>
             {t("Sign in")}
           </NavbarItem>
-        </Else>
+        </Then>
       </If>
-      <LanguagesDropdown onChange={changeLanguageHandler} isLoggedIn={isLoggedIn} className="hidden sm:block" />
+      <If condition={isLoggedIn}>
+        <MyAccountDropdown isLoggedIn={isLoggedIn} />
+      </If>
+      <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
   );
 };

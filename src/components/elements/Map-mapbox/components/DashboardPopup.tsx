@@ -46,22 +46,22 @@ export const DashboardPopup = (event: any) => {
           {
             id: "1",
             title: "No. of Projects",
-            value: ((response.total_enterprise_count || 0) + (response.total_non_profit_count || 0)).toString()
+            value: ((response.total_enterprise_count || 0) + (response.total_non_profit_count || 0)).toLocaleString()
           },
           {
             id: "2",
             title: "Trees Planted",
-            value: (response.total_trees_restored || 0).toString()
+            value: (response.total_trees_restored || 0).toLocaleString()
           },
           {
             id: "3",
             title: "Restoration Hectares",
-            value: (response.total_hectares_restored || 0).toString()
+            value: (response.total_hectares_restored || 0).toLocaleString()
           },
           {
             id: "4",
             title: "Jobs Created",
-            value: (response.total_entries || 0).toString()
+            value: (response.total_entries || 0).toLocaleString()
           }
         ];
         setItems(parsedItems);
@@ -96,7 +96,7 @@ export const DashboardPopup = (event: any) => {
           .map((item: any) => ({
             id: item.key,
             title: item.title,
-            value: item.value
+            value: (item.value ?? "-").toLocaleString()
           }));
 
         const projectLabel = response.data.find((item: any) => item.key === "poly_name")?.value;
@@ -113,6 +113,7 @@ export const DashboardPopup = (event: any) => {
     } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       fetchPolygonData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isoCountry, layerName, itemUuid]);
   const learnMoreEvent = () => {
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {

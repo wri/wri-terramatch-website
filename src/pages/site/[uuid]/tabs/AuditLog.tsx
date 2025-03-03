@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
@@ -14,6 +14,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 interface ReportingTasksProps {
   site: any;
@@ -50,10 +51,10 @@ const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...re
     entityLevel: AuditLogButtonStates.SITE
   });
 
-  useEffect(() => {
+  useValueChanged(buttonToggle, () => {
     refetch();
     loadEntityList();
-  }, [buttonToggle]);
+  });
 
   return (
     <PageBody>
@@ -63,7 +64,11 @@ const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...re
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle}
+                    setButtonToggle={setButtonToggle}
+                    framework={site?.framework_key}
+                  />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
                     <Text variant="text-14-light" className="mb-4">

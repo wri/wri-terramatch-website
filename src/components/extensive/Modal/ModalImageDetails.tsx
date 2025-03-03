@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Image from "next/image";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -14,6 +14,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -66,9 +67,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
   const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
 
-  useEffect(() => {
+  useOnMount(() => {
     setInitialFormData({ ...formData });
-  }, []);
+  });
 
   const handleInputChange = (name: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -142,7 +143,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   };
 
   const { thumbnailImageUrl, label, isGeotagged, raw } = data;
-  const tabs = ["Image", "Location"];
+  const tabs = [
+    { key: "Image", render: "Image" },
+    { key: "Location", render: "Location" }
+  ];
   const handleDelete = () => {
     onClose?.();
     openModal(
@@ -276,8 +280,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <div className="flex max-h-[62vh] flex-1 flex-col gap-4 overflow-auto">
           <Toggle
             items={tabs}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
+            onChangeActiveIndex={setActiveIndex}
             textClassName="!w-1/2 flex justify-center py-1"
             disabledIndexes={isGeotagged ? [] : [1]}
           />

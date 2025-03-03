@@ -59,6 +59,8 @@ export interface DropdownProps {
   onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
   showSelectAll?: boolean;
+  titleClassname?: string;
+  titleContainerClassName?: string;
 }
 const otherKey = "other#value#key";
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
@@ -197,19 +199,24 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             </When>
             <Listbox.Button
               as="div"
-              className={classNames(
+              className={tw(
                 "flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer",
-                !props.error && "border-light",
                 props.error && "border border-error focus:border-error",
                 props.className,
                 variant.className
               )}
             >
               <When condition={!!props.prefix}>{props.prefix}</When>
-              <div className={tw("flex items-center gap-2", variant.titleContainerClassName)}>
+              <div
+                className={tw(
+                  "flex items-center gap-2",
+                  variant.titleContainerClassName,
+                  props.titleContainerClassName
+                )}
+              >
                 <Text
                   variant={props.inputVariant ?? "text-14-light"}
-                  className={tw("w-full", variant.titleClassname)}
+                  className={tw("w-full", variant.titleClassname, props.titleClassname)}
                   title={formatSelectedValues(
                     selected,
                     options,
@@ -265,7 +272,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                 as="div"
                 className={tw(
                   "border-light absolute mt-2 max-h-[235px] min-w-full overflow-auto rounded-lg bg-white outline-none lg:max-h-[250px] wide:max-h-[266px]",
-                  props.optionsClassName
+                  props.optionsClassName,
+                  variant.optionsClassName
                 )}
               >
                 <When condition={props.multiSelect && showSelectAll}>

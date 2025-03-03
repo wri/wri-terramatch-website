@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white h-[80%] w-[776px] margin-4 z-50"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white mobile:h-[calc(100%-60px)] mobile:w-full mobile:rounded-none mobile:mt-[60px] h-[80%] w-[776px] margin-4 z-50"
   >
     <header
       className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
@@ -73,7 +73,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         >
           <input
             hidden={true}
-            id=":r3b:"
+            id=":r3g:"
             multiple={true}
             onChange={[Function]}
             onClick={[Function]}
@@ -108,12 +108,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
             >
               or
             </p>
-            <p
-              className="max-w-[210px] text-center text-12-light"
-              data-testid="txt"
-            >
-              Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
-            </p>
+            Drag and drop a GeoJSON, Shapefile, or KML for your site Tannous/Brayton Road.
           </div>
         </div>
       </div>
@@ -153,7 +148,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalAdd Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

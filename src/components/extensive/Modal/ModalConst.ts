@@ -48,5 +48,9 @@ export const ModalId = {
   IMAGE_GALLERY_PREVIEWER: "ImageGalleryPreviewer",
   SHAPE_PROPERTIES_MODAL: "ShapePropertiesModal",
   WELCOME_MODAL: "WelcomeModal",
-  WARNING: "Warning"
+  WARNING: "Warning",
+  MODAL_RUN_ANALYSIS: "ModalRunAnalysis",
+  MODAL_NOTES: "ModalNotes",
+  MODAL_SHARE_IMPACT_STORY: "ModalShareImpactStory",
+  MODAL_STORY: "ModalStory"
 };

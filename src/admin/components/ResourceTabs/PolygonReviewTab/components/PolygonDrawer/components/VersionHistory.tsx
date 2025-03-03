@@ -53,7 +53,7 @@ const VersionHistory = ({
   setStatusSelectedPolygon?: any;
   data: GetV2SitePolygonUuidVersionsResponse | [];
   isLoadingVersions: boolean;
-  refetch: () => void;
+  refetch: () => Promise<unknown>;
   isLoadingDropdown: boolean;
   setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
@@ -72,6 +72,7 @@ const VersionHistory = ({
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectPolygonVersion]);
 
   useEffect(() => {
@@ -79,6 +80,7 @@ const VersionHistory = ({
       uploadFiles();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {
@@ -305,7 +307,7 @@ const VersionHistory = ({
       };
       reloadVersionList();
     }
-  }, [polygonFromMap]);
+  }, [polygonFromMap, refetch, setIsLoadingDropdown]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -358,10 +360,12 @@ const VersionHistory = ({
             suffixLabelView={true}
             labelClassName="capitalize"
             labelVariant="text-14-light"
-            optionsClassName="!h-[182px] lg:!h-[195px] wide:h-[266px]"
+            optionsClassName="!max-h-[182px] lg:!max-h-[195px] wide:max-h-[266px]"
             placeholder="Select Polygon Version"
             options={polygonVersionData ?? []}
             optionVariant="text-12-light"
+            titleClassname="one-line-text !w-full !text-nowrap"
+            titleContainerClassName="!w-[calc(100%-25px)] !text-nowrap"
             defaultValue={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
             onChange={e => {
               const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);

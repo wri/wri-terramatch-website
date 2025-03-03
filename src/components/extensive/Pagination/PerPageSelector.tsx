@@ -30,7 +30,12 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
   };
 
   return (
-    <Listbox as="div" className={classNames("space-y-2", props.className)} value={selected} onChange={onChangeHandler}>
+    <Listbox
+      as="div"
+      className={classNames("space-y-2 mobile:hidden", props.className)}
+      value={selected}
+      onChange={onChangeHandler}
+    >
       {({ open, value }) => (
         <>
           <div className="flex items-center gap-3">
@@ -53,7 +58,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
                 <Listbox.Options
                   as="div"
                   className={classNames(
-                    "absolute mt-6 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow outline-none",
+                    "absolute z-10 mt-6 max-h-[400px] overflow-auto rounded-lg border border-neutral-100 shadow outline-none",
                     { "bottom-[35px]": props.invertSelect }
                   )}
                 >

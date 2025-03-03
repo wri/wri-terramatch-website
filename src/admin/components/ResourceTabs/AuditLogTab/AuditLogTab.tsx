@@ -9,6 +9,7 @@ import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entitie
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
+import AuditLogTable from "./components/AuditLogTable";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
@@ -33,6 +34,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { record, isLoading } = useShowContext();
   const [buttonToggle, setButtonToggle] = useState(entity);
   const basename = useBasename();
+  const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
+  const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
 
   const {
     mutateEntity,
@@ -50,18 +53,40 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   } = useAuditLogActions({
     record,
     buttonToggle,
-    entityLevel: entity
+    entityLevel: entity,
+    isProjectReport
   });
-
   useEffect(() => {
     refetch();
     loadEntityList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle]);
+  const formatUrl = () => {
+    switch (ReverseButtonStates2[buttonToggle!]) {
+      case "project-reports":
+        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/4`;
+      case "site-reports":
+        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/4`;
+      case "nursery-reports":
+        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/4`;
+      default:
+        return "";
+    }
+  };
+  const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const redirectTo = `${basename}${
+    isProjectReport
+      ? formatUrl()
+      : isNurseryToggle
+      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/4`
+      : `/${modules.site.ResourceName}/${selected?.uuid}/show/6`
+  }`;
+  const title = () => selected?.title ?? selected?.name;
 
-  const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
+  const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
   const verifyEntityReport = () => {
-    switch (ReverseButtonStates2[entity!]) {
+    switch (ReverseButtonStates2[isProjectReport ? buttonToggle! : entity!]) {
       case "project-reports":
         return PROJECT_REPORT;
       case "site-reports":
@@ -78,8 +103,14 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
-              {!verifyEntity && (
-                <AuditLogSiteTabSelection buttonToggle={buttonToggle!} setButtonToggle={setButtonToggle} />
+              {!verifyEntity && entity != AuditLogButtonStates.SITE_REPORT && (
+                <AuditLogSiteTabSelection
+                  buttonToggle={buttonToggle!}
+                  setButtonToggle={setButtonToggle}
+                  framework={record?.framework_key ?? record?.frameworkKey}
+                  isReport={isProjectReport}
+                  entityLevel={entity}
+                />
               )}
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project && !verifyEntity}>
                 <Text variant="text-24-bold">Project Status</Text>
@@ -111,6 +142,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   buttonToggle={buttonToggle!}
                   verifyEntity={verifyEntity}
                   auditData={auditData}
+                  isProjectReport={isProjectReport}
                 />
               </When>
             </Stack>
@@ -133,6 +165,34 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             />
           </Grid>
         </Grid>
+        <div className="px-2 py-2">
+          <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
+            <Text variant="text-16-bold" className="mb-6">
+              History and Discussion for {record && record?.name}
+            </Text>
+            {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
+          </When>
+          <When condition={buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity}>
+            <>
+              <div className="mb-6">
+                {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle && (
+                  <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+                )}
+                {(isSite || verifyEntity || isProjectReport || isNurseryToggle) && (
+                  <Text variant="text-16-bold">
+                    History and Discussion for{" "}
+                    <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                      {title()}
+                    </Link>
+                  </Text>
+                )}
+              </div>
+              <When condition={!!auditLogData}>
+                <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
+              </When>
+            </>
+          </When>
+        </div>
       </TabbedShowLayout.Tab>
     </When>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Table, { TableProps } from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Pagination from "@/components/extensive/Pagination";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { getQueryParams } from "@/helpers/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -58,6 +59,7 @@ export function ServerSideTable<TData extends RowData>({
       </Table>
       {props.meta?.last_page > 1 && (
         <Pagination
+          variant={VARIANT_PAGINATION_DASHBOARD}
           getCanNextPage={() => page < props.meta?.last_page!}
           getCanPreviousPage={() => page > 1}
           getPageCount={() => props.meta?.last_page || 1}

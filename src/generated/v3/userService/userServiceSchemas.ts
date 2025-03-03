@@ -53,3 +53,39 @@ export type OrganisationDto = {
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
 };
+
+export type UserUpdateAttributes = {
+  /**
+   * New default locale for the given user
+   */
+  locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+};
+
+export type UserUpdate = {
+  type: "users";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UserUpdateAttributes;
+};
+
+export type UserUpdateBodyDto = {
+  data: UserUpdate;
+};
+
+export type ResetPasswordResponseDto = {
+  /**
+   * User email
+   *
+   * @example user@example.com
+   */
+  emailAddress: string;
+};
+
+export type ResetPasswordRequest = {
+  emailAddress: string;
+  callbackUrl: string;
+};
+
+export type ResetPasswordDto = {};

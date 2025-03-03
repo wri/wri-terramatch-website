@@ -14,6 +14,7 @@ type DashboardType = {
     landscapes: string[];
     country: CountriesProps;
     organizations: string[];
+    cohort: string;
     uuid: string;
   };
   setFilters: React.Dispatch<
@@ -22,6 +23,7 @@ type DashboardType = {
       landscapes: string[];
       country: { country_slug: string; id: number; data: any };
       organizations: string[];
+      cohort: string;
       uuid: string;
     }>
   >;
@@ -31,6 +33,8 @@ type DashboardType = {
   setFrameworks: React.Dispatch<React.SetStateAction<{ framework_slug?: string; name?: string }[]>>;
   dashboardCountries: CountriesProps[];
   setDashboardCountries: React.Dispatch<React.SetStateAction<CountriesProps[]>>;
+  lastUpdatedAt?: string;
+  setLastUpdatedAt?: React.Dispatch<React.SetStateAction<string>>;
 };
 const defaultValues: DashboardType = {
   filters: {
@@ -45,6 +49,7 @@ const defaultValues: DashboardType = {
       }
     },
     organizations: [],
+    cohort: "",
     uuid: ""
   },
   setFilters: () => {},
@@ -53,7 +58,9 @@ const defaultValues: DashboardType = {
   frameworks: [],
   setFrameworks: () => {},
   dashboardCountries: [],
-  setDashboardCountries: () => {}
+  setDashboardCountries: () => {},
+  lastUpdatedAt: "",
+  setLastUpdatedAt: () => {}
 };
 const DashboardContext = createContext<DashboardType>(defaultValues);
 
@@ -62,6 +69,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [frameworks, setFrameworks] = React.useState<{ framework_slug?: string; name?: string }[]>([]);
   const [dashboardCountries, setDashboardCountries] = React.useState<CountriesProps[]>([]);
+  const [lastUpdatedAt, setLastUpdatedAt] = React.useState<string>("");
   const contextValue: DashboardType = {
     filters,
     setFilters,
@@ -70,7 +78,9 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     frameworks,
     setFrameworks,
     dashboardCountries,
-    setDashboardCountries
+    setDashboardCountries,
+    lastUpdatedAt,
+    setLastUpdatedAt
   };
   return <DashboardContext.Provider value={contextValue}>{children}</DashboardContext.Provider>;
 };

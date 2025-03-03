@@ -18,21 +18,23 @@ export type AuthLoginError = Fetcher.ErrorWrapper<{
      * @example Unauthorized
      */
     message: string;
-    /**
-     * @example Unauthorized
-     */
-    error?: string;
   };
 }>;
 
 export type AuthLoginResponse = {
+  meta?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example logins
      */
     type?: string;
     /**
-     * @pattern ^\d{5}$
+     * @format uuid
      */
     id?: string;
     attributes?: Schemas.LoginDto;
@@ -56,9 +58,11 @@ export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =
 
 export type UsersFindPathParams = {
   /**
-   * A valid user id or "me"
+   * A valid user UUID or "me"
+   *
+   * @example me
    */
-  id: string;
+  uuid: string;
 };
 
 export type UsersFindError = Fetcher.ErrorWrapper<
@@ -73,10 +77,6 @@ export type UsersFindError = Fetcher.ErrorWrapper<
          * @example Unauthorized
          */
         message: string;
-        /**
-         * @example Unauthorized
-         */
-        error?: string;
       };
     }
   | {
@@ -90,15 +90,17 @@ export type UsersFindError = Fetcher.ErrorWrapper<
          * @example Not Found
          */
         message: string;
-        /**
-         * @example Not Found
-         */
-        error?: string;
       };
     }
 >;
 
 export type UsersFindResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example users
@@ -143,12 +145,234 @@ export type UsersFindVariables = {
 };
 
 /**
- * Fetch a user by ID, or with the 'me' identifier
+ * Fetch a user by UUID, or with the 'me' identifier
  */
 export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
   userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
-    url: "/users/v3/users/{id}",
+    url: "/users/v3/users/{uuid}",
     method: "get",
     ...variables,
     signal
   });
+
+export type UserUpdatePathParams = {
+  /**
+   * A valid user uuid
+   */
+  uuid: string;
+};
+
+export type UserUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UserUpdateResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserUpdateVariables = {
+  body: Schemas.UserUpdateBodyDto;
+  pathParams: UserUpdatePathParams;
+};
+
+/**
+ * Update a user by UUID
+ */
+export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
+  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBodyDto, {}, {}, UserUpdatePathParams>({
+    url: "/users/v3/users/{uuid}",
+    method: "patch",
+    ...variables,
+    signal
+  });
+
+export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type RequestPasswordResetResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type RequestPasswordResetVariables = {
+  body: Schemas.ResetPasswordRequest;
+};
+
+/**
+ * Send password reset email with a token
+ */
+export const requestPasswordReset = (variables: RequestPasswordResetVariables, signal?: AbortSignal) =>
+  userServiceFetch<RequestPasswordResetResponse, RequestPasswordResetError, Schemas.ResetPasswordRequest, {}, {}, {}>({
+    url: "/auth/v3/passwordResets",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export type ResetPasswordPathParams = {
+  token: string;
+};
+
+export type ResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type ResetPasswordVariables = {
+  body?: Schemas.ResetPasswordDto;
+  pathParams: ResetPasswordPathParams;
+};
+
+/**
+ * Reset password using the provided token
+ */
+export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortSignal) =>
+  userServiceFetch<
+    ResetPasswordResponse,
+    ResetPasswordError,
+    Schemas.ResetPasswordDto,
+    {},
+    {},
+    ResetPasswordPathParams
+  >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate },
+  resetPassword: { requestPasswordReset, resetPassword }
+};

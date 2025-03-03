@@ -2,7 +2,16 @@
 
 import { ReactNode } from "react";
 
-export type Colors = "white" | "black" | "neutral" | "secondary" | "tertiary" | "primary" | "success" | "error";
+export type Colors =
+  | "white"
+  | "black"
+  | "neutral"
+  | "secondary"
+  | "tertiary"
+  | "primary"
+  | "success"
+  | "error"
+  | "success-600";
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
 export type TextWeights = "regular" | "bold";
@@ -52,6 +61,10 @@ export type TextVariantNew =
   | "text-24"
   | "text-24-semibold"
   | "text-24-bold"
+  | "text-22-light"
+  | "text-22"
+  | "text-22-semibold"
+  | "text-22-bold"
   | "text-26-light"
   | "text-26"
   | "text-26-semibold"
@@ -60,6 +73,10 @@ export type TextVariantNew =
   | "text-28"
   | "text-28-semibold"
   | "text-28-bold"
+  | "text-32-light"
+  | "text-32"
+  | "text-32-semibold"
+  | "text-32-bold"
   | "text-36-light"
   | "text-36"
   | "text-36-semibold"
@@ -68,6 +85,14 @@ export type TextVariantNew =
   | "text-40"
   | "text-40-semibold"
   | "text-40-bold"
+  | "text-48-light"
+  | "text-48"
+  | "text-48-semibold"
+  | "text-48-bold"
+  | "text-56-light"
+  | "text-56"
+  | "text-56-semibold"
+  | "text-56-bold"
   | "text-72-light"
   | "text-72"
   | "text-72-semibold"
@@ -218,9 +243,17 @@ export type EntityName = BaseModelNames | ReportsModelNames;
 export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
 export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports";
 
+export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
+export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
+
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
 export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report";
+
+export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>
+  !name.endsWith("-report");
+export const isSingularReportModelName = (name: SingularEntityName): name is SingularReportsModelNames =>
+  name.endsWith("-report");
 
 export type Entity = {
   entityName: EntityName | SingularEntityName;

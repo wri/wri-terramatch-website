@@ -21,6 +21,7 @@ export interface SiteAuditLogEntityStatusProps {
   verifyEntity?: boolean;
   viewPD?: boolean;
   auditData?: { entity: string; entity_uuid: string };
+  isProjectReport?: boolean;
 }
 
 interface SelectedItem {
@@ -32,6 +33,12 @@ interface SelectedItem {
   status?: string | undefined;
 }
 
+const reportTypesMappging: { [key: number]: string } = {
+  4: "project-reports",
+  5: "site-reports",
+  6: "nursery-reports"
+};
+
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   entityType,
   record,
@@ -40,15 +47,36 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   buttonToggle,
   verifyEntity,
   viewPD = false,
-  auditData
+  auditData,
+  isProjectReport
 }) => {
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const isNurseryToggle = buttonToggle === AuditLogButtonStates.NURSERY;
   const basename = useBasename();
+
+  const formatUrl = () => {
+    switch (reportTypesMappging[buttonToggle]) {
+      case "project-reports":
+        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/4`;
+      case "site-reports":
+        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/4`;
+      case "nursery-reports":
+        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/4`;
+      default:
+        return "";
+    }
+  };
 
   const title = () => record?.title ?? record?.name;
   const redirectTo = viewPD
-    ? `/site/${record?.uuid}?tab=audit-log`
-    : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
+    ? `/${
+        isProjectReport
+          ? "reports/" + reportTypesMappging[buttonToggle].replace(/s$/, "")
+          : isNurseryToggle
+          ? "nursery"
+          : "site"
+      }/${record?.uuid}${isNurseryToggle ? "" : "?tab=audit-log"}`
+    : `${basename}${isProjectReport ? formatUrl() : `/${modules.site.ResourceName}/${record?.uuid}/show/6`}`;
 
   const removeUnderscore = (title: string) => title.replace("_", " ");
 
@@ -63,24 +91,28 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
-      <div>
-        {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
-        {(isSite || verifyEntity) && (
-          <Text variant="text-16-bold">
-            History and Discussion for{" "}
-            {viewPD ? (
-              <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
-                {title()}
-              </Link>
-            ) : (
-              <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                {title()}
-              </RaLink>
-            )}
-          </Text>
-        )}
-      </div>
-      <When condition={!!auditLogData}>
+      <When condition={viewPD}>
+        <div>
+          {!isSite && !verifyEntity && !isNurseryToggle && (
+            <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+          )}
+          {(isSite || verifyEntity || isNurseryToggle) && (
+            <Text variant="text-16-bold">
+              History and Discussion for{" "}
+              {viewPD ? (
+                <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
+                  {title()}
+                </Link>
+              ) : (
+                <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                  {title()}
+                </RaLink>
+              )}
+            </Text>
+          )}
+        </div>
+      </When>
+      <When condition={!!auditLogData && viewPD}>
         <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refresh} />
       </When>
     </div>

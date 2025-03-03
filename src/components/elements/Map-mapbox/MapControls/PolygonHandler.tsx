@@ -17,6 +17,7 @@ import {
   fetchPostV2TerrafundUploadShapefileProject
 } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
+import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import Button from "../../Button/Button";
 
@@ -38,6 +39,7 @@ export const PolygonHandler = () => {
       uploadFile();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, saveFlags]);
 
   const uploadFile = async () => {
@@ -98,7 +100,8 @@ export const PolygonHandler = () => {
         }
         openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
+        const errorMessage = getErrorMessageFromPayload(error);
+        openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     }
     hideLoader();

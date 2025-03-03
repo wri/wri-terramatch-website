@@ -26,5 +26,5 @@ export function useProcessRecordData(modelUUID: string, modelName: string, input
     }
 
     return true;
-  }, [record, inputType, modelUUID, modelName]);
+  }, [record, inputType]);
 }

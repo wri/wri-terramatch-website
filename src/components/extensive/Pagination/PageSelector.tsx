@@ -48,17 +48,21 @@ function PageSelector({
       className={classNames(className, "flex items-center justify-center gap-5", variant?.contentPageSelector)}
     >
       <When condition={variant?.labelsPagination ?? false}>
-        <div className="flex items-center gap-2">
-          <Text variant={"text-12-semibold"} className={classNames("text-black")}>
-            {t("Page")}
-          </Text>
-          <Text variant={"text-12-semibold"} className={classNames("text-black", variant?.iconContentPagination)}>
-            {currentPage}
-          </Text>
-          <Text variant={"text-12-semibold"} className={classNames("text-black")}>
-            {t("of")} {getPageCount()}
-          </Text>
-        </div>
+        <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-2")}>
+          {t("Page")}
+        </Text>
+        <Text
+          variant={"text-12-semibold"}
+          className={classNames(
+            "text-black mobile:order-3 mobile:!w-fit mobile:border-none mobile:bg-transparent mobile:p-0",
+            variant?.iconContentPagination
+          )}
+        >
+          {currentPage}
+        </Text>
+        <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-4")}>
+          {t("of")} {getPageCount()}
+        </Text>
       </When>
       <IconButton
         iconProps={{
@@ -68,7 +72,7 @@ function PageSelector({
         }}
         onClick={() => previousPage()}
         disabled={!getCanPreviousPage()}
-        className={variant?.iconContentPagination}
+        className={classNames(variant?.iconContentPagination, "mobile:order-1")}
       />
       {getPaginationItems(currentPage, getPageCount()).map(pageNumber => {
         return (
@@ -95,7 +99,7 @@ function PageSelector({
         }}
         onClick={() => nextPage()}
         disabled={!getCanNextPage()}
-        className={variant?.iconContentPagination}
+        className={classNames(variant?.iconContentPagination, "mobile:order-5")}
       />
     </div>
   );

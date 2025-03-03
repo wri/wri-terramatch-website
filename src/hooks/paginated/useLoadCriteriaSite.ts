@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   fetchGetV2EntityPolygons,
   fetchGetV2EntityPolygonsCount,
-  fetchGetV2TerrafundValidationCriteriaData
+  fetchPostV2TerrafundValidationCriteriaData
 } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 
 interface LoadCriteriaSiteHook {
   data: any[];
@@ -13,7 +14,7 @@ interface LoadCriteriaSiteHook {
   progress: number;
   polygonCriteriaMap: Record<string, any>;
   refetch: () => void;
-  fetchCriteriaData: (uuid: string) => void;
+  fetchCriteriaData: (uuids: string[]) => void;
   loadCriteriaInOrder: () => void;
 }
 
@@ -61,9 +62,8 @@ const useLoadCriteriaSite = (
       const partialResponse = (await fetchGetV2EntityPolygons({
         queryParams
       })) as any;
-      for (const polygon of partialResponse) {
-        await fetchCriteriaData(polygon.poly_id);
-      }
+      const polyUuids = partialResponse.map((polygon: any) => polygon.poly_id);
+      await fetchCriteriaData(polyUuids);
       result = result.concat(partialResponse);
       setData(result as any);
       if (offset + limit > count!) {
@@ -84,22 +84,24 @@ const useLoadCriteriaSite = (
     loadInBatches();
   };
 
-  const fetchCriteriaData = async (uuid: string) => {
-    const criteriaData = await fetchGetV2TerrafundValidationCriteriaData({
-      queryParams: {
-        uuid: uuid
+  const fetchCriteriaData = async (polyUuids: string[]) => {
+    const criteriaData = await fetchPostV2TerrafundValidationCriteriaData({
+      body: {
+        uuids: polyUuids
       }
     });
     setPolygonCriteriaMap(prev => {
       const newMap = { ...prev };
-      newMap[uuid] = criteriaData;
+      polyUuids.forEach(uuid => {
+        if (criteriaData[uuid]) {
+          newMap[uuid] = criteriaData[uuid];
+        }
+      });
       return newMap;
     });
   };
 
-  useEffect(() => {
-    loadInBatches();
-  }, []);
+  useOnMount(loadInBatches);
 
   return {
     data,

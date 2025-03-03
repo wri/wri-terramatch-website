@@ -13,7 +13,7 @@ const createModalComponent =
     );
 
 const commonBaseClasses =
-  "m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white";
+  "m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white mobile:h-[calc(100%-60px)] mobile:w-full mobile:rounded-none mobile:mt-[60px]";
 
 export const ExpandModalBase = createModalComponent(commonBaseClasses + " h-[90vh] w-[95vw]");
 
@@ -32,6 +32,15 @@ export const ModalBaseImageGallery = createModalComponent(
 export const ModalBaseWithClose = createModalComponent(commonBaseClasses + " max-w-[800px] p-8", "margin-4 z-50");
 
 export const ModalBaseWithLogo = createModalComponent(commonBaseClasses + " h-[95%] w-[776px]", "margin-4 z-50");
+export const ModalBaseWithMonitored = createModalComponent(
+  commonBaseClasses + " max-h-[95%] w-[776px]",
+  "margin-4 z-50"
+);
+
+export const ModalBaseWithLogoAuto = createModalComponent(
+  commonBaseClasses + " h-auto w-[700px] !max-h-max",
+  "margin-4 z-50"
+);
 
 export const ModalBaseWithMap = createModalComponent(
   commonBaseClasses + " h-[504px] w-[80vw] overflow-hidden wide:h-[700px]",

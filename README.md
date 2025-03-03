@@ -1,5 +1,8 @@
 # 🌲 Terramatch Web Platform 🌲
 
+### Storybook
+We host the `staging` build of Storybook on [Github Pages](https://wri.github.io/wri-terramatch-website/)
+
 ### Installation
 
 ```
@@ -54,7 +57,7 @@ When adding a new **service** app to the v3 API:
 * Follow directions below for all namespaces and resources in the new service
 
 When adding a new **namespace** to the V3 API:
-* In `geneated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
+* In `generated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
 
 When adding a new **resource** to the v3 API:
 * The resource needs to be specified in shape of the redux API store. In `apiSlice.ts`, add the new 
@@ -113,7 +116,7 @@ Pushing new translations to the Transifex cloud involves just one manual step. Y
 
 For more details about the command-line interface (CLI), please refer to the [official documentation](https://developers.transifex.com/docs/cli).
 
-It's important to note that the setup requires the correct configuration of `TRANSIFEX_TOKEN` and `TRANSIFEX_SECRET` environment variables. Due to the sensitive nature of these variables, they will be securely shared with you via 1Password.
+It's important to note that the setup requires the correct configuration of `NEXT_PUBLIC_TRANSIFEX_TOKEN` and `TRANSIFEX_SECRET` environment variables. Due to the sensitive nature of these variables, they will be securely shared with you via 1Password.
 
 Additionally, consider automating this step using GitHub Actions for increased efficiency.
 

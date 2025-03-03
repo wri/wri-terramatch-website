@@ -1,9 +1,10 @@
-import { t } from "@transifex/native";
-import { useEffect, useMemo, useState } from "react";
+import { useT } from "@transifex/react";
+import { useMemo, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalImageGallery, { TabImagesItem } from "@/components/extensive/Modal/ModalImageGallery";
 import { GetV2MODELUUIDFilesResponse } from "@/generated/apiComponents";
+import { useOnMount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -15,6 +16,7 @@ const ViewImageCarousel = ({
   modelFilesData: GetV2MODELUUIDFilesResponse["data"];
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
 }) => {
+  const t = useT();
   const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
     const modelFilesGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
     const modelFilesNonGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
@@ -49,7 +51,7 @@ const ViewImageCarousel = ({
         }))
       }
     ];
-  }, [modelFilesData]);
+  }, [modelFilesData, t]);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -90,12 +92,12 @@ const ViewImageCarousel = ({
     scrollToGalleryElement();
   };
 
-  useEffect(() => {
+  useOnMount(() => {
     if (sessionStorage.getItem("scrollToElement") === "true") {
       scrollToGalleryElement();
       sessionStorage.removeItem("scrollToElement");
     }
-  }, []);
+  });
 
   return (
     <div className="relative">

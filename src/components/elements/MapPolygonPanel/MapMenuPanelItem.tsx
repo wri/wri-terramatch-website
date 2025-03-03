@@ -73,7 +73,7 @@ const MapMenuPanelItem = ({
     } else {
       setValidationStatus(undefined);
     }
-  }, [polygonMap, setValidationStatus]);
+  }, [poly_id, polygonMap, setValidationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -210,7 +210,7 @@ const MapMenuPanelItem = ({
             <Text variant="text-12-bold" className="overflow-hidden text-ellipsis whitespace-nowrap" title={t(title)}>
               {t(title)}
             </Text>
-            <button className="min-w-3 min-h-3" onClick={() => setOpenCollapse(!openCollapse)}>
+            <button className="min-h-3 min-w-3" onClick={() => setOpenCollapse(!openCollapse)}>
               <Icon
                 name={IconNames.CHEVRON_DOWN_PA}
                 className={`h-3 w-3 text-black transition-transform duration-300 ${

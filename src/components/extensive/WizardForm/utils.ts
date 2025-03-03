@@ -44,7 +44,7 @@ export const getSchemaFields = (fields: FormField[]) => {
         }
       });
     } else {
-      schema[field.name] = field.validation?.nullable().label(field.label);
+      schema[field.name] = field.validation?.nullable().label(" ");
     }
 
     if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
@@ -165,6 +165,10 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     case FieldType.InvasiveDataTable:
     case FieldType.WorkdaysTable:
     case FieldType.RestorationPartnersTable:
+    case FieldType.JobsTable:
+    case FieldType.VolunteersTable:
+    case FieldType.AllBeneficiariesTable:
+    case FieldType.TrainingBeneficiariesTable:
     case FieldType.SeedingsDataTable: {
       let headers: AccessorKeyColumnDef<any>[] = [];
 

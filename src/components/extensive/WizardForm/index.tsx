@@ -32,6 +32,7 @@ export interface WizardFormProps {
 
   formStatus?: "saving" | "saved";
   title?: string;
+  subtitle?: string;
   errors?: ErrorWrapper<null>;
   summaryOptions?: FormSummaryOptions & {
     downloadButtonText?: string;
@@ -186,33 +187,32 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
-        >
-          <FormFooter
-            className="mt-12"
-            backButtonProps={
-              !props.hideBackButton
-                ? {
-                    children: props.backButtonText || t("Back"),
-                    onClick: () => {
-                      if (selectedStepIndex > 0) {
-                        setSelectedStepIndex(n => n - 1);
-                      } else {
-                        props.onBackFirstStep();
-                      }
+        ></FormStep>
+        <FormFooter
+          variant="sticky"
+          backButtonProps={
+            !props.hideBackButton
+              ? {
+                  children: props.backButtonText || t("Back"),
+                  onClick: () => {
+                    if (selectedStepIndex > 0) {
+                      setSelectedStepIndex(n => n - 1);
+                    } else {
+                      props.onBackFirstStep();
                     }
                   }
-                : undefined
-            }
-            submitButtonProps={{
-              children:
-                selectedStepIndex < lastIndex
-                  ? props.nextButtonText ?? t("Save and continue")
-                  : props.submitButtonText ?? t("Submit"),
-              onClick: formHook.handleSubmit(onSubmitStep),
-              disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
-            }}
-          />
-        </FormStep>
+                }
+              : undefined
+          }
+          submitButtonProps={{
+            children:
+              selectedStepIndex < lastIndex
+                ? props.nextButtonText ?? t("Save and continue")
+                : props.submitButtonText ?? t("Submit"),
+            onClick: formHook.handleSubmit(onSubmitStep),
+            disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
+          }}
+        />
       </div>
     )
   }));
@@ -222,25 +222,26 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && props.steps.length < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && props.steps.length > selectedStepIndex,
     body: (
-      <FormStep
-        id="step"
-        formHook={formHook}
-        title={props.summaryOptions?.title!}
-        subtitle={props.summaryOptions?.subtitle}
-        onChange={onChange}
-        actionButtonProps={
-          props.summaryOptions?.downloadButtonText
-            ? {
-                children: props.summaryOptions?.downloadButtonText,
-                onClick: () => downloadAnswersCSV(props.steps, formHook.getValues())
-              }
-            : undefined
-        }
-        className="h-[calc(100vh-287px)] overflow-auto"
-      >
-        <FormSummary values={formHook.getValues()} steps={props.steps} onEdit={setSelectedStepIndex} />
+      <div className="h-[calc(100vh-287px)] overflow-auto">
+        <FormStep
+          id="step"
+          formHook={formHook}
+          title={props.summaryOptions?.title!}
+          subtitle={props.summaryOptions?.subtitle}
+          onChange={onChange}
+          actionButtonProps={
+            props.summaryOptions?.downloadButtonText
+              ? {
+                  children: props.summaryOptions?.downloadButtonText,
+                  onClick: () => downloadAnswersCSV(props.steps, formHook.getValues())
+                }
+              : undefined
+          }
+        >
+          <FormSummary values={formHook.getValues()} steps={props.steps} onEdit={setSelectedStepIndex} />
+        </FormStep>
         <FormFooter
-          className="mt-14"
+          variant="sticky"
           backButtonProps={{
             children: t("Back"),
             onClick: () => setSelectedStepIndex(n => n - 1)
@@ -251,7 +252,7 @@ function WizardForm(props: WizardFormProps) {
             disabled: props.submitButtonDisable
           }}
         />
-      </FormStep>
+      </div>
     )
   };
 
@@ -267,6 +268,7 @@ function WizardForm(props: WizardFormProps) {
           errorMessage={props.errors && t("Something went wrong")}
           onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
           title={props.title}
+          subtitle={props.subtitle}
         />
       </When>
       <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0", props.className)}>

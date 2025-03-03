@@ -1,9 +1,10 @@
-import { AuthProvider } from "react-admin";
+import { AuthProvider, UserIdentity } from "react-admin";
 
-import { isAdmin, UserRole } from "@/admin/apiProvider/utils/user";
 import { loadLogin, logout } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
 import Log from "@/utils/log";
+
+export type TMUserIdentity = UserIdentity & { primaryRole: string };
 
 export const authProvider: AuthProvider = {
   login: async () => {
@@ -14,10 +15,10 @@ export const authProvider: AuthProvider = {
 
   // when the user navigates, make sure that their credentials are still valid
   checkAuth: async () => {
-    const { user } = await loadMyUser();
+    const { user, isAdmin } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    if (!isAdmin(user.primaryRole as UserRole)) throw "Only admins are allowed.";
+    if (!isAdmin) throw "Only admins are allowed.";
   },
 
   // remove local credentials
@@ -30,7 +31,7 @@ export const authProvider: AuthProvider = {
     const { user } = await loadMyUser();
     if (user == null) throw "No user logged in.";
 
-    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole };
+    return { id: user.uuid, fullName: user.fullName ?? undefined, primaryRole: user.primaryRole } as TMUserIdentity;
   },
 
   // get the user permissions (optional)

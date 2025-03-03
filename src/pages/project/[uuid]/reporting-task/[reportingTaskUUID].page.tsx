@@ -21,10 +21,11 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import { CompletionStatusMapping } from "@/components/extensive/Tables/ReportingTasksTable";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
-  useGetV2ProjectsUUID,
+  GetV2TasksUUIDReportsResponse,
   useGetV2TasksUUID,
   useGetV2TasksUUIDReports,
   usePutV2ENTITYUUIDNothingToReport
@@ -44,6 +45,35 @@ const StatusMapping: { [index: string]: Status } = {
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
 
+type TaskReport = Required<GetV2TasksUUIDReportsResponse>["data"][number];
+
+const mapTaskReport = (format: ReturnType<typeof useDate>["format"]) => (report: TaskReport) => {
+  let completion_status = "started";
+  const { status: reportStatus, update_request_status: urStatus } = report;
+  // If there is no submitted update request in play, then the report status is the source of
+  // truth, otherwise update the UI in accordance with the active update request's status.
+  const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(urStatus!);
+  const status = hasSubmittedUpdateRequest ? urStatus : reportStatus;
+
+  if (status === "needs-more-information") {
+    completion_status = "needs-more-information";
+  } else if (report.nothing_to_report) {
+    completion_status = "nothing-to-report";
+  } else if (status === "awaiting-approval") {
+    completion_status = "awaiting-approval";
+  } else if (status === "approved") {
+    completion_status = "approved";
+  } else if (status === "due") {
+    completion_status = "not-started";
+  }
+
+  return {
+    ...report,
+    updated_at: completion_status !== "not-started" ? format(report.updated_at) : "N/A",
+    completion_status
+  };
+};
+
 const ReportingTaskPage = () => {
   const t = useT();
   const { format } = useDate();
@@ -52,48 +82,31 @@ const ReportingTaskPage = () => {
   const [tourEnabled, setTourEnabled] = useState(false);
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
-  const [reportsTableData, setReportsTableData] = useState([] as any);
+  const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
   const { data: reportingTaskData } = useGetV2TasksUUID({ pathParams: { uuid: reportingTaskUUID } });
   const reportingTask = reportingTaskData?.data as any;
 
   const { data: reportsData, isLoading } = useGetV2TasksUUIDReports({ pathParams: { uuid: reportingTaskUUID } });
-  const { data: projectData } = useGetV2ProjectsUUID({
-    pathParams: { uuid: projectUUID }
-  });
-  const project = (projectData?.data ?? {}) as any;
+  const [projectLoaded, { entity: project }] = useFullProject({ uuid: projectUUID });
 
-  const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({});
+  const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
+    onSuccess: result => {
+      const report = (result as unknown as { data: TaskReport })?.data;
+      if (report == null) return;
+
+      const index = reportsTableData.findIndex(({ uuid }) => uuid === report.uuid);
+      if (index >= 0) {
+        const tableData = [...reportsTableData];
+        tableData[index] = mapTaskReport(format)(report);
+        setReportsTableData(tableData);
+      }
+    }
+  });
 
   const reports = useMemo(() => {
-    const reports =
-      reportsData?.data?.map((report: any) => {
-        let completion_status = "started";
-        const { status: reportStatus, update_request_status: urStatus } = report;
-        // If there is no submitted update request in play, then the report status is the source of
-        // truth, otherwise update the UI in accordance with the active update request's status.
-        const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(urStatus);
-        const status = hasSubmittedUpdateRequest ? urStatus : reportStatus;
-
-        if (status === "needs-more-information") {
-          completion_status = "needs-more-information";
-        } else if (report.nothing_to_report) {
-          completion_status = "nothing-to-report";
-        } else if (status === "awaiting-approval") {
-          completion_status = "awaiting-approval";
-        } else if (status === "approved") {
-          completion_status = "approved";
-        } else if (status === "due") {
-          completion_status = "not-started";
-        }
-
-        return {
-          ...report,
-          update_at: completion_status !== "not-started" ? format(report.update_at) : "N/A",
-          completion_status
-        };
-      }) || [];
+    const reports = (reportsData?.data ?? []).map(mapTaskReport(format));
 
     const mandatory = reports?.filter(report => report.type === "project-report");
     const additional = reports
@@ -112,14 +125,14 @@ const ReportingTaskPage = () => {
     return {
       mandatory,
       additional,
-      outstandingMandatoryCount: mandatory.filter(report => report.completion < 100).length,
-      outstandingAdditionalCount: additional.filter(report => report.completion < 100).length
+      outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
+      outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
     };
   }, [filters, format, reportsData?.data]);
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
-  const nothingToReportHandler = (entity: ReportsModelNames, uuid: string, setIsEnabled: any) => {
+  const nothingToReportHandler = (entity: ReportsModelNames, uuid: string) => {
     openModal(
       ModalId.CONFIRM_UPDATE,
       <Modal
@@ -135,10 +148,9 @@ const ReportingTaskPage = () => {
         )}
         primaryButtonProps={{
           children: t("Nothing to report"),
-          onClick: () => {
+          onClick: async () => {
             submitNothingToReport({ pathParams: { entity, uuid } });
             closeModal(ModalId.CONFIRM_UPDATE);
-            setIsEnabled(false);
           }
         }}
         secondaryButtonProps={{
@@ -177,29 +189,25 @@ const ReportingTaskPage = () => {
       }
     },
     {
-      accessorKey: "update_at",
+      accessorKey: "updated_at",
       header: t("Last Update")
     },
     {
-      accessorKey: "completion",
+      accessorKey: "completion_status",
       id: "uuid",
       header: "",
       enableSorting: false,
       cell: props => {
         const record = props.row.original as any;
-        console.log(record);
-        const [isEnabled, setIsEnabled] = useState(true);
         const { index } = props.row;
         const { status, type, completion, uuid } = record;
 
         const shouldShowButton =
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
-          isEnabled &&
-          !(type === "project-report" || completion === 100);
+          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "project-report" || completion === 100);
 
         const handleClick = useCallback(() => {
-          nothingToReportHandler(singularEntityNameToPlural(type) as ReportsModelNames, uuid, setIsEnabled);
-        }, [type, uuid, setIsEnabled]);
+          nothingToReportHandler(singularEntityNameToPlural(type) as ReportsModelNames, uuid);
+        }, [type, uuid]);
 
         return (
           <div className="flex justify-end gap-4">
@@ -241,64 +249,67 @@ const ReportingTaskPage = () => {
   ];
 
   return (
-    <FrameworkProvider frameworkKey={project.framework_key}>
-      <LoadingContainer loading={isLoading}>
-        <ReportingTaskHeader {...{ project, reportingTask, reports }} />
-        <StatusBar status={StatusMapping?.[reportingTask?.status]} />
-        <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
-          <PageSection>
-            <PageCard title={t("Mandatory Project Report")}>
-              <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
-            </PageCard>
-          </PageSection>
-          <PageSection>
-            <PageCard title={t("Additional Reports")}>
-              <Table
-                data={reportsTableData}
-                columns={tableColumns}
-                onTableStateChange={state => setFilters(state.filters)}
-                hasPagination={true}
-                initialTableState={{ pagination: { pageSize: 15 } }}
-                columnFilters={[
-                  {
-                    type: "dropDown",
-                    accessorKey: "type",
-                    label: t("Report type"),
-                    options: [
-                      {
-                        title: t("Site"),
-                        value: "site-report"
-                      },
-                      {
-                        title: t("Nursery"),
-                        value: "nursery-report"
-                      }
-                    ],
-                    hide: project.framework_key === "ppc"
-                  },
-                  {
-                    type: "dropDown",
-                    accessorKey: "completion_status",
-                    label: t("Report Status"),
-                    options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
-                      title: status.statusText,
-                      value
-                    }))
-                  }
-                ]}
-              />
-            </PageCard>
-          </PageSection>
-          <WelcomeTour
-            tourId="reporting-tasks"
-            hasWelcomeModal={false}
-            tourSteps={tourSteps}
-            onStart={() => setTourEnabled(true)}
-            onFinish={() => setTourEnabled(false)}
-          />
-        </PageBody>
-      </LoadingContainer>
-    </FrameworkProvider>
+    projectLoaded && (
+      <FrameworkProvider frameworkKey={project?.frameworkKey}>
+        <LoadingContainer loading={isLoading}>
+          <ReportingTaskHeader {...{ project, reportingTask, reports }} />
+          <StatusBar status={StatusMapping?.[reportingTask?.status]} />
+          <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
+            <PageSection>
+              <PageCard title={t("Mandatory Project Report")}>
+                <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
+              </PageCard>
+            </PageSection>
+            <PageSection>
+              <PageCard title={t("Additional Reports")}>
+                <Table
+                  data={reportsTableData}
+                  columns={tableColumns}
+                  onTableStateChange={state => setFilters(state.filters)}
+                  hasPagination={true}
+                  resetOnDataChange={false}
+                  initialTableState={{ pagination: { pageSize: 15 } }}
+                  columnFilters={[
+                    {
+                      type: "dropDown",
+                      accessorKey: "type",
+                      label: t("Report type"),
+                      options: [
+                        {
+                          title: t("Site"),
+                          value: "site-report"
+                        },
+                        {
+                          title: t("Nursery"),
+                          value: "nursery-report"
+                        }
+                      ],
+                      hide: project?.frameworkKey === "ppc"
+                    },
+                    {
+                      type: "dropDown",
+                      accessorKey: "completion_status",
+                      label: t("Report Status"),
+                      options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
+                        title: status.statusText,
+                        value
+                      }))
+                    }
+                  ]}
+                />
+              </PageCard>
+            </PageSection>
+            <WelcomeTour
+              tourId="reporting-tasks"
+              hasWelcomeModal={false}
+              tourSteps={tourSteps}
+              onStart={() => setTourEnabled(true)}
+              onFinish={() => setTourEnabled(false)}
+            />
+          </PageBody>
+        </LoadingContainer>
+      </FrameworkProvider>
+    )
   );
 };
 

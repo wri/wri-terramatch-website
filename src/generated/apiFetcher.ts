@@ -4,6 +4,8 @@ import FormData from "form-data";
 import Log from "@/utils/log";
 import { resolveUrl as resolveV3Url } from "./v3/utils";
 import { apiBaseUrl } from "@/constants/environment";
+import JobsSlice from "@/store/jobsSlice";
+import { DelayedJobDto } from "./v3/jobService/jobServiceSchemas";
 
 const baseUrl = `${apiBaseUrl}/api`;
 
@@ -126,15 +128,7 @@ const resolveUrl = (url: string, queryParams: Record<string, string> = {}, pathP
 
 const JOB_POLL_TIMEOUT = 500; // in ms
 
-type JobResult = {
-  data: {
-    attributes: {
-      status: "pending" | "failed" | "succeeded";
-      statusCode: number | null;
-      payload: object | null;
-    };
-  };
-};
+type JobResult = { data: { attributes: DelayedJobDto } };
 
 async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries = 3): Promise<JobResult> {
   let response, error;
@@ -191,6 +185,11 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult.data?.attributes?.status === "pending";
     jobResult = await loadJob(signal, delayedJobId)
   ) {
+    const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
+    if (totalContent != null && processedContent != null) {
+      JobsSlice.setJobsProgress(totalContent, processedContent, progressMessage);
+    }
+
     if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }

@@ -39,6 +39,7 @@ interface FormFieldBase {
   placeholder?: string;
   condition?: boolean;
   feedbackRequired?: boolean;
+  is_parent_conditional_default?: boolean;
 }
 
 type FieldProps<T> = Omit<T, "label" | "description" | "placeholder" | "name">;
@@ -66,6 +67,10 @@ export enum FieldType {
   SeedingsDataTable = "seedingsDataTable",
   WorkdaysTable = "workdays",
   RestorationPartnersTable = "restorationPartners",
+  JobsTable = "jobs",
+  VolunteersTable = "volunteers",
+  AllBeneficiariesTable = "allBeneficiaries",
+  TrainingBeneficiariesTable = "trainingBeneficiaries",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
@@ -126,6 +131,19 @@ export type FormField =
     >
   | FieldTypeBuilder<
       FieldType.RestorationPartnersTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<FieldType.JobsTable, Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>>
+  | FieldTypeBuilder<
+      FieldType.VolunteersTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.AllBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.TrainingBeneficiariesTable,
       Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<

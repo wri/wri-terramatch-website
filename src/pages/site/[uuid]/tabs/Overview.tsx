@@ -7,7 +7,6 @@ import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified"
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
 import Button from "@/components/elements/Button/Button";
-import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
@@ -23,7 +22,6 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { Framework } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -40,8 +38,10 @@ import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/gene
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { FileType, UploadedFile } from "@/types/common";
+import { getErrorMessageFromPayload } from "@/utils/errors";
 import Log from "@/utils/log";
 
+import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
@@ -96,7 +96,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -110,7 +110,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     if (site.project?.uuid) {
       checkIsMonitoringPartner(site.project?.uuid);
     }
-  }, [site]);
+  }, [checkIsMonitoringPartner, setSiteData, site]);
 
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
@@ -118,6 +118,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       setSaveFlags(false);
       closeModal(ModalId.ADD_POLYGONS);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {
@@ -138,7 +139,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       formData.append("polygon_loaded", polygonLoaded.toString());
       formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
       let newRequest: any = formData;
-      showLoader();
       switch (fileType) {
         case "geojson":
           uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
@@ -173,7 +173,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         }
         openNotification("error", t("Error uploading file"), errorMessage);
       } else {
-        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
+        const errorMessage = getErrorMessageFromPayload(error);
+        openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     } finally {
       hideLoader();
@@ -202,7 +203,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           variant: "primary",
           onClick: () => {
             setSaveFlags(true);
-            showLoader();
           }
         }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
@@ -409,36 +409,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
               </Button>
             }
           >
-            <div className="flex w-full">
-              <div className="grid w-[50%] grid-cols-2 content-start gap-x-8 gap-y-7 pr-20">
-                <GoalProgressCard
-                  frameworksShow={[Framework.PPC]}
-                  label={t("Workday Count (PPC)")}
-                  value={site.combined_workday_count}
-                />
-                <GoalProgressCard
-                  label={t("Hectares Under Restoration")}
-                  value={site.total_hectares_restored_sum}
-                  limit={site.framework === Framework.PPC ? undefined : site.hectares_to_restore_goal}
-                />
-              </div>
-              <div>
-                <GoalProgressCard
-                  label={t("Trees restored")}
-                  hasProgress={false}
-                  items={[
-                    { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: site.trees_planted_count },
-                    { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: site.seeds_planted_count },
-                    {
-                      iconName: IconNames.REFRESH_CIRCLE,
-                      label: t("Trees Regenerating"),
-                      value: site.regenerated_trees_count
-                    }
-                  ]}
-                  className="flex-1"
-                />
-              </div>
-            </div>
+            <GoalsAndProgressEntityTab entity={site} />
           </PageCard>
         </PageRow>
         <PageRow>

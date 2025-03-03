@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -9,6 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
 import { privacyPolicyLink, termsAndConditionsLink } from "@/constants/links";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import LoginLayout from "../../layout";
 import { SignUpFormData } from "../index.page";
@@ -24,14 +24,14 @@ const SignUpForm = ({ form, loading, handleSave, role }: SignUpFormProps) => {
   const t = useT();
   const errors = form.formState.errors;
 
-  useEffect(() => {
+  useValueChanged(role, () => {
     form.setValue("role", "project-developer");
-  }, [role]);
+  });
 
   return (
     <LoginLayout>
-      <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1">
-        <Form formType="signUp" onSubmit={form.handleSubmit(handleSave)}>
+      <div className="text-14 mb-auto mt-auto flex w-[31vw] p-1 mobile:w-full">
+        <Form formType="signUp" onSubmit={form.handleSubmit(handleSave)} className="mobile:w-full">
           <Text variant="text-32-bold" className="mb-2 text-blueCustom-700">
             {t("Sign Up")}
           </Text>

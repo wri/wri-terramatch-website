@@ -125,3 +125,11 @@ export const VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP: FileInputVariant = {
   listPreviewDescription: "flex items-center justify-between",
   filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES_WITH_MAP
 };
+
+export const VARIANT_FILE_INPUT_IMPACT_STORY: FileInputVariant = {
+  container: "flex flex-col items-center justify-center rounded-lg border border-grey-750 py-8",
+  snapshotPanel: true,
+  listPreview: "flex flex-col gap-4 w-full mt-2 mb-4 hidden",
+  listPreviewDescription: "flex items-center justify-between hidden",
+  filePreviewVariant: VARIANT_FILE_PREVIEW_CARD_MODAL_ADD_IMAGES_WITH_MAP
+};

@@ -5,7 +5,8 @@ import { twMerge as tw } from "tailwind-merge";
 
 import {
   COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID
+  ESTIMATED_AREA_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
@@ -41,7 +42,11 @@ interface DisplayedPolygonType {
 
 type Criteria = GetV2TerrafundValidationSiteResponse[number];
 
-const EXCLUDED_VALIDATION_CRITERIAS = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+const EXCLUDED_VALIDATION_CRITERIAS = [
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
+];
 
 const getFailingCriterias = (criteria: Criteria): string[] => {
   const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id) ?? [];
@@ -111,7 +116,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
         };
       })
     );
-  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria]);
+  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria, selectedUUIDs]);
 
   return (
     <ModalBaseSubmit {...rest}>

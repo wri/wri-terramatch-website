@@ -2,7 +2,7 @@
 import { get, memoize, uniqBy } from "lodash";
 import { AnyObjectSchema } from "yup";
 
-import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 
 export const validateForm = (schema: AnyObjectSchema) => (values: any) => {
   let errors: { [index: string]: string } = {};
@@ -69,9 +69,36 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
   const output = { ...answers };
 
   steps.forEach(step => {
-    step.fields.forEach(field => {
-      if (field.type === FieldType.Conditional && typeof output[field.name] !== "boolean") {
-        output[field.name] = true;
+    step.fields.forEach(fieldStep => {
+      if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
+        let fieldsCount = 0;
+        let valueAlreadyCalculated = false;
+        fieldStep.fieldProps?.fields.forEach((fieldChildren: any) => {
+          if (valueAlreadyCalculated) {
+            return;
+          }
+          if (
+            Array.isArray(output[fieldChildren.name]) &&
+            output[fieldChildren.name]?.length > 0 &&
+            output[fieldStep.name] == null
+          ) {
+            output[fieldStep.name] = true;
+            valueAlreadyCalculated = true;
+          }
+          if (output[fieldStep.name] == true) {
+            if (
+              (Array.isArray(output[fieldChildren.name]) && output[fieldChildren.name]?.length < 1) ||
+              output[fieldChildren.name] == null ||
+              output[fieldChildren.name] == "" ||
+              output[fieldChildren.name] == 0
+            ) {
+              fieldsCount++;
+            }
+          }
+          if ("fields" in fieldStep.fieldProps && fieldsCount == fieldStep.fieldProps?.fields?.length) {
+            output[fieldStep.name] = false;
+          }
+        });
       }
     });
   });

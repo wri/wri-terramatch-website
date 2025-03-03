@@ -1,4 +1,4 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -17,6 +17,7 @@ import { getSteps } from "@/pages/organization/[id]/project-pitch/create/[pitchU
 const ProjectPitchCreate = () => {
   const router = useRouter();
   const pitchUUID = router.query.pitchUUID as string;
+  const t = useT();
 
   const { data: pitch, isLoading } = useGetV2ProjectPitchesUUID(
     { pathParams: { uuid: pitchUUID } },

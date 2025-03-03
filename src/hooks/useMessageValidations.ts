@@ -24,17 +24,19 @@ interface ExtraInfoItem {
   error?: string;
 }
 
+const FIELDS_TO_VALIDATE: Record<string, string> = {
+  poly_name: "Polygon Name",
+  plantstart: "Plant Start Date",
+  plantend: "Plant End Date",
+  practice: "Restoration Practice",
+  target_sys: "Target Land Use System",
+  distr: "Tree Distribution",
+  num_trees: "Number of Trees"
+};
+
 export const useMessageValidators = () => {
   const t = useT();
-  const fieldsToValidate: any = {
-    poly_name: "Polygon Name",
-    plantstart: "Plant Start Date",
-    plantend: "Plant End Date",
-    practice: "Restoration Practice",
-    target_sys: "Target Land Use System",
-    distr: "Tree Distribution",
-    num_trees: "Number of Trees"
-  };
+
   const getIntersectionMessages = useMemo(
     () =>
       (extraInfo: any): string[] => {
@@ -59,6 +61,30 @@ export const useMessageValidators = () => {
       },
     [t]
   );
+  const getTargetCountryMessage = useMemo(
+    () =>
+      (extraInfo: any): string[] => {
+        if (!extraInfo) return [];
+
+        try {
+          const infoObject = JSON.parse(extraInfo);
+          if (infoObject && typeof infoObject === "object" && "country_name" in infoObject) {
+            const countryName = infoObject.country_name || "Unknown Country";
+            return [
+              t("Target Country: The polygon should be located inside {country}", {
+                country: countryName
+              })
+            ];
+          } else {
+            return [t("Error: Country information is missing in extra info.")];
+          }
+        } catch (error) {
+          Log.error("Failed to get target country message", error);
+          return [t("Error parsing extra info.")];
+        }
+      },
+    [t]
+  );
   const getDataMessage = useMemo(
     () => (extraInfo: string | undefined) => {
       if (!extraInfo) return [];
@@ -67,28 +93,28 @@ export const useMessageValidators = () => {
         return infoArray
           .map(info => {
             if (!info.exists) {
-              return t("{field} is missing", { field: fieldsToValidate[info.field] });
+              return t("{field} is missing", { field: FIELDS_TO_VALIDATE[info.field] });
             }
             switch (info.field) {
               case "target_sys":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",
-                  { field: fieldsToValidate[info.field], error: info.error }
+                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
                 );
               case "distr":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full']",
-                  { field: fieldsToValidate[info.field], error: info.error }
+                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
                 );
               case "num_trees":
                 return t("{field} {error} is not a valid number", {
-                  field: fieldsToValidate[info.field],
+                  field: FIELDS_TO_VALIDATE[info.field],
                   error: info.error
                 });
               case "practice":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration']",
-                  { field: fieldsToValidate[info.field], error: info.error }
+                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
                 );
               default:
                 return null;
@@ -159,11 +185,13 @@ export const useMessageValidators = () => {
         return getIntersectionMessages(extraInfo);
       } else if (criteria_id === 14) {
         return getDataMessage(extraInfo);
+      } else if (criteria_id === 7) {
+        return getTargetCountryMessage(extraInfo);
       } else {
         return [];
       }
     },
-    [getProjectGoalMessage, getIntersectionMessages, getDataMessage]
+    [getProjectGoalMessage, getIntersectionMessages, getDataMessage, getTargetCountryMessage]
   );
 
   return {

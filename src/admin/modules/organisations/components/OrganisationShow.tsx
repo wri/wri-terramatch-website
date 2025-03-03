@@ -21,7 +21,6 @@ import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
 import MapField from "@/admin/components/Fields/MapField";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
-import ShowTitle from "@/admin/components/ShowTitle";
 import { getCountriesOptions } from "@/constants/options/countries";
 import {
   getFarmersEngagementStrategyOptions,
@@ -59,11 +58,7 @@ export const OrganisationShow = () => {
 
   return (
     <>
-      <Show
-        actions={<ShowActions titleSource="name" toggleTestStatus={toggleTestStatus} />}
-        title={<ShowTitle moduleName="Organization" getTitle={record => record?.name} />}
-        aside={<OrganisationShowAside />}
-      >
+      <Show actions={<ShowActions toggleTestStatus={toggleTestStatus} />} aside={<OrganisationShowAside />}>
         <TabbedShowLayout>
           <TabbedShowLayout.Tab label="Organization Details">
             <TextField source="name" label="Legal Name" emptyText="Not Provided" />
@@ -185,7 +180,7 @@ export const OrganisationShow = () => {
             />
             <NumberField source="trees_grown_total" label="Total Trees Grown" emptyText="Not Provided" />
             <NumberField source="trees_grown_3year" label="Trees Grown in the last 3 years" emptyText="Not Provided" />
-            <ArrayField source="tree_species" label="Tree Species Grown" emptyText="Not Provided">
+            <ArrayField source="tree_species_historical" label="Tree Species Grown" emptyText="Not Provided">
               <Datagrid
                 bulkActionButtons={false}
                 empty={

@@ -1,24 +1,18 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dictionary, startCase } from "lodash";
-import { FormEvent, Fragment, useCallback, useState } from "react";
+import { startCase } from "lodash";
+import { FormEvent, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import {
-  DEMOGRAPHICAL_TYPES,
-  DemographicalType,
-  DemographicGridVariantProps,
-  DemographicType,
-  HBFDemographicType
-} from "./types";
+import { DemographicGridVariantProps, DemographicType, useDemographicLabels } from "./types";
 
 export interface DemographicsRowProps {
-  demographicalType: DemographicalType;
-  type: DemographicType | HBFDemographicType;
-  subtypes?: Dictionary<string>;
+  demographicType: DemographicType;
+  entryType: string;
+  usesName: boolean;
   label: string;
   userLabel?: string;
   amount: number;
@@ -28,9 +22,9 @@ export interface DemographicsRowProps {
 }
 
 const DemographicsRow = ({
-  demographicalType,
-  type,
-  subtypes,
+  demographicType,
+  entryType,
+  usesName,
   label,
   userLabel,
   amount,
@@ -61,15 +55,15 @@ const DemographicsRow = ({
     [onChange, amount]
   );
 
-  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
+  const { rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
 
   return (
-    <Fragment>
+    <>
       <div className={classNames("flex items-center justify-between bg-white px-4", variant.secondCol)}>
         <Text variant="text-14-light" className="flex items-center">
           {t(label)}
         </Text>
-        <When condition={subtypes != null}>
+        <When condition={usesName}>
           <When condition={onChange == null}>
             <Text variant="text-14-light" className="items-left flex w-3/5 px-2 py-1">
               {userLabel}
@@ -77,7 +71,7 @@ const DemographicsRow = ({
           </When>
           <When condition={onChange != null}>
             <input
-              placeholder={t(`Enter ${startCase(type)}`)}
+              placeholder={t(`Enter ${startCase(entryType)}`)}
               className="text-14-light hover:shadow-blue-border-input h-min w-3/5 rounded border border-transparent px-2 py-1 outline-0 hover:border hover:border-primary"
               value={userLabel ?? ""}
               onChange={onUserLabelChange}
@@ -98,16 +92,16 @@ const DemographicsRow = ({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onChange={onAmountChange}
-            className="text-14-light hover:shadow-blue-border-input w-16 border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
+            className="text-14-light hover:shadow-blue-border-input border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
           />
-          <When condition={subtypes != null}>
+          <When condition={usesName}>
             <div className="absolute ml-20 cursor-pointer opacity-30 hover:opacity-60" onClick={onDelete}>
               <Icon name={IconNames.CROSS} viewBox="0 0 24 24" />
             </div>
           </When>
         </When>
       </div>
-    </Fragment>
+    </>
   );
 };
 

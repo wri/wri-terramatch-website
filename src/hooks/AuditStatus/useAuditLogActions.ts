@@ -89,11 +89,13 @@ interface AuditLogActionsResponse {
 const useAuditLogActions = ({
   record,
   buttonToggle,
-  entityLevel
+  entityLevel,
+  isProjectReport
 }: {
   record: any;
   buttonToggle?: number;
   entityLevel?: number;
+  isProjectReport?: boolean;
 }): AuditLogActionsResponse => {
   const reportEntityTypes = ReverseButtonStates2[buttonToggle!].includes("reports")
     ? AuditLogButtonStates.REPORT
@@ -106,10 +108,11 @@ const useAuditLogActions = ({
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
-    entityUuid: record?.uuid,
+    entity: record,
     entityType: entityType as AuditLogEntity,
     buttonToggle,
-    entityLevel
+    entityLevel,
+    isProjectReport
   });
 
   const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entityLevel!].includes(word));
@@ -138,7 +141,7 @@ const useAuditLogActions = ({
       fetchCriteriaValidation();
       fetchCheckPolygons();
     }
-  }, [entityType, record, selected]);
+  }, [entityType, isPolygon, isSite, isSiteProject, record?.uuid, selected, verifyEntity]);
 
   const isValidCriteriaData = (criteriaData: any) => {
     if (!criteriaData?.criteria_list?.length) {
@@ -150,12 +153,21 @@ const useAuditLogActions = ({
   };
 
   const entityHandlers = (() => {
-    if (isSiteProject) {
+    if (buttonToggle == AuditLogButtonStates.PROJECT_REPORT) {
+      return {
+        selectedEntityItem: record,
+        loadToEntity: () => {},
+        ListItemToEntity: [],
+        setSelectedToEntity: null,
+        checkPolygons: false
+      };
+    }
+    if (isSiteProject || isProjectReport) {
       return {
         selectedEntityItem: isProject ? record : selected,
-        loadToEntity: !isProject ? loadEntityList : () => {},
-        ListItemToEntity: !isProject ? entityListItem : [],
-        setSelectedToEntity: !isProject ? setSelected : null,
+        loadToEntity: !isProject || isProjectReport ? loadEntityList : () => {},
+        ListItemToEntity: !isProject || isProjectReport ? entityListItem : [],
+        setSelectedToEntity: !isProject || isProjectReport ? setSelected : null,
         checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
       };
     } else if (verifyEntity) {
@@ -190,6 +202,7 @@ const useAuditLogActions = ({
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle, record, entityListItem, selected]);
 
   const getValuesStatusEntity = (() => {

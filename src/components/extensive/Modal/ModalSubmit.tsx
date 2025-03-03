@@ -5,7 +5,8 @@ import { twMerge } from "tailwind-merge";
 
 import {
   COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID
+  ESTIMATED_AREA_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -104,7 +105,11 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
         const criteria = criteriaDataParsed[polygon.poly_id];
-        const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+        const excludedFromValidationCriterias = [
+          COMPLETED_DATA_CRITERIA_ID,
+          ESTIMATED_AREA_CRITERIA_ID,
+          WITHIN_COUNTRY_CRITERIA_ID
+        ];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
         const status = polygon.status;

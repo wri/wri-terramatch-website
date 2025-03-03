@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { Show, TabbedShowLayout, TabbedShowLayoutTabs, useRefresh } from "react-admin";
 
@@ -9,31 +8,32 @@ import ChangeRequestsTab from "@/admin/components/ResourceTabs/ChangeRequestsTab
 import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab";
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
-import ShowTitle from "@/admin/components/ShowTitle";
+import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 import { usePutV2AdminProjectsUUID } from "@/generated/apiComponents";
+import ApiSlice from "@/store/apiSlice";
 
 const ProjectShow = () => {
   const refresh = useRefresh();
-  const queryClient = useQueryClient();
   const { mutate: updateProject } = usePutV2AdminProjectsUUID({
     onSuccess: async (data, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["v2", "projects", variables.pathParams.uuid] });
+      // Temporary until the entity update goes through v3. Then the prune isn't needed, and the
+      // refetch() will pull the updated resource from the store without an API request.
+      ApiSlice.pruneCache("projects", [variables.pathParams.uuid]);
       refresh();
     }
   });
 
   const toggleTestStatus = useCallback(
     (record: any) => {
-      updateProject({ pathParams: { uuid: record.uuid }, body: { is_test: !record.is_test } });
+      updateProject({ pathParams: { uuid: record.uuid }, body: { is_test: !record.isTest } });
     },
     [updateProject]
   );
 
   return (
     <Show
-      title={<ShowTitle moduleName="Project" getTitle={record => record?.name} />}
-      actions={<ShowActions titleSource="name" resourceName="project" toggleTestStatus={toggleTestStatus} />}
+      actions={<ShowActions resourceName="project" toggleTestStatus={toggleTestStatus} />}
       className="-mt-[50px] bg-neutral-100"
     >
       <RecordFrameworkProvider>
@@ -42,7 +42,7 @@ const ProjectShow = () => {
           <GalleryTab label="Project Gallery" entity="projects" />
           <DocumentTab label="Project Documents" entity="projects" />
           <ChangeRequestsTab entity="projects" singularEntity="project" />
-          <TabbedShowLayout.Tab label="Monitored Data">In Progress</TabbedShowLayout.Tab>
+          <MonitoredTab label="Monitored Data" type={"projects"}></MonitoredTab>
           <AuditLogTab entity={AuditLogButtonStates.PROJECT} />
         </TabbedShowLayout>
       </RecordFrameworkProvider>

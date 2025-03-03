@@ -17,6 +17,8 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
+  GetV2AuditStatusENTITYUUIDResponse,
+  useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
@@ -25,6 +27,7 @@ import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@
 import { parseValidationData } from "@/helpers/polygonValidation";
 import Log from "@/utils/log";
 
+import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
@@ -49,6 +52,7 @@ export interface ICriteriaCheckItem {
 export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
 export const OVERLAPPING_CRITERIA_ID = 3;
+export const WITHIN_COUNTRY_CRITERIA_ID = 7;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -91,15 +95,20 @@ const PolygonDrawer = ({
     statusSelectedPolygon,
     setStatusSelectedPolygon,
     setShouldRefetchValidation,
-    polygonCriteriaMap: polygonMap
+    polygonCriteriaMap: polygonMap,
+    setPolygonCriteriaMap
   } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       setCheckPolygonValidation(false);
+      setPolygonCriteriaMap((oldPolygonMap: any) => ({
+        ...oldPolygonMap,
+        [data.polygon_id]: data
+      }));
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -161,6 +170,7 @@ const PolygonDrawer = ({
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);
 
   useEffect(() => {
@@ -186,7 +196,7 @@ const PolygonDrawer = ({
       setSelectedPolygonData({});
       setStatusSelectedPolygon("");
     }
-  }, [polygonSelected, sitePolygonData]);
+  }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
     if (openEditNewPolygon) {
       setButtonToogle(true);
@@ -202,6 +212,7 @@ const PolygonDrawer = ({
       (criteria: any) =>
         criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
         criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
+        criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
         criteria.valid !== 1
     );
   };
@@ -220,7 +231,7 @@ const PolygonDrawer = ({
 
     fetchCriteriaValidation();
     setSelectPolygonVersion(selectedPolygonData);
-  }, [buttonToogle, selectedPolygonData]);
+  }, [buttonToogle, polygonSelected, selectedPolygonData]);
 
   const {
     data: polygonVersions,
@@ -242,13 +253,13 @@ const PolygonDrawer = ({
       setIsLoadingDropdown(false);
     };
     onLoading();
-  }, [isOpenPolygonDrawer]);
+  }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
     if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
-  }, [selectPolygonVersion]);
+  }, [polygonSelected, selectPolygonVersion, selectedPolygonData]);
 
   const runFixPolygonOverlaps = () => {
     if (polygonSelected) {
@@ -259,6 +270,19 @@ const PolygonDrawer = ({
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
+
+  const auditData = {
+    entity: "site-polygon",
+    entity_uuid: selectedPolygon?.poly_id as string
+  };
+
+  const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
+    pathParams: {
+      entity: "site-polygon",
+      uuid: selectedPolygon?.uuid as string
+    }
+  });
+
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
@@ -304,7 +328,25 @@ const PolygonDrawer = ({
               showChangeRequest={false}
               checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
             />
-            <CommentarySection record={selectedPolygon} entity={"Polygon"}></CommentarySection>
+            <CommentarySection
+              variantText="text-14-semibold"
+              record={selectedPolygon}
+              entity={"Polygon"}
+              refresh={refetch}
+            ></CommentarySection>
+            {auditLogData && (
+              <>
+                <Text variant="text-14-semibold" className="">
+                  Audit Log
+                </Text>
+                <AuditLogTable
+                  fullColumns={false}
+                  auditLogData={auditLogData}
+                  auditData={auditData}
+                  refresh={refetch}
+                />
+              </>
+            )}
           </div>
         </Then>
         <Else>

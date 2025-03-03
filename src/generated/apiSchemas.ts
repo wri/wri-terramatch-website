@@ -24,6 +24,33 @@ export type TreeSpeciesPaginated = {
     next?: number;
     unfiltered_total?: number;
   };
+  count_new_species?: number;
+  count_reported_species?: number;
+  count_stablished_species?: number;
+};
+
+export type TreeSpeciesAggregated = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
 };
 
 export type TreeSpeciesRead = {
@@ -4636,30 +4663,6 @@ export type V2SeedingPaginated = {
     next?: number;
     unfiltered_total?: number;
   };
-};
-
-export type V2WorkdayRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
-};
-
-export type V2RestorationPartnerRead = {
-  uuid?: string;
-  collection?: string;
-  readable_collection?: string;
-  demographics?: {
-    type?: "gender" | "age" | "ethnicity" | "caste";
-    subtype?: string;
-    name?: string;
-    amount?: number;
-  }[];
 };
 
 export type V2DisturbanceRead = {
@@ -20437,7 +20440,6 @@ export type SiteReportRead = {
      */
     created_at?: string;
   };
-  workdays_volunteer?: number;
   technical_narrative?: string;
   public_narrative?: string;
   shared_drive_link?: string;
@@ -21005,46 +21007,18 @@ export type ProjectReportRead = {
   pct_survival_to_date?: number;
   survival_calculation?: string;
   survival_comparison?: string;
-  ft_women?: number;
-  ft_men?: number;
-  ft_youth?: number;
-  ft_smallholder_farmers?: number;
-  ft_total?: number;
-  pt_women?: number;
-  pt_men?: number;
-  pt_youth?: number;
-  pt_smallholder_farmers?: number;
-  pt_total?: number;
   seasonal_women?: number;
   seasonal_men?: number;
   seasonal_youth?: number;
-  seasonal_smallholder_farmers?: number;
   seasonal_total?: number;
-  volunteer_women?: number;
-  volunteer_men?: number;
-  volunteer_youth?: number;
-  volunteer_smallholder_farmers?: number;
-  volunteer_total?: number;
   shared_drive_link?: string;
   planted_trees?: number;
   new_jobs_created?: number;
   new_jobs_description?: string;
   new_volunteers?: number;
   volunteers_work_description?: string;
-  ft_jobs_non_youth?: number;
-  ft_jobs_youth?: number;
-  volunteer_non_youth?: number;
-  beneficiaries?: number;
   beneficiaries_description?: string;
-  beneficiaries_women?: number;
-  beneficiaries_men?: number;
-  beneficiaries_non_youth?: number;
-  beneficiaries_youth?: number;
-  beneficiaries_smallholder?: number;
-  beneficiaries_large_scale?: number;
-  beneficiaries_income_increase?: number;
   beneficiaries_income_increase_description?: string;
-  beneficiaries_skills_knowledge_increase?: number;
   beneficiaries_skills_knowledge_increase_description?: string;
   ethnic_indigenous_1?: number;
   ethnic_indigenous_2?: number;
@@ -22202,21 +22176,27 @@ export type V2TaskRead = {
 };
 
 export type V2TaskActionRead = {
-  uuid?: number;
-  type?: string;
-  status?: string;
+  uuid?: string;
   /**
    * @format date-time
    */
   due_at?: string;
-  title?: string;
-  report_title?: string;
-  update_request_status?: string;
   /**
    * @format date-time
    */
   submitted_at?: string;
+  report_title?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  update_request_status?: string;
+  nothing_to_report?: boolean;
+  title?: string;
+  type?: string;
   parent_name?: string;
+  completion?: number;
 };
 
 export type StatusUpdate = {
@@ -22439,6 +22419,45 @@ export type V2TerrafundCriteriaData = {
      */
     extra_info?: Record<string, any>;
   }[];
+};
+
+export type V2TerrafundCriteriaDataMultiple = {
+  [key: string]:
+    | {
+        /**
+         * The ID of the polygon
+         */
+        polygon_id: string;
+        /**
+         * List of validation criteria
+         */
+        criteria_list: {
+          /**
+           * The ID of the criteria
+           */
+          criteria_id?: number;
+          /**
+           * The latest created at timestamp of the criteria
+           *
+           * @format date-time
+           */
+          latest_created_at?: string;
+          /**
+           * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+           */
+          valid?: number;
+          /**
+           * Extra information about the polygon validation
+           */
+          extra_info?: Record<string, any>;
+        }[];
+      }
+    | {
+        /**
+         * Error message if the polygon or criteria data is not found
+         */
+        error: string;
+      };
 };
 
 export type V2TerrafundCriteriaSite = {
@@ -22775,6 +22794,10 @@ export type DashboardGetPolygonStatusResponse = {
 };
 
 export type DashboardBBOXProject = {
+  bbox?: number[];
+};
+
+export type DashboardBBOXLandscape = {
   bbox?: number[];
 };
 
@@ -23659,4 +23682,103 @@ export type UserCreateComplete = {
 
 export type V2AdminProjectUpdate = {
   is_test?: boolean;
+};
+
+export type IndicatorPost = {
+  uuids?: string[];
+};
+
+export type Indicators = {
+  ["2015"]?: number;
+  ["2016"]?: number;
+  ["2017"]?: number;
+  ["2018"]?: number;
+  ["2019"]?: number;
+  ["2020"]?: number;
+  ["2021"]?: number;
+  ["2022"]?: number;
+  ["2023"]?: number;
+  ["2024"]?: number;
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  site_name?: string;
+  size?: void;
+  /**
+   * @format date
+   */
+  created_at?: string;
+  indicator_slug?: string;
+  year_of_analysis?: number;
+  value?: Record<string, any>;
+};
+
+export type IndicatorPolygonsStatus = {
+  draft?: number;
+  submitted?: number;
+  approved?: number;
+  ["needs-more-information"]?: number;
+};
+
+export type V2ImpactStoryRead = {
+  /**
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * @example Empowering Local Communities
+   */
+  title?: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   * @example 2024-09-02T15:04:05Z
+   */
+  updated_at?: string;
+};
+
+export type V2ImpactStoryUpdate = {
+  /**
+   * @example Updated Title
+   */
+  title?: string;
+  /**
+   * @example Updated content of the impact story.
+   */
+  content?: string;
+  /**
+   * @example published
+   */
+  status?: "draft" | "published" | "archived";
+};
+
+export type V2ImpactStoryCreate = {
+  /**
+   * @example Empowering Local Communities
+   */
+  title: string;
+  /**
+   * @example This is an inspiring story of impact...
+   */
+  content: string;
+  /**
+   * @example draft
+   */
+  status?: "draft" | "published" | "archived";
 };

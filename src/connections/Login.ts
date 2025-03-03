@@ -20,7 +20,6 @@ export const logout = () => {
   // When we log out, remove all cached API resources so that when we log in again, these resources
   // are freshly fetched from the BE.
   ApiSlice.clearApiCache();
-  window.location.replace("/auth/login");
 };
 
 export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;

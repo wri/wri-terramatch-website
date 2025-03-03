@@ -5,51 +5,30 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
-import {
-  Demographic,
-  DEMOGRAPHIC_TYPES,
-  DEMOGRAPHICAL_TYPES,
-  DemographicsCollapseGridProps,
-  DemographicType,
-  HBF_DEMOGRAPHIC_TYPES,
-  HBFDemographicType
-} from "./types";
+import { DemographicsCollapseGridProps, useDemographicLabels, useEntryTypes } from "./types";
 
-const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({
-  title,
-  demographicalType,
-  demographics,
-  variant,
-  onChange
-}) => {
+const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
-  const { framework } = useFrameworkContext();
-  const { total, status } = useTableStatus(demographics);
-  const byType = useMemo(() => groupBy(demographics, "type"), [demographics]);
+  const { total, status } = useTableStatus(type, entries);
+  const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(
-    (type: DemographicType | HBFDemographicType, sectionDemographics: Demographic[]) => {
-      onChange?.([
-        ...demographics.filter(({ type: demographicType }) => demographicType !== type),
-        ...sectionDemographics
-      ]);
+    (type: string, sectionEntries: DemographicEntryDto[]) => {
+      onChange?.([...entries.filter(({ type: demographicType }) => demographicType !== type), ...sectionEntries]);
     },
-    [onChange, demographics]
+    [onChange, entries]
   );
 
-  const demographicTypes = useMemo(
-    () => (framework === Framework.HBF ? HBF_DEMOGRAPHIC_TYPES : DEMOGRAPHIC_TYPES),
-    [framework]
-  );
+  const entryTypes = useEntryTypes(type);
 
-  const { rowLabelSingular, rowLabelPlural } = DEMOGRAPHICAL_TYPES[demographicalType];
-  const rowTitle = t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(type);
+  const rowTitle = t(`{total} ${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (
@@ -94,13 +73,13 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({
               variant.gridStyle
             )}
           >
-            {demographicTypes.map(type => (
+            {entryTypes.map(entryType => (
               <DemographicsSection
-                key={type}
-                demographicalType={demographicalType}
-                onChange={onChange == null ? undefined : demographics => onSectionChange(type, demographics)}
-                demographics={byType[type] ?? []}
-                {...{ type, variant }}
+                key={entryType}
+                demographicType={type}
+                onChange={onChange == null ? undefined : entries => onSectionChange(type, entries)}
+                entries={byType[entryType] ?? []}
+                {...{ entryType, variant }}
               />
             ))}
           </div>

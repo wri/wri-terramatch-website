@@ -16,8 +16,19 @@ import {
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import JobsSlice from "@/store/jobsSlice";
 
-const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
+const ProcessBulkPolygonsControl = ({
+  entityData,
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle
+}: {
+  entityData: any;
+  setIsLoadingDelayedJob?: (value: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
+}) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
@@ -100,17 +111,23 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            showLoader();
+            closeModal(ModalId.FIX_POLYGONS);
+            setIsLoadingDelayedJob?.(true);
+            setAlertTitle?.("Fix Polygons");
             fixPolygons(
               {
                 body: {
-                  uuids: selectedUUIDs
+                  uuids: selectedUUIDs,
+                  entity_uuid: entityData?.uuid,
+                  entity_type: "sites"
                 }
               },
               {
                 onSuccess: response => {
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
-                  closeModal(ModalId.FIX_POLYGONS);
+
+                  setIsLoadingDelayedJob?.(false);
+                  JobsSlice.reset();
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -121,10 +138,10 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
                     openNotification("warning", t("Warning"), t("No polygons were fixed."));
                   }
                   refetchData?.();
-                  hideLoader();
                 },
                 onError: () => {
                   hideLoader();
+                  setIsLoadingDelayedJob?.(false);
                   openNotification("error", t("Error!"), t("Failed to fix polygons"));
                 }
               }
@@ -145,7 +162,9 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
     checkPolygons(
       {
         body: {
-          uuids: selectedUUIDs
+          uuids: selectedUUIDs,
+          entity_uuid: entityData?.uuid,
+          entity_type: "sites"
         }
       },
       {
@@ -153,9 +172,12 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
           refetchData?.();
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
+          setIsLoadingDelayedJob?.(false);
+          JobsSlice.reset();
         },
         onError: () => {
           hideLoader();
+          setIsLoadingDelayedJob?.(false);
           openNotification("error", t("Error!"), t("Failed to check polygons"));
         }
       }
@@ -170,7 +192,8 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
       .filter((_, index) => initialSelection[index])
       .map((polygon: SitePolygon) => polygon.poly_id || "");
     if (type === "check") {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Check Polygons");
       runCheckPolygonsSelected(selectedUUIDs);
     } else if (type === "fix") {
       openFormModalHandlerSubmitPolygon(selectedUUIDs);
@@ -188,22 +211,28 @@ const ProcessBulkPolygonsControl = ({ entityData }: { entityData: any }) => {
         <div className="grid grid-cols-3 gap-2">
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-red bg-red p-2 hover:border-white
+              disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("delete")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Delete")}
           </Button>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white
+             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("check")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Check")}
           </Button>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
+            disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("fix")}
+            disabled={isLoadingDelayedJob}
           >
             {t("Fix")}
           </Button>

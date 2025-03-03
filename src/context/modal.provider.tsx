@@ -13,6 +13,7 @@ type ModalContextType = {
   openModal: (id: string, content: ReactNode, coverToolbar?: boolean) => void;
   closeModal: (id: string) => void;
   setModalLoading: (id: string, loading: boolean) => void;
+  modalOpened: (id: string) => boolean;
 };
 
 export const ModalContext = React.createContext<ModalContextType>({
@@ -20,7 +21,8 @@ export const ModalContext = React.createContext<ModalContextType>({
   setModalContent: () => {},
   openModal: () => {},
   closeModal: () => {},
-  setModalLoading: () => {}
+  setModalLoading: () => {},
+  modalOpened: () => false
 });
 
 type ModalProviderProps = {
@@ -48,14 +50,21 @@ const ModalProvider = ({ children }: ModalProviderProps) => {
     setModals(prevModals => prevModals.map(modal => (modal.id === id ? { ...modal, loading } : modal)));
   };
 
+  /** Checks if the modal is opened. */
+  const modalOpened = (id: string) => modals.some(modal => modal.id === id);
+
   const value = useMemo(
     () => ({
       modals,
       setModalContent,
       openModal,
       closeModal,
-      setModalLoading
+      setModalLoading,
+      modalOpened
     }),
+    // Only regenerate the context value if the set of current modals changes. This is more
+    // efficient than wrapping every callback above in useCallback()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [modals]
   );
 

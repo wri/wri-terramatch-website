@@ -1,9 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import Button from "@/components/elements/Button/Button";
-import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import ItemMonitoringCards from "@/components/elements/Cards/ItemMonitoringCard/ItemMonitoringCards";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
@@ -13,15 +11,15 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { Framework } from "@/context/framework.provider";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 
 interface ProjectOverviewTabProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
-  const router = useRouter();
 
   return (
     <PageBody>
@@ -33,56 +31,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               as={Link}
               variant="secondary"
               className="m-auto"
-              href={`/project/${router.query.uuid}?tab=goals`}
+              href={`/project/${project.uuid}?tab=goals`}
               shallow
             >
               {t("View all")}
             </Button>
           }
         >
-          <div className="flex w-full text-darkCustom">
-            <div className="grid w-[55%] grid-cols-2 gap-x-8 gap-y-7 pr-20">
-              <GoalProgressCard
-                frameworksShow={[Framework.PPC]}
-                label={t("Workday Count (PPC)")}
-                value={project.combined_workday_count}
-              />
-              <GoalProgressCard
-                frameworksHide={[Framework.PPC]}
-                label={t("Jobs Created")}
-                value={project.total_jobs_created}
-                limit={project.jobs_created_goal}
-              />
-              <GoalProgressCard
-                label={t("Trees Restored")}
-                value={project.trees_restored_count}
-                limit={project.trees_grown_goal}
-                className="flex-1"
-              />
-              <div></div>
-              <GoalProgressCard
-                label={t("Hectares Under Restoration")}
-                value={project.total_hectares_restored_sum}
-                limit={project.total_hectares_restored_goal}
-              />
-            </div>
-            <div>
-              <GoalProgressCard
-                label={t("Hectares Restored")}
-                hasProgress={false}
-                items={[
-                  { iconName: IconNames.TREE_CIRCLE, label: t("Trees Planted"), value: project.trees_planted_count },
-                  { iconName: IconNames.LEAF_CIRCLE, label: t("Seeds Planted"), value: project.seeds_planted_count },
-                  {
-                    iconName: IconNames.REFRESH_CIRCLE,
-                    label: t("Trees Regenerating"),
-                    value: project.regenerated_trees_count
-                  }
-                ]}
-                className="flex-1"
-              />
-            </div>
-          </div>
+          <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
       <PageRow>
@@ -93,7 +49,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               <Button
                 as={Link}
                 variant="secondary"
-                href={`/entity/sites/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                href={`/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
               >
                 {t("Add New Site")}
               </Button>

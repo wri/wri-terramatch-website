@@ -6,7 +6,8 @@ import { When } from "react-if";
 import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
-  OVERLAPPING_CRITERIA_ID
+  OVERLAPPING_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -21,7 +22,9 @@ import {
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -32,6 +35,9 @@ export interface CheckSitePolygonProps {
     uuid: string;
   };
   polygonCheck: boolean;
+  setIsLoadingDelayedJob?: (isLoading: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
 }
 
 interface CheckedPolygon {
@@ -49,8 +55,42 @@ interface TransformedData {
   showWarning: boolean;
 }
 
+const getTransformedData = (
+  sitePolygonData: SitePolygonsDataResponse | undefined,
+  currentValidationSite: CheckedPolygon[]
+) => {
+  return currentValidationSite.map((checkedPolygon, index) => {
+    const matchingPolygon = Array.isArray(sitePolygonData)
+      ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
+      : null;
+    const excludedFromValidationCriterias = [
+      COMPLETED_DATA_CRITERIA_ID,
+      ESTIMATED_AREA_CRITERIA_ID,
+      WITHIN_COUNTRY_CRITERIA_ID
+    ];
+    const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
+    const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
+    let isValid = false;
+    if (checkedPolygon?.nonValidCriteria?.length === 0) {
+      isValid = true;
+    } else if (failingCriterias?.length === 0) {
+      isValid = true;
+    }
+    return {
+      id: index + 1,
+      valid: checkedPolygon.checked && isValid,
+      checked: checkedPolygon.checked,
+      label: matchingPolygon?.poly_name ?? null,
+      showWarning:
+        nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
+        nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
+        nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
+    };
+  });
+};
+
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck } = props;
+  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
@@ -59,7 +99,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const { showLoader, hideLoader } = useLoading();
+  const { hideLoader } = useLoading();
   const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
     useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -92,9 +132,12 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         "success",
         t("Success! TerraMatch reviewed all polygons")
       );
+      setIsLoadingDelayedJob?.(false);
+      JobsSlice.reset();
     },
     onError: () => {
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
@@ -105,6 +148,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       if (!data.updated_polygons?.length) {
         openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
         closeModal(ModalId.FIX_POLYGONS);
         return;
       }
@@ -118,6 +162,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           .join(", ");
         openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
         hideLoader();
+        setIsLoadingDelayedJob?.(false);
       }
       closeModal(ModalId.FIX_POLYGONS);
     },
@@ -125,34 +170,9 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       Log.error("Error clipping polygons:", error);
       displayNotification(t("An error occurred while fixing polygons. Please try again."), "error", t("Error"));
       hideLoader();
+      setIsLoadingDelayedJob?.(false);
     }
   });
-
-  const getTransformedData = (currentValidationSite: CheckedPolygon[]) => {
-    return currentValidationSite.map((checkedPolygon, index) => {
-      const matchingPolygon = Array.isArray(sitePolygonData)
-        ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
-        : null;
-      const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
-      const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
-      const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-      let isValid = false;
-      if (checkedPolygon?.nonValidCriteria?.length === 0) {
-        isValid = true;
-      } else if (failingCriterias?.length === 0) {
-        isValid = true;
-      }
-      return {
-        id: index + 1,
-        valid: checkedPolygon.checked && isValid,
-        checked: checkedPolygon.checked,
-        label: matchingPolygon?.poly_name ?? null,
-        showWarning:
-          nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
-          nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID)
-      };
-    });
-  };
 
   const checkHasOverlaps = (currentValidationSite: CheckedPolygon[]) => {
     for (const record of currentValidationSite) {
@@ -167,7 +187,9 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
-      showLoader();
+      closeModal(ModalId.FIX_POLYGONS);
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Fix Polygons");
       clipPolygons({ pathParams: { uuid: siteUuid } });
     } else {
       displayNotification(t("Cannot fix polygons: Site UUID is missing."), "error", t("Error"));
@@ -203,43 +225,48 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   useEffect(() => {
     if (currentValidationSite) {
       setHasOverlaps(checkHasOverlaps(currentValidationSite));
-      const transformedData = getTransformedData(currentValidationSite);
+      const transformedData = getTransformedData(sitePolygonData, currentValidationSite);
       setSitePolygonCheckData(transformedData);
     }
   }, [currentValidationSite, sitePolygonData]);
 
-  useEffect(() => {
+  useValueChanged(sitePolygonData, () => {
     if (sitePolygonData) {
       reloadSitePolygonValidation();
     }
-  }, [sitePolygonData]);
+  });
 
-  useEffect(() => {
+  useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
-      showLoader();
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Check Polygons");
       getValidations({ queryParams: { uuid: siteUuid ?? "" } });
     }
-  }, [clickedValidation]);
+  });
 
   return (
     <div className="grid gap-2">
       <div className="rounded-lg bg-[#ffffff26] p-3 text-center text-white backdrop-blur-md">
         <Button
           variant="text"
-          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white"
+          className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 hover:border-white
+          disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => {
             setClickedValidation(true);
             setOpenCollapse(true);
             setSelectedPolygonsInCheckbox([]);
           }}
+          disabled={isLoadingDelayedJob}
         >
           {polygonCheck ? t("Check Polygons") : t("Check All Polygons")}
         </Button>
         <When condition={hasOverlaps}>
           <Button
             variant="text"
-            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary"
+            className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
+             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={openFormModalHandlerSubmitPolygon}
+            disabled={isLoadingDelayedJob}
           >
             {t("Fix Polygons")}
           </Button>

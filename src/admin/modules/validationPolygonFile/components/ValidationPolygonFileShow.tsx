@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import { useT } from "@transifex/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -14,7 +14,9 @@ import {
   fetchPostV2TerrafundUploadKmlValidate,
   fetchPostV2TerrafundUploadShapefileValidate
 } from "@/generated/apiComponents";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { FileType, UploadedFile } from "@/types/common";
+import { getErrorMessageFromPayload } from "@/utils/errors";
 
 const ValidatePolygonFileShow: FC = () => {
   const { openModal, closeModal } = useModalContext();
@@ -24,12 +26,12 @@ const ValidatePolygonFileShow: FC = () => {
   const { openNotification } = useNotificationContext();
 
   const t = useT();
-  useEffect(() => {
+  useValueChanged(saveFlags, () => {
     if (file && saveFlags) {
       uploadFile();
       setSaveFlags(false);
     }
-  }, [saveFlags]);
+  });
 
   const getFileType = (file: UploadedFile) => {
     const fileType = file?.file_name.split(".").pop()?.toLowerCase();
@@ -95,7 +97,8 @@ const ValidatePolygonFileShow: FC = () => {
         }
         openNotification("error", errorMessage, t("Error uploading file"));
       } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
+        const errorMessage = getErrorMessageFromPayload(error);
+        openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     }
     hideLoader();

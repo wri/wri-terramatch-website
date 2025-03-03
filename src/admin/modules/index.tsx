@@ -19,6 +19,8 @@ import FundingProgrammeCreate from "./fundingProgrammes/components/FundingProgra
 import FundingProgrammeEdit from "./fundingProgrammes/components/FundingProgrammeEdit";
 import { FundingProgrammeList } from "./fundingProgrammes/components/FundingProgrammeList";
 import { FundingProgrammeShow } from "./fundingProgrammes/components/FundingProgrammeShow";
+import { ImpactStoriesCreate, ImpactStoriesEdit } from "./impactStories/components/ImpactStories";
+import { ImpactStoriesList } from "./impactStories/components/ImpactStoriesList";
 import { NurseriesList } from "./nurseries/components/NurseriesList";
 import NurseryShow from "./nurseries/components/NurseryShow";
 import NurseryReportShow from "./nurseryReports/components/NurseryReportShow";
@@ -157,6 +159,13 @@ const validatePolygonFile = {
   List: ValidatePolygonFileShow
 };
 
+const impactStories = {
+  ResourceName: "impactStories",
+  List: ImpactStoriesList,
+  Create: ImpactStoriesCreate,
+  Edit: ImpactStoriesEdit
+};
+
 const modules = {
   user,
   organisation,
@@ -174,7 +183,8 @@ const modules = {
   siteReport,
   nurseryReport,
   audit,
-  validatePolygonFile
+  validatePolygonFile,
+  impactStories
 };
 
 export default modules;

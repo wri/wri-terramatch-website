@@ -1,11 +1,13 @@
-import { t } from "@transifex/native";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
+import { useOnMount } from "@/hooks/useOnMount";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -34,6 +36,7 @@ const MapEditPolygonPanel = ({
   polygonData,
   recallEntityData
 }: MapEditPolygonPanelProps) => {
+  const t = useT();
   const {
     editPolygon,
     setEditPolygon,
@@ -45,9 +48,9 @@ const MapEditPolygonPanel = ({
     setHasOverlaps
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;
-  useEffect(() => {
+  useOnMount(() => {
     setTabEditPolygon("Attributes");
-  }, []);
+  });
   const handleClose = () => {
     setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
     setHasOverlaps(false);
@@ -71,13 +74,13 @@ const MapEditPolygonPanel = ({
     return false;
   };
 
-  useEffect(() => {
+  useValueChanged(polygonMap, () => {
     const criteriaDataPolygon = polygonMap[editPolygon?.uuid ?? ""];
     if (criteriaDataPolygon) {
       setHasOverlaps(hasOverlaps(criteriaDataPolygon));
       setCriteriaData(criteriaDataPolygon);
     }
-  }, [polygonMap]);
+  });
 
   return (
     <>

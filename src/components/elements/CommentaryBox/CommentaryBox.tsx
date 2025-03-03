@@ -177,7 +177,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button
-          className="self-end"
+          className="self-end border-[2.5px] border-primary"
           disabled={loading}
           iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}
           onClick={submitComment}

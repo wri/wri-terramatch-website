@@ -6,9 +6,13 @@ import { AutocompleteInput, Form } from "react-admin";
 import { FieldValues } from "react-hook-form";
 import * as yup from "yup";
 
+import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { validateForm } from "@/admin/utils/forms";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { fetchGetV2AdminENTITYPresignedUrlFRAMEWORK } from "@/generated/apiComponents";
+import {
+  fetchGetV2AdminENTITYExportFRAMEWORKPm,
+  fetchGetV2AdminENTITYPresignedUrlFRAMEWORK
+} from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 import { downloadPresignedUrl } from "@/utils/network";
 
@@ -53,23 +57,34 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
   const [exporting, setExporting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const { role } = useGetUserRole();
+
   const onExport = useCallback(
     (framework: string) => {
       setExporting(true);
 
       const exportPrefix = split(entity, "-").map(capitalize).join(" ");
 
-      fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({
+      const getExport =
+        role === "admin-super" ? fetchGetV2AdminENTITYPresignedUrlFRAMEWORK : fetchGetV2AdminENTITYExportFRAMEWORKPm;
+
+      getExport({
         pathParams: { entity, framework }
       })
         .then((data: any) => {
+          if (!data.url) {
+            return getExport({ pathParams: { entity, framework } });
+          }
+          return data;
+        })
+        .then(data => {
           downloadPresignedUrl(data.url, `${exportPrefix} - ${framework}.csv`);
         })
         .finally(() => setExporting(false));
 
       setModalOpen(false);
     },
-    [entity, choices]
+    [entity, role]
   );
 
   return {
@@ -80,7 +95,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
       } else {
         onExport(choices[0].id);
       }
-    }, [choices]),
+    }, [choices, onExport]),
     frameworkDialogProps: {
       open: modalOpen,
       onCancel: useCallback(() => setModalOpen(false), []),

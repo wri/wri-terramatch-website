@@ -1,8 +1,11 @@
 import { Grid, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { Else, If, Then } from "react-if";
 
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
@@ -12,23 +15,26 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
+  countStatuses,
   downloadSiteGeoJsonPolygons,
   parsePolygonData,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
@@ -56,11 +62,13 @@ import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
-import SitePolygonStatus from "./components/SitePolygonStatus/SitePolygonStatus";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
   label: string;
+  setIsLoadingDelayedJob?: (isLoading: boolean) => void;
+  isLoadingDelayedJob?: boolean;
+  setAlertTitle?: (value: string) => void;
 }
 export interface IPolygonItem {
   id: string;
@@ -92,7 +100,8 @@ const PolygonReviewAside: FC<{
   setPolygonFromMap: any;
   refresh?: () => void;
   mapFunctions: any;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions }) => {
+  totalPolygons?: number;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons }) => {
   switch (type) {
     case "sites":
       return (
@@ -102,6 +111,7 @@ const PolygonReviewAside: FC<{
           setPolygonFromMap={setPolygonFromMap}
           mapFunctions={mapFunctions}
           refresh={refresh}
+          totalPolygons={totalPolygons}
         />
       );
     default:
@@ -137,11 +147,11 @@ const ContentForApproval = ({
 
 const PolygonReviewTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
+  const { selectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { showLoader, hideLoader } = useLoading();
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
@@ -161,7 +171,42 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-  const { data: sitePolygonData, refetch, polygonCriteriaMap, loading } = useLoadCriteriaSite(record.uuid, "sites");
+
+  const flyToPolygonBounds = useCallback(
+    async (uuid: string) => {
+      const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
+      const bboxArray = bbox?.bbox;
+      const { map } = mapFunctions;
+      if (bboxArray && map?.current) {
+        const bounds: LngLatBoundsLike = [
+          [bboxArray[0], bboxArray[1]],
+          [bboxArray[2], bboxArray[3]]
+        ];
+        map.current.fitBounds(bounds, {
+          padding: 100,
+          linear: false
+        });
+      } else {
+        Log.error("Bounding box is not in the expected format");
+      }
+    },
+    [mapFunctions]
+  );
+
+  useEffect(() => {
+    if (selectPolygonFromMap?.uuid) {
+      setPolygonFromMap(selectPolygonFromMap);
+      flyToPolygonBounds(selectPolygonFromMap.uuid);
+    }
+  }, [flyToPolygonBounds, polygonList, selectPolygonFromMap]);
+
+  const {
+    data: sitePolygonData,
+    refetch,
+    polygonCriteriaMap,
+    loading,
+    total
+  } = useLoadCriteriaSite(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -208,25 +253,9 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
 
-  const { openModal, closeModal } = useModalContext();
+  const dataPolygonOverview = countStatuses(sitePolygonData);
 
-  const flyToPolygonBounds = async (uuid: string) => {
-    const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
-    const bboxArray = bbox?.bbox;
-    const { map } = mapFunctions;
-    if (bboxArray && map?.current) {
-      const bounds: LngLatBoundsLike = [
-        [bboxArray[0], bboxArray[1]],
-        [bboxArray[2], bboxArray[3]]
-      ];
-      map.current.fitBounds(bounds, {
-        padding: 100,
-        linear: false
-      });
-    } else {
-      Log.error("Bounding box is not in the expected format");
-    }
-  };
+  const { openModal, closeModal } = useModalContext();
 
   const deletePolygon = (uuid: string) => {
     fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
@@ -264,6 +293,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       uploadFiles();
       setSaveFlags(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   useEffect(() => {
@@ -271,22 +301,25 @@ const PolygonReviewTab: FC<IProps> = props => {
       openNotification("error", t("Error uploading file"), t(errorMessage));
       setErrorMessage(null);
     }
-  }, [errorMessage]);
+  }, [errorMessage, openNotification, t]);
+
+  useEffect(() => {
+    setPolygonData(sitePolygonData);
+  }, [loading, setPolygonData, sitePolygonData]);
 
   useEffect(() => {
     setPolygonCriteriaMap(polygonCriteriaMap);
-    setPolygonData(sitePolygonData);
-  }, [loading]);
+  }, [polygonCriteriaMap, setPolygonCriteriaMap]);
+
   useEffect(() => {
     if (shouldRefetchValidation) {
       refetch();
       setShouldRefetchValidation(false);
     }
-  }, [shouldRefetchValidation]);
+  }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
   const uploadFiles = async () => {
     const uploadPromises = [];
-    showLoader();
-
+    closeModal(ModalId.ADD_POLYGON);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const site_uuid = record.uuid;
@@ -321,28 +354,33 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
       refetch();
       refetchSiteBbox();
-      closeModal(ModalId.ADD_POLYGON);
       setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
-      hideLoader();
     } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message;
-        if (typeof errorMessage === "string") {
-          const parsedMessage = JSON.parse(errorMessage);
-          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-            errorMessage = parsedMessage.message;
+      let errorMessage;
+
+      if (error && typeof error === "object" && "error" in error) {
+        const nestedError = error.error;
+        if (typeof nestedError === "string") {
+          try {
+            const parsedNestedError = JSON.parse(nestedError);
+            if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
+              errorMessage = parsedNestedError.message;
+            } else {
+              errorMessage = nestedError;
+            }
+          } catch (parseError) {
+            errorMessage = nestedError;
           }
+        } else {
+          errorMessage = nestedError;
         }
-        if (errorMessage && typeof errorMessage === "object" && "message" in errorMessage) {
-          errorMessage = errorMessage.message;
-        }
-        openNotification("error", t("Error uploading file"), errorMessage);
-        hideLoader();
+      } else if (error && typeof error === "object" && "message" in error) {
+        errorMessage = error.message;
       } else {
-        openNotification("error", t("Error uploading file"), t("An unknown error occurred"));
-        hideLoader();
+        errorMessage = t("An unknown error occurred");
       }
+      openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
     }
   };
 
@@ -546,9 +584,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const isLoading = ctxLoading;
-
-  if (isLoading) return null;
+  if (ctxLoading) return null;
 
   const tableItemMenu = (props: TableItemMenuProps) => [
     {
@@ -586,11 +622,56 @@ const PolygonReviewTab: FC<IProps> = props => {
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pl-8 pt-9">
-              <div className="flex flex-wrap items-start gap-3">
+              <div className="flex flex-col items-start gap-3">
+                <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
+                  <div className="w-40 lg:w-48">
+                    <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
+                      Site Status
+                      <ToolTip
+                        title={""}
+                        content={
+                          "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
+                        }
+                        width="w-64 lg:w-72"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                      </ToolTip>
+                    </Text>
+                    <Text variant="text-14-bold" className="leading-[normal] text-black">
+                      {record?.readable_status}
+                    </Text>
+                  </div>
+                  <div className="w-full">
+                    <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
+                      Polygon Overview
+                      <ToolTip
+                        title={""}
+                        content={
+                          "This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the “Check Polygon” and “Approve Polygon” features below to validate and approve the remaining polygons."
+                        }
+                        width="w-72 lg:w-80"
+                        trigger="click"
+                      >
+                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                      </ToolTip>
+                    </Text>
+                    <If condition={sitePolygonData.length < total}>
+                      <Then>
+                        <Box sx={{ width: "100%" }}>
+                          <LinearProgress sx={{ borderRadius: 5 }} />
+                        </Box>
+                      </Then>
+                      <Else>
+                        <LinearProgressBarMonitored data={dataPolygonOverview} />
+                      </Else>
+                    </If>
+                  </div>
+                </div>
                 <div className="min-w-[450px] flex-[18]">
                   <div className="mb-2">
-                    <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                      Polygon Review
+                    <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
+                      Add or Edit Polygons
                     </Text>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
@@ -598,7 +679,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       application.
                     </Text>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="mt-8 flex w-[65%] gap-3">
                     <AddDataButton
                       classNameContent="flex-1"
                       openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
@@ -633,14 +714,6 @@ const PolygonReviewTab: FC<IProps> = props => {
                     </Button>
                   </div>
                 </div>
-                <div className="mt-4 min-w-[310px] flex-[11] rounded-lg border border-grey-750 p-4">
-                  <Text variant="text-14" className="mb-3 text-blueCustom-250">
-                    Site Status
-                  </Text>
-                  <div className="h-fit w-full">
-                    <SitePolygonStatus statusLabel={record.readable_status} />
-                  </div>
-                </div>
               </div>
               <MapContainer
                 record={record}
@@ -656,6 +729,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
                 modelFilesData={modelFilesData?.data}
+                setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
+                isLoadingDelayedJob={props.isLoadingDelayedJob}
+                setAlertTitle={props.setAlertTitle}
               />
               <div className="mb-6">
                 <div className="mb-4">
@@ -675,7 +751,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                     pagination: { pageSize: 10000000 }
                   }}
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name" },
+                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
@@ -684,15 +760,28 @@ const PolygonReviewTab: FC<IProps> = props => {
                         return (
                           <input
                             placeholder={placeholder}
-                            className="w-[118px] px-[10px] outline-primary placeholder:text-[currentColor]"
+                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
                           />
                         );
-                      }
+                      },
+                      meta: { style: { width: "17.63%" } }
                     },
-                    { header: "Target Land Use System", accessorKey: "target-land-use-system" },
-                    { header: "Tree Distribution", accessorKey: "tree-distribution" },
-                    { header: "Planting Start Date", accessorKey: "planting-start-date" },
-                    { header: "Source", accessorKey: "source" },
+                    {
+                      header: "Target Land Use System",
+                      accessorKey: "target-land-use-system",
+                      meta: { style: { width: "20.63%" } }
+                    },
+                    {
+                      header: "Tree Distribution",
+                      accessorKey: "tree-distribution",
+                      meta: { style: { width: "15.63%" } }
+                    },
+                    {
+                      header: "Planting Start Date",
+                      accessorKey: "planting-start-date",
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
                     {
                       header: "",
                       accessorKey: "ellipse",
@@ -727,6 +816,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               setPolygonFromMap={setPolygonFromMap}
               mapFunctions={mapFunctions}
               refresh={refetch}
+              totalPolygons={total}
             />
           </Grid>
         </Grid>

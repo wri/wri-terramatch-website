@@ -5,6 +5,8 @@ import Button from "@/components/elements/Button/Button";
 import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
+import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -12,6 +14,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { getFullName } from "@/utils/user";
@@ -21,9 +24,65 @@ interface ReportOverviewTabProps {
   dueAt?: string;
 }
 
+type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid">;
+const WORKDAYS_TOTAL: UseTotalProps = {
+  demographicType: "workdays" as DemographicType,
+  collections: DemographicCollections.WORKDAYS_PROJECT
+};
+const WORKDAYS_PAID: UseTotalProps = {
+  ...WORKDAYS_TOTAL,
+  collections: WORKDAYS_TOTAL.collections.filter(c => c.startsWith("paid-"))
+};
+const WORKDAYS_VOLUNTEER: UseTotalProps = {
+  ...WORKDAYS_TOTAL,
+  collections: WORKDAYS_TOTAL.collections.filter(c => c.startsWith("volunteer-"))
+};
+const WORKDAYS_DIRECT: UseTotalProps = {
+  ...WORKDAYS_TOTAL,
+  collections: ["direct"]
+};
+const WORKDAYS_CONVERGENCE: UseTotalProps = {
+  ...WORKDAYS_TOTAL,
+  collections: ["convergence"]
+};
+const RP_DIRECT: UseTotalProps = {
+  demographicType: "restorationPartners" as DemographicType,
+  collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("direct-"))
+};
+const RP_INDIRECT: UseTotalProps = {
+  ...RP_DIRECT,
+  collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("indirect-"))
+};
+const JOBS: UseTotalProps = {
+  demographicType: "jobs" as DemographicType,
+  collections: DemographicCollections.JOBS_PROJECT
+};
+const VOLUNTEERS: UseTotalProps = {
+  demographicType: "volunteers" as DemographicType,
+  collections: DemographicCollections.VOLUNTEERS_PROJECT
+};
+const ALL_BENEFICIARIES: UseTotalProps = {
+  demographicType: "allBeneficiaries" as DemographicType,
+  collections: DemographicCollections.BENEFICIARIES_PROJECT_ALL
+};
+
+const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
+  String(useCollectionsTotal({ ...props, entity: "project-reports", uuid }) ?? "N/A");
+
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
+
+  const workdaysTotal = useTotal(WORKDAYS_TOTAL, report);
+  const workdaysPaid = useTotal(WORKDAYS_PAID, report);
+  const workdaysVolunteer = useTotal(WORKDAYS_VOLUNTEER, report);
+  const workdaysDirect = useTotal(WORKDAYS_DIRECT, report);
+  const workdaysConvergence = useTotal(WORKDAYS_CONVERGENCE, report);
+  const rpDirect = useTotal(RP_DIRECT, report);
+  const rpIndirect = useTotal(RP_INDIRECT, report);
+  const jobs = useTotal(JOBS, report);
+  const volunteers = useTotal(VOLUNTEERS, report);
+  const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
 
   return (
     <PageBody>
@@ -91,21 +150,24 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             }
           >
             <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TextField label={t("Workdays")} value={report.workdays_total} />
-              <TextField label={t("Workdays Paid")} value={report.workdays_paid} />
-              <TextField label={t("Workdays Volunteer")} value={report.workdays_volunteer} />
-              <TextField label={t("Unique Restoration Partners")} value={report.total_unique_restoration_partners} />
-              <TextField label={t("Direct Restoration Partners")} value={report.direct_restoration_partners} />
-              <TextField label={t("Indirect Restoration Partners")} value={report.indirect_restoration_partners} />
+              <TextField label={t("Workdays")} value={workdaysTotal} />
+              <TextField label={t("Workdays Paid")} value={workdaysPaid} />
+              <TextField label={t("Workdays Volunteer")} value={workdaysVolunteer} />
+              <TextField
+                label={t("Unique Restoration Partners")}
+                value={report.total_unique_restoration_partners ?? "N/A"}
+              />
+              <TextField label={t("Direct Restoration Partners")} value={rpDirect} />
+              <TextField label={t("Indirect Restoration Partners")} value={rpIndirect} />
             </ContextCondition>
             <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
-              <TextField label={t("Jobs Created")} value={report.total_jobs_created} />
+              <TextField label={t("Jobs Created")} value={jobs} />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <TextField label={t("Direct Workdays")} value={report.workdays_direct_total} />
-              <TextField label={t("Convergence Workdays")} value={report.workdays_convergence_total} />
-              <TextField label={t("Volunteers")} value={report.volunteer_total} />
-              <TextField label={t("Community Partners")} value={report.total_community_partners} />
+              <TextField label={t("Direct Workdays")} value={workdaysDirect} />
+              <TextField label={t("Convergence Workdays")} value={workdaysConvergence} />
+              <TextField label={t("Volunteers")} value={volunteers} />
+              <TextField label={t("Community Partners")} value={beneficiaries} />
             </ContextCondition>
           </PageCard>
           <PageCard

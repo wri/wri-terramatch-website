@@ -11,7 +11,8 @@ module.exports = {
         md: "1400px",
         wide: "2500px",
         lg: "1900px",
-        sm: "1200px"
+        sm: "1200px",
+        mobile: { max: "1200px" }
       },
       width: {
         "fit-content": "fit-content"
@@ -90,10 +91,12 @@ module.exports = {
         600: "#29C499",
         500: "#009344",
         450: "#3BAE5B",
+        410: "#27E045",
         400: "#9EDD8F",
         300: "#C7ECC4",
         200: "#E0F3E9",
-        100: "#EFF9F4"
+        100: "#EFF9F4",
+        40: "#a9e7d6"
       },
       neutral: {
         DEFAULT: "#9B9B9B",
@@ -101,11 +104,14 @@ module.exports = {
         900: "#3A3A3A",
         800: "#5A5A5A",
         700: "#737373",
+        650: "#747070",
         600: "#888888",
         500: "#9B9B9B",
         400: "#B1B1B1",
+        480: "#C4C4C4",
         450: "#CCD4D6",
         300: "#D8D8D8",
+        250: "#F7F7F7",
         200: "#E3E3E3",
         150: "#F5F7F9",
         100: "#F2F2F2",
@@ -150,6 +156,7 @@ module.exports = {
       },
       darkCustom: {
         DEFAULT: "#353535",
+        300: "#525866",
         200: "#84959D",
         150: "#5D5D59",
         100: "#637579",
@@ -164,7 +171,11 @@ module.exports = {
       },
       purpleCustom: {
         DEFAULT: "#5674C5",
-        100: "#8096D3"
+        1000: "#6C3BAA",
+        500: "#4249E6",
+        100: "#8096D3",
+        60: "#ddddfb",
+        50: "#ededfd"
       },
       grey: {
         100: "#F4F4F4",
@@ -178,7 +189,9 @@ module.exports = {
         740: "#E0E0E0",
         750: "#E6EAEB",
         800: "#E9EDF0",
+        850: "#F0F3FA",
         900: "#F6FAFD",
+        925: "#F7F9FA",
         950: "#ebebeb",
         1000: "#DFE3E8"
       },
@@ -212,6 +225,7 @@ module.exports = {
         DEFAULT: "#FF6464",
         100: "#CBC8D2",
         200: "#E42222",
+        300: "#D33838",
         900: "#8D2D0E",
         1000: "#632424"
       }
@@ -220,7 +234,16 @@ module.exports = {
       DEFAULT: "0px 4px 16px rgba(0, 0, 0, 0.12)",
       all: "0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 4px rgba(0, 0, 0, 0.06)",
       "t-secondary": "0px -1px 0 #8CC63F", //to add additional border, secondary-500 1px
-      none: "0 0 #0000"
+      none: "0 0 #0000",
+      "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
+      dashboard: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+      top: "0 -4px 6px -1px rgb(0 0 0 / 0.1), 0 -2px 4px -2px rgb(0 0 0 / 0.1)"
+    },
+    dropShadow: {
+      table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
     },
     fontFamily: {
       primary: ["Inter"],
@@ -232,6 +255,7 @@ module.exports = {
       base: "1rem", //16px
       md: "1.125rem", //18px
       lg: "1.25rem", //20px
+      "2lg": "1.375rem", //22px
       xl: "1.5rem", //24px
       "2xl": "1.625rem", //26px
       "3xl": "1.75rem", //28px
@@ -241,6 +265,7 @@ module.exports = {
       //Wide extra
       "6xl": "2.75rem", //44px
       "7xl": "3rem", //48px
+      "8xl": "3.5rem", //56px
       "13xl": "4.5rem", //72px
       "14xl": "4.75rem", //76px
       "15xl": "5rem" //80px
@@ -268,7 +293,11 @@ module.exports = {
       treesHeaderWithOverlay:
         "linear-gradient(270deg, rgba(0, 0, 0, 0.31) 0%, rgba(0, 0, 0, 0.66) 100%), url('/images/trees-header.webp')",
       mapsImg: "url('/images/Maps.svg')",
-      dashboardHeader: 'url("/images/dashboard-header.webp")'
+      dashboardHeader: 'url("/images/dashboard-header.webp")',
+      impactStoryBg: 'url("/images/Impact Story - Landing Page.png")',
+      tabScrollLeft: 'url("/images/mask.png")',
+      tabScrollRight: 'url("/images/maskRight.png")',
+      mask: 'url("/images/mask.png")'
     }
   },
   plugins: [

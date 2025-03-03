@@ -6,7 +6,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardCountryCountry,
+  useGetV2DashboardBboxCountryLandscape,
   useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardGetProjects,
@@ -17,7 +17,8 @@ import {
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate
+  useGetV2DashboardVolunteersSurvivalRate,
+  useGetV2ImpactStories
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
@@ -27,7 +28,7 @@ import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
-  const [countryBboxParsed, setCountryBboxParsed] = useState<BBox | undefined>(undefined);
+  const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
   const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
@@ -50,12 +51,15 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const { data: countryBbox } = useGetV2DashboardCountryCountry(
+  const { data: generalBbox } = useGetV2DashboardBboxCountryLandscape(
     {
-      pathParams: { country: filters.country.country_slug }
+      queryParams: {
+        landscapes: filters.landscapes?.join(","),
+        country: filters.country.country_slug
+      }
     },
     {
-      enabled: !!filters.country.country_slug
+      enabled: !!filters.landscapes?.length || !!filters.country.country_slug
     }
   );
   const [updateFilters, setUpdateFilters] = useState<any>({});
@@ -65,6 +69,7 @@ export const useDashboardData = (filters: any) => {
       country: filters.country.country_slug,
       organisationType: filters.organizations,
       landscapes: filters.landscapes,
+      cohort: filters.cohort,
       projectUuid: filters.uuid
     };
     setUpdateFilters(parsedFilters);
@@ -143,10 +148,8 @@ export const useDashboardData = (filters: any) => {
     useGetV2DashboardIndicatorHectaresRestoration<any>({
       queryParams: queryParams
     });
-  const { data: dashboardProjectDetails } = useGetV2DashboardProjectDetailsProject<any>(
-    { pathParams: { project: filters.uuid } },
-    { enabled: !!filters.uuid }
-  );
+  const { data: dashboardProjectDetails, isLoading: isLoadingProjectDetails } =
+    useGetV2DashboardProjectDetailsProject<any>({ pathParams: { project: filters.uuid } }, { enabled: !!filters.uuid });
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -198,13 +201,54 @@ export const useDashboardData = (filters: any) => {
       });
     }
   }, [totalSectionHeader]);
+
   useEffect(() => {
-    if (countryBbox && Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
-      setCountryBboxParsed(countryBbox.bbox[1] as unknown as BBox);
+    if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
+      setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
     } else {
-      setCountryBboxParsed(undefined);
+      setGeneralBboxParsed(undefined);
     }
-  }, [countryBbox]);
+  }, [generalBbox]);
+  const queryString = useMemo(() => {
+    const finalFilters = {
+      status: ["published"],
+      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
+      organizationType: filters.organizations ? filters.organizations : [],
+      uuid: filters.uuid
+    };
+    return createQueryParams(finalFilters);
+  }, [filters.country?.country_slug, filters.organizations, filters.uuid]);
+
+  const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
+    queryParams: queryString as any
+  });
+
+  const transformedStories = useMemo(
+    () =>
+      impactStoriesResponse?.data?.map((story: any) => ({
+        uuid: story.uuid,
+        title: story.title,
+        date: story.date,
+        content: story?.content ? JSON.parse(story.content) : "",
+        category: story.category,
+        thumbnail: story.thumbnail?.url ?? "",
+        organization: {
+          name: story.organization?.name ?? "",
+          category: story.category,
+          country:
+            story.organization?.countries?.length > 0
+              ? story.organization.countries.map((c: any) => c.label).join(", ")
+              : "No country",
+          countries_data: story.organization?.countries ?? [],
+          facebook_url: story.organization?.facebook_url ?? "",
+          instagram_url: story.organization?.instagram_url ?? "",
+          linkedin_url: story.organization?.linkedin_url ?? "",
+          twitter_url: story.organization?.twitter_url ?? ""
+        },
+        status: story.status
+      })) || [],
+    [impactStoriesResponse?.data]
+  );
 
   return {
     dashboardHeader,
@@ -219,14 +263,17 @@ export const useDashboardData = (filters: any) => {
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
     dashboardProjectDetails,
+    isLoadingProjectDetails,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData?.data ?? {},
-    countryBbox: countryBboxParsed,
     isUserAllowed,
-    projectBbox: projectBbox?.bbox
+    projectBbox: projectBbox?.bbox,
+    generalBbox: generalBboxParsed,
+    transformedStories,
+    isLoadingImpactStories
   };
 };

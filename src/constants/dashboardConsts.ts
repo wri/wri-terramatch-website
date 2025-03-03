@@ -38,7 +38,33 @@ export const ORGANIZATIONS_TYPES = {
   "for-profit-organization": "Enterprise"
 };
 
-export const NO_DATA_INFORMATION = "No data available";
+export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+
+export const TEXT_TYPES = {
+  LOGGED_USER: "textForLoggedUser",
+  NOT_LOGGED_USER: "textForNotLoggedUser",
+  NO_DATA: "noData",
+  NO_GRAPH: "noGraph"
+};
+
+export const DEFAULT_POLYGONS_DATA = {
+  graphicTargetLandUseTypes: [],
+  totalSection: {
+    totalHectaresRestored: 0
+  }
+};
+
+export const DEFAULT_POLYGONS_DATA_STRATEGIES = [
+  { label: "Direct Seeding", value: 0 },
+  { label: "Assisted Natural Regeneration", value: 0 },
+  { label: "Tree Planting", value: 0 },
+  { label: "Multiple Strategies", value: 0 }
+];
+
+export const DEFAULT_POLYGONS_DATA_ECOREGIONS = {
+  chartData: [],
+  total: 0
+};
 
 export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {

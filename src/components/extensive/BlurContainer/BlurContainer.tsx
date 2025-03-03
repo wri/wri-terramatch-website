@@ -1,17 +1,22 @@
+import { useT } from "@transifex/react";
 import React from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
+import { TEXT_TYPES } from "@/constants/dashboardConsts";
 
 export interface BlurContainerProps {
   isBlur: boolean;
-  textInformation?: string | React.ReactNode;
+  textType?: string;
   children: React.ReactNode;
   className?: string;
+  logout?: () => void;
 }
 
-const BlurContainer = ({ isBlur, textInformation, children, className, ...props }: BlurContainerProps) => {
+const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurContainerProps) => {
+  const t = useT();
+
   if (!isBlur) {
     return <>{children}</>;
   }
@@ -31,16 +36,50 @@ const BlurContainer = ({ isBlur, textInformation, children, className, ...props 
     </>
   );
 
+  const ProjectAccessText = () => (
+    <>
+      <button onClick={logout} className="text-12-semibold underline">
+        Sign in
+      </button>{" "}
+      with an account associated with this project
+    </>
+  );
+
+  const NoDataText = () => (
+    <a>
+      {t(
+        "Data is still being collected and checked. This visual will remain empty until data is properly quality assured."
+      )}
+    </a>
+  );
+
+  const NoGraph = () => <a>{t("Graph not available.")}</a>;
+
+  const renderText = () => {
+    switch (textType) {
+      case TEXT_TYPES.LOGGED_USER:
+        return <ProjectAccessText />;
+      case TEXT_TYPES.NOT_LOGGED_USER:
+        return <LoginText />;
+      case TEXT_TYPES.NO_DATA:
+        return <NoDataText />;
+      case TEXT_TYPES.NO_GRAPH:
+        return <NoGraph />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={tw("relative w-full text-black", className)}>
       <div
         className={`absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-xl ${
-          isBlur ? "z-[1] bg-[#9d9a9a29] backdrop-blur-sm" : ""
+          isBlur ? "z-[2] bg-[#9d9a9a29] backdrop-blur-sm" : ""
         }`}
       >
-        <When condition={isBlur && !!textInformation}>
+        <When condition={isBlur && !!textType}>
           <Text variant="text-12-semibold" className="h-fit w-fit max-w-[80%] rounded-lg bg-white px-4 py-3">
-            {typeof textInformation === "string" ? textInformation : <LoginText />}
+            {renderText()}
           </Text>
         </When>
       </div>

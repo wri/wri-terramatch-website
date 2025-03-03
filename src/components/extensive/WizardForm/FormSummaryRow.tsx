@@ -60,6 +60,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const mapFunctions = useMap();
   return useMemo<any[]>(
     () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props, t, entityPolygonData, bbox]
   );
 };
@@ -95,34 +96,17 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.WorkdaysTable: {
-        const workday = values[f.name]?.[0] ?? {};
+      case FieldType.WorkdaysTable:
+      case FieldType.RestorationPartnersTable:
+      case FieldType.JobsTable:
+      case FieldType.VolunteersTable:
+      case FieldType.AllBeneficiariesTable:
+      case FieldType.TrainingBeneficiariesTable: {
+        const entries = (values[f.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
           title: f.label,
           type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              demographics={workday?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              demographicalType="workdays"
-            />
-          )
-        });
-        break;
-      }
-
-      case FieldType.RestorationPartnersTable: {
-        const restorationPartner = values[f.name]?.[0] ?? {};
-        outputArr.push({
-          title: f.label,
-          type: f.type,
-          value: (
-            <DemographicsCollapseGrid
-              demographics={restorationPartner?.demographics ?? []}
-              variant={GRID_VARIANT_NARROW}
-              demographicalType="restorationPartners"
-            />
-          )
+          value: <DemographicsCollapseGrid entries={entries} variant={GRID_VARIANT_NARROW} type={f.type} />
         });
         break;
       }

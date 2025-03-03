@@ -5,31 +5,33 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Else, If, Then, When } from "react-if";
 
+import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ButtonField from "@/components/elements/Field/ButtonField";
-import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
+import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import DisturbancesTable from "@/components/extensive/Tables/DisturbancesTable";
-import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTablePD";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { COLLECTION_SITE_PAID_OTHER, SITE_WORKDAY_COLLECTIONS } from "@/constants/workdayCollections";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
 import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
-import useDemographicData from "@/hooks/useDemographicData";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
 import { getFullName } from "@/utils/user";
@@ -55,16 +57,27 @@ const SiteReportDetailPage = () => {
   );
 
   const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
-  const projectReport = taskReportsData?.data?.filter(report => report.type === "project-report")?.[0] ?? {};
-  const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
 
-  const { grids: workdayGrids, title: workdaysTitle } = useDemographicData(
-    "site-report",
-    "workdays",
-    siteReportUUID,
-    SITE_WORKDAY_COLLECTIONS,
-    "Site Workdays"
-  );
+  const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
+  const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
+
+  const totalProps = {
+    entity: "site-reports",
+    uuid: siteReportUUID,
+    demographicType: "workdays"
+  } as Omit<CollectionsTotalProps, "collections">;
+  const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
+  const workdaysPaid = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("paid-"))
+  });
+  const workdaysVolunteer = useCollectionsTotal({
+    ...totalProps,
+    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
+  });
+
+  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const taskTitle = t("Reporting Task {window}", { window });
 
   return (
     <FrameworkProvider frameworkKey={siteReport.framework_key}>
@@ -76,11 +89,11 @@ const SiteReportDetailPage = () => {
           links={[
             { title: t("My Projects"), path: "/my-projects" },
             { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
-            { title: siteReport.project_report_title, path: `/reports/project-report/${projectReport.uuid}` },
+            { title: taskTitle, path: `/project/${siteReport.project?.uuid}/reporting-task/${siteReport.task_uuid}` },
             { title: reportTitle }
           ]}
         />
-        <SiteReportHeader report={siteReport} reportTitle={reportTitle} />
+        <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
         <StatusBar entityName="site-reports" entity={siteReport} />
         <PageBody>
           <If condition={siteReport.nothing_to_report}>
@@ -131,40 +144,185 @@ const SiteReportDetailPage = () => {
                       <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
                       <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
                     </ContextCondition>
-                    <ContextCondition frameworksShow={[Framework.PPC]}>
+                    <ContextCondition frameworksHide={[...ALL_TF, Framework.HBF]}>
                       <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
                       <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
                     </ContextCondition>
-                    <GenericField label={t("Trees Planted")}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Trees Planted")}
-                        value={siteReport.total_trees_planted_count}
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
+                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Description of Survival Rate Calculation")}>
+                        {siteReport.survival_calculation}
+                      </LongTextField>
+                      <LongTextField title={t("Explanation of Survival Rate")}>
+                        {siteReport.survival_description}
+                      </LongTextField>
+                      <LongTextField title={t("Maintenance Activities")}>
+                        {siteReport.maintenance_activities}
+                      </LongTextField>
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.HBF]}>
+                      <Text variant="text-20-bold">{t("Trees Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.TREE_CIRCLE_PD,
+                            label: t("TOTAL TREES PLANTED (on report):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.total_trees_planted_count
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
-                      <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="tree-planted" />
-                    </GenericField>
-                    <GenericField label={t("Direct Seeding")} frameworksHide={[Framework.HBF]}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Direct Seedings")}
-                        value={siteReport.total_seeds_planted_count}
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD
+                          modelName="site-report"
+                          modelUUID={siteReportUUID}
+                          collection="tree-planted"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
+                        />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksShow={[Framework.HBF]}>
+                      <Text variant="text-20-bold">{t("Saplings Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.TREE_CIRCLE_PD,
+                            label: t("TOTAL saplings PLANTED (on report):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.total_trees_planted_count
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
-                      <SeedingsTable modelName="site-report" modelUUID={siteReportUUID} type="count" />
-                    </GenericField>
-                    <GenericField label={t("Non-Tree Species Planted")} frameworksShow={[Framework.HBF]}>
-                      <TextField
-                        className="mt-2"
-                        label={t("Total Non-Trees Planted")}
-                        value={siteReport.total_non_tree_species_planted_count}
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD
+                          modelName="site-report"
+                          modelUUID={siteReportUUID}
+                          collection="tree-planted"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
+                        />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
+                      <Text variant="text-20-bold">{t("Seeds Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.LEAF_CIRCLE_PD,
+                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.total_seeds_planted_count
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
-                      <TreeSpeciesTable modelName="site-report" modelUUID={siteReportUUID} collection="non-tree" />
-                    </GenericField>
-                    <GenericField label={t("Disturbances")}>
-                      <DisturbancesTable modelName="site-report" modelUUID={siteReportUUID} />
-                    </GenericField>
-                    <LongTextField frameworksHide={[Framework.PPC, Framework.HBF]} title={t("Site Changes")}>
-                      {siteReport.polygon_status}
-                    </LongTextField>
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD
+                          modelName="site-report"
+                          modelUUID={siteReportUUID}
+                          collection="seeding"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
+                        />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.PPC]}>
+                      <Text variant="text-20-bold">{t("Non-Trees Planted")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
+                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.total_non_tree_species_planted_count
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD
+                          modelName="site-report"
+                          modelUUID={siteReportUUID}
+                          collection="non-tree"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
+                        />
+                      </div>
+                    </ContextCondition>
+                    <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
+                      <Text variant="text-20-bold">{t("Tree Replanting")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.LEAF_CIRCLE_PD,
+                            label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.total_tree_replanting_count
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                        <TreeSpeciesTablePD
+                          modelName="site-report"
+                          modelUUID={siteReportUUID}
+                          collection="replanting"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
+                        />
+                      </div>
+                    </ContextCondition>
+                    <div>
+                      <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
+                      <GoalProgressCard
+                        hasProgress={false}
+                        classNameCard="!pl-0"
+                        items={[
+                          {
+                            iconName: IconNames.REFRESH_CIRCLE_PD,
+                            label: t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT):"),
+                            variantLabel: "text-14",
+                            classNameLabel: " text-neutral-650 uppercase !w-auto",
+                            classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                            value: siteReport.num_trees_regenerating
+                          }
+                        ]}
+                        className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                      />
+                      <Text variant="text-14" className="uppercase text-neutral-650">
+                        {t("Description of ANR Activities:")}
+                      </Text>
+                      <Text variant="text-16" className="mt-2 text-blueCustom-700">
+                        {t(siteReport.regeneration_description ?? "No description")}
+                      </Text>
+                    </div>
+                    <div>
+                      <Text variant="text-20-bold">{t("Disturbances")}</Text>
+                      <DisturbancesTablePD modelName="site-report" modelUUID={siteReportUUID} />
+                    </div>
                   </PageCard>
                 </PageColumn>
               </PageRow>
@@ -205,7 +363,7 @@ const SiteReportDetailPage = () => {
                 </PageColumn>
               </PageRow>
               <PageRow>
-                <PageColumn>
+                <PageColumn frameworksShow={[Framework.HBF, Framework.PPC]}>
                   <PageCard title={t("Site Report Details")}>
                     <TextField label={t("Site Report name")} value={siteReport.title} />
                     <TextField label={t("Site name")} value={siteReport.site?.name} />
@@ -217,8 +375,8 @@ const SiteReportDetailPage = () => {
                 </PageColumn>
                 <PageColumn frameworksShow={[Framework.PPC]}>
                   <PageCard title={t("Report Overview")}>
-                    <TextField label={t("Workdays Paid")} value={siteReport.workdays_paid} />
-                    <TextField label={t("Workdays Volunteer")} value={siteReport.workdays_volunteer} />
+                    <TextField label={t("Workdays Paid")} value={String(workdaysPaid ?? 0)} />
+                    <TextField label={t("Workdays Volunteer")} value={String(workdaysVolunteer ?? 0)} />
                   </PageCard>
                   <Paper>
                     <ButtonField
@@ -236,33 +394,39 @@ const SiteReportDetailPage = () => {
               <PageRow frameworksShow={[Framework.PPC]}>
                 <PageColumn>
                   <PageCard>
-                    {workdayGrids.length == 0 ? (
+                    {workdaysTotal == null ? (
                       <Loader />
                     ) : (
-                      <Fragment>
-                        <Text variant="text-bold-headline-800">{workdaysTitle}</Text>
-                        {workdayGrids.map(({ collection, grid }) => (
-                          <If key={collection} condition={collection === COLLECTION_SITE_PAID_OTHER}>
-                            <Then>
+                      <>
+                        <Text variant="text-bold-headline-800">{`Site Reports - ${workdaysTotal}`}</Text>
+                        {DemographicCollections.WORKDAYS_SITE.map(collection => (
+                          <Fragment key={collection}>
+                            {collection === DemographicCollections.WORKDAYS_SITE_OTHER && (
                               <TextField
                                 label={t("Other Activities Description")}
                                 value={siteReport.paid_other_activity_description}
                               />
-                              {grid}
-                            </Then>
-                            <Else>
-                              <Then key={collection}>{grid}</Then>
-                            </Else>
-                          </If>
+                            )}
+                            <DemographicsDisplay
+                              entity="site-reports"
+                              uuid={siteReportUUID}
+                              type="workdays"
+                              collection={collection}
+                            />
+                          </Fragment>
                         ))}
-                      </Fragment>
+                      </>
                     )}
                   </PageCard>
                 </PageColumn>
               </PageRow>
             </Else>
           </If>
+          <br />
+          <br />
+          <br />
         </PageBody>
+        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );

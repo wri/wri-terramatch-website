@@ -4,7 +4,8 @@ import { twMerge as tw } from "tailwind-merge";
 
 import {
   COMPLETED_DATA_CRITERIA_ID,
-  ESTIMATED_AREA_CRITERIA_ID
+  ESTIMATED_AREA_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -44,7 +45,11 @@ const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
   if (criteria?.nonValidCriteria?.length === 0) {
     return true;
   }
-  const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+  const excludedFromValidationCriterias = [
+    COMPLETED_DATA_CRITERIA_ID,
+    ESTIMATED_AREA_CRITERIA_ID,
+    WITHIN_COUNTRY_CRITERIA_ID
+  ];
   const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
   const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
   return failingCriterias?.length === 0;
@@ -117,7 +122,11 @@ const ModalApprove: FC<ModalApproveProps> = ({
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
         const criteria = criteriaDataParsed[polygon.poly_id];
-        const excludedFromValidationCriterias = [COMPLETED_DATA_CRITERIA_ID, ESTIMATED_AREA_CRITERIA_ID];
+        const excludedFromValidationCriterias = [
+          COMPLETED_DATA_CRITERIA_ID,
+          ESTIMATED_AREA_CRITERIA_ID,
+          WITHIN_COUNTRY_CRITERIA_ID
+        ];
         const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
         const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
         const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
@@ -169,9 +178,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
               {content}
             </Text>
           </When>
-          <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2 pr-[76px]">
-            Select All
-            <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
+          <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">
+            <Checkbox
+              className="flex h-min items-center"
+              name="Select All"
+              onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)}
+            />
+            <span className="text-14-bold leading-[normal]">Select All</span>
           </Text>
         </div>
 

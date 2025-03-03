@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { UseFormReturn } from "react-hook-form";
@@ -25,7 +26,7 @@ export type FileInputProps = InputWrapperProps & {
   maxFileSize?: number; // in MB
   showPrivateCheckbox?: boolean;
   variant?: FileInputVariant;
-  descriptionInput?: string;
+  descriptionInput?: ReactNode;
   descriptionList?: ReactNode;
   descriptionListStatus?: string;
   onChange?: (file: File[]) => any;
@@ -34,6 +35,7 @@ export type FileInputProps = InputWrapperProps & {
   formHook?: UseFormReturn;
   updateFile?: (file: Partial<UploadedFile>) => void;
   entityData?: any;
+  classNameTextOr?: string;
 };
 
 export interface FileStatus {
@@ -112,6 +114,8 @@ const FileInput = (props: FileInputProps) => {
         required={props.required}
         error={!props.files || props.files.length === 0 ? props.error : undefined}
         feedbackRequired={props.feedbackRequired}
+        labelClassName={props.labelClassName}
+        labelVariant={props.labelVariant}
       >
         <div
           {...getRootProps()}
@@ -133,7 +137,7 @@ const FileInput = (props: FileInputProps) => {
               <FileCardContent
                 title={labelText}
                 subtitle={t("Drag and drop or {browse}", {
-                  browse: `<span className="text-primary underline">${t("browse your device")}</span>`
+                  browse: `<span className="underline text-primary">${t("browse your device")}</span>`
                 })}
                 thumbnailClassName="fill-primary"
                 thumbnailContainerClassName="bg-primary-100"
@@ -146,12 +150,15 @@ const FileInput = (props: FileInputProps) => {
               <Text variant="text-12-bold" className="text-center text-primary">
                 {t("Click to upload")}
               </Text>
-              <Text variant="text-12-light" className="text-center">
+              <Text variant="text-12-light" className={classNames("text-center", props.classNameTextOr)}>
                 {t("or")}
               </Text>
-              <Text variant="text-12-light" className="max-w-[210px] text-center">
-                {t(props.descriptionInput)}
-              </Text>
+              <When condition={props.descriptionInput === "string"}>
+                <Text variant="text-12-light" className="max-w-[210px] text-center">
+                  {t(props.descriptionInput)}
+                </Text>
+              </When>
+              <When condition={props.descriptionInput !== "string"}>{props.descriptionInput}</When>
             </div>
           </When>
         </div>

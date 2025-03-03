@@ -11,9 +11,10 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ProjectsUUIDNurseries } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
@@ -45,7 +46,7 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
                   )}
                   ctaProps={{
                     as: Link,
-                    href: `/entity/nurseries/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`,
+                    href: `/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`,
                     children: "Add Nursery"
                   }}
                 />

@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
   className="flex items-center justify-center bg-primary-400 p-8"
 >
   <div
-    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white w-[776px] margin-4 z-50"
+    className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white mobile:h-[calc(100%-60px)] mobile:w-full mobile:rounded-none mobile:mt-[60px] w-[776px] margin-4 z-50"
   >
     <header
       className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5"
@@ -68,7 +68,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
           <div>
             <input
               className="h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5"
-              id=":r3d:"
+              id=":r3i:"
               name="Select All"
               onClick={[Function]}
               type="checkbox"
@@ -117,7 +117,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200 text-inherit uppercase"
+          className="flex items-center text-bold-caption-200 text-inherit uppercase !leading-[normal]"
         >
           <p
             className="capitalize text-14-bold"
@@ -132,7 +132,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalSubmit Default 1`] = `
         onClick={[Function]}
       >
         <span
-          className="flex items-center text-bold-caption-200"
+          className="flex items-center text-bold-caption-200 !leading-[normal]"
         >
           <p
             className="capitalize text-white text-14-bold"

@@ -11,18 +11,18 @@ import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Container from "@/components/generic/Layout/Container";
+import { useProjectIndex } from "@/connections/Entity";
 import { getCountriesOptions } from "@/constants/options/countries";
-import { GetV2MyProjectsResponse, useGetV2MyProjects } from "@/generated/apiComponents";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 const ProjectsTabContent = () => {
   const t = useT();
-
-  const { data: projectsData } = useGetV2MyProjects<{ data: GetV2MyProjectsResponse }>({});
+  const [, { entities: projects }] = useProjectIndex();
 
   return (
     <Container className="px-8 py-15">
-      <If condition={(projectsData?.data?.length ?? 0) > 0}>
+      <If condition={(projects?.length ?? 0) > 0}>
         <Then>
           <div className="mb-8 flex">
             <Text variant="text-heading-1000" className="flex-1">
@@ -33,7 +33,7 @@ const ProjectsTabContent = () => {
             </Button>
           </div>
           <div className="rounded-xl p-8 shadow">
-            <Table<GetV2MyProjectsResponse[0]>
+            <Table<ProjectLightDto>
               variant={VARIANT_TABLE_BORDER_ALL}
               columns={[
                 { header: t("Title"), accessorKey: "name" },
@@ -76,7 +76,7 @@ const ProjectsTabContent = () => {
                   )
                 }
               ]}
-              data={projectsData?.data || []}
+              data={projects ?? []}
               initialTableState={{ pagination: { pageSize: 5 } }}
             />
           </div>
