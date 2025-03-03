@@ -51,7 +51,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             to={createPath({
               resource: modules.project.ResourceName,
               type: "show",
-              id: record?.project?.uuid ?? record?.projectUuid
+              id: record?.project?.uuid
             })}
             fullWidth
             label="Back To Project"

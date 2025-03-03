@@ -44,7 +44,7 @@ const SiteQuickActions: FC = () => {
           to={createPath({
             resource: modules.project.ResourceName,
             type: "show",
-            id: record?.project?.uuid ?? record?.projectUuid
+            id: record?.projectUuid
           })}
           fullWidth
           label="Back To Project"
