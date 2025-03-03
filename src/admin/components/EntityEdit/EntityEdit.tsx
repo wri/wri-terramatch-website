@@ -58,10 +58,11 @@ export const EntityEdit = () => {
   const framework = formData?.form?.framework_key as Framework;
   const formSteps = useGetCustomFormSteps(formData.form, entity, framework);
 
-  const defaultValues = useNormalizedFormDefaultValue(
-    defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    formSteps
+  const sourceData = useMemo(
+    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
+    [formData?.answers, formData?.update_request?.content]
   );
+  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
   // @ts-ignore
   const { form_title: title } = formData;
