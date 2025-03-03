@@ -66,8 +66,8 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
         return "";
     }
   };
-
-  const title = () => record?.title ?? record?.name;
+  // @ts-ignore
+  const title = () => record?.title ?? record?.name ?? record?.report_title;
   const redirectTo = viewPD
     ? `/${
         isProjectReport
