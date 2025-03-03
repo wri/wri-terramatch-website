@@ -2,6 +2,8 @@ import { FC, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
 
+import { AuditLogButtonStates } from "../constants/enum";
+
 interface AuditLogSiteTabSelectionProps {
   buttonToggle: number;
   setButtonToggle: (buttonToggle: number) => void;
@@ -25,11 +27,11 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       return tabsReport;
     }
     let tabs = ["Project Status", "Site Status", "Polygon Status"];
-    if (!doesNotHaveNurseries) {
+    if (!doesNotHaveNurseries && AuditLogButtonStates.PROJECT == buttonToggle) {
       tabs.push("Nursery Status");
     }
     return tabs;
-  }, [framework, isReport]);
+  }, [framework, isReport, buttonToggle]);
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       {tabNames.map((tabName, index) => {
