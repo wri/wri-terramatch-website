@@ -72,8 +72,8 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
       />
     );
   };
-  // TODO: Fix this
-  const subtitles = [t("Organisation: {org}", { org: "site.organisation?.name" }), useFrameworkTitle()];
+
+  const subtitles = [t("Organisation: {org}", { org: site.organisationName }), useFrameworkTitle()];
   if (framework === Framework.PPC) {
     subtitles.push(t("Site ID: {id}", { id: site.ppcExternalId }));
   }
