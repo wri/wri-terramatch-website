@@ -9,13 +9,15 @@ interface AuditLogSiteTabSelectionProps {
   setButtonToggle: (buttonToggle: number) => void;
   framework?: string;
   isReport?: boolean;
+  entityLevel?: number;
 }
 
 const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   buttonToggle,
   setButtonToggle,
   framework = null,
-  isReport = false
+  isReport = false,
+  entityLevel
 }) => {
   const tabNames = useMemo(() => {
     const doesNotHaveNurseries = framework === null || ["ppc", "hbf"].includes(framework);
@@ -27,11 +29,11 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       return tabsReport;
     }
     let tabs = ["Project Status", "Site Status", "Polygon Status"];
-    if (!doesNotHaveNurseries && AuditLogButtonStates.PROJECT == buttonToggle) {
+    if (!doesNotHaveNurseries && AuditLogButtonStates.PROJECT == entityLevel) {
       tabs.push("Nursery Status");
     }
     return tabs;
-  }, [framework, isReport, buttonToggle]);
+  }, [framework, isReport, entityLevel]);
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       {tabNames.map((tabName, index) => {

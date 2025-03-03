@@ -109,6 +109,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   setButtonToggle={setButtonToggle}
                   framework={record?.framework_key ?? record?.frameworkKey}
                   isReport={isProjectReport}
+                  entityLevel={entity}
                 />
               )}
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project && !verifyEntity}>
