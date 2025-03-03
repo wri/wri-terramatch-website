@@ -90,7 +90,7 @@ export type SiteLightDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Framework UUID. Will be removed after the FE is refactored to not use these IDs
    *
@@ -98,11 +98,11 @@ export type SiteLightDto = {
    */
   frameworkUuid: string | null;
   /**
-   * Entity status for this project
+   * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
-   * Update request status for this project
+   * Update request status for this site
    */
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
@@ -239,7 +239,7 @@ export type SiteFullDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Framework UUID. Will be removed after the FE is refactored to not use these IDs
    *
@@ -247,11 +247,11 @@ export type SiteFullDto = {
    */
   frameworkUuid: string | null;
   /**
-   * Entity status for this project
+   * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
-   * Update request status for this project
+   * Update request status for this site
    */
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
