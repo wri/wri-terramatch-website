@@ -13,7 +13,7 @@ import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const siteDataProvider: DataProvider = {
-  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
+  // @ts-expect-error until we can get the whole DataProvider on Site DTOs
   async getList(_, params) {
     const connection = await loadSiteIndex(raConnectionProps(params));
     if (connection.fetchFailure != null) {
