@@ -3943,19 +3943,6 @@ export type V2SiteRead = {
   updated_at?: string;
 };
 
-export type V2SiteLiteRead = {
-  uuid?: string;
-  name?: string;
-  framework_key?: string;
-  description?: string;
-  control_site?: number;
-  status?: string;
-  readable_status?: string;
-  number_of_trees_planted?: number;
-  start_date?: string;
-  created_at?: string;
-};
-
 export type V2SiteMonitoringCreate = {
   site_uuid?: string;
   tree_count?: number;

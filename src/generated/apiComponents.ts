@@ -16090,109 +16090,6 @@ export const useDeleteV2ProjectsUUID = (
   );
 };
 
-export type GetV2ProjectsUUIDSitesPathParams = {
-  uuid: string;
-};
-
-export type GetV2ProjectsUUIDSitesQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
-   */
-  sort?: string;
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2ProjectsUUIDSitesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ProjectsUUIDSitesResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    framework_key?: string;
-    description?: string;
-    control_site?: number;
-    status?: string;
-    readable_status?: string;
-    number_of_trees_planted?: number;
-    start_date?: string;
-    created_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2ProjectsUUIDSitesVariables = {
-  pathParams: GetV2ProjectsUUIDSitesPathParams;
-  queryParams?: GetV2ProjectsUUIDSitesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, number_of_trees_planted, created_at, updated_at
- */
-export const fetchGetV2ProjectsUUIDSites = (variables: GetV2ProjectsUUIDSitesVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2ProjectsUUIDSitesResponse,
-    GetV2ProjectsUUIDSitesError,
-    undefined,
-    {},
-    GetV2ProjectsUUIDSitesQueryParams,
-    GetV2ProjectsUUIDSitesPathParams
-  >({ url: "/v2/projects/{uuid}/sites", method: "get", ...variables, signal });
-
-/**
- * Available Filters : status  |  Available Searches: name  |  Available Sort Options: name, status, number_of_trees_planted, created_at, updated_at
- */
-export const useGetV2ProjectsUUIDSites = <TData = GetV2ProjectsUUIDSitesResponse>(
-  variables: GetV2ProjectsUUIDSitesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ProjectsUUIDSitesResponse, GetV2ProjectsUUIDSitesError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ProjectsUUIDSitesResponse, GetV2ProjectsUUIDSitesError, TData>(
-    queryKeyFn({ path: "/v2/projects/{UUID}/sites", operationId: "getV2ProjectsUUIDSites", variables }),
-    ({ signal }) => fetchGetV2ProjectsUUIDSites({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ProjectsUUIDNurseriesPathParams = {
   uuid: string;
 };
@@ -36466,11 +36363,6 @@ export type QueryOperation =
       path: "/v2/admin/project-pitches";
       operationId: "getV2AdminProjectPitches";
       variables: GetV2AdminProjectPitchesVariables;
-    }
-  | {
-      path: "/v2/projects/{UUID}/sites";
-      operationId: "getV2ProjectsUUIDSites";
-      variables: GetV2ProjectsUUIDSitesVariables;
     }
   | {
       path: "/v2/projects/{UUID}/nurseries";

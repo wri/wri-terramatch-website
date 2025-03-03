@@ -9,13 +9,10 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
+import { EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDSitesResponse,
-  useDeleteV2SitesUUID,
-  useGetV2ProjectsUUIDSites
-} from "@/generated/apiComponents";
+import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
@@ -25,29 +22,18 @@ import { ModalId } from "../Modal/ModalConst";
 interface SitesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
-  onFetch?: (data: GetV2ProjectsUUIDSitesResponse) => void;
 }
 
-const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) => {
+const SitesTable = ({ project, hasAddButton = true }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState();
+  const [queryParams, setQueryParams] = useState<EntityIndexConnectionProps>({});
   const { openModal, closeModal } = useModalContext();
 
-  const {
-    data: sites,
-    isLoading,
-    refetch
-  } = useGetV2ProjectsUUIDSites(
-    {
-      pathParams: { uuid: project.uuid },
-      queryParams: queryParams
-    },
-    {
-      keepPreviousData: true,
-      onSuccess: onFetch
-    }
-  );
+  const [isLoaded, { entities: sites, refetch }] = useSiteIndex({
+    filter: { projectUuid: project.uuid } as any,
+    ...(queryParams as any)
+  });
 
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
@@ -81,10 +67,18 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
 
   return (
     <ServerSideTable
-      meta={sites?.meta}
-      data={sites?.data || []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
+      meta={{ last_page: 3 }}
+      data={sites ?? []}
+      isLoading={!isLoaded}
+      onQueryParamChange={param => {
+        setQueryParams({
+          pageNumber: param.page,
+          pageSize: param.pageSize,
+          sortDirection: param?.sorting?.length > 0 ? (param.sorting[0].desc ? "DESC" : "ASC") : "ASC",
+          sortField: param?.sorting?.length > 0 ? param.sorting[0].id : "id"
+        });
+        refetch();
+      }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
@@ -108,7 +102,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           }
         },
         {
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;
@@ -126,7 +120,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           header: t("Trees planted")
         },
         {
-          accessorKey: "created_at",
+          accessorKey: "createdAt",
           header: t("Date created"),
           cell: props => format(props.getValue() as string)
         },
