@@ -61,11 +61,11 @@ const SiteReportDetailPage = () => {
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
   const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
-  const totalProps = {
-    entity: "site-reports",
+  const totalProps: Omit<CollectionsTotalProps, "collections"> = {
+    entity: "siteReports",
     uuid: siteReportUUID,
     demographicType: "workdays"
-  } as Omit<CollectionsTotalProps, "collections">;
+  };
   const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
   const workdaysPaid = useCollectionsTotal({
     ...totalProps,
@@ -408,7 +408,7 @@ const SiteReportDetailPage = () => {
                               />
                             )}
                             <DemographicsDisplay
-                              entity="site-reports"
+                              entity="siteReports"
                               uuid={siteReportUUID}
                               type="workdays"
                               collection={collection}

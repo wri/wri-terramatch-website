@@ -59,7 +59,7 @@ function withTotalsShow<T extends CollectionsProps>(WrappedComponent: ComponentT
     const { totalsType, ...rest } = props;
     const { resource } = useShowContext();
     const collections = COLLECTIONS[totalsType]?.[resource as DemographicResource];
-    const entity = (resource === "projectReport" ? "project-reports" : "site-reports") as DemographicEntity;
+    const entity: DemographicEntity = resource === "projectReport" ? "projectReports" : "siteReports";
     const demographicType = COLLECTIONS[totalsType]?.demographicType;
 
     return collections == null || entity == null ? null : (

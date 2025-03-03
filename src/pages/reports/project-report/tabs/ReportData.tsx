@@ -67,7 +67,7 @@ const ALL_BENEFICIARIES: UseTotalProps = {
 };
 
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
-  String(useCollectionsTotal({ ...props, entity: "project-reports", uuid }) ?? "N/A");
+  String(useCollectionsTotal({ ...props, entity: "projectReports", uuid }) ?? "N/A");
 
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();

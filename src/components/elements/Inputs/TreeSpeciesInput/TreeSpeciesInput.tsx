@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { isEmpty, remove } from "lodash";
+import { camelCase, isEmpty, remove } from "lodash";
 import { Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
@@ -97,7 +97,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const displayPreviousCounts = props.withPreviousCounts && isReport;
   const { totalReportedColumn, totalToDateColumn } = getColumnTitles({ ...props, isReport });
 
-  const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
+  const entity = handleBaseEntityTrees ? (camelCase(entityName) as EstablishmentEntityType) : undefined;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
   const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
     entity,

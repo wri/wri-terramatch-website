@@ -223,7 +223,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
    */
-  entity: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for association
    */
@@ -231,7 +231,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics";
+  association: "demographics" | "seedings" | "treeSpecies";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -263,33 +263,69 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type EntityAssociationIndexResponse = {
-  meta?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-  };
-  data?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DemographicDto;
-  };
-};
-
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<
-    EntityAssociationIndexResponse,
+    | {
+        meta?: {
+          /**
+           * @example demographics
+           */
+          type?: string;
+        };
+        data?: {
+          /**
+           * @example demographics
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DemographicDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example seedings
+           */
+          type?: string;
+        };
+        data?: {
+          /**
+           * @example seedings
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SeedingDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example treeSpecies
+           */
+          type?: string;
+        };
+        data?: {
+          /**
+           * @example treeSpecies
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.TreeSpeciesDto;
+        };
+      },
     EntityAssociationIndexError,
     undefined,
     {},
@@ -341,7 +377,7 @@ export type EstablishmentTreesFindPathParams = {
   /**
    * Entity type for which to retrieve the establishment tree data.
    */
-  entity: "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */

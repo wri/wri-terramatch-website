@@ -11,8 +11,10 @@ import {
   EstablishmentsTreesDto,
   ProjectFullDto,
   ProjectLightDto,
+  SeedingDto,
   SiteFullDto,
-  SiteLightDto
+  SiteLightDto,
+  TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import {
@@ -100,7 +102,9 @@ export const RESOURCES = [
   "organisations",
   "passwordResets",
   "projects",
+  "seedings",
   "sites",
+  "treeSpecies",
   "users"
 ] as const;
 
@@ -120,7 +124,9 @@ type ApiResources = {
   organisations: StoreResourceMap<OrganisationDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
+  seedings: StoreResourceMap<SeedingDto>;
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
 };
 

@@ -364,7 +364,7 @@ export type DemographicDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * The entity UUID this resource is associated with.
    */
@@ -373,6 +373,38 @@ export type DemographicDto = {
   type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
   collection: string;
   entries: DemographicEntryDto[];
+};
+
+export type SeedingDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  name?: string;
+  amount?: number;
+  weightOfSample?: number;
+  seedsInSample?: number;
+};
+
+export type TreeSpeciesDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  name?: string;
+  amount?: number;
+  taxonId?: string;
+  collection?: string;
 };
 
 export type PreviousPlantingCountDto = {
