@@ -50,16 +50,16 @@ const SignUpPage = ({
 
   useValueChanged(requestFailed, () => {
     if (requestFailed != null) {
-      console.log(requestFailed);
-      /*requestFailed.errors.forEach(error => {
-        let message = error.detail;
-        if (error.source === "email_address" && error.code === "UNIQUE") {
-          message = t(
-            "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
-          );
-        }
-      });*/
-      // form.setError(error.source, { message: message, type: "validate" });
+      let message: string;
+      if (requestFailed.statusCode == 422 && requestFailed.message == "User already exist") {
+        message = t(
+          "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
+        );
+        form.setError("email_address", { message: message, type: "validate" });
+      } else {
+        message = t("An error occurred. Please try again later.");
+        form.setError("root", { message: message, type: "validate" });
+      }
     }
   });
 
