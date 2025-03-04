@@ -1,6 +1,7 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { camelCase } from "lodash";
 import { FC, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
@@ -11,6 +12,7 @@ import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
@@ -23,8 +25,9 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
+
 interface IProps extends Omit<TabProps, "label" | "children"> {
-  type: EntityName;
+  type: Exclude<EntityName, "project-pitches">;
 }
 const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   switch (type) {
@@ -45,7 +48,7 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   }
 };
 const InformationTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record, resource } = useShowContext();
+  const { isLoading: ctxLoading, record } = useShowContext();
   const t = useT();
   const { framework } = useFrameworkContext();
   const [totalCountNonTree, setTotalCountNonTree] = useState(0);
@@ -53,7 +56,7 @@ const InformationTab: FC<IProps> = props => {
   const [totalCountSeeding, setTotalCountSeeding] = useState(0);
   const [totalCountTreePlanted, setTotalCountTreePlanted] = useState(0);
   const [totalCountReplanting, setTotalCountReplanting] = useState(0);
-  const modelName = resource?.replace("Report", "-report");
+  const entity = camelCase(props.type) as SupportedEntity;
   const modelUUID = record?.uuid;
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
@@ -147,8 +150,8 @@ const InformationTab: FC<IProps> = props => {
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
-                                modelUUID={modelUUID}
-                                modelName={modelName}
+                                entity={entity}
+                                entityUuid={modelUUID}
                                 collection="non-tree"
                                 setTotalCount={setTotalCountNonTree}
                                 secondColumnWidth="45%"
@@ -167,8 +170,8 @@ const InformationTab: FC<IProps> = props => {
                                   </Text>
                                 </div>
                                 <TreeSpeciesTablePD
-                                  modelUUID={modelUUID}
-                                  modelName={modelName}
+                                  entity={entity}
+                                  entityUuid={modelUUID}
                                   collection="nursery-seedling"
                                   setTotalCount={setTotalCountNurserySeedling}
                                   secondColumnWidth="45%"
@@ -187,8 +190,8 @@ const InformationTab: FC<IProps> = props => {
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
-                                modelUUID={modelUUID}
-                                modelName={modelName}
+                                entity={entity}
+                                entityUuid={modelUUID}
                                 collection="seeding"
                                 setTotalCount={setTotalCountSeeding}
                                 secondColumnWidth="45%"
@@ -205,8 +208,8 @@ const InformationTab: FC<IProps> = props => {
                               </Text>
                             </div>
                             <TreeSpeciesTablePD
-                              modelUUID={modelUUID}
-                              modelName={modelName}
+                              entity={entity}
+                              entityUuid={modelUUID}
                               collection="tree-planted"
                               setTotalCount={setTotalCountTreePlanted}
                               secondColumnWidth="45%"
@@ -220,12 +223,12 @@ const InformationTab: FC<IProps> = props => {
                                     Replanting:
                                   </Text>
                                   <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                    {totalCountReplanting.toLocaleString() ?? 0}
+                                    {totalCountReplanting?.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
                                 <TreeSpeciesTablePD
-                                  modelUUID={modelUUID}
-                                  modelName={modelName}
+                                  entity={entity}
+                                  entityUuid={modelUUID}
                                   collection="replanting"
                                   setTotalCount={setTotalCountReplanting}
                                   secondColumnWidth="45%"

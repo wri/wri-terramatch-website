@@ -1,15 +1,15 @@
 import { createSelector } from "reselect";
 
-import {
-  establishmentTreesFind,
-  EstablishmentTreesFindPathParams
-} from "@/generated/v3/entityService/entityServiceComponents";
+import { establishmentTreesFind } from "@/generated/v3/entityService/entityServiceComponents";
+import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
 import { establishmentTreesFindFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
+
+type EstablishmentEntity = (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
 
 type EstablishmentTreesConnection = {
   establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"][string];
@@ -18,24 +18,30 @@ type EstablishmentTreesConnection = {
   establishmentTreesLoadFailed: boolean;
 };
 
-type EstablishmentTreesProps = Partial<EstablishmentTreesFindPathParams> & {
+type EstablishmentTreesProps = {
+  entity?: EstablishmentEntity;
+  uuid?: string;
   collection?: string;
 };
 
-export type EstablishmentEntityType = EstablishmentTreesFindPathParams["entity"] | undefined;
-const establishmentTreesSelector =
-  (entity: EstablishmentEntityType, uuid: string | undefined) => (store: ApiDataStore) =>
-    entity == null || uuid == null ? undefined : store.establishmentTrees?.[`${entity}|${uuid}`];
-const establishmentTreesLoadFailed =
-  (entity: EstablishmentEntityType, uuid: string | undefined) => (store: ApiDataStore) =>
-    entity == null || uuid == null
-      ? false
-      : establishmentTreesFindFetchFailed({ pathParams: { entity, uuid } })(store) != null;
+const establishmentTreesSelector = (entity?: EstablishmentEntity, uuid?: string) => (store: ApiDataStore) =>
+  entity == null || uuid == null ? undefined : store.establishmentTrees?.[`${entity}|${uuid}`];
+const establishmentTreesLoadFailed = (entity?: EstablishmentEntity, uuid?: string) => (store: ApiDataStore) =>
+  entity == null || uuid == null
+    ? false
+    : establishmentTreesFindFetchFailed({ pathParams: { entity, uuid } })(store) != null;
 
 const connectionIsLoaded = (
   { establishmentTrees, establishmentTreesLoadFailed }: EstablishmentTreesConnection,
   { entity, uuid, collection }: EstablishmentTreesProps
-) => collection == null || entity == null || uuid == null || establishmentTrees != null || establishmentTreesLoadFailed;
+) =>
+  collection == null ||
+  entity == null ||
+  // Prevents this connection from issuing an API request with an invalid entity type
+  !TreeEntityTypes.ESTABLISHMENT_ENTITIES.includes(entity) ||
+  uuid == null ||
+  establishmentTrees != null ||
+  establishmentTreesLoadFailed;
 
 const establishmentTreesConnection: Connection<EstablishmentTreesConnection, EstablishmentTreesProps> = {
   load: (connection, props) => {

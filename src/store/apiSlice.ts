@@ -14,6 +14,7 @@ import {
   SeedingDto,
   SiteFullDto,
   SiteLightDto,
+  TreeReportCountsDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
@@ -104,6 +105,7 @@ export const RESOURCES = [
   "projects",
   "seedings",
   "sites",
+  "treeReportCounts",
   "treeSpecies",
   "users"
 ] as const;
@@ -126,6 +128,7 @@ type ApiResources = {
   projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
   seedings: StoreResourceMap<SeedingDto>;
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
 };

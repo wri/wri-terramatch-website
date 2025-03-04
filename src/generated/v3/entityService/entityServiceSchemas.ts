@@ -407,7 +407,7 @@ export type TreeSpeciesDto = {
   collection?: string;
 };
 
-export type PreviousPlantingCountDto = {
+export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
    */
@@ -416,6 +416,26 @@ export type PreviousPlantingCountDto = {
    * Number of trees of this type that have been planted in all previous reports on this entity.
    */
   amount: number;
+};
+
+/**
+ * CONSTANTS
+ */
+export type TreeEntityTypes = {
+  /**
+   * @example sites
+   * @example nurseries
+   * @example projectReports
+   * @example siteReports
+   * @example nurseryReports
+   */
+  ESTABLISHMENT_ENTITIES: string[];
+  /**
+   * @example projects
+   * @example projectReports
+   * @example sites
+   */
+  REPORT_COUNT_ENTITIES: string[];
 };
 
 export type ScientificNameDto = {
@@ -443,7 +463,20 @@ export type EstablishmentsTreesDto = {
    */
   previousPlantingCounts: {
     [key: string]: {
-      [key: string]: PreviousPlantingCountDto;
+      [key: string]: PlantingCountDto;
     };
   } | null;
+};
+
+export type TreeReportCountsDto = {
+  /**
+   * Returns the planting counts of all species on reports associated with this entity, grouped by collection.If the entity is a project or site, it returns data for all site reports under that Project or Site. If the entity is a project report, it returns data for all site reports within the same reporting task. Note that seeding data is returned on this same endpoint under the collection name "seeds"
+   *
+   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
+   */
+  reportCounts: {
+    [key: string]: {
+      [key: string]: PlantingCountDto;
+    };
+  };
 };

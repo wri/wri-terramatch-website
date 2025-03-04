@@ -444,8 +444,79 @@ export const establishmentTreesFind = (variables: EstablishmentTreesFindVariable
     EstablishmentTreesFindPathParams
   >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type TreeReportCountsFindPathParams = {
+  /**
+   * Entity type for which to retrieve the associated report count data.
+   */
+  entity: "projects" | "projectReports" | "sites";
+  /**
+   * Entity UUID for which to retrieve the associated report count data.
+   */
+  uuid: string;
+};
+
+export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeReportCountsFindResponse = {
+  meta?: {
+    /**
+     * @example treeReportCounts
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example treeReportCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.TreeReportCountsDto;
+  };
+};
+
+export type TreeReportCountsFindVariables = {
+  pathParams: TreeReportCountsFindPathParams;
+};
+
+export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    TreeReportCountsFindResponse,
+    TreeReportCountsFindError,
+    undefined,
+    {},
+    {},
+    TreeReportCountsFindPathParams
+  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
+
 export const operationsByTag = {
   entities: { entityIndex, entityGet },
   entityAssociations: { entityAssociationIndex },
-  trees: { treeScientificNamesSearch, establishmentTreesFind }
+  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };

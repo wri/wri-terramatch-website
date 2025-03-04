@@ -179,8 +179,8 @@ const SiteReportDetailPage = () => {
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
                         <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="tree-planted"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -206,8 +206,8 @@ const SiteReportDetailPage = () => {
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
                         <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="tree-planted"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -233,8 +233,8 @@ const SiteReportDetailPage = () => {
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
                         <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="seeding"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -260,8 +260,8 @@ const SiteReportDetailPage = () => {
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
                         <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="non-tree"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -287,8 +287,8 @@ const SiteReportDetailPage = () => {
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
                         <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="replanting"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}

@@ -13,7 +13,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import Loader from "@/components/generic/Loading/Loader";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
@@ -57,7 +57,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       entity: "site"
     }
   });
-  const isTerrafund = ALL_TF.includes(site.framework_key as (typeof ALL_TF)[number]);
+  const isTerrafund = frameworkIsTerrafund(site.framework_key as Framework);
   return (
     <PageBody>
       <PageRow>
@@ -140,8 +140,8 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             </div>
             <div>
               <TreeSpeciesTablePD
-                modelName="site"
-                modelUUID={site.uuid}
+                entity="sites"
+                entityUuid={site.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -241,9 +241,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               <If condition={isTerrafund}>
                 <Then>
                   <TreeSpeciesTablePD
-                    modelName="site"
+                    entity="sites"
+                    entityUuid={site.uuid}
                     collection="non-tree"
-                    modelUUID={site.uuid}
                     visibleRows={5}
                     setTotalSpecies={setSpeciesCount}
                     setTotalCount={setTreeCount}
@@ -251,9 +251,9 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                 </Then>
                 <Else>
                   <TreeSpeciesTablePD
-                    modelName="site"
+                    entity="sites"
+                    entityUuid={site.uuid}
                     collection="seeding"
-                    modelUUID={site.uuid}
                     visibleRows={5}
                     setTotalCount={setTreeCount}
                     setTotalSpecies={setSpeciesCount}
@@ -293,12 +293,12 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             </div>
             <div>
               <TreeSpeciesTablePD
-                modelName="site"
+                entity="sites"
+                entityUuid={site.uuid}
                 collection="non-tree"
-                modelUUID={site.uuid}
                 visibleRows={5}
-                setTotalNonTree={setTotalNonTree}
-                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
+                setTotalCount={setTotalNonTree}
+                setTotalSpecies={setTotalNonTreeSpecies}
               />
             </div>
           </div>

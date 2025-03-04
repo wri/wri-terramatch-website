@@ -6,7 +6,7 @@ import {
   EntityAssociationIndexPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { entityAssociationIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
-import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DemographicDto, SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
@@ -14,7 +14,7 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto;
+export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
@@ -80,8 +80,11 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   )
 });
 
-type CollectionTypeProps = EntityAssociationIndexConnectionProps & {
+type CollectionProps = EntityAssociationIndexConnectionProps & {
   collection?: string;
+};
+
+type CollectionTypeProps = CollectionProps & {
   type?: string;
 };
 
@@ -119,8 +122,35 @@ const collectionTypeHook =
     return loaded ? [true, { association, fetchFailure }] : [false, {}];
   };
 
+/**
+ * Create a hook that filters the given association results based on a given collection
+ */
+const collectionFilterHook =
+  <T extends EntityAssociationDtoType>(
+    connection: Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps>
+  ) =>
+  (props: CollectionProps): Connected<EntityAssociationIndexConnection<T>> => {
+    const [loaded, { associations, fetchFailure }] = useConnection(connection, props);
+
+    const filteredAssociations = useMemo(() => {
+      if (!loaded) return undefined;
+
+      return ((associations as { collection?: string }[]) ?? []).filter(
+        ({ collection }) => collection === props.collection
+      ) as T[];
+    }, [associations, loaded, props.collection]);
+
+    return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
+  };
+
 const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
 /** Returns the one demographic that matches the given type / collection on the given entity */
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+
+const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
+export const useTreeSpecies = collectionFilterHook(treeSpeciesConnection);
+
+const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
+export const useSeedings = connectionHook(seedingsConnection);

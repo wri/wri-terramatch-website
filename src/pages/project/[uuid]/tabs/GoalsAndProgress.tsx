@@ -15,7 +15,7 @@ import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD
 import Loader from "@/components/generic/Loading/Loader";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
@@ -81,7 +81,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       };
     });
 
-  const isTerrafund = ALL_TF.includes(project.frameworkKey as (typeof ALL_TF)[number]);
+  const isTerrafund = frameworkIsTerrafund(project.frameworkKey as Framework);
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -204,8 +204,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
               <TreeSpeciesTablePD
-                modelUUID={project.uuid}
-                modelName="project"
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -215,8 +215,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
               <TreeSpeciesTablePD
-                modelName="project"
-                modelUUID={project.uuid}
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -226,8 +226,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <TreeSpeciesTablePD
-                modelName="project"
-                modelUUID={project.uuid}
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
@@ -335,8 +335,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <div className="mt-2">
                 <ContextCondition frameworksShow={ALL_TF}>
                   <TreeSpeciesTablePD
-                    modelName="project"
-                    modelUUID={project.uuid}
+                    entity="projects"
+                    entityUuid={project.uuid}
                     collection="non-tree"
                     visibleRows={5}
                     setTotalCount={setTreeCount}
@@ -345,8 +345,8 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 </ContextCondition>
                 <ContextCondition frameworksHide={ALL_TF}>
                   <TreeSpeciesTablePD
-                    modelName="project"
-                    modelUUID={project.uuid}
+                    entity="projects"
+                    entityUuid={project.uuid}
                     visibleRows={5}
                     collection="seeding"
                     setTotalCount={setTreeCount}
@@ -408,11 +408,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
 
             <div className="mt-2">
               <TreeSpeciesTablePD
-                modelName="project"
+                entity="projects"
+                entityUuid={project.uuid}
                 data={formatNaturalGenerationData}
-                modelUUID={project.uuid}
                 visibleRows={5}
-                typeTable="treeCountSite"
+                tableType="treeCountSite"
               />
             </div>
           </PageCard>
@@ -461,12 +461,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                 />
               </div>
               <TreeSpeciesTablePD
-                modelName="project"
+                entity="projects"
+                entityUuid={project.uuid}
                 collection="non-tree"
-                modelUUID={project.uuid}
                 visibleRows={5}
                 setTotalCount={setNonTreeCount}
-                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
+                setTotalSpecies={setTotalNonTreeSpecies}
               />
             </div>
           </PageCard>
