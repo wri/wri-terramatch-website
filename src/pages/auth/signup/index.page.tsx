@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
-import { usePostUsers } from "@/generated/apiComponents";
+import { useUserCreation } from "@/connections/User";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
 import SignUpForm from "./components/SignupForm";
 
@@ -39,26 +40,26 @@ const SignUpPage = ({
   const t = useT();
   const router = useRouter();
 
-  const { mutate: signUp, isLoading } = usePostUsers({
-    onSuccess(data) {
-      //@ts-ignore
-      const email = data.data.email_address;
-      if (!email) return;
-      return router.push(`/auth/signup/confirm?email=${encodeURIComponent(email)}`);
-    },
+  const [, { isLoading, isSuccess, requestFailed, emailNewUser, signUp }] = useUserCreation();
 
-    onError(error) {
-      error?.errors?.forEach(error => {
+  useValueChanged(isSuccess, () => {
+    if (isSuccess) {
+      return router.push(`/auth/signup/confirm?email=${encodeURIComponent(emailNewUser)}`);
+    }
+  });
+
+  useValueChanged(requestFailed, () => {
+    if (requestFailed != null) {
+      console.log(requestFailed);
+      /*requestFailed.errors.forEach(error => {
         let message = error.detail;
         if (error.source === "email_address" && error.code === "UNIQUE") {
           message = t(
             "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
           );
         }
-
-        //@ts-ignore
-        form.setError(error.source, { message: message, type: "validate" });
-      });
+      });*/
+      // form.setError(error.source, { message: message, type: "validate" });
     }
   });
 
@@ -81,20 +82,17 @@ const SignUpPage = ({
           "The password does not meet the minimum requirements. Please check that it contains at least 8 characters, including uppercase letters, lowercase letters and numbers."
         )
       });
-
     signUp({
-      body: {
-        email_address: data.email_address,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        password: data.password,
-        phone_number: data.phone_number,
-        job_role: data.job_role,
-        callback_url: window.location.origin + "/auth/verify/email/",
-        role: "project-developer",
-        country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
-        program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
-      }
+      emailAddress: data.email_address,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      password: data.password,
+      phoneNumber: data.phone_number,
+      jobRole: data.job_role,
+      callbackUrl: window.location.origin + "/auth/verify/email/",
+      role: "project-developer",
+      country: selectedTitleOption == "Select Country" ? (selectedOption as any) : null,
+      program: selectedTitleOption == "Select Framework" ? (selectedOption?.toLowerCase() as any) : null
     });
   };
 

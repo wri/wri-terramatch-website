@@ -48,3 +48,15 @@ export const resetPasswordFetchFailed = (variables: Omit<ResetPasswordVariables,
     method: "put",
     ...variables
   });
+
+export const verifyUserIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/auth/v3/verifications", method: "post" });
+
+export const verifyUserFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/auth/v3/verifications", method: "post" });
+
+export const userCreationIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/auth/v3/users", method: "post" });
+
+export const userCreationFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/auth/v3/users", method: "post" });

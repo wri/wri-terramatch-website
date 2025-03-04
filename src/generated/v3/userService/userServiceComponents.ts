@@ -371,8 +371,134 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
 
+export type VerifyUserError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type VerifyUserResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.VerificationUserResponseDto;
+  };
+};
+
+export type VerifyUserVariables = {
+  body: Schemas.VerificationUserRequest;
+};
+
+/**
+ * Receive a token to verify a user and return the verification status
+ */
+export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
+  userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
+    url: "/auth/v3/verifications",
+    method: "post",
+    ...variables,
+    signal
+  });
+
+export type UserCreationError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type UserCreationResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserCreationVariables = {
+  body: Schemas.UserNewRequest;
+};
+
+/**
+ * Create a new user
+ */
+export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
+  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserNewRequest, {}, {}, {}>({
+    url: "/auth/v3/users",
+    method: "post",
+    ...variables,
+    signal
+  });
+
 export const operationsByTag = {
   login: { authLogin },
   users: { usersFind, userUpdate },
-  resetPassword: { requestPasswordReset, resetPassword }
+  resetPassword: { requestPasswordReset, resetPassword },
+  verificationUser: { verifyUser },
+  userCreation: { userCreation }
 };
