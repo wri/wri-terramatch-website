@@ -14,7 +14,7 @@ import {
   ParameterObject,
   PathItemObject
 } from "openapi3-ts";
-import ts, { ClassElement, Expression, PropertyAssignment } from "typescript";
+import ts, { Expression, PropertyAssignment } from "typescript";
 
 const f = ts.factory;
 
@@ -196,34 +196,24 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
       return;
     }
 
-    const members: ClassElement[] = [];
+    const properties: PropertyAssignment[] = [];
     Object.entries(componentSchema.properties).forEach(([propertyName, propertySchema]) => {
       if (isReferenceObject(propertySchema) || propertySchema.type == null || propertySchema.example == null) return;
 
       const literal = generateLiteral(propertySchema.example);
       if (literal != null) {
-        members.push(
-          f.createPropertyDeclaration(
-            [
-              f.createModifier(ts.SyntaxKind.PublicKeyword),
-              f.createModifier(ts.SyntaxKind.StaticKeyword),
-              f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
-            ],
-            propertyName,
-            undefined,
-            undefined,
-            f.createAsExpression(literal, f.createTypeReferenceNode("const"))
-          )
+        properties.push(
+          f.createPropertyAssignment(propertyName, f.createAsExpression(literal, f.createTypeReferenceNode("const")))
         );
       }
     });
     nodes.push(
-      f.createClassExpression(
-        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+      f.createPropertyDeclaration(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword), f.createModifier(ts.SyntaxKind.ConstKeyword)],
         componentName,
         undefined,
         undefined,
-        members
+        f.createAsExpression(f.createObjectLiteralExpression(properties, true), f.createTypeReferenceNode("const"))
       )
     );
   });
