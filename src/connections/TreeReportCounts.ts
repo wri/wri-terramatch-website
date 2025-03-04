@@ -13,6 +13,7 @@ export type TreeReportCountsEntity = (typeof TreeEntityTypes.REPORT_COUNT_ENTITI
 
 type TreeReportCountsConnection = {
   reportCounts?: Exclude<TreeReportCountsDto["reportCounts"], null>[string];
+  establishmentTrees?: Exclude<TreeReportCountsDto["establishmentTrees"], null>[string];
 
   reportCountsFailed: boolean;
 };
@@ -60,7 +61,9 @@ const treeReportCountsConnection: Connection<TreeReportCountsConnection, TreeRep
           const loadComplete = countsDto?.attributes?.reportCounts != null;
           const reportCounts =
             collection == null || !loadComplete ? undefined : countsDto.attributes.reportCounts[collection] ?? {};
-          return { reportCounts, reportCountsFailed };
+          const establishmentTrees =
+            collection == null || !loadComplete ? undefined : countsDto.attributes.establishmentTrees?.[collection];
+          return { reportCounts, establishmentTrees, reportCountsFailed };
         }
       )
   )

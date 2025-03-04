@@ -1,3 +1,6 @@
+import { orderBy } from "lodash";
+import { FC, useMemo } from "react";
+
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTableNew/columnDefinitions";
@@ -29,7 +32,7 @@ export interface TreeSpeciesTableRowData {
   treeCountGoal?: [number, number];
 }
 
-const TreeSpeciesTablePD = ({
+const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
   entityUuid,
   entity,
   setTotalCount,
@@ -42,10 +45,10 @@ const TreeSpeciesTablePD = ({
   visibleRows = 5,
   galleryType,
   data
-}: TreeSpeciesTablePDProps) => {
+}) => {
   const [treeSpeciesLoaded, { associations: treeSpecies }] = useTreeSpecies({ entity, uuid: entityUuid, collection });
   const [seedingsLoaded, { associations: seedingsAssociations }] = useSeedings({ entity, uuid: entityUuid });
-  const [reportCountsLoaded, { reportCounts }] = useTreeReportCounts({
+  const [reportCountsLoaded, { reportCounts, establishmentTrees }] = useTreeReportCounts({
     // If the entity in this component is not a valid TreeReportCountsEntity, the connection will
     // avoid issuing any API requests and will return undefined for reportCounts
     entity: entity as TreeReportCountsEntity,
@@ -53,7 +56,6 @@ const TreeSpeciesTablePD = ({
     collection
   });
   const loaded = treeSpeciesLoaded && seedingsLoaded && reportCountsLoaded;
-  console.log("v3", { loaded, treeSpecies, seedingsAssociations, reportCounts });
 
   const queryParams: any = {};
 
@@ -88,6 +90,66 @@ const TreeSpeciesTablePD = ({
 
   const tableType = useTableType(entity, collection, tableTypeFromProps);
   const columns = useTreeTableColumns(tableType, headerName, secondColumnWidth);
+
+  const v3TreeSpecies = useMemo(() => {
+    if (collection === "seeding") {
+      return orderBy(
+        (seedingsAssociations ?? []).map(
+          row =>
+            ({
+              name: [row.name ?? "", []],
+              treeCount: row.amount,
+              uuid: row.name ?? ""
+            } as TreeSpeciesTableRowData)
+        ),
+        ["treeCount"],
+        ["desc"]
+      );
+    }
+
+    const reportCountEntries = Object.entries(reportCounts ?? {});
+    const getReportAmount = (name?: string) =>
+      reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
+
+    const entityTrees: TreeSpeciesTableRowData[] = (treeSpecies ?? []).map(row => {
+      const speciesTypes = [];
+      if (row.taxonId == null) speciesTypes.push("non-scientific");
+      const tableRowData = { name: [row.name, speciesTypes] as [string, string[]], uuid: row.name ?? "" };
+      if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
+        const reportAmount = getReportAmount(row.name);
+        return {
+          ...tableRowData,
+          treeCount: reportAmount,
+          treeCountGoal: [reportAmount, row.amount ?? 0]
+        };
+      }
+      if (entity === "siteReports") {
+        return { ...tableRowData, treeCount: row.amount };
+      }
+      return { ...tableRowData, treeCount: getReportAmount(row.name) ?? 0 };
+    });
+    const reportTrees: TreeSpeciesTableRowData[] = reportCountEntries
+      .filter(
+        ([reportName]) => treeSpecies?.find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null
+      )
+      .map(([name, { amount, taxonId }]) => {
+        const speciesTypes = [];
+        if (taxonId == null) speciesTypes.push("non-scientific");
+        if (!establishmentTrees?.includes(name)) speciesTypes.push("new");
+        const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
+        if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
+          return { ...tableRowData, treeCount: amount, treeCountGoal: [amount, amount] };
+        }
+        if (entity === "siteReports") {
+          return { ...tableRowData, treeCount: 0 };
+        }
+        return { ...tableRowData, treeCount: amount };
+      });
+
+    const transformed = orderBy([...entityTrees, ...reportTrees], ["treeCount"], ["desc"]);
+    console.log("transformed", { entityTrees, reportTrees, transformed });
+    return transformed;
+  }, [collection, entity, establishmentTrees, reportCounts, seedingsAssociations, tableType, treeSpecies]);
 
   const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
     if (!rows) return [];
@@ -151,10 +213,20 @@ const TreeSpeciesTablePD = ({
       ? processTreeSpeciesTableData(apiResponse.data)
       : [];
 
+  if (!loaded) return null;
   return (
     <div>
       <Table
         data={data ?? tableData}
+        columns={columns}
+        variant={VARIANT_TABLE_TREE_SPECIES}
+        hasPagination
+        invertSelectPagination
+        visibleRows={visibleRows}
+        galleryType={galleryType}
+      />
+      <Table
+        data={data ?? v3TreeSpecies}
         columns={columns}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination
