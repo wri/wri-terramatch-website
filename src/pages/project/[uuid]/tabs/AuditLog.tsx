@@ -67,6 +67,7 @@ const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus,
                     setButtonToggle={setButtonToggle}
                     framework={project?.frameworkKey as string}
                     entityLevel={AuditLogButtonStates.PROJECT}
+                    existNurseries={project?.totalNurseries > 0}
                   />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
