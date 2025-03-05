@@ -238,7 +238,7 @@ const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
     typeMap: GENDERS,
@@ -248,7 +248,11 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
     title: "Age",
     typeMap: JOBS_AGES,
     balanced: false
-  },
+  }
+};
+
+const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
   farmer: {
     title: "Farmer",
     typeMap: HBF_FARMERS,
@@ -268,7 +272,7 @@ export const getTypeMap = (type: DemographicType, framework: Framework) => {
     return isHbf ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : JOBS_DEMOGRAPHICS_TYPE_MAP;
   } else if (type.endsWith("Beneficiaries")) {
     if (type === "trainingBeneficiaries") {
-      return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+      return isHbf ? HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP : BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
     } else {
       return isHbf ? HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP : BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
     }
