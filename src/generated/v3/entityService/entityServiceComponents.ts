@@ -11,7 +11,7 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites";
+  entity: "projects" | "sites" | "nurseries";
 };
 
 export type EntityIndexQueryParams = {
@@ -120,6 +120,37 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.SiteLightDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryLightDto;
+        }[];
       },
     EntityIndexError,
     undefined,
@@ -132,7 +163,7 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites";
+  entity: "projects" | "sites" | "nurseries";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -210,6 +241,25 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
            */
           id?: string;
           attributes?: Schemas.SiteFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryFullDto;
         };
       },
     EntityGetError,

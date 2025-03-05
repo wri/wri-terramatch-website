@@ -116,6 +116,22 @@ export type SiteLightDto = {
   updatedAt: string;
 };
 
+export type NurseryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -260,6 +276,22 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
+};
+
+export type NurseryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
 };
 
 export type DemographicEntryDto = {
