@@ -81,15 +81,15 @@ const NurseryDataGrid: FC = () => {
         sortable={false}
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
-      <TextField source="project.name" label="Project Name" />
-      <TextField source="organisation.name" label="Organization" />
-      <DateField source="start_date" label="Establishment" locales="en-GB" />
+      <TextField source="projectName" label="Project Name" />
+      <TextField source="organisationName" label="Organization" />
+      <DateField source="startDate" label="Establishment" locales="en-GB" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
         render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ??
-          record?.framework_key
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
+          record?.frameworkKey
         }
         sortable={false}
       />
