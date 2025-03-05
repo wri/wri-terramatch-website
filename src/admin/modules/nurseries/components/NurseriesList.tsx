@@ -59,24 +59,24 @@ const NurseryDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Nursery Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={(record: any) => <CustomChipField label={record.status} />}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         render={(record: any) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
       <SelectField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         choices={optionToChoices(getChangeRequestStatusOptions())}
