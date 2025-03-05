@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
@@ -9,11 +9,11 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
+import { EntityIndexConnection, EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
-import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
@@ -22,22 +22,29 @@ import { ModalId } from "../Modal/ModalConst";
 interface SitesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
+  onFetch?: (data: EntityIndexConnection<SiteLightDto>) => void;
 }
 
-const SitesTable = ({ project, hasAddButton = true }: SitesTableProps) => {
+const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState<EntityIndexConnectionProps>({});
+  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
   const { openModal, closeModal } = useModalContext();
 
-  const [isLoaded, { entities: sites, refetch, indexTotal }] = useSiteIndex({
-    filter: { projectUuid: project.uuid } as any,
-    ...(queryParams as any)
-  });
+  const siteIndexQueryParams = {
+    filter: { projectUuid: project.uuid },
+    ...tableParams
+  };
+
+  const [isLoaded, response] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
+
+  useEffect(() => {
+    onFetch?.(response as EntityIndexConnection<SiteLightDto>);
+  }, [response, onFetch]);
 
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
-      refetch();
+      response.refetch();
     }
   });
 
@@ -67,17 +74,27 @@ const SitesTable = ({ project, hasAddButton = true }: SitesTableProps) => {
 
   return (
     <ServerSideTable
-      meta={{ last_page: indexTotal && queryParams.pageSize ? Math.ceil(indexTotal / queryParams.pageSize) : 1 }}
-      data={sites ?? []}
+      meta={{
+        last_page:
+          response?.indexTotal && tableParams.pageSize ? Math.ceil(response?.indexTotal / tableParams.pageSize) : 1
+      }}
+      data={response.entities ?? []}
       isLoading={!isLoaded}
       onQueryParamChange={param => {
-        setQueryParams({
+        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
+        if (param?.sort) {
+          const startWithMinus = param?.sort.startsWith("-");
+          sortDirection = startWithMinus ? "DESC" : "ASC";
+          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
+        }
+        setTableParams({
           pageNumber: param.page,
-          pageSize: param.pageSize,
-          sortDirection: param?.sorting?.length > 0 ? (param.sorting[0].desc ? "DESC" : "ASC") : "ASC",
-          sortField: param?.sorting?.length > 0 ? param.sorting[0].id : "id"
-        });
-        refetch();
+          pageSize: param.per_page,
+          sortDirection,
+          sortField,
+          rng: Math.random()
+        } as any);
+        response.refetch();
       }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[

@@ -319,6 +319,10 @@ export type SiteFullDto = {
    * The associated project uuid
    */
   projectUuid: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
 };
 
 export type DemographicEntryDto = {

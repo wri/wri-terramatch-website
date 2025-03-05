@@ -27,12 +27,7 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
       <PageRow>
         <PageColumn>
           <LoadingContainer wrapInPaper loading={!isLoaded}>
-            <If
-              condition={
-                //@ts-ignore
-                sites?.length === 0
-              }
-            >
+            <If condition={sites?.length === 0}>
               <Then>
                 <EmptyState
                   iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
