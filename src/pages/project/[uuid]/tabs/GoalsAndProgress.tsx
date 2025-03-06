@@ -11,7 +11,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
@@ -203,7 +203,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="projects"
                 entityUuid={project.uuid}
                 visibleRows={8}
@@ -214,7 +214,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               />
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="projects"
                 entityUuid={project.uuid}
                 visibleRows={8}
@@ -225,7 +225,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="projects"
                 entityUuid={project.uuid}
                 visibleRows={8}
@@ -334,7 +334,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               </ContextCondition>
               <div className="mt-2">
                 <ContextCondition frameworksShow={ALL_TF}>
-                  <TreeSpeciesTablePD
+                  <TreeSpeciesTable
                     entity="projects"
                     entityUuid={project.uuid}
                     collection="non-tree"
@@ -344,7 +344,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   />
                 </ContextCondition>
                 <ContextCondition frameworksHide={ALL_TF}>
-                  <TreeSpeciesTablePD
+                  <TreeSpeciesTable
                     entity="projects"
                     entityUuid={project.uuid}
                     visibleRows={5}
@@ -407,7 +407,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
 
             <div className="mt-2">
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="projects"
                 entityUuid={project.uuid}
                 data={formatNaturalGenerationData}
@@ -460,7 +460,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </div>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="projects"
                 entityUuid={project.uuid}
                 collection="non-tree"

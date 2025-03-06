@@ -10,7 +10,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
@@ -139,7 +139,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </div>
             </div>
             <div>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="sites"
                 entityUuid={site.uuid}
                 visibleRows={8}
@@ -240,7 +240,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <div>
               <If condition={isTerrafund}>
                 <Then>
-                  <TreeSpeciesTablePD
+                  <TreeSpeciesTable
                     entity="sites"
                     entityUuid={site.uuid}
                     collection="non-tree"
@@ -250,7 +250,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   />
                 </Then>
                 <Else>
-                  <TreeSpeciesTablePD
+                  <TreeSpeciesTable
                     entity="sites"
                     entityUuid={site.uuid}
                     collection="seeds"
@@ -292,7 +292,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               />
             </div>
             <div>
-              <TreeSpeciesTablePD
+              <TreeSpeciesTable
                 entity="sites"
                 entityUuid={site.uuid}
                 collection="non-tree"

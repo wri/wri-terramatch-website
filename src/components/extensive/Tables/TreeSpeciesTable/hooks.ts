@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTableNew/columnDefinitions";
+import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { SupportedEntity } from "@/connections/EntityAssocation";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
 

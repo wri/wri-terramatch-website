@@ -11,7 +11,7 @@ import { ProjectManagersTable } from "@/admin/components/ResourceTabs/Informatio
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { SupportedEntity } from "@/connections/EntityAssocation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
@@ -151,7 +151,7 @@ const InformationTab: FC<IProps> = props => {
                                     {totalCountNonTree.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
+                                <TreeSpeciesTable
                                   {...{ entity, entityUuid }}
                                   collection="non-tree"
                                   setTotalCount={setTotalCountNonTree}
@@ -191,7 +191,7 @@ const InformationTab: FC<IProps> = props => {
                                       {totalCountNurserySeedling.toLocaleString() ?? 0}
                                     </Text>
                                   </div>
-                                  <TreeSpeciesTablePD
+                                  <TreeSpeciesTable
                                     {...{ entity, entityUuid }}
                                     collection="nursery-seedling"
                                     setTotalCount={setTotalCountNurserySeedling}
@@ -212,7 +212,7 @@ const InformationTab: FC<IProps> = props => {
                                     {totalCountSeeding.toLocaleString()}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
+                                <TreeSpeciesTable
                                   {...{ entity, entityUuid }}
                                   collection="seeds"
                                   setTotalCount={setTotalCountSeeding}
@@ -231,7 +231,7 @@ const InformationTab: FC<IProps> = props => {
                                   {totalCountTreePlanted.toLocaleString() ?? 0}
                                 </Text>
                               </div>
-                              <TreeSpeciesTablePD
+                              <TreeSpeciesTable
                                 {...{ entity, entityUuid }}
                                 collection="tree-planted"
                                 setTotalCount={setTotalCountTreePlanted}
@@ -250,7 +250,7 @@ const InformationTab: FC<IProps> = props => {
                                     {totalCountReplanting?.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
+                                <TreeSpeciesTable
                                   {...{ entity, entityUuid }}
                                   collection="replanting"
                                   setTotalCount={setTotalCountReplanting}

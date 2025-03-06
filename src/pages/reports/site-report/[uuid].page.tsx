@@ -23,7 +23,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTablePD";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { ContextCondition } from "@/context/ContextCondition";
@@ -178,7 +178,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
+                        <TreeSpeciesTable
                           entity="siteReports"
                           entityUuid={siteReportUUID}
                           collection="tree-planted"
@@ -205,7 +205,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
+                        <TreeSpeciesTable
                           entity="siteReports"
                           entityUuid={siteReportUUID}
                           collection="tree-planted"
@@ -232,7 +232,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
+                        <TreeSpeciesTable
                           entity="siteReports"
                           entityUuid={siteReportUUID}
                           collection="seeds"
@@ -259,7 +259,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
+                        <TreeSpeciesTable
                           entity="siteReports"
                           entityUuid={siteReportUUID}
                           collection="non-tree"
@@ -286,7 +286,7 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
+                        <TreeSpeciesTable
                           entity="siteReports"
                           entityUuid={siteReportUUID}
                           collection="replanting"

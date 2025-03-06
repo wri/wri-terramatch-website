@@ -3,13 +3,13 @@ import { FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import { TableType } from "@/components/extensive/Tables/TreeSpeciesTableNew/columnDefinitions";
+import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { SupportedEntity, useSeedings, useTreeSpecies } from "@/connections/EntityAssocation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
 import { SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { useTableType, useTreeTableColumns } from "./TreeSpeciesTableNew/hooks";
+import { useTableType, useTreeTableColumns } from "./hooks";
 
 export interface TreeSpeciesTablePDProps {
   entityUuid: string;
@@ -33,7 +33,7 @@ export interface TreeSpeciesTableRowData {
   treeCountGoal?: [number, number];
 }
 
-const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
+const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
   entityUuid,
   entity,
   setTotalCount,
@@ -223,4 +223,4 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
   );
 };
 
-export default TreeSpeciesTablePD;
+export default TreeSpeciesTable;
