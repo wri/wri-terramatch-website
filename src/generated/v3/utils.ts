@@ -2,6 +2,7 @@ import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErro
 import Log from "@/utils/log";
 import { logout, selectLogin } from "@/connections/Login";
 import { entityServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
+import { Dictionary } from "lodash";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
@@ -15,9 +16,10 @@ type SelectorOptions<TQueryParams, TPathParams> = {
 
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
-  users: userServiceUrl,
+  entities: entityServiceUrl,
   jobs: jobServiceUrl,
-  trees: entityServiceUrl
+  trees: entityServiceUrl,
+  users: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
@@ -31,18 +33,49 @@ const getBaseUrl = (url: string) => {
   return baseUrl;
 };
 
+export type FetchParams = Dictionary<number | string | null | undefined>;
+export const serializeParams = (pathParams?: FetchParams, queryParams?: FetchParams) => {
+  // JSON.serialize() outputs the keys in the order they were added to the object, so take all
+  // non-null values in sorted key order and add them to the object to serialize to guarantees a
+  // stable serialization
+  const orderedParams = { path: {} as Dictionary<number | string>, query: {} as Dictionary<number | string> };
+  if (pathParams != null) {
+    for (const param of Object.keys(pathParams).sort()) {
+      const value = pathParams[param];
+      if (value != null) orderedParams.path[param] = value;
+    }
+  }
+  if (queryParams != null) {
+    for (const param of Object.keys(queryParams).sort()) {
+      const value = queryParams[param];
+      if (value != null) orderedParams.query[param] = value;
+    }
+  }
+  return JSON.stringify(orderedParams);
+};
+
+export const getStableQuery = (queryParams: FetchParams) => {
+  // URLSearchParams will gleefully stringify undefined to "undefined" if you leave the key in place.
+  // For our implementation, we never want to send the string "null" or "undefined" to the server in
+  // the query, so delete any keys that have such a value.
+  for (const key of Object.keys(queryParams)) {
+    if (queryParams[key] == null) delete queryParams[key];
+  }
+  const searchParams = new URLSearchParams(queryParams as Record<string, string>);
+  // Make sure the output string always ends up in the same order because we need the URL string
+  // that is generated from a set of query / path params to be consistent even if the order of the
+  // params in the source object changes.
+  searchParams.sort();
+  return searchParams.toString();
+};
+
 export const resolveUrl = (
   url: string,
   queryParams: Record<string, string> = {},
   pathParams: Record<string, string> = {}
 ) => {
-  const searchParams = new URLSearchParams(queryParams);
-  // Make sure the output string always ends up in the same order because we need the URL string
-  // that is generated from a set of query / path params to be consistent even if the order of the
-  // params in the source object changes.
-  searchParams.sort();
-  let query = searchParams.toString();
-  if (query) query = `?${query}`;
+  let query = getStableQuery(queryParams);
+  if (query.length > 0) query = `?${query}`;
 
   return `${getBaseUrl(url)}${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)]) + query}`;
 };
@@ -73,7 +106,7 @@ export function fetchFailed<TQueryParams extends {}, TPathParams extends {}>({
 
 const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
 
-async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
+async function dispatchRequest<TData, TError>(url: string, serializedParams: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
   ApiSlice.fetchStarting(actionPayload);
 
@@ -102,7 +135,7 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     if (responsePayload.statusCode != null && responsePayload.message != null) {
       ApiSlice.fetchFailed({ ...actionPayload, error: responsePayload });
     } else {
-      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
+      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload, serializedParams });
     }
   } catch (e) {
     Log.error("Unexpected API fetch failure", e);
@@ -173,7 +206,7 @@ export function serviceFetch<
 
   // The promise is ignored on purpose. Further progress of the request is tracked through
   // redux.
-  dispatchRequest<TData, TError>(fullUrl, {
+  dispatchRequest<TData, TError>(fullUrl, serializeParams(pathParams, queryParams), {
     signal,
     method,
     body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,

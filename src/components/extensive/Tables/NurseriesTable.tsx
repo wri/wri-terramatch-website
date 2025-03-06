@@ -16,13 +16,14 @@ import {
   useDeleteV2NurseriesUUID,
   useGetV2ProjectsUUIDNurseries
 } from "@/generated/apiComponents";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 import { ModalId } from "../Modal/ModalConst";
 
 interface NurseriesTableProps {
-  project: any;
+  project: ProjectLightDto;
   hasAddButton?: boolean;
   onFetch?: (data: GetV2ProjectsUUIDNurseriesResponse) => void;
 }
@@ -163,7 +164,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
       {hasAddButton && (
         <Button
           as={Link}
-          href={`/entity/nurseries/create/${project.framework_uuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+          href={`/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
         >
           {t("Add Nursery")}
         </Button>

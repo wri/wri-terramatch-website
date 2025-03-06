@@ -19,7 +19,7 @@ export const useDate = () => {
    * @returns string
    */
   const format = useCallback(
-    (date?: string | number | Date, format = "dd/MM/yyyy") => {
+    (date?: string | number | Date | null, format = "dd/MM/yyyy") => {
       if (!date) return "";
 
       return _format(new Date(date), format, { locale: Locales[formattedLocale] ?? Locales.enUS });

@@ -22,6 +22,12 @@ export type AuthLoginError = Fetcher.ErrorWrapper<{
 }>;
 
 export type AuthLoginResponse = {
+  meta?: {
+    /**
+     * @example logins
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example logins
@@ -89,6 +95,12 @@ export type UsersFindError = Fetcher.ErrorWrapper<
 >;
 
 export type UsersFindResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example users
@@ -193,6 +205,12 @@ export type UserUpdateError = Fetcher.ErrorWrapper<
 >;
 
 export type UserUpdateResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example users
@@ -263,6 +281,12 @@ export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
 }>;
 
 export type RequestPasswordResetResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example passwordResets
@@ -310,6 +334,12 @@ export type ResetPasswordError = Fetcher.ErrorWrapper<{
 }>;
 
 export type ResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+  };
   data?: {
     /**
      * @example passwordResets
@@ -340,3 +370,52 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     {},
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate },
+  resetPassword: { requestPasswordReset, resetPassword }
+};
+
+export type VerifyUserError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type VerifyUserResponse = {
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.VerificationUserResponseDto;
+  };
+};
+
+export type VerifyUserVariables = {
+  body: Schemas.VerificationUserRequest;
+};
+
+/**
+ * Receive a token to verify a user
+ */
+export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
+  userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
+    url: "/auth/v3/verifications",
+    method: "post",
+    ...variables,
+    signal
+  });

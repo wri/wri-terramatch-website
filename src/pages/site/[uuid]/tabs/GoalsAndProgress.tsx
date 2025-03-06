@@ -57,7 +57,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
       entity: "site"
     }
   });
-  const isTerrafund = ALL_TF.includes(site.framework_key as Framework);
+  const isTerrafund = ALL_TF.includes(site.framework_key as (typeof ALL_TF)[number]);
   return (
     <PageBody>
       <PageRow>
@@ -142,7 +142,6 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               <TreeSpeciesTablePD
                 modelName="site"
                 modelUUID={site.uuid}
-                framework={site.framework_key}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}

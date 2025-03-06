@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -22,9 +22,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
 import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
@@ -93,6 +95,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
+  const { showLoader, hideLoader } = useLoading();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
@@ -100,25 +103,26 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  useEffect(() => {
+  useValueChanged(filters.country, () => {
     setSelectedCountry(filters.country.country_slug);
-  }, [filters.country]);
-  useEffect(() => {
-    setSelectedLandscapes(filters.landscapes || []);
-  }, [filters.landscapes]);
-  useEffect(() => {
+  });
+  useValueChanged(filters.landscapes, () => {
+    setSelectedLandscapes(filters.landscapes ?? []);
+  });
+  useValueChanged(filters.uuid, () => {
     setProjectUUID(filters.uuid);
-  }, [filters.uuid]);
+  });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
-  useEffect(() => {
+  useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
     }
-  }, [initialBbox]);
+  });
 
-  useEffect(() => {
+  useValueChanged(modalMapLoaded, () => {
     setModalLoading("modalExpand", modalMapLoaded);
-  }, [modalMapLoaded, setModalLoading]);
+  });
+
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
@@ -320,15 +324,34 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
   const ModalStoryOpen = async (storyData: any) => {
     try {
+      showLoader();
       const response: any = await fetchGetV2ImpactStoriesId({
         pathParams: {
           id: storyData.uuid
         }
       });
       const parsedData = {
-        ...response.data,
-        content: JSON.parse(response.data.content)
+        uuid: response.data.uuid,
+        title: response.data.title,
+        date: response.data.date,
+        content: JSON.parse(response.data.content),
+        category: response.data.category,
+        thumbnail: response.data.thumbnail || "",
+        organization: {
+          name: response.data.organization?.name ?? "",
+          category: response.data.category,
+          country:
+            response.data.organization?.countries?.length > 0
+              ? response.data.organization.countries.map((c: any) => c.label).join(", ")
+              : "No country",
+          facebook_url: response.data.organization?.facebook_url ?? "",
+          instagram_url: response.data.organization?.instagram_url ?? "",
+          linkedin_url: response.data.organization?.linkedin_url ?? "",
+          twitter_url: response.data.organization?.twitter_url ?? ""
+        },
+        status: response.data.status
       };
+      hideLoader();
       openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
     } catch (error) {
       console.error("Error fetching story details:", error);

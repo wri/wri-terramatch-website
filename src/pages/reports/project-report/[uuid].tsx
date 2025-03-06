@@ -4,14 +4,16 @@ import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullProject } from "@/connections/Entity";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useGetV2ENTITYUUID, useGetV2ProjectsUUID, useGetV2TasksUUID } from "@/generated/apiComponents";
+import { useGetV2ENTITYUUID, useGetV2TasksUUID } from "@/generated/apiComponents";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectReportBreadcrumbs from "@/pages/reports/project-report/components/ProjectReportBreadcrumbs";
 import ProjectReportHeader from "@/pages/reports/project-report/components/ProjectReportHeader";
 
+import AuditLog from "./tabs/AuditLog";
 import NurseryReportsTab from "./tabs/NurseryReports";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
@@ -32,14 +34,7 @@ const ProjectReportDetailPage = () => {
     }
   );
 
-  const { data: project } = useGetV2ProjectsUUID(
-    {
-      pathParams: { uuid: data?.data?.project?.uuid }
-    },
-    {
-      enabled: !!data?.data?.project?.uuid
-    }
-  );
+  const [, { entity: project }] = useFullProject({ uuid: data?.data?.project?.uuid });
 
   const { data: reportingTaskData } = useGetV2TasksUUID(
     {
@@ -78,7 +73,6 @@ const ProjectReportDetailPage = () => {
                   modelName="project-reports"
                   modelUUID={report.uuid}
                   modelTitle={t("Report")}
-                  // @ts-ignore incorrect docs
                   entityData={project}
                   emptyStateContent={t(
                     "Your gallery is currently empty. Add images by using the 'Edit' button on this report."
@@ -116,6 +110,11 @@ const ProjectReportDetailPage = () => {
               key: "uploaded-files",
               title: t("Uploaded Files"),
               body: <UploadedFilesTab report={report} />
+            },
+            {
+              key: "audit-log",
+              title: t("Audit Log"),
+              body: <AuditLog projectReport={report} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

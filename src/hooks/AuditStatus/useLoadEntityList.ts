@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { POLYGON, SITE } from "@/constants/entities";
+import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
 import {
+  fetchGetV2ProjectsUUIDNurseries,
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2ProjectsUUIDSites,
-  fetchGetV2SitesSitePolygon
+  fetchGetV2SitesSitePolygon,
+  fetchGetV2TasksUUIDReports
 } from "@/generated/apiComponents";
 
 export interface SelectedItem {
@@ -19,10 +21,11 @@ export interface SelectedItem {
 }
 
 interface UseLoadEntityListParams {
-  entityUuid: string;
+  entity: any;
   entityType: AuditLogEntity;
   buttonToggle?: number;
   entityLevel?: number;
+  isProjectReport?: boolean;
 }
 
 export interface EntityListItem {
@@ -33,9 +36,19 @@ export interface EntityListItem {
   meta?: string | undefined;
   status?: string | undefined;
   poly_id?: string | undefined;
+  type?: string | undefined;
+  parent_name?: string | undefined;
+  report_title?: string | undefined;
+  title?: string | undefined;
 }
 
-const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }: UseLoadEntityListParams) => {
+const useLoadEntityList = ({
+  entity,
+  entityType,
+  buttonToggle,
+  entityLevel,
+  isProjectReport
+}: UseLoadEntityListParams) => {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
@@ -51,12 +64,17 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
     }
   };
 
-  const unnamedTitleAndSort = (list: EntityListItem[], nameProperty: keyof EntityListItem) => {
+  const unnamedTitleAndSort = (
+    list: EntityListItem[],
+    nameProperty: keyof EntityListItem,
+    entityType: AuditLogEntity
+  ) => {
     const unnamedItems = list?.map((item: EntityListItem) => {
-      if (!item[nameProperty]) {
+      if (!item[nameProperty] && AuditLogButtonStates.PROJECT_REPORT != buttonToggle) {
         return {
           ...item,
-          [nameProperty]: nameProperty === "poly_name" ? "Unnamed Polygon" : "Unnamed Site"
+          [nameProperty]:
+            entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
         };
       }
       return item;
@@ -71,14 +89,68 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
 
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
-    const fetchToProject = entityType == SITE ? fetchGetV2ProjectsUUIDSites : fetchGetV2ProjectsUUIDSitePolygonsAll;
-    const fetchAction = isSiteProjectLevel ? fetchToProject : fetchGetV2SitesSitePolygon;
-    const params = isSiteProjectLevel ? { uuid: entityUuid } : { site: entityUuid };
+    const fetchToProject =
+      entityType == SITE
+        ? fetchGetV2ProjectsUUIDSites
+        : entityType == POLYGON
+        ? fetchGetV2ProjectsUUIDSitePolygonsAll
+        : fetchGetV2ProjectsUUIDNurseries;
+    const fetchAction = isSiteProjectLevel
+      ? fetchToProject
+      : isProjectReport
+      ? fetchGetV2TasksUUIDReports
+      : fetchGetV2SitesSitePolygon;
+    const params = isSiteProjectLevel
+      ? { uuid: entity.uuid }
+      : isProjectReport
+      ? { uuid: entity.task_uuid }
+      : { site: entity.uuid };
     const res = await fetchAction({
       // @ts-ignore
       pathParams: params
     });
     const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+    const statusActionsMap = {
+      [AuditLogButtonStates.PROJECT_REPORT as number]: {
+        entityType: PROJECT_REPORT,
+        list: _entityList
+          ?.filter(entity => entity.type == "project-report")
+          .map(report => ({
+            title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
+            uuid: report.uuid,
+            status: report.status,
+            value: report.uuid,
+            meta: report.status,
+            poly_id: undefined
+          }))
+      },
+      [AuditLogButtonStates.SITE_REPORT as number]: {
+        entityType: SITE_REPORT,
+        list: _entityList
+          ?.filter(entity => entity.type == "site-report")
+          .map(report => ({
+            title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
+            uuid: report.uuid,
+            status: report.status,
+            value: report.uuid,
+            meta: report.status,
+            poly_id: undefined
+          }))
+      },
+      [AuditLogButtonStates.NURSERY_REPORT as number]: {
+        entityType: NURSERY_REPORT,
+        list: _entityList
+          ?.filter(entity => entity.type == "nursery-report")
+          .map(report => ({
+            title: (report?.parent_name ?? "") + " " + "(" + report.report_title + ")",
+            uuid: report.uuid,
+            status: report.status,
+            value: report.uuid,
+            meta: report.status,
+            poly_id: undefined
+          }))
+      }
+    };
     const nameProperty = getNameProperty(entityType);
     const transformEntityListItem = (item: EntityListItem) => {
       return {
@@ -90,15 +162,21 @@ const useLoadEntityList = ({ entityUuid, entityType, buttonToggle, entityLevel }
         poly_id: item?.poly_id
       };
     };
-    const _list = unnamedTitleAndSort(_entityList, nameProperty);
-    setEntityListItem(_list?.map((item: EntityListItem) => transformEntityListItem(item)));
+    const _list = unnamedTitleAndSort(
+      isProjectReport ? statusActionsMap[buttonToggle!]?.list : _entityList,
+      isProjectReport ? "title" : nameProperty,
+      entityType
+    );
+    setEntityListItem(isProjectReport ? _list : _list?.map((item: EntityListItem) => transformEntityListItem(item)));
     if (_list?.length > 0) {
       if (isFirstLoad.current) {
         isFirstLoad.current = false;
-        setSelected(transformEntityListItem(_list[0]));
+        setSelected(isProjectReport ? _list[0] : transformEntityListItem(_list[0]));
       } else {
-        const currentSelected = _entityList?.find(item => item?.uuid === selected?.uuid);
-        setSelected(transformEntityListItem(currentSelected as EntityListItem));
+        const currentSelected = isProjectReport
+          ? statusActionsMap[buttonToggle!]?.list?.find(item => item?.uuid === selected?.uuid)
+          : _entityList?.find(item => item?.uuid === selected?.uuid);
+        setSelected(isProjectReport ? currentSelected! : transformEntityListItem(currentSelected as EntityListItem));
       }
     } else {
       setSelected(null);

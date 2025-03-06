@@ -132,90 +132,114 @@ const InformationTab: FC<IProps> = props => {
                           props.type === "projects" ||
                           props.type === "sites" ||
                           props.type === "site-reports" ||
-                          props.type === "project-reports"
+                          props.type === "project-reports" ||
+                          props.type === "nursery-reports"
                         }
                       >
                         <div className="flex flex-col gap-10">
                           <ContextCondition frameworksHide={[Framework.PPC]}>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1 py-1">
-                                <Text variant="text-16-bold" className="capitalize">
-                                  Non-Trees Planted:
-                                </Text>
-                                <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                  {totalCountNonTree.toLocaleString() ?? 0}
-                                </Text>
-                              </div>
-                              <TreeSpeciesTablePD
-                                modelUUID={modelUUID}
-                                modelName={modelName}
-                                collection="non-tree"
-                                setTotalCount={setTotalCountNonTree}
-                                framework={record?.framework_key}
-                                secondColumnWidth="45%"
-                              />
-                            </div>
-                          </ContextCondition>
-                          <When condition={props.type === "projects" || props.type === "project-reports"}>
-                            <ContextCondition frameworksShow={[Framework.PPC]}>
+                            <When condition={props.type !== "nursery-reports"}>
                               <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-1 py-1">
                                   <Text variant="text-16-bold" className="capitalize">
-                                    Saplings Grown in Nurseries:
+                                    Non-Trees Planted:
                                   </Text>
                                   <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                    {totalCountNurserySeedling.toLocaleString() ?? 0}
+                                    {totalCountNonTree.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
                                 <TreeSpeciesTablePD
                                   modelUUID={modelUUID}
                                   modelName={modelName}
-                                  collection="nursery-seedling"
-                                  setTotalCount={setTotalCountNurserySeedling}
-                                  framework={record?.framework_key}
+                                  collection="non-tree"
+                                  setTotalCount={setTotalCountNonTree}
                                   secondColumnWidth="45%"
                                 />
                               </div>
+                            </When>
+                          </ContextCondition>
+                          <When
+                            condition={
+                              props.type === "projects" ||
+                              props.type === "project-reports" ||
+                              props.type === "nursery-reports"
+                            }
+                          >
+                            <ContextCondition
+                              frameworksShow={[
+                                Framework.PPC,
+                                Framework.TF,
+                                Framework.TF_LANDSCAPES,
+                                Framework.ENTERPRISES
+                              ]}
+                            >
+                              <When
+                                condition={
+                                  (props.type != "nursery-reports" && framework == Framework.PPC) ||
+                                  (props.type == "nursery-reports" &&
+                                    [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES].includes(framework))
+                                }
+                              >
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-1 py-1">
+                                    <Text variant="text-16-bold" className="capitalize">
+                                      Saplings Grown in Nurseries:
+                                    </Text>
+                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                      {totalCountNurserySeedling.toLocaleString() ?? 0}
+                                    </Text>
+                                  </div>
+                                  <TreeSpeciesTablePD
+                                    modelUUID={modelUUID}
+                                    modelName={modelName}
+                                    collection="nursery-seedling"
+                                    setTotalCount={setTotalCountNurserySeedling}
+                                    secondColumnWidth="45%"
+                                  />
+                                </div>
+                              </When>
                             </ContextCondition>
                           </When>
                           <ContextCondition frameworksShow={[Framework.PPC]}>
+                            <When condition={props.type !== "nursery-reports"}>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
+                                  <Text variant="text-16-bold" className="capitalize">
+                                    Seeds Planted:
+                                  </Text>
+                                  <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                    {totalCountSeeding.toLocaleString()}
+                                  </Text>
+                                </div>
+                                <TreeSpeciesTablePD
+                                  modelUUID={modelUUID}
+                                  modelName={modelName}
+                                  collection="seeding"
+                                  setTotalCount={setTotalCountSeeding}
+                                  secondColumnWidth="45%"
+                                />
+                              </div>
+                            </When>
+                          </ContextCondition>
+                          <When condition={props.type !== "nursery-reports"}>
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center gap-1 py-1">
                                 <Text variant="text-16-bold" className="capitalize">
-                                  Seeds Planted:
+                                  Trees Planted:
                                 </Text>
                                 <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                  {totalCountSeeding.toLocaleString()}
+                                  {totalCountTreePlanted.toLocaleString() ?? 0}
                                 </Text>
                               </div>
                               <TreeSpeciesTablePD
                                 modelUUID={modelUUID}
                                 modelName={modelName}
-                                collection="seeding"
-                                setTotalCount={setTotalCountSeeding}
-                                framework={record?.framework_key}
+                                collection="tree-planted"
+                                setTotalCount={setTotalCountTreePlanted}
                                 secondColumnWidth="45%"
                               />
                             </div>
-                          </ContextCondition>
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-1 py-1">
-                              <Text variant="text-16-bold" className="capitalize">
-                                Trees Planted:
-                              </Text>
-                              <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                {totalCountTreePlanted.toLocaleString() ?? 0}
-                              </Text>
-                            </div>
-                            <TreeSpeciesTablePD
-                              modelUUID={modelUUID}
-                              modelName={modelName}
-                              collection="tree-planted"
-                              setTotalCount={setTotalCountTreePlanted}
-                              framework={record?.framework_key}
-                              secondColumnWidth="45%"
-                            />
-                          </div>
+                          </When>
                           <When condition={props.type === "site-reports" || props.type === "project-reports"}>
                             <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
                               <div className="flex flex-col gap-1">
@@ -232,7 +256,6 @@ const InformationTab: FC<IProps> = props => {
                                   modelName={modelName}
                                   collection="replanting"
                                   setTotalCount={setTotalCountReplanting}
-                                  framework={record?.framework_key}
                                   secondColumnWidth="45%"
                                 />
                               </div>

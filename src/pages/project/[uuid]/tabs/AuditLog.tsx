@@ -11,11 +11,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 interface ReportingTasksProps {
-  project: any;
+  project: ProjectFullDto;
   label?: string;
   refresh?: () => void;
   enableChangeStatus?: number;
@@ -61,7 +62,13 @@ const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus,
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto">
                 <div className="grid w-[64%] gap-6">
-                  <AuditLogSiteTabSelection buttonToggle={buttonToggle} setButtonToggle={setButtonToggle} />
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle}
+                    setButtonToggle={setButtonToggle}
+                    framework={project?.frameworkKey as string}
+                    entityLevel={AuditLogButtonStates.PROJECT}
+                    existNurseries={project?.totalNurseries > 0}
+                  />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
                   </When>
