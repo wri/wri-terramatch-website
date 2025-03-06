@@ -92,8 +92,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   useEffect(() => {
     const isReset = !props.value || (Array.isArray(props.value) && props.value.length === 0);
 
-    console.log("props", props.value, isReset, !!props.value);
-
     if ((!!props.value && updateControl.current < 5) || isReset) {
       setSelected(getDefaultDropDownValue(props.value || [], props.options, !!props.hasOtherOptions));
       setOtherValue(getDefaultOtherValue(props.value || [], props.options, !!props.hasOtherOptions));
