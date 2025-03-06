@@ -266,6 +266,81 @@ export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal)
     signal
   });
 
+export type UserCreationError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type UserCreationResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    type?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserCreationVariables = {
+  body: Schemas.UserNewRequest;
+};
+
+/**
+ * Create a new user
+ */
+export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
+  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserNewRequest, {}, {}, {}>({
+    url: "/users/v3/users",
+    method: "post",
+    ...variables,
+    signal
+  });
+
 export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -420,85 +495,9 @@ export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal)
     signal
   });
 
-export type UserCreationError = Fetcher.ErrorWrapper<{
-  status: 401;
-  payload: {
-    /**
-     * @example 401
-     */
-    statusCode: number;
-    /**
-     * @example Unauthorized
-     */
-    message: string;
-  };
-}>;
-
-export type UserCreationResponse = {
-  meta?: {
-    /**
-     * @example users
-     */
-    type?: string;
-  };
-  data?: {
-    /**
-     * @example users
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserDto;
-    relationships?: {
-      org?: {
-        /**
-         * @example organisations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
-        };
-      };
-    };
-  };
-  included?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  }[];
-};
-
-export type UserCreationVariables = {
-  body: Schemas.UserNewRequest;
-};
-
-/**
- * Create a new user
- */
-export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserNewRequest, {}, {}, {}>({
-    url: "/auth/v3/users",
-    method: "post",
-    ...variables,
-    signal
-  });
-
 export const operationsByTag = {
   login: { authLogin },
-  users: { usersFind, userUpdate },
+  users: { usersFind, userUpdate, userCreation },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser },
-  userCreation: { userCreation }
+  verificationUser: { verifyUser }
 };

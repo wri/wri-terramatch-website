@@ -27,6 +27,12 @@ export const userUpdateIsFetching = (variables: Omit<UserUpdateVariables, "body"
 export const userUpdateFetchFailed = (variables: Omit<UserUpdateVariables, "body">) => (store: ApiDataStore) =>
   fetchFailed<{}, UserUpdatePathParams>({ store, url: "/users/v3/users/{uuid}", method: "patch", ...variables });
 
+export const userCreationIsFetching = (store: ApiDataStore) =>
+  isFetching<{}, {}>({ store, url: "/users/v3/users", method: "post" });
+
+export const userCreationFetchFailed = (store: ApiDataStore) =>
+  fetchFailed<{}, {}>({ store, url: "/users/v3/users", method: "post" });
+
 export const requestPasswordResetIsFetching = (store: ApiDataStore) =>
   isFetching<{}, {}>({ store, url: "/auth/v3/passwordResets", method: "post" });
 
@@ -54,9 +60,3 @@ export const verifyUserIsFetching = (store: ApiDataStore) =>
 
 export const verifyUserFetchFailed = (store: ApiDataStore) =>
   fetchFailed<{}, {}>({ store, url: "/auth/v3/verifications", method: "post" });
-
-export const userCreationIsFetching = (store: ApiDataStore) =>
-  isFetching<{}, {}>({ store, url: "/auth/v3/users", method: "post" });
-
-export const userCreationFetchFailed = (store: ApiDataStore) =>
-  fetchFailed<{}, {}>({ store, url: "/auth/v3/users", method: "post" });
