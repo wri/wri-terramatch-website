@@ -11,7 +11,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -219,7 +219,12 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           >
             <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} />
             <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
-              <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
+              <TreeSpeciesTablePD
+                entity="projectReports"
+                entityUuid={report.uuid}
+                collection="nursery-seedling"
+                tableType="noGoal"
+              />
             </GenericField>
             <TextField
               frameworksShow={ALL_TF}

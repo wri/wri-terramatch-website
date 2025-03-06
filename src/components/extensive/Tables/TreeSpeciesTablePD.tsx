@@ -111,7 +111,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
           treeCountGoal: [reportAmount, row.amount ?? 0]
         };
       }
-      if (entity === "siteReports" || entity === "nurseryReports") {
+      if (entity.endsWith("Reports")) {
         return { ...tableRowData, treeCount: row.amount };
       }
       return { ...tableRowData, treeCount: getReportAmount(row.name) ?? 0 };

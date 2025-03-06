@@ -1,47 +1,51 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { orderBy } from "lodash";
+import { useMemo } from "react";
 
-import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { GetV2TreeSpeciesEntityUUIDResponse, useGetV2SeedingsENTITYUUID } from "@/generated/apiComponents";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
+import { SupportedEntity, useSeedings } from "@/connections/EntityAssocation";
 
 export interface SeedingsTableProps {
-  modelName: string;
-  modelUUID: string;
-  collection?: string;
-  onFetch?: (data: GetV2TreeSpeciesEntityUUIDResponse) => void;
-  type: "count" | "weight";
+  entity: SupportedEntity;
+  entityUuid: string;
 }
 
-const SeedingsTable = ({ modelName, modelUUID, collection, onFetch, type }: SeedingsTableProps) => {
+const SeedingsTable = ({ entity, entityUuid }: SeedingsTableProps) => {
   const t = useT();
 
-  const [queryParams, setQueryParams] = useState<any>();
+  const [, { associations: seedings }] = useSeedings({ entity, uuid: entityUuid });
+  const sortedSeedings = useMemo(() => orderBy(seedings ?? [], ["seedsInSample"], ["desc"]), [seedings]);
 
-  if (collection && queryParams) {
-    queryParams["filter[collection]"] = collection;
-  }
-
-  const { data: treeSpecies, isLoading } = useGetV2SeedingsENTITYUUID(
-    {
-      queryParams,
-      pathParams: { entity: modelName, uuid: modelUUID }
-    },
-    {
-      enabled: !!modelUUID,
-      keepPreviousData: true,
-      onSuccess: data => onFetch?.(data)
-    }
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: t("Species"),
+        enableSorting: false
+      },
+      {
+        accessorKey: "seedsInSample",
+        header: t("Seeds Per Sample"),
+        enableSorting: false
+      },
+      {
+        accessorKey: "weightOfSample",
+        header: t("Sample Weight(Kg)"),
+        enableSorting: false
+      }
+    ],
+    [t]
   );
 
   return (
     <div>
-      <ServerSideTable
-        meta={treeSpecies?.meta}
-        data={treeSpecies?.data?.map(item => ({ ...item, amount: item.amount || 0 })) || []}
-        isLoading={isLoading}
-        onQueryParamChange={setQueryParams}
-        columns={getSeedingTableColumns(t, type === "count").filter(c => c.accessorKey !== "seeds_per_kg")}
+      <Table
+        data={sortedSeedings}
+        columns={columns}
+        variant={VARIANT_TABLE_TREE_SPECIES}
+        hasPagination
+        invertSelectPagination
       />
     </div>
   );
