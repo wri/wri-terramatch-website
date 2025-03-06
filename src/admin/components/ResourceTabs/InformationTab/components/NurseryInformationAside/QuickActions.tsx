@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 
 import modules from "@/admin/modules";
 
-const QuickActions: FC = () => {
+const NuseryQuickActions: FC = () => {
   const { record } = useShowContext();
 
   const navigate = useNavigate();
@@ -41,10 +41,10 @@ const QuickActions: FC = () => {
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
           <Labeled label="Total Nursery Reports" sx={inlineLabelSx}>
-            <NumberField source="nursery_reports_total" />
+            <NumberField source="nurseryReportsTotal" />
           </Labeled>
           <Labeled label="Total Overdue Nursery Reports" sx={inlineLabelSx}>
-            <NumberField source="overdue_nursery_reports_total" />
+            <NumberField source="overdueNurseryReportsTotal" />
           </Labeled>
           <Button variant="outlined" onClick={() => handleNavigate("nurseryReport")}>
             View Nursery Reports
@@ -55,4 +55,4 @@ const QuickActions: FC = () => {
   );
 };
 
-export default QuickActions;
+export default NuseryQuickActions;

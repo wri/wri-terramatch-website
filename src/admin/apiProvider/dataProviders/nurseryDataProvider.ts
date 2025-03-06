@@ -1,13 +1,11 @@
 import { DataProvider, HttpError } from "react-admin";
 
-import { loadNurseryIndex } from "@/connections/Entity";
+import { loadFullNursery, loadNurseryIndex } from "@/connections/Entity";
 import {
   DeleteV2AdminNurseriesUUIDError,
   fetchDeleteV2AdminNurseriesUUID,
   fetchGetV2AdminNurseriesMulti,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminNurseriesMultiError,
-  GetV2ENTITYUUIDError
+  GetV2AdminNurseriesMultiError
 } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA } from "../utils/error";
@@ -26,19 +24,12 @@ export const nurseryDataProvider: DataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "nurseries",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: site, fetchFailure } = await loadFullNursery({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
     }
+
+    return { data: { ...site, id: site!.uuid } };
   },
 
   // @ts-ignore
