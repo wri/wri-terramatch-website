@@ -120,7 +120,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
       .map(([name, { amount, taxonId }]) => {
         const speciesTypes = [];
         if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
-        if (!establishmentTrees?.includes(name)) speciesTypes.push("new");
+        if (entity !== "projectReports" && !establishmentTrees?.includes(name)) speciesTypes.push("new");
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
         if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
           // treeCount included here to make sorting work; it is not displayed directly.
