@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
-import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import NurseryHeader from "@/pages/nursery/[uuid]/components/NurseryHeader";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -19,23 +19,19 @@ const NurseryDetailPage = () => {
   const router = useRouter();
   const nurseryUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2ENTITYUUID({
-    pathParams: { uuid: nurseryUUID, entity: "nurseries" }
-  });
-
-  const nursery = (data?.data ?? {}) as any;
+  const [isLoaded, { entity: nursery }] = useFullNursery({ uuid: nurseryUUID });
 
   return (
-    <FrameworkProvider frameworkKey={nursery.framework_key}>
-      <LoadingContainer loading={isLoading}>
+    <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
+      <LoadingContainer loading={!isLoaded}>
         <Head>
-          <title>{`${t("Nursery")} ${nursery.name}`}</title>
+          <title>{`${t("Nursery")} ${nursery?.name}`}</title>
         </Head>
         <PageBreadcrumbs
           links={[
             { title: t("My Projects"), path: "/my-projects" },
-            { title: nursery.project?.name, path: `/project/${nursery.project?.uuid}` },
-            { title: nursery.name }
+            { title: nursery?.projectName, path: `/project/${nursery?.projectUuid}` },
+            { title: nursery?.name ?? "" }
           ]}
         />
         <NurseryHeader nursery={nursery} />
@@ -49,7 +45,7 @@ const NurseryDetailPage = () => {
               body: (
                 <GalleryTab
                   modelName="nurseries"
-                  modelUUID={nursery.uuid}
+                  modelUUID={nursery?.uuid!}
                   modelTitle={t("Nursery")}
                   entityData={nursery}
                   emptyStateContent={t(
