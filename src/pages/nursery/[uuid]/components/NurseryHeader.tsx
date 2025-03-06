@@ -36,16 +36,16 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
     }
   });
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
-    entityUUID: nursery.uuid,
-    entityStatus: nursery.status,
-    updateRequestStatus: nursery.update_request_status
+    entityUUID: nursery?.uuid,
+    entityStatus: nursery?.status,
+    updateRequestStatus: nursery?.updateRequestStatus
   });
 
-  const subtitles = [t("Project name: {project}", { project: nursery.project?.name }), useFrameworkTitle()];
+  const subtitles = [t("Project name: {project}", { project: nursery?.projectName }), useFrameworkTitle()];
 
   const onDeleteNursery = () => {
     openModal(
@@ -59,7 +59,7 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
         primaryButtonProps={{
           children: t("Delete"),
           onClick: () => {
-            deleteNursery({ pathParams: { uuid: nursery.uuid } });
+            deleteNursery({ pathParams: { uuid: nursery?.uuid } });
             closeModal(ModalId.CONFIRM_NURSERY_DELETION);
           }
         }}
@@ -72,16 +72,16 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
   };
 
   return (
-    <PageHeader className="h-[203px]" title={nursery.name} subtitles={subtitles} hasBackButton={false}>
+    <PageHeader className="h-[203px]" title={nursery?.name} subtitles={subtitles} hasBackButton={false}>
       <div className="flex gap-4">
-        <When condition={nursery.nursery_reports_total === 0}>
+        <When condition={nursery?.nurseryReportsTotal === 0}>
           <Button variant="secondary" onClick={onDeleteNursery}>
             {t("Delete")}
           </Button>
         </When>
-        <If condition={nursery.status === "started"}>
+        <If condition={nursery?.status === "started"}>
           <Then>
-            <Button as={Link} href={`/entity/nurseries/edit/${nursery.uuid}`}>
+            <Button as={Link} href={`/entity/nurseries/edit/${nursery?.uuid}`}>
               {t("Continue Nursery")}
             </Button>
           </Then>

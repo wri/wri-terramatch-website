@@ -14,7 +14,7 @@ const StatusBar = ({ entity, entityName }: EntityStatusBarProps) => {
     {
       pathParams: {
         entity: pluralEntityNameToSingular(entityName),
-        uuid: entity.uuid
+        uuid: entity?.uuid
       }
     },
     {
@@ -28,7 +28,7 @@ const StatusBar = ({ entity, entityName }: EntityStatusBarProps) => {
   const updateRequest = updateRequestData?.data;
 
   if (updateRequest != null && updateRequest.status !== "draft") {
-    return <UpdateRequestStatusBar entityName={entityName} entityUUID={entity.uuid} updateRequest={updateRequest} />;
+    return <UpdateRequestStatusBar entityName={entityName} entityUUID={entity?.uuid} updateRequest={updateRequest} />;
   } else {
     return <EntityStatusBar entityName={entityName} entity={entity} />;
   }
