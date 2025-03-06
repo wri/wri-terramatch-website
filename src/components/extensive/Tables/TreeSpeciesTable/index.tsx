@@ -4,19 +4,14 @@ import { FC, useMemo } from "react";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
-import { SupportedEntity, useSeedings, useTreeSpecies } from "@/connections/EntityAssocation";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
-import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
-import { SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { useTableType, useTreeTableColumns } from "./hooks";
 
 export interface TreeSpeciesTablePDProps {
   entityUuid: string;
   entity: SupportedEntity;
-  setTotalCount?: React.Dispatch<React.SetStateAction<number>>;
-  setTotalSpecies?: React.Dispatch<React.SetStateAction<number>>;
-  setTotalSpeciesGoal?: React.Dispatch<React.SetStateAction<number>>;
   headerName?: string;
   collection?: string;
   secondColumnWidth?: string;
@@ -36,9 +31,6 @@ export interface TreeSpeciesTableRowData {
 const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
   entityUuid,
   entity,
-  setTotalCount,
-  setTotalSpecies,
-  setTotalSpeciesGoal,
   collection,
   headerName = "species Name",
   secondColumnWidth = "",
@@ -47,8 +39,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
   galleryType,
   data
 }) => {
-  const [treeSpeciesLoaded, { associations: treeSpecies }] = useTreeSpecies({ entity, uuid: entityUuid, collection });
-  const [seedingsLoaded, { associations: seedingsAssociations }] = useSeedings({ entity, uuid: entityUuid });
+  const [plantsLoaded, { associations: plants }] = usePlants({ entity, uuid: entityUuid, collection });
   const [reportCountsLoaded, { reportCounts, establishmentTrees }] = useTreeReportCounts({
     // If the entity in this component is not a valid TreeReportCountsEntity, the connection will
     // avoid issuing any API requests and will return undefined for reportCounts
@@ -56,38 +47,13 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
     uuid: entityUuid,
     collection
   });
-  const loaded = treeSpeciesLoaded && seedingsLoaded && reportCountsLoaded;
+  const loaded = plantsLoaded && reportCountsLoaded;
 
   const queryParams: any = {};
 
   if (collection != null) {
     queryParams["filter[collection]"] = collection;
   }
-
-  const { data: apiResponse } = useGetV2TreeSpeciesEntityUUID(
-    {
-      queryParams,
-      pathParams: {
-        uuid: entityUuid,
-        entity: entity?.replace("Report", "-report")
-      }
-    },
-    {
-      enabled: !!entityUuid && collection !== "seeds"
-    }
-  );
-
-  const { data: seedings } = useGetV2SeedingsENTITYUUID(
-    {
-      pathParams: {
-        uuid: entityUuid,
-        entity: entity?.replace("Report", "-report")
-      }
-    },
-    {
-      enabled: !!entityUuid && collection === "seeds"
-    }
-  );
 
   const tableType = useTableType(entity, collection, tableTypeFromProps);
   const columns = useTreeTableColumns(tableType, headerName, secondColumnWidth);
@@ -97,31 +63,34 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
     const getReportAmount = (name?: string) =>
       reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
 
-    const plants: (SeedingDto | TreeSpeciesDto)[] = (collection === "seeds" ? seedingsAssociations : treeSpecies) ?? [];
-    const entityPlants: TreeSpeciesTableRowData[] = plants.map(row => {
+    const entityPlants: TreeSpeciesTableRowData[] = (plants ?? []).map(({ name, taxonId, amount }) => {
       const speciesTypes = [];
-      if (row.taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
-      const tableRowData = { name: [row.name, speciesTypes] as [string, string[]], uuid: row.name ?? "" };
+      if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
+      const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name ?? "" };
       if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
-        const reportAmount = getReportAmount(row.name);
+        const reportAmount = getReportAmount(name);
         return {
           ...tableRowData,
           treeCount: reportAmount,
-          goalCount: row.amount ?? 0,
-          treeCountGoal: [reportAmount, row.amount ?? 0]
+          goalCount: amount ?? 0,
+          treeCountGoal: [reportAmount, amount ?? 0]
         };
       }
       if (entity.endsWith("Reports")) {
-        return { ...tableRowData, treeCount: row.amount };
+        return { ...tableRowData, treeCount: amount };
       }
-      return { ...tableRowData, treeCount: getReportAmount(row.name) ?? 0 };
+      return { ...tableRowData, treeCount: getReportAmount(name) ?? 0 };
     });
     const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries
-      .filter(([reportName]) => plants.find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null)
+      .filter(
+        ([reportName]) => (plants ?? []).find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null
+      )
       .map(([name, { amount, taxonId }]) => {
         const speciesTypes = [];
         if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
-        if (entity !== "projectReports" && !establishmentTrees?.includes(name)) speciesTypes.push("new");
+        if (entity !== "projectReports" && collection !== "seeds" && !establishmentTrees?.includes(name)) {
+          speciesTypes.push("new");
+        }
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
         if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
           // treeCount included here to make sorting work; it is not displayed directly.
@@ -134,82 +103,11 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
       });
 
     return orderBy([...entityPlants, ...reportPlants], ["goalCount", "treeCount"], ["desc", "desc"]);
-  }, [collection, entity, establishmentTrees, reportCounts, seedingsAssociations, tableType, treeSpecies]);
-
-  const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
-    if (!rows) return [];
-    const total = rows.reduce(
-      (sum, row) => sum + ((entity === "siteReports" ? row.amount : row.report_amount) ?? 0),
-      0
-    );
-    if (setTotalCount) {
-      setTotalCount(total);
-    }
-    if (setTotalSpecies) {
-      const plantedSpeciesCount = (apiResponse?.count_new_species ?? 0) + (apiResponse?.count_reported_species ?? 0);
-      setTotalSpecies(plantedSpeciesCount);
-    }
-    if (setTotalSpeciesGoal) {
-      setTotalSpeciesGoal(apiResponse?.count_stablished_species ?? 0);
-    }
-    return rows.map(row => {
-      let speciesTypes = [];
-      if (!row.taxon_id) speciesTypes.push("non-scientific");
-      if (row.is_new_species) speciesTypes.push("new");
-      const tableRowData = {
-        name: [row.name, speciesTypes] as [string, string[]],
-        uuid: row.name as string // name is unique, but not all rows have a UUID
-      };
-      if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
-        return { ...tableRowData, treeCountGoal: [row.report_amount, row.amount] };
-      }
-      if (entity === "siteReports") {
-        return { ...tableRowData, treeCount: row.amount };
-      }
-      return { ...tableRowData, treeCount: row.report_amount ?? "0" };
-    });
-  };
-
-  const processSeedingTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
-    if (!rows) return [];
-    if (setTotalCount) {
-      const total = rows.reduce((sum, row) => sum + row.amount, 0);
-      setTotalCount(total);
-    }
-    if (setTotalSpecies) {
-      setTotalSpecies(rows.length);
-    }
-    return rows.map(row => {
-      let speciesTypes = ["tree"];
-      return {
-        name: [row.name, speciesTypes],
-        treeCount: row.amount,
-        uuid: row.name
-      };
-    });
-  };
-
-  const tableData =
-    collection === "seeds"
-      ? seedings?.data
-        ? processSeedingTableData(seedings.data)
-        : []
-      : apiResponse?.data
-      ? processTreeSpeciesTableData(apiResponse.data)
-      : [];
+  }, [collection, entity, establishmentTrees, plants, reportCounts, tableType]);
 
   if (!loaded) return null;
   return (
     <div>
-      <Table
-        data={data ?? tableData}
-        columns={columns}
-        variant={VARIANT_TABLE_TREE_SPECIES}
-        hasPagination
-        invertSelectPagination
-        visibleRows={visibleRows}
-        galleryType={galleryType}
-      />
       <Table
         data={data ?? v3TreeSpecies}
         columns={columns}

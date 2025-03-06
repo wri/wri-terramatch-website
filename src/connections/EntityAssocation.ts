@@ -122,27 +122,6 @@ const collectionTypeHook =
     return loaded ? [true, { association, fetchFailure }] : [false, {}];
   };
 
-/**
- * Create a hook that filters the given association results based on a given collection
- */
-const collectionFilterHook =
-  <T extends EntityAssociationDtoType>(
-    connection: Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps>
-  ) =>
-  (props: CollectionProps): Connected<EntityAssociationIndexConnection<T>> => {
-    const [loaded, { associations, fetchFailure }] = useConnection(connection, props);
-
-    const filteredAssociations = useMemo(() => {
-      if (!loaded) return undefined;
-
-      return ((associations as { collection?: string }[]) ?? []).filter(
-        ({ collection }) => collection === props.collection
-      ) as T[];
-    }, [associations, loaded, props.collection]);
-
-    return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
-  };
-
 const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
 /** Returns the one demographic that matches the given type / collection on the given entity */
 export const useDemographic = collectionTypeHook(demographicConnection);
@@ -150,7 +129,33 @@ export const useDemographic = collectionTypeHook(demographicConnection);
 export const useDemographics = connectionHook(demographicConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
-export const useTreeSpecies = collectionFilterHook(treeSpeciesConnection);
-
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
-export const useSeedings = connectionHook(seedingsConnection);
+
+type PlantDto = TreeSpeciesDto | SeedingDto;
+/**
+ * A single connection for fetching a type of plant data. If the collection is "seeds", the data comes from Seedings,
+ * otherwise from TreeSpecies. Since these have become so similar in UI and data, it's likely that in a future
+ * ticket we unify these tables.
+ */
+export const usePlants = <T extends PlantDto = PlantDto>(
+  props: CollectionProps
+): Connected<EntityAssociationIndexConnection<T>> => {
+  // We have to be careful here to be sure that if props.collection changes, we don't change the number of
+  // hooks executed internally here, so we're directly using useConnection for both cases, and then filtering on
+  // collection afterward
+  const [loaded, { associations, fetchFailure }] =
+    props.collection === "seeds"
+      ? useConnection(seedingsConnection, props)
+      : useConnection(treeSpeciesConnection, props);
+
+  const filteredAssociations = useMemo(() => {
+    if (!loaded) return undefined;
+    if (props.collection === "seeds") return associations as T[];
+
+    return ((associations as { collection?: string }[]) ?? []).filter(
+      ({ collection }) => collection === props.collection
+    ) as T[];
+  }, [associations, loaded, props.collection]);
+
+  return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
+};
