@@ -235,7 +235,7 @@ const SiteReportDetailPage = () => {
                         <TreeSpeciesTablePD
                           entity="siteReports"
                           entityUuid={siteReportUUID}
-                          collection="seeding"
+                          collection="seeds"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />

@@ -7,6 +7,7 @@ import { TableType } from "@/components/extensive/Tables/TreeSpeciesTableNew/col
 import { SupportedEntity, useSeedings, useTreeSpecies } from "@/connections/EntityAssocation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { useGetV2SeedingsENTITYUUID, useGetV2TreeSpeciesEntityUUID } from "@/generated/apiComponents";
+import { SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { useTableType, useTreeTableColumns } from "./TreeSpeciesTableNew/hooks";
 
@@ -72,7 +73,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
       }
     },
     {
-      enabled: !!entityUuid && collection !== "seeding"
+      enabled: !!entityUuid && collection !== "seeds"
     }
   );
 
@@ -84,7 +85,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
       }
     },
     {
-      enabled: !!entityUuid && collection === "seeding"
+      enabled: !!entityUuid && collection === "seeds"
     }
   );
 
@@ -92,28 +93,14 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
   const columns = useTreeTableColumns(tableType, headerName, secondColumnWidth);
 
   const v3TreeSpecies = useMemo(() => {
-    if (collection === "seeding") {
-      return orderBy(
-        (seedingsAssociations ?? []).map(
-          row =>
-            ({
-              name: [row.name ?? "", []],
-              treeCount: row.amount,
-              uuid: row.name ?? ""
-            } as TreeSpeciesTableRowData)
-        ),
-        ["treeCount"],
-        ["desc"]
-      );
-    }
-
     const reportCountEntries = Object.entries(reportCounts ?? {});
     const getReportAmount = (name?: string) =>
       reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
 
-    const entityTrees: TreeSpeciesTableRowData[] = (treeSpecies ?? []).map(row => {
+    const plants: (SeedingDto | TreeSpeciesDto)[] = (collection === "seeds" ? seedingsAssociations : treeSpecies) ?? [];
+    const entityPlants: TreeSpeciesTableRowData[] = plants.map(row => {
       const speciesTypes = [];
-      if (row.taxonId == null) speciesTypes.push("non-scientific");
+      if (row.taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
       const tableRowData = { name: [row.name, speciesTypes] as [string, string[]], uuid: row.name ?? "" };
       if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
         const reportAmount = getReportAmount(row.name);
@@ -128,16 +115,15 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
       }
       return { ...tableRowData, treeCount: getReportAmount(row.name) ?? 0 };
     });
-    const reportTrees: TreeSpeciesTableRowData[] = reportCountEntries
-      .filter(
-        ([reportName]) => treeSpecies?.find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null
-      )
+    const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries
+      .filter(([reportName]) => plants.find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null)
       .map(([name, { amount, taxonId }]) => {
         const speciesTypes = [];
-        if (taxonId == null) speciesTypes.push("non-scientific");
+        if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
         if (!establishmentTrees?.includes(name)) speciesTypes.push("new");
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
         if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
+          // treeCount included here to make sorting work; it is not displayed directly.
           return { ...tableRowData, treeCount: amount, treeCountGoal: [amount, amount] };
         }
         if (entity === "siteReports") {
@@ -146,9 +132,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
         return { ...tableRowData, treeCount: amount };
       });
 
-    const transformed = orderBy([...entityTrees, ...reportTrees], ["treeCount"], ["desc"]);
-    console.log("transformed", { entityTrees, reportTrees, transformed });
-    return transformed;
+    return orderBy([...entityPlants, ...reportPlants], ["treeCount"], ["desc"]);
   }, [collection, entity, establishmentTrees, reportCounts, seedingsAssociations, tableType, treeSpecies]);
 
   const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {
@@ -205,7 +189,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
   };
 
   const tableData =
-    collection === "seeding"
+    collection === "seeds"
       ? seedings?.data
         ? processSeedingTableData(seedings.data)
         : []

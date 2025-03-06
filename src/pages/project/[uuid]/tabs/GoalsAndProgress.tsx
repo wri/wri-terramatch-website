@@ -348,7 +348,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     entity="projects"
                     entityUuid={project.uuid}
                     visibleRows={5}
-                    collection="seeding"
+                    collection="seeds"
                     setTotalCount={setTreeCount}
                     setTotalSpecies={setSpeciesCount}
                   />

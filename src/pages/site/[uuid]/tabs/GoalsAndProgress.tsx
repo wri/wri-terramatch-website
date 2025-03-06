@@ -253,7 +253,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   <TreeSpeciesTablePD
                     entity="sites"
                     entityUuid={site.uuid}
-                    collection="seeding"
+                    collection="seeds"
                     visibleRows={5}
                     setTotalCount={setTreeCount}
                     setTotalSpecies={setSpeciesCount}

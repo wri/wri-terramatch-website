@@ -387,6 +387,7 @@ export type SeedingDto = {
   uuid: string;
   name?: string;
   amount?: number;
+  taxonId?: string;
   weightOfSample?: number;
   seedsInSample?: number;
 };
