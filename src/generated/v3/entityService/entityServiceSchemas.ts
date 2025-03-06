@@ -435,6 +435,7 @@ export type TreeEntityTypes = {
    * @example projects
    * @example projectReports
    * @example sites
+   * @example nurseries
    */
   REPORT_COUNT_ENTITIES: string[];
 };

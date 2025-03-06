@@ -107,10 +107,11 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
         return {
           ...tableRowData,
           treeCount: reportAmount,
+          goalCount: row.amount ?? 0,
           treeCountGoal: [reportAmount, row.amount ?? 0]
         };
       }
-      if (entity === "siteReports") {
+      if (entity === "siteReports" || entity === "nurseryReports") {
         return { ...tableRowData, treeCount: row.amount };
       }
       return { ...tableRowData, treeCount: getReportAmount(row.name) ?? 0 };
@@ -124,7 +125,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
         if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
           // treeCount included here to make sorting work; it is not displayed directly.
-          return { ...tableRowData, treeCount: amount, treeCountGoal: [amount, amount] };
+          return { ...tableRowData, treeCount: amount, goalCount: amount, treeCountGoal: [amount, amount] };
         }
         if (entity === "siteReports") {
           return { ...tableRowData, treeCount: 0 };
@@ -132,7 +133,7 @@ const TreeSpeciesTablePD: FC<TreeSpeciesTablePDProps> = ({
         return { ...tableRowData, treeCount: amount };
       });
 
-    return orderBy([...entityPlants, ...reportPlants], ["treeCount"], ["desc"]);
+    return orderBy([...entityPlants, ...reportPlants], ["goalCount", "treeCount"], ["desc", "desc"]);
   }, [collection, entity, establishmentTrees, reportCounts, seedingsAssociations, tableType, treeSpecies]);
 
   const processTreeSpeciesTableData = (rows: any[]): TreeSpeciesTableRowData[] => {

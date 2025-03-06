@@ -62,5 +62,5 @@ export const DemographicCollections = {
 
 export const TreeEntityTypes = {
   ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
-  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites"] as const
+  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;
