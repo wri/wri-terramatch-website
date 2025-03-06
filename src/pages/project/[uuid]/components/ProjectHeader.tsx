@@ -68,7 +68,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
     );
   };
 
-  const subtitles = [`${t("Organisation")}: ${project.organisation?.name}`, useFrameworkTitle()];
+  const subtitles = [`${t("Organisation")}: ${project?.organisationName}`, useFrameworkTitle()];
 
   return (
     <PageHeader className="h-[203px]" title={project.name} subtitles={subtitles} hasBackButton={false}>
