@@ -48,26 +48,25 @@ export const formatDescriptionIndicator = (
   return formattedItems;
 };
 
-export const processTreeCoverData = (apiResponse: { data: any[] }) => {
-  if (!apiResponse?.data || !Array.isArray(apiResponse.data)) {
+export const processTreeCoverData = (apiResponse: any[]) => {
+  if (!apiResponse || !Array.isArray(apiResponse)) {
     return [];
   }
-
-  return apiResponse.data
-    .map(polygon => {
-      const treeCoverIndicator = polygon.attributes?.indicators?.find(
+  const response = apiResponse
+    .map(sitePolygon => {
+      const treeCoverIndicator = sitePolygon?.indicators?.find(
         (ind: { indicatorSlug: string }) => ind.indicatorSlug === "treeCover"
       );
 
       if (!treeCoverIndicator) return null;
 
       return {
-        poly_name: polygon.attributes.name,
-        size: polygon.attributes.calcArea,
-        status: polygon.attributes.status,
-        plantstart: formatDate(polygon.attributes.plantStart),
-        site_id: polygon.attributes.siteId,
-        poly_id: polygon.id,
+        poly_name: sitePolygon.name,
+        size: sitePolygon.calcArea,
+        status: sitePolygon.status,
+        plantstart: formatDate(sitePolygon.plantStart),
+        site_id: sitePolygon.siteId,
+        poly_id: sitePolygon.id,
         yearOfAnalysis: treeCoverIndicator.yearOfAnalysis,
         percentCover: treeCoverIndicator.percentCover,
         projectPhase: treeCoverIndicator.projectPhase,
@@ -75,6 +74,8 @@ export const processTreeCoverData = (apiResponse: { data: any[] }) => {
       };
     })
     .filter(Boolean);
+  console.log("response", response);
+  return response;
 };
 
 const formatDate = (dateString: string | number | Date) => {

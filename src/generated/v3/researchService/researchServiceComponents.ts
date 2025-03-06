@@ -29,6 +29,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["projectId[]"]?: string[];
   /**
+   * Filter results by site UUID(s). If specified, the includeTestProjects param is ignored
+   */
+  ["siteId[]"]?: string[];
+  /**
    * Filter results by polygons that are missing at least one of the indicators listed
    */
   ["missingIndicator[]"]?: (
@@ -202,3 +206,5 @@ export const bulkUpdateSitePolygons = (variables: BulkUpdateSitePolygonsVariable
     ...variables,
     signal
   });
+
+export const operationsByTag = { sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons } };

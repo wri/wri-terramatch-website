@@ -23,6 +23,7 @@ import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useSitePolygons } from "@/connections/SitePolygons";
 import {
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
@@ -43,6 +44,7 @@ import {
   formatDescriptionIndicator,
   getKeyValue,
   getOrderTop3,
+  processTreeCoverData,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
 import { downloadFileBlob } from "@/utils/network";
@@ -302,14 +304,10 @@ const DataCard = ({
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
-  const {
-    polygonsIndicator,
-    treeCoverLossData,
-    treeCoverLossFiresData,
-    isLoadingIndicator,
-    polygonOptions,
-    treeCoverPolygonsData
-  } = useMonitoredData(type!, record.uuid);
+  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
+    useMonitoredData(type!, record.uuid);
+  const [, { sitePolygons }] = useSitePolygons({ entityName: type!, entityUuid: record.uuid });
+
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
       ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
@@ -976,7 +974,9 @@ const DataCard = ({
             <div className="relative w-full px-6 pb-6">
               <Table
                 columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-                data={indicatorSlug === "treeCover" ? treeCoverPolygonsData : polygonsIndicator ?? []}
+                data={
+                  indicatorSlug === "treeCover" ? processTreeCoverData(sitePolygons ?? []) : polygonsIndicator ?? []
+                }
                 variant={VARIANT_TABLE_MONITORED}
                 classNameWrapper="!overflow-visible"
                 visibleRows={50}

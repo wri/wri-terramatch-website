@@ -423,5 +423,6 @@ export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal)
 export const operationsByTag = {
   login: { authLogin },
   users: { usersFind, userUpdate },
-  resetPassword: { requestPasswordReset, resetPassword }
+  resetPassword: { requestPasswordReset, resetPassword },
+  verificationUser: { verifyUser }
 };
