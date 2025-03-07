@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { orderBy } from "lodash";
+import { useMemo } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -25,11 +26,6 @@ import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 interface GoalsAndProgressProps {
   project: ProjectFullDto;
-}
-
-interface NaturalRegenerationItem {
-  name: string;
-  treeCount: number;
 }
 
 export const LABEL_LEGEND = [
@@ -85,13 +81,14 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     }
   });
 
-  const formatNaturalGenerationData = orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(
-    (item: NaturalRegenerationItem) => {
-      return {
-        name: item.name,
-        treeCount: item.treeCount.toLocaleString()
-      };
-    }
+  const naturalGenerationData = useMemo(
+    () =>
+      orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(({ name, treeCount }) => ({
+        uuid: name,
+        name: [name, []] as [string, string[]],
+        treeCount: treeCount.toLocaleString()
+      })),
+    [project.assistedNaturalRegenerationList]
   );
 
   return (
@@ -399,13 +396,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
 
             <div className="mt-2">
-              <TreeSpeciesTable
-                entity="projects"
-                entityUuid={project.uuid}
-                data={formatNaturalGenerationData}
-                visibleRows={5}
-                tableType="treeCountSite"
-              />
+              <TreeSpeciesTable data={naturalGenerationData} visibleRows={5} tableType="treeCountSite" />
             </div>
           </PageCard>
         </PageColumn>

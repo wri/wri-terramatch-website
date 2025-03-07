@@ -6,38 +6,47 @@ import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVar
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
+import Log from "@/utils/log";
 
 import { useTableType, useTreeTableColumns } from "./hooks";
 
-export interface TreeSpeciesTablePDProps {
-  entityUuid: string;
-  entity: SupportedEntity;
+type TreeSpeciesTableViewProps = {
+  data: TreeSpeciesTableRowData[];
+  tableType: TableType;
   headerName?: string;
-  collection?: string;
-  secondColumnWidth?: string;
-  data?: any;
-  tableType?: TableType;
   visibleRows?: number;
   galleryType?: string;
-}
+  secondColumnWidth?: string;
+};
 
-export interface TreeSpeciesTableRowData {
+type TreeSpeciesDataFetcherProps = {
+  children: (tableType: TableType, data: TreeSpeciesTableRowData[]) => JSX.Element;
+  entity: SupportedEntity;
+  entityUuid: string;
+  collection?: string;
+  tableType?: TableType;
+};
+
+type TreeSpeciesTableProps = Omit<TreeSpeciesTableViewProps, "data" | "tableType"> &
+  Omit<TreeSpeciesDataFetcherProps, "entityUuid" | "entity" | "children"> & {
+    entity?: SupportedEntity;
+    entityUuid?: string;
+    data?: TreeSpeciesTableRowData[];
+  };
+
+type TreeSpeciesTableRowData = {
   name: [string, string[]];
   uuid: string; // required by Table, but in this case it's not a real UUID.
   treeCount?: string | number;
   treeCountGoal?: [number, number];
-}
+};
 
-const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
-  entityUuid,
+const TreeSpeciesDataFetcher: FC<TreeSpeciesDataFetcherProps> = ({
+  children: render,
   entity,
+  entityUuid,
   collection,
-  headerName = "species Name",
-  secondColumnWidth = "",
-  tableType: tableTypeFromProps,
-  visibleRows = 5,
-  galleryType,
-  data
+  tableType: tableTypeFromProps
 }) => {
   const [plantsLoaded, { associations: plants }] = usePlants({ entity, uuid: entityUuid, collection });
   const [reportCountsLoaded, { reportCounts, establishmentTrees }] = useTreeReportCounts({
@@ -49,16 +58,9 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
   });
   const loaded = plantsLoaded && reportCountsLoaded;
 
-  const queryParams: any = {};
-
-  if (collection != null) {
-    queryParams["filter[collection]"] = collection;
-  }
-
   const tableType = useTableType(entity, collection, tableTypeFromProps);
-  const columns = useTreeTableColumns(tableType, headerName, secondColumnWidth);
 
-  const v3TreeSpecies = useMemo(() => {
+  const plantRows = useMemo(() => {
     const reportCountEntries = Object.entries(reportCounts ?? {});
     const getReportAmount = (name?: string) =>
       reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
@@ -105,20 +107,50 @@ const TreeSpeciesTable: FC<TreeSpeciesTablePDProps> = ({
     return orderBy([...entityPlants, ...reportPlants], ["goalCount", "treeCount"], ["desc", "desc"]);
   }, [collection, entity, establishmentTrees, plants, reportCounts, tableType]);
 
-  if (!loaded) return null;
-  return (
-    <div>
-      <Table
-        data={data ?? v3TreeSpecies}
-        columns={columns}
-        variant={VARIANT_TABLE_TREE_SPECIES}
-        hasPagination
-        invertSelectPagination
-        visibleRows={visibleRows}
-        galleryType={galleryType}
-      />
-    </div>
-  );
+  return loaded ? render(tableType, plantRows) : null;
+};
+
+const TreeSpeciesTableView: FC<TreeSpeciesTableViewProps> = ({
+  data,
+  tableType,
+  headerName = "Species Name",
+  visibleRows = 5,
+  galleryType,
+  secondColumnWidth = ""
+}) => (
+  <div>
+    <Table
+      data={data}
+      columns={useTreeTableColumns(tableType, headerName, secondColumnWidth)}
+      variant={VARIANT_TABLE_TREE_SPECIES}
+      hasPagination
+      invertSelectPagination
+      visibleRows={visibleRows}
+      galleryType={galleryType}
+    />
+  </div>
+);
+
+const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
+  const { entityUuid, entity, collection, headerName, secondColumnWidth, tableType, visibleRows, galleryType, data } =
+    props;
+
+  if (data == null && entity != null && entityUuid != null) {
+    return (
+      <TreeSpeciesDataFetcher {...{ entity, entityUuid, collection, tableType }}>
+        {(tableType, data) => (
+          <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />
+        )}
+      </TreeSpeciesDataFetcher>
+    );
+  }
+
+  if (data != null && tableType != null) {
+    return <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />;
+  }
+
+  Log.error("Invalid TreeSpeciesTableProps", { props });
+  return null;
 };
 
 export default TreeSpeciesTable;
