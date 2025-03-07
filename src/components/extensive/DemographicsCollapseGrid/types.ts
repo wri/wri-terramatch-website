@@ -211,7 +211,7 @@ const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   ...HBF_DEMOGRAPHIC_TYPE_MAP,
   age: {
     title: "Age",
-    typeMap: JOBS_AGES,
+    typeMap: HBF_AGES,
     balanced: false
   }
 };
@@ -246,7 +246,7 @@ const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue>
   },
   age: {
     title: "Age",
-    typeMap: JOBS_AGES,
+    typeMap: HBF_AGES,
     balanced: false
   }
 };
