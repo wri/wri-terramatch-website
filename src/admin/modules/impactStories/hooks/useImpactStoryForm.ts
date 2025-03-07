@@ -66,6 +66,14 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     [setValue]
   );
 
+  const handleOrganizationChange = useCallback(
+    (value: string) => {
+      setValue("organization.uuid", value);
+      setValue("orgUuid", value);
+    },
+    [setValue]
+  );
+
   const handleStatusChange = useCallback(
     (status: "draft" | "published") => {
       setValue("status", status);
@@ -93,6 +101,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
       handleContentChange,
       handleTitleChange,
       handleDateChange,
+      handleOrganizationChange,
       handleStatusChange,
       handlePreview,
       handleDelete

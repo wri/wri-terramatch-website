@@ -808,7 +808,13 @@ const DataCard = ({
       )
     }
   };
-
+  useEffect(() => {
+    console.log(
+      "DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!;",
+      DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!,
+      indicatorSlug
+    );
+  }, [indicatorSlug]);
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
