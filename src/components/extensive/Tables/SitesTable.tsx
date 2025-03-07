@@ -91,8 +91,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           pageSize: param.per_page,
           sortDirection,
           sortField
-        } as any);
-        // response.refetch();
+        } as EntityIndexConnectionProps);
       }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
