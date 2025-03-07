@@ -6,7 +6,6 @@ import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/co
 import {
   fetchGetV2ProjectsUUIDNurseries,
   fetchGetV2ProjectsUUIDSitePolygonsAll,
-  fetchGetV2ProjectsUUIDSites,
   fetchGetV2SitesSitePolygon,
   fetchGetV2TasksUUIDReports
 } from "@/generated/apiComponents";
@@ -91,7 +90,8 @@ const useLoadEntityList = ({
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
     const fetchToProject =
       entityType == SITE
-        ? fetchGetV2ProjectsUUIDSites
+        ? //TODO: update to v3 sites
+          fetchGetV2ProjectsUUIDNurseries
         : entityType == POLYGON
         ? fetchGetV2ProjectsUUIDSitePolygonsAll
         : fetchGetV2ProjectsUUIDNurseries;

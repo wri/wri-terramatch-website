@@ -35,7 +35,6 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
     filter: { projectUuid: project.uuid },
     ...tableParams
   };
-
   const [isLoaded, response] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
 
   useEffect(() => {
@@ -91,10 +90,9 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           pageNumber: param.page,
           pageSize: param.per_page,
           sortDirection,
-          sortField,
-          rng: Math.random()
+          sortField
         } as any);
-        response.refetch();
+        // response.refetch();
       }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[

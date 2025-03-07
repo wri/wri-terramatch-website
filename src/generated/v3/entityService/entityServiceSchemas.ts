@@ -110,6 +110,7 @@ export type SiteLightDto = {
    * The associated project name
    */
   projectName: string | null;
+  treesPlantedCount: number;
   /**
    * @format date-time
    */
@@ -259,6 +260,7 @@ export type SiteFullDto = {
    * The associated project name
    */
   projectName: string | null;
+  treesPlantedCount: number;
   /**
    * @format date-time
    */
@@ -272,7 +274,6 @@ export type SiteFullDto = {
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
-  treesPlantedCount: number;
   regeneratedTreesCount: number;
   combinedWorkdayCount: number;
   workdayCount: number;
