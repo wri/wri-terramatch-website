@@ -419,7 +419,7 @@ const DataCard = ({
     {
       id: "treeCoverAnalysis",
       header: "Tree Cover Analysis",
-      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, textAlign: "center" } },
       columns: [
         {
           accessorKey: "yearOfAnalysis",
