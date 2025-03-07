@@ -70,11 +70,11 @@ export const processTreeCoverData = (apiResponse: any[]) => {
         yearOfAnalysis: treeCoverIndicator.yearOfAnalysis,
         percentCover: treeCoverIndicator.percentCover,
         projectPhase: treeCoverIndicator.projectPhase,
-        plusMinusPercent: treeCoverIndicator.plusMinusPercent
+        plusMinusPercent: treeCoverIndicator.plusMinusPercent,
+        siteName: sitePolygon.siteName
       };
     })
     .filter(Boolean);
-  console.log("response", response);
   return response;
 };
 

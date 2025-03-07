@@ -388,7 +388,7 @@ const DataCard = ({
           }
         },
         {
-          accessorKey: "site_name",
+          accessorKey: "siteName",
           header: "Site Name",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
         },
