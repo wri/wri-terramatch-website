@@ -25,11 +25,11 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   /**
-   * Filter results by project UUID(s). If specified, the includeTestProjects param is ignored
+   * Filter results by project UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
    */
   ["projectId[]"]?: string[];
   /**
-   * Filter results by site UUID(s). If specified, the includeTestProjects param is ignored
+   * Filter results by site UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
    */
   ["siteId[]"]?: string[];
   /**
@@ -58,7 +58,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   boundaryPolygon?: string;
   /**
-   * Include polygons for test projects in the results. If an explicit list of project UUIDs is included in projectId[], this parameter is ignored.
+   * Include polygons for test projects in the results. Only one of siteId, projectId and includeTestProjects may be used in a single request
    *
    * @default false
    */

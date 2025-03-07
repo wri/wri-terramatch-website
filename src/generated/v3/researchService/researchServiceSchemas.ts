@@ -153,6 +153,10 @@ export type SitePolygonDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
+  /**
+   * The name of the associated Site.
+   */
+  siteName: string;
 };
 
 export type SitePolygonUpdateAttributes = {
