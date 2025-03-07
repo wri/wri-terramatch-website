@@ -3,32 +3,6 @@
  *
  * @version 1.0.0
  */
-export type TreeSpeciesPaginated = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    amount?: number;
-    type?: string;
-    collection?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-  count_new_species?: number;
-  count_reported_species?: number;
-  count_stablished_species?: number;
-};
-
 export type TreeSpeciesAggregated = {
   ["tree-planted"]?: {
     /**
@@ -4618,37 +4592,6 @@ export type V2StrataPaginated = {
     uuid?: string;
     description?: string;
     extent?: number;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type V2SeedingRead = {
-  uuid?: string;
-  name?: string;
-  weight_of_sample?: number;
-  seeds_in_sample?: number;
-  amount?: number;
-};
-
-export type V2SeedingPaginated = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    weight_of_sample?: number;
-    seeds_in_sample?: number;
-    amount?: number;
   }[];
   links?: {
     first?: string;

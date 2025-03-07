@@ -9,7 +9,7 @@ import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-type EstablishmentEntity = (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
+export type EstablishmentEntity = (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
 
 type EstablishmentTreesConnection = {
   establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"][string];
