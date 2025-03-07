@@ -131,7 +131,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           }
         },
         {
-          accessorKey: "number_of_trees_planted",
+          accessorKey: "treesPlantedCount",
           header: t("Trees planted")
         },
         {
