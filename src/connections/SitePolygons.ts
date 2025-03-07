@@ -42,9 +42,7 @@ const sitePolygonsSelector = (store: ApiDataStore) =>
 const sitePolygonsConnection = (params: SitePolygonConnectionParams): Connection<SitePolygonConnection> => ({
   load: ({ sitePolygons }) => {
     if (sitePolygons == null || sitePolygons.length === 0) {
-      console.log("params.E", params.entityName);
       const queryParams = sitePolygonQuery(params.entityName, params.entityUuid);
-      console.log("Query Params", queryParams);
       sitePolygonsIndex(queryParams);
     }
   },

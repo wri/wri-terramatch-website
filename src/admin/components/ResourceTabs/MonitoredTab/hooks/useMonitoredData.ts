@@ -13,7 +13,6 @@ import {
   usePostV2IndicatorsSlug
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName } from "@/types/common";
 
 const dataPolygonOverview = [
@@ -98,7 +97,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
-  const [isLoadingTreeCover, setIsLoadingTreeCover] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
@@ -129,40 +127,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   );
 
-  // 1st attempt: Fetch tree cover data using sitePolygonsIndex (research service)
-  const fetchTreeCoverData = async () => {
-    if (!entity_uuid) return;
-
-    setIsLoadingTreeCover(true);
-    try {
-      // const response: any = await sitePolygonsIndex({
-      //   queryParams: {
-      //     ["page[size]"]: 100,
-      //     ["projectId[]"]: [entity_uuid],
-      //     includeTestProjects: false
-      //   }
-      // });
-      // if (response && response.data) {
-      //   setSitePolygonEntityData(response.data);
-      // }
-    } catch (error) {
-      console.error("Error fetching tree cover data:", error);
-      openNotification(
-        "error",
-        t("Error fetching tree cover data"),
-        t("Failed to fetch tree cover data. Please try again.")
-      );
-    } finally {
-      setIsLoadingTreeCover(false);
-    }
-  };
-
-  useValueChanged(entity_uuid, () => {
-    if (entity_uuid) {
-      fetchTreeCoverData();
-    }
-  });
-  //  --------end of 1st attempt---------
   const getComplementarySlug = (slug: string) => (slug === "treeCoverLoss" ? "treeCoverLossFires" : "treeCoverLoss");
 
   const { data: complementaryData } = useGetV2IndicatorsEntityUuidSlug(
@@ -328,13 +292,11 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
     isLoadingIndicator,
-    isLoadingTreeCover,
     setIsLoadingVerify,
     dropdownAnalysisOptions,
     analysisToSlug,
     polygonMissingAnalysis,
     treeCoverLossData,
-    treeCoverLossFiresData,
-    refreshTreeCoverData: fetchTreeCoverData
+    treeCoverLossFiresData
   };
 };
