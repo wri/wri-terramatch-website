@@ -191,7 +191,7 @@ const toggleItems: TogglePropsItem[] = [
     )
   },
   {
-    key: "table",
+    key: "map",
     render: (
       <Text variant="text-14" className="py-0.5">
         Map

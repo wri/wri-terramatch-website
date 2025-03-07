@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { createSelector } from "reselect";
 
 import {
@@ -60,8 +61,16 @@ const sitePolygonsConnection = (params: SitePolygonConnectionParams): Connection
     })
   )
 });
-export const useSitePolygons = (params: SitePolygonConnectionParams) =>
-  connectionHook(sitePolygonsConnection(params))();
+export const useSitePolygons = (params: SitePolygonConnectionParams) => {
+  const { entityName, entityUuid } = params;
+
+  const memoizedConnection = useMemo(
+    () => sitePolygonsConnection({ entityName, entityUuid }),
+    [entityName, entityUuid]
+  );
+
+  return connectionHook(memoizedConnection)();
+};
 
 export const loadSitePolygons = (params: SitePolygonConnectionParams) =>
   connectionLoader(sitePolygonsConnection(params));
