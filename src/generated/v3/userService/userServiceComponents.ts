@@ -371,6 +371,12 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
 
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate },
+  resetPassword: { requestPasswordReset, resetPassword }
+};
+
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -386,12 +392,6 @@ export type VerifyUserError = Fetcher.ErrorWrapper<{
 }>;
 
 export type VerifyUserResponse = {
-  meta?: {
-    /**
-     * @example verifications
-     */
-    type?: string;
-  };
   data?: {
     /**
      * @example verifications
@@ -410,7 +410,7 @@ export type VerifyUserVariables = {
 };
 
 /**
- * Receive a token to verify a user and return the verification status
+ * Receive a token to verify a user
  */
 export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
   userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
@@ -419,10 +419,3 @@ export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal)
     ...variables,
     signal
   });
-
-export const operationsByTag = {
-  login: { authLogin },
-  users: { usersFind, userUpdate },
-  resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser }
-};

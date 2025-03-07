@@ -21,6 +21,7 @@ export interface SiteAuditLogEntityStatusProps {
   verifyEntity?: boolean;
   viewPD?: boolean;
   auditData?: { entity: string; entity_uuid: string };
+  isProjectReport?: boolean;
 }
 
 interface SelectedItem {
@@ -32,6 +33,12 @@ interface SelectedItem {
   status?: string | undefined;
 }
 
+const reportTypesMappging: { [key: number]: string } = {
+  4: "project-reports",
+  5: "site-reports",
+  6: "nursery-reports"
+};
+
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   entityType,
   record,
@@ -40,15 +47,36 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   buttonToggle,
   verifyEntity,
   viewPD = false,
-  auditData
+  auditData,
+  isProjectReport
 }) => {
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const isNurseryToggle = buttonToggle === AuditLogButtonStates.NURSERY;
   const basename = useBasename();
 
-  const title = () => record?.title ?? record?.name;
+  const formatUrl = () => {
+    switch (reportTypesMappging[buttonToggle]) {
+      case "project-reports":
+        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/4`;
+      case "site-reports":
+        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/4`;
+      case "nursery-reports":
+        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/4`;
+      default:
+        return "";
+    }
+  };
+  // @ts-ignore
+  const title = () => record?.title ?? record?.name ?? record?.report_title;
   const redirectTo = viewPD
-    ? `/site/${record?.uuid}?tab=audit-log`
-    : `${basename}/${modules.site.ResourceName}/${record?.uuid}/show/6`;
+    ? `/${
+        isProjectReport
+          ? "reports/" + reportTypesMappging[buttonToggle].replace(/s$/, "")
+          : isNurseryToggle
+          ? "nursery"
+          : "site"
+      }/${record?.uuid}${isNurseryToggle ? "" : "?tab=audit-log"}`
+    : `${basename}${isProjectReport ? formatUrl() : `/${modules.site.ResourceName}/${record?.uuid}/show/6`}`;
 
   const removeUnderscore = (title: string) => title.replace("_", " ");
 
@@ -65,8 +93,10 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
       </div>
       <When condition={viewPD}>
         <div>
-          {!isSite && !verifyEntity && <Text variant="text-16-bold">History and Discussion for {title()}</Text>}
-          {(isSite || verifyEntity) && (
+          {!isSite && !verifyEntity && !isNurseryToggle && (
+            <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+          )}
+          {(isSite || verifyEntity || isNurseryToggle) && (
             <Text variant="text-16-bold">
               History and Discussion for{" "}
               {viewPD ? (
