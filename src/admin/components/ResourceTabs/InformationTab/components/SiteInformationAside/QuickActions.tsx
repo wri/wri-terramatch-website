@@ -5,7 +5,7 @@ import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } fro
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 
-const QuickActions: FC = () => {
+const SiteQuickActions: FC = () => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
 
@@ -41,7 +41,11 @@ const QuickActions: FC = () => {
         <Button
           className="button-aside-page-admin"
           component={Link}
-          to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
+          to={createPath({
+            resource: modules.project.ResourceName,
+            type: "show",
+            id: record?.projectUuid
+          })}
           fullWidth
           label="Back To Project"
         />
@@ -50,10 +54,10 @@ const QuickActions: FC = () => {
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
           <Labeled label="Total Site Reports" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="site_reports_total" />
+            <NumberField source="totalSiteReports" />
           </Labeled>
           <Labeled label="Total Overdue Site Reports" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="overdue_site_reports_total" />
+            <NumberField source="overdueSiteReportsTotal" />
           </Labeled>
           <Button
             className="button-aside-page-admin"
@@ -73,4 +77,4 @@ const QuickActions: FC = () => {
   );
 };
 
-export default QuickActions;
+export default SiteQuickActions;

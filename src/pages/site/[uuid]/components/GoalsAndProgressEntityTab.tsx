@@ -68,12 +68,11 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     site: {
       total_jobs_created: null,
       jobs_created_goal: null,
-      total_hectares_restored_sum: entity.total_hectares_restored_sum,
-      total_hectares_restored_goal: entity.hectares_to_restore_goal,
-      trees_restored_count:
-        entity?.trees_planted_count + entity?.approved_regenerated_trees_count + entity?.seeds_planted_count,
+      total_hectares_restored_sum: entity.totalHectaresRestoredSum,
+      total_hectares_restored_goal: entity.hectaresToRestoreGoal,
+      trees_restored_count: entity.treesPlantedCount + entity.regeneratedTreesCount + entity.seedsPlantedCount,
       trees_grown_goal: null,
-      workday_count: entity.framework_key == Framework.PPC ? entity.combined_workday_count : entity.workday_count
+      workday_count: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
     }
   };
   const chartDataJobs = {

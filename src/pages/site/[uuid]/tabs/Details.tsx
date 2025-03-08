@@ -14,20 +14,21 @@ import InvasiveTable from "@/components/extensive/Tables/InvasiveTable";
 import SeedingsTable from "@/components/extensive/Tables/SeedingsTable";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useGetOptions } from "@/hooks/useGetOptions";
 
 interface SiteDetailsTabProps {
-  site: any;
+  site: SiteFullDto;
 }
 
 const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
   const t = useT();
   const { format } = useDate();
 
-  const landUseTypesOptions = useGetOptions(site.land_use_types);
-  const landTenuresOptions = useGetOptions(site.land_tenures);
-  const restorationStrategyOptions = useGetOptions(site.restoration_strategy);
+  const landUseTypesOptions = useGetOptions(site.landUseTypes);
+  const landTenuresOptions = useGetOptions(site.landTenures);
+  const restorationStrategyOptions = useGetOptions(site.restorationStrategy);
 
   return (
     <PageBody>
@@ -39,36 +40,36 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
             <SelectImageListField
               title={t("Restoration Strategy")}
               options={restorationStrategyOptions}
-              selectedValues={site.restoration_strategy}
+              selectedValues={site.restorationStrategy ?? []}
             />
             <SelectImageListField
               title={t("Land Use Type")}
               options={landUseTypesOptions}
-              selectedValues={site.land_use_types}
+              selectedValues={site.landUseTypes ?? []}
             />
             <LongTextField
               frameworksShow={[Framework.HBF]}
               className="capitalize"
               title={t("Detailed Intervention Types")}
             >
-              {site.detailed_intervention_types?.join(", ").replace(/-/g, " ")}
+              {site.detailedInterventionTypes?.join(", ").replace(/-/g, " ")}
             </LongTextField>
             <SelectImageListField
               title={t("Land Tenure Type")}
               options={landTenuresOptions}
-              selectedValues={site.land_tenures}
+              selectedValues={site.landTenures ?? []}
             />
           </PageCard>
         </PageColumn>
 
         <PageColumn>
           <PageCard title={t("Site Details")}>
-            <TextField label={t("Site Name")} value={site.name} />
-            <TextField label={t("Restoration Start Date")} value={format(site.start_date)} />
-            <TextField label={t("Restoration End Date")} value={format(site.end_date)} />
+            <TextField label={t("Site Name")} value={site.name ?? ""} />
+            <TextField label={t("Restoration Start Date")} value={format(site.startDate ?? "")} />
+            <TextField label={t("Restoration End Date")} value={format(site.endDate ?? "")} />
           </PageCard>
           <PageCard title={t("Site Creation")}>
-            <TextField label={t("Site Created")} value={format(site.created_at)} />
+            <TextField label={t("Site Created")} value={format(site.createdAt ?? "")} />
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <PageCard title={t("Direct seeding")}>
@@ -79,15 +80,15 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
             </PageCard>
           </ContextCondition>
           <PageCard title={t("Additional Information")} gap={4}>
-            <TextField frameworksShow={[Framework.HBF]} label={t("Soil Condition")} value={site.soil_condition} />
+            <TextField frameworksShow={[Framework.HBF]} label={t("Soil Condition")} value={site.soilCondition ?? ""} />
             <ContextCondition frameworksHide={[Framework.PPC]}>
-              <TextField label={t("Siting Strategy")} value={site.siting_strategy} />
-              <TextField label={t("Siting Strategy Description")} value={site.description_siting_strategy} />
+              <TextField label={t("Siting Strategy")} value={site.sitingStrategy ?? ""} />
+              <TextField label={t("Siting Strategy Description")} value={site.descriptionSitingStrategy ?? ""} />
             </ContextCondition>
             <TextField
               frameworksShow={[Framework.PPC]}
               label={t("Mature trees Count")}
-              value={site.aim_number_of_mature_trees}
+              value={site.aimNumberOfMatureTrees?.toString() ?? ""}
             />
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
@@ -99,7 +100,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
                   variant: "secondary",
                   children: t("Download"),
                   download: true,
-                  href: site.stratification_for_heterogeneity || ""
+                  href: site.stratificationForHeterogeneity?.url ?? ""
                 }}
               />
             </Paper>

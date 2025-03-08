@@ -90,7 +90,7 @@ export type SiteLightDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Framework UUID. Will be removed after the FE is refactored to not use these IDs
    *
@@ -98,14 +98,19 @@ export type SiteLightDto = {
    */
   frameworkUuid: string | null;
   /**
-   * Entity status for this project
+   * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
-   * Update request status for this project
+   * Update request status for this site
    */
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  treesPlantedCount: number;
   /**
    * @format date-time
    */
@@ -235,7 +240,7 @@ export type SiteFullDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Framework UUID. Will be removed after the FE is refactored to not use these IDs
    *
@@ -243,14 +248,19 @@ export type SiteFullDto = {
    */
   frameworkUuid: string | null;
   /**
-   * Entity status for this project
+   * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
-   * Update request status for this project
+   * Update request status for this site
    */
   updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  treesPlantedCount: number;
   /**
    * @format date-time
    */
@@ -260,6 +270,60 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
+  totalHectaresRestoredSum: number;
+  seedsPlantedCount: number;
+  overdueSiteReportsTotal: number;
+  selfReportedWorkdayCount: number;
+  regeneratedTreesCount: number;
+  combinedWorkdayCount: number;
+  workdayCount: number;
+  ppcExternalId: number | null;
+  sitingStrategy: string | null;
+  descriptionSitingStrategy: string | null;
+  hectaresToRestoreGoal: number | null;
+  description: string | null;
+  controlSite: boolean | null;
+  history: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  landTenures: string[] | null;
+  survivalRatePlanted: number | null;
+  directSeedingSurvivalRate: number | null;
+  aNatRegenerationTreesPerHectare: number | null;
+  aNatRegeneration: number | null;
+  landscapeCommunityContribution: string | null;
+  technicalNarrative: string | null;
+  plantingPattern: string | null;
+  soilCondition: string | null;
+  aimYearFiveCrownCover: number | null;
+  aimNumberOfMatureTrees: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  detailedInterventionTypes: string[] | null;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+  treeSpecies: MediaDto[];
+  documentFiles: MediaDto[];
+  stratificationForHeterogeneity: MediaDto;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
 };
 
 export type DemographicEntryDto = {

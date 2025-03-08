@@ -4,7 +4,7 @@ import { FC } from "react";
 import { EntityName } from "@/types/common";
 
 import HighLevelMetrics from "./HighLevelMetrics";
-import QuickActions from "./QuickActions";
+import ReportQuickActions from "./QuickActions";
 import ReportOverview from "./ReportOverview";
 
 type ReportInformationAsideProps = {
@@ -17,7 +17,7 @@ const ReportInformationAside: FC<ReportInformationAsideProps> = ({ type, parent 
     <Stack gap={2}>
       <ReportOverview parent={parent} />
 
-      <QuickActions type={type} />
+      <ReportQuickActions type={type} />
 
       <HighLevelMetrics />
     </Stack>

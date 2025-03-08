@@ -5,6 +5,17 @@ import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps } from "@/types/connection";
 
 /**
+ * A utility to provide props in a guaranteed order so that they can be provided as a list of
+ * dependencies to hooks.
+ */
+const propsInOrder = (props?: OptionalProps) =>
+  props == null
+    ? []
+    : Object.entries(props)
+        .sort(([key1], [key2]) => (key1 < key2 ? -1 : 1))
+        .map(([, value]) => value);
+
+/**
  * Use a connection to efficiently depend on data in the Redux store.
  *
  * In this hook, an internal subscription to the store is used instead of a useSelector() on the
@@ -47,7 +58,7 @@ export function useConnection<TSelected, TProps extends OptionalProps = undefine
       return subscription;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connection, ...Object.keys(props ?? [])]
+    [connection, ...propsInOrder(props)]
   );
 
   return connected == null ? [false, {}] : [true, connected];

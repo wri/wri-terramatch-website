@@ -6,7 +6,8 @@ export const STATUS_MAP: { [key: string]: string } = {
   "under-review": "Under Review",
   "needs-more-information": "Needs More Information",
   "restoration-in-progress": "Restoration in Progress",
-  "awaiting-approval": "Awaiting Approval"
+  "awaiting-approval": "Awaiting Approval",
+  "no-update": "No Update"
 };
 
 export enum StatusEnum {

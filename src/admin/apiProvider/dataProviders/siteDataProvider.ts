@@ -1,50 +1,36 @@
-import { DataProvider } from "react-admin";
+import { DataProvider, HttpError } from "react-admin";
 
+import { loadFullSite, loadSiteIndex } from "@/connections/Entity";
 import {
   DeleteV2AdminSitesUUIDError,
   fetchDeleteV2AdminSitesUUID,
-  fetchGetV2AdminSites,
   fetchGetV2AdminSitesMulti,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminSitesError,
-  GetV2AdminSitesMultiError,
-  GetV2ENTITYUUIDError
+  GetV2AdminSitesMultiError
 } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-const siteSortableList = ["name", "project_name", "start_date"];
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const siteDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on Site DTOs
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminSites({
-        queryParams: raListParamsToQueryParams(params, siteSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminSitesError);
+    const connection = await loadSiteIndex(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
     }
+
+    return entitiesListResult(connection);
   },
 
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "sites",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: site, fetchFailure } = await loadFullSite({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
     }
+
+    return { data: { ...site, id: site!.uuid } };
   },
 
   // @ts-ignore

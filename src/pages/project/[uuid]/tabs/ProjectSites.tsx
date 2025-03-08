@@ -10,7 +10,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ProjectsUUIDSites } from "@/generated/apiComponents";
+import { useSiteIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
@@ -20,26 +20,14 @@ interface ProjectNurseriesTabProps {
 const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
 
-  const { data: sites, isLoading } = useGetV2ProjectsUUIDSites(
-    {
-      pathParams: { uuid: project.uuid }
-    },
-    {
-      keepPreviousData: true
-    }
-  );
+  const [isLoaded, { entities: sites }] = useSiteIndex({ filter: { projectUuid: project.uuid } as any });
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <LoadingContainer wrapInPaper loading={isLoading}>
-            <If
-              condition={
-                //@ts-ignore
-                sites?.meta?.unfiltered_total === 0
-              }
-            >
+          <LoadingContainer wrapInPaper loading={!isLoaded}>
+            <If condition={sites?.length === 0}>
               <Then>
                 <EmptyState
                   iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
