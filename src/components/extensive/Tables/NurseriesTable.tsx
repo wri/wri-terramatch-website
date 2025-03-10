@@ -36,15 +36,15 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
     filter: { projectUuid: project.uuid },
     ...tableParams
   };
-  const [isLoaded, response] = useNurseryIndex(nurseryIndexQueryParams as EntityIndexConnectionProps);
+  const [isLoaded, nurseryIndex] = useNurseryIndex(nurseryIndexQueryParams as EntityIndexConnectionProps);
 
   useEffect(() => {
-    onFetch?.(response as EntityIndexConnection<NurseryLightDto>);
-  }, [response, onFetch]);
+    onFetch?.(nurseryIndex as EntityIndexConnection<NurseryLightDto>);
+  }, [nurseryIndex, onFetch]);
 
   const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
     onSuccess() {
-      response.refetch();
+      nurseryIndex.refetch();
     }
   });
 
@@ -76,9 +76,11 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
     <ServerSideTable
       meta={{
         last_page:
-          response?.indexTotal && tableParams.pageSize ? Math.ceil(response?.indexTotal / tableParams.pageSize) : 1
+          nurseryIndex?.indexTotal && tableParams.pageSize
+            ? Math.ceil(nurseryIndex?.indexTotal / tableParams.pageSize)
+            : 1
       }}
-      data={response.entities ?? []}
+      data={nurseryIndex.entities ?? []}
       isLoading={!isLoaded}
       onQueryParamChange={param => {
         let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
