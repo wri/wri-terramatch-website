@@ -9,6 +9,8 @@ import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token"
 import {
   DemographicDto,
   EstablishmentsTreesDto,
+  NurseryFullDto,
+  NurseryLightDto,
   ProjectFullDto,
   ProjectLightDto,
   SiteFullDto,
@@ -102,6 +104,7 @@ export const RESOURCES = [
   "passwordResets",
   "verifications",
   "projects",
+  "nurseries",
   "sites",
   "users"
 ] as const;
@@ -125,6 +128,7 @@ type ApiResources = {
   projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
   users: StoreResourceMap<UserDto>;
+  nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];

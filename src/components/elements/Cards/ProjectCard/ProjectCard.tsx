@@ -43,8 +43,8 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
   const { openModal, closeModal } = useModalContext();
   const status = getEntityCombinedStatus(project);
   const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
+  const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
   const [siteCount, setSiteCount] = useState<number | undefined>();
-  const [nurseriesCount, setNurseriesCount] = useState();
 
   const onDeleteProject = () => {
     openModal(
@@ -174,10 +174,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                 <NurseriesTable
                   project={project}
                   hasAddButton={false}
-                  onFetch={data =>
-                    //@ts-expect-error
-                    typeof data.meta?.unfiltered_total === "number" && setNurseriesCount(data.meta?.unfiltered_total)
-                  }
+                  onFetch={data => setNurseriesCount(data?.indexTotal)}
                 />
               )}
             </ExpandedCard>
