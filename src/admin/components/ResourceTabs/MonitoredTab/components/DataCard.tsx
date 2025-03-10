@@ -808,7 +808,6 @@ const DataCard = ({
       )
     }
   };
-
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">

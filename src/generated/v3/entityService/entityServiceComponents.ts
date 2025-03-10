@@ -36,6 +36,7 @@ export type EntityIndexQueryParams = {
   country?: string;
   status?: string;
   updateRequestStatus?: string;
+  projectUuid?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{

@@ -89,3 +89,11 @@ export type ResetPasswordRequest = {
 };
 
 export type ResetPasswordDto = {};
+
+export type VerificationUserResponseDto = {
+  verified: boolean;
+};
+
+export type VerificationUserRequest = {
+  token: string;
+};

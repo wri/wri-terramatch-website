@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { orderBy } from "lodash";
 import { useState } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
@@ -72,14 +73,14 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     }
   });
 
-  const formatNaturalGenerationData = project.assistedNaturalRegenerationList
-    .sort((a: NaturalRegenerationItem, b: NaturalRegenerationItem) => b.treeCount - a.treeCount)
-    .map((item: NaturalRegenerationItem) => {
+  const formatNaturalGenerationData = orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(
+    (item: NaturalRegenerationItem) => {
       return {
         name: item.name,
         treeCount: item.treeCount.toLocaleString()
       };
-    });
+    }
+  );
 
   const isTerrafund = ALL_TF.includes(project.frameworkKey as (typeof ALL_TF)[number]);
   return (

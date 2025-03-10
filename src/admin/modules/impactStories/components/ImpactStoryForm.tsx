@@ -63,7 +63,14 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     handlers.handleDateChange(date);
   }, [handlers, title, date]);
 
+  useEffect(() => {
+    if (organizationUuid) {
+      handlers.handleOrganizationChange(organizationUuid);
+    }
+  }, [handlers, organizationUuid]);
+
   useOnMount(() => hideLoader);
+
   const handlePreviewClick = () => {
     const formValues = getValues();
     const previewData = {
@@ -103,6 +110,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
+
   const handleSave = async (status: "draft" | "published") => {
     const isValid = await trigger();
     if (!isValid) {
@@ -111,6 +119,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     showLoader();
     handlers.handleStatusChange(status);
   };
+
   return (
     <div className="impact-story-form w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
@@ -149,6 +158,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
               label={false}
               placeholder="Select an organization"
               defaultValue={organizationUuid}
+              onChange={(value: any) => setOrganizationUuid(value)}
             />
           </ReferenceInput>
         </StyledReferenceInput>

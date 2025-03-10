@@ -239,7 +239,8 @@ module.exports = {
       monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
       "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
       table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
-      dashboard: "rgba(0, 0, 0, 0.35) 0px 5px 15px"
+      dashboard: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+      top: "0 -4px 6px -1px rgb(0 0 0 / 0.1), 0 -2px 4px -2px rgb(0 0 0 / 0.1)"
     },
     dropShadow: {
       table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px"
