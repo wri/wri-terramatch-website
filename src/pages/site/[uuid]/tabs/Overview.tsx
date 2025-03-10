@@ -35,6 +35,7 @@ import {
   useGetV2SitesSitePolygon
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
 import { FileType, UploadedFile } from "@/types/common";
@@ -45,7 +46,7 @@ import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 import SiteArea from "../components/SiteArea";
 
 interface SiteOverviewTabProps {
-  site: any;
+  site: SiteFullDto;
   refetch?: () => void;
 }
 
@@ -107,8 +108,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   });
   useEffect(() => {
     setSiteData(site);
-    if (site.project?.uuid) {
-      checkIsMonitoringPartner(site.project?.uuid);
+    if (site.projectUuid) {
+      checkIsMonitoringPartner(site.projectUuid);
     }
   }, [checkIsMonitoringPartner, setSiteData, site]);
 
@@ -278,7 +279,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         btnDownload={true}
         btnDownloadProps={{
           onClick: () => {
-            downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
+            downloadSiteGeoJsonPolygons(site?.uuid, site?.name ?? "");
           }
         }}
       />
@@ -336,7 +337,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
-        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name} />}
+        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name ?? ""} />}
         onClose={() => closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION)}
         onConfirm={async data => {
           closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
@@ -443,7 +444,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       className=""
                       onClick={() => {
                         setSelectedPolygonsInCheckbox([]);
-                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name);
+                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name ?? "");
                       }}
                     >
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
@@ -466,7 +467,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                 <div className="w-[46%]">
                   <StepProgressbar
                     color="secondary"
-                    value={valuesForStatus?.(site?.status) ?? 0}
+                    value={valuesForStatus?.(site?.status as string) ?? 0}
                     labels={statusLabels}
                     classNameLabels="min-w-[99px]"
                     className={"w-[98%] pl-[1%]"}

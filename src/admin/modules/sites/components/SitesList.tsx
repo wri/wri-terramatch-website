@@ -29,6 +29,7 @@ import { getCountriesOptions } from "@/constants/options/countries";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -69,18 +70,21 @@ const SiteDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Site Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={({ status }: SiteLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request"
         sortable={false}
         render={(record: any) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
@@ -90,12 +94,12 @@ const SiteDataGrid: FC = () => {
         label="Polygon Submitted"
         choices={optionToChoices(getPolygonsSubmittedTypes())}
       />
-      <TextField source="project.name" label="Project Name" />
+      <TextField source="projectName" label="Project Name" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
         render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ||
           record?.framework_key
         }
         sortable={false}
@@ -144,9 +148,9 @@ export const SitesList: FC = () => {
       <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />,
@@ -158,9 +162,9 @@ export const SitesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       label="Change Request"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />,
