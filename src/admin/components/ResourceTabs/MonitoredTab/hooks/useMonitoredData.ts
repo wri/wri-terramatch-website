@@ -41,6 +41,11 @@ const dataPolygonOverview = [
 
 const DROPDOWN_OPTIONS = [
   {
+    title: "Tree Cover (TTC)",
+    value: "0",
+    slug: "treeCover"
+  },
+  {
     title: "Tree Cover Loss",
     value: "1",
     slug: "treeCoverLoss"
