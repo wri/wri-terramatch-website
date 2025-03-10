@@ -25,14 +25,14 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
     const doesNotHaveNurseries = framework === null || ["ppc", "hbf"].includes(framework);
     if (entityLevel == AuditLogButtonStates.SITE_REPORT) {
       return [
-        { index: 4, name: "Project Report Status" },
-        { index: 5, name: "Site Report Status" }
+        { index: 4, name: "Project Report" },
+        { index: 5, name: "Site Report" }
       ];
     }
     if (entityLevel == AuditLogButtonStates.NURSERY_REPORT) {
       return [
-        { index: 4, name: "Project Report Status" },
-        { index: 6, name: "Nursery Report Status" }
+        { index: 4, name: "Project Report" },
+        { index: 6, name: "Nursery Report" }
       ];
     }
     if (isReport) {
