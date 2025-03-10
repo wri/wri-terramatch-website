@@ -5,10 +5,6 @@ import {
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
-import {
-  sitePolygonsIndexFetchFailed,
-  sitePolygonsIndexIsFetching
-} from "@/generated/v3/researchService/researchServicePredicates";
 import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
@@ -20,9 +16,7 @@ export type SitePolygonConnectionParams = {
 };
 
 export type SitePolygonConnection = {
-  sitePolygons?: SitePolygonDto[] | undefined;
-  sitePolygonsHaveFailed: boolean;
-  sitePolygonsAreLoading: boolean;
+  sitePolygons?: SitePolygonDto[];
 };
 
 const sitePolygonQuery = (entityName: string, entityUuid: string) => {
@@ -38,7 +32,7 @@ const sitePolygonQuery = (entityName: string, entityUuid: string) => {
   return { queryParams };
 };
 const sitePolygonsSelector = (store: ApiDataStore) =>
-  Object.values(store.sitePolygons || {}).map(resource => resource.attributes);
+  Object.values(store.sitePolygons ?? {}).map(resource => resource.attributes);
 
 const sitePolygonsConnection = (params: SitePolygonConnectionParams): Connection<SitePolygonConnection> => ({
   load: ({ sitePolygons }) => {
@@ -47,19 +41,10 @@ const sitePolygonsConnection = (params: SitePolygonConnectionParams): Connection
       sitePolygonsIndex(queryParams);
     }
   },
-  isLoaded: ({ sitePolygons, sitePolygonsHaveFailed }) => sitePolygons !== null || sitePolygonsHaveFailed,
-  selector: createSelector(
-    [
-      sitePolygonsSelector,
-      sitePolygonsIndexIsFetching(sitePolygonQuery(params.entityName, params.entityUuid)),
-      sitePolygonsIndexFetchFailed(sitePolygonQuery(params.entityName, params.entityUuid))
-    ],
-    (sitePolygons, sitePolygonsAreLoading, sitePolygonsFailed) => ({
-      sitePolygons,
-      sitePolygonsAreLoading,
-      sitePolygonsHaveFailed: sitePolygonsFailed !== null
-    })
-  )
+  isLoaded: ({ sitePolygons }) => sitePolygons !== null,
+  selector: createSelector([sitePolygonsSelector], sitePolygons => ({
+    sitePolygons
+  }))
 });
 export const useSitePolygons = (params: SitePolygonConnectionParams) => {
   const { entityName, entityUuid } = params;
