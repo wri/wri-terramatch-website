@@ -35,15 +35,15 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
     filter: { projectUuid: project.uuid },
     ...tableParams
   };
-  const [isLoaded, response] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
+  const [isLoaded, siteIndex] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
 
   useEffect(() => {
-    onFetch?.(response as EntityIndexConnection<SiteLightDto>);
-  }, [response, onFetch]);
+    onFetch?.(siteIndex as EntityIndexConnection<SiteLightDto>);
+  }, [siteIndex, onFetch]);
 
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
-      response.refetch();
+      siteIndex.refetch();
     }
   });
 
@@ -75,9 +75,9 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
     <ServerSideTable
       meta={{
         last_page:
-          response?.indexTotal && tableParams.pageSize ? Math.ceil(response?.indexTotal / tableParams.pageSize) : 1
+          siteIndex?.indexTotal && tableParams.pageSize ? Math.ceil(siteIndex?.indexTotal / tableParams.pageSize) : 1
       }}
-      data={response.entities ?? []}
+      data={siteIndex.entities ?? []}
       isLoading={!isLoaded}
       onQueryParamChange={param => {
         let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
