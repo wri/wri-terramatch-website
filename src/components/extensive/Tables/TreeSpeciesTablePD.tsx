@@ -112,7 +112,7 @@ const TreeSpeciesTablePD = ({
           : "noGoal";
     }
     if (collection === "nursery-seedling") {
-      result = modelName === "project" ? "noGoal" : "treeCount/Goal";
+      result = modelName === "project" || modelName === "nursery-report" ? "noGoal" : "treeCount/Goal";
     }
     if (collection === "seeding") {
       result = "noGoal";
@@ -167,7 +167,7 @@ const TreeSpeciesTablePD = ({
           uuid: row.uuid
         };
       }
-      if (modelName === "site-report") {
+      if (modelName === "site-report" || modelName === "nursery-report") {
         return {
           name: [row.name, speciesTypes],
           treeCount: row.amount,

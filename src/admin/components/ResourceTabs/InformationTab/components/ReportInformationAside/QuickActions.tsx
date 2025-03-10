@@ -10,13 +10,12 @@ type QuickActionsProps = {
   type: EntityName;
 };
 
-const QuickActions: FC<QuickActionsProps> = ({ type }) => {
+const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
 
   const getReportsPath = (view: keyof typeof modules) => {
     if (!record) return;
-
     const queryParams = new URLSearchParams({
       displayedFilters: JSON.stringify({ project_uuid: true }),
       filter: JSON.stringify({ project_uuid: record.project.uuid }),
@@ -49,7 +48,11 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
           <Button
             variant="outlined"
             component={Link}
-            to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
+            to={createPath({
+              resource: modules.project.ResourceName,
+              type: "show",
+              id: record?.project?.uuid
+            })}
             fullWidth
             label="Back To Project"
           />
@@ -86,4 +89,4 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
   );
 };
 
-export default QuickActions;
+export default ReportQuickActions;

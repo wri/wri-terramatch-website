@@ -21,35 +21,35 @@ const HighLevelMetrics: FC = () => {
           </Text>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx}>
-              <NumberField source="self_reported_workday_count" emptyText="0" />
+              <NumberField source="selfReportedWorkdayCount" emptyText="0" />
             </Labeled>
             <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
-              <NumberField source="workday_count" emptyText="0" />
+              <NumberField source="workdayCount" emptyText="0" />
             </Labeled>
             <Labeled label="Workdays Created (Combined - PD View)" sx={inlineLabelSx}>
-              <NumberField source="combined_workday_count" emptyText="0" />
+              <NumberField source="combinedWorkdayCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="trees_planted_count" emptyText="0" />
+            <NumberField source="treesPlantedCount" emptyText="0" />
           </Labeled>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx} className="label-field-aside">
-              <NumberField source="seeds_planted_count" emptyText="0" />
+              <NumberField source="seedsPlantedCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx} className="label-field-aside">
-              <NumberField source="approved_regenerated_trees_count" emptyText="0" />
+              <NumberField source="approvedRegeneratedTreesCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.TF]}>
             <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
-              <NumberField source="hectares_to_restore_goal" emptyText="0" />
+              <NumberField source="hectaresToRestoreGoal" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <Labeled label="Hectares Under Restoration" sx={inlineLabelSx} className="label-field-aside">
-            <NumberField source="total_hectares_restored_sum" emptyText="0" />
+            <NumberField source="totalHectaresRestoredSum" emptyText="0" />
           </Labeled>
         </Stack>
       </Box>

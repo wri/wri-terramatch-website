@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
@@ -9,14 +9,11 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
+import { EntityIndexConnection, EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDSitesResponse,
-  useDeleteV2SitesUUID,
-  useGetV2ProjectsUUIDSites
-} from "@/generated/apiComponents";
-import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
+import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
@@ -25,33 +22,28 @@ import { ModalId } from "../Modal/ModalConst";
 interface SitesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
-  onFetch?: (data: GetV2ProjectsUUIDSitesResponse) => void;
+  onFetch?: (data: EntityIndexConnection<SiteLightDto>) => void;
 }
 
 const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState();
+  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
   const { openModal, closeModal } = useModalContext();
 
-  const {
-    data: sites,
-    isLoading,
-    refetch
-  } = useGetV2ProjectsUUIDSites(
-    {
-      pathParams: { uuid: project.uuid },
-      queryParams: queryParams
-    },
-    {
-      keepPreviousData: true,
-      onSuccess: onFetch
-    }
-  );
+  const siteIndexQueryParams = {
+    filter: { projectUuid: project.uuid },
+    ...tableParams
+  };
+  const [isLoaded, siteIndex] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
+
+  useEffect(() => {
+    onFetch?.(siteIndex as EntityIndexConnection<SiteLightDto>);
+  }, [siteIndex, onFetch]);
 
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
     onSuccess() {
-      refetch();
+      siteIndex.refetch();
     }
   });
 
@@ -81,10 +73,26 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
 
   return (
     <ServerSideTable
-      meta={sites?.meta}
-      data={sites?.data || []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
+      meta={{
+        last_page:
+          siteIndex?.indexTotal && tableParams.pageSize ? Math.ceil(siteIndex?.indexTotal / tableParams.pageSize) : 1
+      }}
+      data={siteIndex.entities ?? []}
+      isLoading={!isLoaded}
+      onQueryParamChange={param => {
+        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
+        if (param?.sort) {
+          const startWithMinus = param?.sort.startsWith("-");
+          sortDirection = startWithMinus ? "DESC" : "ASC";
+          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
+        }
+        setTableParams({
+          pageNumber: param.page,
+          pageSize: param.per_page,
+          sortDirection,
+          sortField
+        } as EntityIndexConnectionProps);
+      }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
@@ -108,7 +116,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           }
         },
         {
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;
@@ -122,11 +130,12 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           }
         },
         {
-          accessorKey: "number_of_trees_planted",
-          header: t("Trees planted")
+          accessorKey: "treesPlantedCount",
+          header: t("Trees planted"),
+          enableSorting: false
         },
         {
-          accessorKey: "created_at",
+          accessorKey: "createdAt",
           header: t("Date created"),
           cell: props => format(props.getValue() as string)
         },

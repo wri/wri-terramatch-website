@@ -171,7 +171,7 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
 
 // TEMPORARY while we transition all entities to v3. When adding a new entity to this connection,
 // please update this array.
-const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects"];
+const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects", "sites"];
 
 // The "light" version of entity connections will return the full DTO if it's what's cached in the store. However,
 // the type of the entity will use the Light DTO. For the "full" version of the entity connection, if the version that's
@@ -198,3 +198,14 @@ export const useLightNursery = connectionHook(lightNurseryConnection);
 const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
+const fullSiteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
+export const loadFullSite = connectionLoader(fullSiteConnection);
+export const useFullSite = connectionHook(fullSiteConnection);
+const lightSiteConnection = createGetEntityConnection<SiteLightDto>("sites", false);
+export const loadLightSite = connectionLoader(lightSiteConnection);
+export const useLightSite = connectionHook(lightSiteConnection);
+
+// For indexes, we only support the light dto
+const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
+export const loadSiteIndex = connectionLoader(indexSiteConnection);
+export const useSiteIndex = connectionHook(indexSiteConnection);
