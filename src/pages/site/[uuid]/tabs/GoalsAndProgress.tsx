@@ -17,13 +17,14 @@ import { SupportedEntity } from "@/connections/EntityAssocation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
 interface GoalsAndProgressTabProps {
-  site: any;
+  site: SiteFullDto;
 }
 
 export const LABEL_LEGEND = [
@@ -48,7 +49,7 @@ const isEmptyArray = (obj: any) => {
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
 
-  const isTerrafund = frameworkIsTerrafund(site.framework_key as Framework);
+  const isTerrafund = frameworkIsTerrafund(site.frameworkKey as Framework);
   const aggregateProps = { entity: "sites" as SupportedEntity, entityUuid: site.uuid };
   const treeCount = usePlantTotalCount({ ...aggregateProps, collection: isTerrafund ? "non-tree" : "seeds" });
   const { speciesCount } = usePlantSpeciesCount({
@@ -82,7 +83,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
 
       <PageRow>
         <PageCard
-          title={t(site.framework_key === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+          title={t(site.frameworkKey === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
@@ -93,14 +94,14 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   {
                     iconName: IconNames.TREE_CIRCLE_PD,
                     label: t(
-                      site.framework_key === Framework.HBF ? "number of SAPLINGS PLANTED:" : "number of TREES PLANTED:"
+                      site.frameworkKey === Framework.HBF ? "number of SAPLINGS PLANTED:" : "number of TREES PLANTED:"
                     ),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: site.trees_planted_count
+                    value: site.treesPlantedCount
                   },
-                  ...(site.framework_key !== Framework.HBF
+                  ...(site.frameworkKey !== Framework.HBF
                     ? [
                         {
                           iconName: IconNames.SURVIVAL_RATE,
@@ -108,7 +109,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value: site.survival_rate_planted ? `${site.survival_rate_planted}%` : "-"
+                          value: site.survivalRatePlanted ? `${site.survivalRatePlanted}%` : "-"
                         }
                       ]
                     : []),
@@ -168,7 +169,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
-              <When condition={site.framework_key === Framework.PPC}>
+              <When condition={site.frameworkKey === Framework.PPC}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -179,7 +180,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14" as TextVariants,
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seeds_planted_count.toLocaleString()
+                      value: site.seedsPlantedCount.toLocaleString()
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -187,7 +188,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.direct_seeding_survival_rate ? `${site.direct_seeding_survival_rate}%` : "-"
+                      value: site.directSeedingSurvivalRate ? `${site.directSeedingSurvivalRate}%` : "-"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -224,7 +225,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   ]}
                 />
               </When>
-              <When condition={site.framework_key === Framework.HBF}>
+              <When condition={site.frameworkKey === Framework.HBF}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -235,7 +236,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seeds_planted_count.toLocaleString()
+                      value: site.seedsPlantedCount.toLocaleString()
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
