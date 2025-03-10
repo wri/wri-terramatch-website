@@ -120,6 +120,7 @@ export type SitePolygonDto = {
    * If this ID points to a deleted site, the tree species and reporting period will be empty.
    */
   siteId: string;
+  projectId: number;
   geometry: Record<string, any>;
   /**
    * @format date-time
