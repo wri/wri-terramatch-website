@@ -1,7 +1,8 @@
-import { sumBy } from "lodash";
+import { orderBy, sumBy } from "lodash";
 import { useMemo } from "react";
 
 import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
+import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index";
 import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
@@ -84,4 +85,86 @@ export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: Aggrega
     }),
     [entity, establishmentTrees?.length, plants?.length, reportCounts]
   );
+};
+
+export type TreeSpeciesTableRowData = {
+  name: [string, string[]];
+  uuid: string; // required by Table, but in this case it's not a real UUID.
+  treeCount?: string | number;
+  treeCountGoal?: [number, number];
+};
+
+type TableDataProps = {
+  entity: SupportedEntity;
+  entityUuid: string;
+  collection?: string;
+  tableType: TableType;
+  plants: PlantData[];
+};
+export const useTableData = ({ entity, entityUuid, collection, tableType, plants }: TableDataProps) => {
+  const [loaded, { reportCounts, establishmentTrees }] = useTreeReportCounts({
+    // If the entity in this component is not a valid TreeReportCountsEntity, the connection will
+    // avoid issuing any API requests and will return undefined for reportCounts
+    entity: entity as TreeReportCountsEntity,
+    uuid: entityUuid,
+    collection
+  });
+
+  return useMemo(() => {
+    if (!loaded) return undefined;
+
+    const reportCountEntries = Object.entries(reportCounts ?? {});
+    const getReportAmount = (name?: string) =>
+      reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
+
+    const entityPlants: TreeSpeciesTableRowData[] = (plants ?? []).map(({ name, taxonId, amount }) => {
+      const speciesTypes = [];
+      if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
+      if (
+        entity !== "projectReports" &&
+        collection !== "seeds" &&
+        establishmentTrees != null &&
+        name != null &&
+        !establishmentTrees.includes(name)
+      ) {
+        speciesTypes.push("new");
+      }
+      const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name ?? "" };
+      if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
+        const reportAmount = getReportAmount(name);
+        return {
+          ...tableRowData,
+          treeCount: reportAmount,
+          goalCount: amount ?? 0,
+          treeCountGoal: [reportAmount, amount ?? 0]
+        };
+      }
+      if (entity.endsWith("Reports")) {
+        return { ...tableRowData, treeCount: amount };
+      }
+      return { ...tableRowData, treeCount: getReportAmount(name) ?? 0 };
+    });
+    const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries
+      .filter(
+        ([reportName]) => (plants ?? []).find(({ name }) => name?.toLowerCase() === reportName?.toLowerCase()) == null
+      )
+      .map(([name, { amount, taxonId }]) => {
+        const speciesTypes = [];
+        if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
+        if (entity !== "projectReports" && collection !== "seeds" && !establishmentTrees?.includes(name)) {
+          speciesTypes.push("new");
+        }
+        const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
+        if (tableType !== "noGoal" && tableType.endsWith("Goal")) {
+          // treeCount included here to make sorting work; it is not displayed directly.
+          return { ...tableRowData, treeCount: amount, goalCount: amount, treeCountGoal: [amount, amount] };
+        }
+        if (entity === "siteReports") {
+          return { ...tableRowData, treeCount: 0 };
+        }
+        return { ...tableRowData, treeCount: amount };
+      });
+
+    return orderBy([...entityPlants, ...reportPlants], ["goalCount", "treeCount"], ["desc", "desc"]);
+  }, [collection, entity, establishmentTrees, loaded, plants, reportCounts, tableType]);
 };

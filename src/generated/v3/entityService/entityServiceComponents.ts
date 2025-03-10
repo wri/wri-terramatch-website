@@ -448,7 +448,7 @@ export type TreeReportCountsFindPathParams = {
   /**
    * Entity type for which to retrieve the associated report count data.
    */
-  entity: "projects" | "projectReports" | "sites" | "nurseries";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for which to retrieve the associated report count data.
    */

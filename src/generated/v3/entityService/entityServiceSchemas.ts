@@ -488,5 +488,5 @@ export type TreeReportCountsDto = {
     [key: string]: {
       [key: string]: PlantingCountDto;
     };
-  };
+  } | null;
 };

@@ -7,7 +7,7 @@ import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../../Icon/Icon";
 
-export type TableType = "treeCountSite" | "treeCountGoal" | "noGoal";
+export type TableType = "treeCountSite" | "treeCountGoal" | "noGoal" | "noCount";
 type ColumnDefinitionProps = { tableType: TableType; headerName: string; secondColumnWidth: string };
 
 export const getTreeSpeciesColumns = (props: ColumnDefinitionProps) => {
@@ -18,6 +18,8 @@ export const getTreeSpeciesColumns = (props: ColumnDefinitionProps) => {
       return columnTreeCountGoal(props);
     case "noGoal":
       return columnNoGoal(props);
+    case "noCount":
+      return columnNoCount(props);
 
     default:
       Log.error("Unknown table type", props);
@@ -144,3 +146,5 @@ const columnNoGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps) 
     }
   }
 ];
+
+const columnNoCount = ({ headerName }: ColumnDefinitionProps) => [rowSpeciesName(headerName)];

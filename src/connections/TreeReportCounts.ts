@@ -9,7 +9,9 @@ import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type TreeReportCountsEntity = (typeof TreeEntityTypes.REPORT_COUNT_ENTITIES)[number];
+export type TreeReportCountsEntity =
+  | (typeof TreeEntityTypes.REPORT_COUNT_ENTITIES)[number]
+  | (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
 
 type TreeReportCountsConnection = {
   reportCounts?: Exclude<TreeReportCountsDto["reportCounts"], null>[string];
@@ -34,14 +36,7 @@ const treeReportCountsLoadFailed = (entity?: TreeReportCountsEntity, uuid?: stri
 const connectionIsLoaded = (
   { reportCounts, reportCountsFailed }: TreeReportCountsConnection,
   { entity, uuid, collection }: TreeReportCountProps
-) =>
-  collection == null ||
-  entity == null ||
-  // Prevents this connection from issuing an API request with an invalid entity type.
-  !TreeEntityTypes.REPORT_COUNT_ENTITIES.includes(entity) ||
-  uuid == null ||
-  reportCounts != null ||
-  reportCountsFailed;
+) => collection == null || entity == null || uuid == null || reportCounts != null || reportCountsFailed;
 
 const treeReportCountsConnection: Connection<TreeReportCountsConnection, TreeReportCountProps> = {
   load: (connection, props) => {
@@ -58,9 +53,9 @@ const treeReportCountsConnection: Connection<TreeReportCountsConnection, TreeRep
       createSelector(
         [treeReportCountsSelector(entity, uuid), treeReportCountsLoadFailed(entity, uuid)],
         (countsDto, reportCountsFailed) => {
-          const loadComplete = countsDto?.attributes?.reportCounts != null;
+          const loadComplete = countsDto?.attributes != null;
           const reportCounts =
-            collection == null || !loadComplete ? undefined : countsDto.attributes.reportCounts[collection] ?? {};
+            collection == null || !loadComplete ? undefined : countsDto.attributes.reportCounts?.[collection] ?? {};
           const establishmentTrees =
             collection == null || !loadComplete ? undefined : countsDto.attributes.establishmentTrees?.[collection];
           return { reportCounts, establishmentTrees, reportCountsFailed };
