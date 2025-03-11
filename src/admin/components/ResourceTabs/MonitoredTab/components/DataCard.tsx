@@ -974,7 +974,9 @@ const DataCard = ({
               <Table
                 columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
                 data={
-                  indicatorSlug === "treeCover" ? processTreeCoverData(sitePolygons ?? []) : polygonsIndicator ?? []
+                  (indicatorSlug === "treeCover"
+                    ? processTreeCoverData(sitePolygons ?? [])
+                    : polygonsIndicator ?? []) as any
                 }
                 variant={VARIANT_TABLE_MONITORED}
                 classNameWrapper="!overflow-visible"
