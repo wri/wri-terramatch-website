@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { createSelector } from "reselect";
 
 import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
@@ -22,6 +21,8 @@ export type SitePolygonConnectionParams = {
 export type SitePolygonIndexConnectionProps = {
   pageSize?: number;
   pageNumber?: number;
+  entityName: string;
+  entityUuid: string;
 };
 export type SitePolygonConnection = {
   sitePolygons?: SitePolygonDto[];
@@ -56,22 +57,22 @@ const sitePolygonCacheKey = (entityName: string, entityUuid: string) => {
   return `${entityName}:${entityUuid}`;
 };
 
-const sitePolygonsConnection = (
-  entityName: string,
-  entityUuid: string
-): Connection<SitePolygonIndexConnection<SitePolygonDto>, SitePolygonIndexConnectionProps> => ({
-  load: connection => {
-    if (!indexIsLoaded(connection)) sitePolygonsIndex(sitePolygonQueryParams(entityName, entityUuid));
+const sitePolygonsConnection: Connection<
+  SitePolygonIndexConnection<SitePolygonDto>,
+  SitePolygonIndexConnectionProps
+> = {
+  load: (connection, props) => {
+    if (!indexIsLoaded(connection)) sitePolygonsIndex(sitePolygonQueryParams(props.entityName, props.entityUuid));
   },
   isLoaded: indexIsLoaded,
   selector: selectorCache(
-    props => sitePolygonCacheKey(entityName, entityUuid),
+    props => sitePolygonCacheKey(props.entityName, props.entityUuid),
     props =>
       createSelector(
         [
-          indexMetaSelector("sitePolygons", sitePolygonQueryParams(entityName, entityUuid)),
-          store => sitePolygonsSelector(store, entityName, entityUuid),
-          sitePolygonsIndexFetchFailed(sitePolygonQueryParams(entityName, entityUuid))
+          indexMetaSelector("sitePolygons", sitePolygonQueryParams(props.entityName, props.entityUuid)),
+          store => sitePolygonsSelector(store, props.entityName, props.entityUuid),
+          sitePolygonsIndexFetchFailed(sitePolygonQueryParams(props.entityName, props.entityUuid))
         ],
         (indexMeta, sitePolygons, fetchFailure) => {
           const refetch = () => ApiSlice.pruneIndex("sitePolygons", "");
@@ -81,15 +82,8 @@ const sitePolygonsConnection = (
         }
       )
   )
-});
-
-export const useSitePolygons = (params: SitePolygonConnectionParams) => {
-  const { entityName, entityUuid } = params;
-
-  const memoizedConnection = useMemo(() => sitePolygonsConnection(entityName, entityUuid), [entityName, entityUuid]);
-
-  return connectionHook(memoizedConnection)();
 };
 
-export const loadSitePolygons = (params: SitePolygonConnectionParams) =>
-  connectionLoader(sitePolygonsConnection(params.entityName, params.entityUuid));
+export const useSitePolygons = connectionHook(sitePolygonsConnection);
+
+export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
