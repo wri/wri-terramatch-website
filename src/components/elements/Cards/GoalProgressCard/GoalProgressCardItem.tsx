@@ -7,6 +7,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { TextVariants } from "@/types/common";
 
+import ToolTip from "../../Tooltip/Tooltip";
+
 export interface GoalProgressCardItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   iconName: IconNames;
   label: string;
@@ -15,6 +17,7 @@ export interface GoalProgressCardItemProps extends DetailedHTMLProps<HTMLAttribu
   classNameLabelValue?: string;
   variantLabel?: TextVariants;
   limit?: number;
+  tooltipContent?: string;
 }
 
 const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
@@ -26,6 +29,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
   classNameLabelValue,
   variantLabel,
   limit,
+  tooltipContent,
   ...rest
 }) => {
   const t = useT();
@@ -36,9 +40,20 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
 
       <Text
         variant={variantLabel ?? "text-16-light"}
-        className={classNames("w-[13vw] whitespace-nowrap", classNameLabel)}
+        className={classNames("flex w-[13vw] items-center whitespace-nowrap", classNameLabel)}
       >
         {label}
+        <When condition={!!tooltipContent}>
+          <ToolTip
+            content={tooltipContent ?? ""}
+            title={label}
+            width={"w-60"}
+            className="whitespace-normal"
+            trigger="click"
+          >
+            <Icon name={IconNames.IC_INFO} className="ml-1 w-6 text-neutral-500" />
+          </ToolTip>
+        </When>
       </Text>
 
       <Text variant="text-14-bold" className={classNames("flex w-full justify-end", classNameLabelValue)}>
