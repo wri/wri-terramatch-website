@@ -47,3 +47,39 @@ export const formatDescriptionIndicator = (
   if (baseText) return `${baseText} ${formattedItems}`;
   return formattedItems;
 };
+
+export const processTreeCoverData = (apiResponse: any[]) => {
+  if (!apiResponse || !Array.isArray(apiResponse)) {
+    return [];
+  }
+  const response = apiResponse
+    .map(sitePolygon => {
+      const treeCoverIndicator = sitePolygon?.indicators?.find(
+        (ind: { indicatorSlug: string }) => ind.indicatorSlug === "treeCover"
+      );
+
+      if (!treeCoverIndicator) return null;
+
+      return {
+        poly_name: sitePolygon.name,
+        size: sitePolygon.calcArea,
+        status: sitePolygon.status,
+        plantstart: formatDate(sitePolygon.plantStart),
+        site_id: sitePolygon.siteId,
+        poly_id: sitePolygon.id,
+        yearOfAnalysis: treeCoverIndicator.yearOfAnalysis,
+        percentCover: treeCoverIndicator.percentCover,
+        projectPhase: treeCoverIndicator.projectPhase,
+        plusMinusPercent: treeCoverIndicator.plusMinusPercent,
+        siteName: sitePolygon.siteName
+      };
+    })
+    .filter(Boolean);
+  return response;
+};
+
+const formatDate = (dateString: string | number | Date) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString();
+};

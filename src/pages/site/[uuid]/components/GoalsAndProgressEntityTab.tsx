@@ -1,10 +1,27 @@
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import React from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ALL_TF, Framework } from "@/context/framework.provider";
+
+import {
+  GOALS,
+  TOOLTIP_HECTARES_RESTORED_PROJECT,
+  TOOLTIP_HECTARES_RESTORED_SITE,
+  TOOLTIP_SAPLING_RESTORED_PROJECT,
+  TOOLTIP_SAPLING_RESTORED_SITE,
+  TOOLTIP_SEEDS_PLANTED_PROJECT,
+  TOOLTIP_SEEDS_PLANTED_SITE,
+  TOOLTIP_TREE_RESTORED_PROJECT,
+  TOOLTIP_TREE_RESTORED_SITE,
+  TOOLTIP_TREES_PLANTED_PROJECT,
+  TOOLTIP_TREES_PLANTED_SITE,
+  TOOLTIP_TREES_REGENERATING_PROJECT,
+  TOOLTIP_TREES_REGENERATING_SITE
+} from "./constants";
 
 interface GoalsAndProgressEntityTabProps {
   entity: any;
@@ -20,6 +37,7 @@ interface ProgressDataCardItem {
   chartData: any;
   graph?: boolean;
   hectares?: boolean;
+  tooltipContent?: string;
 }
 
 type ChartsData = {
@@ -29,6 +47,9 @@ type ChartsData = {
 };
 
 const ProgressDataCard = (values: ProgressDataCardItem) => {
+  const router = useRouter();
+  const tab = router.query.tab as string;
+
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -36,10 +57,12 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
       totalValue={values.cardValues.totalValue}
       hectares={values.hectares}
       graph={values.graph}
-      classNameLabel="text-neutral-650 uppercase mb-3"
+      classNameLabel="text-neutral-650 uppercase mb-3 flex items-center gap-2 justify-center"
       labelVariant="text-14"
       classNameCard="text-center flex flex-col items-center"
       classNameLabelValue="justify-center"
+      tootipContent={values.tooltipContent && tab === GOALS ? values.tooltipContent : undefined}
+      tooltipTitle={values.tooltipContent && tab === GOALS ? values.cardValues.label : undefined}
       chart={<ProgressGoalsDoughnutChart key={"items"} data={values.chartData} />}
     />
   );
@@ -47,6 +70,8 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
+  const router = useRouter();
+  const tab = router.query.tab as string;
   const totalTreesRestoredCount =
     (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
     (entity?.approved_regenerated_trees_count ?? entity?.regeneratedTreesCount) +
@@ -94,7 +119,11 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
   };
   const chartDataHectares = {
     chartData: [
-      { name: t("HECTARES RESTORED"), value: attribMapping[keyAttribute].total_hectares_restored_sum },
+      {
+        name: t("HECTARES RESTORED"),
+        value: attribMapping[keyAttribute].total_hectares_restored_sum,
+        tooltipContent: "Number of hectares within approved polygons for this project"
+      },
       {
         name: t("TOTAL HECTARES RESTORED"),
         value: parseFloat(attribMapping[keyAttribute].total_hectares_restored_goal)
@@ -169,12 +198,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         chartData={chartDataHectares}
         hectares={true}
         graph={true}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"terrafund-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={project}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
       />
     ],
     ppc: [
@@ -184,12 +215,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         chartData={chartDataHectares}
         graph={project}
         hectares={true}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"ppc-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={project}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"ppc-3"}
@@ -210,19 +243,21 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"hbf-3"}
         cardValues={chartDataSaplings.cardValues}
         chartData={chartDataSaplings}
         graph={project}
+        tooltipContent={project && tab === GOALS ? TOOLTIP_SAPLING_RESTORED_PROJECT : TOOLTIP_SAPLING_RESTORED_SITE}
       />
     ]
   };
   const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
   const framework = ALL_TF.includes(frameworkKey as (typeof ALL_TF)[number]) ? "terrafund" : frameworkKey;
   return (
-    <div className="flex w-full flex-wrap items-start justify-between gap-8">
+    <div className="flex w-full flex-wrap items-start justify-between gap-4">
       {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
         <React.Fragment key={index}>{chart}</React.Fragment>
       ))}
@@ -237,21 +272,32 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Trees Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.trees_planted_count ?? entity.treesPlantedCount
+            value: entity.trees_planted_count ?? entity.treesPlantedCount,
+            tooltipContent:
+              tab === GOALS ? (project ? TOOLTIP_TREES_PLANTED_PROJECT : TOOLTIP_TREES_PLANTED_SITE) : undefined,
+            classNameLabelValue: "flex items-center gap-2"
           },
           {
             iconName: IconNames.LEAF_CIRCLE_PD,
             label: t("Seeds Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.seeds_planted_count ?? entity.seedsPlantedCount
+            value: entity.seeds_planted_count ?? entity.seedsPlantedCount,
+            tooltipContent:
+              tab === GOALS ? (project ? TOOLTIP_SEEDS_PLANTED_PROJECT : TOOLTIP_SEEDS_PLANTED_SITE) : undefined
           },
           {
             iconName: IconNames.REFRESH_CIRCLE_PD,
             label: t("Trees Regenerating:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.approved_regenerated_trees_count ?? entity.regeneratedTreesCount
+            value: entity.approved_regenerated_trees_count ?? entity.regeneratedTreesCount,
+            tooltipContent:
+              tab === GOALS
+                ? project
+                  ? TOOLTIP_TREES_REGENERATING_PROJECT
+                  : TOOLTIP_TREES_REGENERATING_SITE
+                : undefined
           }
         ]}
         className="pr-[41px] lg:pr-[150px]"

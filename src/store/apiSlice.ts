@@ -17,6 +17,7 @@ import {
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   LoginDto,
   OrganisationDto,
@@ -106,7 +107,8 @@ export const RESOURCES = [
   "projects",
   "nurseries",
   "sites",
-  "users"
+  "users",
+  "sitePolygons"
 ] as const;
 
 // The store for entities may contain either light DTOs or full DTOs depending on where the
@@ -129,6 +131,7 @@ type ApiResources = {
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
   users: StoreResourceMap<UserDto>;
   nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
+  sitePolygons: StoreResourceMap<SitePolygonDto>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];
