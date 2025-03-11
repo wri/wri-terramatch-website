@@ -61,7 +61,7 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
       labelVariant="text-14"
       classNameCard="text-center flex flex-col items-center"
       classNameLabelValue="justify-center"
-      tootipContent={values.tooltipContent && tab === GOALS ? values.cardValues.label : undefined}
+      tootipContent={values.tooltipContent && tab === GOALS ? values.tooltipContent : undefined}
       tooltipTitle={values.tooltipContent && tab === GOALS ? values.cardValues.label : undefined}
       chart={<ProgressGoalsDoughnutChart key={"items"} data={values.chartData} />}
     />
