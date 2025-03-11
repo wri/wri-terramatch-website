@@ -65,7 +65,7 @@ export type ProjectLightDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * @format date-time
@@ -104,7 +104,7 @@ export type SiteLightDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * The associated project name
@@ -148,7 +148,7 @@ export type ProjectFullDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * @format date-time
@@ -254,7 +254,7 @@ export type SiteFullDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * The associated project name

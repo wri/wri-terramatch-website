@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { filter } from "lodash";
 import { PropsWithChildren, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { createLogger } from "redux-logger";
@@ -30,7 +31,8 @@ export const makeStore = (queryClient?: QueryClient) => {
         // log when it's present.
         const logger = createLogger({
           titleFormatter: (action: any, time: string, took: number) => {
-            const extra = action?.payload?.url == null ? "" : ` [${action.payload.url}]`;
+            const { url, method } = action?.payload ?? {};
+            const extra = url == null ? "" : ` [${filter([method, url]).join(" ")}]`;
             return `action @ ${time} ${action.type} (in ${took.toFixed(2)} ms)${extra}`;
           }
         });

@@ -1,16 +1,18 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { FC } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullProject } from "@/connections/Entity";
+import { useDeleteProject, useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -20,6 +22,7 @@ import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
+import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
@@ -30,7 +33,12 @@ const ButtonStates = {
   POLYGON: 2
 };
 
-const ProjectContent = ({ project, refetch }: { project: ProjectFullDto; refetch: () => void }) => {
+type ProjectContentProps = {
+  project: ProjectFullDto;
+  refetch: () => void;
+  deleteProject: () => void;
+};
+const ProjectContent: FC<ProjectContentProps> = ({ project, refetch, deleteProject }) => {
   const t = useT();
   return (
     <>
@@ -38,7 +46,7 @@ const ProjectContent = ({ project, refetch }: { project: ProjectFullDto; refetch
         <title>{t("Project")}</title>
       </Head>
       <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project?.name ?? "" }]} />
-      <ProjectHeader project={project} />
+      <ProjectHeader {...{ project, deleteProject }} />
       <StatusBar entityName="projects" entity={project} />
       <SecondaryTabs
         tabItems={[
@@ -87,10 +95,23 @@ const ProjectContent = ({ project, refetch }: { project: ProjectFullDto; refetch
 
 const ProjectDetailPage = () => {
   const router = useRouter();
+  const t = useT();
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
 
+  const { openToast } = useToastContext();
   const [isLoaded, { entity: project, refetch }] = useFullProject({ uuid: projectUUID });
+  const deleteProject = useDeleteProject(
+    projectUUID,
+    () => {
+      router.push("/my-projects");
+      openToast(t("The project has been successfully deleted."));
+    },
+    failure => {
+      Log.error("Project delete failed", failure);
+      openToast(t("Something went wrong!"), ToastType.ERROR);
+    }
+  );
 
   return (
     (!isLoaded || project != null) && (
@@ -102,7 +123,7 @@ const ProjectDetailPage = () => {
             </div>
           )}
           <LoadingContainer loading={!isLoaded}>
-            {project && <ProjectContent {...{ project, refetch }} />}
+            {project && <ProjectContent {...{ project, refetch, deleteProject }} />}
           </LoadingContainer>
         </FrameworkProvider>
       </MapAreaProvider>

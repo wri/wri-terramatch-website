@@ -17,7 +17,7 @@ import { downloadFileBlob } from "@/utils/network";
 export const useGetExportEntityHandler = (
   entity: EntityName,
   uuid: string,
-  name?: string,
+  name?: string | null,
   extension: string = "zip"
 ) => {
   const t = useT();
