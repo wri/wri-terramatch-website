@@ -2,7 +2,7 @@ import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/t
 import { QueryClient } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
-import { uniq } from "lodash";
+import { isNumber, isString, uniq } from "lodash";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
 
@@ -35,6 +35,9 @@ export type PendingErrorState = {
   message: string;
   error?: string;
 };
+
+export const isPendingErrorState = (error: unknown): error is PendingErrorState =>
+  error != null && isNumber((error as PendingErrorState).statusCode) && isString((error as PendingErrorState).message);
 
 export type Pending = true | PendingErrorState;
 

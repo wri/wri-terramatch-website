@@ -1,14 +1,9 @@
-import { DataProvider, HttpError } from "react-admin";
+import { DataProvider } from "react-admin";
 
-import { loadFullProject, loadProjectIndex } from "@/connections/Entity";
-import {
-  DeleteV2AdminProjectsUUIDError,
-  fetchDeleteV2AdminProjectsUUID,
-  fetchGetV2AdminProjectsMulti,
-  GetV2AdminProjectsMultiError
-} from "@/generated/apiComponents";
+import { deleteProject, loadFullProject, loadProjectIndex } from "@/connections/Entity";
+import { fetchGetV2AdminProjectsMulti, GetV2AdminProjectsMultiError } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
@@ -17,7 +12,7 @@ export const projectDataProvider: DataProvider = {
   async getList(_, params) {
     const connection = await loadProjectIndex(raConnectionProps(params));
     if (connection.fetchFailure != null) {
-      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
+      throw v3ErrorForRA("Project index fetch failed", connection.fetchFailure);
     }
 
     return entitiesListResult(connection);
@@ -27,7 +22,7 @@ export const projectDataProvider: DataProvider = {
   async getOne(_, params) {
     const { entity: project, fetchFailure } = await loadFullProject({ uuid: params.id });
     if (fetchFailure != null) {
-      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
+      throw v3ErrorForRA("Project get fetch failed", fetchFailure);
     }
 
     return { data: { ...project, id: project!.uuid } };
@@ -54,29 +49,26 @@ export const projectDataProvider: DataProvider = {
     }
   },
 
-  // @ts-ignore
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminProjectsUUID({
-        pathParams: { uuid: params.id as string }
-      });
+      await deleteProject(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminProjectsUUIDError);
+      return v3ErrorForRA("Project delete failed", err);
     }
   },
 
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminProjectsUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteProject(id as string);
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminProjectsUUIDError);
+      return v3ErrorForRA("Project delete failed", err);
     }
   }
 };
