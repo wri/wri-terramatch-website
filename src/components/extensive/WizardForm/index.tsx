@@ -103,7 +103,7 @@ function WizardForm(props: WizardFormProps) {
         //Disable auto step progress if disableAutoProgress was passed
         setSelectedStepIndex(n => n + 1);
       }
-      props.onChange?.(formHook.getValues());
+      props.onChange?.(formHook.getValues(), true);
       props.onStepChange?.(data, selectedStep);
       formHook.clearErrors();
     } else {
