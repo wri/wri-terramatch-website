@@ -38,11 +38,18 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
   }, [collection, entity, framework, fromProps]);
 };
 
-export const useTreeTableColumns = (tableType: TableType, headerName: string, secondColumnWidth: string) =>
-  useMemo(
-    () => getTreeSpeciesColumns({ tableType, headerName: useT()(headerName ?? "Tree Species"), secondColumnWidth }),
-    [tableType, headerName, secondColumnWidth]
+export const useTreeTableColumns = (tableType: TableType, headerName: string, secondColumnWidth: string) => {
+  const t = useT();
+  return useMemo(
+    () =>
+      getTreeSpeciesColumns({
+        tableType,
+        headerName: t(headerName ?? "Tree Species"),
+        secondColumnWidth
+      }),
+    [tableType, t, headerName, secondColumnWidth]
   );
+};
 
 type AggregateTreeHookProps = {
   entity: SupportedEntity;
