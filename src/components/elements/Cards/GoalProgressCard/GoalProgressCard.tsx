@@ -3,10 +3,12 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { withFrameworkShow } from "@/context/framework.provider";
 import { TextVariants } from "@/types/common";
 
 import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
+import ToolTip from "../../Tooltip/Tooltip";
 import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressCardItem";
 
 export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -25,6 +27,8 @@ export interface GoalProgressCardProps extends DetailedHTMLProps<HTMLAttributes<
   chart?: JSX.Element;
   hectares?: boolean;
   graph?: boolean;
+  tooltipTitle?: string;
+  tootipContent?: string;
 }
 
 const GoalProgressCard: FC<GoalProgressCardProps> = ({
@@ -44,6 +48,8 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   chart,
   hectares = false,
   graph = true,
+  tooltipTitle,
+  tootipContent,
   ...rest
 }) => {
   const value = _val ?? 0;
@@ -58,6 +64,11 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
         <div className={classNames("mr-6 w-full", classNameCard)}>
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
+            <When condition={!!tooltipTitle || !!tootipContent}>
+              <ToolTip title={tooltipTitle} content={tootipContent || ""} width="w-60" trigger="click">
+                <Icon name={IconNames.IC_INFO} className="ml-1 text-neutral-500" />
+              </ToolTip>
+            </When>
           </Text>
           {graph ? <div className="flex w-[calc(33.33%-16px)] min-w-[200px] items-center">{chart}</div> : null}
           <Text variant="text-24-bold" className={classNames("flex w-full items-baseline", classNameLabelValue)}>

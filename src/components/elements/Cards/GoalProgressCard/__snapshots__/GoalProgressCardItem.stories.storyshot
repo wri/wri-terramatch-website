@@ -13,7 +13,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] 
     }
   />
   <p
-    className="w-[13vw] whitespace-nowrap text-16-light"
+    className="flex w-[13vw] items-center whitespace-nowrap text-16-light"
     data-testid="txt"
   >
     Trash Removed 

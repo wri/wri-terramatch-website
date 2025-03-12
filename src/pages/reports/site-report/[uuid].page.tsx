@@ -46,7 +46,6 @@ const SiteReportDetailPage = () => {
     pathParams: { uuid: siteReportUUID, entity: "site-reports" }
   });
   const siteReport = (data?.data ?? {}) as any;
-
   const { data: site } = useGetV2ENTITYUUID(
     {
       pathParams: { uuid: siteReport?.site?.uuid, entity: "sites" }
@@ -114,10 +113,10 @@ const SiteReportDetailPage = () => {
               <PageRow>
                 <PageColumn>
                   <EntityMapAndGalleryCard
-                    modelName="site-reports"
-                    modelUUID={siteReport.uuid}
+                    modelName="sites"
+                    modelUUID={siteReport?.site?.uuid}
                     modelTitle={t("Site Report")}
-                    entityData={site}
+                    entityData={site?.data}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
                     )}
