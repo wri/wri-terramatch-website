@@ -73,7 +73,8 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="text-16-light"
           data-testid="txt"
         >
-          of 
+          of
+           
           732
            
         </p>
@@ -201,7 +202,8 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
           className="text-16-light"
           data-testid="txt"
         >
-          of 
+          of
+           
           150
            
         </p>

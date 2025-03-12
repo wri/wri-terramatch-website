@@ -12,8 +12,11 @@ import {
   EstablishmentsTreesDto,
   ProjectFullDto,
   ProjectLightDto,
+  SeedingDto,
   SiteFullDto,
-  SiteLightDto
+  SiteLightDto,
+  TreeReportCountsDto,
+  TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -108,7 +111,10 @@ export const RESOURCES = [
   "passwordResets",
   "verifications",
   "projects",
+  "seedings",
   "sites",
+  "treeReportCounts",
+  "treeSpecies",
   "users",
   "sitePolygons"
 ] as const;
@@ -130,7 +136,10 @@ type ApiResources = {
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   verifications: StoreResourceMap<VerificationUserResponseDto>;
   projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
+  seedings: StoreResourceMap<SeedingDto>;
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
   sitePolygons: StoreResourceMap<SitePolygonDto>;
 };

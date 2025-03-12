@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React from "react";
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from "recharts";
 
@@ -20,6 +21,7 @@ const percentage = (current: number, total: number) => {
 };
 
 const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({ data }) => {
+  const t = useT();
   const { chartData } = data as any;
 
   const currentValue = chartData[0]?.value || 0;
@@ -70,7 +72,7 @@ const ProgressGoalsDoughnutChart: React.FC<ProgressGoalsDoughnutChartProps> = ({
                         {percentage(currentValue, totalValue)}%
                       </tspan>
                       <tspan x={cx} dy="16" className="text-12-light !text-darkCustom">
-                        complete
+                        {t("complete")}
                       </tspan>
                     </text>
                   );

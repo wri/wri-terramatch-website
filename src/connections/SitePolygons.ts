@@ -29,7 +29,7 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
   return {
     queryParams: {
-      "page[number]": props.pageNumber ?? 0,
+      "page[number]": props.pageNumber ?? 1,
       "page[size]": props.pageSize ?? 10,
       ...(queryKey ? { [queryKey]: props.entityUuid } : {})
     }

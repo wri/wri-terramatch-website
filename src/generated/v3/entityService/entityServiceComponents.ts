@@ -286,7 +286,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
    */
-  entity: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for association
    */
@@ -294,7 +294,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics";
+  association: "demographics" | "seedings" | "treeSpecies";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -326,33 +326,69 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type EntityAssociationIndexResponse = {
-  meta?: {
-    /**
-     * @example demographics
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DemographicDto;
-  };
-};
-
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<
-    EntityAssociationIndexResponse,
+    | {
+        meta?: {
+          /**
+           * @example demographics
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example demographics
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DemographicDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example seedings
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example seedings
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SeedingDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example treeSpecies
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example treeSpecies
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.TreeSpeciesDto;
+        };
+      },
     EntityAssociationIndexError,
     undefined,
     {},
@@ -404,7 +440,7 @@ export type EstablishmentTreesFindPathParams = {
   /**
    * Entity type for which to retrieve the establishment tree data.
    */
-  entity: "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -471,8 +507,79 @@ export const establishmentTreesFind = (variables: EstablishmentTreesFindVariable
     EstablishmentTreesFindPathParams
   >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type TreeReportCountsFindPathParams = {
+  /**
+   * Entity type for which to retrieve the associated report count data.
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * Entity UUID for which to retrieve the associated report count data.
+   */
+  uuid: string;
+};
+
+export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeReportCountsFindResponse = {
+  meta?: {
+    /**
+     * @example treeReportCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeReportCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.TreeReportCountsDto;
+  };
+};
+
+export type TreeReportCountsFindVariables = {
+  pathParams: TreeReportCountsFindPathParams;
+};
+
+export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    TreeReportCountsFindResponse,
+    TreeReportCountsFindError,
+    undefined,
+    {},
+    {},
+    TreeReportCountsFindPathParams
+  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
+
 export const operationsByTag = {
   entities: { entityIndex, entityGet, entityDelete },
   entityAssociations: { entityAssociationIndex },
-  trees: { treeScientificNamesSearch, establishmentTreesFind }
+  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };
