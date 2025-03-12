@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -8,20 +9,24 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { deleteProject } from "@/connections/Entity";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
+import Log from "@/utils/log";
 
 interface ProjectHeaderProps {
   project: ProjectFullDto;
-  deleteProject: () => void;
 }
 
-const ProjectHeader = ({ project, deleteProject }: ProjectHeaderProps) => {
+const ProjectHeader = ({ project }: ProjectHeaderProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const { openToast } = useToastContext();
+  const router = useRouter();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const { handleEdit } = useGetEditEntityHandler({
@@ -42,9 +47,16 @@ const ProjectHeader = ({ project, deleteProject }: ProjectHeaderProps) => {
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            deleteProject();
+          onClick: async () => {
             closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
+            try {
+              await deleteProject(project.uuid);
+              router.push("/my-projects");
+              openToast(t("The project has been successfully deleted."));
+            } catch (failure) {
+              Log.error("Project delete failed", failure);
+              openToast(t("Something went wrong"), ToastType.ERROR);
+            }
           }
         }}
         secondaryButtonProps={{

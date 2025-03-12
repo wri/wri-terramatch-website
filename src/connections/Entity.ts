@@ -19,11 +19,10 @@ import {
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableQuery } from "@/generated/v3/utils";
-import { useConnection } from "@/hooks/useConnection";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
+import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -36,12 +35,6 @@ type EntityConnection<T extends EntityDtoType> = {
   entityIsDeleted: boolean;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
-};
-
-type EntityDeleteConnection = {
-  deleteEntity: () => void;
-  entityIsDeleted: boolean;
-  deleteFailure: PendingErrorState | null;
 };
 
 type EntityConnectionProps = {
@@ -73,9 +66,6 @@ const entitySelector =
   <T extends EntityDtoType>(entityName: SupportedEntity) =>
   (store: ApiDataStore) =>
     store[entityName] as StoreResourceMap<T>;
-
-const entitiesDeletedSelector = (entityName: SupportedEntity) => (store: ApiDataStore) =>
-  store.meta.deleted[entityName];
 
 const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
@@ -123,7 +113,7 @@ const createGetEntityConnection = <T extends EntityDtoType>(
       createSelector(
         [
           entitySelector(entityName),
-          entitiesDeletedSelector(entityName),
+          resourcesDeletedSelector(entityName),
           entityGetFetchFailed(specificEntityParams(entityName, uuid))
         ],
         (entities, deleted, failure) => ({
@@ -133,23 +123,6 @@ const createGetEntityConnection = <T extends EntityDtoType>(
           refetch: () => {
             if (uuid != null) ApiSlice.pruneCache(entityName, [uuid]);
           }
-        })
-      )
-  )
-});
-
-const createDeleteEntityConnection = (
-  entityName: SupportedEntity
-): Connection<EntityDeleteConnection, EntityConnectionProps> => ({
-  selector: selectorCache(
-    ({ uuid }) => uuid,
-    ({ uuid }) =>
-      createSelector(
-        [entitiesDeletedSelector(entityName), entityDeleteFetchFailed(specificEntityParams(entityName, uuid))],
-        (deleted, deleteFailure) => ({
-          deleteEntity: () => (uuid == null ? null : entityDelete(specificEntityParams(entityName, uuid))),
-          entityIsDeleted: uuid != null && deleted.includes(uuid),
-          deleteFailure
         })
       )
   )
@@ -209,20 +182,6 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
   }
 };
 
-const deletionHook =
-  (connection: Connection<EntityDeleteConnection, EntityConnectionProps>) =>
-  (uuid: string, onDeleteSucceeded: () => void, onDeleteFailed: (failure: PendingErrorState) => void) => {
-    const [, { deleteEntity, entityIsDeleted, deleteFailure }] = useConnection(connection, { uuid });
-    useValueChanged(deleteFailure, () => {
-      if (deleteFailure != null) onDeleteFailed(deleteFailure);
-    });
-    useValueChanged(entityIsDeleted, () => {
-      if (entityIsDeleted) onDeleteSucceeded();
-    });
-
-    return deleteEntity;
-  };
-
 // TEMPORARY while we transition all entities to v3. When adding a new entity to this connection,
 // please update this array.
 const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects", "sites"];
@@ -236,8 +195,11 @@ export const useFullProject = connectionHook(fullProjectConnection);
 const lightProjectConnection = createGetEntityConnection<ProjectLightDto>("projects", false);
 export const loadLightProject = connectionLoader(lightProjectConnection);
 export const useLightProject = connectionHook(lightProjectConnection);
-const deleteProjectConnection = createDeleteEntityConnection("projects");
-export const useDeleteProject = deletionHook(deleteProjectConnection);
+export const deleteProject = connectedResourceDeleter(
+  "projects",
+  uuid => entityDeleteFetchFailed(specificEntityParams("projects", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
+);
 
 // For indexes, we only support the light dto
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
