@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { When } from "react-if";
@@ -52,6 +53,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
   tootipContent,
   ...rest
 }) => {
+  const t = useT();
   const value = _val ?? 0;
 
   // Calculates percentage and clamps between 0 and 100
@@ -75,7 +77,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
             {value?.toLocaleString()}&nbsp;
             <When condition={!!limit || !!totalValue}>
               <Text variant="text-16-light">
-                of {limit?.toLocaleString() ?? totalValue?.toLocaleString()} {hectares ? "ha" : null}
+                {t("of")} {limit?.toLocaleString() ?? totalValue?.toLocaleString()} {hectares ? t("ha") : null}
               </Text>
             </When>
             <When condition={!!labelValue}>

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 
 import LinearProgressBar from "@/components/elements/ProgressBar/LinearProgressBar/LinearProgressBar";
@@ -63,13 +64,14 @@ const TreeSpeciesTablePD = ({
   setTotalNonTreeSpecies,
   setTotalSpeciesGoal,
   collection,
-  headerName = "species Name",
+  headerName,
   secondColumnWidth = "",
   typeTable,
   visibleRows = 5,
   galleryType,
   data
 }: TreeSpeciesTablePDProps) => {
+  const t = useT();
   const queryParams: any = {};
 
   if (collection != null) {
@@ -212,7 +214,7 @@ const TreeSpeciesTablePD = ({
 
   const rowSpeciesName = {
     accessorKey: "name",
-    header: headerName,
+    header: headerName ?? t("Species Name"),
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -265,7 +267,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCount",
-      header: "Tree Count",
+      header: t("Tree Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -279,7 +281,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "seedCount",
-      header: "SEED Count",
+      header: t("SEED Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -293,7 +295,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "nonTreeCount",
-      header: "Non Tree Count",
+      header: t("Non Tree Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -306,12 +308,12 @@ const TreeSpeciesTablePD = ({
   const columnTreeCountSite = [
     {
       accessorKey: "name",
-      header: "Site Name",
+      header: t("Site Name"),
       enableSorting: false
     },
     {
       accessorKey: "treeCount",
-      header: "Tree Count",
+      header: t("Tree Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -325,7 +327,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCountGoal",
-      header: "Tree Count / goal",
+      header: t("Tree Count / goal"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -356,7 +358,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "seedCountGoal",
-      header: "Seed Count / goal",
+      header: t("Seed Count / goal"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -382,7 +384,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "speciesCountGoal",
-      header: "SPECIES Count / goal",
+      header: t("SPECIES Count / goal"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -410,7 +412,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCount",
-      header: "saplings CounT",
+      header: t("saplings Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
@@ -424,7 +426,7 @@ const TreeSpeciesTablePD = ({
     rowSpeciesName,
     {
       accessorKey: "treeCount",
-      header: "Count",
+      header: t("Count"),
       enableSorting: false,
       meta: { width: secondColumnWidth },
       cell: (props: any) => {
