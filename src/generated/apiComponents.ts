@@ -15918,37 +15918,6 @@ export const useGetV2AdminProjectPitches = <TData = GetV2AdminProjectPitchesResp
   );
 };
 
-export type DeleteV2ProjectsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2ProjectsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2ProjectsUUIDVariables = {
-  pathParams: DeleteV2ProjectsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2ProjectsUUID = (variables: DeleteV2ProjectsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2ProjectsUUIDError, undefined, {}, {}, DeleteV2ProjectsUUIDPathParams>({
-    url: "/v2/projects/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2ProjectsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2ProjectsUUIDError, DeleteV2ProjectsUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2ProjectsUUIDError, DeleteV2ProjectsUUIDVariables>(
-    (variables: DeleteV2ProjectsUUIDVariables) => fetchDeleteV2ProjectsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2ProjectsUUIDNurseriesPathParams = {
   uuid: string;
 };
