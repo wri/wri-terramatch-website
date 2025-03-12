@@ -37,7 +37,7 @@ import {
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
-import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
+import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
 import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 import Log from "@/utils/log";
@@ -390,7 +390,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     );
   };
 
-  const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.SITE];
+  const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.SITE);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>

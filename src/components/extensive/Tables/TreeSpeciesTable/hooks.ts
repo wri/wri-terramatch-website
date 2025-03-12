@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { orderBy, sumBy } from "lodash";
 import { useMemo } from "react";
 
@@ -39,7 +40,7 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
 
 export const useTreeTableColumns = (tableType: TableType, headerName: string, secondColumnWidth: string) =>
   useMemo(
-    () => getTreeSpeciesColumns({ tableType, headerName, secondColumnWidth }),
+    () => getTreeSpeciesColumns({ tableType, headerName: useT()(headerName ?? "Tree Species"), secondColumnWidth }),
     [tableType, headerName, secondColumnWidth]
   );
 

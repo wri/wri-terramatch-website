@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { orderBy } from "lodash";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -27,28 +27,6 @@ import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 interface GoalsAndProgressProps {
   project: ProjectFullDto;
 }
-
-export const LABEL_LEGEND = [
-  {
-    label: { key: "Trees", render: "Trees" },
-    color: "bg-primary"
-  },
-  {
-    label: { key: "Seeds", render: "Seeds" },
-    color: "bg-blueCustom-900"
-  },
-  {
-    label: { key: "Regenerating", render: "Regenerating" },
-    color: "bg-secondary-600"
-  }
-];
-
-const getProgressData = (totalValue: number, progressValue: number) => {
-  return [
-    { name: "Total", value: totalValue, color: "#13487A" },
-    { name: "Progress", value: progressValue, color: "#7BBD31" }
-  ];
-};
 
 const isEmptyArray = (obj: any) => {
   return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
@@ -89,6 +67,32 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         treeCount: treeCount.toLocaleString()
       })),
     [project.assistedNaturalRegenerationList]
+  );
+
+  const LABEL_LEGEND = useMemo(
+    () => [
+      {
+        label: { key: "Trees", render: t("Trees") },
+        color: "bg-primary"
+      },
+      {
+        label: { key: "Seeds", render: t("Seeds") },
+        color: "bg-blueCustom-900"
+      },
+      {
+        label: { key: "Regenerating", render: t("Regenerating") },
+        color: "bg-secondary-600"
+      }
+    ],
+    [t]
+  );
+
+  const getProgressData = useCallback(
+    (totalValue: number, progressValue: number) => [
+      { name: t("Total"), value: totalValue, color: "#13487A" },
+      { name: t("Progress"), value: progressValue, color: "#7BBD31" }
+    ],
+    [t]
   );
 
   return (
@@ -141,7 +145,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <ContextCondition frameworksHide={[Framework.PPC]}>
                 <>
                   <Text variant="text-14" className="uppercase text-neutral-650">
-                    {t(isTerrafund ? "Number of Trees Planted:" : "Number of SAPLINGS Planted:")}
+                    {isTerrafund ? t("Number of Trees Planted:") : t("Number of SAPLINGS Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
                     <div className="relative h-9 w-[230px]">
@@ -243,7 +247,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
       <PageRow>
         <PageColumn>
-          <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")} className="h-full">
+          <PageCard
+            title={isTerrafund ? t("Non-Tree Planting Progress") : t("Seed Planting Progress")}
+            className="h-full"
+          >
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
                 <GoalProgressCard
