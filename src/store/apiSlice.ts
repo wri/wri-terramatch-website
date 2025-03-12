@@ -110,7 +110,6 @@ export const RESOURCES = [
   "sites",
   "treeReportCounts",
   "treeSpecies",
-  "users"
   "users",
   "sitePolygons"
 ] as const;
