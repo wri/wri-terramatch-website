@@ -73,7 +73,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <PageCard title={t("Direct seeding")}>
-              <SeedingsTable modelName="site" modelUUID={site.uuid} type="weight" />
+              <SeedingsTable entity="sites" entityUuid={site.uuid} />
             </PageCard>
             <PageCard title={t("Invasives")}>
               <InvasiveTable modelName="site" modelUUID={site.uuid} collection="invasive" />
