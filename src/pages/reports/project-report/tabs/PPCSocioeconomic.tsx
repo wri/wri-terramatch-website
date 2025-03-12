@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 
 import TextField from "@/components/elements/Field/TextField";
 import Text from "@/components/elements/Text/Text";
@@ -33,29 +33,37 @@ type DemographicalTypeConfig = {
   otherDescriptionProp?: string;
 };
 
-const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in CollectionType]: DemographicalTypeConfig } = {
-  workdays: {
-    demographicType: "workdays",
-    collections: DemographicCollections.WORKDAYS_PROJECT_PPC,
-    titlePrefix: "Project Workdays",
-    otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
-    otherTitle: "Other Activities Description",
-    otherDescriptionProp: "paid_other_activity_description"
-  },
-  restorationPartners: {
-    demographicType: "restorationPartners",
-    collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT,
-    titlePrefix: "Project Restoration Partners",
-    otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
-    otherTitle: "Other Restoration Partners Description",
-    otherDescriptionProp: "other_restoration_partners_description"
-  }
+const useGetDemographicTypeConfig = (type: CollectionType): DemographicalTypeConfig => {
+  const t = useT();
+
+  const DEMOGRAPHICAL_TYPE_CONFIGS: { [k in CollectionType]: DemographicalTypeConfig } = useMemo(
+    () => ({
+      workdays: {
+        demographicType: "workdays",
+        collections: DemographicCollections.WORKDAYS_PROJECT_PPC,
+        titlePrefix: t("Project Workdays"),
+        otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
+        otherTitle: t("Other Activities Description"),
+        otherDescriptionProp: "paid_other_activity_description"
+      },
+      restorationPartners: {
+        demographicType: "restorationPartners",
+        collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT,
+        titlePrefix: t("Project Restoration Partners"),
+        otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
+        otherTitle: t("Other Restoration Partners Description"),
+        otherDescriptionProp: "other_restoration_partners_description"
+      }
+    }),
+    [t]
+  );
+
+  return DEMOGRAPHICAL_TYPE_CONFIGS[type];
 };
 
 const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
-  const t = useT();
   const { demographicType, collections, titlePrefix, otherCollection, otherTitle, otherDescriptionProp } =
-    DEMOGRAPHICAL_TYPE_CONFIGS[type];
+    useGetDemographicTypeConfig(type);
 
   const demographicsTotal = useCollectionsTotal({
     entity: "project-reports",
@@ -77,7 +85,7 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
       {collections.map(collection => (
         <Fragment key={collection}>
           {otherDescriptionProp != null && collection === otherCollection ? (
-            <TextField label={t(otherTitle)} value={report[otherDescriptionProp]} />
+            <TextField label={otherTitle!} value={report[otherDescriptionProp]} />
           ) : null}
           <DemographicsDisplay
             entity="project-reports"

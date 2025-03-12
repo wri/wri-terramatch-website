@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -17,29 +18,31 @@ export interface StatusProps {
 }
 
 const Status = (props: StatusProps) => {
+  const t = useT();
+
   const { className, status, textVariant = "text-12-semibold", variant = "default" } = props;
 
   const convertStatusToReadableStatus = (status: string): string => {
     const statusMap: { [key: string]: string } = {
-      approved: "Approved",
-      submitted: "Submitted",
-      draft: "Draft",
-      started: "Started",
-      "under-review": "Under Review",
-      "needs-more-information": "Needs More Information",
-      "restoration-in-progress": "Restoration in Progress",
-      "awaiting-approval": "Awaiting Approval"
+      approved: t("Approved"),
+      submitted: t("Submitted"),
+      draft: t("Draft"),
+      started: t("Started"),
+      "under-review": t("Under Review"),
+      "needs-more-information": t("Needs More Information"),
+      "restoration-in-progress": t("Restoration in Progress"),
+      "awaiting-approval": t("Awaiting Approval")
     };
 
     const statusMapSmall: { [key: string]: string } = {
-      approved: "Approved",
-      submitted: "Submitted",
-      draft: "Draft",
-      started: "Started",
-      "under-review": "Under Review",
-      "needs-more-information": "Needs Info",
-      "restoration-in-progress": "Restoration in Progress",
-      "awaiting-approval": "Awaiting Approval"
+      approved: t("Approved"),
+      submitted: t("Submitted"),
+      draft: t("Draft"),
+      started: t("Started"),
+      "under-review": t("Under Review"),
+      "needs-more-information": t("Needs Info"),
+      "restoration-in-progress": t("Restoration in Progress"),
+      "awaiting-approval": t("Awaiting Approval")
     };
 
     return variant == "small" ? statusMapSmall[status] ?? "" : statusMap[status] ?? "";
