@@ -1,14 +1,31 @@
-import { BaseModelNames, EntityName, ReportsModelNames, SingularEntityName } from "@/types/common";
+import { camelCase } from "lodash";
 
-export const singularEntityNameToPlural = (singular: SingularEntityName) => {
+import {
+  BaseModelNames,
+  Entity,
+  EntityName,
+  isSingularEntityName,
+  ReportsModelNames,
+  SingularEntityName
+} from "@/types/common";
+
+export const singularEntityNameToPlural = (singular: SingularEntityName): EntityName => {
   if (singular === "nursery") return "nurseries";
   else return `${singular}s` as EntityName;
 };
 
-export const pluralEntityNameToSingular = (plural: EntityName) => {
+export const pluralEntityNameToSingular = (plural: EntityName): SingularEntityName => {
   if (plural === "nurseries") return "nursery";
   if (plural === "project-pitches") return "project-pitch";
   else return plural.substring(0, plural.length - 1) as SingularEntityName;
+};
+
+export const v3Entity = (entity?: Entity) => {
+  if (entity == null) return undefined;
+  const name = isSingularEntityName(entity.entityName)
+    ? singularEntityNameToPlural(entity.entityName)
+    : entity.entityName;
+  return camelCase(name);
 };
 
 export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, singular?: boolean) => {

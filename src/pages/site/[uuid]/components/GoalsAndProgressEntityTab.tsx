@@ -5,7 +5,7 @@ import React from "react";
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { Framework, isTerrafund } from "@/context/framework.provider";
 
 import {
   GOALS,
@@ -255,7 +255,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     ]
   };
   const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
-  const framework = ALL_TF.includes(frameworkKey as (typeof ALL_TF)[number]) ? "terrafund" : frameworkKey;
+  const framework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
       {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
