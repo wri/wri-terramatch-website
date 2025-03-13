@@ -59,3 +59,14 @@ export class DemographicCollections {
   public static readonly BENEFICIARIES_PROJECT_ALL = ["all"] as const;
   public static readonly BENEFICIARIES_PROJECT_TRAINING = ["training"] as const;
 }
+
+export class TreeEntityTypes {
+  public static readonly ESTABLISHMENT_ENTITIES = [
+    "sites",
+    "nurseries",
+    "projectReports",
+    "siteReports",
+    "nurseryReports"
+  ] as const;
+  public static readonly REPORT_COUNT_ENTITIES = ["projects", "projectReports", "sites", "nurseries"] as const;
+}

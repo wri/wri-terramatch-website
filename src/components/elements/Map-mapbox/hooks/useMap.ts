@@ -11,7 +11,7 @@ import type { ControlType } from "../Map.d";
 import { MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
-const INITIAL_ZOOM = 2.0;
+const INITIAL_ZOOM = 2.4;
 
 export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { record } = useShowContext();
@@ -46,7 +46,8 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       style: isDashboard ? MapStyle.Street : MapStyle.Satellite,
       zoom: zoom,
       minZoom: 2.0,
-      accessToken: mapboxToken
+      accessToken: mapboxToken,
+      center: [21.496, 5.456]
     });
 
     draw.current = new MapboxDraw({
