@@ -11,10 +11,14 @@ import {
   EstablishmentsTreesDto,
   ProjectFullDto,
   ProjectLightDto,
+  SeedingDto,
   SiteFullDto,
-  SiteLightDto
+  SiteLightDto,
+  TreeReportCountsDto,
+  TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   LoginDto,
   OrganisationDto,
@@ -102,8 +106,12 @@ export const RESOURCES = [
   "passwordResets",
   "verifications",
   "projects",
+  "seedings",
   "sites",
-  "users"
+  "treeReportCounts",
+  "treeSpecies",
+  "users",
+  "sitePolygons"
 ] as const;
 
 // The store for entities may contain either light DTOs or full DTOs depending on where the
@@ -123,8 +131,12 @@ type ApiResources = {
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   verifications: StoreResourceMap<VerificationUserResponseDto>;
   projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
+  seedings: StoreResourceMap<SeedingDto>;
   sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
+  sitePolygons: StoreResourceMap<SitePolygonDto>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];

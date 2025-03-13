@@ -73,7 +73,8 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="text-16-light"
           data-testid="txt"
         >
-          of 
+          of
+           
           732
            
         </p>
@@ -107,7 +108,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="w-[13vw] whitespace-nowrap text-16-light"
+          className="flex w-[13vw] items-center whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Organisations Joined
@@ -131,7 +132,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="w-[13vw] whitespace-nowrap text-16-light"
+          className="flex w-[13vw] items-center whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Trees Planed
@@ -155,7 +156,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           }
         />
         <p
-          className="w-[13vw] whitespace-nowrap text-16-light"
+          className="flex w-[13vw] items-center whitespace-nowrap text-16-light"
           data-testid="txt"
         >
           Trash Removed 
@@ -201,7 +202,8 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress No 
           className="text-16-light"
           data-testid="txt"
         >
-          of 
+          of
+           
           150
            
         </p>

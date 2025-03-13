@@ -202,7 +202,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       <div className="p-4 text-darkCustom">
         <div className="flex items-center justify-between gap-1">
           <Text variant="text-14-bold" className="flex items-center gap-1">
-            Uploaded via:{" "}
+            {t("Uploaded via")}:{" "}
             <Text variant="text-14-light" className="capitalize">
               {getReadableEntityName(data?.raw?.model_name as SingularEntityName, true)}
             </Text>
@@ -215,15 +215,15 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           </button>
         </div>
         <Text variant="text-14-bold" className="flex items-center gap-1">
-          Date uploaded:{" "}
+          {t("Date uploaded")}:{" "}
           <Text variant="text-14-light" className="capitalize">
             {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
           </Text>
         </Text>
         <Text variant="text-14-bold" className="flex items-center gap-1">
-          Visibility:{" "}
+          {t("Visibility")}:{" "}
           <Text variant="text-14-light" className="capitalize">
-            {data.isPublic ? "Public" : "Private"}
+            {data.isPublic ? t("Public") : t("Private")}
           </Text>
         </Text>
       </div>

@@ -23,7 +23,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTablePD";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { ContextCondition } from "@/context/ContextCondition";
@@ -46,7 +46,6 @@ const SiteReportDetailPage = () => {
     pathParams: { uuid: siteReportUUID, entity: "site-reports" }
   });
   const siteReport = (data?.data ?? {}) as any;
-
   const { data: site } = useGetV2ENTITYUUID(
     {
       pathParams: { uuid: siteReport?.site?.uuid, entity: "sites" }
@@ -61,11 +60,11 @@ const SiteReportDetailPage = () => {
   const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
   const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
 
-  const totalProps = {
-    entity: "site-reports",
+  const totalProps: Omit<CollectionsTotalProps, "collections"> = {
+    entity: "siteReports",
     uuid: siteReportUUID,
     demographicType: "workdays"
-  } as Omit<CollectionsTotalProps, "collections">;
+  };
   const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
   const workdaysPaid = useCollectionsTotal({
     ...totalProps,
@@ -114,10 +113,10 @@ const SiteReportDetailPage = () => {
               <PageRow>
                 <PageColumn>
                   <EntityMapAndGalleryCard
-                    modelName="site-reports"
-                    modelUUID={siteReport.uuid}
+                    modelName="sites"
+                    modelUUID={siteReport?.site?.uuid}
                     modelTitle={t("Site Report")}
-                    entityData={site}
+                    entityData={site?.data}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
                     )}
@@ -178,9 +177,9 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                        <TreeSpeciesTable
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="tree-planted"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -205,9 +204,9 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                        <TreeSpeciesTable
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="tree-planted"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -232,10 +231,10 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
-                          collection="seeding"
+                        <TreeSpeciesTable
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
+                          collection="seeds"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
                         />
@@ -259,9 +258,9 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                        <TreeSpeciesTable
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="non-tree"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -286,9 +285,9 @@ const SiteReportDetailPage = () => {
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
                       />
                       <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
-                        <TreeSpeciesTablePD
-                          modelName="site-report"
-                          modelUUID={siteReportUUID}
+                        <TreeSpeciesTable
+                          entity="siteReports"
+                          entityUuid={siteReportUUID}
                           collection="replanting"
                           visibleRows={8}
                           galleryType={"treeSpeciesPD"}
@@ -408,7 +407,7 @@ const SiteReportDetailPage = () => {
                               />
                             )}
                             <DemographicsDisplay
-                              entity="site-reports"
+                              entity="siteReports"
                               uuid={siteReportUUID}
                               type="workdays"
                               collection={collection}
