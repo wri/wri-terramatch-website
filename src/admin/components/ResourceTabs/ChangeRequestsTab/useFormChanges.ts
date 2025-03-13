@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { normalizedFormDefaultValue } from "@/helpers/customForms";
+import { Entity } from "@/types/common";
 
 interface FormChange {
   title?: string;
@@ -30,15 +31,20 @@ const cleanValue = (value: any) => {
   return value;
 };
 
-export default function useFormChanges(current: any, changed: any, steps: FormStepSchema[]): StepChange[] {
+export default function useFormChanges(
+  current: any,
+  changed: any,
+  steps: FormStepSchema[],
+  entity: Entity
+): StepChange[] {
   const t = useT();
   const currentValues = useMemo(() => normalizedFormDefaultValue(current, steps), [current, steps]);
   const changedValues = useMemo(() => normalizedFormDefaultValue(changed, steps), [changed, steps]);
   return useMemo(
     () =>
       steps.map(step => {
-        const currentEntries = getFormEntries({ values: currentValues, nullText: "-", step }, t);
-        const changedEntries = getFormEntries({ values: changedValues, nullText: "-", step }, t);
+        const currentEntries = getFormEntries({ values: currentValues, nullText: "-", step, entity }, t);
+        const changedEntries = getFormEntries({ values: changedValues, nullText: "-", step, entity }, t);
 
         return {
           step,
@@ -56,6 +62,6 @@ export default function useFormChanges(current: any, changed: any, steps: FormSt
           })
         };
       }),
-    [steps, t, currentValues, changedValues]
+    [steps, currentValues, entity, t, changedValues]
   );
 }

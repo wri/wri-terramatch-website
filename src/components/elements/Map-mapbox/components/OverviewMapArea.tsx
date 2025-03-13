@@ -179,7 +179,7 @@ const OverviewMapArea = ({
     <>
       {isMonitoring ? (
         <MapPolygonPanel
-          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
             (polygonsData?.map(item => ({
               ...item,
@@ -208,7 +208,7 @@ const OverviewMapArea = ({
         />
       ) : (
         <MapSidePanel
-          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
             (polygonsData?.map(item => ({
               ...item,

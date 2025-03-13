@@ -46,7 +46,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
         <When condition={!!tooltipContent}>
           <ToolTip
             content={tooltipContent ?? ""}
-            title={label}
+            title={label.replace(":", "")}
             width={"w-60"}
             className="whitespace-normal"
             trigger="click"

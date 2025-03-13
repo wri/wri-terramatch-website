@@ -3,7 +3,7 @@ import Log from "@/utils/log";
 const ENVIRONMENT_NAMES = ["local", "dev", "test", "staging", "prod"] as const;
 type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 
-const SERVICES = ["apiBaseUrl", "userServiceUrl", "jobServiceUrl", "entityServiceUrl"] as const;
+const SERVICES = ["apiBaseUrl", "userServiceUrl", "jobServiceUrl", "entityServiceUrl", "researchServiceUrl"] as const;
 type Service = (typeof SERVICES)[number];
 
 type ServicesDefinition = {

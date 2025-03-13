@@ -1,5 +1,5 @@
-export class DemographicCollections {
-  public static readonly WORKDAYS_PROJECT = [
+export const DemographicCollections = {
+  WORKDAYS_PROJECT: [
     "paid-project-management",
     "volunteer-project-management",
     "paid-nursery-operations",
@@ -8,17 +8,17 @@ export class DemographicCollections {
     "volunteer-other-activities",
     "direct",
     "convergence"
-  ] as const;
-  public static readonly WORKDAYS_PROJECT_PPC = [
+  ] as const,
+  WORKDAYS_PROJECT_PPC: [
     "paid-project-management",
     "volunteer-project-management",
     "paid-nursery-operations",
     "volunteer-nursery-operations",
     "paid-other-activities",
     "volunteer-other-activities"
-  ] as const;
-  public static readonly WORKDAYS_PROJECT_OTHER = "paid-other-activities" as const;
-  public static readonly WORKDAYS_SITE = [
+  ] as const,
+  WORKDAYS_PROJECT_OTHER: "paid-other-activities" as const,
+  WORKDAYS_SITE: [
     "paid-site-establishment",
     "volunteer-site-establishment",
     "paid-planting",
@@ -29,9 +29,9 @@ export class DemographicCollections {
     "volunteer-site-monitoring",
     "paid-other-activities",
     "volunteer-other-activities"
-  ] as const;
-  public static readonly WORKDAYS_SITE_OTHER = "paid-other-activities" as const;
-  public static readonly RESTORATION_PARTNERS_PROJECT = [
+  ] as const,
+  WORKDAYS_SITE_OTHER: "paid-other-activities" as const,
+  RESTORATION_PARTNERS_PROJECT: [
     "direct-income",
     "indirect-income",
     "direct-benefits",
@@ -52,21 +52,15 @@ export class DemographicCollections {
     "indirect-productivity",
     "direct-other",
     "indirect-other"
-  ] as const;
-  public static readonly RESTORATION_PARTNERS_PROJECT_OTHER = "direct-other" as const;
-  public static readonly JOBS_PROJECT = ["full-time", "part-time"] as const;
-  public static readonly VOLUNTEERS_PROJECT = ["volunteer"] as const;
-  public static readonly BENEFICIARIES_PROJECT_ALL = ["all"] as const;
-  public static readonly BENEFICIARIES_PROJECT_TRAINING = ["training"] as const;
-}
+  ] as const,
+  RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
+  JOBS_PROJECT: ["full-time", "part-time"] as const,
+  VOLUNTEERS_PROJECT: ["volunteer"] as const,
+  BENEFICIARIES_PROJECT_ALL: ["all"] as const,
+  BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
+} as const;
 
-export class TreeEntityTypes {
-  public static readonly ESTABLISHMENT_ENTITIES = [
-    "sites",
-    "nurseries",
-    "projectReports",
-    "siteReports",
-    "nurseryReports"
-  ] as const;
-  public static readonly REPORT_COUNT_ENTITIES = ["projects", "projectReports", "sites", "nurseries"] as const;
-}
+export const TreeEntityTypes = {
+  ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
+  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
+} as const;

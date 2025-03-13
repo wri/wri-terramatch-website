@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { orderBy } from "lodash";
-import { useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -12,11 +12,13 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
@@ -26,45 +28,29 @@ interface GoalsAndProgressProps {
   project: ProjectFullDto;
 }
 
-interface NaturalRegenerationItem {
-  name: string;
-  treeCount: number;
-}
-
-export const LABEL_LEGEND = [
-  {
-    label: { key: "Trees", render: "Trees" },
-    color: "bg-primary"
-  },
-  {
-    label: { key: "Seeds", render: "Seeds" },
-    color: "bg-blueCustom-900"
-  },
-  {
-    label: { key: "Regenerating", render: "Regenerating" },
-    color: "bg-secondary-600"
-  }
-];
-
-const getProgressData = (totalValue: number, progressValue: number) => {
-  return [
-    { name: "Total", value: totalValue, color: "#13487A" },
-    { name: "Progress", value: progressValue, color: "#7BBD31" }
-  ];
-};
-
 const isEmptyArray = (obj: any) => {
   return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
 };
 
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
-  const [treeCount, setTreeCount] = useState(0);
-  const [speciesCount, setSpeciesCount] = useState(0);
-  const [nonTreeCount, setNonTreeCount] = useState(0);
-  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
-  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
-  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
+  const isTerrafund = frameworkIsTerrafund(project.frameworkKey as Framework);
+  const aggregateProps = { entity: "projects" as SupportedEntity, entityUuid: project.uuid };
+  const treeCount = usePlantTotalCount({ ...aggregateProps, collection: isTerrafund ? "non-tree" : "seeds" });
+  const { speciesCount } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: isTerrafund ? "non-tree" : "seeds"
+  });
+  const { speciesCount: treePlantedSpeciesCount, speciesGoal: treePlantedSpeciesGoal } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "tree-planted"
+  });
+  const nonTreeCount = usePlantTotalCount({ ...aggregateProps, collection: "non-tree" });
+  const { speciesCount: totalNonTreeSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "non-tree"
+  });
 
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
@@ -73,16 +59,42 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     }
   });
 
-  const formatNaturalGenerationData = orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(
-    (item: NaturalRegenerationItem) => {
-      return {
-        name: item.name,
-        treeCount: item.treeCount.toLocaleString()
-      };
-    }
+  const naturalGenerationData = useMemo(
+    () =>
+      orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(({ name, treeCount }) => ({
+        uuid: name,
+        name: [name, []] as [string, string[]],
+        treeCount: treeCount.toLocaleString()
+      })),
+    [project.assistedNaturalRegenerationList]
   );
 
-  const isTerrafund = ALL_TF.includes(project.frameworkKey as (typeof ALL_TF)[number]);
+  const LABEL_LEGEND = useMemo(
+    () => [
+      {
+        label: { key: "Trees", render: t("Trees") },
+        color: "bg-primary"
+      },
+      {
+        label: { key: "Seeds", render: t("Seeds") },
+        color: "bg-blueCustom-900"
+      },
+      {
+        label: { key: "Regenerating", render: t("Regenerating") },
+        color: "bg-secondary-600"
+      }
+    ],
+    [t]
+  );
+
+  const getProgressData = useCallback(
+    (totalValue: number, progressValue: number) => [
+      { name: t("Total"), value: totalValue, color: "#13487A" },
+      { name: t("Progress"), value: progressValue, color: "#7BBD31" }
+    ],
+    [t]
+  );
+
   return (
     <PageBody className="text-darkCustom">
       <PageRow>
@@ -133,7 +145,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               <ContextCondition frameworksHide={[Framework.PPC]}>
                 <>
                   <Text variant="text-14" className="uppercase text-neutral-650">
-                    {t(isTerrafund ? "Number of Trees Planted:" : "Number of SAPLINGS Planted:")}
+                    {isTerrafund ? t("Number of Trees Planted:") : t("Number of SAPLINGS Planted:")}
                   </Text>
                   <div className="mb-2 flex items-center">
                     <div className="relative h-9 w-[230px]">
@@ -204,36 +216,30 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               </div>
             </div>
             <ContextCondition frameworksShow={[Framework.PPC]}>
-              <TreeSpeciesTablePD
-                modelUUID={project.uuid}
-                modelName="project"
+              <TreeSpeciesTable
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
-                setTotalSpecies={setTreePlantedSpeciesCount}
-                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <TreeSpeciesTablePD
-                modelName="project"
-                modelUUID={project.uuid}
+              <TreeSpeciesTable
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
-                setTotalSpecies={setTreePlantedSpeciesCount}
-                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <TreeSpeciesTablePD
-                modelName="project"
-                modelUUID={project.uuid}
+              <TreeSpeciesTable
+                entity="projects"
+                entityUuid={project.uuid}
                 visibleRows={8}
                 collection="tree-planted"
                 galleryType={"treeSpeciesPD"}
-                setTotalSpecies={setTreePlantedSpeciesCount}
-                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
               />
             </ContextCondition>
           </div>
@@ -241,7 +247,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       </PageRow>
       <PageRow>
         <PageColumn>
-          <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")} className="h-full">
+          <PageCard
+            title={isTerrafund ? t("Non-Tree Planting Progress") : t("Seed Planting Progress")}
+            className="h-full"
+          >
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
                 <GoalProgressCard
@@ -335,24 +344,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
               </ContextCondition>
               <div className="mt-2">
                 <ContextCondition frameworksShow={ALL_TF}>
-                  <TreeSpeciesTablePD
-                    modelName="project"
-                    modelUUID={project.uuid}
-                    collection="non-tree"
-                    visibleRows={5}
-                    setTotalCount={setTreeCount}
-                    setTotalSpecies={setSpeciesCount}
-                  />
+                  <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="non-tree" visibleRows={5} />
                 </ContextCondition>
                 <ContextCondition frameworksHide={ALL_TF}>
-                  <TreeSpeciesTablePD
-                    modelName="project"
-                    modelUUID={project.uuid}
-                    visibleRows={5}
-                    collection="seeding"
-                    setTotalCount={setTreeCount}
-                    setTotalSpecies={setSpeciesCount}
-                  />
+                  <TreeSpeciesTable entity="projects" entityUuid={project.uuid} visibleRows={5} collection="seeds" />
                 </ContextCondition>
               </div>
             </div>
@@ -408,13 +403,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </ContextCondition>
 
             <div className="mt-2">
-              <TreeSpeciesTablePD
-                modelName="project"
-                data={formatNaturalGenerationData}
-                modelUUID={project.uuid}
-                visibleRows={5}
-                typeTable="treeCountSite"
-              />
+              <TreeSpeciesTable data={naturalGenerationData} visibleRows={5} tableType="treeCountSite" />
             </div>
           </PageCard>
         </PageColumn>
@@ -461,14 +450,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   ]}
                 />
               </div>
-              <TreeSpeciesTablePD
-                modelName="project"
-                collection="non-tree"
-                modelUUID={project.uuid}
-                visibleRows={5}
-                setTotalCount={setNonTreeCount}
-                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
-              />
+              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="non-tree" visibleRows={5} />
             </div>
           </PageCard>
         </PageRow>
