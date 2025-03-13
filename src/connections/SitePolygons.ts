@@ -13,6 +13,17 @@ export type SitePolygonIndexConnectionProps = {
   entityUuid: string;
   pageSize?: number;
   pageNumber?: number;
+  presentIndicator?:
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon";
 };
 
 const ENTITY_QUERY_KEYS: Record<string, string> = {
@@ -27,20 +38,29 @@ export type SitePolygonIndexConnection<SitePolygonDto> = {
 
 const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  return {
-    queryParams: {
-      "page[number]": props.pageNumber ?? 1,
-      "page[size]": props.pageSize ?? 10,
-      ...(queryKey ? { [queryKey]: props.entityUuid } : {})
-    }
+  const queryParams: Record<string, string | number | null | undefined> = {
+    "page[number]": props.pageNumber ?? 1,
+    "page[size]": props.pageSize ?? 10
   };
+
+  if (queryKey) {
+    queryParams[queryKey] = props.entityUuid;
+  }
+
+  // Add a single presentIndicator if provided
+  if (props.presentIndicator) {
+    // This should work with your API since it's a single value
+    queryParams["presentIndicator[]"] = props.presentIndicator;
+  }
+
+  return { queryParams };
 };
 
 const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonDto>) =>
   sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
-  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}`;
+  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}`;
 
 const sitePolygonsConnection: Connection<
   SitePolygonIndexConnection<SitePolygonDto>,

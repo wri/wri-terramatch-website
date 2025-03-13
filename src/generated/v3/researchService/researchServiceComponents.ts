@@ -17,9 +17,13 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["page[size]"]?: number;
   /**
-   * The last record before the page being requested. The value is a UUID. If neither page[after] nor page[number] is provided, the first page is returned.
+   * The last record before the page being requested. The value is a UUID. If page[after] is not provided, the first page is returned.
    */
   ["page[after]"]?: string;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
   /**
    * Filter results by polygon status
    */
@@ -36,6 +40,21 @@ export type SitePolygonsIndexQueryParams = {
    * Filter results by polygons that are missing at least one of the indicators listed
    */
   ["missingIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
+   * Filter results by polygons that have all of the indicators listed
+   */
+  ["presentIndicator[]"]?: (
     | "treeCover"
     | "treeCoverLoss"
     | "treeCoverLossFires"

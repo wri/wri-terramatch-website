@@ -301,12 +301,22 @@ const DataCard = ({
   const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
+  const [pagination] = useState({
+    pageSize: 10,
+    pageNumber: 1
+  });
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
     useMonitoredData(type!, record.uuid);
-  const [, { sitePolygons }] = useSitePolygons({ entityName: type!, entityUuid: record.uuid });
+  const [, { sitePolygons }] = useSitePolygons({
+    entityName: type!,
+    entityUuid: record.uuid,
+    pageSize: pagination.pageSize,
+    pageNumber: pagination.pageNumber,
+    presentIndicator: "treeCover"
+  });
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
