@@ -20,7 +20,7 @@ import List from "@/components/extensive/List/List";
 import { Framework } from "@/context/framework.provider";
 import { useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps } from "@/helpers/customForms";
-import { EntityName, SingularEntityName } from "@/types/common";
+import { Entity, EntityName, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
 
@@ -60,7 +60,11 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
     () => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)),
     [form, framework, t]
   );
-  const formChanges = useFormChanges(current, changes, formSteps ?? []);
+  const entityDef = useMemo(
+    () => ({ entityName: entity, entityUUID: ctx?.record?.uuid ?? "" } as Entity),
+    [ctx?.record?.uuid, entity]
+  );
+  const formChanges = useFormChanges(current, changes, formSteps ?? [], entityDef);
   const numFieldsAffected = useMemo(
     () =>
       formChanges.reduce((sum, stepChange) => {

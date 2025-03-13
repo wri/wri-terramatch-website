@@ -16,7 +16,7 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import { useMyUser } from "@/connections/User";
 import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
-import { statusActionsMap } from "@/hooks/AuditStatus/useAuditLogActions";
+import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -47,7 +47,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
 }) => {
   const t = useT();
   const [buttonToogle, setButtonToogle] = useState(true);
-  const { valuesForStatus, statusLabels } = statusActionsMap[AuditLogButtonStates.POLYGON];
+  const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.POLYGON);
 
   const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {

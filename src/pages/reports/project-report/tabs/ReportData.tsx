@@ -67,7 +67,7 @@ const ALL_BENEFICIARIES: UseTotalProps = {
 };
 
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
-  String(useCollectionsTotal({ ...props, entity: "project-reports", uuid }) ?? "N/A");
+  String(useCollectionsTotal({ ...props, entity: "projectReports", uuid }) ?? "N/A");
 
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
@@ -219,7 +219,12 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           >
             <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} />
             <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
-              <TreeSpeciesTable modelName="project-report" modelUUID={report.uuid} />
+              <TreeSpeciesTable
+                entity="projectReports"
+                entityUuid={report.uuid}
+                collection="nursery-seedling"
+                tableType="noGoal"
+              />
             </GenericField>
             <TextField
               frameworksShow={ALL_TF}

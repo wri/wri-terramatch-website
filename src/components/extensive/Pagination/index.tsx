@@ -41,7 +41,7 @@ function Pagination(props: PaginationProps) {
     >
       {props.hasPageSizeSelector ? (
         <PerPageSelector
-          label={t(props.variant?.labelText || "Per page")}
+          label={t(props.variant?.labelText) || t("Per page")}
           options={pageSizeOptions}
           variantText={props.variant?.VariantPrePageText}
           defaultValue={props.defaultPageSize}

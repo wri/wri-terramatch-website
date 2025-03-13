@@ -9,82 +9,6 @@ import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
 import type * as RequestBodies from "./apiRequestBodies";
 
-export type GetV2TreeSpeciesEntityUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2TreeSpeciesEntityUUIDQueryParams = {
-  /**
-   * The collection to filter tree species by.
-   */
-  ["filter[collection]"]?: string;
-};
-
-export type GetV2TreeSpeciesEntityUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TreeSpeciesEntityUUIDResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    amount?: number;
-    type?: string;
-    collection?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-  count_new_species?: number;
-  count_reported_species?: number;
-  count_stablished_species?: number;
-};
-
-export type GetV2TreeSpeciesEntityUUIDVariables = {
-  pathParams: GetV2TreeSpeciesEntityUUIDPathParams;
-  queryParams?: GetV2TreeSpeciesEntityUUIDQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TreeSpeciesEntityUUID = (variables: GetV2TreeSpeciesEntityUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2TreeSpeciesEntityUUIDResponse,
-    GetV2TreeSpeciesEntityUUIDError,
-    undefined,
-    {},
-    GetV2TreeSpeciesEntityUUIDQueryParams,
-    GetV2TreeSpeciesEntityUUIDPathParams
-  >({ url: "/v2/tree-species/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2TreeSpeciesEntityUUID = <TData = GetV2TreeSpeciesEntityUUIDResponse>(
-  variables: GetV2TreeSpeciesEntityUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TreeSpeciesEntityUUIDResponse, GetV2TreeSpeciesEntityUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TreeSpeciesEntityUUIDResponse, GetV2TreeSpeciesEntityUUIDError, TData>(
-    queryKeyFn({ path: "/v2/tree-species/{entity}/{UUID}", operationId: "getV2TreeSpeciesEntityUUID", variables }),
-    ({ signal }) => fetchGetV2TreeSpeciesEntityUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2EntityUUIDAggregateReportsPathParams = {
   /**
    * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
@@ -7317,71 +7241,6 @@ export const useGetV2StratasENTITYUUID = <TData = GetV2StratasENTITYUUIDResponse
   return reactQuery.useQuery<GetV2StratasENTITYUUIDResponse, GetV2StratasENTITYUUIDError, TData>(
     queryKeyFn({ path: "/v2/stratas/{ENTITY}/{UUID}", operationId: "getV2StratasENTITYUUID", variables }),
     ({ signal }) => fetchGetV2StratasENTITYUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2SeedingsENTITYUUIDPathParams = {
-  /**
-   * allowed values site/site-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2SeedingsENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2SeedingsENTITYUUIDResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    weight_of_sample?: number;
-    seeds_in_sample?: number;
-    amount?: number;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2SeedingsENTITYUUIDVariables = {
-  pathParams: GetV2SeedingsENTITYUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2SeedingsENTITYUUID = (variables: GetV2SeedingsENTITYUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2SeedingsENTITYUUIDResponse,
-    GetV2SeedingsENTITYUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2SeedingsENTITYUUIDPathParams
-  >({ url: "/v2/seedings/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2SeedingsENTITYUUID = <TData = GetV2SeedingsENTITYUUIDResponse>(
-  variables: GetV2SeedingsENTITYUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2SeedingsENTITYUUIDResponse, GetV2SeedingsENTITYUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2SeedingsENTITYUUIDResponse, GetV2SeedingsENTITYUUIDError, TData>(
-    queryKeyFn({ path: "/v2/seedings/{ENTITY}/{UUID}", operationId: "getV2SeedingsENTITYUUID", variables }),
-    ({ signal }) => fetchGetV2SeedingsENTITYUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -35603,11 +35462,6 @@ export const useGetV2ImpactStoriesId = <TData = GetV2ImpactStoriesIdResponse>(
 
 export type QueryOperation =
   | {
-      path: "/v2/tree-species/{entity}/{UUID}";
-      operationId: "getV2TreeSpeciesEntityUUID";
-      variables: GetV2TreeSpeciesEntityUUIDVariables;
-    }
-  | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
       operationId: "getV2EntityUUIDAggregateReports";
       variables: GetV2EntityUUIDAggregateReportsVariables;
@@ -35711,11 +35565,6 @@ export type QueryOperation =
       path: "/v2/stratas/{ENTITY}/{UUID}";
       operationId: "getV2StratasENTITYUUID";
       variables: GetV2StratasENTITYUUIDVariables;
-    }
-  | {
-      path: "/v2/seedings/{ENTITY}/{UUID}";
-      operationId: "getV2SeedingsENTITYUUID";
-      variables: GetV2SeedingsENTITYUUIDVariables;
     }
   | {
       path: "/v2/disturbances/{ENTITY}/{UUID}";
