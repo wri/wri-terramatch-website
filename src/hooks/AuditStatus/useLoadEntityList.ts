@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { loadSiteIndex } from "@/connections/Entity";
+import { loadNurseryIndex, loadSiteIndex } from "@/connections/Entity";
 import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
 import {
-  fetchGetV2ProjectsUUIDNurseries,
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2SitesSitePolygon,
   fetchGetV2TasksUUIDReports
@@ -94,7 +93,7 @@ const useLoadEntityList = ({
         ? loadSiteIndex
         : entityType == POLYGON
         ? fetchGetV2ProjectsUUIDSitePolygonsAll
-        : fetchGetV2ProjectsUUIDNurseries;
+        : loadNurseryIndex;
     const fetchAction = isSiteProjectLevel
       ? fetchToProject
       : isProjectReport

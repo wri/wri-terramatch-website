@@ -10,7 +10,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ProjectsUUIDNurseries } from "@/generated/apiComponents";
+import { useNurseryIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
@@ -19,18 +19,14 @@ interface ProjectNurseriesTabProps {
 
 const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
-  const { data: nurseries, isLoading } = useGetV2ProjectsUUIDNurseries(
-    {
-      pathParams: { uuid: project.uuid }
-    },
-    { keepPreviousData: true }
-  );
+
+  const [isLoaded, { entities: nurseries }] = useNurseryIndex({ filter: { projectUuid: project.uuid } as any });
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <LoadingContainer wrapInPaper loading={isLoading}>
+          <LoadingContainer wrapInPaper loading={!isLoaded}>
             <If
               condition={
                 //@ts-ignore
