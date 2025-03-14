@@ -2,7 +2,6 @@ import {
   ArrayField,
   DateField,
   FunctionField,
-  Labeled,
   ReferenceField,
   Show,
   SimpleShowLayout,
@@ -19,19 +18,31 @@ import { UserShowAside } from "./UserShowAside";
 
 function ManagedProjects() {
   const { isLoading: ctxLoading, record } = useShowContext();
-
-  if (ctxLoading || record.role !== "project-manager") return null;
+  if (ctxLoading || !["project-developer", "project-manager"].includes(record?.role)) return null;
+  const isMonitoring = record?.role === "project-developer" ? true : false;
 
   return (
-    <Labeled>
-      <ArrayField source="managed_projects" label="Managed Projects">
+    <>
+      <ArrayField
+        source={isMonitoring ? "monitoring_projects" : "managed_projects"}
+        label={isMonitoring ? "Monitoring Projects" : "Managed Projects"}
+      >
         <SingleFieldList className="pb-2 pt-2">
           <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
             <TextField source="name" />
           </ReferenceField>
         </SingleFieldList>
       </ArrayField>
-    </Labeled>
+      {record.role == "project-manager" && record.monitoring_projects.length > 0 && (
+        <ArrayField source="monitoring_projects" label="Monitoring Projects">
+          <SingleFieldList className="pb-2 pt-2">
+            <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
+              <TextField source="name" />
+            </ReferenceField>
+          </SingleFieldList>
+        </ArrayField>
+      )}
+    </>
   );
 }
 
@@ -42,22 +53,26 @@ const renderFrameworks = (property: string) => (record: any) => {
 
 export const UserShow = () => (
   <Show actions={<ShowActions deleteProps={{ confirmTitle: "Delete User" }} />} aside={<UserShowAside />}>
-    <SimpleShowLayout>
-      <TextField source="first_name" label="First Name" emptyText="Not Provided" />
-      <TextField source="last_name" label="Last Name" emptyText="Not Provided" />
-      <TextField source="email_address" label="Professional Email Address" emptyText="Not Provided" />
-      <TextField source="phone_number" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
-      <TextField source="job_role" label="Job Title" emptyText="Not Provided" />
-      <ReferenceField label="Organisation" source="organisation.uuid" reference={modules.organisation.ResourceName}>
-        <FunctionField render={(record: V2AdminOrganisationRead) => record.name || "No Organisation Name"} />
-      </ReferenceField>
-      <DateField label="Last date active" source="last_logged_in_at" />
-      <FunctionField
-        label="All Frameworks (includes frameworks through role and project associations)"
-        render={renderFrameworks("all_frameworks")}
-      />
-      <FunctionField label="Direct Frameworks" render={renderFrameworks("direct_frameworks")} />
-      <ManagedProjects />
-    </SimpleShowLayout>
+    <div className="flex">
+      <SimpleShowLayout>
+        <TextField source="first_name" label="First Name" emptyText="Not Provided" />
+        <TextField source="last_name" label="Last Name" emptyText="Not Provided" />
+        <TextField source="email_address" label="Professional Email Address" emptyText="Not Provided" />
+        <TextField source="phone_number" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
+        <TextField source="job_role" label="Job Title" emptyText="Not Provided" />
+        <ReferenceField label="Organisation" source="organisation.uuid" reference={modules.organisation.ResourceName}>
+          <FunctionField render={(record: V2AdminOrganisationRead) => record.name || "No Organisation Name"} />
+        </ReferenceField>
+        <DateField label="Last date active" source="last_logged_in_at" />
+        <FunctionField
+          label="All Frameworks (includes frameworks through role and project associations)"
+          render={renderFrameworks("all_frameworks")}
+        />
+        <FunctionField label="Direct Frameworks" render={renderFrameworks("direct_frameworks")} />
+      </SimpleShowLayout>
+      <SimpleShowLayout>
+        <ManagedProjects />
+      </SimpleShowLayout>
+    </div>
   </Show>
 );
