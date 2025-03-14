@@ -58,3 +58,13 @@
     background-color: #f2f2f2;
   }
 }
+
+.modal-impact-story-content iframe,
+.modal-impact-story-content .ql-video {
+  width: 100% !important;
+  height: 400px !important;
+  max-width: 100% !important;
+}
+.modal-impact-story-content p {
+  margin-bottom: 6px;
+}

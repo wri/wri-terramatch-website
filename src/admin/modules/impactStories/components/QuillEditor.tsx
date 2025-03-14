@@ -53,6 +53,29 @@ class QuillEditor extends Component<QuillEditorProps> {
       if (this.props.value) {
         this.quill.root.innerHTML = this.props.value;
       }
+
+      const videoHandler = () => {
+        const range = this.quill.getSelection();
+        const value = prompt("Please enter the YouTube video URL:");
+
+        if (value) {
+          let videoId = "";
+          const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+          const match = value.match(regExp);
+
+          if (match && match[2].length === 11) {
+            videoId = match[2];
+            this.quill.insertEmbed(range.index, "video", `https://www.youtube.com/embed/${videoId}`);
+          } else {
+            this.quill.insertEmbed(range.index, "video", value);
+          }
+
+          this.quill.setSelection(range.index + 1);
+        }
+      };
+
+      const toolbar = this.quill.getModule("toolbar");
+      toolbar.addHandler("video", videoHandler);
     }
   }
 
@@ -85,6 +108,14 @@ class QuillEditor extends Component<QuillEditorProps> {
             top: 0;
             z-index: 2;
             background: white;
+          }
+          
+          /* Add custom CSS for video embeds */
+          .quill-editor-container .ql-editor iframe,
+          .quill-editor-container .ql-editor .ql-video {
+            width: 100%;
+            height: 400px; /* Adjust this height as needed */
+            max-width: 100%;
           }
         `}</style>
         <div ref={this.editorRef}></div>
