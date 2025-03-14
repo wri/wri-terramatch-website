@@ -114,16 +114,17 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
       return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
     },
     meta: { style: { width: "13.65%" } }
-  },
-  {
-    accessorKey: "base_line",
-    header: "Baseline",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return format(new Date(value), "dd/MM/yyyy");
-    },
-    meta: { style: { width: "8.87%" } }
   }
+  // Uncomment when LightResoruce for research service is applied
+  // {
+  //   accessorKey: "base_line",
+  //   header: "Baseline",
+  //   cell: (props: any) => {
+  //     const value = props.getValue();
+  //     return format(new Date(value), "dd/MM/yyyy");
+  //   },
+  //   meta: { style: { width: "8.87%" } }
+  // }
 ];
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
@@ -437,7 +438,11 @@ const DataCard = ({
         {
           accessorKey: "projectPhase",
           header: "Project Phase",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? value.charAt(0).toUpperCase() + value.slice(1) : "-";
+          }
         },
         {
           accessorKey: "plusMinusPercent",

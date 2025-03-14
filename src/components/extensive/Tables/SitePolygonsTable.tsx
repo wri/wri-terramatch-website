@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { TableVariant } from "@/components/elements/Table/TableVariants";
 import { SitePolygonIndexConnectionProps, useSitePolygons } from "@/connections/SitePolygons";
-import { processTreeCoverData } from "@/utils/MonitoredIndicatorUtils";
+import { processIndicatorData } from "@/utils/MonitoredIndicatorUtils";
 
 export interface SitePolygonsTableProps {
   entityName: string;
@@ -47,7 +47,7 @@ const SitePolygonsTable = ({
   return (
     <ServerSideTable
       meta={tableMeta}
-      data={sitePolygons ? processTreeCoverData(sitePolygons) : []}
+      data={sitePolygons ? processIndicatorData(sitePolygons, presentIndicator ?? "") : []}
       // isLoading={isLoading}
       onQueryParamChange={setQueryParams}
       columns={columns}
