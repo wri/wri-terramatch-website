@@ -3,7 +3,7 @@ import { createSelector } from "reselect";
 import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
 import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
 import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { ApiDataStore, indexMetaSelector, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -13,6 +13,17 @@ export type SitePolygonIndexConnectionProps = {
   entityUuid: string;
   pageSize?: number;
   pageNumber?: number;
+  presentIndicator?:
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon";
 };
 
 const ENTITY_QUERY_KEYS: Record<string, string> = {
@@ -22,25 +33,33 @@ const ENTITY_QUERY_KEYS: Record<string, string> = {
 
 export type SitePolygonIndexConnection<SitePolygonDto> = {
   sitePolygons?: SitePolygonDto[];
+  meta?: ResponseMeta["page"];
   fetchFailure?: PendingErrorState | null;
 };
 
 const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  return {
-    queryParams: {
-      "page[number]": props.pageNumber ?? 1,
-      "page[size]": props.pageSize ?? 10,
-      ...(queryKey ? { [queryKey]: props.entityUuid } : {})
-    }
+  const queryParams: Record<string, string | number | null | undefined> = {
+    "page[number]": props.pageNumber ?? 1,
+    "page[size]": props.pageSize ?? 10
   };
+
+  if (queryKey) {
+    queryParams[queryKey] = props.entityUuid;
+  }
+
+  if (props.presentIndicator) {
+    queryParams["presentIndicator[]"] = props.presentIndicator;
+  }
+
+  return { queryParams };
 };
 
 const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonDto>) =>
   sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
-  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}`;
+  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}`;
 
 const sitePolygonsConnection: Connection<
   SitePolygonIndexConnection<SitePolygonDto>,
@@ -68,7 +87,7 @@ const sitePolygonsConnection: Connection<
             .map(id => sitePolygonsStore[id]?.attributes as SitePolygonDto)
             .filter(Boolean);
 
-          return { sitePolygons, fetchFailure };
+          return { sitePolygons, meta: indexMeta?.page, fetchFailure };
         }
       )
   )
