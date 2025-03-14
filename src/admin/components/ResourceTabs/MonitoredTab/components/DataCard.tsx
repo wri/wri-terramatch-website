@@ -976,18 +976,6 @@ const DataCard = ({
           </div>
           <When condition={tabActive === 0}>
             <div className="relative w-full px-6 pb-6">
-              {/* <Table
-                columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-                data={
-                  (indicatorSlug === "treeCover"
-                    ? processTreeCoverData(sitePolygons ?? [])
-                    : polygonsIndicator ?? []) as any
-                }
-                variant={VARIANT_TABLE_MONITORED}
-                classNameWrapper="!overflow-visible"
-                visibleRows={50}
-                border={1}
-              /> */}
               <SitePolygonsTable
                 entityName={type!}
                 entityUuid={record.uuid}

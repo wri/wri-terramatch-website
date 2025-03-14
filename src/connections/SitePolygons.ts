@@ -48,9 +48,7 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
     queryParams[queryKey] = props.entityUuid;
   }
 
-  // Add a single presentIndicator if provided
   if (props.presentIndicator) {
-    // This should work with your API since it's a single value
     queryParams["presentIndicator[]"] = props.presentIndicator;
   }
 

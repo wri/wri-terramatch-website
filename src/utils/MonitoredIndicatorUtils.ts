@@ -207,7 +207,6 @@ export const processIndicatorData = (apiResponse: any[], presentIndicator: strin
           };
 
         case "restorationByEcoRegion": {
-          console.log("indicator", indicator);
           const data: Record<EcoRegionCategory, string | null> = {
             australasian: null,
             afrotropical: null,

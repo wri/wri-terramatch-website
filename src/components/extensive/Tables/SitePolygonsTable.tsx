@@ -41,14 +41,11 @@ const SitePolygonsTable = ({
     });
   }, [meta, queryParams]);
   const columns = presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : [];
-  useEffect(() => {
-    console.log("Table", tableMeta, queryParams);
-  }, [tableMeta, queryParams]);
+
   return (
     <ServerSideTable
       meta={tableMeta}
       data={sitePolygons ? processIndicatorData(sitePolygons, presentIndicator ?? "") : []}
-      // isLoading={isLoading}
       onQueryParamChange={setQueryParams}
       columns={columns}
       variant={variant}
