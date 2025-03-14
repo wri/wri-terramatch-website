@@ -3,7 +3,7 @@ import { createSelector } from "reselect";
 import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
 import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
 import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { ApiDataStore, indexMetaSelector, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -33,6 +33,7 @@ const ENTITY_QUERY_KEYS: Record<string, string> = {
 
 export type SitePolygonIndexConnection<SitePolygonDto> = {
   sitePolygons?: SitePolygonDto[];
+  meta?: ResponseMeta["page"];
   fetchFailure?: PendingErrorState | null;
 };
 
@@ -88,7 +89,7 @@ const sitePolygonsConnection: Connection<
             .map(id => sitePolygonsStore[id]?.attributes as SitePolygonDto)
             .filter(Boolean);
 
-          return { sitePolygons, fetchFailure };
+          return { sitePolygons, meta: indexMeta?.page, fetchFailure };
         }
       )
   )

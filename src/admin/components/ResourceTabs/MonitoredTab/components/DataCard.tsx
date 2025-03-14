@@ -14,7 +14,6 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
-import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_MONITORED } from "@/components/elements/Table/TableVariants";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
@@ -23,7 +22,8 @@ import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useSitePolygons } from "@/connections/SitePolygons";
+import SitePolygonsTable from "@/components/extensive/Tables/SitePolygonsTable";
+import { SitePolygonIndexConnectionProps } from "@/connections/SitePolygons";
 import {
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
@@ -44,7 +44,6 @@ import {
   formatDescriptionIndicator,
   getKeyValue,
   getOrderTop3,
-  processTreeCoverData,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
 import { downloadFileBlob } from "@/utils/network";
@@ -301,22 +300,12 @@ const DataCard = ({
   const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
-  const [pagination] = useState({
-    pageSize: 10,
-    pageNumber: 1
-  });
+
   const basename = useBasename();
   const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
     useMonitoredData(type!, record.uuid);
-  const [, { sitePolygons }] = useSitePolygons({
-    entityName: type!,
-    entityUuid: record.uuid,
-    pageSize: pagination.pageSize,
-    pageNumber: pagination.pageNumber,
-    presentIndicator: "treeCover"
-  });
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
@@ -941,6 +930,7 @@ const DataCard = ({
       )
     }
   };
+
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
@@ -981,7 +971,7 @@ const DataCard = ({
           </div>
           <When condition={tabActive === 0}>
             <div className="relative w-full px-6 pb-6">
-              <Table
+              {/* <Table
                 columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
                 data={
                   (indicatorSlug === "treeCover"
@@ -992,6 +982,13 @@ const DataCard = ({
                 classNameWrapper="!overflow-visible"
                 visibleRows={50}
                 border={1}
+              /> */}
+              <SitePolygonsTable
+                entityName={type!}
+                entityUuid={record.uuid}
+                presentIndicator={indicatorSlug as SitePolygonIndexConnectionProps["presentIndicator"]}
+                TABLE_COLUMNS_MAPPING={TABLE_COLUMNS_MAPPING}
+                variant={VARIANT_TABLE_MONITORED}
               />
             </div>
           </When>
