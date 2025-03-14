@@ -35,7 +35,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Site Information")}>
-            <LongTextField title={t("Description")}>{site.description}</LongTextField>
+            <LongTextField title={t("Description")}>{site.landscapeCommunityContribution}</LongTextField>
             <LongTextField title={t("History")}>{site.history}</LongTextField>
             <SelectImageListField
               title={t("Restoration Strategy")}
