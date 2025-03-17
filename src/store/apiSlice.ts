@@ -313,8 +313,7 @@ export const apiSlice = createSlice({
       if (isDeleteResponse(method, response)) {
         const resource = response.meta.resourceType;
         const ids = [response.meta.resourceId!];
-        const action = apiSlice.actions.pruneCache({ resource, ids });
-        pruneCache(state, action);
+        pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
         state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
         return;
       }

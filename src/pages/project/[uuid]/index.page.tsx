@@ -92,23 +92,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
 const ProjectDetailPage = () => {
   const router = useRouter();
-  // const t = useT();
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
 
-  // const { openToast } = useToastContext();
   const [isLoaded, { entity: project, refetch }] = useFullProject({ uuid: projectUUID });
-  // const deleteProject = useDeleteProject(
-  //   projectUUID,
-  //   () => {
-  //     router.push("/my-projects");
-  //     openToast(t("The project has been successfully deleted."));
-  //   },
-  //   failure => {
-  //     Log.error("Project delete failed", failure);
-  //     openToast(t("Something went wrong!"), ToastType.ERROR);
-  //   }
-  // );
 
   return (
     (!isLoaded || project != null) && (
