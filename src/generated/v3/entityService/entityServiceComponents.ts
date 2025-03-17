@@ -29,7 +29,7 @@ export type EntityIndexQueryParams = {
    */
   ["page[size]"]?: number;
   /**
-   * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
+   * The page number to return. If page[number] is not provided, the first page is returned.
    */
   ["page[number]"]?: number;
   search?: string;
