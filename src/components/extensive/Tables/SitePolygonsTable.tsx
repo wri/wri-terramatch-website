@@ -20,8 +20,9 @@ const SitePolygonsTable = ({
   TABLE_COLUMNS_MAPPING,
   variant
 }: SitePolygonsTableProps) => {
+  const initPageSize = 5;
   const [queryParams, setQueryParams] = useState<any>({
-    per_page: 5,
+    per_page: initPageSize,
     page: 1
   });
   const [tableMeta, setTableMeta] = useState<any>();
@@ -50,6 +51,7 @@ const SitePolygonsTable = ({
       columns={columns}
       variant={variant}
       isLoading={!isLoaded}
+      defaultPageSize={initPageSize}
     />
   );
 };

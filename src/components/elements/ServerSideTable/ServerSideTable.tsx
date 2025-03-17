@@ -21,17 +21,17 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   meta: any;
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
+  defaultPageSize?: number;
 }
 
 export function ServerSideTable<TData extends RowData>({
   onTableStateChange,
   onQueryParamChange,
   variant,
+  defaultPageSize = 5,
   children,
   ...props
 }: ServerSideTableProps<TData>) {
-  const defaultPageSize = 5;
-
   const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
   const [filters, setFilter] = useState<FilterValue[]>([]);
   const [page, setPage] = useState(1);
@@ -70,7 +70,7 @@ export function ServerSideTable<TData extends RowData>({
             previousPage={() => setPage(page => page - 1)}
             setPageIndex={index => setPage(index + 1)}
             hasPageSizeSelector
-            defaultPageSize={defaultPageSize}
+            defaultPageSize={pageSize}
             setPageSize={size => {
               setPage(1);
               setPageSize(size);
