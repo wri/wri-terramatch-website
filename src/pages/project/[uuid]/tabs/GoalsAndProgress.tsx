@@ -245,7 +245,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow>
+      <PageRow className="gap-8">
         <PageColumn>
           <PageCard
             title={isTerrafund ? t("Non-Tree Planting Progress") : t("Seed Planting Progress")}
