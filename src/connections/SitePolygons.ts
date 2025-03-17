@@ -11,6 +11,7 @@ import { selectorCache } from "@/utils/selectorCache";
 export type SitePolygonIndexConnectionProps = {
   entityName: string;
   entityUuid: string;
+  search?: string;
   pageSize?: number;
   pageNumber?: number;
   presentIndicator?:
@@ -41,7 +42,8 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
   const queryParams: Record<string, string | number | null | undefined> = {
     "page[number]": props.pageNumber ?? 1,
-    "page[size]": props.pageSize ?? 10
+    "page[size]": props.pageSize ?? 10,
+    search: props.search
   };
 
   if (queryKey) {
@@ -59,7 +61,7 @@ const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnectio
   sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
-  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}`;
+  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${props.search}`;
 
 const sitePolygonsConnection: Connection<
   SitePolygonIndexConnection<SitePolygonDto>,
