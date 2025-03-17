@@ -321,6 +321,10 @@ export type SiteFullDto = {
    */
   projectUuid: string | null;
   /**
+   * The associated project country
+   */
+  projectCountry: string | null;
+  /**
    * The associated project organisation name
    */
   organisationName: string | null;
