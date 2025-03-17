@@ -35,7 +35,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Site Information")}>
-            <LongTextField title={t("Description")}>{site.description}</LongTextField>
+            <LongTextField title={t("Description")}>{site.landscapeCommunityContribution}</LongTextField>
             <LongTextField title={t("History")}>{site.history}</LongTextField>
             <SelectImageListField
               title={t("Restoration Strategy")}
@@ -73,7 +73,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
           </PageCard>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <PageCard title={t("Direct seeding")}>
-              <SeedingsTable modelName="site" modelUUID={site.uuid} type="weight" />
+              <SeedingsTable entity="sites" entityUuid={site.uuid} />
             </PageCard>
             <PageCard title={t("Invasives")}>
               <InvasiveTable modelName="site" modelUUID={site.uuid} collection="invasive" />

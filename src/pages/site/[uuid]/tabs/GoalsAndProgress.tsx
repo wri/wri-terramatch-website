@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import React from "react";
 import { Else, If, Then, When } from "react-if";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -10,10 +10,12 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
@@ -46,19 +48,31 @@ const isEmptyArray = (obj: any) => {
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-  const [treeCount, setTreeCount] = useState(0);
-  const [speciesCount, setSpeciesCount] = useState(0);
-  const [totalNonTree, setTotalNonTree] = useState(0);
-  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
-  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
-  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
+  const isTerrafund = frameworkIsTerrafund(site.frameworkKey as Framework);
+  const aggregateProps = { entity: "sites" as SupportedEntity, entityUuid: site.uuid };
+  const treeCount = usePlantTotalCount({ ...aggregateProps, collection: isTerrafund ? "non-tree" : "seeds" });
+  const { speciesCount } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: isTerrafund ? "non-tree" : "seeds"
+  });
+  const totalNonTree = usePlantTotalCount({ ...aggregateProps, collection: "non-tree" });
+  const { speciesCount: totalNonTreeSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "non-tree"
+  });
+  const treePlantedSpeciesCount = usePlantTotalCount({ ...aggregateProps, collection: "tree-planted" });
+  const { speciesCount: treePlantedSpeciesGoal } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "tree-planted"
+  });
+
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: site.uuid,
       entity: "site"
     }
   });
-  const isTerrafund = ALL_TF.includes(site.frameworkKey as (typeof ALL_TF)[number]);
   return (
     <PageBody>
       <PageRow>
@@ -140,14 +154,12 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </div>
             </div>
             <div>
-              <TreeSpeciesTablePD
-                modelName="site"
-                modelUUID={site.uuid}
+              <TreeSpeciesTable
+                entity="sites"
+                entityUuid={site.uuid}
                 visibleRows={8}
                 collection="tree-planted"
-                galleryType={"treeSpeciesPD"}
-                setTotalSpecies={setTreePlantedSpeciesCount}
-                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
+                galleryType="treeSpeciesPD"
               />
             </div>
           </div>
@@ -241,24 +253,10 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <div>
               <If condition={isTerrafund}>
                 <Then>
-                  <TreeSpeciesTablePD
-                    modelName="site"
-                    collection="non-tree"
-                    modelUUID={site.uuid}
-                    visibleRows={5}
-                    setTotalSpecies={setSpeciesCount}
-                    setTotalCount={setTreeCount}
-                  />
+                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="non-tree" visibleRows={5} />
                 </Then>
                 <Else>
-                  <TreeSpeciesTablePD
-                    modelName="site"
-                    collection="seeding"
-                    modelUUID={site.uuid}
-                    visibleRows={5}
-                    setTotalCount={setTreeCount}
-                    setTotalSpecies={setSpeciesCount}
-                  />
+                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="seeds" visibleRows={5} />
                 </Else>
               </If>
             </div>
@@ -293,14 +291,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               />
             </div>
             <div>
-              <TreeSpeciesTablePD
-                modelName="site"
-                collection="non-tree"
-                modelUUID={site.uuid}
-                visibleRows={5}
-                setTotalNonTree={setTotalNonTree}
-                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
-              />
+              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="non-tree" visibleRows={5} />
             </div>
           </div>
         </PageCard>

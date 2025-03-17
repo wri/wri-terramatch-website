@@ -20,10 +20,12 @@ import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elem
 import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
+import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
@@ -38,7 +40,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   entity?: Entity;
 }
 
-export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
+type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
 
 export interface FormEntry {
   title?: string;
@@ -66,7 +68,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 };
 
 export const getFormEntries = (
-  { step, values, nullText, type }: GetFormEntriesProps,
+  { step, values, nullText, type, entity }: GetFormEntriesProps,
   t: typeof useT,
   entityPolygonData?: any,
   bbox?: any,
@@ -78,21 +80,32 @@ export const getFormEntries = (
     switch (f.type) {
       case FieldType.TreeSpecies:
       case FieldType.SeedingsTableInput: {
-        //If it was tree species
-        const value = getAnswer(f, values) as TreeSpeciesValue[] | null;
+        const value = (getAnswer(f, values) ?? []) as TreeSpeciesValue[];
+        const collection = f.type === FieldType.SeedingsTableInput ? "seeds" : value[0]?.collection;
+        const plants = value.map(
+          ({ name, amount, taxon_id }) =>
+            ({
+              name,
+              amount,
+              // ?? null is important here for the isEqual check in useFormChanges. The v3 API always
+              // returns null, so if taxon_id is undefined here, we want it to be explicitly null
+              // for comparison.
+              taxonId: taxon_id ?? null
+            } as PlantData)
+        );
+        const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
+        const tableType = !f.fieldProps.withNumbers ? "noCount" : undefined;
         outputArr.push({
-          title: t("Total {label}", { label: f.label ?? "" }),
+          title: f.label,
           type: f.type,
-          value: value?.length ?? nullText ?? t("Answer Not Provided")
+          value: (
+            <TreeSpeciesTable
+              {...{ plants, collection, tableType }}
+              entity={supportedEntity}
+              entityUuid={entity?.entityUUID}
+            />
+          )
         });
-        if (f.fieldProps.withNumbers) {
-          //If tree species included numbers
-          outputArr.push({
-            title: t("Total {label} Count", { label: f.label ?? "" }),
-            type: f.type,
-            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? nullText ?? t("Answer Not Provided")
-          });
-        }
         break;
       }
 
@@ -191,7 +204,8 @@ export const getFormEntries = (
             step: {
               ...step,
               fields: f.fieldProps.fields.filter(child => child.condition === values[f.name])
-            }
+            },
+            entity
           },
           t
         );

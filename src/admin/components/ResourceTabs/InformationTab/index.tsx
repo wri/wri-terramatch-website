@@ -1,7 +1,8 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { camelCase } from "lodash";
+import { FC } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then, When } from "react-if";
 
@@ -10,7 +11,9 @@ import { ProjectManagersTable } from "@/admin/components/ResourceTabs/Informatio
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
@@ -23,8 +26,9 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
+
 interface IProps extends Omit<TabProps, "label" | "children"> {
-  type: EntityName;
+  type: Exclude<EntityName, "project-pitches">;
 }
 const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   switch (type) {
@@ -45,16 +49,17 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
   }
 };
 const InformationTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record, resource } = useShowContext();
+  const { isLoading: ctxLoading, record } = useShowContext();
   const t = useT();
   const { framework } = useFrameworkContext();
-  const [totalCountNonTree, setTotalCountNonTree] = useState(0);
-  const [totalCountNurserySeedling, setTotalCountNurserySeedling] = useState(0);
-  const [totalCountSeeding, setTotalCountSeeding] = useState(0);
-  const [totalCountTreePlanted, setTotalCountTreePlanted] = useState(0);
-  const [totalCountReplanting, setTotalCountReplanting] = useState(0);
-  const modelName = resource?.replace("Report", "-report");
-  const modelUUID = record?.uuid;
+  const entity = camelCase(props.type) as SupportedEntity;
+  const entityUuid = record?.uuid;
+
+  const totalCountNonTree = usePlantTotalCount({ entity, entityUuid, collection: "non-tree" });
+  const totalCountNurserySeedling = usePlantTotalCount({ entity, entityUuid, collection: "nursery-seedling" });
+  const totalCountSeeds = usePlantTotalCount({ entity, entityUuid, collection: "seeds" });
+  const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
+  const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
   const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
     pathParams: {
@@ -148,11 +153,9 @@ const InformationTab: FC<IProps> = props => {
                                     {totalCountNonTree.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
-                                  modelUUID={modelUUID}
-                                  modelName={modelName}
+                                <TreeSpeciesTable
+                                  {...{ entity, entityUuid }}
                                   collection="non-tree"
-                                  setTotalCount={setTotalCountNonTree}
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -189,11 +192,9 @@ const InformationTab: FC<IProps> = props => {
                                       {totalCountNurserySeedling.toLocaleString() ?? 0}
                                     </Text>
                                   </div>
-                                  <TreeSpeciesTablePD
-                                    modelUUID={modelUUID}
-                                    modelName={modelName}
+                                  <TreeSpeciesTable
+                                    {...{ entity, entityUuid }}
                                     collection="nursery-seedling"
-                                    setTotalCount={setTotalCountNurserySeedling}
                                     secondColumnWidth="45%"
                                   />
                                 </div>
@@ -208,14 +209,12 @@ const InformationTab: FC<IProps> = props => {
                                     Seeds Planted:
                                   </Text>
                                   <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                    {totalCountSeeding.toLocaleString()}
+                                    {totalCountSeeds.toLocaleString()}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
-                                  modelUUID={modelUUID}
-                                  modelName={modelName}
-                                  collection="seeding"
-                                  setTotalCount={setTotalCountSeeding}
+                                <TreeSpeciesTable
+                                  {...{ entity, entityUuid }}
+                                  collection="seeds"
                                   secondColumnWidth="45%"
                                 />
                               </div>
@@ -231,11 +230,9 @@ const InformationTab: FC<IProps> = props => {
                                   {totalCountTreePlanted.toLocaleString() ?? 0}
                                 </Text>
                               </div>
-                              <TreeSpeciesTablePD
-                                modelUUID={modelUUID}
-                                modelName={modelName}
+                              <TreeSpeciesTable
+                                {...{ entity, entityUuid }}
                                 collection="tree-planted"
-                                setTotalCount={setTotalCountTreePlanted}
                                 secondColumnWidth="45%"
                               />
                             </div>
@@ -248,14 +245,12 @@ const InformationTab: FC<IProps> = props => {
                                     Replanting:
                                   </Text>
                                   <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                    {totalCountReplanting.toLocaleString() ?? 0}
+                                    {totalCountReplanting?.toLocaleString() ?? 0}
                                   </Text>
                                 </div>
-                                <TreeSpeciesTablePD
-                                  modelUUID={modelUUID}
-                                  modelName={modelName}
+                                <TreeSpeciesTable
+                                  {...{ entity, entityUuid }}
                                   collection="replanting"
-                                  setTotalCount={setTotalCountReplanting}
                                   secondColumnWidth="45%"
                                 />
                               </div>

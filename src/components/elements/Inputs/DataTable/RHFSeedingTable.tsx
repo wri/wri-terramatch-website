@@ -18,7 +18,7 @@ export interface RHFSeedingProps
 
 export const getSeedingTableColumns = (
   t: typeof useT | Function = (t: string) => t,
-  captureCount: boolean
+  captureCount: boolean = false
 ): AccessorKeyColumnDef<any>[] =>
   captureCount
     ? [

@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { isEmpty, remove } from "lodash";
+import { camelCase, isEmpty, remove } from "lodash";
 import { Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
@@ -12,7 +12,7 @@ import { useAutocompleteSearch } from "@/components/elements/Inputs/TreeSpeciesI
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { EstablishmentEntityType, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
+import { EstablishmentEntity, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
 import { useEntityContext } from "@/context/entity.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -97,7 +97,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
   const displayPreviousCounts = props.withPreviousCounts && isReport;
   const { totalReportedColumn, totalToDateColumn } = getColumnTitles({ ...props, isReport });
 
-  const entity = (handleBaseEntityTrees ? entityName : undefined) as EstablishmentEntityType;
+  const entity = handleBaseEntityTrees ? (camelCase(entityName) as EstablishmentEntity) : undefined;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
   const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
     entity,

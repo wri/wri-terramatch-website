@@ -98,7 +98,7 @@ const ImpactStoryLanding = () => {
               <b>{t("Date Added: ")}</b>
               {transformedData.date}
             </Text>
-            <Text variant="text-16" className="mt-6 leading-8 text-darkCustom" containHtml>
+            <Text variant="text-16" className="modal-impact-story-content mt-6 leading-8 text-darkCustom" containHtml>
               {transformedData.content}
             </Text>
           </div>

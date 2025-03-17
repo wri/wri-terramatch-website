@@ -66,7 +66,7 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
     useGetDemographicTypeConfig(type);
 
   const demographicsTotal = useCollectionsTotal({
-    entity: "project-reports",
+    entity: "projectReports",
     uuid: report.uuid,
     demographicType,
     collections
@@ -88,7 +88,7 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
             <TextField label={otherTitle!} value={report[otherDescriptionProp]} />
           ) : null}
           <DemographicsDisplay
-            entity="project-reports"
+            entity="projectReports"
             uuid={report.uuid}
             type={demographicType}
             collection={collection}

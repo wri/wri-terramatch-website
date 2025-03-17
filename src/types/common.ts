@@ -255,6 +255,9 @@ export const isSingularBaseModelName = (name: SingularEntityName): name is Singu
 export const isSingularReportModelName = (name: SingularEntityName): name is SingularReportsModelNames =>
   name.endsWith("-report");
 
+export const isSingularEntityName = (name: EntityName | SingularEntityName): name is SingularEntityName =>
+  !name.endsWith("s");
+
 export type Entity = {
   entityName: EntityName | SingularEntityName;
   entityUUID: string;

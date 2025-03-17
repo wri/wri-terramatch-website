@@ -51,9 +51,9 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
         <div className="flex gap-8 overflow-y-auto pr-10 mobile:flex-col mobile:p-0">
           <SectionShare
             data={data}
-            className="w-max  max-w-[25%] mobile:order-2 mobile:w-full mobile:max-w-full mobile:pb-4"
+            className="w-max max-w-[25%] mobile:order-2 mobile:w-full mobile:max-w-full mobile:pb-4"
           />
-          <div className="w-wekit h-max pb-15 mobile:order-1">
+          <div className="w-wekit h-max w-full pb-15 mobile:order-1">
             <Text variant={isMobile ? "text-22-bold" : "text-40-bold"} className="leading-[normal] text-darkCustom">
               {data?.title}
             </Text>
@@ -69,7 +69,11 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
                 timeZone: "UTC"
               })}
             </Text>
-            <Text variant="text-16" className="mt-6 leading-[normal] text-darkCustom" containHtml>
+            <Text
+              variant="text-16"
+              className="modal-impact-story-content mt-6 leading-[normal] text-darkCustom"
+              containHtml
+            >
               {data?.content}
             </Text>
           </div>
