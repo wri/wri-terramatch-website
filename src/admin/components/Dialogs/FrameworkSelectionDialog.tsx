@@ -57,7 +57,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
   const [exporting, setExporting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { role } = useGetUserRole();
+  const { isSuperAdmin, isFrameworkAdmin } = useGetUserRole();
 
   const onExport = useCallback(
     (framework: string) => {
@@ -66,7 +66,9 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
       const exportPrefix = split(entity, "-").map(capitalize).join(" ");
 
       const getExport =
-        role === "admin-super" ? fetchGetV2AdminENTITYPresignedUrlFRAMEWORK : fetchGetV2AdminENTITYExportFRAMEWORKPm;
+        isSuperAdmin || isFrameworkAdmin
+          ? fetchGetV2AdminENTITYPresignedUrlFRAMEWORK
+          : fetchGetV2AdminENTITYExportFRAMEWORKPm;
 
       getExport({
         pathParams: { entity, framework }
@@ -84,7 +86,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
 
       setModalOpen(false);
     },
-    [entity, role]
+    [entity, isSuperAdmin, isFrameworkAdmin]
   );
 
   return {

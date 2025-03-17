@@ -101,7 +101,7 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               startIcon={<Check />}
-              disabled={record?.status === "approved" || checkPolygons}
+              disabled={record?.status === "approved" || !checkPolygons}
               onClick={() => setStatusModal("approve")}
             >
               Approve

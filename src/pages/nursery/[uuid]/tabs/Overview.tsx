@@ -29,7 +29,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
         <PageColumn>
           <PageCard title={t("Nursery Details")} gap={4}>
             <TextField label={t("Nursery name")} value={nursery?.name} />
-            <TextField label={t("Nursery type")} value={nursery?.nursery_type} />
+            <TextField label={t("Nursery type")} value={nursery?.type} />
             <TextField label={t("Nursery start date")} value={format(nursery.start_date)} />
             <TextField label={t("Nursery end date")} value={format(nursery.end_date)} />
             <TextField label={t("Last updated")} value={format(nursery.updated_at)} />
