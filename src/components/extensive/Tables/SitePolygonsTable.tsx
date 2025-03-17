@@ -25,7 +25,7 @@ const SitePolygonsTable = ({
     page: 1
   });
   const [tableMeta, setTableMeta] = useState<any>();
-  const [, { sitePolygons, meta }] = useSitePolygons({
+  const [isLoaded, { sitePolygons, meta }] = useSitePolygons({
     entityName,
     entityUuid,
     pageSize: queryParams.per_page,
@@ -49,6 +49,7 @@ const SitePolygonsTable = ({
       onQueryParamChange={setQueryParams}
       columns={columns}
       variant={variant}
+      isLoading={!isLoaded}
     />
   );
 };
