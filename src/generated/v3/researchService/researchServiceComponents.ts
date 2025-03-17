@@ -52,6 +52,21 @@ export type SitePolygonsIndexQueryParams = {
     | "msuCarbon"
   )[];
   /**
+   * Filter results by polygons that have all of the indicators listed
+   */
+  ["presentIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
    * Filter results by polygons that have been modified since the date provided
    *
    * @format date-time

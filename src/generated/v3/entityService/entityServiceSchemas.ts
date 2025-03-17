@@ -71,6 +71,8 @@ export type ProjectLightDto = {
    * @format date-time
    */
   plantingStartDate: string | null;
+  country: string | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -154,6 +156,8 @@ export type ProjectFullDto = {
    * @format date-time
    */
   plantingStartDate: string | null;
+  country: string | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -169,7 +173,6 @@ export type ProjectFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   continent: string | null;
-  country: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**
@@ -183,7 +186,6 @@ export type ProjectFullDto = {
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
-  totalHectaresRestoredSum: number;
   treesGrownGoal: number | null;
   survivalRate: number | null;
   landUseTypes: string[] | null;
@@ -320,6 +322,10 @@ export type SiteFullDto = {
    * The associated project uuid
    */
   projectUuid: string | null;
+  /**
+   * The associated project country
+   */
+  projectCountry: string | null;
   /**
    * The associated project organisation name
    */
