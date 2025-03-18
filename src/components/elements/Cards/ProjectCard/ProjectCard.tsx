@@ -16,17 +16,19 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
+import { deleteProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
+import Log from "@/utils/log";
 
 export interface ProjectCardProps
   extends PropsWithChildren,
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   project: ProjectLightDto;
-  onDelete: (uuid: string) => void;
 }
 
 const FrameworkName = () => {
@@ -38,9 +40,10 @@ const FrameworkName = () => {
   );
 };
 
-const ProjectCard = ({ project, onDelete, title, children, className, ...rest }: ProjectCardProps) => {
+const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCardProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const { openToast } = useToastContext();
   const status = getEntityCombinedStatus(project);
   const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
   const [siteCount, setSiteCount] = useState<number | undefined>();
@@ -57,9 +60,15 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            onDelete(project.uuid);
+          onClick: async () => {
             closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
+            try {
+              await deleteProject(project.uuid);
+              openToast(t("The project has been successfully deleted"));
+            } catch (failure) {
+              Log.error("Project delete failed", failure);
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            }
           }
         }}
         secondaryButtonProps={{

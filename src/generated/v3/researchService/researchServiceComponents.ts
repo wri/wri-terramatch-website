@@ -118,7 +118,7 @@ export type SitePolygonsIndexResponse = {
     /**
      * @example sitePolygons
      */
-    type?: string;
+    resourceType?: string;
     page?: {
       /**
        * The total number of records available.

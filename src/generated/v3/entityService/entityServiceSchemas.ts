@@ -65,12 +65,14 @@ export type ProjectLightDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * @format date-time
    */
   plantingStartDate: string | null;
+  country: string | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -104,7 +106,7 @@ export type SiteLightDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * The associated project name
@@ -148,12 +150,14 @@ export type ProjectFullDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * @format date-time
    */
   plantingStartDate: string | null;
+  country: string | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -169,7 +173,6 @@ export type ProjectFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   continent: string | null;
-  country: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**
@@ -183,7 +186,6 @@ export type ProjectFullDto = {
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
-  totalHectaresRestoredSum: number;
   treesGrownGoal: number | null;
   survivalRate: number | null;
   landUseTypes: string[] | null;
@@ -254,7 +256,7 @@ export type SiteFullDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   /**
    * The associated project name

@@ -26,7 +26,7 @@ export type AuthLoginResponse = {
     /**
      * @example logins
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -99,7 +99,7 @@ export type UsersFindResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -209,7 +209,7 @@ export type UserUpdateResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -285,7 +285,7 @@ export type UserCreationResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -360,7 +360,7 @@ export type RequestPasswordResetResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -413,7 +413,7 @@ export type ResetPasswordResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -465,7 +465,7 @@ export type VerifyUserResponse = {
     /**
      * @example verifications
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
