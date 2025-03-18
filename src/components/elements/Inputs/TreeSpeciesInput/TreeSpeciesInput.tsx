@@ -416,25 +416,25 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                     ? {
                         width: `${refPlanted.current?.clientWidth}px`
                       }
-                    : !props.withNumbers
-                    ? {
+                    : {
                         width: `${refPlanted.current?.clientWidth}px`,
                         minWidth: `${refPlanted.current?.clientWidth}px`
                       }
-                    : {}
                 }
               >
-                <Input
-                  name="amount"
-                  type="number"
-                  variant="treePlanted"
-                  defaultValue={props.withNumbers ? value.amount : ""}
-                  placeholder={t("0")}
-                  error={props.error?.[index]?.amount ? ({} as FieldError) : undefined}
-                  onChange={e => (props.withNumbers ? handleUpdate({ ...value, amount: +e.target.value }) : {})}
-                  onKeyDownCapture={onKeyDownCapture}
-                  containerClassName=""
-                />
+                {props.withNumbers && (
+                  <Input
+                    name="amount"
+                    type="number"
+                    variant="treePlanted"
+                    defaultValue={value.amount}
+                    placeholder={"0"}
+                    error={props.error?.[index]?.amount ? ({} as FieldError) : undefined}
+                    onChange={e => handleUpdate({ ...value, amount: +e.target.value })}
+                    onKeyDownCapture={onKeyDownCapture}
+                    containerClassName=""
+                  />
+                )}
               </div>
               <When condition={displayPreviousCounts}>
                 <Text variant="text-14-light" className="text-black ">
