@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Using node version `node -v`"
         - yarn install
     build:
       commands:
