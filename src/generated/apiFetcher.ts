@@ -167,8 +167,8 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     Log.error("Delayed Job Fetch error", e);
 
     if (typeof e === "object" && e !== null) {
-      const errorMessage = (e as { message?: string }).message || "";
-      const statusCode = (e as { statusCode?: number }).statusCode;
+      const errorMessage = (e as { message?: string }).message ?? "";
+      const statusCode = (e as { statusCode?: number }).statusCode ?? -1;
 
       const isNetworkError = errorMessage.includes("network changed") || errorMessage.includes("Failed to fetch");
 
