@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import SectionBody from "@/components/elements/Section/SectionBody";
@@ -18,7 +19,11 @@ import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { sustainableDevelopmentGoalsOptions } from "@/constants/options/sustainableDevelopmentGoals";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import {
+  fetchGetV2DashboardCountryCountry,
+  fetchGetV2TerrafundPolygonBboxUuid,
+  useGetV2TerrafundProjectPolygon
+} from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -64,11 +69,27 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
     }
   };
 
+  const callCountryBBox = async () => {
+    const currentCountry: string = Array.isArray(pitch?.project_country)
+      ? pitch.project_country[0] ?? ""
+      : pitch?.project_country ?? "";
+    if (currentCountry) {
+      const countryBbox = await fetchGetV2DashboardCountryCountry({
+        pathParams: { country: currentCountry }
+      });
+      if (Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
+        const bboxFormat = countryBbox.bbox[1] as unknown as BBox;
+        setPolygonBbox(bboxFormat);
+      }
+    }
+  };
+
   useValueChanged(projectPolygon, async () => {
     if (projectPolygon?.project_polygon) {
       setBbboxAndZoom();
       setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
     } else {
+      callCountryBBox();
       setPolygonDataMap({ [FORM_POLYGONS]: [] });
     }
   });
