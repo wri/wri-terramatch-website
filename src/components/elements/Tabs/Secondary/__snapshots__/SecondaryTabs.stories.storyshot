@@ -20,7 +20,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
           aria-selected={true}
           className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-primary"
           data-headlessui-state="selected"
-          id="headlessui-tabs-tab-:r3a:"
+          id="headlessui-tabs-tab-:r39:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onMouseDown={[Function]}
@@ -38,7 +38,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
           aria-selected={false}
           className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
           data-headlessui-state=""
-          id="headlessui-tabs-tab-:r3b:"
+          id="headlessui-tabs-tab-:r3a:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onMouseDown={[Function]}
@@ -56,7 +56,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
           aria-selected={false}
           className="mb-[-2px] h-full outline-none  px-4 py-4 border-b-[3px] text-black border-transparent"
           data-headlessui-state=""
-          id="headlessui-tabs-tab-:r3c:"
+          id="headlessui-tabs-tab-:r3b:"
           onClick={[Function]}
           onKeyDown={[Function]}
           onMouseDown={[Function]}
@@ -75,7 +75,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
     <div>
       <div
         data-headlessui-state="selected"
-        id="headlessui-tabs-panel-:r3d:"
+        id="headlessui-tabs-panel-:r3c:"
         role="tabpanel"
         tabIndex={0}
       >
@@ -84,7 +84,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         </div>
       </div>
       <span
-        id="headlessui-tabs-panel-:r3e:"
+        id="headlessui-tabs-panel-:r3d:"
         role="tabpanel"
         style={
           Object {
@@ -104,7 +104,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
         tabIndex={-1}
       />
       <span
-        id="headlessui-tabs-panel-:r3f:"
+        id="headlessui-tabs-panel-:r3e:"
         role="tabpanel"
         style={
           Object {
