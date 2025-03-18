@@ -129,7 +129,6 @@ const resolveUrl = (url: string, queryParams: Record<string, string> = {}, pathP
 const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = { data: { attributes: DelayedJobDto } };
-
 async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries = 3): Promise<JobResult> {
   let response, error;
   try {
@@ -141,9 +140,6 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     response = await fetch(url, { signal, headers });
 
     // Retry logic for handling 502 Bad Gateway errors
-    // When requesting the job status from the server, a 502 Bad Gateway error may occur. This error should be temporary,
-    // retrying the request after a short delay might return the correct response.
-    // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
     if (response.status === 502 && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
       return loadJob(signal, delayedJobId, retries - 1); // Retry
@@ -158,16 +154,21 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
       } catch (e) {
         error = { statusCode: -1 };
       }
-
       throw error;
     }
 
     return await response.json();
-  } catch (e) {
+  } catch (e: any) {
     Log.error("Delayed Job Fetch error", e);
+    const isNetworkError = e.message?.includes("network changed") || e.message?.includes("Failed to fetch");
+
+    if ((isNetworkError || e.statusCode === -1) && retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
+      return loadJob(signal, delayedJobId, retries - 1);
+    }
+
     error = {
       statusCode: response?.status || -1,
-      //@ts-ignore
       ...(e || {})
     };
     throw error;
