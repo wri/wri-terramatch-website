@@ -110,12 +110,40 @@ class QuillEditor extends Component<QuillEditorProps> {
             background: white;
           }
           
-          /* Add custom CSS for video embeds */
+          /* Updated responsive CSS for video embeds */
           .quill-editor-container .ql-editor iframe,
           .quill-editor-container .ql-editor .ql-video {
-            width: 100%;
-            height: 400px; /* Adjust this height as needed */
-            max-width: 100%;
+            width: 100% !important;
+            aspect-ratio: 16/9 !important;
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          
+          @supports not (aspect-ratio: 16/9) {
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video {
+              height: 0 !important;
+              padding-bottom: 56.25% !important;
+              position: relative !important;
+            }
+            
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video iframe {
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
+          
+          @media (min-width: 1500px) {
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video {
+              max-width: 75% !important;
+              margin: 0 auto !important;
+              display: block !important;
+            }
           }
         `}</style>
         <div ref={this.editorRef}></div>
