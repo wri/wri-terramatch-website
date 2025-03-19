@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { FC } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
@@ -30,7 +31,11 @@ const ButtonStates = {
   POLYGON: 2
 };
 
-const ProjectContent = ({ project, refetch }: { project: ProjectFullDto; refetch: () => void }) => {
+type ProjectContentProps = {
+  project: ProjectFullDto;
+  refetch: () => void;
+};
+const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   return (
     <>
@@ -38,7 +43,7 @@ const ProjectContent = ({ project, refetch }: { project: ProjectFullDto; refetch
         <title>{t("Project")}</title>
       </Head>
       <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project?.name ?? "" }]} />
-      <ProjectHeader project={project} />
+      <ProjectHeader {...{ project }} />
       <StatusBar entityName="projects" entity={project} />
       <SecondaryTabs
         tabItems={[

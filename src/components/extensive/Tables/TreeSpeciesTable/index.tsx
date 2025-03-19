@@ -138,7 +138,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
     return <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />;
   }
 
-  Log.error("Invalid TreeSpeciesTableProps", { props });
+  Log.debug("Invalid TreeSpeciesTableProps", { props });
   return null;
 };
 

@@ -1,10 +1,20 @@
 import { createSelector } from "reselect";
 
 import { selectFirstLogin } from "@/connections/Login";
-import { usersFind, UsersFindVariables, userUpdate } from "@/generated/v3/userService/userServiceComponents";
-import { usersFindFetchFailed, userUpdateFetchFailed } from "@/generated/v3/userService/userServicePredicates";
-import { UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
-import { ApiDataStore } from "@/store/apiSlice";
+import {
+  userCreation,
+  usersFind,
+  UsersFindVariables,
+  userUpdate
+} from "@/generated/v3/userService/userServiceComponents";
+import {
+  userCreationFetchFailed,
+  userCreationIsFetching,
+  usersFindFetchFailed,
+  userUpdateFetchFailed
+} from "@/generated/v3/userService/userServicePredicates";
+import { UserDto, UserNewRequest, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -73,5 +83,30 @@ const myUserConnection: Connection<UserConnection> = {
     })
   )
 };
+
+export const selectUserCreation = (store: ApiDataStore) => Object.values(store.users)?.[0]?.attributes;
+
+type UserCreationConnection = {
+  isLoading: boolean;
+  requestFailed: PendingErrorState | null;
+  isSuccess: boolean;
+  emailNewUser: string;
+  signUp: (newUSer: UserNewRequest) => void;
+};
+
+const userCreationConnection: Connection<UserCreationConnection> = {
+  selector: createSelector(
+    [userCreationIsFetching, userCreationFetchFailed, selectUserCreation],
+    (isLoading, requestFailed, selector) => ({
+      isLoading,
+      requestFailed,
+      isSuccess: selector?.emailAddress != null,
+      emailNewUser: selector?.emailAddress,
+      signUp: (newUser: UserNewRequest) => userCreation({ body: newUser })
+    })
+  )
+};
+
 export const useMyUser = connectionHook(myUserConnection);
 export const loadMyUser = connectionLoader(myUserConnection);
+export const useUserCreation = connectionHook(userCreationConnection);

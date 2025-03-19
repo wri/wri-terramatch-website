@@ -15381,37 +15381,6 @@ export const useGetV2AdminProjectPitches = <TData = GetV2AdminProjectPitchesResp
   );
 };
 
-export type DeleteV2ProjectsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2ProjectsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2ProjectsUUIDVariables = {
-  pathParams: DeleteV2ProjectsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2ProjectsUUID = (variables: DeleteV2ProjectsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2ProjectsUUIDError, undefined, {}, {}, DeleteV2ProjectsUUIDPathParams>({
-    url: "/v2/projects/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2ProjectsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2ProjectsUUIDError, DeleteV2ProjectsUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2ProjectsUUIDError, DeleteV2ProjectsUUIDVariables>(
-    (variables: DeleteV2ProjectsUUIDVariables) => fetchDeleteV2ProjectsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2ProjectsUUIDTasksPathParams = {
   uuid: string;
 };
@@ -25876,38 +25845,6 @@ export const usePutV2AdminProjectsUUID = (
     PutV2AdminProjectsUUIDVariables
   >(
     (variables: PutV2AdminProjectsUUIDVariables) => fetchPutV2AdminProjectsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2AdminProjectsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2AdminProjectsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2AdminProjectsUUIDVariables = {
-  pathParams: DeleteV2AdminProjectsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2AdminProjectsUUID = (variables: DeleteV2AdminProjectsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2AdminProjectsUUIDError, undefined, {}, {}, DeleteV2AdminProjectsUUIDPathParams>({
-    url: "/v2/admin/projects/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2AdminProjectsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2AdminProjectsUUIDError, DeleteV2AdminProjectsUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2AdminProjectsUUIDError, DeleteV2AdminProjectsUUIDVariables>(
-    (variables: DeleteV2AdminProjectsUUIDVariables) =>
-      fetchDeleteV2AdminProjectsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };

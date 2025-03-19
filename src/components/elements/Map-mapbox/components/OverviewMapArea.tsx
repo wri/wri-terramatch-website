@@ -117,7 +117,7 @@ const OverviewMapArea = ({
   const callCountryBBox = async () => {
     let currentCountry = entityModel?.country;
     if (type === "sites") {
-      currentCountry = entityModel?.project?.country;
+      currentCountry = entityModel?.projectCountry;
     }
     const countryBbox = await fetchGetV2DashboardCountryCountry({
       pathParams: { country: currentCountry }
