@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
 import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
-import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
@@ -13,6 +13,7 @@ export type SitePolygonIndexConnectionProps = {
   entityUuid: string;
   pageSize?: number;
   pageNumber?: number;
+  lightResource?: boolean;
   presentIndicator?:
     | "treeCover"
     | "treeCoverLoss"
@@ -31,17 +32,18 @@ const ENTITY_QUERY_KEYS: Record<string, string> = {
   sites: "siteId[]"
 };
 
-export type SitePolygonIndexConnection<SitePolygonDto> = {
-  sitePolygons?: SitePolygonDto[];
+export type SitePolygonIndexConnection<SitePolygonLightDto> = {
+  sitePolygons?: SitePolygonLightDto[];
   meta?: ResponseMeta["page"];
   fetchFailure?: PendingErrorState | null;
 };
 
 const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  const queryParams: Record<string, string | number | null | undefined> = {
+  const queryParams: Record<string, string | number | boolean | null | undefined> = {
     "page[number]": props.pageNumber ?? 1,
-    "page[size]": props.pageSize ?? 10
+    "page[size]": props.pageSize ?? 10,
+    lightResource: props.lightResource ?? false
   };
 
   if (queryKey) {
@@ -55,14 +57,14 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   return { queryParams };
 };
 
-const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonDto>) =>
+const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonLightDto>) =>
   sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
   `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}`;
 
 const sitePolygonsConnection: Connection<
-  SitePolygonIndexConnection<SitePolygonDto>,
+  SitePolygonIndexConnection<SitePolygonLightDto>,
   SitePolygonIndexConnectionProps
 > = {
   load: (connection, props) => {
@@ -83,8 +85,8 @@ const sitePolygonsConnection: Connection<
         (indexMeta, sitePolygonsStore, fetchFailure) => {
           if (!indexMeta) return { fetchFailure };
 
-          const sitePolygons: SitePolygonDto[] = indexMeta.ids
-            .map(id => sitePolygonsStore[id]?.attributes as SitePolygonDto)
+          const sitePolygons: SitePolygonLightDto[] = indexMeta.ids
+            .map(id => sitePolygonsStore[id]?.attributes as SitePolygonLightDto)
             .filter(Boolean);
 
           return { sitePolygons, meta: indexMeta?.page, fetchFailure };
