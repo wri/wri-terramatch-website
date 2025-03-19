@@ -127,6 +127,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
         },
         {
           accessorKey: "seedlingsGrownCount",
+          enableSorting: false,
           header: t("No. seedlings")
         },
         {
