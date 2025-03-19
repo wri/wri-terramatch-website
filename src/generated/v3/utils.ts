@@ -34,14 +34,14 @@ const getBaseUrl = (url: string) => {
   return baseUrl;
 };
 
-export type FetchParams = Dictionary<number | string | boolean | null | undefined>;
+export type FetchParams = Dictionary<number | string | string[] | boolean | null | undefined>;
 export const serializeParams = (pathParams?: FetchParams, queryParams?: FetchParams) => {
   // JSON.serialize() outputs the keys in the order they were added to the object, so take all
   // non-null values in sorted key order and add them to the object to serialize to guarantees a
   // stable serialization
   const orderedParams = {
-    path: {} as Dictionary<number | string | boolean>,
-    query: {} as Dictionary<number | string | boolean>
+    path: {} as Dictionary<number | string | boolean | string[]>,
+    query: {} as Dictionary<number | string | boolean | string[]>
   };
   if (pathParams != null) {
     for (const param of Object.keys(pathParams).sort()) {

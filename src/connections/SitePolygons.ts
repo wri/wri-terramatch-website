@@ -1,6 +1,10 @@
+import { Dictionary } from "lodash";
 import { createSelector } from "reselect";
 
-import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
+import {
+  sitePolygonsIndex,
+  SitePolygonsIndexQueryParams
+} from "@/generated/v3/researchService/researchServiceComponents";
 import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
@@ -13,7 +17,6 @@ export type SitePolygonIndexConnectionProps = {
   entityUuid: string;
   pageSize?: number;
   pageNumber?: number;
-  lightResource?: boolean;
   presentIndicator?:
     | "treeCover"
     | "treeCoverLoss"
@@ -27,10 +30,12 @@ export type SitePolygonIndexConnectionProps = {
     | "msuCarbon";
 };
 
-const ENTITY_QUERY_KEYS: Record<string, string> = {
+const ENTITY_QUERY_KEYS: Dictionary<keyof SitePolygonsIndexQueryParams> = {
   projects: "projectId[]",
   sites: "siteId[]"
 };
+
+type EntityQueryKey = SitePolygonsIndexQueryParams["projectId[]"] | SitePolygonsIndexQueryParams["siteId[]"];
 
 export type SitePolygonIndexConnection<SitePolygonLightDto> = {
   sitePolygons?: SitePolygonLightDto[];
@@ -40,18 +45,18 @@ export type SitePolygonIndexConnection<SitePolygonLightDto> = {
 
 const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  const queryParams: Record<string, string | number | boolean | null | undefined> = {
+  const queryParams: SitePolygonsIndexQueryParams = {
     "page[number]": props.pageNumber ?? 1,
     "page[size]": props.pageSize ?? 10,
     lightResource: true
   };
 
-  if (queryKey) {
-    queryParams[queryKey] = props.entityUuid;
+  if (queryKey != null) {
+    (queryParams[queryKey] as EntityQueryKey) = [props.entityUuid];
   }
 
   if (props.presentIndicator) {
-    queryParams["presentIndicator[]"] = props.presentIndicator;
+    queryParams["presentIndicator[]"] = [props.presentIndicator];
   }
 
   return { queryParams };
@@ -86,7 +91,7 @@ const sitePolygonsConnection: Connection<
           if (!indexMeta) return { fetchFailure };
 
           const sitePolygons: SitePolygonLightDto[] = indexMeta.ids
-            .map(id => sitePolygonsStore[id]?.attributes as SitePolygonLightDto)
+            .map(id => sitePolygonsStore[id]?.attributes)
             .filter(Boolean);
 
           return { sitePolygons, meta: indexMeta?.page, fetchFailure };
