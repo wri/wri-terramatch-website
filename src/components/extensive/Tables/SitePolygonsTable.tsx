@@ -31,7 +31,6 @@ const SitePolygonsTable = ({
     entityUuid,
     pageSize: queryParams.per_page,
     pageNumber: queryParams.page,
-    lightResource: true,
     presentIndicator: presentIndicator
   });
 

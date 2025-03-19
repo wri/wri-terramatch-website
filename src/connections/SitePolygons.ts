@@ -43,7 +43,7 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryParams: Record<string, string | number | boolean | null | undefined> = {
     "page[number]": props.pageNumber ?? 1,
     "page[size]": props.pageSize ?? 10,
-    lightResource: props.lightResource ?? false
+    lightResource: true
   };
 
   if (queryKey) {
