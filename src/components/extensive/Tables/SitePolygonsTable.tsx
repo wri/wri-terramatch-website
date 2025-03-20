@@ -8,6 +8,7 @@ import { processIndicatorData } from "@/utils/MonitoredIndicatorUtils";
 export interface SitePolygonsTableProps {
   entityName: string;
   entityUuid: string;
+  searchTerm: string;
   presentIndicator: SitePolygonIndexConnectionProps["presentIndicator"];
   TABLE_COLUMNS_MAPPING: Record<string, any>;
   variant?: TableVariant;
@@ -16,6 +17,7 @@ export interface SitePolygonsTableProps {
 const SitePolygonsTable = ({
   entityName,
   entityUuid,
+  searchTerm,
   presentIndicator,
   TABLE_COLUMNS_MAPPING,
   variant
@@ -29,6 +31,7 @@ const SitePolygonsTable = ({
   const [isLoaded, { sitePolygons, meta }] = useSitePolygons({
     entityName,
     entityUuid,
+    search: searchTerm,
     pageSize: queryParams.per_page,
     pageNumber: queryParams.page,
     presentIndicator: presentIndicator
