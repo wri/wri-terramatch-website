@@ -49,7 +49,7 @@ const ProjectReportDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="title" label="Report Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
         render={({ status }: ProjectReportLightDto) => {
