@@ -205,10 +205,12 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
       setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
+    } else if (centroidsDataProjects?.bbox) {
+      setGeneralBboxParsed(centroidsDataProjects?.bbox);
     } else {
       setGeneralBboxParsed(undefined);
     }
-  }, [generalBbox]);
+  }, [generalBbox, centroidsDataProjects?.bbox]);
   const queryString = useMemo(() => {
     const finalFilters = {
       status: ["published"],

@@ -78,8 +78,8 @@ const ImageGallery = ({
   const [source, setSource] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
   const [privacy, setPrivacy] = useState<boolean>();
-  const [filterLabel, setFilterLabel] = useState<string>("Filter");
-  const [sortLabel, setSortLabel] = useState<string>("Sort");
+  const [filterLabel, setFilterLabel] = useState<string>(t("Filter"));
+  const [sortLabel, setSortLabel] = useState<string>(t("Sort"));
 
   const mapSourceLabels: { [key: string]: string } = {
     projects: t("Project"),
@@ -98,7 +98,7 @@ const ImageGallery = ({
               currentPrivacytLabel ? t(currentPrivacytLabel) : ""
             }`
           )
-        : "Filter"
+        : t("Filter")
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [privacy, source]);
@@ -108,9 +108,9 @@ const ImageGallery = ({
   });
 
   const tabs = [
-    { key: "0", render: "All Images" },
-    { key: "1", render: "Geotagged" },
-    { key: "2", render: "Not Geotagged" }
+    { key: "0", render: t("All Images") },
+    { key: "1", render: t("Geotagged") },
+    { key: "2", render: t("Not Geotagged") }
   ];
   const getFilteredMenu = (entity: string) => {
     return [
@@ -338,7 +338,7 @@ const ImageGallery = ({
                 setSearchText(e);
                 onChangeSearch(e);
               }}
-              placeholder={"Search..."}
+              placeholder={t("Search...")}
               className="w-64"
             />
             <Toggle items={tabs} onChangeActiveIndex={setActiveIndex} />

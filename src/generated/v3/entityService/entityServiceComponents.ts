@@ -29,13 +29,14 @@ export type EntityIndexQueryParams = {
    */
   ["page[size]"]?: number;
   /**
-   * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
+   * The page number to return. If page[number] is not provided, the first page is returned.
    */
   ["page[number]"]?: number;
   search?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
+  projectUuid?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -64,7 +65,7 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           /**
            * @example projects
            */
-          type?: string;
+          resourceType?: string;
           page?: {
             /**
              * The total number of records available.
@@ -95,7 +96,7 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           /**
            * @example sites
            */
-          type?: string;
+          resourceType?: string;
           page?: {
             /**
              * The total number of records available.
@@ -179,7 +180,7 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           /**
            * @example projects
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -198,7 +199,7 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           /**
            * @example sites
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -219,11 +220,73 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     EntityGetPathParams
   >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type EntityDeletePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity: "projects" | "sites";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type EntityDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityDeleteResponse = {
+  meta?: {
+    resourceType?: "projects" | "sites";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type EntityDeleteVariables = {
+  pathParams: EntityDeletePathParams;
+};
+
+export const entityDelete = (variables: EntityDeleteVariables, signal?: AbortSignal) =>
+  entityServiceFetch<EntityDeleteResponse, EntityDeleteError, undefined, {}, {}, EntityDeletePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "delete",
+    ...variables,
+    signal
+  });
+
 export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
    */
-  entity: "projects" | "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for association
    */
@@ -231,7 +294,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics";
+  association: "demographics" | "seedings" | "treeSpecies";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -263,33 +326,69 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type EntityAssociationIndexResponse = {
-  meta?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-  };
-  data?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DemographicDto;
-  };
-};
-
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<
-    EntityAssociationIndexResponse,
+    | {
+        meta?: {
+          /**
+           * @example demographics
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example demographics
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DemographicDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example seedings
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example seedings
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SeedingDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example treeSpecies
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example treeSpecies
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.TreeSpeciesDto;
+        };
+      },
     EntityAssociationIndexError,
     undefined,
     {},
@@ -308,7 +407,7 @@ export type TreeScientificNamesSearchResponse = {
     /**
      * @example treeSpeciesScientificNames
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -335,13 +434,13 @@ export const treeScientificNamesSearch = (variables: TreeScientificNamesSearchVa
     {},
     TreeScientificNamesSearchQueryParams,
     {}
-  >({ url: "/trees/v3/scientific-names", method: "get", ...variables, signal });
+  >({ url: "/trees/v3/scientificNames", method: "get", ...variables, signal });
 
 export type EstablishmentTreesFindPathParams = {
   /**
    * Entity type for which to retrieve the establishment tree data.
    */
-  entity: "sites" | "nurseries" | "project-reports" | "site-reports" | "nursery-reports";
+  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -382,7 +481,7 @@ export type EstablishmentTreesFindResponse = {
     /**
      * @example establishmentTrees
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -408,8 +507,79 @@ export const establishmentTreesFind = (variables: EstablishmentTreesFindVariable
     EstablishmentTreesFindPathParams
   >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type TreeReportCountsFindPathParams = {
+  /**
+   * Entity type for which to retrieve the associated report count data.
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * Entity UUID for which to retrieve the associated report count data.
+   */
+  uuid: string;
+};
+
+export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeReportCountsFindResponse = {
+  meta?: {
+    /**
+     * @example treeReportCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeReportCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.TreeReportCountsDto;
+  };
+};
+
+export type TreeReportCountsFindVariables = {
+  pathParams: TreeReportCountsFindPathParams;
+};
+
+export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    TreeReportCountsFindResponse,
+    TreeReportCountsFindError,
+    undefined,
+    {},
+    {},
+    TreeReportCountsFindPathParams
+  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
+
 export const operationsByTag = {
-  entities: { entityIndex, entityGet },
+  entities: { entityIndex, entityGet, entityDelete },
   entityAssociations: { entityAssociationIndex },
-  trees: { treeScientificNamesSearch, establishmentTreesFind }
+  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };

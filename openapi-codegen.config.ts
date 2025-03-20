@@ -14,7 +14,7 @@ import {
   ParameterObject,
   PathItemObject
 } from "openapi3-ts";
-import ts, { ClassElement, Expression, PropertyAssignment } from "typescript";
+import ts, { Expression, PropertyAssignment } from "typescript";
 
 const f = ts.factory;
 
@@ -28,6 +28,7 @@ type Environment = {
   apiBaseUrl: string;
   userServiceUrl: string;
   jobServiceUrl: string;
+  researchServiceUrl: string;
   entityServiceUrl: string;
 };
 
@@ -36,30 +37,35 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     apiBaseUrl: "http://localhost:8080",
     userServiceUrl: "http://localhost:4010",
     jobServiceUrl: "http://localhost:4020",
+    researchServiceUrl: "http://localhost:4030",
     entityServiceUrl: "http://localhost:4050"
   },
   dev: {
     apiBaseUrl: "https://api-dev.terramatch.org",
     userServiceUrl: "https://api-dev.terramatch.org",
     jobServiceUrl: "https://api-dev.terramatch.org",
+    researchServiceUrl: "https://api-dev.terramatch.org",
     entityServiceUrl: "https://api-dev.terramatch.org"
   },
   test: {
     apiBaseUrl: "https://api-test.terramatch.org",
     userServiceUrl: "https://api-test.terramatch.org",
     jobServiceUrl: "https://api-test.terramatch.org",
+    researchServiceUrl: "https://api-test.terramatch.org",
     entityServiceUrl: "https://api-test.terramatch.org"
   },
   staging: {
     apiBaseUrl: "https://api-staging.terramatch.org",
     userServiceUrl: "https://api-staging.terramatch.org",
     jobServiceUrl: "https://api-staging.terramatch.org",
+    researchServiceUrl: "https://api-staging.terramatch.org",
     entityServiceUrl: "https://api-staging.terramatch.org"
   },
   prod: {
     apiBaseUrl: "https://api.terramatch.org",
     userServiceUrl: "https://api.terramatch.org",
     jobServiceUrl: "https://api.terramatch.org",
+    researchServiceUrl: "https://api.terramatch.org",
     entityServiceUrl: "https://api.terramatch.org"
   }
 };
@@ -73,6 +79,7 @@ const DEFAULTS = ENVIRONMENTS[declaredEnv];
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
 const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
+const researchServiceUrl = process.env.NEXT_PUBLIC_RESEARCH_SERVICE_URL ?? DEFAULTS.researchServiceUrl;
 const entityServiceUrl = process.env.NEXT_PUBLIC_ENTITY_SERVICE_URL ?? DEFAULTS.entityServiceUrl;
 
 // The services defined in the v3 Node BE codebase. Although the URL path for APIs in the v3 space
@@ -82,6 +89,7 @@ const entityServiceUrl = process.env.NEXT_PUBLIC_ENTITY_SERVICE_URL ?? DEFAULTS.
 const SERVICES = {
   "user-service": userServiceUrl,
   "job-service": jobServiceUrl,
+  "research-service": researchServiceUrl,
   "entity-service": entityServiceUrl
 };
 
@@ -196,34 +204,24 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
       return;
     }
 
-    const members: ClassElement[] = [];
+    const properties: PropertyAssignment[] = [];
     Object.entries(componentSchema.properties).forEach(([propertyName, propertySchema]) => {
       if (isReferenceObject(propertySchema) || propertySchema.type == null || propertySchema.example == null) return;
 
       const literal = generateLiteral(propertySchema.example);
       if (literal != null) {
-        members.push(
-          f.createPropertyDeclaration(
-            [
-              f.createModifier(ts.SyntaxKind.PublicKeyword),
-              f.createModifier(ts.SyntaxKind.StaticKeyword),
-              f.createModifier(ts.SyntaxKind.ReadonlyKeyword)
-            ],
-            propertyName,
-            undefined,
-            undefined,
-            f.createAsExpression(literal, f.createTypeReferenceNode("const"))
-          )
+        properties.push(
+          f.createPropertyAssignment(propertyName, f.createAsExpression(literal, f.createTypeReferenceNode("const")))
         );
       }
     });
     nodes.push(
-      f.createClassExpression(
-        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+      f.createPropertyDeclaration(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword), f.createModifier(ts.SyntaxKind.ConstKeyword)],
         componentName,
         undefined,
         undefined,
-        members
+        f.createAsExpression(f.createObjectLiteralExpression(properties, true), f.createTypeReferenceNode("const"))
       )
     );
   });

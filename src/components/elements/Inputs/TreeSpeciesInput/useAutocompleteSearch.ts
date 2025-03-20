@@ -11,7 +11,7 @@ async function searchRequest(search: string) {
   const accessToken = typeof window !== "undefined" && getAccessToken();
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
-  const url = resolveUrl(`/trees/v3/scientific-names`, { search });
+  const url = resolveUrl(`/trees/v3/scientificNames`, { search });
   const response = await fetch(url, { headers });
   if (!response.ok) {
     let error;

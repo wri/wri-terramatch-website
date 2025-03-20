@@ -28,7 +28,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           <PageCard title={framework === Framework.HBF ? t("Direct Jobs") : t("New Jobs")} gap={4}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
               <DemographicsDisplay
-                entity="project-reports"
+                entity="projectReports"
                 uuid={report.uuid}
                 type="workdays"
                 collection="direct"
@@ -41,7 +41,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               {DemographicCollections.JOBS_PROJECT.map(collection => (
                 <DemographicsDisplay
                   key={collection}
-                  entity="project-reports"
+                  entity="projectReports"
                   uuid={report.uuid}
                   type="jobs"
                   collection={collection}
@@ -54,7 +54,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
               <DemographicsDisplay
                 key={collection}
-                entity="project-reports"
+                entity="projectReports"
                 uuid={report.uuid}
                 type="volunteers"
                 collection={collection}
@@ -74,7 +74,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               {report.community_partners_assets_description}
             </LongTextField>
             <DemographicsDisplay
-              entity="project-reports"
+              entity="projectReports"
               uuid={report.uuid}
               type="allBeneficiaries"
               collection="all"
@@ -95,7 +95,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               {report.beneficiaries_description}
             </LongTextField>
             <DemographicsDisplay
-              entity="project-reports"
+              entity="projectReports"
               uuid={report.uuid}
               type="allBeneficiaries"
               collection="all"
@@ -105,7 +105,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               {report.beneficiaries_skills_knowledge_increase_description}
             </LongTextField>
             <DemographicsDisplay
-              entity="project-reports"
+              entity="projectReports"
               uuid={report.uuid}
               type="trainingBeneficiaries"
               collection="training"
@@ -121,7 +121,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
 
           <PageCard title={t("Convergence Jobs")} gap={4} frameworksShow={[Framework.HBF]}>
             <DemographicsDisplay
-              entity="project-reports"
+              entity="projectReports"
               uuid={report.uuid}
               type="workdays"
               collection="convergence"
@@ -136,7 +136,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
               <DemographicsDisplay
                 key={collection}
-                entity="project-reports"
+                entity="projectReports"
                 uuid={report.uuid}
                 type="volunteers"
                 collection={collection}

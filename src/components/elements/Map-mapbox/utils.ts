@@ -612,28 +612,31 @@ export const addSourceToLayer = (
   zoomFilter?: number | undefined
 ) => {
   const { name, geoserverLayerName, styles } = layer;
-
-  if (map) {
-    if (map.getSource(name)) {
-      styles?.forEach((_: unknown, index: number) => {
-        map.removeLayer(`${name}-${index}`);
+  try {
+    if (map) {
+      if (map.getSource(name)) {
+        styles?.forEach((_: unknown, index: number) => {
+          map.removeLayer(`${name}-${index}`);
+        });
+        map.removeSource(name);
+      }
+      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
+      map.addSource(name, {
+        type: "vector",
+        tiles: [GEOSERVER_TILE_URL]
       });
-      map.removeSource(name);
+      styles?.forEach((style: LayerWithStyle, index: number) => {
+        addLayerStyle(map, name, geoserverLayerName, style, index);
+      });
+      if (polygonsData) {
+        loadLayersInMap(map, polygonsData, layer, zoomFilter);
+      }
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+        addHoverEvent(layer, map);
+      }
     }
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
-    map.addSource(name, {
-      type: "vector",
-      tiles: [GEOSERVER_TILE_URL]
-    });
-    styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, geoserverLayerName, style, index);
-    });
-    if (polygonsData) {
-      loadLayersInMap(map, polygonsData, layer, zoomFilter);
-    }
-    if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      addHoverEvent(layer, map);
-    }
+  } catch (e) {
+    console.warn(e);
   }
 };
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -653,19 +656,23 @@ const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<str
 };
 export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, geoserverLayerName, styles } = layer;
-  if (map) {
-    if (map.getSource(name)) {
-      styles?.forEach((_: unknown, index: number) => {
-        map.removeLayer(`${name}-${index}`);
+  try {
+    if (map) {
+      if (map.getSource(name)) {
+        styles?.forEach((_: unknown, index: number) => {
+          map.removeLayer(`${name}-${index}`);
+        });
+        map.removeSource(name);
+      }
+      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
+      map.addSource(name, {
+        type: "vector",
+        tiles: [GEOSERVER_TILE_URL]
       });
-      map.removeSource(name);
+      loadDeleteLayer(layer, map, polygonsData);
     }
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
-    map.addSource(name, {
-      type: "vector",
-      tiles: [GEOSERVER_TILE_URL]
-    });
-    loadDeleteLayer(layer, map, polygonsData);
+  } catch (e) {
+    console.warn(e);
   }
 };
 const moveDeleteLayers = (map: mapboxgl.Map) => {
@@ -710,31 +717,34 @@ export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landsca
 };
 export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
   if (!country || !map) return;
+  try {
+    const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
+    const countryLayer = layersList.find(layer => layer.name === styleName);
+    if (!countryLayer) return;
+    const countryStyles = countryLayer.styles || [];
+    const sourceName = countryLayer.name;
+    const GEOSERVER_TILE_URL = getGeoserverURL(countryLayer.geoserverLayerName);
 
-  const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-  const countryLayer = layersList.find(layer => layer.name === styleName);
-  if (!countryLayer) return;
-  const countryStyles = countryLayer.styles || [];
-  const sourceName = countryLayer.name;
-  const GEOSERVER_TILE_URL = getGeoserverURL(countryLayer.geoserverLayerName);
-
-  if (!map.getSource(sourceName)) {
-    map.addSource(sourceName, {
-      type: "vector",
-      tiles: [GEOSERVER_TILE_URL]
-    });
+    if (!map.getSource(sourceName)) {
+      map.addSource(sourceName, {
+        type: "vector",
+        tiles: [GEOSERVER_TILE_URL]
+      });
+    }
+    if (map.getLayer(sourceName)) {
+      map.removeLayer(sourceName);
+    }
+    const style = countryStyles[0];
+    map.addLayer({
+      ...style,
+      id: sourceName,
+      source: sourceName,
+      "source-layer": countryLayer.geoserverLayerName
+    } as mapboxgl.AnyLayer);
+    setFilterCountry(map, sourceName, country);
+  } catch (e) {
+    console.warn(e);
   }
-  if (map.getLayer(sourceName)) {
-    map.removeLayer(sourceName);
-  }
-  const style = countryStyles[0];
-  map.addLayer({
-    ...style,
-    id: sourceName,
-    source: sourceName,
-    "source-layer": countryLayer.geoserverLayerName
-  } as mapboxgl.AnyLayer);
-  setFilterCountry(map, sourceName, country);
 };
 export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
   if (!landscapes || !map) return;

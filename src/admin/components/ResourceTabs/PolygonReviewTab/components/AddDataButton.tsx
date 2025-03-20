@@ -53,7 +53,7 @@ const AddDataButton = (props: AddDataButtonProps) => {
           name: IconNames.PLUS_PA
         }}
       >
-        Add Data
+        {t("Add Data")}
       </Button>
     </Menu>
   );

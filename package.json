@@ -19,7 +19,8 @@
     "generate:jobService": "openapi-codegen gen jobService",
     "generate:userService": "openapi-codegen gen userService",
     "generate:entityService": "openapi-codegen gen entityService",
-    "generate:services": "yarn generate:userService && yarn generate:entityService && yarn generate:jobService",
+    "generate:researchService": "openapi-codegen gen researchService",
+    "generate:services": "yarn generate:userService && yarn generate:entityService && yarn generate:jobService && yarn generate:researchService",
     "tx:push": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli push --key-generator=hash src/ --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET",
     "tx:pull": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
@@ -45,7 +46,7 @@
     "@transifex/native": "^5.0.6",
     "@transifex/react": "^5.0.6",
     "@turf/bbox": "^6.5.0",
-    "canvg": "^4.0.1",
+    "canvg": "^4.0.3",
     "case": "^1.6.3",
     "circle-to-polygon": "^2.2.0",
     "classnames": "^2.3.2",

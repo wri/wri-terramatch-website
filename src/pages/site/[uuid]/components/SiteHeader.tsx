@@ -14,12 +14,13 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface SiteHeaderProps {
-  site: any;
+  site: SiteFullDto;
 }
 
 const SiteHeader = ({ site }: SiteHeaderProps) => {
@@ -29,13 +30,13 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
   const router = useRouter();
   const { framework } = useFrameworkContext();
 
-  const siteStatus = getActionCardStatusMapper(t)[site.status]?.status;
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name);
+  const siteStatus = getActionCardStatusMapper(t)[site?.status as string]?.status;
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site?.name ?? "");
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
-    entityStatus: site.status,
-    updateRequestStatus: site.update_request_status
+    entityStatus: site.status as string,
+    updateRequestStatus: site.updateRequestStatus as string
   });
 
   const { mutate: deleteSite } = useDeleteV2SitesUUID({
@@ -72,15 +73,15 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
     );
   };
 
-  const subtitles = [t("Organisation: {org}", { org: site.organisation?.name }), useFrameworkTitle()];
+  const subtitles = [t("Organisation: {org}", { org: site.organisationName }), useFrameworkTitle()];
   if (framework === Framework.PPC) {
-    subtitles.push(t("Site ID: {id}", { id: site.ppc_external_id }));
+    subtitles.push(t("Site ID: {id}", { id: site.ppcExternalId }));
   }
 
   return (
-    <PageHeader className="h-[203px]" title={site.name} subtitles={subtitles} hasBackButton={false}>
+    <PageHeader className="h-[203px]" title={site?.name ?? ""} subtitles={subtitles} hasBackButton={false}>
       <div className="flex gap-4">
-        <When condition={site.site_reports_total === 0}>
+        <When condition={site.totalSiteReports === 0}>
           <Button variant="secondary" onClick={onDeleteSite}>
             {t("Delete")}
           </Button>

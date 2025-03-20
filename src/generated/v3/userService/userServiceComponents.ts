@@ -26,7 +26,7 @@ export type AuthLoginResponse = {
     /**
      * @example logins
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -99,7 +99,7 @@ export type UsersFindResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -209,7 +209,7 @@ export type UserUpdateResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -266,6 +266,81 @@ export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal)
     signal
   });
 
+export type UserCreationError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type UserCreationResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserCreationVariables = {
+  body: Schemas.UserNewRequest;
+};
+
+/**
+ * Create a new user
+ */
+export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
+  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserNewRequest, {}, {}, {}>({
+    url: "/users/v3/users",
+    method: "post",
+    ...variables,
+    signal
+  });
+
 export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -285,7 +360,7 @@ export type RequestPasswordResetResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -338,7 +413,7 @@ export type ResetPasswordResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -371,12 +446,6 @@ export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortS
     ResetPasswordPathParams
   >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
 
-export const operationsByTag = {
-  login: { authLogin },
-  users: { usersFind, userUpdate },
-  resetPassword: { requestPasswordReset, resetPassword }
-};
-
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -392,6 +461,12 @@ export type VerifyUserError = Fetcher.ErrorWrapper<{
 }>;
 
 export type VerifyUserResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
   data?: {
     /**
      * @example verifications
@@ -410,7 +485,7 @@ export type VerifyUserVariables = {
 };
 
 /**
- * Receive a token to verify a user
+ * Receive a token to verify a user and return the verification status
  */
 export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
   userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
@@ -419,3 +494,10 @@ export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal)
     ...variables,
     signal
   });
+
+export const operationsByTag = {
+  login: { authLogin },
+  users: { usersFind, userUpdate, userCreation },
+  resetPassword: { requestPasswordReset, resetPassword },
+  verificationUser: { verifyUser }
+};

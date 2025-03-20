@@ -1,12 +1,17 @@
 import { createSelector } from "reselect";
 
 import {
+  entityDelete,
   entityGet,
   EntityGetPathParams,
   entityIndex,
   EntityIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { entityGetFetchFailed, entityIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
+import {
+  entityDeleteFetchFailed,
+  entityGetFetchFailed,
+  entityIndexFetchFailed
+} from "@/generated/v3/entityService/entityServicePredicates";
 import {
   ProjectFullDto,
   ProjectLightDto,
@@ -17,6 +22,7 @@ import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
+import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -26,6 +32,7 @@ export type EntityDtoType = EntityFullDto | EntityLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
   entity?: T;
+  entityIsDeleted: boolean;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
 };
@@ -60,7 +67,7 @@ const entitySelector =
   (store: ApiDataStore) =>
     store[entityName] as StoreResourceMap<T>;
 
-const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
+const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
   const queryParams = { "page[number]": props?.pageNumber, "page[size]": props?.pageSize } as EntityIndexQueryParams;
   if (props?.sortField != null) {
@@ -81,8 +88,11 @@ const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectio
 
 const entityIsLoaded =
   (requireFullEntity: boolean) =>
-  <T extends EntityDtoType>({ entity, fetchFailure }: EntityConnection<T>, { uuid }: EntityConnectionProps) => {
-    if (uuid == null || fetchFailure != null) return true;
+  <T extends EntityDtoType>(
+    { entity, entityIsDeleted, fetchFailure }: EntityConnection<T>,
+    { uuid }: EntityConnectionProps
+  ) => {
+    if (uuid == null || entityIsDeleted || fetchFailure != null) return true;
     if (entity == null) return false;
     return !requireFullEntity || !entity.lightResource;
   };
@@ -92,7 +102,7 @@ const createGetEntityConnection = <T extends EntityDtoType>(
   requireFullEntity: boolean
 ): Connection<EntityConnection<T>, EntityConnectionProps> => ({
   load: (connection, props) => {
-    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(entityGetParams(entityName, props.uuid));
+    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
   },
 
   isLoaded: entityIsLoaded(requireFullEntity),
@@ -101,9 +111,14 @@ const createGetEntityConnection = <T extends EntityDtoType>(
     ({ uuid }) => uuid,
     ({ uuid }) =>
       createSelector(
-        [entitySelector(entityName), entityGetFetchFailed(entityGetParams(entityName, uuid))],
-        (entities, failure) => ({
+        [
+          entitySelector(entityName),
+          resourcesDeletedSelector(entityName),
+          entityGetFetchFailed(specificEntityParams(entityName, uuid))
+        ],
+        (entities, deleted, failure) => ({
           entity: entities[uuid]?.attributes as T,
+          entityIsDeleted: uuid != null && deleted.includes(uuid),
           fetchFailure: failure ?? undefined,
           refetch: () => {
             if (uuid != null) ApiSlice.pruneCache(entityName, [uuid]);
@@ -169,7 +184,7 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
 
 // TEMPORARY while we transition all entities to v3. When adding a new entity to this connection,
 // please update this array.
-const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects"];
+const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects", "sites"];
 
 // The "light" version of entity connections will return the full DTO if it's what's cached in the store. However,
 // the type of the entity will use the Light DTO. For the "full" version of the entity connection, if the version that's
@@ -180,8 +195,25 @@ export const useFullProject = connectionHook(fullProjectConnection);
 const lightProjectConnection = createGetEntityConnection<ProjectLightDto>("projects", false);
 export const loadLightProject = connectionLoader(lightProjectConnection);
 export const useLightProject = connectionHook(lightProjectConnection);
+export const deleteProject = connectedResourceDeleter(
+  "projects",
+  uuid => entityDeleteFetchFailed(specificEntityParams("projects", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
+);
 
 // For indexes, we only support the light dto
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+
+const fullSiteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
+export const loadFullSite = connectionLoader(fullSiteConnection);
+export const useFullSite = connectionHook(fullSiteConnection);
+const lightSiteConnection = createGetEntityConnection<SiteLightDto>("sites", false);
+export const loadLightSite = connectionLoader(lightSiteConnection);
+export const useLightSite = connectionHook(lightSiteConnection);
+
+// For indexes, we only support the light dto
+const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
+export const loadSiteIndex = connectionLoader(indexSiteConnection);
+export const useSiteIndex = connectionHook(indexSiteConnection);

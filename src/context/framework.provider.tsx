@@ -13,6 +13,7 @@ export enum Framework {
 }
 
 export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES] as const;
+export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
 interface IFrameworkContext {
   framework: Framework;

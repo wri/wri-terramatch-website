@@ -63,7 +63,11 @@ const EntityMapAndGalleryCard = ({
   const mapFunctions = useMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  const projectUUID = router.query.uuid as string;
+  let entityUUID = router.query.uuid as string;
+  console.log("Model Ta", modelTitle, modelUUID, router.query.uuid);
+  if (modelTitle === "Site Report" || modelTitle === "Site") {
+    entityUUID = modelUUID;
+  }
   const queryParams: any = {
     page: pagination.page,
     per_page: pagination.pageSize,
@@ -85,7 +89,7 @@ const EntityMapAndGalleryCard = ({
 
   const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
     queryParams: {
-      uuid: projectUUID,
+      uuid: entityUUID,
       type: modelName
     }
   });

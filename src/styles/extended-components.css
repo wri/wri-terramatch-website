@@ -58,3 +58,42 @@
     background-color: #f2f2f2;
   }
 }
+
+.modal-impact-story-content iframe,
+.modal-impact-story-content .ql-video {
+  width: 100% !important;
+  aspect-ratio: 16/9 !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+@supports not (aspect-ratio: 16/9) {
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video {
+    height: 0 !important;
+    padding-bottom: 56.25% !important;
+    position: relative !important;
+  }
+  
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+@media (min-width: 1500px) {
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video {
+    max-width: 75% !important;
+    margin: 0 auto !important;
+    display: block !important;
+  }
+}
+
+.modal-impact-story-content p {
+  margin-bottom: 6px;
+}

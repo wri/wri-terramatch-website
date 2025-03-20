@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { loadSiteIndex } from "@/connections/Entity";
 import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
 import {
   fetchGetV2ProjectsUUIDNurseries,
   fetchGetV2ProjectsUUIDSitePolygonsAll,
-  fetchGetV2ProjectsUUIDSites,
   fetchGetV2SitesSitePolygon,
   fetchGetV2TasksUUIDReports
 } from "@/generated/apiComponents";
@@ -91,7 +91,7 @@ const useLoadEntityList = ({
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
     const fetchToProject =
       entityType == SITE
-        ? fetchGetV2ProjectsUUIDSites
+        ? loadSiteIndex
         : entityType == POLYGON
         ? fetchGetV2ProjectsUUIDSitePolygonsAll
         : fetchGetV2ProjectsUUIDNurseries;
@@ -101,7 +101,9 @@ const useLoadEntityList = ({
       ? fetchGetV2TasksUUIDReports
       : fetchGetV2SitesSitePolygon;
     const params = isSiteProjectLevel
-      ? { uuid: entity.uuid }
+      ? entityType == SITE
+        ? { projectUuid: entity.uuid }
+        : { uuid: entity.uuid }
       : isProjectReport
       ? { uuid: entity.task_uuid }
       : { site: entity.uuid };
@@ -109,7 +111,10 @@ const useLoadEntityList = ({
       // @ts-ignore
       pathParams: params
     });
-    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+    const _entityList =
+      entityType == SITE
+        ? (res as { entities: EntityListItem[] }).entities
+        : (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
         entityType: PROJECT_REPORT,

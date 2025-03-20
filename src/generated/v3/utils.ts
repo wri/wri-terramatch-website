@@ -1,7 +1,7 @@
 import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { logout, selectLogin } from "@/connections/Login";
-import { entityServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
+import { entityServiceUrl, researchServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
 import { Dictionary } from "lodash";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
@@ -18,6 +18,7 @@ const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   entities: entityServiceUrl,
   jobs: jobServiceUrl,
+  research: researchServiceUrl,
   trees: entityServiceUrl,
   users: userServiceUrl
 } as const;
@@ -33,12 +34,15 @@ const getBaseUrl = (url: string) => {
   return baseUrl;
 };
 
-export type FetchParams = Dictionary<number | string | null | undefined>;
+export type FetchParams = Dictionary<number | string | string[] | boolean | null | undefined>;
 export const serializeParams = (pathParams?: FetchParams, queryParams?: FetchParams) => {
   // JSON.serialize() outputs the keys in the order they were added to the object, so take all
   // non-null values in sorted key order and add them to the object to serialize to guarantees a
   // stable serialization
-  const orderedParams = { path: {} as Dictionary<number | string>, query: {} as Dictionary<number | string> };
+  const orderedParams = {
+    path: {} as Dictionary<number | string | boolean | string[]>,
+    query: {} as Dictionary<number | string | boolean | string[]>
+  };
   if (pathParams != null) {
     for (const param of Object.keys(pathParams).sort()) {
       const value = pathParams[param];

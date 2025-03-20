@@ -26,7 +26,7 @@ export type ListDelayedJobsResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -89,7 +89,7 @@ export type DelayedJobsFindResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -166,7 +166,7 @@ export type BulkUpdateJobsResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**

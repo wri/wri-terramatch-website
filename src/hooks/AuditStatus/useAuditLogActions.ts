@@ -1,29 +1,18 @@
+import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { ENTITY_REPORT, NURSERY, POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
   fetchGetV2SitesSiteCheckApprove,
   fetchPostV2TerrafundValidationPolygon,
-  fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
-import {
-  entityReportStatusLabels,
-  getValueForStatusEntityReport,
-  getValueForStatusNursery,
-  getValueForStatusPolygon,
-  getValueForStatusProject,
-  getValueForStatusSite,
-  nurseryStatusLabels,
-  polygonProgressBarStatusLabels,
-  projectStatusLabels,
-  siteProgressBarStatusLabels
-} from "@/utils/statusUtils";
+import { getValueForStatusEntityReport, getValueForStatusNursery } from "@/utils/statusUtils";
 
 import useLoadEntityList from "./useLoadEntityList";
+import { useStatusActionsMap } from "./useStatusActionsMap";
 
 const ESTIMATED_AREA_CRITERIA_ID = 12;
 
@@ -35,39 +24,6 @@ const ReverseButtonStates2: { [key: number]: string } = {
   4: "project-reports",
   5: "site-reports",
   6: "nursery-reports"
-};
-
-export const statusActionsMap = {
-  [AuditLogButtonStates.PROJECT as number]: {
-    mutateEntity: fetchPutV2ENTITYUUIDStatus,
-    valuesForStatus: getValueForStatusProject,
-    statusLabels: projectStatusLabels,
-    entityType: PROJECT
-  },
-  [AuditLogButtonStates.SITE as number]: {
-    mutateEntity: fetchPutV2ENTITYUUIDStatus,
-    valuesForStatus: getValueForStatusSite,
-    statusLabels: siteProgressBarStatusLabels,
-    entityType: SITE
-  },
-  [AuditLogButtonStates.POLYGON as number]: {
-    mutateEntity: fetchPutV2ENTITYUUIDStatus,
-    valuesForStatus: getValueForStatusPolygon,
-    statusLabels: polygonProgressBarStatusLabels,
-    entityType: POLYGON
-  },
-  [AuditLogButtonStates.NURSERY as number]: {
-    mutateEntity: fetchPutV2ENTITYUUIDStatus,
-    valuesForStatus: getValueForStatusNursery,
-    statusLabels: nurseryStatusLabels,
-    entityType: NURSERY
-  },
-  [AuditLogButtonStates.REPORT as number]: {
-    mutateEntity: fetchPutV2ENTITYUUIDStatus,
-    valuesForStatus: getValueForStatusEntityReport,
-    statusLabels: entityReportStatusLabels,
-    entityType: ENTITY_REPORT
-  }
 };
 
 interface AuditLogActionsResponse {
@@ -97,10 +53,11 @@ const useAuditLogActions = ({
   entityLevel?: number;
   isProjectReport?: boolean;
 }): AuditLogActionsResponse => {
+  const t = useT();
   const reportEntityTypes = ReverseButtonStates2[buttonToggle!].includes("reports")
     ? AuditLogButtonStates.REPORT
     : buttonToggle;
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = statusActionsMap[reportEntityTypes!];
+  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(reportEntityTypes!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
@@ -209,12 +166,23 @@ const useAuditLogActions = ({
     if (ReverseButtonStates2[entityLevel!]?.includes("Report")) {
       return {
         getValueForStatus: getValueForStatusEntityReport,
-        statusLabels: entityReportStatusLabels
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ]
       };
     } else if (ReverseButtonStates2[entityLevel!] == "Nursery") {
       return {
         getValueForStatus: getValueForStatusNursery,
-        statusLabels: nurseryStatusLabels
+        statusLabels: [
+          { id: "1", label: t("Started") },
+          { id: "2", label: t("Awaiting Approval") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Approved") }
+        ]
       };
     } else {
       return {

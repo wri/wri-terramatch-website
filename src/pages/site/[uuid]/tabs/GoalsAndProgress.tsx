@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import React from "react";
 import { Else, If, Then, When } from "react-if";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
@@ -10,18 +10,21 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTablePD from "@/components/extensive/Tables/TreeSpeciesTablePD";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
+import { SupportedEntity } from "@/connections/EntityAssocation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
 interface GoalsAndProgressTabProps {
-  site: any;
+  site: SiteFullDto;
 }
 
 export const LABEL_LEGEND = [
@@ -45,19 +48,31 @@ const isEmptyArray = (obj: any) => {
 
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
-  const [treeCount, setTreeCount] = useState(0);
-  const [speciesCount, setSpeciesCount] = useState(0);
-  const [totalNonTree, setTotalNonTree] = useState(0);
-  const [totalNonTreeSpecies, setTotalNonTreeSpecies] = useState(0);
-  const [treePlantedSpeciesCount, setTreePlantedSpeciesCount] = useState(0);
-  const [treePlantedSpeciesGoal, setTreePlantedSpeciesGoal] = useState(0);
+
+  const isTerrafund = frameworkIsTerrafund(site.frameworkKey as Framework);
+  const aggregateProps = { entity: "sites" as SupportedEntity, entityUuid: site.uuid };
+  const treeCount = usePlantTotalCount({ ...aggregateProps, collection: isTerrafund ? "non-tree" : "seeds" });
+  const { speciesCount } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: isTerrafund ? "non-tree" : "seeds"
+  });
+  const totalNonTree = usePlantTotalCount({ ...aggregateProps, collection: "non-tree" });
+  const { speciesCount: totalNonTreeSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "non-tree"
+  });
+  const treePlantedSpeciesCount = usePlantTotalCount({ ...aggregateProps, collection: "tree-planted" });
+  const { speciesCount: treePlantedSpeciesGoal } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "tree-planted"
+  });
+
   const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
     pathParams: {
       uuid: site.uuid,
       entity: "site"
     }
   });
-  const isTerrafund = ALL_TF.includes(site.framework_key as (typeof ALL_TF)[number]);
   return (
     <PageBody>
       <PageRow>
@@ -68,7 +83,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
 
       <PageRow>
         <PageCard
-          title={t(site.framework_key === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
+          title={t(site.frameworkKey === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
@@ -79,14 +94,14 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   {
                     iconName: IconNames.TREE_CIRCLE_PD,
                     label: t(
-                      site.framework_key === Framework.HBF ? "number of SAPLINGS PLANTED:" : "number of TREES PLANTED:"
+                      site.frameworkKey === Framework.HBF ? "number of SAPLINGS PLANTED:" : "number of TREES PLANTED:"
                     ),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: site.trees_planted_count
+                    value: site.treesPlantedCount
                   },
-                  ...(site.framework_key !== Framework.HBF
+                  ...(site.frameworkKey !== Framework.HBF
                     ? [
                         {
                           iconName: IconNames.SURVIVAL_RATE,
@@ -94,7 +109,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value: site.survival_rate_planted ? `${site.survival_rate_planted}%` : "-"
+                          value: site.survivalRatePlanted ? `${site.survivalRatePlanted}%` : "-"
                         }
                       ]
                     : []),
@@ -139,14 +154,12 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               </div>
             </div>
             <div>
-              <TreeSpeciesTablePD
-                modelName="site"
-                modelUUID={site.uuid}
+              <TreeSpeciesTable
+                entity="sites"
+                entityUuid={site.uuid}
                 visibleRows={8}
                 collection="tree-planted"
-                galleryType={"treeSpeciesPD"}
-                setTotalSpecies={setTreePlantedSpeciesCount}
-                setTotalSpeciesGoal={setTreePlantedSpeciesGoal}
+                galleryType="treeSpeciesPD"
               />
             </div>
           </div>
@@ -156,7 +169,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
-              <When condition={site.framework_key === Framework.PPC}>
+              <When condition={site.frameworkKey === Framework.PPC}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -167,7 +180,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14" as TextVariants,
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seeds_planted_count.toLocaleString()
+                      value: site.seedsPlantedCount.toLocaleString()
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -175,7 +188,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.direct_seeding_survival_rate ? `${site.direct_seeding_survival_rate}%` : "-"
+                      value: site.directSeedingSurvivalRate ? `${site.directSeedingSurvivalRate}%` : "-"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -212,7 +225,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                   ]}
                 />
               </When>
-              <When condition={site.framework_key === Framework.HBF}>
+              <When condition={site.frameworkKey === Framework.HBF}>
                 <GoalProgressCard
                   hasProgress={false}
                   classNameCard="!pl-0"
@@ -223,7 +236,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seeds_planted_count.toLocaleString()
+                      value: site.seedsPlantedCount.toLocaleString()
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
@@ -240,24 +253,10 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             <div>
               <If condition={isTerrafund}>
                 <Then>
-                  <TreeSpeciesTablePD
-                    modelName="site"
-                    collection="non-tree"
-                    modelUUID={site.uuid}
-                    visibleRows={5}
-                    setTotalSpecies={setSpeciesCount}
-                    setTotalCount={setTreeCount}
-                  />
+                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="non-tree" visibleRows={5} />
                 </Then>
                 <Else>
-                  <TreeSpeciesTablePD
-                    modelName="site"
-                    collection="seeding"
-                    modelUUID={site.uuid}
-                    visibleRows={5}
-                    setTotalCount={setTreeCount}
-                    setTotalSpecies={setSpeciesCount}
-                  />
+                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="seeds" visibleRows={5} />
                 </Else>
               </If>
             </div>
@@ -292,14 +291,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
               />
             </div>
             <div>
-              <TreeSpeciesTablePD
-                modelName="site"
-                collection="non-tree"
-                modelUUID={site.uuid}
-                visibleRows={5}
-                setTotalNonTree={setTotalNonTree}
-                setTotalNonTreeSpecies={setTotalNonTreeSpecies}
-              />
+              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="non-tree" visibleRows={5} />
             </div>
           </div>
         </PageCard>

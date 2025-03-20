@@ -6,7 +6,7 @@ import {
   EntityAssociationIndexPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { entityAssociationIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
-import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DemographicDto, SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
@@ -14,7 +14,7 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto;
+export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
@@ -80,8 +80,11 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   )
 });
 
-type CollectionTypeProps = EntityAssociationIndexConnectionProps & {
+type CollectionProps = EntityAssociationIndexConnectionProps & {
   collection?: string;
+};
+
+type CollectionTypeProps = CollectionProps & {
   type?: string;
 };
 
@@ -124,3 +127,35 @@ const demographicConnection = createAssociationIndexConnection<DemographicDto>("
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+
+const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
+const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
+
+type PlantDto = TreeSpeciesDto | SeedingDto;
+/**
+ * A single connection for fetching a type of plant data. If the collection is "seeds", the data comes from Seedings,
+ * otherwise from TreeSpecies. Since these have become so similar in UI and data, it's likely that in a future
+ * ticket we unify these tables.
+ */
+export const usePlants = <T extends PlantDto = PlantDto>(
+  props: CollectionProps
+): Connected<EntityAssociationIndexConnection<T>> => {
+  // We have to be careful here to be sure that if props.collection changes, we don't change the number of
+  // hooks executed internally here, so we're directly using useConnection for both cases, and then filtering on
+  // collection afterward
+  const [loaded, { associations, fetchFailure }] =
+    props.collection === "seeds"
+      ? useConnection(seedingsConnection, props)
+      : useConnection(treeSpeciesConnection, props);
+
+  const filteredAssociations = useMemo(() => {
+    if (!loaded) return undefined;
+    if (props.collection === "seeds") return associations as T[];
+
+    return ((associations as { collection?: string }[]) ?? []).filter(
+      ({ collection }) => collection === props.collection
+    ) as T[];
+  }, [associations, loaded, props.collection]);
+
+  return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
+};

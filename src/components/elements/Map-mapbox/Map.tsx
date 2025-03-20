@@ -670,7 +670,9 @@ export const MapContainer = ({
           <button
             type="button"
             className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
-            onClick={() => bbox && map.current && zoomToBbox(bbox, map.current, hasControls)}
+            onClick={() => {
+              bbox && map.current && zoomToBbox(bbox, map.current, hasControls);
+            }}
           >
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
