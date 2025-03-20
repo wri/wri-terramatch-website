@@ -579,7 +579,8 @@ export type ProjectReportFullDto = {
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
   readableCompletionStatus: string;
-  createdByUser: string | null;
+  createdBy: number | null;
+  createdByUser: Record<string, any> | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
