@@ -30,7 +30,10 @@ const ProjectReportDetailPage = () => {
 
   const [, { entity: project }] = useFullProject({ uuid: projectReport?.projectUuid! });
 
-  const { data: reportTaskUuid } = useGetV2TasksIDId({ pathParams: { id: projectReport?.taskId! } });
+  const { data: reportTaskUuid } = useGetV2TasksIDId(
+    { pathParams: { id: projectReport?.taskId! } },
+    { enabled: !!projectReport?.taskId }
+  );
 
   const { data: reportingTaskData } = useGetV2TasksUUID(
     {
@@ -43,11 +46,11 @@ const ProjectReportDetailPage = () => {
 
   const reportingTask = reportingTaskData?.data as any;
   const report = (projectReport ?? {}) as ProjectReportFullDto;
-  const reportTitle = report?.reportTitle ?? report?.title ?? t("Project Report");
+  const reportTitle = report?.reportTitle ?? t("Project Report");
 
   return (
     <FrameworkProvider frameworkKey={report?.frameworkKey}>
-      <LoadingContainer loading={isLoaded}>
+      <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>
         </Head>

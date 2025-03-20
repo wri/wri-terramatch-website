@@ -14,6 +14,8 @@ import {
   NurseryLightDto,
   ProjectFullDto,
   ProjectLightDto,
+  ProjectReportFullDto,
+  ProjectReportLightDto,
   SeedingDto,
   SiteFullDto,
   SiteLightDto,
@@ -122,7 +124,8 @@ export const RESOURCES = [
   "treeReportCounts",
   "treeSpecies",
   "users",
-  "sitePolygons"
+  "sitePolygons",
+  "projectReports"
 ] as const;
 
 // The store for entities may contain either light DTOs or full DTOs depending on where the
@@ -149,6 +152,7 @@ type ApiResources = {
   users: StoreResourceMap<UserDto>;
   nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
   sitePolygons: StoreResourceMap<SitePolygonDto>;
+  projectReports: StoreResourceMap<EntityType<ProjectReportLightDto, ProjectReportFullDto>>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];

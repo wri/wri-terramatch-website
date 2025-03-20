@@ -5,6 +5,7 @@ import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "reminder" | undefined>();
@@ -36,19 +37,19 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={4} item>
               <Labeled label="Framework">
-                <FrameworkField />
+                <FrameworkField prop="frameworkKey" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Status">
-                <TextField source="readableStatus" />
+                <ReadableStatusField prop="status" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
-                <TextField source="readableUpdateRequestStatus" />
+                <ReadableStatusField prop="updateRequestStatus" />
               </Labeled>
             </Grid>
 
