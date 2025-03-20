@@ -1,49 +1,35 @@
-import { DataProvider } from "react-admin";
+import { DataProvider, HttpError } from "react-admin";
 
+import { loadFullNursery, loadNurseryIndex } from "@/connections/Entity";
 import {
   DeleteV2AdminNurseriesUUIDError,
   fetchDeleteV2AdminNurseriesUUID,
-  fetchGetV2AdminNurseries,
   fetchGetV2AdminNurseriesMulti,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminNurseriesError,
-  GetV2AdminNurseriesMultiError,
-  GetV2ENTITYUUIDError
+  GetV2AdminNurseriesMultiError
 } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-const nurserySortableList = ["name", "project_name", "organisation_name", "start_date", "status"];
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const nurseryDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on Nurseries DTOs
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminNurseries({
-        queryParams: raListParamsToQueryParams(params, nurserySortableList)
-      });
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminNurseriesError);
+    const connection = await loadNurseryIndex(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
     }
+    return entitiesListResult(connection);
   },
 
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "nurseries",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: site, fetchFailure } = await loadFullNursery({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
     }
+
+    return { data: { ...site, id: site!.uuid } };
   },
 
   // @ts-ignore

@@ -123,6 +123,53 @@ export type SiteLightDto = {
   updatedAt: string;
 };
 
+export type NurseryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  name: string | null;
+  /**
+   * Framework key for this nursery
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this nursery
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this nursery
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
+  migrated: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -330,6 +377,65 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+};
+
+export type NurseryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  name: string | null;
+  /**
+   * Framework key for this nursery
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this nursery
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this nursery
+   */
+  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
+  migrated: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  type: string | null;
+  seedlingGrown: number | null;
+  plantingContribution: string | null;
+  oldModel: string | null;
+  nurseryReportsTotal: number | null;
+  overdueNurseryReportsTotal: number | null;
+  projectUuid: string | null;
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
 };
 
 export type DemographicEntryDto = {
