@@ -11,7 +11,7 @@ import {
   usePatchV2FormsSubmissionsUUID,
   usePutV2FormsSubmissionsSubmitUUID
 } from "@/generated/apiComponents";
-import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
+import { ApplicationRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps } from "@/helpers/customForms";
 import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 
@@ -39,7 +39,9 @@ const RequestMoreInformationPage = () => {
     }
   });
 
-  const submission = applicationData?.data?.current_submission as FormSubmissionRead;
+  const submission = (applicationData?.data?.form_submissions ?? []).find(
+    ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
+  );
 
   const requestedInformationForm = getRequestedInformationForm(
     submission?.form ?? {},
