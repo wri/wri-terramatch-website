@@ -21,7 +21,7 @@ import {
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   LoginDto,
   OrganisationDto,
@@ -147,8 +147,8 @@ type ApiResources = {
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
+  sitePolygons: StoreResourceMap<SitePolygonLightDto>;
   nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
-  sitePolygons: StoreResourceMap<SitePolygonDto>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];
