@@ -2,6 +2,7 @@ import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/t
 import { QueryClient } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
+import { isNumber, isString, uniq } from "lodash";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
 
@@ -18,7 +19,7 @@ import {
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   LoginDto,
   OrganisationDto,
@@ -34,6 +35,9 @@ export type PendingErrorState = {
   message: string;
   error?: string;
 };
+
+export const isPendingErrorState = (error: unknown): error is PendingErrorState =>
+  error != null && isNumber((error as PendingErrorState).statusCode) && isString((error as PendingErrorState).message);
 
 export type Pending = true | PendingErrorState;
 
@@ -57,6 +61,10 @@ export type ApiFilteredIndexCache = {
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
 export type ApiIndexStore = {
   [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
+};
+
+type ApiDeletedStore = {
+  [key in ResourceType]: string[];
 };
 
 export const indexMetaSelector = (
@@ -136,7 +144,7 @@ type ApiResources = {
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
-  sitePolygons: StoreResourceMap<SitePolygonDto>;
+  sitePolygons: StoreResourceMap<SitePolygonLightDto>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];
@@ -150,6 +158,7 @@ export type JsonApiResource = {
 
 export type ResponseMeta = {
   resourceType: ResourceType;
+  resourceId?: string;
   page?: {
     number: number;
     total: number;
@@ -157,7 +166,7 @@ export type ResponseMeta = {
 };
 
 export type JsonApiResponse = {
-  data: JsonApiResource[] | JsonApiResource;
+  data?: JsonApiResource[] | JsonApiResource;
   included?: JsonApiResource[];
   meta: ResponseMeta;
 };
@@ -172,6 +181,8 @@ export type ApiDataStore = ApiResources & {
      * sorted) index queries.
      **/
     indices: ApiIndexStore;
+
+    deleted: ApiDeletedStore;
 
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
@@ -201,7 +212,12 @@ export const INITIAL_STATE = {
       return acc;
     }, {}) as ApiPendingStore,
 
-    indices: RESOURCES.reduce((acc, resource) => ({ ...acc, [resource]: {} }), {} as Partial<ApiIndexStore>)
+    indices: RESOURCES.reduce((acc, resource) => ({ ...acc, [resource]: {} }), {} as Partial<ApiIndexStore>),
+
+    deleted: RESOURCES.reduce(
+      (acc, resource) => ({ ...acc, [resource]: [] as string[] }),
+      {} as Partial<ApiDeletedStore>
+    )
   }
 } as ApiDataStore;
 
@@ -240,11 +256,32 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
   delete state.meta.meUserId;
 };
 
+const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<PruneCacheProps>) => {
+  const { resource, ids, searchQuery } = action.payload;
+  if (ids == null && searchQuery == null) {
+    state[resource] = {};
+    return;
+  }
+
+  if (ids != null) {
+    for (const id of ids) {
+      delete state[resource][id];
+    }
+  }
+
+  if (searchQuery != null) {
+    delete state.meta.indices[resource][searchQuery];
+  }
+};
+
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
 const isIndexResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
   method === "GET" && isArray(response.data);
+
+const isDeleteResponse = (method: string, response: JsonApiResponse) =>
+  method === "DELETE" && response.meta.resourceId != null;
 
 export const apiSlice = createSlice({
   name: "api",
@@ -264,9 +301,26 @@ export const apiSlice = createSlice({
 
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
       const { url, method, response } = action.payload;
+
+      if (isLogin(action.payload)) {
+        // After a successful login, clear the entire cache; we want all mounted components to
+        // re-fetch their data with the new login credentials.
+        clearApiCache(state);
+      } else {
+        delete state.meta.pending[method][url];
+      }
+
+      if (isDeleteResponse(method, response)) {
+        const resource = response.meta.resourceType;
+        const ids = [response.meta.resourceId!];
+        pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
+        state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
+        return;
+      }
+
       // All response objects from the v3 api conform to JsonApiResponse
       let { data, included, meta } = response;
-      if (!isArray(data)) data = [data];
+      if (!isArray(data)) data = [data!];
 
       if (isIndexResponse(action.payload)) {
         let cache = state.meta.indices[meta.resourceType][action.payload.serializedParams];
@@ -277,14 +331,6 @@ export const apiSlice = createSlice({
           ids: data.map(({ id }) => id),
           page: action.payload.response.meta.page
         };
-      }
-
-      if (isLogin(action.payload)) {
-        // After a successful login, clear the entire cache; we want all mounted components to
-        // re-fetch their data with the new login credentials.
-        clearApiCache(state);
-      } else {
-        delete state.meta.pending[method][url];
       }
 
       if (included != null) {
@@ -334,23 +380,7 @@ export const apiSlice = createSlice({
       }
     },
 
-    pruneCache: (state, action: PayloadAction<PruneCacheProps>) => {
-      const { resource, ids, searchQuery } = action.payload;
-      if (ids == null && searchQuery == null) {
-        state[resource] = {};
-        return;
-      }
-
-      if (ids != null) {
-        for (const id of ids) {
-          delete state[resource][id];
-        }
-      }
-
-      if (searchQuery != null) {
-        delete state.meta.indices[resource][searchQuery];
-      }
-    },
+    pruneCache,
 
     clearApiCache
   },

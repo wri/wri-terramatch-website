@@ -1,8 +1,12 @@
+import { Dictionary } from "lodash";
 import { createSelector } from "reselect";
 
-import { sitePolygonsIndex } from "@/generated/v3/researchService/researchServiceComponents";
+import {
+  sitePolygonsIndex,
+  SitePolygonsIndexQueryParams
+} from "@/generated/v3/researchService/researchServiceComponents";
 import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
-import { SitePolygonDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
@@ -27,44 +31,47 @@ export type SitePolygonIndexConnectionProps = {
     | "msuCarbon";
 };
 
-const ENTITY_QUERY_KEYS: Record<string, string> = {
+const ENTITY_QUERY_KEYS: Dictionary<keyof SitePolygonsIndexQueryParams> = {
   projects: "projectId[]",
   sites: "siteId[]"
 };
 
-export type SitePolygonIndexConnection<SitePolygonDto> = {
-  sitePolygons?: SitePolygonDto[];
+type EntityQueryKey = SitePolygonsIndexQueryParams["projectId[]"] | SitePolygonsIndexQueryParams["siteId[]"];
+
+export type SitePolygonIndexConnection<SitePolygonLightDto> = {
+  sitePolygons?: SitePolygonLightDto[];
   meta?: ResponseMeta["page"];
   fetchFailure?: PendingErrorState | null;
 };
 
 const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  const queryParams: Record<string, string | number | null | undefined> = {
+  const queryParams: SitePolygonsIndexQueryParams = {
     "page[number]": props.pageNumber ?? 1,
     "page[size]": props.pageSize ?? 10,
-    search: props.search
+    search: props.search,
+    lightResource: true
   };
 
-  if (queryKey) {
-    queryParams[queryKey] = props.entityUuid;
+  if (queryKey != null) {
+    (queryParams[queryKey] as EntityQueryKey) = [props.entityUuid];
   }
 
   if (props.presentIndicator) {
-    queryParams["presentIndicator[]"] = props.presentIndicator;
+    queryParams["presentIndicator[]"] = [props.presentIndicator];
   }
 
   return { queryParams };
 };
 
-const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonDto>) =>
+const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonLightDto>) =>
   sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
   `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${props.search}`;
 
 const sitePolygonsConnection: Connection<
-  SitePolygonIndexConnection<SitePolygonDto>,
+  SitePolygonIndexConnection<SitePolygonLightDto>,
   SitePolygonIndexConnectionProps
 > = {
   load: (connection, props) => {
@@ -85,8 +92,8 @@ const sitePolygonsConnection: Connection<
         (indexMeta, sitePolygonsStore, fetchFailure) => {
           if (!indexMeta) return { fetchFailure };
 
-          const sitePolygons: SitePolygonDto[] = indexMeta.ids
-            .map(id => sitePolygonsStore[id]?.attributes as SitePolygonDto)
+          const sitePolygons: SitePolygonLightDto[] = indexMeta.ids
+            .map(id => sitePolygonsStore[id]?.attributes)
             .filter(Boolean);
 
           return { sitePolygons, meta: indexMeta?.page, fetchFailure };
