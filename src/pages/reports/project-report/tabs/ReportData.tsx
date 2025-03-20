@@ -17,7 +17,6 @@ import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { getFullName } from "@/utils/user";
 
 interface ReportOverviewTabProps {
   report: any;
@@ -238,7 +237,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Project Report Details")}>
             <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title} />
-            <TextField label={t("Created by")} value={getFullName(report.createdBy)} />
+            <TextField label={t("Created by")} value={report?.createdByUser} />
             <TextField label={t("Updated")} value={format(report.updatedAt)} />
             <TextField label={t("Due date")} value={format(dueAt)} />
             <TextField label={t("Submitted Date")} value={format(report.submittedAt)} />

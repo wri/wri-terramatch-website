@@ -182,6 +182,10 @@ export type ProjectReportLightDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   projectName: string | null;
   projectUuid: string | null;
   status: string;
@@ -487,6 +491,10 @@ export type ProjectReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   projectName: string | null;
   projectUuid: string | null;
   status: string | null;
@@ -535,8 +543,6 @@ export type ProjectReportFullDto = {
   seedsPlantedCount: number | null;
   treesPlantedCount: number | null;
   regeneratedTreesCount: number;
-  directRestorationPartners: number;
-  indirectRestorationPartners: number;
   topThreeSuccesses: string | null;
   challengesFaced: string | null;
   lessonsLearned: string | null;
@@ -573,6 +579,7 @@ export type ProjectReportFullDto = {
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
   readableCompletionStatus: string;
+  createdByUser: string | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
