@@ -17,6 +17,8 @@ import {
   NurseryLightDto,
   ProjectFullDto,
   ProjectLightDto,
+  ProjectReportFullDto,
+  ProjectReportLightDto,
   SiteFullDto,
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -28,9 +30,9 @@ import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/conn
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityFullDto = ProjectFullDto | SiteFullDto | NurseryFullDto;
-export type EntityLightDto = ProjectLightDto | SiteLightDto | NurseryLightDto;
-export type EntityDtoType = EntityFullDto | EntityLightDto | NurseryLightDto;
+export type EntityFullDto = ProjectFullDto | SiteFullDto | NurseryFullDto | ProjectReportFullDto;
+export type EntityLightDto = ProjectLightDto | SiteLightDto | NurseryLightDto | ProjectReportLightDto;
+export type EntityDtoType = EntityFullDto | EntityLightDto | NurseryLightDto | ProjectReportLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
   entity?: T;
@@ -229,3 +231,13 @@ export const useLightSite = connectionHook(lightSiteConnection);
 const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
+
+const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
+export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
+export const useProjectReportIndex = connectionHook(indexProjectReportConnection);
+const fullProjectReportConnection = createGetEntityConnection<ProjectReportFullDto>("projectReports", true);
+export const loadFullProjectReport = connectionLoader(fullProjectReportConnection);
+export const useFullProjectReport = connectionHook(fullProjectReportConnection);
+const lightProjectReportConnection = createGetEntityConnection<ProjectReportLightDto>("projectReports", false);
+export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
+export const useLightProjectReport = connectionHook(lightProjectReportConnection);
