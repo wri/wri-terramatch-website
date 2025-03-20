@@ -90,46 +90,46 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
         <PageColumn>
           <PageCard title={Framework.HBF ? t("General Report Updates") : t("Reported Data")} gap={8}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
-              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
-              <LongTextField title={t("Climate Resilience Progress")}>{report.resilience_progress}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
+              <LongTextField title={t("Climate Resilience Progress")}>{report.resilienceProgress}</LongTextField>
               <LongTextField title={t("Response to Local Priorities")}>
-                {report.local_engagement_description}
+                {report.localEngagementDescription}
               </LongTextField>
-              <LongTextField title={t("Governance Progress")}>{report.local_governance}</LongTextField>
+              <LongTextField title={t("Governance Progress")}>{report.localGovernance}</LongTextField>
               <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
-                {report.equitable_opportunities}
+                {report.equitableOpportunities}
               </LongTextField>
-              <LongTextField title={t("Top Three Successes")}>{report.top_three_successes}</LongTextField>
-              <LongTextField title={t("Challenges Faced")}>{report.challenges_faced}</LongTextField>
-              <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
-              <LongTextField title={t("Adaptative Management")}>{report.adaptive_management}</LongTextField>
-              <LongTextField title={t("Significant Change")}>{report.significant_change}</LongTextField>
-              <LongTextField title={t("Scalability Progress")}>{report.scalability_replicability}</LongTextField>
-              <LongTextField title={t("Convergence Schemes")}>{report.convergence_schemes}</LongTextField>
+              <LongTextField title={t("Top Three Successes")}>{report.topThreeSuccesses}</LongTextField>
+              <LongTextField title={t("Challenges Faced")}>{report.challengesFaced}</LongTextField>
+              <LongTextField title={t("Lessons Learned")}>{report.lessonsLearned}</LongTextField>
+              <LongTextField title={t("Adaptative Management")}>{report.adaptiveManagement}</LongTextField>
+              <LongTextField title={t("Significant Change")}>{report.significantChange}</LongTextField>
+              <LongTextField title={t("Scalability Progress")}>{report.scalabilityReplicability}</LongTextField>
+              <LongTextField title={t("Convergence Schemes")}>{report.convergenceSchemes}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={[Framework.PPC]}>
-              <LongTextField title={t("Technical Narrative")}>{report.technical_narrative}</LongTextField>
-              <LongTextField title={t("Public Narrative")}>{report.public_narrative}</LongTextField>
+              <LongTextField title={t("Technical Narrative")}>{report.technicalNarrative}</LongTextField>
+              <LongTextField title={t("Public Narrative")}>{report.publicNarrative}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscape_community_contribution}</LongTextField>
-              <LongTextField title={t("Community Engagement Progress")}>{report.community_progress}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
               <LongTextField title={t("Community Engagement Approach")}>
-                {report.local_engagement_description}
+                {report.localEngagementDescription}
               </LongTextField>
-              <LongTextField title={t("Top 3 Successes")}>{report.top_three_successes}</LongTextField>
-              <LongTextField title={t("Challenges Faced")}>{report.challenges_faced}</LongTextField>
-              <LongTextField title={t("Lessons Learned")}>{report.lessons_learned}</LongTextField>
+              <LongTextField title={t("Top 3 Successes")}>{report.topThreeSuccesses}</LongTextField>
+              <LongTextField title={t("Challenges Faced")}>{report.challengesFaced}</LongTextField>
+              <LongTextField title={t("Lessons Learned")}>{report.lessonsLearned}</LongTextField>
               <LongTextField title={t("Maintenance and Monitoring Activities")}>
-                {report.maintenance_and_monitoring_activities}
+                {report.maintenanceAndMonitoringActivities}
               </LongTextField>
-              <LongTextField title={t("Significant Change")}>{report.significant_change}</LongTextField>
-              <LongTextField title={t("Survival Rate")}>{report.pct_survival_to_date}</LongTextField>
-              <LongTextField title={t("Survival Calculation")}>{report.survival_calculation}</LongTextField>
-              <LongTextField title={t("Survival Comparison")}>{report.survival_comparison}</LongTextField>
+              <LongTextField title={t("Significant Change")}>{report.significantChange}</LongTextField>
+              <LongTextField title={t("Survival Rate")}>{report.pctSurvivalToDate}</LongTextField>
+              <LongTextField title={t("Survival Calculation")}>{report.survivalCalculation}</LongTextField>
+              <LongTextField title={t("Survival Comparison")}>{report.survivalComparison}</LongTextField>
               <LongTextField title={t("Equitable Opportunities for Women + Youth")}>
-                {report.equitable_opportunities}
+                {report.equitableOpportunities}
               </LongTextField>
             </ContextCondition>
           </PageCard>
@@ -155,7 +155,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Workdays Volunteer")} value={workdaysVolunteer} />
               <TextField
                 label={t("Unique Restoration Partners")}
-                value={report.total_unique_restoration_partners ?? "N/A"}
+                value={report.totalUniqueRestorationPartners ?? "N/A"}
               />
               <TextField label={t("Direct Restoration Partners")} value={rpDirect} />
               <TextField label={t("Indirect Restoration Partners")} value={rpIndirect} />
@@ -195,12 +195,12 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <TextField label={t("Trees Planted")} value={report.trees_planted_count} />
-            <TextField frameworksShow={[Framework.HBF]} label={t("Non-Trees Planted")} value={report.non_tree_total} />
+            <TextField label={t("Trees Planted")} value={report.treesPlantedCount} />
+            <TextField frameworksShow={[Framework.HBF]} label={t("Non-Trees Planted")} value={report.nonTreeTotal} />
             <TextField
               frameworksHide={[Framework.HBF]}
               label={t("Number of Sites Reports")}
-              value={report.site_reports_count}
+              value={report.siteReportsCount}
             />
           </PageCard>
           <PageCard
@@ -217,7 +217,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <TextField label={t("Seedlings Grown")} value={report.seedlings_grown} />
+            <TextField label={t("Seedlings Grown")} value={report.seedlingsGrown} />
             <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
               <TreeSpeciesTable
                 entity="projectReports"
@@ -229,19 +229,19 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             <TextField
               frameworksShow={ALL_TF}
               label={t("Number of Nursery Reports")}
-              value={report.nursery_reports_count}
+              value={report.nurseryReportsCount}
             />
           </PageCard>
           <PageCard title={t("Convergence Details")} frameworksShow={[Framework.HBF]}>
-            <TextField label={t("Convergence Funds Raised")} value={report.convergence_amount} />
-            <LongTextField title={t("Convergence Description")}>{report.convergence_schemes}</LongTextField>
+            <TextField label={t("Convergence Funds Raised")} value={report.convergenceAmount} />
+            <LongTextField title={t("Convergence Description")}>{report.convergenceSchemes}</LongTextField>
           </PageCard>
           <PageCard title={t("Project Report Details")}>
             <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title} />
-            <TextField label={t("Created by")} value={getFullName(report.created_by)} />
-            <TextField label={t("Updated")} value={format(report.updated_at)} />
+            <TextField label={t("Created by")} value={getFullName(report.createdBy)} />
+            <TextField label={t("Updated")} value={format(report.updatedAt)} />
             <TextField label={t("Due date")} value={format(dueAt)} />
-            <TextField label={t("Submitted Date")} value={format(report.submitted_at)} />
+            <TextField label={t("Submitted Date")} value={format(report.submittedAt)} />
           </PageCard>
         </PageColumn>
       </PageRow>

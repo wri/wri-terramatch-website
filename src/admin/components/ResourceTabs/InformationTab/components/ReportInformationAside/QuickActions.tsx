@@ -18,7 +18,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
     if (!record) return;
     const queryParams = new URLSearchParams({
       displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.project.uuid }),
+      filter: JSON.stringify({ project_uuid: record.projectUuid }),
       order: "ASC",
       page: "1",
       perPage: "10",
@@ -51,7 +51,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             to={createPath({
               resource: modules.project.ResourceName,
               type: "show",
-              id: record?.project?.uuid
+              id: record?.projectUuid
             })}
             fullWidth
             label="Back To Project"

@@ -141,7 +141,7 @@ export type NurseryLightDto = {
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated project name
    */
@@ -160,6 +160,43 @@ export type NurseryLightDto = {
    */
   endDate: string | null;
   seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type ProjectReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string;
+  frameworkUuid: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskId: number | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -397,7 +434,7 @@ export type NurseryFullDto = {
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated project name
    */
@@ -433,6 +470,111 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+};
+
+export type ProjectReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string;
+  frameworkUuid: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskId: number | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  workdaysPaid: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  completion: number | null;
+  localEngagementDescription: string | null;
+  equitableOpportunities: string | null;
+  resilienceProgress: string | null;
+  localGovernance: string | null;
+  adaptiveManagement: string | null;
+  scalabilityReplicability: string | null;
+  convergenceJobsDescription: string | null;
+  convergenceSchemes: string | null;
+  convergenceAmount: number | null;
+  beneficiariesScstobc: number | null;
+  beneficiariesScstobcFarmers: number | null;
+  communityPartnersAssetsDescription: string | null;
+  peopleKnowledgeSkillsIncreased: number | null;
+  technicalNarrative: string | null;
+  publicNarrative: string | null;
+  totalUniqueRestorationPartners: number | null;
+  businessMilestones: string | null;
+  landscapeCommunityContribution: string | null;
+  reportTitle: string | null;
+  seedsPlantedCount: number | null;
+  treesPlantedCount: number | null;
+  regeneratedTreesCount: number;
+  directRestorationPartners: number;
+  indirectRestorationPartners: number;
+  topThreeSuccesses: string | null;
+  challengesFaced: string | null;
+  lessonsLearned: string | null;
+  maintenanceAndMonitoringActivities: string | null;
+  significantChange: string | null;
+  pctSurvivalToDate: number | null;
+  survivalCalculation: string | null;
+  survivalComparison: string | null;
+  ftSmallholderFarmers: number | null;
+  ptSmallholderFarmers: number | null;
+  seasonalMen: number | null;
+  seasonalWomen: number | null;
+  seasonalYouth: number | null;
+  seasonalSmallholderFarmers: number | null;
+  seasonalTotal: number | null;
+  volunteerSmallholderFarmers: number | null;
+  plantedTrees: number | null;
+  sharedDriveLink: string | null;
+  beneficiariesDescription: string | null;
+  beneficiariesIncomeIncrease: number | null;
+  beneficiariesIncomeIncreaseDescription: string | null;
+  beneficiariesSkillsKnowledgeIncreaseDescription: string | null;
+  indirectBeneficiaries: number | null;
+  indirectBeneficiariesDescription: string | null;
+  newJobsDescription: string | null;
+  volunteersWorkDescription: string | null;
+  siteReportsCount: number | null;
+  nurseryReportsCount: number | null;
+  migrated: boolean;
+  seedlingsGrown: number;
+  communityProgress: string | null;
+  localEngagement: string | null;
+  siteAddition: boolean;
+  paidOtherActivityDescription: string | null;
+  nonTreeTotal: number | null;
+  readableCompletionStatus: string;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   photos: MediaDto[];

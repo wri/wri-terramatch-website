@@ -34,10 +34,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
                 collection="direct"
                 variant={GRID_VARIANT_GREEN}
               />
-              <LongTextField title={t("Description of Direct Jobs")}>{report.new_jobs_description}</LongTextField>
+              <LongTextField title={t("Description of Direct Jobs")}>{report.newJobsDescription}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <LongTextField title={t("Description of Jobs")}>{report.new_jobs_description}</LongTextField>
+              <LongTextField title={t("Description of Jobs")}>{report.newJobsDescription}</LongTextField>
               {DemographicCollections.JOBS_PROJECT.map(collection => (
                 <DemographicsDisplay
                   key={collection}
@@ -50,7 +50,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             </ContextCondition>
           </PageCard>
           <PageCard title={t("Volunteers")} gap={4} frameworksHide={[Framework.HBF]}>
-            <LongTextField title={t("Description of Volunteers")}>{report.volunteers_work_description}</LongTextField>
+            <LongTextField title={t("Description of Volunteers")}>{report.volunteersWorkDescription}</LongTextField>
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
               <DemographicsDisplay
                 key={collection}
@@ -63,15 +63,15 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Other")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Income Generating Description")}>
-              {report.beneficiaries_income_increase_description}
+              {report.beneficiariesIncomeIncreaseDescription}
             </LongTextField>
           </PageCard>
           <PageCard title={t("Community Partners - Direct")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Description of benefits to Community Partners")}>
-              {report.beneficiaries_description}
+              {report.beneficiariesDescription}
             </LongTextField>
             <LongTextField title={t("Description of Community Assets")}>
-              {report.community_partners_assets_description}
+              {report.communityPartnersAssetsDescription}
             </LongTextField>
             <DemographicsDisplay
               entity="projectReports"
@@ -83,16 +83,16 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Community Partners - Indirect")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Description of Indirect Benefits")}>
-              {report.indirect_beneficiaries_description}
+              {report.indirectBeneficiariesDescription}
             </LongTextField>
-            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirect_beneficiaries} />
+            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirectBeneficiaries} />
           </PageCard>
         </PageColumn>
 
         <PageColumn>
           <PageCard title={t("Beneficiaries")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Description of Benefits to Community Partners")}>
-              {report.beneficiaries_description}
+              {report.beneficiariesDescription}
             </LongTextField>
             <DemographicsDisplay
               entity="projectReports"
@@ -102,7 +102,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               variant={GRID_VARIANT_GREEN}
             />
             <LongTextField title={t("Description of Training")}>
-              {report.beneficiaries_skills_knowledge_increase_description}
+              {report.beneficiariesSkillsKnowledgeIncreaseDescription}
             </LongTextField>
             <DemographicsDisplay
               entity="projectReports"
@@ -114,9 +114,9 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Indirect Benefits")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Description of Indirect Benefits")}>
-              {report.indirect_beneficiaries_description}
+              {report.indirectBeneficiariesDescription}
             </LongTextField>
-            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirect_beneficiaries} />
+            <TextField label={t("Total Indirect Beneficiaries")} value={report.indirectBeneficiaries} />
           </PageCard>
 
           <PageCard title={t("Convergence Jobs")} gap={4} frameworksShow={[Framework.HBF]}>
@@ -128,11 +128,11 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
               variant={GRID_VARIANT_GREEN}
             />
             <LongTextField title={t("Description of Convergence Jobs")}>
-              {report.convergence_jobs_description}
+              {report.convergenceJobsDescription}
             </LongTextField>
           </PageCard>
           <PageCard title={t("Volunteers")} gap={4} frameworksShow={[Framework.HBF]}>
-            <LongTextField title={t("Description of Volunteers")}>{report.volunteers_work_description}</LongTextField>
+            <LongTextField title={t("Description of Volunteers")}>{report.volunteersWorkDescription}</LongTextField>
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
               <DemographicsDisplay
                 key={collection}
@@ -145,12 +145,12 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Other")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Income Generating Description")}>
-              {report.beneficiaries_income_increase_description}
+              {report.beneficiariesIncomeIncreaseDescription}
             </LongTextField>
             <LongTextField title={t("Training Description")}>
-              {report.beneficiaries_skills_knowledge_increase_description}
+              {report.beneficiariesSkillsKnowledgeIncreaseDescription}
             </LongTextField>
-            <TextField label={t("People Trained")} value={report.people_knowledge_skills_increased} />
+            <TextField label={t("People Trained")} value={report.peopleKnowledgeSkillsIncreased} />
           </PageCard>
         </PageColumn>
       </PageRow>

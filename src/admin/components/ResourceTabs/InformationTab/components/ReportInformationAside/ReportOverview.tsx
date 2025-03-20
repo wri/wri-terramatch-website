@@ -10,7 +10,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "reminder" | undefined>();
 
   const { record } = useShowContext();
-  const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.update_request_status);
+  const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.updateRequestStatus);
 
   return (
     <>
@@ -26,11 +26,11 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             </Labeled>
           )}
           <Labeled label="Project">
-            <TextField source="project.name" />
+            <TextField source="projectName" />
           </Labeled>
 
           <Labeled label="Organisation">
-            <TextField source="organisation.name" />
+            <TextField source="organisationName" />
           </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
@@ -42,19 +42,19 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
 
             <Grid xs={4} item>
               <Labeled label="Status">
-                <TextField source="readable_status" />
+                <TextField source="readableStatus" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
-                <TextField source="readable_update_request_status" />
+                <TextField source="readableUpdateRequestStatus" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Due Date">
-                <DateField source="due_at" label="Due Date" locales="en-GB" />
+                <DateField source="dueAt" label="Due Date" locales="en-GB" />
               </Labeled>
             </Grid>
           </Grid>
