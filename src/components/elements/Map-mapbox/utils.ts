@@ -497,7 +497,7 @@ export const addPopupToLayer = (
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
       if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
-
+      // keep commented for future possible use
       // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
@@ -598,6 +598,7 @@ export const addGeojsonSourceToLayer = (
       addLayerGeojsonStyle(map, name, name, style, index);
     });
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
+    // keep commented for future possible use
     // if (existsPolygons) {
     layerIds.forEach(layerId => {
       let existingFilter = map.getFilter(layerId) || ["all"];
