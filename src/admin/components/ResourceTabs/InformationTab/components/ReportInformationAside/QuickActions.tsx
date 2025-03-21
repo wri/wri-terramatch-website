@@ -4,7 +4,6 @@ import { Button, Link, useCreatePath, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import modules from "@/admin/modules";
-import { useGetV2TasksIDId } from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 
 type QuickActionsProps = {
@@ -29,11 +28,6 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
     return `/${view}?${queryParams}`;
   };
 
-  const { data: reportTaskUuid } = useGetV2TasksIDId(
-    { pathParams: { id: record?.taskId! } },
-    { enabled: !!record?.taskId }
-  );
-
   return (
     <Card>
       <Box paddingX={3.75} paddingY={2}>
@@ -50,7 +44,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             to={createPath({
               resource: modules.task.ResourceName,
               type: "show",
-              id: reportTaskUuid?.uuid! ?? record?.task_uuid!
+              id: record?.taskUuid! ?? record?.task_uuid!
             })}
             fullWidth
             label="View Task"

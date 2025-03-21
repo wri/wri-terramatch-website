@@ -193,7 +193,10 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
   title: string | null;
   updateRequestStatus: string;
   /**
@@ -502,7 +505,10 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
   title: string | null;
   updateRequestStatus: string;
   /**

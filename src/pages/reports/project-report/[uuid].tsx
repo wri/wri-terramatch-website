@@ -7,7 +7,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useGetV2TasksIDId, useGetV2TasksUUID } from "@/generated/apiComponents";
+import { useGetV2TasksUUID } from "@/generated/apiComponents";
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -30,17 +30,12 @@ const ProjectReportDetailPage = () => {
 
   const [, { entity: project }] = useFullProject({ uuid: projectReport?.projectUuid! });
 
-  const { data: reportTaskUuid } = useGetV2TasksIDId(
-    { pathParams: { id: projectReport?.taskId! } },
-    { enabled: !!projectReport?.taskId }
-  );
-
   const { data: reportingTaskData } = useGetV2TasksUUID(
     {
-      pathParams: { uuid: reportTaskUuid?.uuid! }
+      pathParams: { uuid: projectReport?.taskUuid! }
     },
     {
-      enabled: !!reportTaskUuid?.uuid!
+      enabled: !!projectReport?.taskUuid
     }
   );
 
@@ -97,12 +92,12 @@ const ProjectReportDetailPage = () => {
             {
               key: "site-reports",
               title: t("Site reports"),
-              body: <SiteReportsTab taskUuid={reportTaskUuid?.uuid!} />
+              body: <SiteReportsTab taskUuid={projectReport?.taskUuid!} />
             },
             {
               key: "nursery-reports",
               title: t("Nursery reports"),
-              body: <NurseryReportsTab taskUuid={reportTaskUuid?.uuid!} />,
+              body: <NurseryReportsTab taskUuid={projectReport?.taskUuid!} />,
               hide: [Framework.PPC]
             },
             {

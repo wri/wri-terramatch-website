@@ -7,8 +7,7 @@ import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/co
 import {
   fetchGetV2ProjectsUUIDSitePolygonsAll,
   fetchGetV2SitesSitePolygon,
-  fetchGetV2TasksUUIDReports,
-  useGetV2TasksIDId
+  fetchGetV2TasksUUIDReports
 } from "@/generated/apiComponents";
 
 export interface SelectedItem {
@@ -87,11 +86,6 @@ const useLoadEntityList = ({
     });
   };
 
-  const { data: reportTaskUuid } = useGetV2TasksIDId(
-    { pathParams: { id: entity?.taskId! } },
-    { enabled: isProjectReport && !!entity?.taskId }
-  );
-
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
     const fetchToProject =
@@ -110,7 +104,7 @@ const useLoadEntityList = ({
         ? { projectUuid: entity.uuid }
         : { uuid: entity.uuid }
       : isProjectReport
-      ? { uuid: reportTaskUuid?.uuid ?? entity.task_uuid }
+      ? { uuid: entity.taskUuid ?? entity.task_uuid }
       : { site: entity.uuid };
     const res = await fetchAction({
       // @ts-ignore
