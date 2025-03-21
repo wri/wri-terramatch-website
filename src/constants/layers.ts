@@ -5,12 +5,12 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 import { DELETED_POLYGONS } from "./statuses";
 
 export const LAYERS_NAMES = {
-  WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
-  LANDSCAPES: "landscape_geom"
+  LANDSCAPES: "landscape_geom",
+  WORLD_COUNTRIES: "world_countries_generalized"
 };
 export const layersList: LayerType[] = [
   {
@@ -150,57 +150,6 @@ export const layersList: LayerType[] = [
     ]
   },
   {
-    name: LAYERS_NAMES.WORLD_COUNTRIES,
-    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
-    styles: [
-      {
-        type: "line",
-        paint: {
-          "line-color": "#ff5a5f",
-          "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
-        }
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
-      {
-        type: "fill",
-        paint: {
-          "fill-color": "#ff5a5f",
-          "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
-        }
-      } as unknown as mapboxgl.FillLayer
-    ],
-    hover: true
-  },
-  {
-    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
-    name: `${LAYERS_NAMES.WORLD_COUNTRIES}-line`,
-    styles: [
-      {
-        type: "line",
-        layout: {},
-        paint: {
-          "line-color": "#ff5a5f",
-          "line-width": 2
-        }
-      }
-    ],
-    hover: false
-  },
-  {
-    geoserverLayerName: LAYERS_NAMES.LANDSCAPES,
-    name: `${LAYERS_NAMES.LANDSCAPES}`,
-    styles: [
-      {
-        type: "line",
-        layout: {},
-        paint: {
-          "line-color": "#fC5a5f",
-          "line-width": 2
-        }
-      }
-    ],
-    hover: false
-  },
-  {
     name: LAYERS_NAMES.CENTROIDS,
     geoserverLayerName: "",
     styles: [
@@ -211,7 +160,7 @@ export const layersList: LayerType[] = [
         paint: {
           "circle-color": "#795305",
           "circle-opacity": 0.2,
-          "circle-radius": 8
+          "circle-radius": 9
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer,
       {
@@ -262,5 +211,56 @@ export const layersList: LayerType[] = [
       } as mapboxgl.Style & mapboxgl.CircleLayer
     ],
     hover: true
+  },
+  {
+    name: LAYERS_NAMES.WORLD_COUNTRIES,
+    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
+    styles: [
+      {
+        type: "line",
+        paint: {
+          "line-color": "#ff5a5f",
+          "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
+        }
+      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      {
+        type: "fill",
+        paint: {
+          "fill-color": "#ff5a5f",
+          "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
+        }
+      } as unknown as mapboxgl.FillLayer
+    ],
+    hover: true
+  },
+  {
+    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
+    name: `${LAYERS_NAMES.WORLD_COUNTRIES}-line`,
+    styles: [
+      {
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#ff5a5f",
+          "line-width": 2
+        }
+      }
+    ],
+    hover: false
+  },
+  {
+    geoserverLayerName: LAYERS_NAMES.LANDSCAPES,
+    name: `${LAYERS_NAMES.LANDSCAPES}`,
+    styles: [
+      {
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#fC5a5f",
+          "line-width": 2
+        }
+      }
+    ],
+    hover: false
   }
 ];
