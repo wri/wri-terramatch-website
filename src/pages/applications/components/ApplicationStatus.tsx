@@ -35,7 +35,9 @@ interface StatusProps {
 }
 
 const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
-  const currentSubmission = application?.current_submission;
+  const currentSubmission = (application?.form_submissions ?? []).find(
+    ({ uuid }) => uuid === application?.current_submission_uuid
+  );
   //@ts-ignore
   const stages = application?.funding_programme?.stages?.data as StageRead[];
   const fundingProgrammeStatus = application?.funding_programme?.status;

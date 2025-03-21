@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2ApplicationsUUID } from "@/generated/apiComponents";
-import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
+import { ApplicationRead } from "@/generated/apiSchemas";
 import ApplicationHeader from "@/pages/applications/components/ApplicationHeader";
 import ApplicationOverview from "@/pages/applications/components/ApplicationOverview";
 import ApplicationStatus from "@/pages/applications/components/ApplicationStatus";
@@ -27,7 +27,9 @@ const ApplicationPage = () => {
     }
   });
   const application = applicationData?.data;
-  const currentSubmission = application?.current_submission as FormSubmissionRead;
+  const currentSubmission = (application?.form_submissions ?? []).find(
+    ({ uuid }) => uuid === application?.current_submission_uuid
+  );
   const applicationName = application
     ? `${application?.organisation?.name} - ${application?.funding_programme?.name}`
     : "N/A";
