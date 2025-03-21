@@ -288,7 +288,7 @@ const DataCard = ({
     { treeCoverLoss: 0, treeCoverLossFires: 0 }
   );
 
-  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
+  const { setSearchTerm, searchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
   const { openNotification } = useNotificationContext();
@@ -933,6 +933,7 @@ const DataCard = ({
               <SitePolygonsTable
                 entityName={type!}
                 entityUuid={record.uuid}
+                searchTerm={searchTerm}
                 presentIndicator={indicatorSlug as SitePolygonIndexConnectionProps["presentIndicator"]}
                 TABLE_COLUMNS_MAPPING={TABLE_COLUMNS_MAPPING}
                 variant={VARIANT_TABLE_MONITORED}

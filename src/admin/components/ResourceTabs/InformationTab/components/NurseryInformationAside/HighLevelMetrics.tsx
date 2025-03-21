@@ -19,7 +19,7 @@ const HighLevelMetics: FC = () => {
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
           <Labeled label="Total No. Seedlings Were Grown" sx={inlineLabelSx}>
-            <NumberField source="seedlings_grown_count" />
+            <NumberField source="seedlingsGrownCount" />
           </Labeled>
         </Stack>
       </Box>

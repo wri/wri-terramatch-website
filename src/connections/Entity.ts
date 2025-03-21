@@ -13,6 +13,8 @@ import {
   entityIndexFetchFailed
 } from "@/generated/v3/entityService/entityServicePredicates";
 import {
+  NurseryFullDto,
+  NurseryLightDto,
   ProjectFullDto,
   ProjectLightDto,
   SiteFullDto,
@@ -26,9 +28,9 @@ import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/conn
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityFullDto = ProjectFullDto | SiteFullDto;
-export type EntityLightDto = ProjectLightDto | SiteLightDto;
-export type EntityDtoType = EntityFullDto | EntityLightDto;
+export type EntityFullDto = ProjectFullDto | SiteFullDto | NurseryFullDto;
+export type EntityLightDto = ProjectLightDto | SiteLightDto | NurseryLightDto;
+export type EntityDtoType = EntityFullDto | EntityLightDto | NurseryLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
   entity?: T;
@@ -206,6 +208,16 @@ const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("pro
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 
+const fullNurseryConnection = createGetEntityConnection<NurseryFullDto>("nurseries", true);
+export const loadFullNursery = connectionLoader(fullNurseryConnection);
+export const useFullNursery = connectionHook(fullNurseryConnection);
+const lightNurseryConnection = createGetEntityConnection<NurseryLightDto>("nurseries", false);
+export const loadLightNursery = connectionLoader(lightNurseryConnection);
+export const useLightNursery = connectionHook(lightNurseryConnection);
+
+const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
+export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
+export const useNurseryIndex = connectionHook(indexNurseryConnection);
 const fullSiteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
 export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);

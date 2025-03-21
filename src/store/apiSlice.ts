@@ -10,6 +10,8 @@ import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token"
 import {
   DemographicDto,
   EstablishmentsTreesDto,
+  NurseryFullDto,
+  NurseryLightDto,
   ProjectFullDto,
   ProjectLightDto,
   SeedingDto,
@@ -114,6 +116,7 @@ export const RESOURCES = [
   "passwordResets",
   "verifications",
   "projects",
+  "nurseries",
   "seedings",
   "sites",
   "treeReportCounts",
@@ -145,6 +148,7 @@ type ApiResources = {
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   users: StoreResourceMap<UserDto>;
   sitePolygons: StoreResourceMap<SitePolygonLightDto>;
+  nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];

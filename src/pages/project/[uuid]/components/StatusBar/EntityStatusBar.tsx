@@ -31,8 +31,8 @@ const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
 
-  const feedback = entity.feedback;
-  const entityStatus = entity.status;
+  const feedback = entity?.feedback;
+  const entityStatus = entity?.status;
   const needMoreInformation = entityStatus === "needs-more-information";
   const hasFeedback = needMoreInformation || entityStatus === "approved";
   const projectedEntityStatus = StatusMapping?.[entityStatus];
@@ -66,7 +66,7 @@ const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {
             ? {
                 as: Link,
                 children: t("Provide Feedback"),
-                href: `/entity/${entityName}/edit/${entity.uuid}?mode=provide-feedback-entity`,
+                href: `/entity/${entityName}/edit/${entity?.uuid}?mode=provide-feedback-entity`,
                 onClick: () => {
                   closeModal(ModalId.STATUS);
                 }
