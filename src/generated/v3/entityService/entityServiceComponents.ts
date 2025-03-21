@@ -11,7 +11,7 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries";
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -127,7 +127,7 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           /**
            * @example nurseries
            */
-          type?: string;
+          resourceType?: string;
           page?: {
             /**
              * The total number of records available.
@@ -152,6 +152,37 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.NurseryLightDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example projectReports
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example projectReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectReportLightDto;
+        }[];
       },
     EntityIndexError,
     undefined,
@@ -164,7 +195,7 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries";
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -249,7 +280,7 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           /**
            * @example nurseries
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -261,6 +292,25 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
            */
           id?: string;
           attributes?: Schemas.NurseryFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example projectReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example projectReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectReportFullDto;
         };
       },
     EntityGetError,
@@ -274,7 +324,7 @@ export type EntityDeletePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites";
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
   /**
    * Entity UUID for resource to retrieve
    */

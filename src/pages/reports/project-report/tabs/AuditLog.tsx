@@ -105,8 +105,8 @@ const AuditLog = ({
                   buttonToggle={buttonToggle}
                   setButtonToggle={setButtonToggle}
                   isReport={true}
-                  framework={projectReport?.framework_key as string}
-                  existNurseries={projectReport?.nursery_reports_count > 0}
+                  framework={projectReport?.frameworkKey as string}
+                  existNurseries={projectReport?.nurseryReportsCount > 0}
                 />
                 <When condition={buttonToggle === ButtonStates.PROJECT_REPORT}>
                   <SiteAuditLogProjectStatus viewPD={true} record={projectReport} auditLogData={auditLogData} />

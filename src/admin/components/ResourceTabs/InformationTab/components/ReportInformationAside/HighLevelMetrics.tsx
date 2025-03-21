@@ -130,7 +130,7 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
             <NumberField
-              source={record.trees_planted_count ? "trees_planted_count" : "total_trees_planted_count"}
+              source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
               emptyText="0"
             />
           </Labeled>
@@ -138,7 +138,7 @@ const HighLevelMetrics: FC = () => {
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
                 <NumberField
-                  source={record.seeds_planted_count ? "seeds_planted_count" : "total_seeds_planted_count"}
+                  source={record.seedsPlantedCount ? "seedsPlantedCount" : "totalSeedsPlantedCount"}
                   emptyText="0"
                 />
               </Labeled>
@@ -148,7 +148,7 @@ const HighLevelMetrics: FC = () => {
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx}>
                 <NumberField
-                  source={resource === "projectReport" ? "regenerated_trees_count" : "num_trees_regenerating"}
+                  source={resource === "projectReport" ? "regeneratedTreesCount" : "numTreesRegenerating"}
                   emptyText="0"
                 />
               </Labeled>
@@ -157,7 +157,7 @@ const HighLevelMetrics: FC = () => {
           <ContextCondition frameworksShow={ALL_TF}>
             <When condition={resource !== "siteReport"}>
               <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
-                <NumberField source="seedlings_grown" emptyText="0" />
+                <NumberField source="seedlingsGrown" emptyText="0" />
               </Labeled>
             </When>
           </ContextCondition>

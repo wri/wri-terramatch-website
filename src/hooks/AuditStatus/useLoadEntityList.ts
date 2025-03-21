@@ -104,7 +104,7 @@ const useLoadEntityList = ({
         ? { projectUuid: entity.uuid }
         : { uuid: entity.uuid }
       : isProjectReport
-      ? { uuid: entity.task_uuid }
+      ? { uuid: entity.taskUuid ?? entity.task_uuid }
       : { site: entity.uuid };
     const res = await fetchAction({
       // @ts-ignore

@@ -7585,36 +7585,6 @@ export type ApplicationRead = {
   updated_at?: string;
 };
 
-export type ProjectReportLiteRead = {
-  uuid?: string;
-  framework_key?: string;
-  status?: number;
-  readable_status?: string;
-  title?: string;
-};
-
-export type ProjectReportPaginated = {
-  data?: {
-    uuid?: string;
-    framework_key?: string;
-    status?: number;
-    readable_status?: string;
-    title?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
 export type TaskPaginated = {
   data?: {
     uuid?: string;

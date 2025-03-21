@@ -18,7 +18,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
     if (!record) return;
     const queryParams = new URLSearchParams({
       displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.project.uuid }),
+      filter: JSON.stringify({ project_uuid: record.projectUuid }),
       order: "ASC",
       page: "1",
       perPage: "10",
@@ -41,7 +41,11 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
           <Button
             variant="outlined"
             component={Link}
-            to={createPath({ resource: modules.task.ResourceName, type: "show", id: record.task_uuid })}
+            to={createPath({
+              resource: modules.task.ResourceName,
+              type: "show",
+              id: record?.taskUuid! ?? record?.task_uuid!
+            })}
             fullWidth
             label="View Task"
           />
@@ -51,7 +55,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             to={createPath({
               resource: modules.project.ResourceName,
               type: "show",
-              id: record?.project?.uuid
+              id: record?.projectUuid
             })}
             fullWidth
             label="Back To Project"

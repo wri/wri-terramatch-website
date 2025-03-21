@@ -5610,62 +5610,6 @@ export const useGetV2AdminSiteReports = <TData = GetV2AdminSiteReportsResponse>(
   );
 };
 
-export type GetV2AdminProjectReportsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminProjectReportsResponse = {
-  data?: {
-    uuid?: string;
-    framework_key?: string;
-    status?: number;
-    readable_status?: string;
-    title?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2AdminProjectReportsVariables = {
-  body?: RequestBodies.GetV2AdminNurseryReportsBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminProjectReports = (variables: GetV2AdminProjectReportsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2AdminProjectReportsResponse,
-    GetV2AdminProjectReportsError,
-    RequestBodies.GetV2AdminNurseryReportsBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/project-reports", method: "get", ...variables, signal });
-
-export const useGetV2AdminProjectReports = <TData = GetV2AdminProjectReportsResponse>(
-  variables: GetV2AdminProjectReportsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminProjectReportsResponse, GetV2AdminProjectReportsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminProjectReportsResponse, GetV2AdminProjectReportsError, TData>(
-    queryKeyFn({ path: "/v2/admin/project-reports", operationId: "getV2AdminProjectReports", variables }),
-    ({ signal }) => fetchGetV2AdminProjectReports({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminTasksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminTasksResponse = {
@@ -34253,11 +34197,6 @@ export type QueryOperation =
       path: "/v2/admin/site-reports";
       operationId: "getV2AdminSiteReports";
       variables: GetV2AdminSiteReportsVariables;
-    }
-  | {
-      path: "/v2/admin/project-reports";
-      operationId: "getV2AdminProjectReports";
-      variables: GetV2AdminProjectReportsVariables;
     }
   | {
       path: "/v2/admin/tasks";

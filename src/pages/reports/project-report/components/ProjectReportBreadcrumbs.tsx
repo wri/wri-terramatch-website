@@ -18,8 +18,8 @@ const ProjectReportBreadcrumbs = ({ title, report, task }: ProjectReportBreadcru
     <PageBreadcrumbs
       links={[
         { title: t("My Projects"), path: "/my-projects" },
-        { title: report.project?.name ?? t("Project"), path: `/project/${report.project?.uuid}` },
-        { title: taskTitle, path: `/project/${report.project?.uuid}/reporting-task/${report.task_uuid}` },
+        { title: report?.projectName ?? t("Project"), path: `/project/${report?.projectUuid}` },
+        { title: taskTitle, path: `/project/${report?.projectUuid}/reporting-task/${report?.taskUuid}` },
         { title }
       ]}
     />
