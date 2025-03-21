@@ -10,8 +10,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2DashboardCountryCountry,
-  fetchGetV2DashboardGetBboxProject,
-  fetchGetV2SitesSiteBbox,
   GetV2MODELUUIDFilesResponse,
   useGetV2MODELUUIDFiles
 } from "@/generated/apiComponents";
@@ -19,10 +17,9 @@ import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { createQueryParams } from "@/utils/dashboardUtils";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { parsePolygonData, storePolygon } from "../utils";
+import { callEntityBbox, parsePolygonData, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -87,7 +84,11 @@ const OverviewMapArea = ({
       return;
     }
     if (polygonsData.length > 0) {
-      callEntityBbox();
+      callEntityBbox(type, entityModel).then(bbox => {
+        if (bbox) {
+          setEntityBbox(bbox);
+        }
+      });
     } else {
       callCountryBBox();
     }
@@ -96,23 +97,6 @@ const OverviewMapArea = ({
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedValues, sortOrder]);
-  const callEntityBbox = async () => {
-    if (type === "sites") {
-      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
-      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
-        const bboxFormat = siteBbox.bbox as BBox;
-        setEntityBbox(bboxFormat);
-      }
-    } else {
-      const projectBbox = await fetchGetV2DashboardGetBboxProject({
-        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
-      });
-      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
-        const bboxFormat = projectBbox.bbox as BBox;
-        setEntityBbox(bboxFormat);
-      }
-    }
-  };
 
   const callCountryBBox = async () => {
     let currentCountry = entityModel?.country;
