@@ -15,12 +15,13 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
+import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { getFullName } from "@/utils/user";
 
 interface ReportOverviewTabProps {
-  report: any;
+  report: ProjectReportFullDto;
   dueAt?: string;
 }
 
@@ -155,7 +156,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <TextField label={t("Workdays Volunteer")} value={workdaysVolunteer} />
               <TextField
                 label={t("Unique Restoration Partners")}
-                value={report.totalUniqueRestorationPartners ?? "N/A"}
+                value={String(report.totalUniqueRestorationPartners ?? "")}
               />
               <TextField label={t("Direct Restoration Partners")} value={rpDirect} />
               <TextField label={t("Indirect Restoration Partners")} value={rpIndirect} />
@@ -195,12 +196,16 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <TextField label={t("Trees Planted")} value={report.treesPlantedCount} />
-            <TextField frameworksShow={[Framework.HBF]} label={t("Non-Trees Planted")} value={report.nonTreeTotal} />
+            <TextField label={t("Trees Planted")} value={String(report.treesPlantedCount ?? "")} />
+            <TextField
+              frameworksShow={[Framework.HBF]}
+              label={t("Non-Trees Planted")}
+              value={String(report.nonTreeTotal ?? "")}
+            />
             <TextField
               frameworksHide={[Framework.HBF]}
               label={t("Number of Sites Reports")}
-              value={report.siteReportsCount}
+              value={String(report.siteReportsCount ?? "")}
             />
           </PageCard>
           <PageCard
@@ -217,7 +222,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <TextField label={t("Seedlings Grown")} value={report.seedlingsGrown} />
+            <TextField label={t("Seedlings Grown")} value={String(report.seedlingsGrown ?? "")} />
             <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
               <TreeSpeciesTable
                 entity="projectReports"
@@ -229,16 +234,16 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
             <TextField
               frameworksShow={ALL_TF}
               label={t("Number of Nursery Reports")}
-              value={report.nurseryReportsCount}
+              value={String(report.nurseryReportsCount ?? "")}
             />
           </PageCard>
           <PageCard title={t("Convergence Details")} frameworksShow={[Framework.HBF]}>
-            <TextField label={t("Convergence Funds Raised")} value={report.convergenceAmount} />
+            <TextField label={t("Convergence Funds Raised")} value={String(report.convergenceAmount ?? "")} />
             <LongTextField title={t("Convergence Description")}>{report.convergenceSchemes}</LongTextField>
           </PageCard>
           <PageCard title={t("Project Report Details")}>
-            <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title} />
-            <TextField label={t("Created by")} value={getFullName(report.createdByUser)} />
+            <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title ?? ""} />
+            <TextField label={t("Created by")} value={getFullName(report.createdByUser ?? "")} />
             <TextField label={t("Updated")} value={format(report.updatedAt)} />
             <TextField label={t("Due date")} value={format(dueAt)} />
             <TextField label={t("Submitted Date")} value={format(report.submittedAt)} />

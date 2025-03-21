@@ -32,7 +32,7 @@ import { selectorCache } from "@/utils/selectorCache";
 
 export type EntityFullDto = ProjectFullDto | SiteFullDto | NurseryFullDto | ProjectReportFullDto;
 export type EntityLightDto = ProjectLightDto | SiteLightDto | NurseryLightDto | ProjectReportLightDto;
-export type EntityDtoType = EntityFullDto | EntityLightDto | NurseryLightDto | ProjectReportLightDto;
+export type EntityDtoType = EntityFullDto | EntityLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
   entity?: T;

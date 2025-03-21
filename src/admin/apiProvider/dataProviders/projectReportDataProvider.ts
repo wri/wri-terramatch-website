@@ -1,9 +1,9 @@
-import { DataProvider, HttpError } from "react-admin";
+import { DataProvider } from "react-admin";
 
 import { loadFullProjectReport, loadProjectReportIndex } from "@/connections/Entity";
 import { DeleteV2AdminProjectReportsUUIDError, fetchDeleteV2AdminProjectReportsUUID } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
@@ -12,7 +12,7 @@ export const projectReportDataProvider: DataProvider = {
   async getList(_, params) {
     const connection = await loadProjectReportIndex(raConnectionProps(params));
     if (connection.fetchFailure != null) {
-      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
+      throw v3ErrorForRA("Project report index fetch failed", connection.fetchFailure);
     }
     return entitiesListResult(connection);
   },
@@ -21,7 +21,7 @@ export const projectReportDataProvider: DataProvider = {
   async getOne(_, params) {
     const { entity: projectReport, fetchFailure } = await loadFullProjectReport({ uuid: params.id });
     if (fetchFailure != null) {
-      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
+      throw v3ErrorForRA("Project report get fetch failed", fetchFailure);
     }
 
     return { data: { ...projectReport, id: projectReport!.uuid } };
