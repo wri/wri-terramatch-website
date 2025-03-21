@@ -496,9 +496,9 @@ export const addPopupToLayer = (
       const currentMode = draw?.getMode();
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
 
-      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
+      // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
         e,
@@ -598,14 +598,12 @@ export const addGeojsonSourceToLayer = (
       addLayerGeojsonStyle(map, name, name, style, index);
     });
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    if (existsPolygons && zoomFilterValue !== undefined) {
-      layerIds.forEach(layerId => {
-        let existingFilter = map.getFilter(layerId) || ["all"];
-        let zoomFilter = ["<=", ["zoom"], zoomFilterValue + 1];
-        let combinedFilter = ["all", existingFilter, zoomFilter];
-        map.setFilter(layerId, combinedFilter);
-      });
-    }
+    // if (existsPolygons) {
+    layerIds.forEach(layerId => {
+      let existingFilter = map.getFilter(layerId) || ["all"];
+      map.setFilter(layerId, existingFilter);
+    });
+    // }
   }
 };
 export const addSourceToLayer = (
