@@ -64,7 +64,6 @@ const EntityMapAndGalleryCard = ({
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   let entityUUID = router.query.uuid as string;
-  console.log("Model Ta", modelTitle, modelUUID, router.query.uuid);
   if (modelTitle === "Site Report" || modelTitle === "Site") {
     entityUUID = modelUUID;
   }

@@ -886,7 +886,6 @@ export function getPolygonsData(
     type: type,
     [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
   };
-  console.log("queryParams", queryParams);
   if (statusFilter) {
     queryParams.status = statusFilter;
   }
