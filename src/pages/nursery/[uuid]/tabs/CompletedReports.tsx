@@ -29,7 +29,7 @@ const CompletedReportsTab = ({ nursery }: ReportingTasksProps) => {
     <PageBody>
       <PageRow>
         <PageColumn>
-          <If condition={isLoading || reports?.meta?.total === 0}>
+          <If condition={isLoading || nursery.nurseryReportsTotal === 0}>
             <Then>
               <EmptyState
                 iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}

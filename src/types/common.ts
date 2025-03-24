@@ -241,14 +241,24 @@ export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "re
 
 export type EntityName = BaseModelNames | ReportsModelNames;
 export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
-export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports" | "projectReports";
+export type ReportsModelNames =
+  | "project-reports"
+  | "site-reports"
+  | "nursery-reports"
+  | "projectReports"
+  | "nurseryReports";
 
 export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
 export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
-export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report" | "projectReport";
+export type SingularReportsModelNames =
+  | "project-report"
+  | "site-report"
+  | "nursery-report"
+  | "projectReport"
+  | "nurseryReport";
 
 export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>
   !name.endsWith("-report");

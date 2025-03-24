@@ -214,6 +214,55 @@ export type ProjectReportLightDto = {
   updatedAt: string;
 };
 
+export type NurseryReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskId: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -591,6 +640,83 @@ export type ProjectReportFullDto = {
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+};
+
+export type NurseryReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskId: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  reportTitle: string | null;
+  projectReportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  nothingToReport: boolean;
+  readableCompletionStatus: string;
+  title: string | null;
+  seedlingsYoungTrees: number | null;
+  interestingFacts: string | null;
+  sitePrep: string | null;
+  sharedDriveLink: string | null;
+  createdBy: number | null;
+  createdByUser: Record<string, any> | null;
+  approvedBy: number | null;
+  approvedByUser: Record<string, any> | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  migrated: boolean;
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  treeSeedlingContributions: MediaDto[];
   photos: MediaDto[];
 };
 
