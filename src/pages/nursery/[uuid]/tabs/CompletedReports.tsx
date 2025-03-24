@@ -8,7 +8,6 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import CompletedReportsTable from "@/components/extensive/Tables/CompletedReportsTable";
-import { useGetV2ENTITYUUIDReports } from "@/generated/apiComponents";
 
 interface ReportingTasksProps {
   nursery: any;
@@ -16,20 +15,12 @@ interface ReportingTasksProps {
 
 const CompletedReportsTab = ({ nursery }: ReportingTasksProps) => {
   const t = useT();
-  const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
-    {
-      pathParams: { entity: "nurseries", uuid: nursery.uuid }
-    },
-    {
-      keepPreviousData: true
-    }
-  );
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <If condition={isLoading || nursery.nurseryReportsTotal === 0}>
+          <If condition={nursery.nurseryReportsTotal === 0}>
             <Then>
               <EmptyState
                 iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
@@ -41,7 +32,7 @@ const CompletedReportsTab = ({ nursery }: ReportingTasksProps) => {
             </Then>
             <Else>
               <PageCard
-                title={t("Completed Nursery Reports ({count})", { count: reports?.meta?.total ?? 0 })}
+                title={t("Completed Nursery Reports ({count})", { count: nursery.nurseryReportsTotal ?? 0 })}
                 subtitle={t(
                   "This is a list of all the reports you have completed for this Nursery. You can monitor their review process and approval status in this section."
                 )}
