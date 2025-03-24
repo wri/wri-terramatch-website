@@ -112,12 +112,16 @@ const filterLayerByZoom = (map: mapboxgl.Map, name: string, styles: LayerWithSty
   if (zoomLevel < zoomFilter) {
     styles.forEach((_: LayerWithStyle, index: number) => {
       const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "none");
+      if (map.getLayer(layerName)) {
+        map.setLayoutProperty(layerName, "visibility", "none");
+      }
     });
   } else {
     styles.forEach((_: LayerWithStyle, index: number) => {
       const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "visible");
+      if (map.getLayer(layerName)) {
+        map.setLayoutProperty(layerName, "visibility", "visible");
+      }
     });
   }
 };
@@ -576,6 +580,10 @@ export const addGeojsonSourceToLayer = (
       });
       map.removeSource(name);
     }
+    if (existsPolygons) {
+      return;
+    }
+
     map.addSource(name, {
       type: "geojson",
       data: {
