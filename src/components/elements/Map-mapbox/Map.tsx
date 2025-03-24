@@ -697,7 +697,7 @@ export const MapContainer = ({
         <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
           <ListPolygon />
           <ViewImageCarousel
-            className="py-2 lg:pt-2.5 lg:pb-3"
+            className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
             modelFilesData={props?.modelFilesData}
             imageGalleryRef={imageGalleryRef}
           />
