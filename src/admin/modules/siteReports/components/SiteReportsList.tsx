@@ -26,10 +26,10 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
-
 const SiteReportDataGrid: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
 
@@ -46,38 +46,40 @@ const SiteReportDataGrid: FC = () => {
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
-      <TextField source="site.name" label="Site Name" sortable={false} />
+      <TextField source="siteName" label="Site Name" sortable={false} />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={({ status }: SiteReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record: any) => {
+        render={(record: SiteReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
-      <TextField source="project.name" label="Project" />
+      <TextField source="projectName" label="Project" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
-        render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ||
-          record?.framework_key
+        render={({ frameworkKey }: SiteReportLightDto) =>
+          frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey
         }
         sortable={false}
       />
-      <TextField source="organisation.name" label="Organization" />
-      <DateField source="due_at" label="Due Date" locales="en-GB" />
-      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
-      <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
+      <TextField source="organisationName" label="Organization" />
+      <DateField source="dueAt" label="Due Date" locales="en-GB" />
+      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
+      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -92,7 +94,7 @@ export const SiteReportsList: FC = () => {
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organisation"
       sort={{
@@ -106,7 +108,7 @@ export const SiteReportsList: FC = () => {
     </ReferenceInput>,
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{
@@ -118,7 +120,7 @@ export const SiteReportsList: FC = () => {
     </ReferenceInput>,
     <ReferenceInput
       key="site"
-      source="site_uuid"
+      source="siteUuid"
       reference={modules.site.ResourceName}
       label="Site"
       sort={{
@@ -143,16 +145,16 @@ export const SiteReportsList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       label="Change Request Status"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />

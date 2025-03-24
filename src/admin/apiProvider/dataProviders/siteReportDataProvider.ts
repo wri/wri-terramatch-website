@@ -1,47 +1,29 @@
 import { DataProvider } from "react-admin";
 
-import {
-  DeleteV2AdminSiteReportsUUIDError,
-  fetchDeleteV2AdminSiteReportsUUID,
-  fetchGetV2AdminSiteReports,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminSiteReportsError,
-  GetV2ENTITYUUIDError
-} from "@/generated/apiComponents";
+import { loadFullSiteReport, loadSiteReportIndex } from "@/connections/Entity";
+import { DeleteV2AdminSiteReportsUUIDError, fetchDeleteV2AdminSiteReportsUUID } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-const siteReportSortableList = ["title", "project_name", "site_name", "organisation_name", "due_at", "submitted_at"];
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const siteReportDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on SiteReportLightDto
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminSiteReports({
-        queryParams: raListParamsToQueryParams(params, siteReportSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminSiteReportsError);
+    const connection = await loadSiteReportIndex(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Site report index fetch failed", connection.fetchFailure);
     }
+    return entitiesListResult(connection);
   },
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "site-reports",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: siteReport, fetchFailure } = await loadFullSiteReport({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw v3ErrorForRA("Site report get fetch failed", fetchFailure);
     }
+
+    return { data: { ...siteReport, id: siteReport!.uuid } };
   },
 
   // @ts-ignore

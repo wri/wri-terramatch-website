@@ -19,6 +19,8 @@ import {
   SeedingDto,
   SiteFullDto,
   SiteLightDto,
+  SiteReportFullDto,
+  SiteReportLightDto,
   TreeReportCountsDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -125,7 +127,8 @@ export const RESOURCES = [
   "treeSpecies",
   "users",
   "sitePolygons",
-  "projectReports"
+  "projectReports",
+  "siteReports"
 ] as const;
 
 // The store for entities may contain either light DTOs or full DTOs depending on where the
@@ -153,6 +156,7 @@ type ApiResources = {
   sitePolygons: StoreResourceMap<SitePolygonLightDto>;
   nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
   projectReports: StoreResourceMap<EntityType<ProjectReportLightDto, ProjectReportFullDto>>;
+  siteReports: StoreResourceMap<EntityType<SiteReportLightDto, SiteReportFullDto>>;
 };
 
 export type ResourceType = (typeof RESOURCES)[number];

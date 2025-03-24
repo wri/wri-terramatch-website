@@ -26,9 +26,10 @@ import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTable
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
-import { useGetV2ENTITYUUID, useGetV2TasksUUIDReports } from "@/generated/apiComponents";
+import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -42,23 +43,14 @@ const SiteReportDetailPage = () => {
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2ENTITYUUID({
-    pathParams: { uuid: siteReportUUID, entity: "site-reports" }
-  });
-  const siteReport = (data?.data ?? {}) as any;
-  const { data: site } = useGetV2ENTITYUUID(
-    {
-      pathParams: { uuid: siteReport?.site?.uuid, entity: "sites" }
-    },
-    {
-      enabled: !!siteReport?.site?.uuid
-    }
-  );
+  const [isLoaded, { entity: siteReport }] = useFullSiteReport({ uuid: siteReportUUID });
 
-  const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport.task_uuid } });
+  const [, { entity: site }] = useFullSite({ uuid: siteReport?.siteUuid! });
 
-  const reportTitle = siteReport.report_title ?? siteReport.title ?? t("Site Report");
-  const headerReportTitle = site?.data?.name ? `${site?.data?.name} ${reportTitle}` : "";
+  const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport?.taskUuid! } });
+
+  const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
+  const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";
 
   const totalProps: Omit<CollectionsTotalProps, "collections"> = {
     entity: "siteReports",
@@ -79,23 +71,23 @@ const SiteReportDetailPage = () => {
   const taskTitle = t("Reporting Task {window}", { window });
 
   return (
-    <FrameworkProvider frameworkKey={siteReport.framework_key}>
-      <LoadingContainer loading={isLoading}>
+    <FrameworkProvider frameworkKey={siteReport?.frameworkKey!}>
+      <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>
         </Head>
         <PageBreadcrumbs
           links={[
             { title: t("My Projects"), path: "/my-projects" },
-            { title: siteReport.project?.name ?? t("Project"), path: `/project/${siteReport.project?.uuid}` },
-            { title: taskTitle, path: `/project/${siteReport.project?.uuid}/reporting-task/${siteReport.task_uuid}` },
+            { title: siteReport?.projectName ?? t("Project"), path: `/project/${siteReport?.projectUuid}` },
+            { title: taskTitle, path: `/project/${siteReport?.projectUuid}/reporting-task/${siteReport?.taskUuid}` },
             { title: reportTitle }
           ]}
         />
-        <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
+        <SiteReportHeader report={siteReport!} reportTitle={headerReportTitle} />
         <StatusBar entityName="site-reports" entity={siteReport} />
         <PageBody>
-          <If condition={siteReport.nothing_to_report}>
+          <If condition={siteReport?.nothingToReport}>
             <Then>
               <PageRow>
                 <PageColumn>
@@ -114,21 +106,21 @@ const SiteReportDetailPage = () => {
                 <PageColumn>
                   <EntityMapAndGalleryCard
                     modelName="sites"
-                    modelUUID={siteReport?.site?.uuid}
+                    modelUUID={siteReport?.siteUuid!}
                     modelTitle={t("Site Report")}
-                    entityData={site?.data}
+                    entityData={site}
                     emptyStateContent={t(
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
                     )}
                   />
-                  <When condition={!!siteReport.shared_drive_link}>
+                  <When condition={!!siteReport?.sharedDriveLink}>
                     <Paper>
                       <ButtonField
                         label={t("Shared Drive link")}
                         buttonProps={{
                           as: Link,
                           children: t("View"),
-                          href: siteReport.shared_drive_link ?? "",
+                          href: siteReport?.sharedDriveLink ?? "",
                           target: "_blank"
                         }}
                       />
@@ -140,23 +132,23 @@ const SiteReportDetailPage = () => {
                 <PageColumn>
                   <PageCard title={t("Reported Data")} gap={8}>
                     <ContextCondition frameworksShow={[Framework.HBF]}>
-                      <LongTextField title={t("Sites Changes")}>{siteReport.polygon_status}</LongTextField>
-                      <LongTextField title={t("ANR Description")}>{siteReport.technical_narrative}</LongTextField>
+                      <LongTextField title={t("Sites Changes")}>{siteReport?.polygonStatus}</LongTextField>
+                      <LongTextField title={t("ANR Description")}>{siteReport?.technicalNarrative}</LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[...ALL_TF, Framework.HBF]}>
-                      <LongTextField title={t("Technical Narrative")}>{siteReport.technical_narrative}</LongTextField>
-                      <LongTextField title={t("Public Narrative")}>{siteReport.public_narrative}</LongTextField>
+                      <LongTextField title={t("Technical Narrative")}>{siteReport?.technicalNarrative}</LongTextField>
+                      <LongTextField title={t("Public Narrative")}>{siteReport?.publicNarrative}</LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksShow={[Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES]}>
-                      <LongTextField title={t("Survival Rate")}>{siteReport.pct_survival_to_date}</LongTextField>
+                      <LongTextField title={t("Survival Rate")}>{siteReport?.pctSurvivalToDate}</LongTextField>
                       <LongTextField title={t("Description of Survival Rate Calculation")}>
-                        {siteReport.survival_calculation}
+                        {siteReport?.survivalCalculation}
                       </LongTextField>
                       <LongTextField title={t("Explanation of Survival Rate")}>
-                        {siteReport.survival_description}
+                        {siteReport?.survivalDescription}
                       </LongTextField>
                       <LongTextField title={t("Maintenance Activities")}>
-                        {siteReport.maintenance_activities}
+                        {siteReport?.maintenanceActivities}
                       </LongTextField>
                     </ContextCondition>
                     <ContextCondition frameworksHide={[Framework.HBF]}>
@@ -171,7 +163,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.total_trees_planted_count
+                            value: siteReport?.totalTreesPlantedCount!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -198,7 +190,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.total_trees_planted_count
+                            value: siteReport?.totalTreesPlantedCount!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -225,7 +217,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.total_seeds_planted_count
+                            value: siteReport?.totalSeedsPlantedCount!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -252,7 +244,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.total_non_tree_species_planted_count
+                            value: siteReport?.totalNonTreeSpeciesPlantedCount!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -279,7 +271,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.total_tree_replanting_count
+                            value: siteReport?.totalTreeReplantingCount!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -306,7 +298,7 @@ const SiteReportDetailPage = () => {
                             variantLabel: "text-14",
                             classNameLabel: " text-neutral-650 uppercase !w-auto",
                             classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                            value: siteReport.num_trees_regenerating
+                            value: siteReport?.numTreesRegenerating!
                           }
                         ]}
                         className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
@@ -315,7 +307,7 @@ const SiteReportDetailPage = () => {
                         {t("Description of ANR Activities:")}
                       </Text>
                       <Text variant="text-16" className="mt-2 text-blueCustom-700">
-                        {t(siteReport.regeneration_description ?? "No description")}
+                        {t(siteReport?.regenerationDescription ?? "No description")}
                       </Text>
                     </div>
                     <div>
@@ -329,10 +321,10 @@ const SiteReportDetailPage = () => {
                 <PageColumn>
                   <PageCard title={t("Invasive Species Management")}>
                     <LongTextField title={t("Information invasive species and are restored")}>
-                      {siteReport.invasive_species_management}
+                      {siteReport?.invasiveSpeciesManagement}
                     </LongTextField>
                     <LongTextField title={t("Post Invasive removal plan")}>
-                      {siteReport.invasive_species_removed}
+                      {siteReport?.invasiveSpeciesRemoved}
                     </LongTextField>
                   </PageCard>
                 </PageColumn>
@@ -341,10 +333,10 @@ const SiteReportDetailPage = () => {
                 <PageColumn>
                   <PageCard title={t("Soil + Water Management")}>
                     <LongTextField title={t("Soil and Water-Based Restoration Description")}>
-                      {siteReport.soil_water_restoration_description}
+                      {siteReport?.soilWaterRestorationDescription}
                     </LongTextField>
                     <LongTextField title={t("Water + Soil Conservation Structures Created")}>
-                      {siteReport.water_structures}
+                      {siteReport?.waterStructures}
                     </LongTextField>
                   </PageCard>
                 </PageColumn>
@@ -353,10 +345,10 @@ const SiteReportDetailPage = () => {
                 <PageColumn>
                   <PageCard title={t("Site Socioeconomic Impact")}>
                     <LongTextField title={t("Site Community Partners Description")}>
-                      {siteReport.site_community_partners_description}
+                      {siteReport?.siteCommunityPartnersDescription}
                     </LongTextField>
                     <LongTextField title={t("Site Income Generating Activities")}>
-                      {siteReport.site_community_partners_income_increase_description}
+                      {siteReport?.siteCommunityPartnersIncomeIncreaseDescription}
                     </LongTextField>
                   </PageCard>
                 </PageColumn>
@@ -364,12 +356,12 @@ const SiteReportDetailPage = () => {
               <PageRow>
                 <PageColumn frameworksShow={[Framework.HBF, Framework.PPC]}>
                   <PageCard title={t("Site Report Details")}>
-                    <TextField label={t("Site Report name")} value={siteReport.title} />
-                    <TextField label={t("Site name")} value={siteReport.site?.name} />
-                    <TextField label={t("Created by")} value={getFullName(siteReport.created_by)} />
-                    <TextField label={t("Updated")} value={format(siteReport.updated_at)} />
-                    <TextField label={t("Due date")} value={format(siteReport.due_at)} />
-                    <TextField label={t("Submitted date")} value={format(siteReport.submitted_at)} />
+                    <TextField label={t("Site Report name")} value={siteReport?.title!} />
+                    <TextField label={t("Site name")} value={siteReport?.siteName!} />
+                    <TextField label={t("Created by")} value={getFullName(siteReport?.createdByUser!)} />
+                    <TextField label={t("Updated")} value={format(siteReport?.updatedAt!)} />
+                    <TextField label={t("Due date")} value={format(siteReport?.dueAt!)} />
+                    <TextField label={t("Submitted date")} value={format(siteReport?.submittedAt!)} />
                   </PageCard>
                 </PageColumn>
                 <PageColumn frameworksShow={[Framework.PPC]}>
@@ -383,7 +375,7 @@ const SiteReportDetailPage = () => {
                       buttonProps={{
                         as: Link,
                         children: t("Download"),
-                        href: siteReport?.socioeconomic_benefits?.[0]?.url ?? "",
+                        href: siteReport?.socioeconomicBenefits?.[0]?.url ?? "",
                         download: true
                       }}
                     />
@@ -403,7 +395,7 @@ const SiteReportDetailPage = () => {
                             {collection === DemographicCollections.WORKDAYS_SITE_OTHER && (
                               <TextField
                                 label={t("Other Activities Description")}
-                                value={siteReport.paid_other_activity_description}
+                                value={siteReport?.paidOtherActivityDescription!}
                               />
                             )}
                             <DemographicsDisplay
