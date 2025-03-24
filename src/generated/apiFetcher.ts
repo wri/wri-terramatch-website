@@ -163,13 +163,21 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     }
 
     return await response.json();
-  } catch (e) {
+  } catch (e: unknown) {
     Log.error("Delayed Job Fetch error", e);
-    error = {
-      statusCode: response?.status || -1,
-      //@ts-ignore
-      ...(e || {})
-    };
+
+    if (typeof e === "object" && e !== null) {
+      const errorMessage = (e as { message?: string }).message ?? "";
+      const statusCode = (e as { statusCode?: number }).statusCode ?? -1;
+
+      const isNetworkError = errorMessage.includes("network changed") || errorMessage.includes("Failed to fetch");
+
+      if ((isNetworkError || statusCode === -1) && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
+        return loadJob(signal, delayedJobId, retries - 1);
+      }
+    }
+
     throw error;
   }
 }

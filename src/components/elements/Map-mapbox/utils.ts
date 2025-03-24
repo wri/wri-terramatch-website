@@ -9,6 +9,8 @@ import { createRoot } from "react-dom/client";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
+  fetchGetV2DashboardGetBboxProject,
+  fetchGetV2SitesSiteBbox,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
@@ -19,6 +21,7 @@ import {
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -493,9 +496,9 @@ export const addPopupToLayer = (
       const currentMode = draw?.getMode();
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
-
-      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
+      // keep commented for future possible use
+      // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
         e,
@@ -595,14 +598,13 @@ export const addGeojsonSourceToLayer = (
       addLayerGeojsonStyle(map, name, name, style, index);
     });
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    if (existsPolygons && zoomFilterValue !== undefined) {
-      layerIds.forEach(layerId => {
-        let existingFilter = map.getFilter(layerId) || ["all"];
-        let zoomFilter = ["<=", ["zoom"], zoomFilterValue + 1];
-        let combinedFilter = ["all", existingFilter, zoomFilter];
-        map.setFilter(layerId, combinedFilter);
-      });
-    }
+    // keep commented for future possible use
+    // if (existsPolygons) {
+    layerIds.forEach(layerId => {
+      let existingFilter = map.getFilter(layerId) || ["all"];
+      map.setFilter(layerId, existingFilter);
+    });
+    // }
   }
 };
 export const addSourceToLayer = (
@@ -871,15 +873,22 @@ export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | und
   }, {});
 }
 
-export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: string, type: string, cb: Function) {
-  fetchGetV2TypeEntity({
-    queryParams: {
-      uuid: uuid,
-      type: type,
-      status: statusFilter,
-      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-    }
-  }).then(result => {
+export function getPolygonsData(
+  uuid: string,
+  statusFilter: string | undefined,
+  sortOrder: string,
+  type: string,
+  cb: Function
+) {
+  const queryParams: any = {
+    uuid: uuid,
+    type: type,
+    [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+  };
+  if (statusFilter) {
+    queryParams.status = statusFilter;
+  }
+  fetchGetV2TypeEntity({ queryParams }).then(result => {
     cb(result);
   });
 }
@@ -916,6 +925,31 @@ export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOvervi
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
+
+export async function callEntityBbox(type: string, entityModel: any): Promise<BBox | null> {
+  try {
+    if (type === "sites") {
+      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
+
+      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
+        return siteBbox.bbox as BBox;
+      }
+    } else if (type === "projects") {
+      const projectBbox = await fetchGetV2DashboardGetBboxProject({
+        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
+      });
+
+      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
+        return projectBbox.bbox as BBox;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching entity BBox:", error);
+    return null;
+  }
+}
 
 export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
   const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({

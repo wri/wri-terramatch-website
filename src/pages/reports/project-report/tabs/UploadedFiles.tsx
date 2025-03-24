@@ -15,9 +15,9 @@ interface UploadedFilesTabProps {
 }
 
 const sections = [
-  { name: "Socio Economic", property: "socioeconomic_benefits" },
+  { name: "Socio Economic", property: "socioeconomicBenefits" },
   { name: "Files", property: "file" },
-  { name: "Other Additional Files", property: "other_additional_documents" }
+  { name: "Other Additional Files", property: "otherAdditionalDocuments" }
 ];
 
 const UploadedFilesTab = ({ report }: UploadedFilesTabProps) => {

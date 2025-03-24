@@ -11,7 +11,7 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites";
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -29,7 +29,7 @@ export type EntityIndexQueryParams = {
    */
   ["page[size]"]?: number;
   /**
-   * The page number to return. If neither page[after] nor page[number] is provided, the first page is returned. If page[number] is provided, page[size] is required.
+   * The page number to return. If page[number] is not provided, the first page is returned.
    */
   ["page[number]"]?: number;
   search?: string;
@@ -65,7 +65,7 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           /**
            * @example projects
            */
-          type?: string;
+          resourceType?: string;
           page?: {
             /**
              * The total number of records available.
@@ -96,7 +96,7 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           /**
            * @example sites
            */
-          type?: string;
+          resourceType?: string;
           page?: {
             /**
              * The total number of records available.
@@ -121,6 +121,68 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.SiteLightDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseries
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryLightDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example projectReports
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example projectReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectReportLightDto;
+        }[];
       },
     EntityIndexError,
     undefined,
@@ -133,7 +195,7 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites";
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -180,7 +242,7 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           /**
            * @example projects
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -199,7 +261,7 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           /**
            * @example sites
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -212,6 +274,44 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           id?: string;
           attributes?: Schemas.SiteFullDto;
         };
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseries
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example projectReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example projectReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.ProjectReportFullDto;
+        };
       },
     EntityGetError,
     undefined,
@@ -219,6 +319,68 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     {},
     EntityGetPathParams
   >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export type EntityDeletePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type EntityDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityDeleteResponse = {
+  meta?: {
+    resourceType?: "projects" | "sites";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type EntityDeleteVariables = {
+  pathParams: EntityDeletePathParams;
+};
+
+export const entityDelete = (variables: EntityDeleteVariables, signal?: AbortSignal) =>
+  entityServiceFetch<EntityDeleteResponse, EntityDeleteError, undefined, {}, {}, EntityDeletePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "delete",
+    ...variables,
+    signal
+  });
 
 export type EntityAssociationIndexPathParams = {
   /**
@@ -275,7 +437,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
           /**
            * @example demographics
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -294,7 +456,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
           /**
            * @example seedings
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -313,7 +475,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
           /**
            * @example treeSpecies
            */
-          type?: string;
+          resourceType?: string;
         };
         data?: {
           /**
@@ -345,7 +507,7 @@ export type TreeScientificNamesSearchResponse = {
     /**
      * @example treeSpeciesScientificNames
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -372,7 +534,7 @@ export const treeScientificNamesSearch = (variables: TreeScientificNamesSearchVa
     {},
     TreeScientificNamesSearchQueryParams,
     {}
-  >({ url: "/trees/v3/scientific-names", method: "get", ...variables, signal });
+  >({ url: "/trees/v3/scientificNames", method: "get", ...variables, signal });
 
 export type EstablishmentTreesFindPathParams = {
   /**
@@ -419,7 +581,7 @@ export type EstablishmentTreesFindResponse = {
     /**
      * @example establishmentTrees
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -490,7 +652,7 @@ export type TreeReportCountsFindResponse = {
     /**
      * @example treeReportCounts
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -517,7 +679,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  entities: { entityIndex, entityGet },
+  entities: { entityIndex, entityGet, entityDelete },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };
