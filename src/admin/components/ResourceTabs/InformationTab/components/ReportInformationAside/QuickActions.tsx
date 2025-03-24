@@ -64,7 +64,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             <Button
               variant="outlined"
               component={Link}
-              to={createPath({ resource: modules.site.ResourceName, type: "show", id: record?.site?.uuid })}
+              to={createPath({ resource: modules.site.ResourceName, type: "show", id: record?.siteUuid })}
               fullWidth
               label="Back To Site"
             />
