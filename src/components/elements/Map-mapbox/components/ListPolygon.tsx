@@ -36,13 +36,16 @@ const ListPolygon = () => {
         </div>
       </Button>
       <When condition={isOpenListPolygon}>
-        <div className="absolute left-0 top-full z-10 mt-2 flex h-72 w-full flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-lg bg-white px-4 py-2">
+        <div className="absolute left-0 top-full z-10 mt-2 flex h-72 w-full flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-lg bg-white py-2">
+          <Text variant="text-14" className="px-4 py-2 text-black">
+            Show All Polygons
+          </Text>
           <List
             items={MOCKED_DATA_LIST_POLYGON}
             render={(item: any) => {
               return (
                 <div key={item.uuid}>
-                  <Text variant="text-14" className="text-black">
+                  <Text variant="text-14" className="px-4 text-black">
                     {item.name}
                   </Text>
                   <List
@@ -50,7 +53,7 @@ const ListPolygon = () => {
                     render={(itemPolygon: any, index: number) => {
                       return (
                         <div
-                          className="flex items-center justify-between gap-2"
+                          className="flex cursor-pointer items-center justify-between gap-2 px-4 hover:bg-primary/20"
                           onClick={() => setSelectedPolygon(itemPolygon)}
                           key={itemPolygon.uuid}
                         >
