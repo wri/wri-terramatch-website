@@ -1113,3 +1113,46 @@ export const setMapStyle = (
     setCurrentStyle(style);
   }
 };
+
+export const enableTerrainAndAnimateCamera = async (
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string,
+  centroid: LngLat
+) => {
+  if (map.isStyleLoaded()) {
+    setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle);
+    map.once("style.load", () => {
+      map.addSource("mapbox-dem", {
+        type: "raster-dem",
+        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+        tileSize: 512,
+        maxzoom: 14
+      });
+      map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
+
+      animateCamera(map, centroid);
+    });
+  }
+};
+
+const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
+  let angle = 0;
+
+  function frame() {
+    angle += 0.2;
+    map.easeTo({
+      center: centroid,
+      zoom: 14,
+      pitch: 60,
+      bearing: angle,
+      duration: 80
+    });
+
+    if (map.getTerrain()) {
+      requestAnimationFrame(frame);
+    }
+  }
+
+  frame();
+};

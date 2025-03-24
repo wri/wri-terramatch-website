@@ -69,6 +69,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  enableTerrainAndAnimateCamera,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -361,6 +362,18 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, styleLoaded]);
+  const polygonCentroid = [19.402029417744895, -4.939551650159928];
+  useValueChanged(polygonCentroid, () => {
+    if (map.current) {
+      enableTerrainAndAnimateCamera(
+        map.current,
+        setCurrentStyle,
+        currentStyle,
+        new mapboxgl.LngLat(polygonCentroid[0], polygonCentroid[1])
+      );
+    }
+  });
+
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
