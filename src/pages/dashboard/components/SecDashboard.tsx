@@ -14,7 +14,8 @@ import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import {
   CHART_TYPES,
-  DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
+  // Uncomment when the dVolunteer data is available
+  // DUMMY_DATA_FOR_CHART_DOUGHNUT_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_GROUPED_BAR_CHART_GENDER,
   DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART,
   DUMMY_DATA_FOR_CHART_SIMPLE_BAR_CHART,
@@ -25,7 +26,8 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
-import DoughnutChart from "../charts/DoughnutChart";
+// Uncomment when the Volunteer data is available
+// import DoughnutChart from "../charts/DoughnutChart";
 import GroupedBarChart from "../charts/GroupedBarChart";
 import HorizontalStackedBarChart from "../charts/HorizontalStackedBarChart";
 import MultiLineChart from "../charts/MultiLineChart";
@@ -215,6 +217,7 @@ const SecDashboard = ({
             />
           </BlurContainer>
         </When>
+        {/* Uncomment when the Volunteer data is available
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <BlurContainer
             isBlur={(isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
@@ -228,7 +231,7 @@ const SecDashboard = ({
               }
             />
           </BlurContainer>
-        </When>
+        </When> */}
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
           <BlurContainer
             isBlur={
