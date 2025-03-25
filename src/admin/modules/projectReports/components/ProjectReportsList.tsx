@@ -114,7 +114,12 @@ export const ProjectReportsList: FC = () => {
       }}
       perPage={100}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        className="select-page-admin"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>,
     <SelectInput
       key="country"

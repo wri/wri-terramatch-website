@@ -41,12 +41,11 @@ const QuickActions: FC = () => {
     });
   };
 
-  const handleNavigate = (view: keyof typeof modules) => {
+  const handleNavigate = (view: keyof typeof modules, params?: object) => {
     if (!record) return;
 
     const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ projectUuid: true }),
-      filter: JSON.stringify({ projectUuid: record.uuid }),
+      ...params,
       order: "ASC",
       page: "1",
       perPage: "10",
@@ -73,7 +72,15 @@ const QuickActions: FC = () => {
         <Labeled label="Total Sites" sx={inlineLabelSx}>
           <NumberField source="totalSites" />
         </Labeled>
-        <Button variant="outlined" onClick={() => handleNavigate("site")}>
+        <Button
+          variant="outlined"
+          onClick={() =>
+            handleNavigate("site", {
+              displayedFilters: JSON.stringify({ projectUuid: true }),
+              filter: JSON.stringify({ projectUuid: record.uuid })
+            })
+          }
+        >
           View Sites
         </Button>
         <Button variant="outlined" onClick={() => handleExport("sites")}>
@@ -90,7 +97,15 @@ const QuickActions: FC = () => {
           <Labeled label="Total Nurseries" sx={inlineLabelSx}>
             <NumberField source="totalNurseries" />
           </Labeled>
-          <Button variant="outlined" onClick={() => handleNavigate("nursery")}>
+          <Button
+            variant="outlined"
+            onClick={() =>
+              handleNavigate("nursery", {
+                displayedFilters: JSON.stringify({ project_uuid: true }),
+                filter: JSON.stringify({ project_uuid: record.uuid })
+              })
+            }
+          >
             View Nurseries
           </Button>
           <Button variant="outlined" onClick={() => handleExport("nurseries")}>
@@ -107,7 +122,15 @@ const QuickActions: FC = () => {
         <Labeled label="Total Overdue Reports" sx={inlineLabelSx}>
           <NumberField source="totalOverdueReports" />
         </Labeled>
-        <Button variant="outlined" onClick={() => handleNavigate("projectReport")}>
+        <Button
+          variant="outlined"
+          onClick={() =>
+            handleNavigate("projectReport", {
+              displayedFilters: JSON.stringify({ project_uuid: true }),
+              filter: JSON.stringify({ project_uuid: record.uuid })
+            })
+          }
+        >
           View Reports
         </Button>
         <Button variant="outlined" onClick={() => handleExport("project-reports")}>
