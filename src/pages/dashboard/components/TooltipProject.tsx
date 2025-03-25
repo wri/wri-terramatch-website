@@ -16,10 +16,10 @@ const TooltipProject = (props: TooltipProjectProps) => {
   const t = useT();
 
   return (
-    <div className="popup-project w-auto min-w-[17vw] max-w-[20vw] rounded bg-white p-2 lg:min-w-[17vw] lg:max-w-[15vw]">
+    <div className="popup-project w-auto min-w-[17vw] max-w-[20vw] rounded-lg bg-white p-3 lg:min-w-[17vw] lg:max-w-[15vw]">
       <div className="min-w-40 flex flex-col gap-2">
         <div className="flex flex-col gap-1">
-          <Text className="pr-8 text-darkCustom" variant="text-12-bold">
+          <Text className="pr-8 leading-[1.2] text-darkCustom" variant="text-12">
             {t(projectName)}
           </Text>
           <div className="flex items-center gap-1">
@@ -29,16 +29,16 @@ const TooltipProject = (props: TooltipProjectProps) => {
             </Text>
           </div>
         </div>
-        <Text className="w-fit rounded-md bg-green-600 p-1 text-white" variant="text-12-bold">
+        <Text className="w-fit rounded-md bg-green-600 p-1 leading-[1.2] text-white" variant="text-12-bold">
           {t(country)}
         </Text>
-        <Text className="text-darkCustom" variant="text-18-bold">
+        <Text className="leading-[1.2] text-darkCustom" variant="text-18-bold">
           {t(organizationName)}
         </Text>
 
         {learnMore && (
           <button onClick={() => learnMore()}>
-            <Icon name={IconNames.ARROW} className="h-5 w-5 text-primary" />
+            <Icon name={IconNames.ARROW} className="h-5 w-5 text-primary transition-all hover:translate-x-1" />
           </button>
         )}
       </div>
