@@ -721,11 +721,13 @@ export const MapContainer = ({
           <When condition={!isLoadingPolygonsList}>
             <ListPolygon polygonsListData={polygonsListData} setPolygonCentroid={setPolygonCentroid} />
           </When>
-          <ViewImageCarousel
-            className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-            modelFilesData={props?.modelFilesData}
-            imageGalleryRef={imageGalleryRef}
-          />
+          <When condition={isDashboard !== "dashboard"}>
+            <ViewImageCarousel
+              className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
+              modelFilesData={props?.modelFilesData}
+              imageGalleryRef={imageGalleryRef}
+            />
+          </When>
         </ControlGroup>
       </When>
       <When condition={showLegend}>

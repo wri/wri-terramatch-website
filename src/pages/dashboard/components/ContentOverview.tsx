@@ -2,6 +2,7 @@ import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import React, { useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -400,20 +401,22 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             projectUUID={projectUUID}
           />
         </LoadingContainerOpacity>
-        <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
-          <div className="flex gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
-            </Text>
+        <When condition={!projectUUID}>
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
+            <div className="flex gap-2">
+              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
+              <Text variant="text-12" className="text-darkCustom">
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
+              </Text>
+            </div>
+            <div className="flex items-center gap-2">
+              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
+              <Text variant="text-12" className="text-darkCustom">
+                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
+              </Text>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
-            </Text>
-          </div>
-        </div>
+        </When>
       </div>
 
       <PageCard
