@@ -45,8 +45,8 @@ const QuickActions: FC = () => {
     if (!record) return;
 
     const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.uuid }),
+      displayedFilters: JSON.stringify({ projectUuid: true }),
+      filter: JSON.stringify({ projectUuid: record.uuid }),
       order: "ASC",
       page: "1",
       perPage: "10",

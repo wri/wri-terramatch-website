@@ -113,6 +113,7 @@ export const SiteReportsList: FC = () => {
         field: "name",
         order: "ASC"
       }}
+      perPage={100}
     >
       <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
@@ -125,6 +126,7 @@ export const SiteReportsList: FC = () => {
         field: "name",
         order: "ASC"
       }}
+      perPage={100}
     >
       <AutocompleteInput optionText="name" label="Site" className="select-page-admin" />
     </ReferenceInput>,

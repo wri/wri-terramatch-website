@@ -128,7 +128,7 @@ export const ProjectsList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       className="select-page-admin"
@@ -136,6 +136,7 @@ export const ProjectsList: FC = () => {
         field: "name",
         order: "ASC"
       }}
+      perPage={1000}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
