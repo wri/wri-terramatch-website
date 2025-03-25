@@ -10,7 +10,8 @@ export const LAYERS_NAMES = {
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
-  WORLD_COUNTRIES: "world_countries_generalized"
+  WORLD_COUNTRIES: "world_countries_generalized",
+  POLYGON_CENTROIDS: "polygon_centroids"
 };
 export const layersList: LayerType[] = [
   {
@@ -262,5 +263,21 @@ export const layersList: LayerType[] = [
       }
     ],
     hover: false
+  },
+  {
+    name: LAYERS_NAMES.POLYGON_CENTROIDS,
+    geoserverLayerName: "",
+    styles: [
+      {
+        metadata: { type: "big-circle" },
+        type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
+        paint: {
+          "circle-color": "#795305",
+          "circle-opacity": 0.2,
+          "circle-radius": 9
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer
+    ]
   }
 ];

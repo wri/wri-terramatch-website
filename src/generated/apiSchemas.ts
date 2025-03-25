@@ -21347,6 +21347,23 @@ export type DashboardGetProjectsData = {
 
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
+  /**
+   * Centroids of polygons
+   */
+  centroids?: {
+    /**
+     * Uuid of polygon
+     */
+    uuid?: string;
+    /**
+     * Longitude of polygon
+     */
+    long?: number;
+    /**
+     * Latitude of polygon
+     */
+    lat?: number;
+  }[];
 };
 
 export type DashboardBBOXProject = {

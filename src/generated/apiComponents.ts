@@ -30329,6 +30329,23 @@ export type GetV2DashboardGetPolygonsStatusesError = Fetcher.ErrorWrapper<undefi
 
 export type GetV2DashboardGetPolygonsStatusesResponse = {
   data?: any[];
+  /**
+   * Centroids of polygons
+   */
+  centroids?: {
+    /**
+     * Uuid of polygon
+     */
+    uuid?: string;
+    /**
+     * Longitude of polygon
+     */
+    long?: number;
+    /**
+     * Latitude of polygon
+     */
+    lat?: number;
+  }[];
 };
 
 export type GetV2DashboardGetPolygonsStatusesVariables = {

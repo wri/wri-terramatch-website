@@ -59,7 +59,7 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
-  polygonsData?: Record<string, string[]>;
+  polygonsData?: { data: Record<string, string[]>; centroids: any[] };
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
   bbox?: BBox | undefined;
@@ -223,7 +223,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="custom-popup-close-button !h-full"
               centroids={centroids}
               showPopups={true}
-              polygonsData={polygonsData as Record<string, string[]>}
+              polygonsData={polygonsData?.data as Record<string, string[]>}
+              polygonsCentroids={polygonsData?.centroids}
               showImagesButton={showImagesButton}
               bbox={dashboardBbox}
               selectedCountry={selectedCountry}
@@ -389,7 +390,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             className="custom-popup-close-button mobile:!h-[381px]"
             centroids={centroids}
             showPopups={true}
-            polygonsData={polygonsData as Record<string, string[]>}
+            polygonsData={polygonsData?.data as Record<string, string[]>}
+            polygonsCentroids={polygonsData?.centroids}
             showImagesButton={showImagesButton}
             bbox={currentBbox}
             selectedCountry={selectedCountry}
