@@ -125,7 +125,7 @@ export const SitesList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       sort={{
