@@ -49,12 +49,6 @@ export type ProjectLightDto = {
    */
   frameworkKey: string | null;
   /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
-  /**
    * The associated organisation name
    */
   organisationName: string | null;
@@ -93,12 +87,6 @@ export type SiteLightDto = {
    * Framework key for this project
    */
   frameworkKey: string | null;
-  /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
   /**
    * Entity status for this site
    */
@@ -177,7 +165,6 @@ export type ProjectReportLightDto = {
   lightResource: boolean;
   uuid: string;
   frameworkKey: string;
-  frameworkUuid: string;
   /**
    * The associated organisation name
    */
@@ -224,12 +211,6 @@ export type ProjectFullDto = {
    * Framework key for this project
    */
   frameworkKey: string | null;
-  /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
   /**
    * The associated organisation name
    */
@@ -334,12 +315,6 @@ export type SiteFullDto = {
    * Framework key for this project
    */
   frameworkKey: string | null;
-  /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
   /**
    * Entity status for this site
    */
@@ -489,7 +464,6 @@ export type ProjectReportFullDto = {
   lightResource: boolean;
   uuid: string;
   frameworkKey: string;
-  frameworkUuid: string;
   /**
    * The associated organisation name
    */
