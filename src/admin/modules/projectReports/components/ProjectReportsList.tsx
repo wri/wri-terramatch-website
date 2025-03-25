@@ -116,6 +116,7 @@ export const ProjectReportsList: FC = () => {
         field: "name",
         order: "ASC"
       }}
+      perPage={100}
     >
       <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
     </ReferenceInput>,
