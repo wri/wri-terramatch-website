@@ -17,7 +17,9 @@ const QuickActions: FC = () => {
   const [addManagerDialogOpen, setAddManagerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleExport = (entity: "project-reports" | "sites" | "nurseries" | "shapefiles") => {
+  const handleExport = (
+    entity: "project-reports" | "sites" | "nurseries" | "shapefiles" | "site-reports" | "nursery-reports"
+  ) => {
     if (!record) return;
 
     fetchGetV2ProjectsUUIDENTITYExport({
@@ -76,7 +78,7 @@ const QuickActions: FC = () => {
         <Button variant="outlined" onClick={() => handleNavigate("site")}>
           View Sites
         </Button>
-        <Button variant="outlined" onClick={() => handleExport("sites")}>
+        <Button variant="outlined" onClick={() => handleExport("site-reports")}>
           Export Site Reports
         </Button>
         <Button variant="outlined" onClick={() => handleExport("shapefiles")}>
@@ -93,7 +95,7 @@ const QuickActions: FC = () => {
           <Button variant="outlined" onClick={() => handleNavigate("nursery")}>
             View Nurseries
           </Button>
-          <Button variant="outlined" onClick={() => handleExport("nurseries")}>
+          <Button variant="outlined" onClick={() => handleExport("nursery-reports")}>
             Export Nursery Reports
           </Button>
           <Divider sx={{ marginBottom: 2 }} />
