@@ -134,9 +134,10 @@ export const ProjectsList: FC = () => {
       className="select-page-admin"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
       perPage={1000}
+      filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
