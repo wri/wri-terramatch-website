@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Else, If, Then } from "react-if";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { LAYERS_NAMES } from "@/constants/layers";
@@ -10,6 +11,7 @@ import {
   fetchGetV2DashboardTotalSectionHeaderCountry
 } from "@/generated/apiComponents";
 import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
+import TooltipProject from "@/pages/dashboard/components/TooltipProject";
 import ApiSlice from "@/store/apiSlice";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
@@ -132,15 +134,33 @@ export const DashboardPopup = (event: any) => {
     }
     removePopupFromMap();
   };
+
   return (
     <ReduxProvider store={ApiSlice.redux}>
       <QueryClientProvider client={client}>
-        <TooltipGridMap
-          label={label}
-          learnMore={layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null}
-          isoCountry={isoCountry}
-          items={items}
-        />
+        <If condition={layerName === LAYERS_NAMES.CENTROIDS}>
+          <Then>
+            <TooltipProject
+              projectName={label}
+              noSites={Number(items.find((item: Item) => item.id === "polygon_counts")?.value)}
+              country={items.find((item: Item) => item.id === "country")?.value}
+              organizationName={items.find((item: Item) => item.id === "organizations")?.value}
+              learnMore={
+                layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : () => {}
+              }
+            />
+          </Then>
+          <Else>
+            <TooltipGridMap
+              label={label}
+              learnMore={
+                layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null
+              }
+              isoCountry={isoCountry}
+              items={items}
+            />
+          </Else>
+        </If>
       </QueryClientProvider>
     </ReduxProvider>
   );
