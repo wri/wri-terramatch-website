@@ -82,6 +82,13 @@ export type SitePolygonsIndexQueryParams = {
    * @default false
    */
   includeTestProjects?: boolean;
+  search?: string;
+  /**
+   * Wheter to include the complete sitePolygon Dto or not
+   *
+   * @default false
+   */
+  lightResource?: boolean;
 };
 
 export type SitePolygonsIndexError = Fetcher.ErrorWrapper<
@@ -113,53 +120,82 @@ export type SitePolygonsIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type SitePolygonsIndexResponse = {
-  meta?: {
-    /**
-     * @example sitePolygons
-     */
-    resourceType?: string;
-    page?: {
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-      /**
-       * The cursor for the first record on this page.
-       */
-      cursor?: string;
-    };
-  };
-  data?: {
-    /**
-     * @example sitePolygons
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SitePolygonDto;
-    meta?: {
-      page?: {
-        /**
-         * The cursor for this record.
-         */
-        cursor?: string;
-      };
-    };
-  }[];
-};
-
 export type SitePolygonsIndexVariables = {
   queryParams?: SitePolygonsIndexQueryParams;
 };
 
 export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?: AbortSignal) =>
   researchServiceFetch<
-    SitePolygonsIndexResponse,
+    | {
+        meta?: {
+          /**
+           * @example sitePolygons
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The cursor for the first record on this page.
+             */
+            cursor?: string;
+          };
+        };
+        data?: {
+          /**
+           * @example sitePolygons
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SitePolygonFullDto;
+          meta?: {
+            page?: {
+              /**
+               * The cursor for this record.
+               */
+              cursor?: string;
+            };
+          };
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example sitePolygons
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example sitePolygons
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SitePolygonLightDto;
+        }[];
+      },
     SitePolygonsIndexError,
     undefined,
     {},

@@ -125,7 +125,7 @@ export const SitesList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       sort={{
@@ -139,15 +139,21 @@ export const SitesList: FC = () => {
     </ReferenceInput>,
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{
         field: "name",
         order: "ASC"
       }}
+      perPage={100}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        className="select-page-admin"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>,
     <SelectInput
       key="frameworkKey"
@@ -171,9 +177,9 @@ export const SitesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="monitoring_data"
+      key="monitoringData"
       label="Monitored Data"
-      source="monitoring_data"
+      source="monitoringData"
       choices={monitoringDataChoices}
       className="select-page-admin"
     />,
