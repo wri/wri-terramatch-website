@@ -37,6 +37,10 @@ export type EntityIndexQueryParams = {
   status?: string;
   updateRequestStatus?: string;
   projectUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
