@@ -97,7 +97,7 @@ export const SiteReportsList: FC = () => {
       label="Organisation"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
       perPage={1000}
       filter={{ status: "approved" }}

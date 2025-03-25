@@ -119,8 +119,10 @@ export const NurseriesList: FC = () => {
       label="Organization"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
+      perPage={1000}
+      filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
