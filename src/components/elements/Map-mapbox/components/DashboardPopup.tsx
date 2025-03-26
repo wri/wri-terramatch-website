@@ -78,7 +78,7 @@ export const DashboardPopup = (event: any) => {
           .filter((item: any) => item.key !== "project_name")
           .map((item: any) => ({
             id: item.key,
-            title: item.title,
+            title: item.title === "No. of Site - Polygons" ? "Number of Site - Polygons" : item.title,
             value: item.value
           }));
 
