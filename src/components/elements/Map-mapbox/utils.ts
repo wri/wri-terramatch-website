@@ -404,7 +404,7 @@ export const addSourcesToLayers = (
         addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard);
       }
       if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
-        addSourceToLayer(layer, map, undefined, undefined, isDashboard);
+        addSourceToLayer(layer, map, undefined, undefined);
       }
       if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
