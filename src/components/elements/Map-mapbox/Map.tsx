@@ -28,7 +28,6 @@ import {
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
-  useGetV2DashboardProjectsProjectPolygons,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
@@ -42,7 +41,6 @@ import Log from "@/utils/log";
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
-import ListPolygon from "./components/ListPolygons";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -71,7 +69,6 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
-  enableTerrainAndAnimateCamera,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -228,15 +225,6 @@ export const MapContainer = ({
   }
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
-
-  const { data: polygonsListData, isLoading: isLoadingPolygonsList } = useGetV2DashboardProjectsProjectPolygons(
-    {
-      pathParams: { project: projectUUID ?? "" }
-    },
-    { enabled: !!projectUUID }
-  );
-  const [polygonCentroid, setPolygonCentroid] = useState<[number, number] | null>(null);
-
   useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
@@ -373,17 +361,6 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, styleLoaded]);
-
-  useValueChanged(polygonCentroid, () => {
-    if (map.current && polygonCentroid) {
-      enableTerrainAndAnimateCamera(
-        map.current,
-        setCurrentStyle,
-        currentStyle,
-        new mapboxgl.LngLat(polygonCentroid[0], polygonCentroid[1])
-      );
-    }
-  });
 
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
@@ -718,9 +695,6 @@ export const MapContainer = ({
       </When>
       <When condition={isDashboard === "dashboard"}>
         <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
-          <When condition={!isLoadingPolygonsList}>
-            <ListPolygon polygonsListData={polygonsListData} setPolygonCentroid={setPolygonCentroid} />
-          </When>
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel
               className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
