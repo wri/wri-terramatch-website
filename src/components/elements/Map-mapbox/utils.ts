@@ -401,10 +401,10 @@ export const addSourcesToLayers = (
   if (map) {
     layersList.forEach((layer: LayerType) => {
       if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-        addSourceToLayer(layer, map, polygonsData, zoomFilter);
+        addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard);
       }
       if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
-        addSourceToLayer(layer, map, undefined);
+        addSourceToLayer(layer, map, undefined, undefined);
       }
       if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
@@ -560,9 +560,10 @@ export const addPopupToLayer = (
   }
 };
 
-const getGeoserverURL = (layerName: string) => {
+const getGeoserverURL = (layerName: string, isDashboard?: string | undefined) => {
+  const workspace = isDashboard ? `${geoserverWorkspace}_db` : geoserverWorkspace;
   return `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${geoserverWorkspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+      &VERSION=1.0.0&LAYER=${workspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
 export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   const { name, styles } = layer;
@@ -657,7 +658,8 @@ export const addSourceToLayer = (
   layer: LayerType,
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
-  zoomFilter?: number | undefined
+  zoomFilter?: number | undefined,
+  isDashboard?: string | undefined
 ) => {
   const { name, geoserverLayerName, styles } = layer;
   try {
@@ -668,7 +670,7 @@ export const addSourceToLayer = (
         });
         map.removeSource(name);
       }
-      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
+      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, isDashboard);
       map.addSource(name, {
         type: "vector",
         tiles: [GEOSERVER_TILE_URL]
