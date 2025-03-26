@@ -453,7 +453,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.DemographicDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -472,7 +472,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.SeedingDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -491,7 +491,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
-        };
+        }[];
       },
     EntityAssociationIndexError,
     undefined,

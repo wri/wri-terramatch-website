@@ -1,13 +1,20 @@
-import ApiSlice, { ApiDataStore, isErrorState, isInProgress, Method, PendingErrorState } from "@/store/apiSlice";
+import ApiSlice, {
+  ApiDataStore,
+  isErrorState,
+  isInProgress,
+  Method,
+  PendingErrorState,
+  ResourceType
+} from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { logout, selectLogin } from "@/connections/Login";
 import { entityServiceUrl, researchServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
 import { Dictionary } from "lodash";
+import qs, { ParsedQs } from "qs";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 type SelectorOptions<TQueryParams, TPathParams> = {
-  store: ApiDataStore;
   url: string;
   method: string;
   queryParams?: TQueryParams;
@@ -34,83 +41,83 @@ const getBaseUrl = (url: string) => {
   return baseUrl;
 };
 
-export type FetchParams = Dictionary<number | string | string[] | boolean | null | undefined>;
-export const serializeParams = (pathParams?: FetchParams, queryParams?: FetchParams) => {
-  // JSON.serialize() outputs the keys in the order they were added to the object, so take all
-  // non-null values in sorted key order and add them to the object to serialize to guarantees a
-  // stable serialization
-  const orderedParams = {
-    path: {} as Dictionary<number | string | boolean | string[]>,
-    query: {} as Dictionary<number | string | boolean | string[]>
-  };
-  if (pathParams != null) {
-    for (const param of Object.keys(pathParams).sort()) {
-      const value = pathParams[param];
-      if (value != null) orderedParams.path[param] = value;
-    }
-  }
-  if (queryParams != null) {
-    for (const param of Object.keys(queryParams).sort()) {
-      const value = queryParams[param];
-      if (value != null) orderedParams.query[param] = value;
-    }
-  }
-  return JSON.stringify(orderedParams);
-};
+export type FetchParamValue = number | string | boolean | null | undefined | FetchParamValue[];
+export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams[]>;
 
 export const getStableQuery = (queryParams: FetchParams) => {
-  // URLSearchParams will gleefully stringify undefined to "undefined" if you leave the key in place.
-  // For our implementation, we never want to send the string "null" or "undefined" to the server in
-  // the query, so delete any keys that have such a value.
+  // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
+  // For our implementation, we never want to send the empty key to the server in the query, so
+  // delete any keys that have such a value.
   for (const key of Object.keys(queryParams)) {
     if (queryParams[key] == null) delete queryParams[key];
   }
-  const searchParams = new URLSearchParams(queryParams as Record<string, string>);
+  // Have `qs` handle the initial stringify because it's smarter about embedded objects and arrays.
+  const searchParams = new URLSearchParams(qs.stringify(queryParams));
   // Make sure the output string always ends up in the same order because we need the URL string
   // that is generated from a set of query / path params to be consistent even if the order of the
   // params in the source object changes.
   searchParams.sort();
-  return searchParams.toString();
+  const query = searchParams.toString();
+  return query.length === 0 ? "" : `?${query}`;
 };
 
-export const resolveUrl = (
-  url: string,
-  queryParams: Record<string, string> = {},
-  pathParams: Record<string, string> = {}
-) => {
-  let query = getStableQuery(queryParams);
-  if (query.length > 0) query = `?${query}`;
-
-  return `${getBaseUrl(url)}${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)]) + query}`;
+const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) => {
+  const query = getStableQuery(queryParams);
+  return `${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)] as string)}${query}`;
 };
 
-export function isFetching<TQueryParams extends {}, TPathParams extends {}>({
-  store,
+export const resolveUrl = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) =>
+  `${getBaseUrl(url)}${getStablePathAndQuery(url, queryParams, pathParams)}`;
+
+export function isFetchingSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
   url,
   method,
   pathParams,
   queryParams
-}: SelectorOptions<TQueryParams, TPathParams>): boolean {
+}: SelectorOptions<TQueryParams, TPathParams>) {
   const fullUrl = resolveUrl(url, queryParams, pathParams);
-  const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
-  return isInProgress(pending);
+  return (store: ApiDataStore) => isInProgress(store.meta.pending[method.toUpperCase() as Method][fullUrl]);
 }
 
-export function fetchFailed<TQueryParams extends {}, TPathParams extends {}>({
-  store,
+export function fetchFailedSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
   url,
   method,
   pathParams,
   queryParams
-}: SelectorOptions<TQueryParams, TPathParams>): PendingErrorState | null {
+}: SelectorOptions<TQueryParams, TPathParams>) {
   const fullUrl = resolveUrl(url, queryParams, pathParams);
-  const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
-  return isErrorState(pending) ? pending : null;
+  return (store: ApiDataStore) => {
+    const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
+    return isErrorState(pending) ? pending : null;
+  };
+}
+
+export function indexMetaSelector<TQueryParams extends {}, TPathParams extends {}>({
+  resource,
+  url,
+  pathParams,
+  queryParams
+}: Omit<SelectorOptions<TQueryParams, TPathParams>, "method"> & { resource: ResourceType }) {
+  // Some query params gets specified as a single indexed key like `page[number]`, and some get
+  // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
+  // what we get through qs stringify / parse will normalize it.
+  const normalizedQuery = qs.parse(qs.stringify(queryParams));
+  const queryKeys = Object.keys(normalizedQuery);
+  const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
+  if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
+    delete (normalizedQuery.page as ParsedQs).number;
+  }
+  if (queryKeys.includes("sideloads")) {
+    delete normalizedQuery.sideloads;
+  }
+
+  const stableUrl = getStablePathAndQuery(url, normalizedQuery, pathParams);
+  return (store: ApiDataStore) => store.meta.indices[resource][stableUrl]?.[pageNumber];
 }
 
 const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
 
-async function dispatchRequest<TData, TError>(url: string, serializedParams: string, requestInit: RequestInit) {
+async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
   ApiSlice.fetchStarting(actionPayload);
 
@@ -139,7 +146,7 @@ async function dispatchRequest<TData, TError>(url: string, serializedParams: str
     if (responsePayload.statusCode != null && responsePayload.message != null) {
       ApiSlice.fetchFailed({ ...actionPayload, error: responsePayload });
     } else {
-      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload, serializedParams });
+      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
     }
   } catch (e) {
     Log.error("Unexpected API fetch failure", e);
@@ -210,7 +217,7 @@ export function serviceFetch<
 
   // The promise is ignored on purpose. Further progress of the request is tracked through
   // redux.
-  dispatchRequest<TData, TError>(fullUrl, serializeParams(pathParams, queryParams), {
+  dispatchRequest<TData, TError>(fullUrl, {
     signal,
     method,
     body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,

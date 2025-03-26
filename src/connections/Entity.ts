@@ -8,11 +8,6 @@ import {
   EntityIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
-  entityDeleteFetchFailed,
-  entityGetFetchFailed,
-  entityIndexFetchFailed
-} from "@/generated/v3/entityService/entityServicePredicates";
-import {
   NurseryFullDto,
   NurseryLightDto,
   ProjectFullDto,
@@ -22,8 +17,14 @@ import {
   SiteFullDto,
   SiteLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  entityDeleteFetchFailed,
+  entityGetFetchFailed,
+  entityIndexFetchFailed,
+  entityIndexIndexMeta
+} from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
@@ -54,7 +55,7 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
 
 type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
 export type EntityIndexConnectionProps = {
   pageSize?: number;
@@ -151,7 +152,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
     props =>
       createSelector(
         [
-          indexMetaSelector(entityName, entityIndexParams(entityName, props)),
+          entityIndexIndexMeta(entityName, entityIndexParams(entityName, props)),
           entitySelector(entityName),
           entityIndexFetchFailed(entityIndexParams(entityName, props))
         ],
@@ -168,7 +169,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, indexTotal: indexMeta.page?.total, refetch, fetchFailure };
+          return { entities, indexTotal: indexMeta.total, refetch, fetchFailure };
         }
       )
   )

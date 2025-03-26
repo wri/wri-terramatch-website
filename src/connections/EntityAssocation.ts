@@ -5,10 +5,13 @@ import {
   entityAssociationIndex,
   EntityAssociationIndexPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { entityAssociationIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
 import { DemographicDto, SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  entityAssociationIndexFetchFailed,
+  entityAssociationIndexIndexMeta
+} from "@/generated/v3/entityService/entityServiceSelectors";
 import { useConnection } from "@/hooks/useConnection";
-import { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
@@ -59,7 +62,7 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
     props =>
       createSelector(
         [
-          indexMetaSelector(association, associationGetParams(association, props)),
+          entityAssociationIndexIndexMeta(association, associationGetParams(association, props)),
           associationSelector(association),
           entityAssociationIndexFetchFailed(associationGetParams(association, props))
         ],

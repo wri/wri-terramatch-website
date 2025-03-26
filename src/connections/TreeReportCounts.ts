@@ -2,8 +2,8 @@ import { createSelector } from "reselect";
 
 import { treeReportCountsFind } from "@/generated/v3/entityService/entityServiceComponents";
 import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
-import { treeReportCountsFindFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
 import { TreeReportCountsDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { treeReportCountsFindFetchFailed } from "@/generated/v3/entityService/entityServiceSelectors";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";

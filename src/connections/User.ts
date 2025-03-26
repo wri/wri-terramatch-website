@@ -7,13 +7,13 @@ import {
   UsersFindVariables,
   userUpdate
 } from "@/generated/v3/userService/userServiceComponents";
+import { UserDto, UserNewRequest, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import {
   userCreationFetchFailed,
   userCreationIsFetching,
   usersFindFetchFailed,
   userUpdateFetchFailed
-} from "@/generated/v3/userService/userServicePredicates";
-import { UserDto, UserNewRequest, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+} from "@/generated/v3/userService/userServiceSelectors";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";

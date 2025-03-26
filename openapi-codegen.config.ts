@@ -141,7 +141,7 @@ for (const [service, baseUrl] of Object.entries(SERVICES)) {
     to: async context => {
       const { schemasFiles } = await generateSchemaTypes(context, { filenamePrefix: name });
       await generateFetchers(context, { filenamePrefix: name, schemasFiles });
-      await generatePendingPredicates(context, { filenamePrefix: name });
+      await generateSelectors(context, { filenamePrefix: name });
       await generateConstants(context, { filenamePrefix: name });
     }
   };
@@ -170,7 +170,13 @@ const generateLiteral = (value: unknown) => {
   }
 };
 
-const generateConstants = async (context: Context, config: ConfigBase) => {
+const formatFilename = (filenameSuffix: string, context: Context, config: ConfigBase) => {
+  const filenamePrefix = c.snake(config.filenamePrefix ?? context.openAPIDocument.info.title) + "-";
+  const formatFunction = config.filenameCase ? c[config.filenameCase] : c.camel;
+  return formatFunction(filenamePrefix + filenameSuffix);
+};
+
+const writeFile = async (nodes: ts.Node[], filenameSuffix: string, context: Context, config: ConfigBase) => {
   const sourceFile = ts.createSourceFile("index.ts", "", ts.ScriptTarget.Latest);
 
   const printer = ts.createPrinter({
@@ -178,21 +184,23 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
     removeComments: false
   });
 
-  const printNodes = (nodes: ts.Node[]) =>
+  const filename = formatFilename(filenameSuffix, context, config);
+
+  await context.writeFile(
+    filename + ".ts",
     nodes
-      .map((node: ts.Node, i, nodes) => {
-        return (
+      .map(
+        (node, i, nodes) =>
           printer.printNode(ts.EmitHint.Unspecified, node, sourceFile) +
           (ts.isJSDoc(node) || (ts.isImportDeclaration(node) && nodes[i + 1] && ts.isImportDeclaration(nodes[i + 1]))
             ? ""
             : "\n")
-        );
-      })
-      .join("\n");
+      )
+      .join("\n")
+  );
+};
 
-  const filenamePrefix = c.snake(config.filenamePrefix ?? context.openAPIDocument.info.title) + "-";
-  const formatFilename = config.filenameCase ? c[config.filenameCase] : c.camel;
-  const filename = formatFilename(filenamePrefix + "-constants");
+const generateConstants = async (context: Context, config: ConfigBase) => {
   const nodes: ts.Node[] = [];
 
   Object.entries(context.openAPIDocument.components?.schemas ?? {}).forEach(([componentName, componentSchema]) => {
@@ -231,7 +239,19 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
     nodes.push(f.createExportAssignment(undefined, undefined, f.createObjectLiteralExpression(undefined, false)));
   }
 
-  await context.writeFile(filename + ".ts", printNodes(nodes));
+  await writeFile(nodes, "-constants", context, config);
+};
+
+const isIndex = (verb: string, operation: OperationObject) => {
+  if (verb !== "get") return false;
+
+  const okSchema = operation.responses["200"]?.content["application/json"]?.schema;
+  if (okSchema == null) return false;
+
+  const properties = _.isArray(okSchema.oneOf) ? okSchema.oneOf[0]?.properties : okSchema.properties;
+  if (properties?.data == null) return false;
+
+  return properties.data.type === "array";
 };
 
 /**
@@ -241,34 +261,13 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
  * methods here are similar to ones in that repo, but they aren't exported, so were copied from there and modified for
  * use in this generator.
  */
-const generatePendingPredicates = async (context: Context, config: ConfigBase) => {
-  const sourceFile = ts.createSourceFile("index.ts", "", ts.ScriptTarget.Latest);
-
-  const printer = ts.createPrinter({
-    newLine: ts.NewLineKind.LineFeed,
-    removeComments: false
-  });
-
-  const printNodes = (nodes: ts.Node[]) =>
-    nodes
-      .map((node: ts.Node, i, nodes) => {
-        return (
-          printer.printNode(ts.EmitHint.Unspecified, node, sourceFile) +
-          (ts.isJSDoc(node) || (ts.isImportDeclaration(node) && nodes[i + 1] && ts.isImportDeclaration(nodes[i + 1]))
-            ? ""
-            : "\n")
-        );
-      })
-      .join("\n");
-
-  const filenamePrefix = c.snake(config.filenamePrefix ?? context.openAPIDocument.info.title) + "-";
-  const formatFilename = config.filenameCase ? c[config.filenameCase] : c.camel;
-  const filename = formatFilename(filenamePrefix + "-predicates");
+const generateSelectors = async (context: Context, config: ConfigBase) => {
   const nodes: ts.Node[] = [];
   const componentImports: string[] = [];
 
   let variablesExtraPropsType: ts.TypeNode = f.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
 
+  let hasIndexMeta = false;
   Object.entries(context.openAPIDocument.paths).forEach(([route, verbs]: [string, PathItemObject]) => {
     Object.entries(verbs).forEach(([verb, operation]) => {
       if (!isVerb(verb) || !isOperationObject(operation)) return;
@@ -288,41 +287,54 @@ const generatePendingPredicates = async (context: Context, config: ConfigBase) =
         }
       }
 
+      const includeIndexMeta = isIndex(verb, operation);
+      hasIndexMeta ||= includeIndexMeta;
       nodes.push(
-        ...createPredicateNodes({
+        ...createSelectorNodes({
           pathParamsType,
           variablesType,
           queryParamsType,
           url: route,
           verb,
-          name: operationId
+          name: operationId,
+          includeIndexMeta
         })
       );
     });
   });
 
-  await context.writeFile(
-    filename + ".ts",
-    printNodes([
-      createNamedImport(["isFetching", "fetchFailed"], `../utils`),
-      createNamedImport(["ApiDataStore"], "@/store/apiSlice"),
-      ...(componentImports.length == 0
+  const utilsImports = ["isFetchingSelector", "fetchFailedSelector"];
+  const sliceImports = [];
+  if (hasIndexMeta) {
+    utilsImports.push("indexMetaSelector");
+    sliceImports.push("ResourceType");
+  }
+
+  await writeFile(
+    [
+      createNamedImport(utilsImports, `../utils`),
+      ...(sliceImports.length === 0 ? [] : [createNamedImport(sliceImports, "@/store/apiSlice")]),
+      ...(componentImports.length === 0
         ? []
-        : [createNamedImport(componentImports, `./${formatFilename(filenamePrefix + "-components")}`)]),
+        : [createNamedImport(componentImports, `./${formatFilename("-components", context, config)}`)]),
       ...nodes
-    ])
+    ],
+    "-selectors",
+    context,
+    config
   );
 };
 
 const camelizedPathParams = (url: string) => url.replace(/\{\w*}/g, match => `{${c.camel(match)}}`);
 
-const createPredicateNodes = ({
+const createSelectorNodes = ({
   queryParamsType,
   pathParamsType,
   variablesType,
   url,
   verb,
-  name
+  name,
+  includeIndexMeta
 }: {
   pathParamsType: ts.TypeNode;
   queryParamsType: ts.TypeNode;
@@ -330,86 +342,83 @@ const createPredicateNodes = ({
   url: string;
   verb: string;
   name: string;
+  includeIndexMeta: boolean;
 }) => {
   const nodes: ts.Node[] = [];
 
-  const storeTypeDeclaration = f.createParameterDeclaration(
-    undefined,
-    undefined,
-    f.createIdentifier("store"),
-    undefined,
-    f.createTypeReferenceNode("ApiDataStore"),
-    undefined
-  );
+  const createSelectorNode = (fnName: string) => {
+    const selectorArguments: ts.ObjectLiteralElementLike[] = [
+      f.createPropertyAssignment(f.createIdentifier("url"), f.createStringLiteral(camelizedPathParams(url)))
+    ];
+    if (fnName === "indexMeta") {
+      selectorArguments.push(f.createShorthandPropertyAssignment("resource"));
+    } else {
+      selectorArguments.push(f.createPropertyAssignment(f.createIdentifier("method"), f.createStringLiteral(verb)));
+    }
+    if (variablesType.kind !== ts.SyntaxKind.VoidKeyword) {
+      selectorArguments.push(f.createSpreadAssignment(f.createIdentifier("variables")));
+    }
 
-  nodes.push(
-    ...["isFetching", "fetchFailed"].map(fnName => {
-      const callBaseSelector = f.createCallExpression(
-        f.createIdentifier(fnName),
-        [queryParamsType, pathParamsType],
-        [
-          f.createObjectLiteralExpression(
-            [
-              f.createShorthandPropertyAssignment("store"),
-              f.createPropertyAssignment(f.createIdentifier("url"), f.createStringLiteral(camelizedPathParams(url))),
-              f.createPropertyAssignment(f.createIdentifier("method"), f.createStringLiteral(verb)),
-              ...(variablesType.kind !== ts.SyntaxKind.VoidKeyword
-                ? [f.createSpreadAssignment(f.createIdentifier("variables"))]
-                : [])
-            ],
-            false
-          )
-        ]
-      );
+    const callBaseSelector = f.createCallExpression(
+      f.createIdentifier(`${fnName}Selector`),
+      [queryParamsType, pathParamsType],
+      [f.createObjectLiteralExpression(selectorArguments, false)]
+    );
 
-      let selector = f.createArrowFunction(
-        undefined,
-        undefined,
-        [storeTypeDeclaration],
-        undefined,
-        f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-        callBaseSelector
-      );
-
-      if (variablesType.kind !== ts.SyntaxKind.VoidKeyword) {
-        selector = f.createArrowFunction(
+    const selectorParameters: ts.ParameterDeclaration[] = [];
+    if (fnName === "indexMeta") {
+      selectorParameters.push(
+        f.createParameterDeclaration(
           undefined,
           undefined,
-          [
-            f.createParameterDeclaration(
-              undefined,
-              undefined,
-              f.createIdentifier("variables"),
-              undefined,
-              f.createTypeReferenceNode("Omit", [
-                variablesType,
-                f.createLiteralTypeNode(f.createStringLiteral("body"))
-              ]),
-              undefined
-            )
-          ],
+          f.createIdentifier("resource"),
           undefined,
-          f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-          selector
-        );
-      }
-
-      return f.createVariableStatement(
-        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
-        f.createVariableDeclarationList(
-          [
-            f.createVariableDeclaration(
-              f.createIdentifier(`${name}${_.upperFirst(fnName)}`),
-              undefined,
-              undefined,
-              selector
-            )
-          ],
-          ts.NodeFlags.Const
+          f.createTypeReferenceNode("ResourceType"),
+          undefined
         )
       );
-    })
-  );
+    }
+    if (variablesType.kind !== ts.SyntaxKind.VoidKeyword) {
+      selectorParameters.push(
+        f.createParameterDeclaration(
+          undefined,
+          undefined,
+          f.createIdentifier("variables"),
+          undefined,
+          f.createTypeReferenceNode("Omit", [variablesType, f.createLiteralTypeNode(f.createStringLiteral("body"))]),
+          undefined
+        )
+      );
+    }
+    const selector = f.createArrowFunction(
+      undefined,
+      undefined,
+      selectorParameters,
+      undefined,
+      f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+      callBaseSelector
+    );
+
+    return f.createVariableStatement(
+      [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+      f.createVariableDeclarationList(
+        [
+          f.createVariableDeclaration(
+            f.createIdentifier(`${name}${_.upperFirst(fnName)}`),
+            undefined,
+            undefined,
+            selector
+          )
+        ],
+        ts.NodeFlags.Const
+      )
+    );
+  };
+
+  for (const selector of ["isFetching", "fetchFailed", "indexMeta"]) {
+    if (selector === "indexMeta" && !includeIndexMeta) continue;
+    nodes.push(createSelectorNode(selector));
+  }
 
   return nodes;
 };

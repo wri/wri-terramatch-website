@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
-import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServicePredicates";
+import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServiceSelectors";
 import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader, connectionSelector } from "@/utils/connectionShortcuts";
