@@ -2,7 +2,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -136,7 +136,19 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     setSearchTerm("");
   };
 
+  const isFirstRender = useRef(true);
+  const isUpdatingRef = useRef(false);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (isUpdatingRef.current) {
+      return;
+    }
+
     const query: any = {
       ...router.query,
       programmes: filters.programmes,
@@ -149,18 +161,24 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     Object.keys(query).forEach(key => !query[key]?.length && delete query[key]);
 
-    const currentQuery = JSON.stringify(router.query);
-    const newQuery = JSON.stringify(query);
+    const currentQueryString = JSON.stringify(router.query);
+    const newQueryString = JSON.stringify(query);
 
-    if (currentQuery !== newQuery) {
-      router.push(
-        {
-          pathname: router.pathname,
-          query: query
-        },
-        undefined,
-        { shallow: true }
-      );
+    if (currentQueryString !== newQueryString) {
+      isUpdatingRef.current = true;
+
+      router
+        .push(
+          {
+            pathname: router.pathname,
+            query: query
+          },
+          undefined,
+          { shallow: true }
+        )
+        .finally(() => {
+          isUpdatingRef.current = false;
+        });
     }
   }, [
     router,
