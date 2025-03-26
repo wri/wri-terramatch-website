@@ -21876,6 +21876,21 @@ export type DashboardGetProjectsData = {
 
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
+  /**
+   * Centroids of polygons
+   */
+  centroids?: {
+    /**
+     * Uuid of polygon
+     */
+    uuid?: string;
+    /**
+     * Longitude of polygon
+     */
+    long?: number;
+    lat?: number;
+    description?: void;
+  }[];
 };
 
 export type DashboardBBOXProject = {
@@ -22866,4 +22881,21 @@ export type V2ImpactStoryCreate = {
    * @example draft
    */
   status?: "draft" | "published" | "archived";
+};
+
+export type DashboardGetSitePolygonsDataProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    site_polygons?: {
+      uuid?: string;
+      site_id?: string;
+      poly_name?: string;
+      poly_id?: string;
+    }[];
+  }[];
+};
+
+export type DashboardGetPolygonCentroidResponse = {
+  centroid?: number[];
 };

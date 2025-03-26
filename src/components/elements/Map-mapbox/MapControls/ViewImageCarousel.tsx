@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -11,10 +12,12 @@ import Text from "../../Text/Text";
 
 const ViewImageCarousel = ({
   modelFilesData,
-  imageGalleryRef
+  imageGalleryRef,
+  className
 }: {
   modelFilesData: GetV2MODELUUIDFilesResponse["data"];
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  className?: string;
 }) => {
   const t = useT();
   const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
@@ -101,7 +104,11 @@ const ViewImageCarousel = ({
 
   return (
     <div className="relative">
-      <Button variant="white-button-map" className="flex items-center gap-2" onClick={() => scrollToElement()}>
+      <Button
+        variant="white-button-map"
+        className={classNames("flex items-center gap-2", className)}
+        onClick={() => scrollToElement()}
+      >
         <Icon name={IconNames.IMAGE_ICON} className="h-4 w-4" />
         <Text variant="text-12-bold"> {t("View Gallery")}</Text>
       </Button>
