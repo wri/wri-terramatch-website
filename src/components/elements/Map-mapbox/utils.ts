@@ -128,7 +128,7 @@ const showPolygons = (
       ["literal", parsedPolygonData?.[polygonStatus] === undefined ? "" : parsedPolygonData[polygonStatus]]
     ];
 
-    const completeFilter = zoomFilter ? ["all", uuidFilter, [">=", ["zoom"], zoomFilter]] : ["all", uuidFilter];
+    const completeFilter = zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter];
 
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
