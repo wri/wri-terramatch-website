@@ -459,7 +459,7 @@ export const addPolygonCentroidsLayer = (
       "icon-image": "pulsing-dot-centroids"
     },
     paint: {},
-    filter: zoomFilterValue ? ["<", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
+    filter: zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
   });
 };
 export const addPopupsToMap = (
@@ -647,7 +647,7 @@ export const addGeojsonSourceToLayer = (
       let existingFilter = map.getFilter(layerId) || ["all"];
 
       // Add zoom-based visibility filter
-      const zoomFilter = zoomFilterValue ? ["<", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+      const zoomFilter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
 
       map.setFilter(layerId, ["all", existingFilter, zoomFilter]);
     });
@@ -679,9 +679,10 @@ export const addSourceToLayer = (
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-        addHoverEvent(layer, map);
-      }
+      // commented for future possible use
+      // if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      //   addHoverEvent(layer, map);
+      // }
     }
   } catch (e) {
     console.warn(e);
