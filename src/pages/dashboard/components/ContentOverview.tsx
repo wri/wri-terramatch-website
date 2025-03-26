@@ -1,6 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { When } from "react-if";
 
@@ -103,7 +104,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
   const isMobile = useMediaQuery("(max-width: 1200px)");
-
+  const router = useRouter();
+  const { country } = router.query;
   useValueChanged(filters.country, () => {
     setSelectedCountry(filters.country.country_slug);
   });
@@ -419,63 +421,66 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           </div>
         </When>
       </div>
-      <PageCard
-        className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
-        classNameSubTitle="mt-4"
-        gap={6}
-        isUserAllowed={isUserAllowed}
-        subtitleMore={true}
-        title={t(titleTable)}
-        tooltip={textTooltipTable}
-        tooltipTrigger="click"
-        iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
-        headerChildren={
-          <Button
-            variant="white-border"
-            onClick={() => {
-              ModalTable();
-            }}
-          >
-            <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-              {!isMobile && (
-                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("See All")}
-                </Text>
-              )}
-            </div>
-          </Button>
-        }
-      >
-        <Table
-          visibleRows={50}
-          columns={isMobile ? columnMobile : columns}
-          data={data}
-          classNameWrapper="mobile:px-0"
-          onRowClick={row => {
-            if (row?.country_slug) {
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid as string,
-                country:
-                  dashboardCountries?.find(country => country.country_slug === row?.country_slug) || prevValues.country
-              }));
-            }
-
-            if (row.uuid) {
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
-            }
-            return;
-          }}
-          classNameTableWrapper={
-            filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+      <When condition={!country}>
+        <PageCard
+          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
+          classNameSubTitle="mt-4"
+          gap={6}
+          isUserAllowed={isUserAllowed}
+          subtitleMore={true}
+          title={t(titleTable)}
+          tooltip={textTooltipTable}
+          tooltipTrigger="click"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+          headerChildren={
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
+              </div>
+            </Button>
           }
-          variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
-        />
-      </PageCard>
+        >
+          <Table
+            visibleRows={50}
+            columns={isMobile ? columnMobile : columns}
+            data={data}
+            classNameWrapper="mobile:px-0"
+            onRowClick={row => {
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
+            }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
+        </PageCard>
+      </When>
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
@@ -528,6 +533,66 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           isLoading={isLoadingHectaresUnderRestoration}
         />
       </PageCard>
+      <When condition={!!country}>
+        <PageCard
+          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
+          classNameSubTitle="mt-4"
+          gap={6}
+          isUserAllowed={isUserAllowed}
+          subtitleMore={true}
+          title={t(titleTable)}
+          tooltip={textTooltipTable}
+          tooltipTrigger="click"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+          headerChildren={
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
+              </div>
+            </Button>
+          }
+        >
+          <Table
+            visibleRows={50}
+            columns={isMobile ? columnMobile : columns}
+            data={data}
+            classNameWrapper="mobile:px-0"
+            onRowClick={row => {
+              if (row?.country_slug) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
+                    prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
+            }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
+        </PageCard>
+      </When>
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"
