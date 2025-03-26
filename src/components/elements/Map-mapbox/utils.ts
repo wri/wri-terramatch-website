@@ -440,7 +440,7 @@ export const addPolygonCentroidsLayer = (
       uuid: centroid.uuid
     }
   }));
-  const pulsingDot = getPulsingDot(map, 120);
+  const pulsingDot = getPulsingDot(map, 120, "#72D961");
   map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
 
   map.addSource(layerName, {
