@@ -603,7 +603,6 @@ export const addGeojsonSourceToLayer = (
 ) => {
   const { name, styles } = layer;
   if (map && centroids && centroids.length > 0) {
-    // Remove existing source and layers if they exist
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
         map.removeLayer(`${name}-${index}`);
@@ -611,12 +610,10 @@ export const addGeojsonSourceToLayer = (
       map.removeSource(name);
     }
 
-    // If polygons exist, we might want to handle this differently
     if (existsPolygons) {
       return;
     }
 
-    // Prepare features from centroids
     const features: GeoJSON.Feature[] = centroids.map((centroid: any) => ({
       type: "Feature",
       geometry: {
