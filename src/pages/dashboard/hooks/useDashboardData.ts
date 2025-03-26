@@ -271,7 +271,7 @@ export const useDashboardData = (filters: any) => {
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    polygonsData: polygonsData?.data ?? {},
+    polygonsData: polygonsData ?? {},
     isUserAllowed,
     projectBbox: projectBbox?.bbox,
     generalBbox: generalBboxParsed,

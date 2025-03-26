@@ -9,6 +9,8 @@ import { createRoot } from "react-dom/client";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
+  fetchGetV2DashboardGetBboxProject,
+  fetchGetV2SitesSiteBbox,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
@@ -19,6 +21,7 @@ import {
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -104,20 +107,6 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
 export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
 };
-const filterLayerByZoom = (map: mapboxgl.Map, name: string, styles: LayerWithStyle[], zoomFilter: number) => {
-  const zoomLevel = map.getZoom();
-  if (zoomLevel < zoomFilter) {
-    styles.forEach((_: LayerWithStyle, index: number) => {
-      const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "none");
-    });
-  } else {
-    styles.forEach((_: LayerWithStyle, index: number) => {
-      const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "visible");
-    });
-  }
-};
 const showPolygons = (
   styles: LayerWithStyle[],
   name: string,
@@ -133,20 +122,17 @@ const showPolygons = (
       return;
     }
     const polygonStatus = style?.metadata?.polygonStatus;
-    const filter = [
+    const uuidFilter = [
       "in",
       ["get", field],
       ["literal", parsedPolygonData?.[polygonStatus] === undefined ? "" : parsedPolygonData[polygonStatus]]
     ];
-    const completeFilter = ["all", filter];
+
+    const completeFilter = zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter];
+
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
-  if (zoomFilter) {
-    map.on("zoom", () => {
-      filterLayerByZoom(map, name, styles, zoomFilter);
-    });
-  }
 };
 
 let popup: mapboxgl.Popup | null = null;
@@ -409,7 +395,8 @@ export const addSourcesToLayers = (
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  polygonsCentroids?: any[] | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
@@ -423,9 +410,58 @@ export const addSourcesToLayers = (
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });
+    if (isDashboard) {
+      addPolygonCentroidsLayer(map, polygonsCentroids ?? [], zoomFilter);
+    }
   }
 };
+export const addPolygonCentroidsLayer = (
+  map: mapboxgl.Map,
+  centroids: { uuid: string; long: number; lat: number }[],
+  zoomFilterValue?: number
+) => {
+  const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
+  if (map.getSource(layerName)) {
+    map.removeLayer(`${layerName}`);
+    map.removeSource(layerName);
+  }
 
+  if (map.hasImage("pulsing-dot-centroids")) {
+    map.removeImage("pulsing-dot-centroids");
+  }
+
+  const features: GeoJSON.Feature[] = centroids.map(centroid => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [centroid.long, centroid.lat]
+    },
+    properties: {
+      uuid: centroid.uuid
+    }
+  }));
+  const pulsingDot = getPulsingDot(map, 120);
+  map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+
+  map.addSource(layerName, {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: features
+    }
+  });
+
+  map.addLayer({
+    id: layerName,
+    type: "symbol",
+    source: layerName,
+    layout: {
+      "icon-image": "pulsing-dot-centroids"
+    },
+    paint: {},
+    filter: zoomFilterValue ? ["<", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
+  });
+};
 export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
@@ -493,9 +529,9 @@ export const addPopupToLayer = (
       const currentMode = draw?.getMode();
       if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
 
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES && selectedCountry) return;
-
-      if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
+      if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
+      // keep commented for future possible use
+      // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
 
       handleLayerClick(
         e,
@@ -559,50 +595,62 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   }
 };
 export const addGeojsonSourceToLayer = (
-  centroids: DashboardGetProjectsData[] | undefined,
+  centroids: DashboardGetProjectsData[] | { uuid: string; long: number; lat: number }[] | undefined,
   map: mapboxgl.Map,
   layer: LayerType,
   zoomFilterValue: number | undefined,
   existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
-  if (map && centroids) {
+  if (map && centroids && centroids.length > 0) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
         map.removeLayer(`${name}-${index}`);
       });
       map.removeSource(name);
     }
+
+    if (existsPolygons) {
+      return;
+    }
+
+    const features: GeoJSON.Feature[] = centroids.map((centroid: any) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [centroid.long || centroid.centroid?.long, centroid.lat || centroid.centroid?.lat]
+      },
+      properties: {
+        uuid: centroid.uuid,
+        name: centroid.name || centroid.uuid,
+        type: centroid.type || "polygon_centroid"
+      }
+    }));
+
+    // Add new source
     map.addSource(name, {
       type: "geojson",
       data: {
         type: "FeatureCollection",
-        features: centroids.map((centroid: any) => ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [centroid.long, centroid.lat]
-          },
-          properties: {
-            uuid: centroid.uuid,
-            name: centroid.name,
-            type: centroid.type
-          }
-        }))
+        features: features
       }
     });
+
+    // Add layers with styles
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
+
+    // Set filters for layers
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    if (existsPolygons && zoomFilterValue !== undefined) {
-      layerIds.forEach(layerId => {
-        let existingFilter = map.getFilter(layerId) || ["all"];
-        let zoomFilter = ["<=", ["zoom"], zoomFilterValue + 1];
-        let combinedFilter = ["all", existingFilter, zoomFilter];
-        map.setFilter(layerId, combinedFilter);
-      });
-    }
+    layerIds.forEach(layerId => {
+      let existingFilter = map.getFilter(layerId) || ["all"];
+
+      // Add zoom-based visibility filter
+      const zoomFilter = zoomFilterValue ? ["<", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+
+      map.setFilter(layerId, ["all", existingFilter, zoomFilter]);
+    });
   }
 };
 export const addSourceToLayer = (
@@ -626,7 +674,7 @@ export const addSourceToLayer = (
         tiles: [GEOSERVER_TILE_URL]
       });
       styles?.forEach((style: LayerWithStyle, index: number) => {
-        addLayerStyle(map, name, geoserverLayerName, style, index);
+        addLayerStyle(map, name, geoserverLayerName, style, index, zoomFilter);
       });
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
@@ -799,7 +847,8 @@ export const addLayerStyle = (
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
-  index_suffix: number | string
+  index_suffix: number | string,
+  zoomFilter?: number | undefined
 ) => {
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
   if (map.getLayer(`${layerName}-${index_suffix}`)) {
@@ -810,7 +859,10 @@ export const addLayerStyle = (
       ...style,
       id: `${layerName}-${index_suffix}`,
       source: sourceName,
-      "source-layer": sourceName
+      "source-layer": sourceName,
+      ...(zoomFilter && {
+        filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
+      })
     } as mapboxgl.AnyLayer,
     beforeLayer
   );
@@ -871,15 +923,22 @@ export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | und
   }, {});
 }
 
-export function getPolygonsData(uuid: string, statusFilter: string, sortOrder: string, type: string, cb: Function) {
-  fetchGetV2TypeEntity({
-    queryParams: {
-      uuid: uuid,
-      type: type,
-      status: statusFilter,
-      [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-    }
-  }).then(result => {
+export function getPolygonsData(
+  uuid: string,
+  statusFilter: string | undefined,
+  sortOrder: string,
+  type: string,
+  cb: Function
+) {
+  const queryParams: any = {
+    uuid: uuid,
+    type: type,
+    [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+  };
+  if (statusFilter) {
+    queryParams.status = statusFilter;
+  }
+  fetchGetV2TypeEntity({ queryParams }).then(result => {
     cb(result);
   });
 }
@@ -916,6 +975,31 @@ export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOvervi
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
+
+export async function callEntityBbox(type: string, entityModel: any): Promise<BBox | null> {
+  try {
+    if (type === "sites") {
+      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
+
+      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
+        return siteBbox.bbox as BBox;
+      }
+    } else if (type === "projects") {
+      const projectBbox = await fetchGetV2DashboardGetBboxProject({
+        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
+      });
+
+      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
+        return projectBbox.bbox as BBox;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching entity BBox:", error);
+    return null;
+  }
+}
 
 export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
   const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
@@ -1078,4 +1162,55 @@ export const setMapStyle = (
     updateMapProjection(map, style);
     setCurrentStyle(style);
   }
+};
+
+export const enableTerrainAndAnimateCamera = async (
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string,
+  centroid: LngLat
+) => {
+  const shouldChangeStyle = currentStyle !== MapStyle.Satellite;
+  if (shouldChangeStyle) {
+    setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle);
+    map.once("style.load", () => {
+      setupTerrainAndAnimate(map, centroid);
+    });
+  } else {
+    setupTerrainAndAnimate(map, centroid);
+  }
+};
+
+const setupTerrainAndAnimate = (map: mapboxgl.Map, centroid: LngLat) => {
+  // if (!map.getSource("mapbox-dem")) {
+  //   map.addSource("mapbox-dem", {
+  //     type: "raster-dem",
+  //     url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+  //     tileSize: 512,
+  //     maxzoom: 14
+  //   });
+  //   map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
+  // }
+  animateCamera(map, centroid);
+};
+
+const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
+  let angle = 0;
+
+  function frame() {
+    angle += 0.4;
+    map.easeTo({
+      center: centroid,
+      zoom: 14,
+      pitch: 60,
+      bearing: angle,
+      duration: 80
+    });
+
+    // if (map.getTerrain()) {
+    requestAnimationFrame(frame);
+    // }
+  }
+
+  frame();
 };

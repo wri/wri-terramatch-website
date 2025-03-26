@@ -5,12 +5,13 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 import { DELETED_POLYGONS } from "./statuses";
 
 export const LAYERS_NAMES = {
-  WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
-  LANDSCAPES: "landscape_geom"
+  LANDSCAPES: "landscape_geom",
+  WORLD_COUNTRIES: "world_countries_generalized",
+  POLYGON_CENTROIDS: "polygon_centroids"
 };
 export const layersList: LayerType[] = [
   {
@@ -150,6 +151,69 @@ export const layersList: LayerType[] = [
     ]
   },
   {
+    name: LAYERS_NAMES.CENTROIDS,
+    geoserverLayerName: "",
+    styles: [
+      {
+        metadata: { type: "big-circle" },
+        type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
+        paint: {
+          "circle-color": "#795305",
+          "circle-opacity": 0.2,
+          "circle-radius": 9
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
+        paint: {
+          "circle-color": "white",
+          "circle-radius": 4.5,
+          "circle-opacity": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "non-profit-organization"],
+        paint: {
+          "circle-color": "#795305",
+          "circle-radius": 3,
+          "circle-opacity": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        metadata: { type: "big-circle" },
+        type: "circle",
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "#0179FE",
+          "circle-opacity": 0.2,
+          "circle-radius": 8
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "white",
+          "circle-radius": 4.5,
+          "circle-opacity": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      {
+        type: "circle",
+        filter: ["==", ["get", "type"], "for-profit-organization"],
+        paint: {
+          "circle-color": "#0179FE",
+          "circle-radius": 3,
+          "circle-opacity": 1
+        }
+      } as mapboxgl.Style & mapboxgl.CircleLayer
+    ],
+    hover: true
+  },
+  {
     name: LAYERS_NAMES.WORLD_COUNTRIES,
     geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
     styles: [
@@ -201,7 +265,7 @@ export const layersList: LayerType[] = [
     hover: false
   },
   {
-    name: LAYERS_NAMES.CENTROIDS,
+    name: LAYERS_NAMES.POLYGON_CENTROIDS,
     geoserverLayerName: "",
     styles: [
       {
@@ -211,56 +275,9 @@ export const layersList: LayerType[] = [
         paint: {
           "circle-color": "#795305",
           "circle-opacity": 0.2,
-          "circle-radius": 8
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
-      {
-        type: "circle",
-        filter: ["==", ["get", "type"], "non-profit-organization"],
-        paint: {
-          "circle-color": "white",
-          "circle-radius": 4.5,
-          "circle-opacity": 1
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
-      {
-        type: "circle",
-        filter: ["==", ["get", "type"], "non-profit-organization"],
-        paint: {
-          "circle-color": "#795305",
-          "circle-radius": 3,
-          "circle-opacity": 1
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
-      {
-        metadata: { type: "big-circle" },
-        type: "circle",
-        filter: ["==", ["get", "type"], "for-profit-organization"],
-        paint: {
-          "circle-color": "#0179FE",
-          "circle-opacity": 0.2,
-          "circle-radius": 8
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
-      {
-        type: "circle",
-        filter: ["==", ["get", "type"], "for-profit-organization"],
-        paint: {
-          "circle-color": "white",
-          "circle-radius": 4.5,
-          "circle-opacity": 1
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
-      {
-        type: "circle",
-        filter: ["==", ["get", "type"], "for-profit-organization"],
-        paint: {
-          "circle-color": "#0179FE",
-          "circle-radius": 3,
-          "circle-opacity": 1
+          "circle-radius": 9
         }
       } as mapboxgl.Style & mapboxgl.CircleLayer
-    ],
-    hover: true
+    ]
   }
 ];
