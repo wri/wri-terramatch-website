@@ -28,6 +28,7 @@ import {
   fetchGetV2TerrafundPolygonGeojsonUuid,
   GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
+  useGetV2DashboardProjectsProjectPolygons,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
@@ -70,6 +71,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  enableTerrainAndAnimateCamera,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -105,6 +107,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   legend?: LegendItem[];
   centroids?: DashboardGetProjectsData[];
   polygonsData?: Record<string, string[]>;
+  polygonsCentroids?: any[];
   bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
@@ -182,6 +185,7 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const {
     polygonsData,
+    polygonsCentroids,
     bbox,
     setPolygonFromMap,
     polygonFromMap,
@@ -225,6 +229,14 @@ export const MapContainer = ({
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
 
+  const { data: polygonsListData, isLoading: isLoadingPolygonsList } = useGetV2DashboardProjectsProjectPolygons(
+    {
+      pathParams: { project: projectUUID ?? "" }
+    },
+    { enabled: !!projectUUID }
+  );
+  const [polygonCentroid, setPolygonCentroid] = useState<[number, number] | null>(null);
+
   useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
@@ -259,10 +271,9 @@ export const MapContainer = ({
   useEffect(() => {
     if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
       const currentMap = map.current as mapboxgl.Map;
-
       const setupMap = () => {
-        const zoomFilter = isDashboard ? 7 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard);
+        const zoomFilter = isDashboard ? 9 : undefined;
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard, polygonsCentroids);
         setChangeStyle(true);
         setSourcesAdded(true);
 
@@ -296,7 +307,7 @@ export const MapContainer = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {
@@ -362,6 +373,18 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, styleLoaded]);
+
+  useValueChanged(polygonCentroid, () => {
+    if (map.current && polygonCentroid) {
+      enableTerrainAndAnimateCamera(
+        map.current,
+        setCurrentStyle,
+        currentStyle,
+        new mapboxgl.LngLat(polygonCentroid[0], polygonCentroid[1])
+      );
+    }
+  });
+
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
@@ -695,12 +718,16 @@ export const MapContainer = ({
       </When>
       <When condition={isDashboard === "dashboard"}>
         <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
-          <ListPolygon />
-          <ViewImageCarousel
-            className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-            modelFilesData={props?.modelFilesData}
-            imageGalleryRef={imageGalleryRef}
-          />
+          <When condition={!isLoadingPolygonsList}>
+            <ListPolygon polygonsListData={polygonsListData} setPolygonCentroid={setPolygonCentroid} />
+          </When>
+          <When condition={isDashboard !== "dashboard"}>
+            <ViewImageCarousel
+              className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
+              modelFilesData={props?.modelFilesData}
+              imageGalleryRef={imageGalleryRef}
+            />
+          </When>
         </ControlGroup>
       </When>
       <When condition={showLegend}>

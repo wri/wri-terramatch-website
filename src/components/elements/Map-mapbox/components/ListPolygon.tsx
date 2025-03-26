@@ -4,14 +4,28 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import { fetchGetV2DashboardPolygonsPolyUuidCentroid } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
-import { MOCKED_DATA_LIST_POLYGON } from "./ListPolygon.mockedData";
 
-const ListPolygon = () => {
+const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListData: any; setPolygonCentroid: any }) => {
   const [isOpenListPolygon, setIsOpenListPolygon] = useState(false);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
+  const handlePolygonClick = async (polygon: any) => {
+    setSelectedPolygon(polygon);
+
+    try {
+      const response = await fetchGetV2DashboardPolygonsPolyUuidCentroid({
+        pathParams: { polyUuid: polygon.poly_id }
+      });
+      if (response.centroid?.length) {
+        setPolygonCentroid(response.centroid);
+      }
+    } catch (err) {
+      console.error("Failed to fetch centroid.");
+    }
+  };
 
   return (
     <div className="relative">
@@ -41,7 +55,7 @@ const ListPolygon = () => {
             Show All Polygons
           </Text>
           <List
-            items={MOCKED_DATA_LIST_POLYGON}
+            items={polygonsListData}
             render={(item: any) => {
               return (
                 <div key={item.uuid}>
@@ -82,6 +96,7 @@ const ListPolygon = () => {
                                 "text-primary": itemPolygon.uuid === selectedPolygon?.uuid,
                                 "text-black": itemPolygon.uuid !== selectedPolygon?.uuid
                               })}
+                              onClick={() => handlePolygonClick(itemPolygon)}
                             >
                               {itemPolygon.poly_name}
                             </Text>
