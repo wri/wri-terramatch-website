@@ -263,21 +263,5 @@ export const layersList: LayerType[] = [
       }
     ],
     hover: false
-  },
-  {
-    name: LAYERS_NAMES.POLYGON_CENTROIDS,
-    geoserverLayerName: "",
-    styles: [
-      {
-        metadata: { type: "big-circle" },
-        type: "circle",
-        filter: ["==", ["get", "type"], "non-profit-organization"],
-        paint: {
-          "circle-color": "#795305",
-          "circle-opacity": 0.2,
-          "circle-radius": 9
-        }
-      } as mapboxgl.Style & mapboxgl.CircleLayer
-    ]
   }
 ];
