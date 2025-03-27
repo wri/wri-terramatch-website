@@ -43,6 +43,10 @@ export type EntityIndexQueryParams = {
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -574,7 +578,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.DemographicDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -593,7 +597,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.SeedingDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -612,7 +616,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
-        };
+        }[];
       },
     EntityAssociationIndexError,
     undefined,

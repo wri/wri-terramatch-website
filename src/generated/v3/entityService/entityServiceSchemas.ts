@@ -42,7 +42,7 @@ export type EntitySideload = {
   /**
    * Entity type to sideload
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
   /**
    * The page size to include.
    */

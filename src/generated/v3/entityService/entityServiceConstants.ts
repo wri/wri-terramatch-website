@@ -8,6 +8,10 @@ import {
   NurseryFullDto,
   ProjectReportLightDto,
   ProjectReportFullDto,
+  NurseryReportLightDto,
+  NurseryReportFullDto,
+  SiteReportLightDto,
+  SiteReportFullDto,
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
@@ -21,6 +25,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "sites",
   "nurseries",
   "projectReports",
+  "nurseryReports",
+  "siteReports",
   "demographics",
   "seedings",
   "treeSpecies",
@@ -34,6 +40,8 @@ export type EntityServiceApiResources = {
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
+  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
