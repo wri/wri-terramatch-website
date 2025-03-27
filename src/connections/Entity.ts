@@ -62,7 +62,7 @@ export type EntityIndexConnectionProps = {
   pageNumber?: number;
   sortField?: string;
   sortDirection?: "ASC" | "DESC";
-  filter?: Record<EntityIndexFilterKey, string>;
+  filter?: Partial<Record<EntityIndexFilterKey, string>>;
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
