@@ -398,74 +398,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             projectUUID={projectUUID}
           />
         </LoadingContainerOpacity>
-        <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
-          <div className="flex gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
-            </Text>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
-            </Text>
-          </div>
-        </div>
       </div>
-
-      <PageCard
-        className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
-        classNameSubTitle="mt-4"
-        gap={8}
-        isUserAllowed={isUserAllowed}
-        subtitleMore={true}
-        title={t("HECTARES UNDER RESTORATION")}
-        variantSubTitle="text-14-light"
-        iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
-        subtitle={t(
-          `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
-        )}
-        widthTooltip="w-52 lg:w-64"
-        collapseChildren={isMobile ? true : false}
-      >
-        <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000 mobile:divide-x-0">
-          <SecDashboard
-            title={t("Total Hectares Under Restoration")}
-            data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
-            classNameBody="w-full place-content-center"
-            tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
-            isUserAllowed={isUserAllowed}
-          />
-          <SecDashboard
-            title={t("Total Number Of Sites")}
-            data={{ value: dataHectaresUnderRestoration?.totalSection.numberOfSites }}
-            className="pl-12"
-            classNameBody="w-full place-content-center"
-            tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
-            isUserAllowed={isUserAllowed}
-          />
-        </div>
-        <SecDashboard
-          title={t("Restoration Strategies Represented")}
-          data={{}}
-          classNameBody="ml-[-30px] lg:ml-[-24px] mobile:mx-[-33px] wide:ml-[-16px]"
-          chartType={CHART_TYPES.simpleBarChart}
-          dataForChart={dataHectaresUnderRestoration}
-          tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
-          isUserAllowed={isUserAllowed}
-          isLoading={isLoadingHectaresUnderRestoration}
-        />
-        <SecDashboard
-          title={t("Target Land Use Types Represented")}
-          chartType={CHART_TYPES.barChart}
-          data={dataHectaresUnderRestoration}
-          tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
-          isUserAllowed={isUserAllowed}
-          isLoading={isLoadingHectaresUnderRestoration}
-        />
-      </PageCard>
-
       <PageCard
         className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
         classNameSubTitle="mt-4"
@@ -523,6 +456,59 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
         />
       </PageCard>
+
+      <PageCard
+        className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
+        classNameSubTitle="mt-4"
+        gap={8}
+        isUserAllowed={isUserAllowed}
+        subtitleMore={true}
+        title={t("HECTARES UNDER RESTORATION")}
+        variantSubTitle="text-14-light"
+        iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
+        subtitle={t(
+          `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+        )}
+        widthTooltip="w-52 lg:w-64"
+        collapseChildren={isMobile ? true : false}
+      >
+        <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000 mobile:divide-x-0">
+          <SecDashboard
+            title={t("Total Hectares Under Restoration")}
+            data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
+            classNameBody="w-full place-content-center"
+            tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
+          />
+          <SecDashboard
+            title={t("Total Number Of Sites")}
+            data={{ value: dataHectaresUnderRestoration?.totalSection.numberOfSites }}
+            className="pl-12"
+            classNameBody="w-full place-content-center"
+            tooltip={t(TOTAL_NUMBER_OF_SITES_TOOLTIP)}
+            isUserAllowed={isUserAllowed}
+          />
+        </div>
+        <SecDashboard
+          title={t("Restoration Strategies Represented")}
+          data={{}}
+          classNameBody="ml-[-30px] lg:ml-[-24px] mobile:mx-[-33px] wide:ml-[-16px]"
+          chartType={CHART_TYPES.simpleBarChart}
+          dataForChart={dataHectaresUnderRestoration}
+          tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
+          isUserAllowed={isUserAllowed}
+          isLoading={isLoadingHectaresUnderRestoration}
+        />
+        <SecDashboard
+          title={t("Target Land Use Types Represented")}
+          chartType={CHART_TYPES.barChart}
+          data={dataHectaresUnderRestoration}
+          tooltip={t(TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP)}
+          isUserAllowed={isUserAllowed}
+          isLoading={isLoadingHectaresUnderRestoration}
+        />
+      </PageCard>
+
       <PageCard
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"
         classNameSubTitle="mt-4"

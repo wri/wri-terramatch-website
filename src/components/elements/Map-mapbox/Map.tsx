@@ -41,6 +41,7 @@ import Log from "@/utils/log";
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
+import ListPolygon from "./components/ListPolygon";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -691,6 +692,16 @@ export const MapContainer = ({
             )}
           </ControlGroup>
         </When>
+      </When>
+      <When condition={isDashboard === "dashboard"}>
+        <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
+          <ListPolygon />
+          <ViewImageCarousel
+            className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
+            modelFilesData={props?.modelFilesData}
+            imageGalleryRef={imageGalleryRef}
+          />
+        </ControlGroup>
       </When>
       <When condition={showLegend}>
         <ControlGroup position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}>
