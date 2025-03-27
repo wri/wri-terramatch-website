@@ -107,20 +107,6 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map) => {
 export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
 };
-const filterLayerByZoom = (map: mapboxgl.Map, name: string, styles: LayerWithStyle[], zoomFilter: number) => {
-  const zoomLevel = map.getZoom();
-  if (zoomLevel < zoomFilter) {
-    styles.forEach((_: LayerWithStyle, index: number) => {
-      const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "none");
-    });
-  } else {
-    styles.forEach((_: LayerWithStyle, index: number) => {
-      const layerName = `${name}-${index}`;
-      map.setLayoutProperty(layerName, "visibility", "visible");
-    });
-  }
-};
 const showPolygons = (
   styles: LayerWithStyle[],
   name: string,
@@ -136,20 +122,17 @@ const showPolygons = (
       return;
     }
     const polygonStatus = style?.metadata?.polygonStatus;
-    const filter = [
+    const uuidFilter = [
       "in",
       ["get", field],
       ["literal", parsedPolygonData?.[polygonStatus] === undefined ? "" : parsedPolygonData[polygonStatus]]
     ];
-    const completeFilter = ["all", filter];
+
+    const completeFilter = zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter];
+
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
-  if (zoomFilter) {
-    map.on("zoom", () => {
-      filterLayerByZoom(map, name, styles, zoomFilter);
-    });
-  }
 };
 
 let popup: mapboxgl.Popup | null = null;
@@ -412,23 +395,73 @@ export const addSourcesToLayers = (
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  polygonsCentroids?: any[] | undefined
 ) => {
   if (map) {
     layersList.forEach((layer: LayerType) => {
       if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-        addSourceToLayer(layer, map, polygonsData, zoomFilter);
+        addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard);
       }
       if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
-        addSourceToLayer(layer, map, undefined);
+        addSourceToLayer(layer, map, undefined, undefined);
       }
       if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
         addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
       }
     });
+    if (isDashboard) {
+      addPolygonCentroidsLayer(map, polygonsCentroids ?? [], zoomFilter);
+    }
   }
 };
+export const addPolygonCentroidsLayer = (
+  map: mapboxgl.Map,
+  centroids: { uuid: string; long: number; lat: number }[],
+  zoomFilterValue?: number
+) => {
+  const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
+  if (map.getSource(layerName)) {
+    map.removeLayer(`${layerName}`);
+    map.removeSource(layerName);
+  }
 
+  if (map.hasImage("pulsing-dot-centroids")) {
+    map.removeImage("pulsing-dot-centroids");
+  }
+
+  const features: GeoJSON.Feature[] = centroids.map(centroid => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [centroid.long, centroid.lat]
+    },
+    properties: {
+      uuid: centroid.uuid
+    }
+  }));
+  const pulsingDot = getPulsingDot(map, 120, "#72D961");
+  map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+
+  map.addSource(layerName, {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: features
+    }
+  });
+
+  map.addLayer({
+    id: layerName,
+    type: "symbol",
+    source: layerName,
+    layout: {
+      "icon-image": "pulsing-dot-centroids"
+    },
+    paint: {},
+    filter: zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
+  });
+};
 export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
@@ -527,9 +560,10 @@ export const addPopupToLayer = (
   }
 };
 
-const getGeoserverURL = (layerName: string) => {
+const getGeoserverURL = (layerName: string, isDashboard?: string | undefined) => {
+  const workspace = isDashboard ? `${geoserverWorkspace}_db` : geoserverWorkspace;
   return `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS
-      &VERSION=1.0.0&LAYER=${geoserverWorkspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
+      &VERSION=1.0.0&LAYER=${workspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}&TILEMATRIXSET=EPSG:900913&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}&RND=${Math.random()}`;
 };
 export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   const { name, styles } = layer;
@@ -562,56 +596,70 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   }
 };
 export const addGeojsonSourceToLayer = (
-  centroids: DashboardGetProjectsData[] | undefined,
+  centroids: DashboardGetProjectsData[] | { uuid: string; long: number; lat: number }[] | undefined,
   map: mapboxgl.Map,
   layer: LayerType,
   zoomFilterValue: number | undefined,
   existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
-  if (map && centroids) {
+  if (map && centroids && centroids.length > 0) {
     if (map.getSource(name)) {
       styles?.forEach((_: unknown, index: number) => {
         map.removeLayer(`${name}-${index}`);
       });
       map.removeSource(name);
     }
+
+    if (existsPolygons) {
+      return;
+    }
+
+    const features: GeoJSON.Feature[] = centroids.map((centroid: any) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [centroid.long || centroid.centroid?.long, centroid.lat || centroid.centroid?.lat]
+      },
+      properties: {
+        uuid: centroid.uuid,
+        name: centroid.name || centroid.uuid,
+        type: centroid.type || "polygon_centroid"
+      }
+    }));
+
+    // Add new source
     map.addSource(name, {
       type: "geojson",
       data: {
         type: "FeatureCollection",
-        features: centroids.map((centroid: any) => ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [centroid.long, centroid.lat]
-          },
-          properties: {
-            uuid: centroid.uuid,
-            name: centroid.name,
-            type: centroid.type
-          }
-        }))
+        features: features
       }
     });
+
+    // Add layers with styles
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
+
+    // Set filters for layers
     const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    // keep commented for future possible use
-    // if (existsPolygons) {
     layerIds.forEach(layerId => {
       let existingFilter = map.getFilter(layerId) || ["all"];
-      map.setFilter(layerId, existingFilter);
+
+      // Add zoom-based visibility filter
+      const zoomFilter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+
+      map.setFilter(layerId, ["all", existingFilter, zoomFilter]);
     });
-    // }
   }
 };
 export const addSourceToLayer = (
   layer: LayerType,
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
-  zoomFilter?: number | undefined
+  zoomFilter?: number | undefined,
+  isDashboard?: string | undefined
 ) => {
   const { name, geoserverLayerName, styles } = layer;
   try {
@@ -622,20 +670,21 @@ export const addSourceToLayer = (
         });
         map.removeSource(name);
       }
-      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);
+      const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, isDashboard);
       map.addSource(name, {
         type: "vector",
         tiles: [GEOSERVER_TILE_URL]
       });
       styles?.forEach((style: LayerWithStyle, index: number) => {
-        addLayerStyle(map, name, geoserverLayerName, style, index);
+        addLayerStyle(map, name, geoserverLayerName, style, index, zoomFilter);
       });
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-        addHoverEvent(layer, map);
-      }
+      // commented for future possible use
+      // if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
+      //   addHoverEvent(layer, map);
+      // }
     }
   } catch (e) {
     console.warn(e);
@@ -801,7 +850,8 @@ export const addLayerStyle = (
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
-  index_suffix: number | string
+  index_suffix: number | string,
+  zoomFilter?: number | undefined
 ) => {
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
   if (map.getLayer(`${layerName}-${index_suffix}`)) {
@@ -812,7 +862,10 @@ export const addLayerStyle = (
       ...style,
       id: `${layerName}-${index_suffix}`,
       source: sourceName,
-      "source-layer": sourceName
+      "source-layer": sourceName,
+      ...(zoomFilter && {
+        filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
+      })
     } as mapboxgl.AnyLayer,
     beforeLayer
   );
@@ -1112,4 +1165,55 @@ export const setMapStyle = (
     updateMapProjection(map, style);
     setCurrentStyle(style);
   }
+};
+
+export const enableTerrainAndAnimateCamera = async (
+  map: mapboxgl.Map,
+  setCurrentStyle: (style: MapStyle) => void,
+  currentStyle: string,
+  centroid: LngLat
+) => {
+  const shouldChangeStyle = currentStyle !== MapStyle.Satellite;
+  if (shouldChangeStyle) {
+    setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle);
+    map.once("style.load", () => {
+      setupTerrainAndAnimate(map, centroid);
+    });
+  } else {
+    setupTerrainAndAnimate(map, centroid);
+  }
+};
+
+const setupTerrainAndAnimate = (map: mapboxgl.Map, centroid: LngLat) => {
+  // if (!map.getSource("mapbox-dem")) {
+  //   map.addSource("mapbox-dem", {
+  //     type: "raster-dem",
+  //     url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+  //     tileSize: 512,
+  //     maxzoom: 14
+  //   });
+  //   map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
+  // }
+  animateCamera(map, centroid);
+};
+
+const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
+  let angle = 0;
+
+  function frame() {
+    angle += 0.4;
+    map.easeTo({
+      center: centroid,
+      zoom: 14,
+      pitch: 60,
+      bearing: angle,
+      duration: 80
+    });
+
+    // if (map.getTerrain()) {
+    requestAnimationFrame(frame);
+    // }
+  }
+
+  frame();
 };

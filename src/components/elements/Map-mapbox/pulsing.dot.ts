@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 
-export const getPulsingDot = function (map: mapboxgl.Map, size = 40) {
+export const getPulsingDot = function (map: mapboxgl.Map, size = 40, color = "rgba(255, 200, 200, 1)") {
   const pulsingDot = {
     width: size,
     height: size,
@@ -36,7 +36,7 @@ export const getPulsingDot = function (map: mapboxgl.Map, size = 40) {
       // Draw the inner circle.
       context.beginPath();
       context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2);
-      context.fillStyle = "rgba(255, 100, 100, 1)";
+      context.fillStyle = color;
       context.strokeStyle = "white";
       context.lineWidth = 2 + 2 * (1 - t);
       context.fill();

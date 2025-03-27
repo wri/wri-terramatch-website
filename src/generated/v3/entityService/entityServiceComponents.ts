@@ -33,6 +33,10 @@ export type EntityIndexQueryParams = {
    */
   ["page[number]"]?: number;
   search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
