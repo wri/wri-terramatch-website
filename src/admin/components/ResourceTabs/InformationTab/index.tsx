@@ -41,7 +41,7 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
     case "project-reports":
       return <ReportInformationAside type={type} />;
     case "site-reports":
-      return <ReportInformationAside type={type} parent={{ label: "Site", source: "site.name" }} />;
+      return <ReportInformationAside type={type} parent={{ label: "Site", source: "siteName" }} />;
     case "nursery-reports":
       return <ReportInformationAside type={type} parent={{ label: "Nursery", source: "nurseryName" }} />;
     default:

@@ -8,8 +8,13 @@ import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVaria
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useNurseryReportIndex } from "@/connections/Entity";
-import { NurseryReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  EntityIndexConnection,
+  EntityIndexConnectionProps,
+  useNurseryReportIndex,
+  useSiteReportIndex
+} from "@/connections/Entity";
+import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { BaseModelNames } from "@/types/common";
@@ -17,7 +22,7 @@ import { BaseModelNames } from "@/types/common";
 interface CompletedReportsTableProps {
   modelName: BaseModelNames;
   modelUUID: string;
-  onFetch?: (data: EntityIndexConnection<NurseryReportLightDto | any>) => void;
+  onFetch?: (data: EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>) => void;
 }
 
 const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedReportsTableProps) => {
@@ -31,9 +36,8 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
       hookReportIndex: useNurseryReportIndex
     },
     ["sites" as BaseModelNames]: {
-      //commented out when site report is implemented
-      // queryParam: { siteUuid: modelUUID },
-      // hookReportIndex: useSiteReportIndex
+      queryParam: { siteUuid: modelUUID },
+      hookReportIndex: useSiteReportIndex
     }
   };
 
@@ -44,10 +48,10 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
   const hookReportIndex = statusActionsMap?.[modelName!]?.hookReportIndex;
   const [isLoaded, entityReportIndex] = hookReportIndex
     ? hookReportIndex(entityIndexQueryParams as EntityIndexConnectionProps)
-    : [false, {} as EntityIndexConnection<NurseryReportLightDto | any>];
+    : [false, {} as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>];
 
   useEffect(() => {
-    onFetch?.(entityReportIndex as EntityIndexConnection<NurseryReportLightDto | any>);
+    onFetch?.(entityReportIndex as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>);
   }, [entityReportIndex, onFetch]);
 
   return (
