@@ -24,7 +24,6 @@ import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
-import { getFullName } from "@/utils/user";
 
 const NurseryReportDetailPage = () => {
   const t = useT();
@@ -116,7 +115,10 @@ const NurseryReportDetailPage = () => {
                   <PageCard title={t("Nursery Report Details")}>
                     <TextField label={t("Nursery Report name")} value={nurseryReport?.title!} />
                     <TextField label={t("Nursery name")} value={nursery?.name!} />
-                    <TextField label={t("Created by")} value={getFullName(nurseryReport?.createdByUser!)} />
+                    <TextField
+                      label={t("Created by")}
+                      value={(nurseryReport?.createdByFirstName ?? "") + " " + (nurseryReport?.createdByLastName ?? "")}
+                    />
                     <TextField label={t("Updated")} value={format(nurseryReport?.updatedAt!)} />
                     <TextField label={t("Due date")} value={format(nurseryReport?.dueAt!)} />
                     <TextField label={t("Submitted date")} value={format(nurseryReport?.submittedAt!)} />

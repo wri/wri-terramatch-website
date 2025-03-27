@@ -256,7 +256,13 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  title: string | null;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
@@ -685,34 +691,33 @@ export type NurseryReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  reportTitle: string | null;
-  projectReportTitle: string | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  feedback: string | null;
-  feedbackFields: string[] | null;
-  nothingToReport: boolean;
-  readableCompletionStatus: string;
-  title: string | null;
-  seedlingsYoungTrees: number | null;
-  interestingFacts: string | null;
-  sitePrep: string | null;
-  sharedDriveLink: string | null;
-  createdBy: number | null;
-  createdByUser: Record<string, any> | null;
-  approvedBy: number | null;
-  approvedByUser: Record<string, any> | null;
   /**
    * The associated task uuid
    */
   taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  title: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  nothingToReport: boolean;
+  completion: number | null;
+  seedlingsYoungTrees: number | null;
+  interestingFacts: string | null;
+  sitePrep: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
   migrated: boolean;
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
