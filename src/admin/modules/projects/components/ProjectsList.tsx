@@ -1,12 +1,13 @@
 import { Stack } from "@mui/material";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
-  DateField,
   EditButton,
   FunctionField,
   List,
+  NumberField,
   ReferenceInput,
   SearchInput,
   SelectInput,
@@ -29,7 +30,7 @@ import { getCountriesOptions } from "@/constants/options/countries";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { optionToChoices } from "@/utils/options";
+import { formatOptionsList, optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
@@ -54,7 +55,7 @@ const tableMenu = [
 
 const ProjectDataGrid = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
-
+  const t = useT();
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Project Name" />
@@ -78,7 +79,7 @@ const ProjectDataGrid = () => {
         }}
       />
       <TextField source="organisationName" label="Organization" />
-      <DateField source="plantingStartDate" label="Establishment" locales="en-GB" />
+      <NumberField source="totalHectaresRestoredSum" label="Hectares Restored" sortable={false} emptyText="0" />
       <FunctionField
         source="frameworkKey"
         label="Framework"
@@ -86,6 +87,25 @@ const ProjectDataGrid = () => {
           frameworkInputChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey
         }
         sortable={false}
+      />
+      <FunctionField
+        source="country"
+        label="Country"
+        render={(props: any) => {
+          return (
+            props?.country && (
+              <div className="flex items-center gap-2">
+                <img
+                  src={`/flags/${props?.country?.toLowerCase()}.svg`}
+                  alt="flas"
+                  className="h-6 w-10 min-w-[40px] object-cover"
+                />
+                <Text variant="text-14-light">{formatOptionsList(getCountriesOptions(t), props?.country ?? [])}</Text>
+              </div>
+            )
+          );
+        }}
+        sortable={true}
       />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
@@ -108,14 +128,16 @@ export const ProjectsList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       className="select-page-admin"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
+      perPage={1000}
+      filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,

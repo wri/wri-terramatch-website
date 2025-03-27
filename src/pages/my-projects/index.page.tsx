@@ -17,25 +17,12 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useProjectIndex } from "@/connections/Entity";
 import { useMyOrg } from "@/connections/Organisation";
-import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
 
 const MyProjectsPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
-  const { openToast } = useToastContext();
 
-  const [isLoaded, { entities: projects, refetch }] = useProjectIndex();
-
-  const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
-    onSuccess() {
-      refetch();
-      openToast(t("The project has been successfully deleted"));
-    },
-    onError() {
-      openToast(t("Something went wrong!"), ToastType.ERROR);
-    }
-  });
+  const [isLoaded, { entities: projects }] = useProjectIndex();
 
   const hasProjects = projects != null && projects.length > 0;
   return (
@@ -64,14 +51,7 @@ const MyProjectsPage = () => {
                     as={Fragment}
                     itemAs={Fragment}
                     items={projects}
-                    render={project => (
-                      <ProjectCard
-                        project={project}
-                        onDelete={uuid => {
-                          deleteProject({ pathParams: { uuid } });
-                        }}
-                      />
-                    )}
+                    render={project => <ProjectCard project={project} />}
                   />
                 </PageSection>
               ) : (

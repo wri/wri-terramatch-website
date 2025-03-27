@@ -19,7 +19,7 @@ const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
     "site-reports",
     report.uuid,
-    `${report.site.name} - ${report.report_title}`
+    `${report.site?.name} - ${report.report_title}`
   );
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "site-reports",

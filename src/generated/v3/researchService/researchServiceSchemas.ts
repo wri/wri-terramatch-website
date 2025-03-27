@@ -113,27 +113,21 @@ export type ReportingPeriodDto = {
   treeSpecies: TreeSpeciesDto[];
 };
 
-export type SitePolygonDto = {
+export type SitePolygonFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   name: string;
   status: "draft" | "submitted" | "needs-more-information" | "approved";
   /**
-   * If this ID points to a deleted site, the tree species and reporting period will be empty.
+   * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string;
-  projectId: number;
-  geometry: Record<string, any>;
   /**
    * @format date-time
    */
   plantStart: string | null;
-  /**
-   * @format date-time
-   */
-  plantEnd: string | null;
-  practice: string | null;
-  targetSys: string | null;
-  distr: string | null;
-  numTrees: number | null;
   calcArea: number | null;
   /**
    * All indicators currently recorded for this site polygon
@@ -147,6 +141,19 @@ export type SitePolygonDto = {
     | IndicatorMsuCarbonDto
   )[];
   /**
+   * The name of the associated Site.
+   */
+  siteName: string;
+  /**
+   * @format date-time
+   */
+  plantEnd: string | null;
+  geometry: Record<string, any>;
+  practice: string | null;
+  targetSys: string | null;
+  distr: string | null;
+  numTrees: number | null;
+  /**
    * The tree species associated with the establishment of the site that this polygon relates to.
    */
   establishmentTreeSpecies: TreeSpeciesDto[];
@@ -154,6 +161,35 @@ export type SitePolygonDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
+};
+
+export type SitePolygonLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  name: string;
+  status: "draft" | "submitted" | "needs-more-information" | "approved";
+  /**
+   * If this ID points to a deleted site, the indicators will be empty.
+   */
+  siteId: string;
+  /**
+   * @format date-time
+   */
+  plantStart: string | null;
+  calcArea: number | null;
+  /**
+   * All indicators currently recorded for this site polygon
+   */
+  indicators: (
+    | IndicatorTreeCoverLossDto
+    | IndicatorHectaresDto
+    | IndicatorTreeCountDto
+    | IndicatorTreeCoverDto
+    | IndicatorFieldMonitoringDto
+    | IndicatorMsuCarbonDto
+  )[];
   /**
    * The name of the associated Site.
    */

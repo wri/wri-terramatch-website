@@ -34,6 +34,21 @@
   right: 10px;
 }
 
+.popup-content-map:has(.popup-project:first-child) + .mapboxgl-popup-close-button {
+  top: 10px;
+  right: 10px;
+  background-color: #637579;
+  color: white;
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 8px !important;
+}
+
 .custom-popup-close-button {
   .mapboxgl-popup-tip {
     border: 6px solid #0c33f000;
@@ -62,9 +77,38 @@
 .modal-impact-story-content iframe,
 .modal-impact-story-content .ql-video {
   width: 100% !important;
-  height: 400px !important;
+  aspect-ratio: 16/9 !important;
   max-width: 100% !important;
+  height: auto !important;
 }
+
+@supports not (aspect-ratio: 16/9) {
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video {
+    height: 0 !important;
+    padding-bottom: 56.25% !important;
+    position: relative !important;
+  }
+  
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+@media (min-width: 1500px) {
+  .modal-impact-story-content iframe,
+  .modal-impact-story-content .ql-video {
+    max-width: 75% !important;
+    margin: 0 auto !important;
+    display: block !important;
+  }
+}
+
 .modal-impact-story-content p {
   margin-bottom: 6px;
 }

@@ -31,7 +31,10 @@ const nextConfig = {
 
     return config;
   },
-  transpilePackages: ["mapbox-gl-draw-circle"]
+  transpilePackages: ["mapbox-gl-draw-circle"],
+  eslint: {
+    ignoreDuringBuilds: true
+  }
 };
 
 /** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */

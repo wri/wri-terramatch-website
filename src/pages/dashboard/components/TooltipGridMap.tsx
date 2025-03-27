@@ -52,8 +52,8 @@ const TooltipGridMap = (props: TooltipGridProps) => {
             ))}
         </div>
         {learnMore && (
-          <button>
-            <Text onClick={() => learnMore()} className="mt-1 text-start text-primary underline" variant="text-12-bold">
+          <button onClick={() => learnMore()}>
+            <Text className="mt-1 text-start text-primary underline" variant="text-12-bold">
               {t("Learn More")}
             </Text>
           </button>

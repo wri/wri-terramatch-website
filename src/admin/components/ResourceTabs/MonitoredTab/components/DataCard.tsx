@@ -12,18 +12,15 @@ import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import MapContainer from "@/components/elements/Map-mapbox/Map";
-import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_MONITORED } from "@/components/elements/Table/TableVariants";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
-import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useSitePolygons } from "@/connections/SitePolygons";
+import SitePolygonsTable from "@/components/extensive/Tables/SitePolygonsTable";
+import { SitePolygonIndexConnectionProps } from "@/connections/SitePolygons";
 import {
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
@@ -44,13 +41,13 @@ import {
   formatDescriptionIndicator,
   getKeyValue,
   getOrderTop3,
-  processTreeCoverData,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
 import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import MonitoredCharts from "./MonitoredCharts";
+import MonitoredDataMap from "./MonitoredDataMap";
 
 interface TableData {
   polygonName: string;
@@ -115,16 +112,17 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
       return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
     },
     meta: { style: { width: "13.65%" } }
-  },
-  {
-    accessorKey: "base_line",
-    header: "Baseline",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return format(new Date(value), "dd/MM/yyyy");
-    },
-    meta: { style: { width: "8.87%" } }
   }
+  // Uncomment when LightResoruce for research service is applied
+  // {
+  //   accessorKey: "base_line",
+  //   header: "Baseline",
+  //   cell: (props: any) => {
+  //     const value = props.getValue();
+  //     return format(new Date(value), "dd/MM/yyyy");
+  //   },
+  //   meta: { style: { width: "8.87%" } }
+  // }
 ];
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
@@ -216,49 +214,6 @@ const noDataGraph = (
   </div>
 );
 
-const indicatorDescription1 =
-  "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
-const indicatorDescription2 =
-  "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
-
-const noDataMap = (
-  <div className="absolute top-0 flex h-full w-full">
-    <div className="relative flex w-[23vw] flex-col gap-3 p-6">
-      <div className="absolute top-0 left-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
-      <Text
-        variant={"text-14-semibold"}
-        className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
-      >
-        Indicator Description
-      </Text>
-      <div className="z-[5] flex min-h-0 flex-col gap-3 overflow-auto pr-1">
-        <Text variant={"text-14-light"} className="text-white" containHtml>
-          {indicatorDescription1}
-        </Text>
-        <Text variant={"text-14-light"} className="text-white" containHtml>
-          {indicatorDescription2}
-        </Text>
-      </div>
-    </div>
-    <div className="w-full p-6">
-      <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-        <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
-        <Text variant={"text-32-semibold"} className="z-10 text-white">
-          No Data to Display
-        </Text>
-        <div className="flex items-center gap-1">
-          <Text variant={"text-14"} className="z-10 text-white">
-            RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
-          </Text>
-          <Tooltip content={"Tooltip"}>
-            <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
-          </Tooltip>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const sumValuesTreeCoverLoss = (data: any) => {
   return data?.reduce((totalAcc: number, data: { [key: number | string]: number }) => {
     const sum = Object.values(data?.data).reduce((acc: number, curr: number) => acc + curr, 0);
@@ -301,12 +256,11 @@ const DataCard = ({
   const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
+
   const basename = useBasename();
-  const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
     useMonitoredData(type!, record.uuid);
-  const [, { sitePolygons }] = useSitePolygons({ entityName: type!, entityUuid: record.uuid });
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
@@ -334,7 +288,7 @@ const DataCard = ({
     { treeCoverLoss: 0, treeCoverLossFires: 0 }
   );
 
-  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
+  const { setSearchTerm, searchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
   const { openNotification } = useNotificationContext();
@@ -438,7 +392,11 @@ const DataCard = ({
         {
           accessorKey: "projectPhase",
           header: "Project Phase",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? value.charAt(0).toUpperCase() + value.slice(1) : "-";
+          }
         },
         {
           accessorKey: "plusMinusPercent",
@@ -931,6 +889,7 @@ const DataCard = ({
       )
     }
   };
+
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
@@ -971,17 +930,13 @@ const DataCard = ({
           </div>
           <When condition={tabActive === 0}>
             <div className="relative w-full px-6 pb-6">
-              <Table
-                columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-                data={
-                  (indicatorSlug === "treeCover"
-                    ? processTreeCoverData(sitePolygons ?? [])
-                    : polygonsIndicator ?? []) as any
-                }
+              <SitePolygonsTable
+                entityName={type!}
+                entityUuid={record.uuid}
+                searchTerm={searchTerm}
+                presentIndicator={indicatorSlug as SitePolygonIndexConnectionProps["presentIndicator"]}
+                TABLE_COLUMNS_MAPPING={TABLE_COLUMNS_MAPPING}
                 variant={VARIANT_TABLE_MONITORED}
-                classNameWrapper="!overflow-visible"
-                visibleRows={50}
-                border={1}
               />
             </div>
           </When>
@@ -1024,21 +979,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 2}>
-            <div className="relative h-[calc(100vh-295px)] w-full">
-              <div className="absolute left-1/2 top-6 z-10">
-                <TooltipMapMonitoring />
-              </div>
-              <MapContainer
-                className="!h-full"
-                mapFunctions={mapFunctions}
-                sitePolygonData={[]}
-                hasControls={!selected.includes("6")}
-                showLegend={!selected.includes("6")}
-                legendPosition="bottom-right"
-                showViewGallery={false}
-              />
-              <When condition={selected.includes("6")}>{noDataMap}</When>
-            </div>
+            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} />
           </When>
         </div>
       </div>

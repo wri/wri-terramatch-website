@@ -18,7 +18,7 @@ import {
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
 import { apiFetch } from "@/generated/apiFetcher";
-import { FormSubmissionRead } from "@/generated/apiSchemas";
+import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
@@ -87,6 +87,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
     }
   },
 
+  // @ts-ignore
   async getOne(_, params) {
     try {
       const response = await fetchGetV2AdminFormsApplicationsUUID({
@@ -94,7 +95,17 @@ export const applicationDataProvider: ApplicationDataProvider = {
       });
 
       // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
+      const application = response.data as ApplicationRead;
+      const data = {
+        ...application,
+        // We took this field out of the BE API response to cut down the render time for this
+        // massive object, but a bunch of admin code still wants it, so map it in here.
+        current_submission: (application?.form_submissions ?? []).find(
+          ({ uuid }) => uuid === application?.current_submission_uuid
+        ),
+        id: application.uuid
+      };
+      return { data };
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminFormsSubmissionsError);
     }

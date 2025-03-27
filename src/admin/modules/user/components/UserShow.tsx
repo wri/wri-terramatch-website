@@ -2,6 +2,7 @@ import {
   ArrayField,
   DateField,
   FunctionField,
+  Labeled,
   ReferenceField,
   Show,
   SimpleShowLayout,
@@ -9,8 +10,13 @@ import {
   TextField,
   useShowContext
 } from "react-admin";
+import { When } from "react-if";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
+import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
 
 import modules from "../..";
@@ -18,31 +24,19 @@ import { UserShowAside } from "./UserShowAside";
 
 function ManagedProjects() {
   const { isLoading: ctxLoading, record } = useShowContext();
-  if (ctxLoading || !["project-developer", "project-manager"].includes(record?.role)) return null;
-  const isMonitoring = record?.role === "project-developer" ? true : false;
+
+  if (ctxLoading || record.role !== "project-manager") return null;
 
   return (
-    <>
-      <ArrayField
-        source={isMonitoring ? "monitoring_projects" : "managed_projects"}
-        label={isMonitoring ? "Monitoring Projects" : "Managed Projects"}
-      >
-        <SingleFieldList className="pb-2 pt-2">
+    <Labeled>
+      <ArrayField source="managed_projects" label="Managed Projects">
+        <SingleFieldList className="pt-2 pb-2">
           <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
             <TextField source="name" />
           </ReferenceField>
         </SingleFieldList>
       </ArrayField>
-      {record.role == "project-manager" && record.monitoring_projects.length > 0 && (
-        <ArrayField source="monitoring_projects" label="Monitoring Projects">
-          <SingleFieldList className="pb-2 pt-2">
-            <ReferenceField link="show" source="uuid" reference={modules.project.ResourceName}>
-              <TextField source="name" />
-            </ReferenceField>
-          </SingleFieldList>
-        </ArrayField>
-      )}
-    </>
+    </Labeled>
   );
 }
 
@@ -53,8 +47,8 @@ const renderFrameworks = (property: string) => (record: any) => {
 
 export const UserShow = () => (
   <Show actions={<ShowActions deleteProps={{ confirmTitle: "Delete User" }} />} aside={<UserShowAside />}>
-    <div className="flex">
-      <SimpleShowLayout>
+    <div className="grid-user-show p-2">
+      <SimpleShowLayout className="">
         <TextField source="first_name" label="First Name" emptyText="Not Provided" />
         <TextField source="last_name" label="Last Name" emptyText="Not Provided" />
         <TextField source="email_address" label="Professional Email Address" emptyText="Not Provided" />
@@ -69,10 +63,57 @@ export const UserShow = () => (
           render={renderFrameworks("all_frameworks")}
         />
         <FunctionField label="Direct Frameworks" render={renderFrameworks("direct_frameworks")} />
-      </SimpleShowLayout>
-      <SimpleShowLayout>
         <ManagedProjects />
       </SimpleShowLayout>
+      <div className="px-4 pb-8">
+        <Table
+          columns={[
+            {
+              header: "Monitoring Projects",
+              accessorKey: "project_name",
+              enableSorting: false,
+              cell: props => (
+                <div className="flex items-center gap-2">
+                  <span>{String(props.getValue() ?? "-")}</span>
+                  <When condition={props.row.original.isNew}>
+                    <ToolTip
+                      content="New Project"
+                      colorBackground="white"
+                      placement="right"
+                      textVariantContent="text-14"
+                    >
+                      <Icon
+                        name={IconNames.NEW_TAG_TREE_SPECIES_CUSTOM}
+                        className="min-h-7 min-w-7 h-7 w-7 text-blueCustom-700 opacity-50"
+                      />
+                    </ToolTip>
+                  </When>
+                </div>
+              )
+            }
+          ]}
+          variant={VARIANT_TABLE_TREE_SPECIES}
+          data={[
+            {
+              project_name: "Project 123",
+              project_uuid: "123"
+            },
+            {
+              project_name: "Project 456",
+              project_uuid: "456",
+              isNew: true
+            },
+            {
+              project_name: "Project 789",
+              project_uuid: "789"
+            },
+            {
+              project_name: "Project 101",
+              project_uuid: "101"
+            }
+          ]}
+        />
+      </div>
     </div>
   </Show>
 );

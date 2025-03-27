@@ -20,22 +20,22 @@ const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
     "project-reports",
     report.uuid,
-    report.report_title
+    report.reportTitle
   );
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "project-reports",
-    entityUUID: report.uuid,
-    entityStatus: report.status,
-    updateRequestStatus: report.update_request_status
+    entityUUID: report?.uuid,
+    entityStatus: report?.status,
+    updateRequestStatus: report?.updateRequestStatus
   });
 
-  const subtitles = [report.project?.name, useFrameworkTitle()];
+  const subtitles = [report?.projectName, useFrameworkTitle()];
 
   return (
     <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
       <If condition={report?.status === "started"}>
         <Then>
-          <Button as={Link} href={`/entity/project-reports/edit/${report.uuid}`}>
+          <Button as={Link} href={`/entity/project-reports/edit/${report?.uuid}`}>
             {t("Continue Report")}
           </Button>
         </Then>
