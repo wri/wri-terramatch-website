@@ -10,7 +10,8 @@ export const LAYERS_NAMES = {
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
-  WORLD_COUNTRIES: "world_countries_generalized"
+  WORLD_COUNTRIES: "world_countries_generalized",
+  POLYGON_CENTROIDS: "polygon_centroids"
 };
 export const layersList: LayerType[] = [
   {
