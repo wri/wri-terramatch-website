@@ -44,7 +44,7 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
           .fill(0)
           .map((_, index) => {
             const year = new Date().getFullYear() - 5 + index;
-            return { title: `${year}`, value: `${year}` };
+            return { title: `${year}`, value: year };
           }),
         required: true
       }
