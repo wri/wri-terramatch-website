@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
@@ -8,7 +8,13 @@ import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVaria
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { GetV2ENTITYUUIDReportsResponse, useGetV2ENTITYUUIDReports } from "@/generated/apiComponents";
+import {
+  EntityIndexConnection,
+  EntityIndexConnectionProps,
+  useNurseryReportIndex,
+  useSiteReportIndex
+} from "@/connections/Entity";
+import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { BaseModelNames } from "@/types/common";
@@ -16,58 +22,89 @@ import { BaseModelNames } from "@/types/common";
 interface CompletedReportsTableProps {
   modelName: BaseModelNames;
   modelUUID: string;
-  onFetch?: (data: GetV2ENTITYUUIDReportsResponse) => void;
+  onFetch?: (data: EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>) => void;
 }
 
 const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedReportsTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState();
+  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
 
-  const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
-    {
-      pathParams: { entity: modelName, uuid: modelUUID },
-      queryParams: queryParams
+  const statusActionsMap = {
+    ["nurseries" as BaseModelNames]: {
+      queryParam: { nurseryUuid: modelUUID },
+      hookReportIndex: useNurseryReportIndex
     },
-    {
-      keepPreviousData: true,
-      onSuccess: onFetch
+    ["sites" as BaseModelNames]: {
+      queryParam: { siteUuid: modelUUID },
+      hookReportIndex: useSiteReportIndex
     }
-  );
+  };
+
+  const entityIndexQueryParams = {
+    filter: statusActionsMap?.[modelName!]?.queryParam,
+    ...tableParams
+  };
+  const hookReportIndex = statusActionsMap?.[modelName!]?.hookReportIndex;
+  const [isLoaded, entityReportIndex] = hookReportIndex
+    ? hookReportIndex(entityIndexQueryParams as EntityIndexConnectionProps)
+    : [false, {} as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>];
+
+  useEffect(() => {
+    onFetch?.(entityReportIndex as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>);
+  }, [entityReportIndex, onFetch]);
 
   return (
     <ServerSideTable
-      meta={reports?.meta}
-      data={reports?.data || []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
+      meta={{
+        last_page:
+          entityReportIndex?.indexTotal && tableParams.pageSize
+            ? Math.ceil(entityReportIndex?.indexTotal / tableParams.pageSize)
+            : 1
+      }}
+      data={entityReportIndex.entities || []}
+      isLoading={!isLoaded}
+      onQueryParamChange={param => {
+        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
+        if (param?.sort) {
+          const startWithMinus = param?.sort.startsWith("-");
+          sortDirection = startWithMinus ? "DESC" : "ASC";
+          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
+        }
+        setTableParams({
+          pageNumber: param.page,
+          pageSize: param.per_page,
+          sortDirection,
+          sortField
+        } as EntityIndexConnectionProps);
+      }}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {
-          accessorKey: "due_at",
+          accessorKey: "dueAt",
           header: t("Due date"),
           cell: props => {
             return format(props.getValue() as string);
           }
         },
         {
-          accessorKey: "submitted_at",
+          accessorKey: "submittedAt",
           header: t("Date submitted"),
           cell: props => {
             return format(props.getValue() as string);
           }
         },
         {
-          accessorKey: "report_title",
+          accessorKey: "reportTitle",
           header: t("Report Title"),
           enableSorting: false,
           cell: props => {
-            const report_title = props.getValue() as string;
+            const reportTitle = props.getValue() as string;
             const title = props.row.original.title;
 
             return (
               <Text variant="text-14-light" className="whitespace-normal">
-                {report_title ?? title}
+                {reportTitle ?? title}
               </Text>
             );
           }
@@ -83,7 +120,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
           }
         },
         {
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;

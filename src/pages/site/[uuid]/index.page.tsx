@@ -82,7 +82,7 @@ const SiteDetailPage = () => {
                 {
                   key: "completed-tasks",
                   title: t("Completed Reports"),
-                  body: <SiteCompletedReportsTab siteUUID={site?.uuid ?? ""} />
+                  body: <SiteCompletedReportsTab site={site!} />
                 },
                 {
                   key: "audit-log",
