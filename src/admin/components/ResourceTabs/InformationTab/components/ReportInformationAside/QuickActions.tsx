@@ -73,7 +73,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             <Button
               variant="outlined"
               component={Link}
-              to={createPath({ resource: modules.nursery.ResourceName, type: "show", id: record?.nursery?.uuid })}
+              to={createPath({ resource: modules.nursery.ResourceName, type: "show", id: record?.nurseryUuid })}
               fullWidth
               label="Back To Nursery"
             />

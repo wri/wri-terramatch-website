@@ -103,8 +103,8 @@ const QuickActions: FC = () => {
             variant="outlined"
             onClick={() =>
               handleNavigate("nursery", {
-                displayedFilters: JSON.stringify({ project_uuid: true }),
-                filter: JSON.stringify({ project_uuid: record.uuid })
+                displayedFilters: JSON.stringify({ projectUuid: true }),
+                filter: JSON.stringify({ projectUuid: record.uuid })
               })
             }
           >

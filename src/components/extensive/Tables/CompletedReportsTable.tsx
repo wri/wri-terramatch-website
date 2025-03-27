@@ -8,8 +8,13 @@ import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVaria
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useSiteReportIndex } from "@/connections/Entity";
-import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  EntityIndexConnection,
+  EntityIndexConnectionProps,
+  useNurseryReportIndex,
+  useSiteReportIndex
+} from "@/connections/Entity";
+import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { BaseModelNames } from "@/types/common";
@@ -17,7 +22,7 @@ import { BaseModelNames } from "@/types/common";
 interface CompletedReportsTableProps {
   modelName: BaseModelNames;
   modelUUID: string;
-  onFetch?: (data: EntityIndexConnection<SiteReportLightDto | any>) => void;
+  onFetch?: (data: EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>) => void;
 }
 
 const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedReportsTableProps) => {
@@ -27,9 +32,8 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
 
   const statusActionsMap = {
     ["nurseries" as BaseModelNames]: {
-      //commented out when nursery report is implemented
-      // queryParam: { nurseryUuid: modelUUID },
-      // hookReportIndex: useNurseryReportIndex
+      queryParam: { nurseryUuid: modelUUID },
+      hookReportIndex: useNurseryReportIndex
     },
     ["sites" as BaseModelNames]: {
       queryParam: { siteUuid: modelUUID },
@@ -44,10 +48,10 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
   const hookReportIndex = statusActionsMap?.[modelName!]?.hookReportIndex;
   const [isLoaded, entityReportIndex] = hookReportIndex
     ? hookReportIndex(entityIndexQueryParams as EntityIndexConnectionProps)
-    : [false, {} as EntityIndexConnection<SiteReportLightDto | any>];
+    : [false, {} as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>];
 
   useEffect(() => {
-    onFetch?.(entityReportIndex as EntityIndexConnection<SiteReportLightDto | any>);
+    onFetch?.(entityReportIndex as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>);
   }, [entityReportIndex, onFetch]);
 
   return (
@@ -58,7 +62,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
             ? Math.ceil(entityReportIndex?.indexTotal / tableParams.pageSize)
             : 1
       }}
-      data={entityReportIndex?.entities || []}
+      data={entityReportIndex.entities || []}
       isLoading={!isLoaded}
       onQueryParamChange={param => {
         let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
