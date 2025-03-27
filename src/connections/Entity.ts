@@ -63,6 +63,7 @@ export type EntityIndexConnectionProps = {
   sortField?: string;
   sortDirection?: "ASC" | "DESC";
   filter?: Partial<Record<EntityIndexFilterKey, string>>;
+  sideloads?: EntityIndexQueryParams["sideloads"];
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
@@ -74,7 +75,11 @@ const entitySelector =
 
 const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
-  const queryParams = { "page[number]": props?.pageNumber, "page[size]": props?.pageSize } as EntityIndexQueryParams;
+  const queryParams = {
+    "page[number]": props?.pageNumber,
+    "page[size]": props?.pageSize,
+    sideloads: props?.sideloads
+  } as EntityIndexQueryParams;
   if (props?.sortField != null) {
     queryParams["sort[field]"] = props.sortField;
     queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
