@@ -128,14 +128,16 @@ export const ProjectsList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       className="select-page-admin"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
+      perPage={1000}
+      filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
