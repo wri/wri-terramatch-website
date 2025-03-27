@@ -1,3 +1,47 @@
+import { StoreResourceMap } from "@/store/apiSlice";
+import {
+  ProjectLightDto,
+  ProjectFullDto,
+  SiteLightDto,
+  SiteFullDto,
+  NurseryLightDto,
+  NurseryFullDto,
+  ProjectReportLightDto,
+  ProjectReportFullDto,
+  DemographicDto,
+  SeedingDto,
+  TreeSpeciesDto,
+  ScientificNameDto,
+  EstablishmentsTreesDto,
+  TreeReportCountsDto
+} from "./entityServiceSchemas";
+
+export const ENTITY_SERVICE_RESOURCES = [
+  "projects",
+  "sites",
+  "nurseries",
+  "projectReports",
+  "demographics",
+  "seedings",
+  "treeSpecies",
+  "treeSpeciesScientificNames",
+  "establishmentTrees",
+  "treeReportCounts"
+] as const;
+
+export type EntityServiceApiResources = {
+  projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
+  sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
+  nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
+  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
+  demographics: StoreResourceMap<DemographicDto>;
+  seedings: StoreResourceMap<SeedingDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
+  treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
+  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+};
+
 export const DemographicCollections = {
   WORKDAYS_PROJECT: [
     "paid-project-management",

@@ -8,29 +8,16 @@ import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import {
-  DemographicDto,
-  EstablishmentsTreesDto,
-  NurseryFullDto,
-  NurseryLightDto,
-  ProjectFullDto,
-  ProjectLightDto,
-  ProjectReportFullDto,
-  ProjectReportLightDto,
-  SeedingDto,
-  SiteFullDto,
-  SiteLightDto,
-  TreeReportCountsDto,
-  TreeSpeciesDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
-import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+  ENTITY_SERVICE_RESOURCES,
+  EntityServiceApiResources
+} from "@/generated/v3/entityService/entityServiceConstants";
+import { JOB_SERVICE_RESOURCES, JobServiceApiResources } from "@/generated/v3/jobService/jobServiceConstants";
 import {
-  LoginDto,
-  OrganisationDto,
-  ResetPasswordResponseDto,
-  UserDto,
-  VerificationUserResponseDto
-} from "@/generated/v3/userService/userServiceSchemas";
+  RESEARCH_SERVICE_RESOURCES,
+  ResearchServiceApiResources
+} from "@/generated/v3/researchService/researchServiceConstants";
+import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
+import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
@@ -94,53 +81,17 @@ export type StoreResource<AttributeType> = {
 
 export type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeType>>;
 
-// The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
-// be added to this list.
 export const RESOURCES = [
-  "delayedJobs",
-  "demographics",
-  "establishmentTrees",
-  "logins",
-  "organisations",
-  "passwordResets",
-  "verifications",
-  "projects",
-  "nurseries",
-  "seedings",
-  "sites",
-  "treeReportCounts",
-  "treeSpecies",
-  "users",
-  "sitePolygons",
-  "projectReports"
+  ...ENTITY_SERVICE_RESOURCES,
+  ...JOB_SERVICE_RESOURCES,
+  ...USER_SERVICE_RESOURCES,
+  ...RESEARCH_SERVICE_RESOURCES
 ] as const;
 
-// The store for entities may contain either light DTOs or full DTOs depending on where the
-// data came from. This type allows us to specify that the shape of the objects in the store
-// conform to the light DTO and all full DTO members are optional. The connections that use
-// this section of the store should explicitly cast their member object to either the light
-// or full version depending on what the connection is expected to produce. See Entity.ts connection
-// for more.
-type EntityType<LightDto, FullDto> = LightDto & Partial<Omit<FullDto, keyof LightDto>>;
-
-type ApiResources = {
-  delayedJobs: StoreResourceMap<DelayedJobDto>;
-  demographics: StoreResourceMap<DemographicDto>;
-  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
-  logins: StoreResourceMap<LoginDto>;
-  organisations: StoreResourceMap<OrganisationDto>;
-  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
-  verifications: StoreResourceMap<VerificationUserResponseDto>;
-  projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
-  seedings: StoreResourceMap<SeedingDto>;
-  sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
-  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  users: StoreResourceMap<UserDto>;
-  sitePolygons: StoreResourceMap<SitePolygonLightDto>;
-  nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
-  projectReports: StoreResourceMap<EntityType<ProjectReportLightDto, ProjectReportFullDto>>;
-};
+type ApiResources = EntityServiceApiResources &
+  JobServiceApiResources &
+  UserServiceApiResources &
+  ResearchServiceApiResources;
 
 export type ResourceType = (typeof RESOURCES)[number];
 

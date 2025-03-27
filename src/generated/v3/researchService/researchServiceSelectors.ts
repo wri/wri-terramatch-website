@@ -21,8 +21,12 @@ export const sitePolygonsIndexIndexMeta = (
   variables: Omit<SitePolygonsIndexVariables, "body">
 ) => indexMetaSelector<SitePolygonsIndexQueryParams, {}>({ url: "/research/v3/sitePolygons", resource, ...variables });
 
-export const bulkUpdateSitePolygonsIsFetching = () =>
-  isFetchingSelector<{}, {}>({ url: "/research/v3/sitePolygons", method: "patch" });
+export const bulkUpdateSitePolygonsIsFetching = isFetchingSelector<{}, {}>({
+  url: "/research/v3/sitePolygons",
+  method: "patch"
+});
 
-export const bulkUpdateSitePolygonsFetchFailed = () =>
-  fetchFailedSelector<{}, {}>({ url: "/research/v3/sitePolygons", method: "patch" });
+export const bulkUpdateSitePolygonsFetchFailed = fetchFailedSelector<{}, {}>({
+  url: "/research/v3/sitePolygons",
+  method: "patch"
+});

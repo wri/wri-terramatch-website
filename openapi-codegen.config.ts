@@ -12,9 +12,10 @@ import {
   OpenAPIObject,
   OperationObject,
   ParameterObject,
-  PathItemObject
+  PathItemObject,
+  SchemaObject
 } from "openapi3-ts";
-import ts, { Expression, PropertyAssignment } from "typescript";
+import ts, { Expression, PropertyAssignment, TypeElement } from "typescript";
 
 const f = ts.factory;
 
@@ -202,6 +203,99 @@ const writeFile = async (nodes: ts.Node[], filenameSuffix: string, context: Cont
 
 const generateConstants = async (context: Context, config: ConfigBase) => {
   const nodes: ts.Node[] = [];
+  const dtoImports = new Set<string>();
+
+  // A mapping of resource type to a set of the DTOs represented for that type.
+  const resources: _.Dictionary<Set<string>> = {};
+  Object.values(context.openAPIDocument.paths).forEach((verbs: PathItemObject) => {
+    Object.entries(verbs).forEach(([verb, operation]: [string, OperationObject]) => {
+      if (!["get", "post", "put", "patch"].includes(verb)) return;
+
+      // Find the response schema for the first 2XX response in the definition. There is expected to
+      // be only one 2XX response defined.
+      const okResponse = Object.entries(operation.responses ?? {}).find(([code]) => code.startsWith("2"))?.[1];
+      const schema = okResponse?.content?.["application/json"]?.schema as SchemaObject;
+      if (schema == null) return;
+
+      const schemaProperties: _.Dictionary<SchemaObject>[] =
+        schema.oneOf == null
+          ? [schema.properties!]
+          : (schema.oneOf as SchemaObject[]).map(({ properties }) => properties!);
+      for (const schema of schemaProperties) {
+        for (const definition of [schema.data, schema.included]) {
+          if (definition == null) continue;
+
+          const allDtoProperties: _.Dictionary<SchemaObject>[] = [];
+          if (definition.type === "object") allDtoProperties.push(definition.properties!);
+          else {
+            if ((definition.items! as SchemaObject).oneOf != null) {
+              for (const oneOf of (definition.items! as SchemaObject).oneOf!) {
+                allDtoProperties.push((oneOf as SchemaObject).properties!);
+              }
+            } else {
+              allDtoProperties.push((definition.items! as SchemaObject).properties!);
+            }
+          }
+          for (const dtoProperties of allDtoProperties) {
+            const type = dtoProperties.type!.example as string;
+            const dtoName = (dtoProperties.attributes!["$ref"] as string).split("/").pop();
+            // All top level `data` members of a JSON API schema from the v3 API should have a "type" with an
+            // example specifying the resource type, and a ref to a DTO schema definition.
+            if (type == null || dtoName == null) {
+              throw new Error("Invalid operation definition from v3 API: " + operation.operationId);
+            }
+
+            if (resources[type] == null) resources[type] = new Set<string>();
+            resources[type].add(dtoName);
+          }
+        }
+      }
+    });
+  });
+
+  const dtoTypes: TypeElement[] = [];
+  Object.entries(resources).forEach(([resourceType, dtoSet]) => {
+    const dtoNames = [...dtoSet.values()];
+    dtoNames.forEach(dtoName => dtoImports.add(dtoName));
+    const dtosType = f.createTypeReferenceNode("StoreResourceMap", [
+      dtoNames.length === 1
+        ? f.createTypeReferenceNode(dtoNames[0])
+        : f.createUnionTypeNode(dtoNames.map(dtoName => f.createTypeReferenceNode(dtoName)))
+    ]);
+
+    dtoTypes.push(f.createPropertySignature(undefined, resourceType, undefined, dtosType));
+  });
+  if (dtoTypes.length > 0) {
+    nodes.unshift(
+      createNamedImport("StoreResourceMap", "@/store/apiSlice"),
+      createNamedImport([...dtoImports.values()], `./${formatFilename("-schemas", context, config)}`)
+    );
+
+    nodes.push(
+      f.createPropertyDeclaration(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword), f.createModifier(ts.SyntaxKind.ConstKeyword)],
+        _.snakeCase(`${config.filenamePrefix}_RESOURCES`).toUpperCase(),
+        undefined,
+        undefined,
+        f.createAsExpression(
+          f.createArrayLiteralExpression(
+            Object.keys(resources).map(resourceType => f.createStringLiteral(resourceType)),
+            true
+          ),
+          f.createTypeReferenceNode("const")
+        )
+      )
+    );
+
+    nodes.push(
+      f.createTypeAliasDeclaration(
+        [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+        _.upperFirst(_.camelCase(`${config.filenamePrefix}ApiResources`)),
+        undefined,
+        f.createTypeLiteralNode(dtoTypes)
+      )
+    );
+  }
 
   Object.entries(context.openAPIDocument.components?.schemas ?? {}).forEach(([componentName, componentSchema]) => {
     if (
@@ -359,7 +453,7 @@ const createSelectorNodes = ({
       selectorArguments.push(f.createSpreadAssignment(f.createIdentifier("variables")));
     }
 
-    const callBaseSelector = f.createCallExpression(
+    let selector: Expression = f.createCallExpression(
       f.createIdentifier(`${fnName}Selector`),
       [queryParamsType, pathParamsType],
       [f.createObjectLiteralExpression(selectorArguments, false)]
@@ -390,14 +484,16 @@ const createSelectorNodes = ({
         )
       );
     }
-    const selector = f.createArrowFunction(
-      undefined,
-      undefined,
-      selectorParameters,
-      undefined,
-      f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      callBaseSelector
-    );
+    if (selectorParameters.length > 0) {
+      selector = f.createArrowFunction(
+        undefined,
+        undefined,
+        selectorParameters,
+        undefined,
+        f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+        selector
+      );
+    }
 
     return f.createVariableStatement(
       [f.createModifier(ts.SyntaxKind.ExportKeyword)],

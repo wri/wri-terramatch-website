@@ -2,11 +2,9 @@ import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../u
 import { ResourceType } from "@/store/apiSlice";
 import { DelayedJobsFindPathParams, DelayedJobsFindVariables } from "./jobServiceComponents";
 
-export const listDelayedJobsIsFetching = () =>
-  isFetchingSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
+export const listDelayedJobsIsFetching = isFetchingSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
 
-export const listDelayedJobsFetchFailed = () =>
-  fetchFailedSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
+export const listDelayedJobsFetchFailed = fetchFailedSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
 
 export const listDelayedJobsIndexMeta = (resource: ResourceType) =>
   indexMetaSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", resource });
@@ -25,8 +23,12 @@ export const delayedJobsFindFetchFailed = (variables: Omit<DelayedJobsFindVariab
     ...variables
   });
 
-export const bulkUpdateJobsIsFetching = () =>
-  isFetchingSelector<{}, {}>({ url: "/jobs/v3/delayedJobs/bulk-update", method: "patch" });
+export const bulkUpdateJobsIsFetching = isFetchingSelector<{}, {}>({
+  url: "/jobs/v3/delayedJobs/bulk-update",
+  method: "patch"
+});
 
-export const bulkUpdateJobsFetchFailed = () =>
-  fetchFailedSelector<{}, {}>({ url: "/jobs/v3/delayedJobs/bulk-update", method: "patch" });
+export const bulkUpdateJobsFetchFailed = fetchFailedSelector<{}, {}>({
+  url: "/jobs/v3/delayedJobs/bulk-update",
+  method: "patch"
+});
