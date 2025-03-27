@@ -256,7 +256,12 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
@@ -685,31 +690,30 @@ export type SiteReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  taskId: number | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  reportTitle: string | null;
-  projectReportTitle: string | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  feedback: string | null;
-  feedbackFields: string[] | null;
-  nothingToReport: boolean;
-  readableCompletionStatus: string;
-  title: string | null;
-  sharedDriveLink: string | null;
-  createdBy: number | null;
-  createdByUser: Record<string, any> | null;
-  approvedBy: number | null;
-  approvedByUser: Record<string, any> | null;
   /**
    * The associated task uuid
    */
   taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  nothingToReport: boolean;
+  completion: number | null;
+  title: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
   migrated: boolean;
   numTreesRegenerating: number | null;
   regenerationDescription: string | null;

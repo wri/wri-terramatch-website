@@ -35,7 +35,6 @@ import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
-import { getFullName } from "@/utils/user";
 
 const SiteReportDetailPage = () => {
   const t = useT();
@@ -358,7 +357,10 @@ const SiteReportDetailPage = () => {
                   <PageCard title={t("Site Report Details")}>
                     <TextField label={t("Site Report name")} value={siteReport?.title!} />
                     <TextField label={t("Site name")} value={siteReport?.siteName!} />
-                    <TextField label={t("Created by")} value={getFullName(siteReport?.createdByUser!)} />
+                    <TextField
+                      label={t("Created by")}
+                      value={siteReport?.createdByFirstName ?? "" + " " + siteReport?.createdByLastName ?? ""}
+                    />
                     <TextField label={t("Updated")} value={format(siteReport?.updatedAt!)} />
                     <TextField label={t("Due date")} value={format(siteReport?.dueAt!)} />
                     <TextField label={t("Submitted date")} value={format(siteReport?.submittedAt!)} />
