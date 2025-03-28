@@ -15,12 +15,7 @@ import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import {
-  formatLabelsVolunteers,
-  getFrameworkName,
-  parseDataToObjetive,
-  parseHectaresUnderRestorationData
-} from "@/utils/dashboardUtils";
+import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -149,7 +144,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
+  const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
     dashboardHeader,
@@ -178,10 +173,7 @@ const Dashboard = () => {
     isLoadingImpactStories
   } = useDashboardData(filters);
 
-  const frameworkName = useMemo(
-    () => getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework) || "",
-    [frameworks, dashboardProjectDetails?.data?.framework]
-  );
+  const cohortName = useMemo(() => dashboardProjectDetails?.data?.cohort, [dashboardProjectDetails?.data?.cohort]);
 
   const dataToggle = useMemo(
     () => [
@@ -445,7 +437,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              framework={frameworkName}
+              cohort={cohortName}
               countryName={dashboardProjectDetails?.data?.country}
               projectName={dashboardProjectDetails?.data?.name}
               className="pt-0"
@@ -523,7 +515,7 @@ const Dashboard = () => {
                     }`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Programme: ${frameworkName}`)}
+                  {t(`Cohort: ${cohortName}`)}
                 </Text>
               </div>
             </div>
