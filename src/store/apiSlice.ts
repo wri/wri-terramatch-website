@@ -8,34 +8,16 @@ import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import {
-  DemographicDto,
-  EstablishmentsTreesDto,
-  NurseryFullDto,
-  NurseryLightDto,
-  NurseryReportFullDto,
-  NurseryReportLightDto,
-  ProjectFullDto,
-  ProjectLightDto,
-  ProjectReportFullDto,
-  ProjectReportLightDto,
-  SeedingDto,
-  SiteFullDto,
-  SiteLightDto,
-  SiteReportFullDto,
-  SiteReportLightDto,
-  TreeReportCountsDto,
-  TreeSpeciesDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
-import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+  ENTITY_SERVICE_RESOURCES,
+  EntityServiceApiResources
+} from "@/generated/v3/entityService/entityServiceConstants";
+import { JOB_SERVICE_RESOURCES, JobServiceApiResources } from "@/generated/v3/jobService/jobServiceConstants";
 import {
-  LoginDto,
-  OrganisationDto,
-  ResetPasswordResponseDto,
-  UserDto,
-  VerificationUserResponseDto
-} from "@/generated/v3/userService/userServiceSchemas";
-import { FetchParams, serializeParams } from "@/generated/v3/utils";
+  RESEARCH_SERVICE_RESOURCES,
+  ResearchServiceApiResources
+} from "@/generated/v3/researchService/researchServiceConstants";
+import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
+import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__ } from "@/store/store";
 
 export type PendingErrorState = {
@@ -63,7 +45,7 @@ export type ApiPendingStore = {
 
 export type ApiFilteredIndexCache = {
   ids: string[];
-  page: ResponseMeta["page"];
+  total?: number;
 };
 
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
@@ -73,18 +55,6 @@ export type ApiIndexStore = {
 
 type ApiDeletedStore = {
   [key in ResourceType]: string[];
-};
-
-export const indexMetaSelector = (
-  resource: ResourceType,
-  { pathParams, queryParams }: { pathParams?: FetchParams; queryParams?: FetchParams }
-) => {
-  const modifiedQuery = { ...queryParams };
-  const pageNumber = Number(modifiedQuery["page[number]"] ?? 0);
-  delete modifiedQuery["page[number]"];
-  const serialized = serializeParams(pathParams, queryParams);
-
-  return (store: ApiDataStore) => store.meta.indices[resource][serialized]?.[pageNumber];
 };
 
 type AttributeValue = string | number | boolean;
@@ -111,57 +81,17 @@ export type StoreResource<AttributeType> = {
 
 export type StoreResourceMap<AttributeType> = Record<string, StoreResource<AttributeType>>;
 
-// The list of potential resource types. IMPORTANT: When a new resource type is integrated, it must
-// be added to this list.
 export const RESOURCES = [
-  "delayedJobs",
-  "demographics",
-  "establishmentTrees",
-  "logins",
-  "organisations",
-  "passwordResets",
-  "verifications",
-  "projects",
-  "nurseries",
-  "seedings",
-  "sites",
-  "treeReportCounts",
-  "treeSpecies",
-  "users",
-  "sitePolygons",
-  "projectReports",
-  "nurseryReports",
-  "siteReports"
+  ...ENTITY_SERVICE_RESOURCES,
+  ...JOB_SERVICE_RESOURCES,
+  ...USER_SERVICE_RESOURCES,
+  ...RESEARCH_SERVICE_RESOURCES
 ] as const;
 
-// The store for entities may contain either light DTOs or full DTOs depending on where the
-// data came from. This type allows us to specify that the shape of the objects in the store
-// conform to the light DTO and all full DTO members are optional. The connections that use
-// this section of the store should explicitly cast their member object to either the light
-// or full version depending on what the connection is expected to produce. See Entity.ts connection
-// for more.
-type EntityType<LightDto, FullDto> = LightDto & Partial<Omit<FullDto, keyof LightDto>>;
-
-type ApiResources = {
-  delayedJobs: StoreResourceMap<DelayedJobDto>;
-  demographics: StoreResourceMap<DemographicDto>;
-  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
-  logins: StoreResourceMap<LoginDto>;
-  organisations: StoreResourceMap<OrganisationDto>;
-  passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
-  verifications: StoreResourceMap<VerificationUserResponseDto>;
-  projects: StoreResourceMap<EntityType<ProjectLightDto, ProjectFullDto>>;
-  seedings: StoreResourceMap<SeedingDto>;
-  sites: StoreResourceMap<EntityType<SiteLightDto, SiteFullDto>>;
-  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  users: StoreResourceMap<UserDto>;
-  sitePolygons: StoreResourceMap<SitePolygonLightDto>;
-  nurseries: StoreResourceMap<EntityType<NurseryLightDto, NurseryFullDto>>;
-  projectReports: StoreResourceMap<EntityType<ProjectReportLightDto, ProjectReportFullDto>>;
-  nurseryReports: StoreResourceMap<EntityType<NurseryReportLightDto, NurseryReportFullDto>>;
-  siteReports: StoreResourceMap<EntityType<SiteReportLightDto, SiteReportFullDto>>;
-};
+type ApiResources = EntityServiceApiResources &
+  JobServiceApiResources &
+  UserServiceApiResources &
+  ResearchServiceApiResources;
 
 export type ResourceType = (typeof RESOURCES)[number];
 
@@ -172,19 +102,33 @@ export type JsonApiResource = {
   relationships?: { [key: string]: { data: Relationship | Relationship[] } };
 };
 
+export type IndexData = {
+  resource: ResourceType;
+  requestPath: string;
+  ids: string[];
+  total?: number;
+  cursor?: string;
+  pageNumber?: number;
+};
+
 export type ResponseMeta = {
   resourceType: ResourceType;
   resourceId?: string;
-  page?: {
-    number: number;
-    total: number;
-  };
+  indices?: IndexData[];
 };
 
 export type JsonApiResponse = {
   data?: JsonApiResource[] | JsonApiResource;
   included?: JsonApiResource[];
   meta: ResponseMeta;
+};
+
+export type IndexApiResponse = Omit<JsonApiResponse, "meta"> & {
+  meta: Omit<ResponseMeta, "indices"> & { indices: IndexData[] };
+};
+
+export type DeleteApiResponse = Omit<JsonApiResponse, "meta" | "data"> & {
+  meta: Omit<ResponseMeta, "indices" | "resourceId"> & { resourceId: string };
 };
 
 export type ApiDataStore = ApiResources & {
@@ -248,7 +192,6 @@ type ApiFetchFailedProps = ApiFetchStartingProps & {
 
 type ApiFetchSucceededProps = ApiFetchStartingProps & {
   response: JsonApiResponse;
-  serializedParams: string;
 };
 
 // This may get more sophisticated in the future, but for now this is good enough
@@ -293,10 +236,10 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
-const isIndexResponse = ({ method, response }: { method: string; response: JsonApiResponse }) =>
-  method === "GET" && isArray(response.data);
+const isIndexResponse = (method: string, response: JsonApiResponse): response is IndexApiResponse =>
+  method === "GET" && isArray(response.data) && response.meta.indices != null && response.meta.indices.length > 0;
 
-const isDeleteResponse = (method: string, response: JsonApiResponse) =>
+const isDeleteResponse = (method: string, response: JsonApiResponse): response is DeleteApiResponse =>
   method === "DELETE" && response.meta.resourceId != null;
 
 export const apiSlice = createSlice({
@@ -328,25 +271,23 @@ export const apiSlice = createSlice({
 
       if (isDeleteResponse(method, response)) {
         const resource = response.meta.resourceType;
-        const ids = [response.meta.resourceId!];
+        const ids = [response.meta.resourceId];
         pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
         state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
         return;
       }
 
       // All response objects from the v3 api conform to JsonApiResponse
-      let { data, included, meta } = response;
+      let { data, included } = response;
       if (!isArray(data)) data = [data!];
 
-      if (isIndexResponse(action.payload)) {
-        let cache = state.meta.indices[meta.resourceType][action.payload.serializedParams];
-        if (cache == null) cache = state.meta.indices[meta.resourceType][action.payload.serializedParams] = {};
+      if (isIndexResponse(method, response)) {
+        for (const indexMeta of response.meta.indices) {
+          let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
+          if (cache == null) cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath] = {};
 
-        const pageNumber = Number(new URL(url).searchParams.get("page[number]") ?? 0);
-        cache[pageNumber] = {
-          ids: data.map(({ id }) => id),
-          page: action.payload.response.meta.page
-        };
+          cache[indexMeta.pageNumber ?? 1] = { ids: indexMeta.ids, total: indexMeta.total };
+        }
       }
 
       if (included != null) {

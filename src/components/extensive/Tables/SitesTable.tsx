@@ -1,15 +1,15 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ServerSideTable, useEntityIndexQueryParams } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
+import { EntityIndexConnection, useSiteIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
@@ -28,14 +28,11 @@ interface SitesTableProps {
 const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
+  const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
   const { openModal, closeModal } = useModalContext();
 
-  const siteIndexQueryParams = {
-    filter: { projectUuid: project.uuid },
-    ...tableParams
-  };
-  const [isLoaded, siteIndex] = useSiteIndex(siteIndexQueryParams as EntityIndexConnectionProps);
+  const siteIndexQueryParams = { filter: { projectUuid: project.uuid }, ...queryParams };
+  const [isLoaded, siteIndex] = useSiteIndex(siteIndexQueryParams);
 
   useEffect(() => {
     onFetch?.(siteIndex as EntityIndexConnection<SiteLightDto>);
@@ -75,24 +72,11 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
     <ServerSideTable
       meta={{
         last_page:
-          siteIndex?.indexTotal && tableParams.pageSize ? Math.ceil(siteIndex?.indexTotal / tableParams.pageSize) : 1
+          siteIndex?.indexTotal && queryParams.pageSize ? Math.ceil(siteIndex?.indexTotal / queryParams.pageSize) : 1
       }}
       data={siteIndex.entities ?? []}
       isLoading={!isLoaded}
-      onQueryParamChange={param => {
-        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
-        if (param?.sort) {
-          const startWithMinus = param?.sort.startsWith("-");
-          sortDirection = startWithMinus ? "DESC" : "ASC";
-          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
-        }
-        setTableParams({
-          pageNumber: param.page,
-          pageSize: param.per_page,
-          sortDirection,
-          sortField
-        } as EntityIndexConnectionProps);
-      }}
+      onQueryParamChange={onQueryParamChange}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={[
         {

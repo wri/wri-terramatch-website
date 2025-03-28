@@ -7,6 +7,7 @@ import { Else, If, Then } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import ProjectCard from "@/components/elements/Cards/ProjectCard/ProjectCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -22,7 +23,12 @@ const MyProjectsPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
 
-  const [isLoaded, { entities: projects }] = useProjectIndex();
+  const [isLoaded, { entities: projects }] = useProjectIndex({
+    sideloads: [
+      { entity: "sites", pageSize: DEFAULT_PAGE_SIZE },
+      { entity: "nurseries", pageSize: DEFAULT_PAGE_SIZE }
+    ]
+  });
 
   const hasProjects = projects != null && projects.length > 0;
   return (

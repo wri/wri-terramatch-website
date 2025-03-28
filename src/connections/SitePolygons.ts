@@ -5,9 +5,12 @@ import {
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
-import { sitePolygonsIndexFetchFailed } from "@/generated/v3/researchService/researchServicePredicates";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { ApiDataStore, indexMetaSelector, PendingErrorState, ResponseMeta } from "@/store/apiSlice";
+import {
+  sitePolygonsIndexFetchFailed,
+  sitePolygonsIndexIndexMeta
+} from "@/generated/v3/researchService/researchServiceSelectors";
+import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -40,7 +43,7 @@ type EntityQueryKey = SitePolygonsIndexQueryParams["projectId[]"] | SitePolygons
 
 export type SitePolygonIndexConnection<SitePolygonLightDto> = {
   sitePolygons?: SitePolygonLightDto[];
-  meta?: ResponseMeta["page"];
+  total?: number;
   fetchFailure?: PendingErrorState | null;
 };
 
@@ -85,7 +88,7 @@ const sitePolygonsConnection: Connection<
     props =>
       createSelector(
         [
-          indexMetaSelector("sitePolygons", sitePolygonQueryParams(props)),
+          sitePolygonsIndexIndexMeta("sitePolygons", sitePolygonQueryParams(props)),
           (store: ApiDataStore) => store.sitePolygons,
           sitePolygonsIndexFetchFailed(sitePolygonQueryParams(props))
         ],
@@ -96,7 +99,7 @@ const sitePolygonsConnection: Connection<
             .map(id => sitePolygonsStore[id]?.attributes)
             .filter(Boolean);
 
-          return { sitePolygons, meta: indexMeta?.page, fetchFailure };
+          return { sitePolygons, total: indexMeta?.total, fetchFailure };
         }
       )
   )

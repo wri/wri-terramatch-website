@@ -1,7 +1,7 @@
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import { logout } from "@/connections/Login";
+import { logout } from "@/generated/v3/utils";
 
 export default function Custom500() {
   const handleBackToHome = () => {
