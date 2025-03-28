@@ -35,8 +35,8 @@ const UserProjectsTable = ({ title, projectKey }: { title: string; projectKey: s
             accessorKey: "name",
             enableSorting: false,
             cell: props => (
-              // @ts-ignore
               <Link
+                // @ts-ignore
                 to={`${basename}/project/${props.row.original.uuid}/show`}
                 className="!text-[#000000DD] no-underline"
               >
