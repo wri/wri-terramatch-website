@@ -6,7 +6,7 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsUUID } from "@/generated/apiComponents";
+import { useGetV2FormsUUID, usePostV2FormsSubmissions } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
 
 //Todo: To fetch form data and populate title, image, description and downloadLink when endpoint is ready
@@ -18,6 +18,13 @@ const FormIntroPage = () => {
   const { data: formData } = useGetV2FormsUUID<{ data: FormRead }>({
     pathParams: { uuid: formUUID },
     queryParams: { lang: router.locale }
+  });
+
+  const { mutate: create, isLoading } = usePostV2FormsSubmissions({
+    onSuccess(data) {
+      // @ts-ignore
+      router.push(`/form/submission/${data.data.uuid}`);
+    }
   });
 
   return (
@@ -38,8 +45,8 @@ const FormIntroPage = () => {
             }}
             submitButtonProps={{
               children: t("Continue"),
-              as: Link,
-              href: `/form/${formUUID}/pitch-select`
+              onClick: () => create({ body: { form_uuid: formUUID } }),
+              disabled: isLoading
             }}
             backButtonProps={{
               children: t("Cancel"),
