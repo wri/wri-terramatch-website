@@ -1,6 +1,5 @@
 import { createSelector } from "reselect";
 
-import { selectFirstLogin } from "@/connections/Login";
 import {
   userCreation,
   usersFind,
@@ -14,6 +13,7 @@ import {
   usersFindFetchFailed,
   userUpdateFetchFailed
 } from "@/generated/v3/userService/userServiceSelectors";
+import { selectFirstLogin } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";

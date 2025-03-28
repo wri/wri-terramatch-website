@@ -7,10 +7,10 @@ import ApiSlice, {
   ResourceType
 } from "@/store/apiSlice";
 import Log from "@/utils/log";
-import { logout, selectLogin } from "@/connections/Login";
-import { entityServiceUrl, researchServiceUrl, jobServiceUrl, userServiceUrl } from "@/constants/environment";
+import { entityServiceUrl, jobServiceUrl, researchServiceUrl, userServiceUrl } from "@/constants/environment";
 import { Dictionary } from "lodash";
 import qs, { ParsedQs } from "qs";
+import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
@@ -117,6 +117,19 @@ export function indexMetaSelector<TQueryParams extends {}, TPathParams extends {
 
 const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
 
+// NOTE: logout and selectFirstLogin are provided in this file instead of the Login.ts connection file
+// in order to avoid importing anything from connections in this file, which can cause a circular
+// dependency resolution problem.
+
+export const logout = () => {
+  removeAccessToken();
+  // When we log out, remove all cached API resources so that when we log in again, these resources
+  // are freshly fetched from the BE.
+  ApiSlice.clearApiCache();
+};
+
+export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
+
 async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
   ApiSlice.fetchStarting(actionPayload);
@@ -199,7 +212,7 @@ export function serviceFetch<
   // store, which means that the next connections that kick off right away don't have access to
   // the token through the getAccessToken method. So, we grab it from the store instead, which is
   // more reliable in this case.
-  const { token } = selectLogin();
+  const { token } = selectFirstLogin(ApiSlice.currentState) ?? {};
   if (!requestHeaders?.Authorization && token != null) {
     // Always include the JWT access token if we have one.
     requestHeaders.Authorization = `Bearer ${token}`;
