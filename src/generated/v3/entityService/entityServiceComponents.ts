@@ -76,7 +76,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example projects
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -86,8 +94,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -107,7 +119,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example sites
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -117,8 +137,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -138,7 +162,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example nurseries
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -148,8 +180,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -169,7 +205,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example projectReports
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -179,8 +223,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -200,7 +248,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example nurseryReports
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -210,8 +266,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -231,7 +291,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example siteReports
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -241,8 +309,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**

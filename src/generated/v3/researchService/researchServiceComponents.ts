@@ -132,7 +132,15 @@ export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?
            * @example sitePolygons
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -143,7 +151,11 @@ export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?
              * The cursor for the first record on this page.
              */
             cursor?: string;
-          };
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -171,7 +183,15 @@ export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?
            * @example sitePolygons
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -181,8 +201,12 @@ export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
