@@ -27,7 +27,7 @@ const UserProjectsTable = ({ title, projectKey }: { title: string; projectKey: s
   const projects = record[projectKey]?.map(({ name, uuid }: { name: string; uuid: string }) => ({ name, uuid })) || [];
 
   return (
-    <div className="px-4 pb-8">
+    <div className="px-4 pb-8 wide:pt-14">
       <Table
         columns={[
           {
@@ -48,6 +48,7 @@ const UserProjectsTable = ({ title, projectKey }: { title: string; projectKey: s
         variant={VARIANT_TABLE_TREE_SPECIES}
         data={projects}
         hasPagination={true}
+        invertSelectPagination={true}
       />
     </div>
   );
