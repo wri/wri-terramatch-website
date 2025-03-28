@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { defineConfig } from "@openapi-codegen/cli";
 import { Config } from "@openapi-codegen/cli/lib/types";
 import { generateFetchers, generateReactQueryComponents, generateSchemaTypes } from "@openapi-codegen/typescript";
