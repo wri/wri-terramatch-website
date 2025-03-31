@@ -3,7 +3,7 @@ import { Fragment, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { TextVariants } from "@/types/common";
 import { getCohortName } from "@/utils/dashboardUtils";
 
@@ -12,7 +12,7 @@ interface DashboardBreadcrumbsProps {
   clasNameText?: string;
   textVariant?: TextVariants;
   cohort: string;
-  countryData?: any;
+  countryData?: CountriesProps;
   projectName?: string;
 }
 

@@ -238,9 +238,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       }));
     }
   };
-  useEffect(() => {
-    console.log("filters", filters);
-  }, [filters]);
   const valueForCountry = useMemo(() => (filters.country?.id ? [filters.country.id] : []), [filters.country?.id]);
 
   const valueForCohort = useMemo(() => (filters.cohort ? [filters.cohort] : []), [filters.cohort]);
