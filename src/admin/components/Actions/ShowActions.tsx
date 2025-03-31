@@ -70,7 +70,7 @@ const ShowActions = ({
             />
           </Button>
         )}
-        {canEdit && hasDelete && (
+        {canEdit && hasDelete && record && record.id && (
           <DeleteWithConfirmButton
             {...deleteProps}
             mutationMode="undoable"

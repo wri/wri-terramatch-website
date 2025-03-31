@@ -15,12 +15,16 @@ import {
 import {
   NurseryFullDto,
   NurseryLightDto,
+  NurseryReportFullDto,
+  NurseryReportLightDto,
   ProjectFullDto,
   ProjectLightDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
   SiteFullDto,
-  SiteLightDto
+  SiteLightDto,
+  SiteReportFullDto,
+  SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
@@ -30,8 +34,20 @@ import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/conn
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityFullDto = ProjectFullDto | SiteFullDto | NurseryFullDto | ProjectReportFullDto;
-export type EntityLightDto = ProjectLightDto | SiteLightDto | NurseryLightDto | ProjectReportLightDto;
+export type EntityFullDto =
+  | ProjectFullDto
+  | SiteFullDto
+  | NurseryFullDto
+  | ProjectReportFullDto
+  | NurseryReportFullDto
+  | SiteReportFullDto;
+export type EntityLightDto =
+  | ProjectLightDto
+  | SiteLightDto
+  | NurseryLightDto
+  | ProjectReportLightDto
+  | NurseryReportLightDto
+  | SiteReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
 
 type EntityConnection<T extends EntityDtoType> = {
@@ -241,3 +257,23 @@ export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 const lightProjectReportConnection = createGetEntityConnection<ProjectReportLightDto>("projectReports", false);
 export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
+
+const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
+export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
+export const useNurseryReportIndex = connectionHook(indexNurseryReportConnection);
+const fullNurseryReportConnection = createGetEntityConnection<NurseryReportFullDto>("nurseryReports", true);
+export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
+export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
+const lightNurseryReportConnection = createGetEntityConnection<NurseryReportLightDto>("nurseryReports", false);
+export const loadLightNurseryReport = connectionLoader(lightNurseryReportConnection);
+export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
+
+const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
+export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
+export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
+const fullSiteReportConnection = createGetEntityConnection<SiteReportFullDto>("siteReports", true);
+export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
+export const useFullSiteReport = connectionHook(fullSiteReportConnection);
+const lightSiteReportConnection = createGetEntityConnection<SiteReportLightDto>("siteReports", false);
+export const loadLightSiteReport = connectionLoader(lightSiteReportConnection);
+export const useLightSiteReport = connectionHook(lightSiteReportConnection);

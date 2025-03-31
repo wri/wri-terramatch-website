@@ -1,48 +1,30 @@
 import { DataProvider } from "react-admin";
 
-import {
-  DeleteV2AdminNurseryReportsUUIDError,
-  fetchDeleteV2AdminNurseryReportsUUID,
-  fetchGetV2AdminNurseryReports,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminNurseryReportsError,
-  GetV2ENTITYUUIDError
-} from "@/generated/apiComponents";
+import { loadFullNurseryReport, loadNurseryReportIndex } from "@/connections/Entity";
+import { DeleteV2AdminNurseryReportsUUIDError, fetchDeleteV2AdminNurseryReportsUUID } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-const nurseryReportSortableList = ["title", "project_name", "organisation_name", "due_at", "submitted_at"];
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const nurseryReportDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on NurseryReportLightDto
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminNurseryReports({
-        queryParams: raListParamsToQueryParams(params, nurseryReportSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminNurseryReportsError);
+    const connection = await loadNurseryReportIndex(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Nursery report index fetch failed", connection.fetchFailure);
     }
+    return entitiesListResult(connection);
   },
 
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "nursery-reports",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: nurseryReport, fetchFailure } = await loadFullNurseryReport({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw v3ErrorForRA("Nursery report get fetch failed", fetchFailure);
     }
+
+    return { data: { ...nurseryReport, id: nurseryReport!.uuid } };
   },
 
   // @ts-ignore
