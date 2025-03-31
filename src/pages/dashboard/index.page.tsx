@@ -438,7 +438,7 @@ const Dashboard = () => {
           <div>
             <DashboardBreadcrumbs
               cohort={cohortName}
-              countryName={dashboardProjectDetails?.data?.country}
+              countryData={dashboardProjectDetails?.data?.countryData}
               projectName={dashboardProjectDetails?.data?.name}
               className="pt-0"
               textVariant="text-14"

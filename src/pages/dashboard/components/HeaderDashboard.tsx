@@ -2,7 +2,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -238,6 +238,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       }));
     }
   };
+  useEffect(() => {
+    console.log("filters", filters);
+  }, [filters]);
+  const valueForCountry = useMemo(() => (filters.country?.id ? [filters.country.id] : []), [filters.country?.id]);
+
+  const valueForCohort = useMemo(() => (filters.cohort ? [filters.cohort] : []), [filters.cohort]);
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
@@ -374,6 +380,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[4] w-full"
               />
               <ResponsiveDropdownContainer
+                key={`country-${filters.country?.id || "empty"}`}
                 className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
@@ -386,7 +393,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
-                value={filters.country?.id ? [filters.country.id] : undefined}
+                value={valueForCountry}
                 onChange={value => {
                   handleChangeCountry(value);
                 }}
@@ -444,6 +451,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[2] w-full"
               />
               <ResponsiveDropdownContainer
+                key={`cohort-${filters.cohort || "empty"}`}
                 className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
@@ -456,7 +464,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
-                value={filters.cohort ? [filters.cohort] : []}
+                value={valueForCohort}
                 onChange={(value: OptionValue[]) => {
                   return setFilters(prevValues => ({
                     ...prevValues,
