@@ -232,6 +232,11 @@ export const useFullNursery = connectionHook(fullNurseryConnection);
 const lightNurseryConnection = createGetEntityConnection<NurseryLightDto>("nurseries", false);
 export const loadLightNursery = connectionLoader(lightNurseryConnection);
 export const useLightNursery = connectionHook(lightNurseryConnection);
+export const deleteNursery = connectedResourceDeleter(
+  "nurseries",
+  uuid => entityDeleteFetchFailed(specificEntityParams("nurseries", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseries", uuid)))
+);
 
 const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
@@ -242,6 +247,11 @@ export const useFullSite = connectionHook(fullSiteConnection);
 const lightSiteConnection = createGetEntityConnection<SiteLightDto>("sites", false);
 export const loadLightSite = connectionLoader(lightSiteConnection);
 export const useLightSite = connectionHook(lightSiteConnection);
+export const deleteSite = connectedResourceDeleter(
+  "sites",
+  uuid => entityDeleteFetchFailed(specificEntityParams("sites", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("sites", uuid)))
+);
 
 // For indexes, we only support the light dto
 const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
@@ -257,6 +267,11 @@ export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 const lightProjectReportConnection = createGetEntityConnection<ProjectReportLightDto>("projectReports", false);
 export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
+export const deleteProjectReport = connectedResourceDeleter(
+  "projectReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("projectReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projectReports", uuid)))
+);
 
 const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
 export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
@@ -267,6 +282,11 @@ export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 const lightNurseryReportConnection = createGetEntityConnection<NurseryReportLightDto>("nurseryReports", false);
 export const loadLightNurseryReport = connectionLoader(lightNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
+export const deleteNurseryReport = connectedResourceDeleter(
+  "nurseryReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseryReports", uuid)))
+);
 
 const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
@@ -277,3 +297,8 @@ export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 const lightSiteReportConnection = createGetEntityConnection<SiteReportLightDto>("siteReports", false);
 export const loadLightSiteReport = connectionLoader(lightSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
+export const deleteSiteReport = connectedResourceDeleter(
+  "siteReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("siteReports", uuid)))
+);
