@@ -59,7 +59,6 @@ export const siteDataProvider: DataProvider = {
     }
   },
 
-  //@ts-expect-error until we can get the whole DataProvider on Site DTOs
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {

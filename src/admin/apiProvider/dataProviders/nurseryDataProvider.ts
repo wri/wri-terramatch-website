@@ -58,7 +58,6 @@ export const nurseryDataProvider: DataProvider = {
     }
   },
 
-  //@ts-expect-error until we can get the whole DataProvider on Nursery DTOs
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {

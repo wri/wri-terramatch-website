@@ -36,7 +36,6 @@ export const projectReportDataProvider: DataProvider = {
     }
   },
 
-  //@ts-expect-error until we can get the whole DataProvider on ProjectReportLightDto
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
