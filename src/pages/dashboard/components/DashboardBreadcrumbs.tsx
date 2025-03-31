@@ -3,7 +3,7 @@ import { Fragment, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { TextVariants } from "@/types/common";
 import { getCohortName } from "@/utils/dashboardUtils";
 
@@ -12,7 +12,7 @@ interface DashboardBreadcrumbsProps {
   clasNameText?: string;
   textVariant?: TextVariants;
   cohort: string;
-  countryName?: string;
+  countryData?: CountriesProps;
   projectName?: string;
 }
 
@@ -21,11 +21,10 @@ const DashboardBreadcrumbs = ({
   clasNameText,
   textVariant,
   cohort,
-  countryName,
+  countryData,
   projectName
 }: DashboardBreadcrumbsProps) => {
   const { setFilters } = useDashboardContext();
-
   const links = useMemo(
     () =>
       [
@@ -47,14 +46,23 @@ const DashboardBreadcrumbs = ({
             }));
           }
         },
-        countryName
+        countryData
           ? {
-              title: countryName,
-              onClick: () =>
+              title: countryData?.data?.label,
+              onClick: () => {
                 setFilters(prevValues => ({
                   ...prevValues,
+                  country: {
+                    country_slug: countryData?.country_slug,
+                    id: countryData?.id ?? 0,
+                    data: {
+                      label: countryData?.data?.label,
+                      icon: countryData?.data?.icon
+                    }
+                  },
                   uuid: ""
-                }))
+                }));
+              }
             }
           : null,
         projectName
@@ -63,7 +71,7 @@ const DashboardBreadcrumbs = ({
             }
           : null
       ].filter(Boolean),
-    [cohort, countryName, projectName, setFilters]
+    [cohort, countryData, projectName, setFilters]
   );
 
   return (
@@ -78,7 +86,8 @@ const DashboardBreadcrumbs = ({
                     variant={textVariant || "text-14-bold"}
                     className={classNames(
                       "text-darkCustom opacity-60 hover:text-primary hover:underline hover:opacity-100",
-                      "line-clamp-1",
+                      "text-nowrap",
+                      "w-max",
                       clasNameText
                     )}
                     title={item.title}
