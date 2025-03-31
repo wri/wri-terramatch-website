@@ -13,8 +13,8 @@ const SiteQuickActions: FC = () => {
     if (!record) return;
 
     const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ site_uuid: true }),
-      filter: JSON.stringify({ site_uuid: record.uuid }),
+      displayedFilters: JSON.stringify({ siteUuid: true }),
+      filter: JSON.stringify({ siteUuid: record.uuid }),
       order: "ASC",
       page: "1",
       perPage: "10",

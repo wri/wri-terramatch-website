@@ -40,9 +40,12 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
       type: FieldType.Dropdown,
       validation: yup.string().required(),
       fieldProps: {
-        options: Array(10)
-          .fill(2014)
-          .map((item, index) => ({ title: `${item + index}`, value: `${item + index}` })),
+        options: Array(6)
+          .fill(0)
+          .map((_, index) => {
+            const year = new Date().getFullYear() - 5 + index;
+            return { title: `${year}`, value: year };
+          }),
         required: true
       }
     },

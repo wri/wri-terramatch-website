@@ -5,12 +5,13 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { TextVariants } from "@/types/common";
+import { getCohortName } from "@/utils/dashboardUtils";
 
 interface DashboardBreadcrumbsProps {
   className?: string;
   clasNameText?: string;
   textVariant?: TextVariants;
-  framework: string;
+  cohort: string;
   countryName?: string;
   projectName?: string;
 }
@@ -19,7 +20,7 @@ const DashboardBreadcrumbs = ({
   className,
   clasNameText,
   textVariant,
-  framework,
+  cohort,
   countryName,
   projectName
 }: DashboardBreadcrumbsProps) => {
@@ -29,11 +30,11 @@ const DashboardBreadcrumbs = ({
     () =>
       [
         {
-          title: framework,
-          onClick: () =>
+          title: getCohortName(cohort),
+          onClick: () => {
             setFilters(prevValues => ({
               ...prevValues,
-              programme: "terrafund",
+              cohort: cohort,
               country: {
                 country_slug: "",
                 id: 0,
@@ -43,7 +44,8 @@ const DashboardBreadcrumbs = ({
                 }
               },
               uuid: ""
-            }))
+            }));
+          }
         },
         countryName
           ? {
@@ -61,7 +63,7 @@ const DashboardBreadcrumbs = ({
             }
           : null
       ].filter(Boolean),
-    [framework, countryName, projectName, setFilters]
+    [cohort, countryName, projectName, setFilters]
   );
 
   return (
@@ -87,7 +89,7 @@ const DashboardBreadcrumbs = ({
               ) : (
                 <Text
                   variant={textVariant || "text-14-bold"}
-                  className={classNames("text-darkCustom", "line-clamp-1", clasNameText)}
+                  className={classNames("text-darkCustom", "text-nowrap", "line-clamp-1", clasNameText)}
                   title={item.title}
                 >
                   {item.title}

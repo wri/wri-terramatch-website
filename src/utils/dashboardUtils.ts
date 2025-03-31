@@ -151,6 +151,13 @@ type YearlyData = {
   treeCoverLossFires: number;
 };
 
+export const cohortNames = {
+  ppc: "PPC",
+  terrafund: "TerraFund Top 100",
+  "terrafund-landscapes": "TerraFund Landscapes",
+  hbf: "HBF",
+  "epa-ghana-pilot": "EPA-Ghana Pilot"
+};
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -509,6 +516,10 @@ export const parseDataToObjetive = (data: InputData): Objetive => {
 export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
   const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
   return framework ? framework.name : undefined;
+};
+
+export const getCohortName = (cohortKey: string): string | undefined => {
+  return cohortNames[cohortKey as keyof typeof cohortNames];
 };
 
 export const isEmptyChartData = (chartType: string, data: any): boolean => {

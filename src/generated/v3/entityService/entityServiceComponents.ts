@@ -11,7 +11,7 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -33,10 +33,16 @@ export type EntityIndexQueryParams = {
    */
   ["page[number]"]?: number;
   search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
   projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -183,6 +189,68 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
           id?: string;
           attributes?: Schemas.ProjectReportLightDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseryReports
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example nurseryReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryReportLightDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example siteReports
+           */
+          resourceType?: string;
+          page?: {
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            number?: number;
+          };
+        };
+        data?: {
+          /**
+           * @example siteReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteReportLightDto;
+        }[];
       },
     EntityIndexError,
     undefined,
@@ -195,7 +263,7 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -297,6 +365,25 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     | {
         meta?: {
           /**
+           * @example nurseries
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
            * @example projectReports
            */
           resourceType?: string;
@@ -312,6 +399,44 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           id?: string;
           attributes?: Schemas.ProjectReportFullDto;
         };
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseryReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example nurseryReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryReportFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example siteReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example siteReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteReportFullDto;
+        };
       },
     EntityGetError,
     undefined,
@@ -324,7 +449,7 @@ export type EntityDeletePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
   /**
    * Entity UUID for resource to retrieve
    */
