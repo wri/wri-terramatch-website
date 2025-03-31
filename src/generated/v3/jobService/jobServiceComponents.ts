@@ -38,7 +38,7 @@ export type ListDelayedJobsResponse = {
      */
     id?: string;
     attributes?: Schemas.DelayedJobDto;
-  };
+  }[];
 };
 
 /**

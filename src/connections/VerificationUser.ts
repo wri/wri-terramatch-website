@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
 import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
-import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServicePredicates";
+import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServiceSelectors";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";

@@ -1,7 +1,8 @@
 import { AuthProvider, UserIdentity } from "react-admin";
 
-import { loadLogin, logout } from "@/connections/Login";
+import { loadLogin } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
+import { logout } from "@/generated/v3/utils";
 import Log from "@/utils/log";
 
 export type TMUserIdentity = UserIdentity & { primaryRole: string };

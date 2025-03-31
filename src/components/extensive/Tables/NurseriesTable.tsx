@@ -1,15 +1,15 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ServerSideTable, useEntityIndexQueryParams } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useNurseryIndex } from "@/connections/Entity";
+import { EntityIndexConnection, useNurseryIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2NurseriesUUID } from "@/generated/apiComponents";
@@ -28,15 +28,12 @@ interface NurseriesTableProps {
 const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTableProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
-  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
+  const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
 
   const { format } = useDate();
 
-  const nurseryIndexQueryParams = {
-    filter: { projectUuid: project.uuid },
-    ...tableParams
-  };
-  const [isLoaded, nurseryIndex] = useNurseryIndex(nurseryIndexQueryParams as EntityIndexConnectionProps);
+  const nurseryIndexQueryParams = { filter: { projectUuid: project.uuid }, ...queryParams };
+  const [isLoaded, nurseryIndex] = useNurseryIndex(nurseryIndexQueryParams);
 
   useEffect(() => {
     onFetch?.(nurseryIndex as EntityIndexConnection<NurseryLightDto>);
@@ -76,26 +73,13 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
     <ServerSideTable
       meta={{
         last_page:
-          nurseryIndex?.indexTotal && tableParams.pageSize
-            ? Math.ceil(nurseryIndex?.indexTotal / tableParams.pageSize)
+          nurseryIndex?.indexTotal && queryParams.pageSize
+            ? Math.ceil(nurseryIndex?.indexTotal / queryParams.pageSize)
             : 1
       }}
       data={nurseryIndex.entities ?? []}
       isLoading={!isLoaded}
-      onQueryParamChange={param => {
-        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
-        if (param?.sort) {
-          const startWithMinus = param?.sort.startsWith("-");
-          sortDirection = startWithMinus ? "DESC" : "ASC";
-          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
-        }
-        setTableParams({
-          pageNumber: param.page,
-          pageSize: param.per_page,
-          sortDirection,
-          sortField
-        } as EntityIndexConnectionProps);
-      }}
+      onQueryParamChange={onQueryParamChange}
       columns={[
         {
           accessorKey: "name",
