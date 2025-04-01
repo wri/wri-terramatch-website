@@ -15,7 +15,7 @@ import { EntityName } from "@/types/common";
 /**
  * Starting point of creation flow
  * Provide either
- *    frameworkUUID, parent_name, parent_uuid : will create a new entity
+ *    frameworkKey, parent_name, parent_uuid : will create a new entity
  * or
  *    entity_uuid: providing entity_uuid will bypass creation of a new entity and takes user directly to next page
  *
@@ -26,14 +26,14 @@ const EntityIntroPage = () => {
   const router = useRouter();
   //Allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
   const entityName = router.query.entityName as EntityName;
-  const frameworkUUID = router.query.frameworkUUID as string;
+  const frameworkKey = router.query.frameworkKey as string;
 
   //Allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
   const parentName = router.query.parent_name as EntityName | "applications";
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
 
-  const formUUID = !entityUUID ? useGetReportingFrameworkFormUUID(frameworkUUID, entityName) : undefined;
+  const formUUID = !entityUUID ? useGetReportingFrameworkFormUUID(frameworkKey, entityName) : undefined;
 
   const { data: formData } = useGetV2FormsUUID<{ data: FormRead }>(
     {

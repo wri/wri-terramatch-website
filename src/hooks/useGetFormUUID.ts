@@ -3,13 +3,13 @@ import { EntityName } from "@/types/common";
 
 /**
  * To fetch reporting framework custom form uuid
- * @param frameworkUUID UUID
+ * @param frameworkKey UUID
  * @param entity EntityName
  * @returns custom form UUID
  */
-export const useGetReportingFrameworkFormUUID = (frameworkUUID: string, entity: EntityName) => {
+export const useGetReportingFrameworkFormUUID = (frameworkKey: string, entity: EntityName) => {
   const { data } = useGetV2ReportingFrameworksUUID(
-    { pathParams: { uuid: frameworkUUID } },
+    { pathParams: { uuid: frameworkKey } },
     {
       staleTime: process.env.NODE_ENV === "development" ? 0 : 30_000
     }
