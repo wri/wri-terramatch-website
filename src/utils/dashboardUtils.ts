@@ -456,7 +456,8 @@ export const parseHectaresUnderRestorationData = (
     return `${Math.round(value).toLocaleString()} ha ${percentage.toFixed(1)}%`;
   };
 
-  const getLandUseTypeTitle = (value: string): string => {
+  const getLandUseTypeTitle = (value: string | null): string => {
+    if (!value) return "No Type Identified";
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
