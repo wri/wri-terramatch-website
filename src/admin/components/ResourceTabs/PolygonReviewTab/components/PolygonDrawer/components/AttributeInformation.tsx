@@ -81,7 +81,7 @@ const dropdownOptionsTree = [
 ];
 const AttributeInformation = ({
   selectedPolygon,
-  sitePolygonRefresh,
+  updateSingleCriteriaData,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
   refetchPolygonVersions,
@@ -93,7 +93,7 @@ const AttributeInformation = ({
   setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygon;
-  sitePolygonRefresh?: () => void;
+  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void | undefined;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
@@ -177,6 +177,7 @@ const AttributeInformation = ({
         adminUpdate: true
       };
       try {
+        setIsLoadingDropdownVersions(true);
         sendSiteData(
           {
             body: updatedPolygonData,
@@ -184,15 +185,16 @@ const AttributeInformation = ({
           },
           {
             onSuccess: async () => {
-              setIsLoadingDropdownVersions(true);
               await refetchPolygonVersions();
-              await sitePolygonRefresh?.();
               await refetch();
-
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primary_uuid as string }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
+              if (selectedPolygon.uuid) {
+                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
+              }
+
               setSelectedPolygonData(polygonActive);
               setSelectedPolygonToDrawer?.({
                 id: selectedPolygonIndex as string,
@@ -207,6 +209,7 @@ const AttributeInformation = ({
             },
             onError: error => {
               openNotification("error", t("Error!"), t("Error creating polygon version"));
+              setIsLoadingDropdownVersions(false);
             }
           }
         );
