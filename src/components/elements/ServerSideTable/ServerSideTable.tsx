@@ -99,7 +99,7 @@ export function ServerSideTable<TData extends RowData>({
       >
         {children}
       </Table>
-      {props.meta?.last_page > 1 && (
+      {(props.meta?.last_page > 1 || alwaysShowPagination) && (
         <div className="relative z-20 pt-4">
           <Pagination
             variant={VARIANT_PAGINATION_DASHBOARD}
