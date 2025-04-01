@@ -144,7 +144,6 @@ function Table<TData extends RowData>({
 
   const tableState = getState();
   const defaultPageSize = galleryType === "treeSpeciesPD" ? 8 : initialTableState?.pagination?.pageSize || 5;
-  const rowCount = Object.keys(getRowModel().rowsById).length;
 
   useEffect(() => {
     setSorting(initialTableState?.sorting ?? []);
@@ -308,7 +307,7 @@ function Table<TData extends RowData>({
           setPageSize={setPageSize}
           defaultPageSize={defaultPageSize}
           containerClassName={classNames("mt-6", classPagination)}
-          hasPageSizeSelector={rowCount > defaultPageSize}
+          hasPageSizeSelector={true}
           invertSelect={invertSelectPagination}
           galleryType={galleryType}
         />
