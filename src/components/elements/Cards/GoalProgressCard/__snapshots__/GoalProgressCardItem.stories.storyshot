@@ -22,7 +22,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Item Default 1`] 
     className="flex w-full justify-end text-14-bold"
     data-testid="txt"
   >
-    530,000
+    530.000
   </p>
 </div>
 `;
