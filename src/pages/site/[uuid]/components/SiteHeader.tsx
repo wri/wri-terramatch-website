@@ -50,18 +50,16 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
         )}
         primaryButtonProps={{
           children: t("Delete"),
-          onClick: () => {
-            deleteSite(site.uuid)
-              .then(() => {
-                router.push("/my-projects");
-                openToast(t("The site has been successfully deleted"));
-              })
-              .catch(() => {
-                openToast(t("Something went wrong!"), ToastType.ERROR);
-              })
-              .finally(() => {
-                closeModal(ModalId.CONFIRM_SITE_DELETION);
-              });
+          onClick: async () => {
+            try {
+              await deleteSite(site.uuid);
+              router.push("/my-projects");
+              openToast(t("The site has been successfully deleted"));
+            } catch (error) {
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            } finally {
+              closeModal(ModalId.CONFIRM_SITE_DELETION);
+            }
           }
         }}
         secondaryButtonProps={{
