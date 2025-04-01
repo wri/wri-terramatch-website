@@ -22,9 +22,10 @@ interface SitesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
   onFetch?: (data: EntityIndexConnection<SiteLightDto>) => void;
+  alwaysShowPagination?: boolean;
 }
 
-const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) => {
+const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPagination = false }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
   const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
@@ -165,6 +166,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
           href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`
         }
       ]}
+      alwaysShowPagination={alwaysShowPagination}
     ></ServerSideTable>
   );
 };

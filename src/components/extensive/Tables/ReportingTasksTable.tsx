@@ -12,6 +12,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
+  alwaysShowPagination?: boolean;
 }
 
 const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
@@ -20,7 +21,7 @@ const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
   return <p className="text-14-light whitespace-nowrap">{t("Project Report {window}", { window })}</p>;
 };
 
-const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
+const ReportingTasksTable = ({ projectUUID, alwaysShowPagination = false }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
   const [queryParams, setQueryParams] = useState();
@@ -89,6 +90,7 @@ const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
           )
         }
       ]}
+      alwaysShowPagination={alwaysShowPagination}
     />
   );
 };

@@ -22,9 +22,15 @@ interface NurseriesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
   onFetch?: (data: EntityIndexConnection<NurseryLightDto>) => void;
+  alwaysShowPagination?: boolean;
 }
 
-const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTableProps) => {
+const NurseriesTable = ({
+  project,
+  onFetch,
+  hasAddButton = true,
+  alwaysShowPagination = false
+}: NurseriesTableProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
@@ -153,6 +159,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
           options: getChangeRequestStatusOptions(t)
         }
       ]}
+      alwaysShowPagination={alwaysShowPagination}
     >
       {hasAddButton && (
         <Button
