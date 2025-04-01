@@ -296,6 +296,7 @@ const ReportingTaskPage = () => {
                       }))
                     }
                   ]}
+                  alwaysShowPagination
                 />
               </PageCard>
             </PageSection>
