@@ -59,7 +59,7 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
                     "This table displays all the nurseries associated with this project. You can use it to keep track of your nursery approvals."
                   )}
                 >
-                  <NurseriesTable project={project} />
+                  <NurseriesTable project={project} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>

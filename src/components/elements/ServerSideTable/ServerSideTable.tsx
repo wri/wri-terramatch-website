@@ -23,6 +23,7 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
   defaultPageSize?: number;
+  alwaysShowPagination?: boolean;
 }
 
 export type QueryParams = {
@@ -68,6 +69,7 @@ export function ServerSideTable<TData extends RowData>({
   variant,
   defaultPageSize = DEFAULT_PAGE_SIZE,
   children,
+  alwaysShowPagination = false,
   ...props
 }: ServerSideTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
@@ -93,10 +95,11 @@ export function ServerSideTable<TData extends RowData>({
         }}
         classNameWrapper="!overflow-visible"
         variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
+        alwaysShowPagination={alwaysShowPagination}
       >
         {children}
       </Table>
-      {props.meta?.last_page > 1 && (
+      {(props.meta?.last_page > 1 || alwaysShowPagination) && (
         <div className="relative z-20 pt-4">
           <Pagination
             variant={VARIANT_PAGINATION_DASHBOARD}

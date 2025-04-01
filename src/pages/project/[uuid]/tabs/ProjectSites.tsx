@@ -49,7 +49,7 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
               </Then>
               <Else>
                 <PageCard title={t("Project Sites")}>
-                  <SitesTable project={project} />
+                  <SitesTable project={project} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>
