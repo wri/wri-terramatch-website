@@ -141,7 +141,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="flex w-full justify-end text-14-bold"
           data-testid="txt"
         >
-          1.332
+          1,332
         </p>
       </div>
       <div
@@ -165,7 +165,7 @@ exports[`Storyshots Components/Elements/Cards/GoalProgressCard/Card Progress And
           className="flex w-full justify-end text-14-bold"
           data-testid="txt"
         >
-          530.000
+          530,000
         </p>
       </div>
     </div>
