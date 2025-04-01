@@ -16,6 +16,7 @@ interface LoadCriteriaSiteHook {
   refetch: () => void;
   fetchCriteriaData: (uuids: string[]) => void;
   loadCriteriaInOrder: () => void;
+  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void;
 }
 
 const useLoadCriteriaSite = (
@@ -100,7 +101,10 @@ const useLoadCriteriaSite = (
       return newMap;
     });
   };
-
+  const updateSingleCriteriaData = async (old_id: string, updatedData: any) => {
+    setData((prevData: any) => prevData.map((item: any) => (item.uuid === old_id ? updatedData : item)));
+    await fetchCriteriaData([updatedData.uuid]);
+  };
   useOnMount(loadInBatches);
 
   return {
@@ -111,7 +115,8 @@ const useLoadCriteriaSite = (
     polygonCriteriaMap,
     refetch,
     fetchCriteriaData,
-    loadCriteriaInOrder
+    loadCriteriaInOrder,
+    updateSingleCriteriaData
   };
 };
 

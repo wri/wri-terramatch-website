@@ -25,6 +25,7 @@ import {
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
@@ -89,6 +90,7 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const sitePolygonRefresh = context?.reloadSiteData;
+  const updateSingleCriteriaData = context?.updateSingleCriteriaData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const {
@@ -173,10 +175,16 @@ const PolygonDrawer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);
 
-  useEffect(() => {
+  useValueChanged(isLoadingDropdown, () => {
+    if (isLoadingDropdown) {
+      showLoader();
+    } else {
+      hideLoader();
+    }
+  });
+  useValueChanged(isPolygonStatusOpen, () => {
     setButtonToogle(!isPolygonStatusOpen);
-  }, [isPolygonStatusOpen]);
-
+  });
   useEffect(() => {
     const criteriaData = polygonMap[polygonSelected];
     if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
@@ -364,7 +372,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  sitePolygonRefresh={sitePolygonRefresh}
+                  updateSingleCriteriaData={updateSingleCriteriaData}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
