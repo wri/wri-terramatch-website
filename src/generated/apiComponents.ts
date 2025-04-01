@@ -23649,37 +23649,6 @@ export const usePostV2UsersResend = (
   );
 };
 
-export type DeleteV2SitesUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2SitesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2SitesUUIDVariables = {
-  pathParams: DeleteV2SitesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2SitesUUID = (variables: DeleteV2SitesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2SitesUUIDError, undefined, {}, {}, DeleteV2SitesUUIDPathParams>({
-    url: "/v2/sites/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2SitesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2SitesUUIDError, DeleteV2SitesUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2SitesUUIDError, DeleteV2SitesUUIDVariables>(
-    (variables: DeleteV2SitesUUIDVariables) => fetchDeleteV2SitesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2SitesUUIDPathParams = {
   uuid: string;
 };
@@ -24911,37 +24880,6 @@ export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
   >(
     (variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables) =>
       fetchDeleteV2ProjectsUUIDManagersUSERUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2NurseriesUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2NurseriesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2NurseriesUUIDVariables = {
-  pathParams: DeleteV2NurseriesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2NurseriesUUID = (variables: DeleteV2NurseriesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2NurseriesUUIDError, undefined, {}, {}, DeleteV2NurseriesUUIDPathParams>({
-    url: "/v2/nurseries/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2NurseriesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2NurseriesUUIDError, DeleteV2NurseriesUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2NurseriesUUIDError, DeleteV2NurseriesUUIDVariables>(
-    (variables: DeleteV2NurseriesUUIDVariables) => fetchDeleteV2NurseriesUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };

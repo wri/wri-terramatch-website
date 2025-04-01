@@ -9,10 +9,9 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
+import { deleteSite, EntityIndexConnection, EntityIndexConnectionProps, useSiteIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
 import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
@@ -41,12 +40,6 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
     onFetch?.(siteIndex as EntityIndexConnection<SiteLightDto>);
   }, [siteIndex, onFetch]);
 
-  const { mutate: deleteSite } = useDeleteV2SitesUUID({
-    onSuccess() {
-      siteIndex.refetch();
-    }
-  });
-
   const handleDeleteSite = (uuid: string) => {
     openModal(
       ModalId.CONFIRM_SITE_DELETION,
@@ -59,8 +52,13 @@ const SitesTable = ({ project, hasAddButton = true, onFetch }: SitesTableProps) 
         primaryButtonProps={{
           children: t("Yes"),
           onClick: () => {
-            deleteSite({ pathParams: { uuid } });
-            closeModal(ModalId.CONFIRM_SITE_DELETION);
+            deleteSite(uuid)
+              .then(() => {
+                siteIndex.refetch();
+              })
+              .finally(() => {
+                closeModal(ModalId.CONFIRM_SITE_DELETION);
+              });
           }
         }}
         secondaryButtonProps={{

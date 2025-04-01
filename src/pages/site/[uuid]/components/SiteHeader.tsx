@@ -10,10 +10,10 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { deleteSite } from "@/connections/Entity";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDeleteV2SitesUUID } from "@/generated/apiComponents";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -39,16 +39,6 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
     updateRequestStatus: site.updateRequestStatus as string
   });
 
-  const { mutate: deleteSite } = useDeleteV2SitesUUID({
-    onSuccess() {
-      router.push("/my-projects");
-      openToast(t("The site has been successfully deleted"));
-    },
-    onError() {
-      openToast(t("Something went wrong!"), ToastType.ERROR);
-    }
-  });
-
   const onDeleteSite = () => {
     openModal(
       ModalId.CONFIRM_SITE_DELETION,
@@ -61,8 +51,17 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
         primaryButtonProps={{
           children: t("Delete"),
           onClick: () => {
-            deleteSite({ pathParams: { uuid: site.uuid } });
-            closeModal(ModalId.CONFIRM_SITE_DELETION);
+            deleteSite(site.uuid)
+              .then(() => {
+                router.push("/my-projects");
+                openToast(t("The site has been successfully deleted"));
+              })
+              .catch(() => {
+                openToast(t("Something went wrong!"), ToastType.ERROR);
+              })
+              .finally(() => {
+                closeModal(ModalId.CONFIRM_SITE_DELETION);
+              });
           }
         }}
         secondaryButtonProps={{

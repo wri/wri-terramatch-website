@@ -9,10 +9,14 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { EntityIndexConnection, EntityIndexConnectionProps, useNurseryIndex } from "@/connections/Entity";
+import {
+  deleteNursery,
+  EntityIndexConnection,
+  EntityIndexConnectionProps,
+  useNurseryIndex
+} from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteV2NurseriesUUID } from "@/generated/apiComponents";
 import { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
@@ -42,12 +46,6 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
     onFetch?.(nurseryIndex as EntityIndexConnection<NurseryLightDto>);
   }, [nurseryIndex, onFetch]);
 
-  const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
-    onSuccess() {
-      nurseryIndex.refetch();
-    }
-  });
-
   const handleDeleteNursery = (uuid: string) => {
     openModal(
       ModalId.CONFIRM_NURSERY_DELETION,
@@ -60,8 +58,13 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
         primaryButtonProps={{
           children: t("Yes"),
           onClick: () => {
-            deleteNursery({ pathParams: { uuid } });
-            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+            deleteNursery(uuid)
+              .then(() => {
+                nurseryIndex.refetch();
+              })
+              .finally(() => {
+                closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+              });
           }
         }}
         secondaryButtonProps={{

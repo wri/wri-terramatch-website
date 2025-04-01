@@ -9,9 +9,9 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { deleteNursery } from "@/connections/Entity";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDeleteV2NurseriesUUID } from "@/generated/apiComponents";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
@@ -25,16 +25,6 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
-
-  const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
-    onSuccess() {
-      router.push("/my-projects");
-      openToast(t("The nursery has been successfully deleted"));
-    },
-    onError() {
-      openToast(t("Something went wrong!"), ToastType.ERROR);
-    }
-  });
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
 
@@ -59,8 +49,17 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
         primaryButtonProps={{
           children: t("Delete"),
           onClick: () => {
-            deleteNursery({ pathParams: { uuid: nursery?.uuid } });
-            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+            deleteNursery(nursery?.uuid)
+              .then(() => {
+                router.push("/my-projects");
+                openToast(t("The nursery has been successfully deleted"));
+              })
+              .catch(() => {
+                openToast(t("Something went wrong!"), ToastType.ERROR);
+              })
+              .finally(() => {
+                closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+              });
           }
         }}
         secondaryButtonProps={{
