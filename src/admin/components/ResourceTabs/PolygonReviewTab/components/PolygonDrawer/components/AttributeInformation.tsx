@@ -93,7 +93,7 @@ const AttributeInformation = ({
   setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygon;
-  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void;
+  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void | undefined;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;

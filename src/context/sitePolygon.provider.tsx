@@ -9,14 +9,14 @@ export type SitePolygonData = {
 type SitePolygonContextType = {
   sitePolygonData: SitePolygonsDataResponse | undefined;
   reloadSiteData: () => void;
-  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void;
+  updateSingleCriteriaData?: (poly_id: string, updatedData: any) => void;
 };
 
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
   sitePolygonData: SitePolygonsDataResponse | undefined;
-  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void;
+  updateSingleCriteriaData?: (poly_id: string, updatedData: any) => void;
   reloadSiteData: () => void;
   children: ReactNode;
 }> = ({ sitePolygonData, reloadSiteData, updateSingleCriteriaData, children }) => {

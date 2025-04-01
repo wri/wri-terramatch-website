@@ -197,7 +197,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { reloadSiteData } = context ?? {};
+  const { updateSingleCriteriaData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -542,12 +542,14 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
-              await reloadSiteData?.();
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
+              if (polygonFromMap?.uuid) {
+                await updateSingleCriteriaData?.(polygonFromMap?.uuid, polygonActive);
+              }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
               flyToPolygonBounds(polygonActive?.poly_id as string);
@@ -556,7 +558,6 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
-              await reloadSiteData?.();
             }
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData, centroids);

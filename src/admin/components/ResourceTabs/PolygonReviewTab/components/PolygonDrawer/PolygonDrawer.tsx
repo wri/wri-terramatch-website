@@ -372,7 +372,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  updateSingleCriteriaData={updateSingleCriteriaData}
+                  updateSingleCriteriaData={updateSingleCriteriaData ?? (() => {})}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
