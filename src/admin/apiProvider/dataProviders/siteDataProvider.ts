@@ -1,14 +1,9 @@
-import { DataProvider, HttpError } from "react-admin";
+import { DataProvider } from "react-admin";
 
-import { loadFullSite, loadSiteIndex } from "@/connections/Entity";
-import {
-  DeleteV2AdminSitesUUIDError,
-  fetchDeleteV2AdminSitesUUID,
-  fetchGetV2AdminSitesMulti,
-  GetV2AdminSitesMultiError
-} from "@/generated/apiComponents";
+import { deleteSite, loadFullSite, loadSiteIndex } from "@/connections/Entity";
+import { fetchGetV2AdminSitesMulti, GetV2AdminSitesMultiError } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
@@ -17,7 +12,7 @@ export const siteDataProvider: DataProvider = {
   async getList(_, params) {
     const connection = await loadSiteIndex(raConnectionProps(params));
     if (connection.fetchFailure != null) {
-      throw new HttpError(connection.fetchFailure.message, connection.fetchFailure.statusCode);
+      throw v3ErrorForRA("Site index fetch failed", connection.fetchFailure);
     }
 
     return entitiesListResult(connection);
@@ -27,7 +22,7 @@ export const siteDataProvider: DataProvider = {
   async getOne(_, params) {
     const { entity: site, fetchFailure } = await loadFullSite({ uuid: params.id });
     if (fetchFailure != null) {
-      throw new HttpError(fetchFailure.message, fetchFailure.statusCode);
+      throw v3ErrorForRA("Site get fetch failed", fetchFailure);
     }
 
     return { data: { ...site, id: site!.uuid } };
@@ -54,29 +49,25 @@ export const siteDataProvider: DataProvider = {
     }
   },
 
-  //@ts-ignore
+  //@ts-expect-error until we can get the whole DataProvider on Site DTOs
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminSitesUUID({
-        pathParams: { uuid: params.id as string }
-      });
+      await deleteSite(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminSitesUUIDError);
+      throw v3ErrorForRA("Site delete failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminSitesUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteSite(id as string);
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminSitesUUIDError);
+      throw v3ErrorForRA("Site deleteMany failed", err);
     }
   }
 };

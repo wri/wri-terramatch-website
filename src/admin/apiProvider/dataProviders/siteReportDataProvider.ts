@@ -1,9 +1,8 @@
 import { DataProvider } from "react-admin";
 
-import { loadFullSiteReport, loadSiteReportIndex } from "@/connections/Entity";
-import { DeleteV2AdminSiteReportsUUIDError, fetchDeleteV2AdminSiteReportsUUID } from "@/generated/apiComponents";
+import { deleteSiteReport, loadFullSiteReport, loadSiteReportIndex } from "@/connections/Entity";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
@@ -29,26 +28,22 @@ export const siteReportDataProvider: DataProvider = {
   // @ts-ignore
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminSiteReportsUUID({
-        pathParams: { uuid: params.id as string }
-      });
+      await deleteSiteReport(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminSiteReportsUUIDError);
+      throw v3ErrorForRA("Site report delete failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminSiteReportsUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteSiteReport(id as string);
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminSiteReportsUUIDError);
+      throw v3ErrorForRA("Site report deleteMany failed", err);
     }
   }
 };
