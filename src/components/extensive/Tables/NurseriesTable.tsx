@@ -55,14 +55,9 @@ const NurseriesTable = ({
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            deleteNursery(uuid)
-              .then(() => {
-                nurseryIndex.refetch();
-              })
-              .finally(() => {
-                closeModal(ModalId.CONFIRM_NURSERY_DELETION);
-              });
+          onClick: async () => {
+            await deleteNursery(uuid);
+            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
           }
         }}
         secondaryButtonProps={{

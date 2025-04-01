@@ -49,14 +49,9 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            deleteSite(uuid)
-              .then(() => {
-                siteIndex.refetch();
-              })
-              .finally(() => {
-                closeModal(ModalId.CONFIRM_SITE_DELETION);
-              });
+          onClick: async () => {
+            await deleteSite(uuid);
+            closeModal(ModalId.CONFIRM_SITE_DELETION);
           }
         }}
         secondaryButtonProps={{

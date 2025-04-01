@@ -48,18 +48,16 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
         )}
         primaryButtonProps={{
           children: t("Delete"),
-          onClick: () => {
-            deleteNursery(nursery?.uuid)
-              .then(() => {
-                router.push("/my-projects");
-                openToast(t("The nursery has been successfully deleted"));
-              })
-              .catch(() => {
-                openToast(t("Something went wrong!"), ToastType.ERROR);
-              })
-              .finally(() => {
-                closeModal(ModalId.CONFIRM_NURSERY_DELETION);
-              });
+          onClick: async () => {
+            try {
+              await deleteNursery(nursery?.uuid);
+              router.push("/my-projects");
+              openToast(t("The nursery has been successfully deleted"));
+            } catch (error) {
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            } finally {
+              closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+            }
           }
         }}
         secondaryButtonProps={{
