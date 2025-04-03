@@ -10,7 +10,7 @@ import { EntityName } from "@/types/common";
  * @param entity EntityName
  * @returns custom form UUID
  */
-export const useGetReportingFrameworkFormUUID = (frameworkKey: string, entity: EntityName) => {
+export const useGetReportingFrameworkFormKey = (frameworkKey: string, entity: EntityName) => {
   const { data } = useGetV2ReportingFrameworksFrameworkKey(
     { pathParams: { frameworkKey } },
     {

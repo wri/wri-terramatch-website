@@ -9,7 +9,7 @@ import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGetV2FormsENTITYUUID, useGetV2FormsUUID, usePostV2FormsENTITY } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
-import { useGetReportingFrameworkFormUUID } from "@/hooks/useGetFormUUID";
+import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
 
 /**
@@ -33,7 +33,7 @@ const EntityIntroPage = () => {
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
 
-  const formUUID = !entityUUID ? useGetReportingFrameworkFormUUID(frameworkKey, entityName) : undefined;
+  const formUUID = !entityUUID ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
 
   const { data: formData } = useGetV2FormsUUID<{ data: FormRead }>(
     {
