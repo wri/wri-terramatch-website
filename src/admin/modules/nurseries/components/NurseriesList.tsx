@@ -59,37 +59,37 @@ const NurseryDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Nursery Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={(record: any) => <CustomChipField label={record.status} />}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         render={(record: any) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
       <SelectField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
-      <TextField source="project.name" label="Project Name" />
-      <TextField source="organisation.name" label="Organization" />
-      <DateField source="start_date" label="Establishment" locales="en-GB" />
+      <TextField source="projectName" label="Project Name" />
+      <TextField source="organisationName" label="Organization" />
+      <DateField source="startDate" label="Establishment" locales="en-GB" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
         render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ??
-          record?.framework_key
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
+          record?.frameworkKey
         }
         sortable={false}
       />
@@ -114,7 +114,7 @@ export const NurseriesList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       sort={{
@@ -127,9 +127,9 @@ export const NurseriesList: FC = () => {
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />,
@@ -141,15 +141,15 @@ export const NurseriesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       label="Change Request Status"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />,
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{

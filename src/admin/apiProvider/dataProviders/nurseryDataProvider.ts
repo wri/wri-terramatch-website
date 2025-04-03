@@ -1,49 +1,30 @@
 import { DataProvider } from "react-admin";
 
-import {
-  DeleteV2AdminNurseriesUUIDError,
-  fetchDeleteV2AdminNurseriesUUID,
-  fetchGetV2AdminNurseries,
-  fetchGetV2AdminNurseriesMulti,
-  fetchGetV2ENTITYUUID,
-  GetV2AdminNurseriesError,
-  GetV2AdminNurseriesMultiError,
-  GetV2ENTITYUUIDError
-} from "@/generated/apiComponents";
+import { deleteNursery, loadFullNursery, loadNurseryIndex } from "@/connections/Entity";
+import { fetchGetV2AdminNurseriesMulti, GetV2AdminNurseriesMultiError } from "@/generated/apiComponents";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-const nurserySortableList = ["name", "project_name", "organisation_name", "start_date", "status"];
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const nurseryDataProvider: DataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on Nurseries DTOs
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminNurseries({
-        queryParams: raListParamsToQueryParams(params, nurserySortableList)
-      });
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminNurseriesError);
+    const connection = await loadNurseryIndex(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Nursery index fetch failed", connection.fetchFailure);
     }
+    return entitiesListResult(connection);
   },
 
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ENTITYUUID({
-        pathParams: {
-          entity: "nurseries",
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ENTITYUUIDError);
+    const { entity: site, fetchFailure } = await loadFullNursery({ uuid: params.id });
+    if (fetchFailure != null) {
+      throw v3ErrorForRA("Nursery get fetch failed", fetchFailure);
     }
+
+    return { data: { ...site, id: site!.uuid } };
   },
 
   // @ts-ignore
@@ -67,29 +48,25 @@ export const nurseryDataProvider: DataProvider = {
     }
   },
 
-  //@ts-ignore
+  //@ts-expect-error until we can get the whole DataProvider on Nursery DTOs
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminNurseriesUUID({
-        pathParams: { uuid: params.id as string }
-      });
+      await deleteNursery(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminNurseriesUUIDError);
+      throw v3ErrorForRA("Nursery delete failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminNurseriesUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteNursery(id as string);
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminNurseriesUUIDError);
+      throw v3ErrorForRA("Nursery deleteMany failed", err);
     }
   }
 };

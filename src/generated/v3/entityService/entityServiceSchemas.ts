@@ -38,6 +38,17 @@ export type MediaDto = {
   photographer: string | null;
 };
 
+export type EntitySideload = {
+  /**
+   * Entity type to sideload
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  /**
+   * The page size to include.
+   */
+  pageSize: number;
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -121,6 +132,206 @@ export type SiteLightDto = {
    * @format date-time
    */
   updatedAt: string;
+};
+
+export type NurseryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  name: string | null;
+  /**
+   * Framework key for this nursery
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this nursery
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this nursery
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
+  migrated: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type ProjectReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string;
+  frameworkUuid: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  workdaysPaid: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type NurseryReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  title: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+};
+
+export type SiteReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated site name
+   */
+  siteName: string | null;
+  /**
+   * The associated site uuid
+   */
+  siteUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
 };
 
 export type ProjectFullDto = {
@@ -330,6 +541,352 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+};
+
+export type NurseryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  name: string | null;
+  /**
+   * Framework key for this nursery
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this nursery
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this nursery
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
+  migrated: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  type: string | null;
+  seedlingGrown: number | null;
+  plantingContribution: string | null;
+  oldModel: string | null;
+  nurseryReportsTotal: number | null;
+  overdueNurseryReportsTotal: number | null;
+  projectUuid: string | null;
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+};
+
+export type ProjectReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string;
+  frameworkUuid: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  workdaysPaid: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  completion: number | null;
+  localEngagementDescription: string | null;
+  equitableOpportunities: string | null;
+  resilienceProgress: string | null;
+  localGovernance: string | null;
+  adaptiveManagement: string | null;
+  scalabilityReplicability: string | null;
+  convergenceJobsDescription: string | null;
+  convergenceSchemes: string | null;
+  convergenceAmount: number | null;
+  beneficiariesScstobc: number | null;
+  beneficiariesScstobcFarmers: number | null;
+  communityPartnersAssetsDescription: string | null;
+  peopleKnowledgeSkillsIncreased: number | null;
+  technicalNarrative: string | null;
+  publicNarrative: string | null;
+  totalUniqueRestorationPartners: number | null;
+  businessMilestones: string | null;
+  landscapeCommunityContribution: string | null;
+  reportTitle: string | null;
+  seedsPlantedCount: number | null;
+  treesPlantedCount: number | null;
+  regeneratedTreesCount: number;
+  topThreeSuccesses: string | null;
+  challengesFaced: string | null;
+  lessonsLearned: string | null;
+  maintenanceAndMonitoringActivities: string | null;
+  significantChange: string | null;
+  pctSurvivalToDate: number | null;
+  survivalCalculation: string | null;
+  survivalComparison: string | null;
+  ftSmallholderFarmers: number | null;
+  ptSmallholderFarmers: number | null;
+  seasonalMen: number | null;
+  seasonalWomen: number | null;
+  seasonalYouth: number | null;
+  seasonalSmallholderFarmers: number | null;
+  seasonalTotal: number | null;
+  volunteerSmallholderFarmers: number | null;
+  plantedTrees: number | null;
+  sharedDriveLink: string | null;
+  beneficiariesDescription: string | null;
+  beneficiariesIncomeIncrease: number | null;
+  beneficiariesIncomeIncreaseDescription: string | null;
+  beneficiariesSkillsKnowledgeIncreaseDescription: string | null;
+  indirectBeneficiaries: number | null;
+  indirectBeneficiariesDescription: string | null;
+  newJobsDescription: string | null;
+  volunteersWorkDescription: string | null;
+  siteReportsCount: number | null;
+  nurseryReportsCount: number | null;
+  migrated: boolean;
+  seedlingsGrown: number;
+  communityProgress: string | null;
+  localEngagement: string | null;
+  siteAddition: boolean;
+  paidOtherActivityDescription: string | null;
+  nonTreeTotal: number | null;
+  readableCompletionStatus: string;
+  createdBy: number | null;
+  createdByUser: Record<string, any> | null;
+  media: MediaDto[];
+  socioeconomicBenefits: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+};
+
+export type NurseryReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  title: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  nothingToReport: boolean;
+  completion: number | null;
+  seedlingsYoungTrees: number | null;
+  interestingFacts: string | null;
+  sitePrep: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
+  migrated: boolean;
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  treeSeedlingContributions: MediaDto[];
+  photos: MediaDto[];
+};
+
+export type SiteReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated site name
+   */
+  siteName: string | null;
+  /**
+   * The associated site uuid
+   */
+  siteUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  nothingToReport: boolean;
+  completion: number | null;
+  title: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
+  migrated: boolean;
+  numTreesRegenerating: number | null;
+  regenerationDescription: string | null;
+  invasiveSpeciesRemoved: string | null;
+  invasiveSpeciesManagement: string | null;
+  siteCommunityPartnersDescription: string | null;
+  siteCommunityPartnersIncomeIncreaseDescription: string | null;
+  soilWaterRestorationDescription: string | null;
+  waterStructures: string | null;
+  disturbanceDetails: string | null;
+  paidOtherActivityDescription: string | null;
+  polygonStatus: string | null;
+  totalNonTreeSpeciesPlantedCount: number;
+  totalTreeReplantingCount: number;
+  totalTreesPlantedCount: number;
+  totalSeedsPlantedCount: number;
+  survivalCalculation: string;
+  survivalDescription: string;
+  maintenanceActivities: string;
+  technicalNarrative: string;
+  publicNarrative: string;
+  pctSurvivalToDate: number;
+  projectReport: ProjectReportLightDto;
+  socioeconomicBenefits: MediaDto[];
+  media: MediaDto[];
+  file: MediaDto[];
+  otherAdditionalDocuments: MediaDto[];
+  photos: MediaDto[];
+  treeSpecies: MediaDto[];
+  siteSubmission: MediaDto[];
+  documentFiles: MediaDto[];
 };
 
 export type DemographicEntryDto = {

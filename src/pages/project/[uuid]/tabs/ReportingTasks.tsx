@@ -46,7 +46,7 @@ const ReportingTasksTab = ({ projectUUID }: ReportingTasksProps) => {
                     "This is a list of your reporting tasks for this project. Please ensure that you review the submission status and complete all reports that are both due and overdue."
                   )}
                 >
-                  <ReportingTasksTable projectUUID={projectUUID} />
+                  <ReportingTasksTable projectUUID={projectUUID} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>

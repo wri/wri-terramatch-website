@@ -28,7 +28,7 @@ const SitePolygonsTable = ({
     page: 1
   });
   const [tableMeta, setTableMeta] = useState<any>();
-  const [isLoaded, { sitePolygons, meta }] = useSitePolygons({
+  const [isLoaded, { sitePolygons, total }] = useSitePolygons({
     entityName,
     entityUuid,
     search: searchTerm,
@@ -39,11 +39,10 @@ const SitePolygonsTable = ({
 
   useEffect(() => {
     setTableMeta({
-      ...meta,
       pageSize: queryParams.per_page,
-      last_page: meta ? Math.ceil(+meta.total / +queryParams.per_page) : 1
+      last_page: total != null && total > +queryParams.per_page ? Math.ceil(total / +queryParams.per_page) : 1
     });
-  }, [meta, queryParams]);
+  }, [total, queryParams]);
   const columns = presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : [];
 
   return (

@@ -3,15 +3,16 @@ import { Fragment, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { TextVariants } from "@/types/common";
+import { getCohortName } from "@/utils/dashboardUtils";
 
 interface DashboardBreadcrumbsProps {
   className?: string;
   clasNameText?: string;
   textVariant?: TextVariants;
-  framework: string;
-  countryName?: string;
+  cohort: string;
+  countryData?: CountriesProps;
   projectName?: string;
 }
 
@@ -19,21 +20,20 @@ const DashboardBreadcrumbs = ({
   className,
   clasNameText,
   textVariant,
-  framework,
-  countryName,
+  cohort,
+  countryData,
   projectName
 }: DashboardBreadcrumbsProps) => {
   const { setFilters } = useDashboardContext();
-
   const links = useMemo(
     () =>
       [
         {
-          title: framework,
-          onClick: () =>
+          title: getCohortName(cohort),
+          onClick: () => {
             setFilters(prevValues => ({
               ...prevValues,
-              programme: "terrafund",
+              cohort: cohort,
               country: {
                 country_slug: "",
                 id: 0,
@@ -43,16 +43,26 @@ const DashboardBreadcrumbs = ({
                 }
               },
               uuid: ""
-            }))
+            }));
+          }
         },
-        countryName
+        countryData
           ? {
-              title: countryName,
-              onClick: () =>
+              title: countryData?.data?.label,
+              onClick: () => {
                 setFilters(prevValues => ({
                   ...prevValues,
+                  country: {
+                    country_slug: countryData?.country_slug,
+                    id: countryData?.id ?? 0,
+                    data: {
+                      label: countryData?.data?.label,
+                      icon: countryData?.data?.icon
+                    }
+                  },
                   uuid: ""
-                }))
+                }));
+              }
             }
           : null,
         projectName
@@ -61,7 +71,7 @@ const DashboardBreadcrumbs = ({
             }
           : null
       ].filter(Boolean),
-    [framework, countryName, projectName, setFilters]
+    [cohort, countryData, projectName, setFilters]
   );
 
   return (
@@ -76,7 +86,8 @@ const DashboardBreadcrumbs = ({
                     variant={textVariant || "text-14-bold"}
                     className={classNames(
                       "text-darkCustom opacity-60 hover:text-primary hover:underline hover:opacity-100",
-                      "line-clamp-1",
+                      "text-nowrap",
+                      "w-max",
                       clasNameText
                     )}
                     title={item.title}
@@ -87,7 +98,7 @@ const DashboardBreadcrumbs = ({
               ) : (
                 <Text
                   variant={textVariant || "text-14-bold"}
-                  className={classNames("text-darkCustom", "line-clamp-1", clasNameText)}
+                  className={classNames("text-darkCustom", "text-nowrap", "line-clamp-1", clasNameText)}
                   title={item.title}
                 >
                   {item.title}

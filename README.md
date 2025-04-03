@@ -50,22 +50,16 @@ When adding a new **service** app to the v3 API:
 * This will generate a new target, which needs to be added to `package.json`:
   * Under scripts, add `"generate:fooService": "npm run generate:fooService"`
   * Under the `"generate:services"` script, add the new service: `"generate:services": "npm run generate:userService && npm run generate:fooService`
-* After running `yarn generate:fooService` the first time, open the generated `fooServiceFetcher.ts` and 
-  modify it to match `userServiceFetcher.ts`. 
-  * This file does not get regenerated after the first time, and so it can utilize the same utilities 
-    for interfacing with the redux API layer / connection system that the other v3 services use.
-* Follow directions below for all namespaces and resources in the new service
+* After running `yarn generate:fooService` the first time:
+  * open the generated `fooServiceFetcher.ts` and modify it to match `userServiceFetcher.ts`. 
+    * This file does not get regenerated after the first time, and so it can utilize the same utilities 
+      for interfacing with the redux API layer / connection system that the other v3 services use.
+  * open `apiSlice.ts` and update the `RESOURCES` const and `ApiResource` type to reference the newly 
+    generated resources constants from the newly generated service constants file.
+* Follow directions below for all namespaces in the new service
 
 When adding a new **namespace** to the V3 API:
 * In `generated/v3/utils.ts`, add namespace -> service URL mapping to `V3_NAMESPACES`
-
-When adding a new **resource** to the v3 API:
-* The resource needs to be specified in shape of the redux API store. In `apiSlice.ts`, add the new 
-  resource plural name (the `type` returned in the API responses) to the store by adding it to the 
-  `RESOURCES` const. This will make sure it's listed in the type of the ApiStore so that resources that match that type are seamlessly folded into the store cache structure.
-* The shape of the resource should be specified by the auto-generated API. This type needs to be 
-  added to the `ApiResource` type in `apiSlice.ts`. This allows us to have strongly typed results
-  coming from the redux API store.
 
 ### Connections
 Connections are a **declarative** way for components to get access to the data from the cached API

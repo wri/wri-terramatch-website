@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
+import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const NurseryOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
@@ -21,17 +22,17 @@ const NurseryOverview: FC = () => {
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={12} item>
               <Labeled label="Project">
-                <TextField source="project.name" />
+                <TextField source="projectName" />
               </Labeled>
             </Grid>
             <Grid xs={4} item>
               <Labeled label="Status">
-                <TextField source="readable_status" />
+                <ReadableStatusField prop="status" />
               </Labeled>
             </Grid>
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
-                <TextField source="readable_update_request_status" />
+                <ReadableStatusField prop="updateRequestStatus" />
               </Labeled>
             </Grid>
           </Grid>

@@ -46,8 +46,8 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
   const { openToast } = useToastContext();
   const status = getEntityCombinedStatus(project);
   const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
+  const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
   const [siteCount, setSiteCount] = useState<number | undefined>();
-  const [nurseriesCount, setNurseriesCount] = useState();
 
   const onDeleteProject = () => {
     openModal(
@@ -150,7 +150,12 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
               }
             >
               {(typeof siteCount === "undefined" || siteCount > 0) && (
-                <SitesTable project={project} hasAddButton={false} onFetch={data => setSiteCount(data?.indexTotal)} />
+                <SitesTable
+                  project={project}
+                  hasAddButton={false}
+                  onFetch={data => setSiteCount(data?.indexTotal)}
+                  alwaysShowPagination
+                />
               )}
             </ExpandedCard>
 
@@ -183,10 +188,8 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
                 <NurseriesTable
                   project={project}
                   hasAddButton={false}
-                  onFetch={data =>
-                    //@ts-expect-error
-                    typeof data.meta?.unfiltered_total === "number" && setNurseriesCount(data.meta?.unfiltered_total)
-                  }
+                  onFetch={data => setNurseriesCount(data?.indexTotal)}
+                  alwaysShowPagination
                 />
               )}
             </ExpandedCard>

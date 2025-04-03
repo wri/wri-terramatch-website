@@ -1,22 +1,18 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ServerSideTable, useEntityIndexQueryParams } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
+import { deleteNursery, EntityIndexConnection, useNurseryIndex } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDNurseriesResponse,
-  useDeleteV2NurseriesUUID,
-  useGetV2ProjectsUUIDNurseries
-} from "@/generated/apiComponents";
-import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
@@ -25,36 +21,28 @@ import { ModalId } from "../Modal/ModalConst";
 interface NurseriesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
-  onFetch?: (data: GetV2ProjectsUUIDNurseriesResponse) => void;
+  onFetch?: (data: EntityIndexConnection<NurseryLightDto>) => void;
+  alwaysShowPagination?: boolean;
 }
 
-const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTableProps) => {
+const NurseriesTable = ({
+  project,
+  onFetch,
+  hasAddButton = true,
+  alwaysShowPagination = false
+}: NurseriesTableProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
-  const [queryParams, setQueryParams] = useState();
+  const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
 
   const { format } = useDate();
 
-  const {
-    data: nurseries,
-    isLoading,
-    refetch
-  } = useGetV2ProjectsUUIDNurseries(
-    {
-      pathParams: { uuid: project.uuid },
-      queryParams
-    },
-    {
-      keepPreviousData: true,
-      onSuccess: onFetch
-    }
-  );
+  const nurseryIndexQueryParams = { filter: { projectUuid: project.uuid }, ...queryParams };
+  const [isLoaded, nurseryIndex] = useNurseryIndex(nurseryIndexQueryParams);
 
-  const { mutate: deleteNursery } = useDeleteV2NurseriesUUID({
-    onSuccess() {
-      refetch();
-    }
-  });
+  useEffect(() => {
+    onFetch?.(nurseryIndex as EntityIndexConnection<NurseryLightDto>);
+  }, [nurseryIndex, onFetch]);
 
   const handleDeleteNursery = (uuid: string) => {
     openModal(
@@ -67,8 +55,8 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            deleteNursery({ pathParams: { uuid } });
+          onClick: async () => {
+            await deleteNursery(uuid);
             closeModal(ModalId.CONFIRM_NURSERY_DELETION);
           }
         }}
@@ -82,10 +70,15 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
 
   return (
     <ServerSideTable
-      meta={nurseries?.meta}
-      data={nurseries?.data || []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
+      meta={{
+        last_page:
+          nurseryIndex?.indexTotal && queryParams.pageSize
+            ? Math.ceil(nurseryIndex?.indexTotal / queryParams.pageSize)
+            : 1
+      }}
+      data={nurseryIndex.entities ?? []}
+      isLoading={!isLoaded}
+      onQueryParamChange={onQueryParamChange}
       columns={[
         {
           accessorKey: "name",
@@ -102,7 +95,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
           }
         },
         {
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;
@@ -116,11 +109,12 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
           }
         },
         {
-          accessorKey: "seedlings_grown_count",
+          accessorKey: "seedlingsGrownCount",
+          enableSorting: false,
           header: t("No. seedlings")
         },
         {
-          accessorKey: "created_at",
+          accessorKey: "createdAt",
           header: t("Date created"),
           cell: props => format(props.getValue() as string)
         },
@@ -138,7 +132,7 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
                   href: getEntityDetailPageLink("nurseries", props.getValue() as string),
                   children: t("View Nursery")
                 }}
-                hasDeleteButton={record.nursery_reports_total === 0}
+                hasDeleteButton={record.nurseryReportsTotal === 0}
                 onDelete={() => handleDeleteNursery(props.getValue() as string)}
               />
             );
@@ -155,11 +149,12 @@ const NurseriesTable = ({ project, onFetch, hasAddButton = true }: NurseriesTabl
         },
         {
           type: "dropDown",
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           label: t("Change Request"),
           options: getChangeRequestStatusOptions(t)
         }
       ]}
+      alwaysShowPagination={alwaysShowPagination}
     >
       {hasAddButton && (
         <Button

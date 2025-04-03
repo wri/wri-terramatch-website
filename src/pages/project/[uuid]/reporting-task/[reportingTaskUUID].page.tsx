@@ -268,7 +268,7 @@ const ReportingTaskPage = () => {
                   onTableStateChange={state => setFilters(state.filters)}
                   hasPagination={true}
                   resetOnDataChange={false}
-                  initialTableState={{ pagination: { pageSize: 15 } }}
+                  initialTableState={{ pagination: { pageSize: 10 } }}
                   columnFilters={[
                     {
                       type: "dropDown",
@@ -296,6 +296,7 @@ const ReportingTaskPage = () => {
                       }))
                     }
                   ]}
+                  alwaysShowPagination
                 />
               </PageCard>
             </PageSection>
