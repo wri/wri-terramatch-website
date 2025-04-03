@@ -45,6 +45,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   useValueChanged(valueCondition, () => {
     if (valueCondition == true) {
       field.onChange(true);
+      formHook.reset(formHook.getValues());
       return;
     }
     const values = props?.formHook?.formState?.defaultValues;
@@ -57,6 +58,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
         field.value == null
       ) {
         field.onChange(true);
+        formHook.reset(formHook.getValues());
         return;
       }
       if (values && (field.value == true || field.value == null)) {

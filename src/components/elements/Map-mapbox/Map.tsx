@@ -526,8 +526,8 @@ export const MapContainer = ({
     });
   };
 
-  const { mutate: updateGeometry } = usePutV2TerrafundPolygonUuid();
-  const { mutate: createGeometry } = usePostV2GeometryUUIDNewVersion();
+  const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
+  const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
@@ -538,6 +538,7 @@ export const MapContainer = ({
           const feature = geojson.features[0];
           try {
             if (!pdView) {
+              showLoader();
               await createGeometry({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
@@ -546,9 +547,10 @@ export const MapContainer = ({
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
               })) as SitePolygonsDataResponse;
+
               const polygonActive = polygonVersionData?.find(item => item.is_active);
-              if (polygonFromMap?.uuid) {
-                await updateSingleCriteriaData?.(polygonFromMap?.uuid, polygonActive);
+              if (selectedPolygon?.uuid) {
+                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
@@ -567,8 +569,10 @@ export const MapContainer = ({
               t("Success"),
               pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully.")
             );
-          } catch (e) {
-            openNotification("error", t("Error"), t("Please try again later."));
+          } catch (e: any) {
+            openNotification("error", t("Error"), e?.message || t("Please try again later."));
+          } finally {
+            hideLoader();
           }
         }
       }
