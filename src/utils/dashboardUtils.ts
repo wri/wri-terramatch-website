@@ -453,10 +453,10 @@ export const parseHectaresUnderRestorationData = (
         decimals++;
         if (decimals > 6) break;
       }
-      return `${value.toFixed(1).toLocaleString()} ha (${percentage.toFixed(decimals)}%)`;
+      return `${Number(value.toFixed(1)).toLocaleString()} ha (${percentage.toFixed(decimals)}%)`;
     }
 
-    return `${value.toFixed(1).toLocaleString()} ha (${percentage.toFixed(1)}%)`;
+    return `${Number(value.toFixed(1)).toLocaleString()} ha (${percentage.toFixed(1)}%)`;
   };
 
   const getLandUseTypeTitle = (value: string | null): string => {
