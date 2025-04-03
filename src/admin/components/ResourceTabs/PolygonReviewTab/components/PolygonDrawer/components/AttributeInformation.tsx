@@ -110,7 +110,7 @@ const AttributeInformation = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
-  const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
+  const [treesPlanted, setTreesPlanted] = useState<number>(selectedPolygon?.num_trees ?? 0);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePostV2TerrafundNewSitePolygonUuidNewVersion();
@@ -227,7 +227,17 @@ const AttributeInformation = ({
   const handleCloseDrawer = () => {
     setIsOpenPolygonDrawer(false);
   };
+  const handleChangeTreesPlanted = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
 
+    if (value.length > 1 && value.startsWith("0")) {
+      value = value.replace(/^0+/, "");
+    }
+
+    if (/^\d*$/.test(value)) {
+      setTreesPlanted(Number(value));
+    }
+  };
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -296,11 +306,10 @@ const AttributeInformation = ({
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Trees Planted"
-        type="number"
-        format="number"
+        type="text"
         name=""
         value={treesPlanted}
-        onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
+        onChangeCapture={handleChangeTreesPlanted}
       />
       <Input
         label="Calculated Area"
