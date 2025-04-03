@@ -18,7 +18,7 @@ export const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
       <p className="text-12-bold text-black">{label}</p>
       {payload.map((item: any, index: number) => (
         <p key={index} className="text-12">
-          <p className="text-gray-600">{`${formattedValue}ha (${formattedPercentage}%)`}</p>
+          <p className="text-gray-600">{`${formattedValue} ha (${formattedPercentage}%)`}</p>
         </p>
       ))}
     </div>
