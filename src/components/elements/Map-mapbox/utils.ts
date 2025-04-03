@@ -641,17 +641,6 @@ export const addGeojsonSourceToLayer = (
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
-
-    // Set filters for layers
-    const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    layerIds.forEach(layerId => {
-      let existingFilter = map.getFilter(layerId) || ["all"];
-
-      // Add zoom-based visibility filter
-      const zoomFilter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
-
-      map.setFilter(layerId, ["all", existingFilter, zoomFilter]);
-    });
   }
 };
 export const addSourceToLayer = (
