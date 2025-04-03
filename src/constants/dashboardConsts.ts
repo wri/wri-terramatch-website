@@ -58,7 +58,8 @@ export const DEFAULT_POLYGONS_DATA_STRATEGIES = [
   { label: "Direct Seeding", value: 0 },
   { label: "Assisted Natural Regeneration", value: 0 },
   { label: "Tree Planting", value: 0 },
-  { label: "Multiple Strategies", value: 0 }
+  { label: "Multiple Strategies", value: 0 },
+  { label: "No Strategy Identified", value: 0 }
 ];
 
 export const DEFAULT_POLYGONS_DATA_ECOREGIONS = {

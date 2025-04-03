@@ -381,6 +381,9 @@ export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
 export const getBarColorRestoration = (name: string) => {
   if (name.includes("Tree Planting")) return "#7BBD31";
   if (name.includes("Direct Seeding")) return "#27A9E0";
+  if (name.includes("Assisted Natural Regeneration")) return "#13487A";
+  if (name.includes("Multiple Strategies")) return "#24555C";
+  if (name.includes("No Strategy Identified")) return "#795305";
   return "#13487A";
 };
 
@@ -462,6 +465,8 @@ export const parseHectaresUnderRestorationData = (
     return option ? option.title : value;
   };
 
+  const noStrategyValue = hectaresUnderRestoration?.restoration_strategies_represented?.[""] || 0;
+
   const restorationStrategiesRepresented: ParsedDataItem[] = [
     {
       label: getRestorationStrategyOptions["direct-seeding"],
@@ -478,8 +483,14 @@ export const parseHectaresUnderRestorationData = (
     {
       label: "Multiple Strategies",
       value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
-        .filter(key => !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key))
+        .filter(
+          key => key !== "" && !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key)
+        )
         .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+    },
+    {
+      label: "No Strategy Identified",
+      value: noStrategyValue
     }
   ].filter(item => item.value > 0);
 
