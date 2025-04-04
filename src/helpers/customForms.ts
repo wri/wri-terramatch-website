@@ -345,7 +345,8 @@ export const apiFormQuestionToFormField = (
 
         fieldProps: {
           required,
-          addButtonCaption: question.add_button_text
+          addButtonCaption: question.add_button_text,
+          collection: question.collection
         }
       };
     }
