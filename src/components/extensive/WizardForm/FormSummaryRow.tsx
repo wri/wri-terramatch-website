@@ -114,7 +114,9 @@ export const getFormEntries = (
       case FieldType.JobsTable:
       case FieldType.VolunteersTable:
       case FieldType.AllBeneficiariesTable:
-      case FieldType.TrainingBeneficiariesTable: {
+      case FieldType.TrainingBeneficiariesTable:
+      case FieldType.IndirectBeneficiariesTable:
+      case FieldType.EmployeesTable: {
         const entries = (values[f.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
           title: f.label,

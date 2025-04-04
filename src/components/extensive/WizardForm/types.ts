@@ -69,6 +69,8 @@ export enum FieldType {
   VolunteersTable = "volunteers",
   AllBeneficiariesTable = "allBeneficiaries",
   TrainingBeneficiariesTable = "trainingBeneficiaries",
+  IndirectBeneficiariesTable = "indirectBeneficiaries",
+  EmployeesTable = "employees",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
@@ -138,6 +140,14 @@ export type FormField =
     >
   | FieldTypeBuilder<
       FieldType.TrainingBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.IndirectBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.EmployeesTable,
       Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
