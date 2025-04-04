@@ -338,10 +338,10 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "leadershipTeam": {
+    case "leaderships": {
       return {
         ...sharedProps,
-        type: FieldType.LeadershipTeamDataTable,
+        type: FieldType.LeadershipsDataTable,
 
         fieldProps: {
           required,
@@ -429,18 +429,6 @@ export const apiFormQuestionToFormField = (
           }
         };
       }
-    }
-
-    case "coreTeamLeaders": {
-      return {
-        ...sharedProps,
-        type: FieldType.CoreTeamLeadersDataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text
-        }
-      };
     }
 
     case "fundingType": {

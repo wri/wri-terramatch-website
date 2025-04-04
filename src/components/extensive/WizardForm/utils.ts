@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
@@ -157,7 +157,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       break;
     }
 
-    case FieldType.LeadershipTeamDataTable:
+    case FieldType.LeadershipsDataTable:
     case FieldType.OwnershipStakeDataTable:
     case FieldType.FundingTypeDataTable:
     case FieldType.StrataDataTable:
@@ -172,7 +172,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     case FieldType.SeedingsDataTable: {
       let headers: AccessorKeyColumnDef<any>[] = [];
 
-      if (field.type === FieldType.LeadershipTeamDataTable) headers = getLeadershipTableColumns();
+      if (field.type === FieldType.LeadershipsDataTable) headers = getLeadershipsTableColumns();
       else if (field.type === FieldType.OwnershipStakeDataTable) headers = getOwnershipTableColumns();
       else if (field.type === FieldType.FundingTypeDataTable) headers = getFundingTypeTableColumns();
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
