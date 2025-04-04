@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { createSelector } from "reselect";
 
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
@@ -30,3 +32,23 @@ const loginConnection: Connection<LoginConnection> = {
 };
 export const useLogin = connectionHook(loginConnection);
 export const loadLogin = connectionLoader(loginConnection);
+
+export const useLoginRedirect = () => {
+  const router = useRouter();
+  const { returnUrl } = router.query;
+  const [, { isLoggedIn }] = useLogin();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (returnUrl) {
+        router.push(decodeURIComponent(returnUrl as string));
+      } else if (typeof window !== "undefined" && localStorage.getItem("dashboardReturnUrl")) {
+        const savedUrl = localStorage.getItem("dashboardReturnUrl");
+        localStorage.removeItem("dashboardReturnUrl");
+        if (savedUrl) {
+          router.push(savedUrl);
+        }
+      }
+    }
+  }, [isLoggedIn, returnUrl, router]);
+};
