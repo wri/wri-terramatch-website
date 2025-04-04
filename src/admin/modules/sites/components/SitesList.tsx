@@ -184,9 +184,9 @@ export const SitesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="polygon"
+      key="polygonStatus"
       label="Polygon"
-      source="polygon"
+      source="polygonStatus"
       choices={optionToChoices(getPolygonOptions())}
       className="select-page-admin"
     />
