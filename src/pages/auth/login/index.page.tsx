@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { login, useLogin } from "@/connections/Login";
+import { login, useLogin, useLoginRedirect } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -28,6 +28,9 @@ const LoginPage = () => {
   const t = useT();
   const [, { isLoggedIn, isLoggingIn, loginFailed }] = useLogin();
   const { openToast } = useToastContext();
+
+  useLoginRedirect();
+
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),
     mode: "onSubmit"

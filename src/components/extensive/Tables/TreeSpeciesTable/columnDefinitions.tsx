@@ -40,11 +40,15 @@ const rowSpeciesName = (headerName: string) => ({
         icon: IconNames.NON_SCIENTIFIC_NAME_CUSTOM
       },
       new: {
-        tooltip: "New Species",
+        tooltip: "New species added to the project",
         icon: IconNames.NEW_TAG_TREE_SPECIES_CUSTOM
+      },
+      native: {
+        //TODO: add native species icon
+        tooltip: "Native species",
+        icon: IconNames.NATIVE_SPECIES
       }
     };
-
     const icons = Array.isArray(speciesTypes)
       ? speciesTypes.map((type: string) => {
           const config = iconConfigs[type];

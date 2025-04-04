@@ -17,13 +17,17 @@ export interface BlurContainerProps {
 const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurContainerProps) => {
   const t = useT();
 
+  const currentPath = typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : "";
+
+  const returnUrl = encodeURIComponent(currentPath);
+
   if (!isBlur) {
     return <>{children}</>;
   }
 
   const LoginText = () => (
     <>
-      <a href="/auth/login" className="text-12-semibold underline">
+      <a href={`/auth/login?returnUrl=${returnUrl}`} className="text-12-semibold underline">
         Login to view.
       </a>{" "}
       If you are a funder or representing a government agency, please{" "}
@@ -38,7 +42,15 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
 
   const ProjectAccessText = () => (
     <>
-      <button onClick={logout} className="text-12-semibold underline">
+      <button
+        onClick={() => {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("dashboardReturnUrl", currentPath);
+          }
+          logout && logout();
+        }}
+        className="text-12-semibold underline"
+      >
         Sign in
       </button>{" "}
       with an account associated with this project

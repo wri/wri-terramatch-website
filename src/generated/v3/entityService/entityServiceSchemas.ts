@@ -38,6 +38,17 @@ export type MediaDto = {
   photographer: string | null;
 };
 
+export type EntitySideload = {
+  /**
+   * Entity type to sideload
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  /**
+   * The page size to include.
+   */
+  pageSize: number;
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -986,7 +997,15 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
-  type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
+  type:
+    | "workdays"
+    | "restoration-partners"
+    | "jobs"
+    | "employees"
+    | "volunteers"
+    | "all-beneficiaries"
+    | "training-beneficiaries"
+    | "indirect-beneficiaries";
   collection: string;
   entries: DemographicEntryDto[];
 };

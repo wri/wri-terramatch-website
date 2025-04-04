@@ -2,12 +2,11 @@ import { FieldError, FieldValues, UseFormReturn } from "react-hook-form";
 
 import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import RHFCoreTeamLeadersDataTable from "@/components/elements/Inputs/DataTable/RHFCoreTeamLeadersTable";
 import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import RHFLeadershipTeamDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
@@ -123,21 +122,13 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
         <RHFDataTable {...field.fieldProps} {...sharedProps} control={formHook.control} onChangeCapture={onChange} />
       );
 
-    case FieldType.LeadershipTeamDataTable:
+    case FieldType.LeadershipsDataTable:
       return (
-        <RHFLeadershipTeamDataTable
+        <RHFLeadershipsDataTable
           {...field.fieldProps}
           {...sharedProps}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
-      );
-
-    case FieldType.CoreTeamLeadersDataTable:
-      return (
-        <RHFCoreTeamLeadersDataTable
-          {...field.fieldProps}
-          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error as any}
           control={formHook.control}
           onChangeCapture={onChange}
         />
@@ -154,6 +145,8 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
     case FieldType.VolunteersTable:
     case FieldType.AllBeneficiariesTable:
     case FieldType.TrainingBeneficiariesTable:
+    case FieldType.IndirectBeneficiariesTable:
+    case FieldType.EmployeesTable:
       return (
         <RHFDemographicsTable
           {...field.fieldProps}

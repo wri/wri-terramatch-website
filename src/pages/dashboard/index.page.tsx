@@ -10,10 +10,10 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import { logout } from "@/connections/Login";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
+import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -438,7 +438,7 @@ const Dashboard = () => {
           <div>
             <DashboardBreadcrumbs
               cohort={cohortName}
-              countryName={dashboardProjectDetails?.data?.country}
+              countryData={dashboardProjectDetails?.data?.countryData}
               projectName={dashboardProjectDetails?.data?.name}
               className="pt-0"
               textVariant="text-14"

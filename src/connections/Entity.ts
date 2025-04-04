@@ -8,11 +8,6 @@ import {
   EntityIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
-  entityDeleteFetchFailed,
-  entityGetFetchFailed,
-  entityIndexFetchFailed
-} from "@/generated/v3/entityService/entityServicePredicates";
-import {
   NurseryFullDto,
   NurseryLightDto,
   NurseryReportFullDto,
@@ -26,8 +21,14 @@ import {
   SiteReportFullDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  entityDeleteFetchFailed,
+  entityGetFetchFailed,
+  entityIndexFetchFailed,
+  entityIndexIndexMeta
+} from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
@@ -70,14 +71,15 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
 
 type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
 export type EntityIndexConnectionProps = {
   pageSize?: number;
   pageNumber?: number;
   sortField?: string;
   sortDirection?: "ASC" | "DESC";
-  filter?: Record<EntityIndexFilterKey, string>;
+  filter?: Partial<Record<EntityIndexFilterKey, string>>;
+  sideloads?: EntityIndexQueryParams["sideloads"];
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
@@ -89,7 +91,11 @@ const entitySelector =
 
 const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
-  const queryParams = { "page[number]": props?.pageNumber, "page[size]": props?.pageSize } as EntityIndexQueryParams;
+  const queryParams = {
+    "page[number]": props?.pageNumber,
+    "page[size]": props?.pageSize,
+    sideloads: props?.sideloads
+  } as EntityIndexQueryParams;
   if (props?.sortField != null) {
     queryParams["sort[field]"] = props.sortField;
     queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
@@ -167,7 +173,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
     props =>
       createSelector(
         [
-          indexMetaSelector(entityName, entityIndexParams(entityName, props)),
+          entityIndexIndexMeta(entityName, entityIndexParams(entityName, props)),
           entitySelector(entityName),
           entityIndexFetchFailed(entityIndexParams(entityName, props))
         ],
@@ -184,7 +190,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, indexTotal: indexMeta.page?.total, refetch, fetchFailure };
+          return { entities, indexTotal: indexMeta.total, refetch, fetchFailure };
         }
       )
   )
@@ -232,6 +238,11 @@ export const useFullNursery = connectionHook(fullNurseryConnection);
 const lightNurseryConnection = createGetEntityConnection<NurseryLightDto>("nurseries", false);
 export const loadLightNursery = connectionLoader(lightNurseryConnection);
 export const useLightNursery = connectionHook(lightNurseryConnection);
+export const deleteNursery = connectedResourceDeleter(
+  "nurseries",
+  uuid => entityDeleteFetchFailed(specificEntityParams("nurseries", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseries", uuid)))
+);
 
 const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
@@ -242,6 +253,11 @@ export const useFullSite = connectionHook(fullSiteConnection);
 const lightSiteConnection = createGetEntityConnection<SiteLightDto>("sites", false);
 export const loadLightSite = connectionLoader(lightSiteConnection);
 export const useLightSite = connectionHook(lightSiteConnection);
+export const deleteSite = connectedResourceDeleter(
+  "sites",
+  uuid => entityDeleteFetchFailed(specificEntityParams("sites", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("sites", uuid)))
+);
 
 // For indexes, we only support the light dto
 const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
@@ -257,6 +273,11 @@ export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 const lightProjectReportConnection = createGetEntityConnection<ProjectReportLightDto>("projectReports", false);
 export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
+export const deleteProjectReport = connectedResourceDeleter(
+  "projectReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("projectReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projectReports", uuid)))
+);
 
 const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
 export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
@@ -267,6 +288,11 @@ export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 const lightNurseryReportConnection = createGetEntityConnection<NurseryReportLightDto>("nurseryReports", false);
 export const loadLightNurseryReport = connectionLoader(lightNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
+export const deleteNurseryReport = connectedResourceDeleter(
+  "nurseryReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseryReports", uuid)))
+);
 
 const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
@@ -277,3 +303,8 @@ export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 const lightSiteReportConnection = createGetEntityConnection<SiteReportLightDto>("siteReports", false);
 export const loadLightSiteReport = connectionLoader(lightSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
+export const deleteSiteReport = connectedResourceDeleter(
+  "siteReports",
+  uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
+  uuid => (uuid == null ? null : entityDelete(specificEntityParams("siteReports", uuid)))
+);

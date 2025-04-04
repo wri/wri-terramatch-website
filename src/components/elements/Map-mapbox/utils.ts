@@ -641,17 +641,6 @@ export const addGeojsonSourceToLayer = (
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
-
-    // Set filters for layers
-    const layerIds = styles.map((_: unknown, index: number) => `${name}-${index}`);
-    layerIds.forEach(layerId => {
-      let existingFilter = map.getFilter(layerId) || ["all"];
-
-      // Add zoom-based visibility filter
-      const zoomFilter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
-
-      map.setFilter(layerId, ["all", existingFilter, zoomFilter]);
-    });
   }
 };
 export const addSourceToLayer = (
@@ -1165,55 +1154,4 @@ export const setMapStyle = (
     updateMapProjection(map, style);
     setCurrentStyle(style);
   }
-};
-
-export const enableTerrainAndAnimateCamera = async (
-  map: mapboxgl.Map,
-  setCurrentStyle: (style: MapStyle) => void,
-  currentStyle: string,
-  centroid: LngLat
-) => {
-  const shouldChangeStyle = currentStyle !== MapStyle.Satellite;
-  if (shouldChangeStyle) {
-    setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle);
-    map.once("style.load", () => {
-      setupTerrainAndAnimate(map, centroid);
-    });
-  } else {
-    setupTerrainAndAnimate(map, centroid);
-  }
-};
-
-const setupTerrainAndAnimate = (map: mapboxgl.Map, centroid: LngLat) => {
-  // if (!map.getSource("mapbox-dem")) {
-  //   map.addSource("mapbox-dem", {
-  //     type: "raster-dem",
-  //     url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-  //     tileSize: 512,
-  //     maxzoom: 14
-  //   });
-  //   map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
-  // }
-  animateCamera(map, centroid);
-};
-
-const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
-  let angle = 0;
-
-  function frame() {
-    angle += 0.4;
-    map.easeTo({
-      center: centroid,
-      zoom: 14,
-      pitch: 60,
-      bearing: angle,
-      duration: 80
-    });
-
-    // if (map.getTerrain()) {
-    requestAnimationFrame(frame);
-    // }
-  }
-
-  frame();
 };

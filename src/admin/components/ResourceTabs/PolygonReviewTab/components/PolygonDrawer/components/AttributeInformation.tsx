@@ -81,7 +81,7 @@ const dropdownOptionsTree = [
 ];
 const AttributeInformation = ({
   selectedPolygon,
-  sitePolygonRefresh,
+  updateSingleCriteriaData,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
   refetchPolygonVersions,
@@ -93,7 +93,7 @@ const AttributeInformation = ({
   setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygon;
-  sitePolygonRefresh?: () => void;
+  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void | undefined;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
@@ -110,7 +110,7 @@ const AttributeInformation = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
-  const [treesPlanted, setTreesPlanted] = useState(selectedPolygon?.num_trees);
+  const [treesPlanted, setTreesPlanted] = useState<number>(selectedPolygon?.num_trees ?? 0);
   const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePostV2TerrafundNewSitePolygonUuidNewVersion();
@@ -177,6 +177,7 @@ const AttributeInformation = ({
         adminUpdate: true
       };
       try {
+        setIsLoadingDropdownVersions(true);
         sendSiteData(
           {
             body: updatedPolygonData,
@@ -184,15 +185,16 @@ const AttributeInformation = ({
           },
           {
             onSuccess: async () => {
-              setIsLoadingDropdownVersions(true);
               await refetchPolygonVersions();
-              await sitePolygonRefresh?.();
               await refetch();
-
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primary_uuid as string }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
+              if (selectedPolygon.uuid) {
+                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
+              }
+
               setSelectedPolygonData(polygonActive);
               setSelectedPolygonToDrawer?.({
                 id: selectedPolygonIndex as string,
@@ -207,6 +209,7 @@ const AttributeInformation = ({
             },
             onError: error => {
               openNotification("error", t("Error!"), t("Error creating polygon version"));
+              setIsLoadingDropdownVersions(false);
             }
           }
         );
@@ -224,7 +227,17 @@ const AttributeInformation = ({
   const handleCloseDrawer = () => {
     setIsOpenPolygonDrawer(false);
   };
+  const handleChangeTreesPlanted = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
 
+    if (value.length > 1 && value.startsWith("0")) {
+      value = value.replace(/^0+/, "");
+    }
+
+    if (/^\d*$/.test(value)) {
+      setTreesPlanted(Number(value));
+    }
+  };
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -293,11 +306,10 @@ const AttributeInformation = ({
         labelClassName="capitalize"
         labelVariant="text-14-light"
         placeholder="Input Trees Planted"
-        type="number"
-        format="number"
+        type="text"
         name=""
         value={treesPlanted}
-        onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => setTreesPlanted(Number(e.target.value))}
+        onChangeCapture={handleChangeTreesPlanted}
       />
       <Input
         label="Calculated Area"

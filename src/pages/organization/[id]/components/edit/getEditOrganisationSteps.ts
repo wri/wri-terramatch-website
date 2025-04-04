@@ -192,11 +192,13 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
         },
         {
           name: "leadership_team",
-          type: FieldType.LeadershipTeamDataTable,
+          type: FieldType.LeadershipsDataTable,
           label: t("Leadership team (providing your senior leaders by position, gender, and age)"),
           description: t("Please list the members of your organization’s board of directors."),
           validation: yup.array(),
-          fieldProps: {}
+          fieldProps: {
+            collection: "leadership-team"
+          }
         },
         {
           name: "ownership_stake",
