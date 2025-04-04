@@ -338,14 +338,15 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "leadershipTeam": {
+    case "leaderships": {
       return {
         ...sharedProps,
-        type: FieldType.LeadershipTeamDataTable,
+        type: FieldType.LeadershipsDataTable,
 
         fieldProps: {
           required,
-          addButtonCaption: question.add_button_text
+          addButtonCaption: question.add_button_text,
+          collection: question.collection
         }
       };
     }
@@ -429,18 +430,6 @@ export const apiFormQuestionToFormField = (
           }
         };
       }
-    }
-
-    case "coreTeamLeaders": {
-      return {
-        ...sharedProps,
-        type: FieldType.CoreTeamLeadersDataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text
-        }
-      };
     }
 
     case "fundingType": {

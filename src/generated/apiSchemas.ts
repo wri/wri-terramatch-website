@@ -3602,55 +3602,22 @@ export type V2TreeSpeciesRead = {
   collection?: string;
 };
 
-export type V2CoreTeamLeaderCreate = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
-  age?: number;
-};
-
-export type V2CoreTeamLeaderRead = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
-  age?: number;
-};
-
-export type V2CoreTeamLeaderUpdate = {
-  position?: string;
-  gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
-  age?: number;
-};
-
-export type V2LeadershipTeamCreate = {
+export type V2LeadershipsCreate = {
   organisation_id?: string;
   position?: string;
   gender?: string;
   age?: number;
+  nationality?: string;
 };
 
-export type V2LeadershipTeamRead = {
+export type V2LeadershipsRead = {
   uuid?: string;
   organisation_id?: string;
   position?: string;
   gender?: string;
   age?: number;
-};
-
-export type V2LeadershipTeamUpdate = {
-  position?: string;
-  gender?: string;
-  age?: number;
+  nationality?: string;
+  collection?: string;
 };
 
 export type V2OwnershipStakeCreate = {
