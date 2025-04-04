@@ -458,9 +458,11 @@ export const apiFormQuestionToFormField = (
     case "workdays":
     case "restorationPartners":
     case "jobs":
+    case "employees":
     case "volunteers":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries": {
       return {
         ...sharedProps,
         type: question.input_type,
