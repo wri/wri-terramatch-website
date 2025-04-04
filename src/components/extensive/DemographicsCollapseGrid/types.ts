@@ -61,6 +61,11 @@ const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties }
     rowLabelSingular: "Job",
     rowLabelPlural: "Jobs"
   },
+  employees: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Employee",
+    rowLabelPlural: "Employees"
+  },
   volunteers: {
     sectionLabel: "Total",
     rowLabelSingular: "Volunteer",
@@ -73,6 +78,11 @@ const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties }
   },
   trainingBeneficiaries: {
     sectionLabel: "Total Training",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  indirectBeneficiaries: {
+    sectionLabel: "Total Indirect",
     rowLabelSingular: "Beneficiary",
     rowLabelPlural: "Beneficiaries"
   }
@@ -268,7 +278,7 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
 export const getTypeMap = (type: DemographicType, framework: Framework) => {
   const isHbf = framework === Framework.HBF;
 
-  if (["jobs", "volunteers"].includes(type)) {
+  if (["jobs", "volunteers", "employees"].includes(type)) {
     return isHbf ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : JOBS_DEMOGRAPHICS_TYPE_MAP;
   } else if (type.endsWith("Beneficiaries")) {
     if (type === "trainingBeneficiaries") {
