@@ -11,7 +11,7 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -33,10 +33,20 @@ export type EntityIndexQueryParams = {
    */
   ["page[number]"]?: number;
   search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
   projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -66,7 +76,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example projects
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -76,8 +94,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -97,7 +119,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example sites
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -107,8 +137,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -128,7 +162,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example nurseries
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -138,8 +180,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -159,7 +205,15 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            * @example projectReports
            */
           resourceType?: string;
-          page?: {
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
             /**
              * The total number of records available.
              *
@@ -169,8 +223,12 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
             /**
              * The current page number.
              */
-            number?: number;
-          };
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
         };
         data?: {
           /**
@@ -182,6 +240,92 @@ export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSigna
            */
           id?: string;
           attributes?: Schemas.ProjectReportLightDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseryReports
+           */
+          resourceType?: string;
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
+        };
+        data?: {
+          /**
+           * @example nurseryReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryReportLightDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example siteReports
+           */
+          resourceType?: string;
+          indices?: {
+            /**
+             * The resource type for this included index
+             */
+            resource?: string;
+            /**
+             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+             */
+            requestPath?: string;
+            /**
+             * The total number of records available.
+             *
+             * @example 42
+             */
+            total?: number;
+            /**
+             * The current page number.
+             */
+            pageNumber?: number;
+            /**
+             * The ordered set of resource IDs for this page of this index search.
+             */
+            ids?: string[];
+          }[];
+        };
+        data?: {
+          /**
+           * @example siteReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteReportLightDto;
         }[];
       },
     EntityIndexError,
@@ -195,7 +339,7 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -297,6 +441,25 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
     | {
         meta?: {
           /**
+           * @example nurseries
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example nurseries
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
            * @example projectReports
            */
           resourceType?: string;
@@ -312,6 +475,44 @@ export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =
           id?: string;
           attributes?: Schemas.ProjectReportFullDto;
         };
+      }
+    | {
+        meta?: {
+          /**
+           * @example nurseryReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example nurseryReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.NurseryReportFullDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example siteReports
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example siteReports
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.SiteReportFullDto;
+        };
       },
     EntityGetError,
     undefined,
@@ -324,7 +525,7 @@ export type EntityDeletePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports";
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -449,7 +650,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.DemographicDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -468,7 +669,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.SeedingDto;
-        };
+        }[];
       }
     | {
         meta?: {
@@ -487,7 +688,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
-        };
+        }[];
       },
     EntityAssociationIndexError,
     undefined,

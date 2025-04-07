@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -20,7 +21,11 @@ interface ProjectNurseriesTabProps {
 const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
 
-  const [isLoaded, { entities: nurseries }] = useNurseryIndex({ filter: { projectUuid: project.uuid } as any });
+  const [isLoaded, { entities: nurseries }] = useNurseryIndex({
+    filter: { projectUuid: project.uuid },
+    pageSize: DEFAULT_PAGE_SIZE,
+    pageNumber: 1
+  });
 
   return (
     <PageBody>
@@ -54,7 +59,7 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
                     "This table displays all the nurseries associated with this project. You can use it to keep track of your nursery approvals."
                   )}
                 >
-                  <NurseriesTable project={project} />
+                  <NurseriesTable project={project} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>

@@ -205,7 +205,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch,
     polygonCriteriaMap,
     loading,
-    total
+    total,
+    updateSingleCriteriaData
   } = useLoadCriteriaSite(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
@@ -617,7 +618,11 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider
+      sitePolygonData={sitePolygonData}
+      reloadSiteData={refetch}
+      updateSingleCriteriaData={updateSingleCriteriaData}
+    >
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>

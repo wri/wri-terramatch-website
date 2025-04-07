@@ -4,8 +4,8 @@ import { createSelector } from "reselect";
 
 import { useLogin } from "@/connections/Login";
 import { bulkUpdateJobs, listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
-import { bulkUpdateJobsFetchFailed, bulkUpdateJobsIsFetching } from "@/generated/v3/jobService/jobServicePredicates";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { bulkUpdateJobsFetchFailed, bulkUpdateJobsIsFetching } from "@/generated/v3/jobService/jobServiceSelectors";
 import { useConnection } from "@/hooks/useConnection";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore } from "@/store/apiSlice";

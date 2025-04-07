@@ -41,7 +41,6 @@ import Log from "@/utils/log";
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
-import ListPolygon from "./components/ListPolygon";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -105,6 +104,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   legend?: LegendItem[];
   centroids?: DashboardGetProjectsData[];
   polygonsData?: Record<string, string[]>;
+  polygonsCentroids?: any[];
   bbox?: BBox;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
@@ -182,6 +182,7 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const {
     polygonsData,
+    polygonsCentroids,
     bbox,
     setPolygonFromMap,
     polygonFromMap,
@@ -196,7 +197,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { reloadSiteData } = context ?? {};
+  const { updateSingleCriteriaData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -224,7 +225,6 @@ export const MapContainer = ({
   }
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
-
   useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
@@ -259,10 +259,9 @@ export const MapContainer = ({
   useEffect(() => {
     if (map?.current && (isDashboard || !_.isEmpty(polygonsData))) {
       const currentMap = map.current as mapboxgl.Map;
-
       const setupMap = () => {
-        const zoomFilter = isDashboard ? 7 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard);
+        const zoomFilter = isDashboard ? 9 : undefined;
+        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard, polygonsCentroids);
         setChangeStyle(true);
         setSourcesAdded(true);
 
@@ -296,7 +295,7 @@ export const MapContainer = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {
@@ -362,6 +361,7 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, styleLoaded]);
+
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
@@ -526,8 +526,8 @@ export const MapContainer = ({
     });
   };
 
-  const { mutate: updateGeometry } = usePutV2TerrafundPolygonUuid();
-  const { mutate: createGeometry } = usePostV2GeometryUUIDNewVersion();
+  const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
+  const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
@@ -538,16 +538,20 @@ export const MapContainer = ({
           const feature = geojson.features[0];
           try {
             if (!pdView) {
+              showLoader();
               await createGeometry({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
-              await reloadSiteData?.();
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
               })) as SitePolygonsDataResponse;
+
               const polygonActive = polygonVersionData?.find(item => item.is_active);
+              if (selectedPolygon?.uuid) {
+                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
+              }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
               flyToPolygonBounds(polygonActive?.poly_id as string);
@@ -556,7 +560,6 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
-              await reloadSiteData?.();
             }
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData, centroids);
@@ -566,8 +569,10 @@ export const MapContainer = ({
               t("Success"),
               pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully.")
             );
-          } catch (e) {
-            openNotification("error", t("Error"), t("Please try again later."));
+          } catch (e: any) {
+            openNotification("error", t("Error"), e?.message || t("Please try again later."));
+          } finally {
+            hideLoader();
           }
         }
       }
@@ -695,12 +700,13 @@ export const MapContainer = ({
       </When>
       <When condition={isDashboard === "dashboard"}>
         <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
-          <ListPolygon />
-          <ViewImageCarousel
-            className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-            modelFilesData={props?.modelFilesData}
-            imageGalleryRef={imageGalleryRef}
-          />
+          <When condition={isDashboard !== "dashboard"}>
+            <ViewImageCarousel
+              className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
+              modelFilesData={props?.modelFilesData}
+              imageGalleryRef={imageGalleryRef}
+            />
+          </When>
         </ControlGroup>
       </When>
       <When condition={showLegend}>

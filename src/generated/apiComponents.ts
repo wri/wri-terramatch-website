@@ -11550,323 +11550,98 @@ export const useDeleteV2FundingTypeUUID = (
   );
 };
 
-export type PostV2CoreTeamLeaderError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2LeadershipsError = Fetcher.ErrorWrapper<undefined>;
 
-export type PostV2CoreTeamLeaderResponse = {
+export type PostV2LeadershipsResponse = {
   uuid?: string;
   organisation_id?: string;
   position?: string;
   gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
   age?: number;
+  nationality?: string;
+  collection?: string;
 };
 
-export type PostV2CoreTeamLeaderRequestBody = {
+export type PostV2LeadershipsRequestBody = {
   organisation_id?: string;
   position?: string;
   gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
   age?: number;
+  nationality?: string;
 };
 
-export type PostV2CoreTeamLeaderVariables = {
-  body?: PostV2CoreTeamLeaderRequestBody;
+export type PostV2LeadershipsVariables = {
+  body?: PostV2LeadershipsRequestBody;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPostV2CoreTeamLeader = (variables: PostV2CoreTeamLeaderVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2CoreTeamLeaderResponse, PostV2CoreTeamLeaderError, PostV2CoreTeamLeaderRequestBody, {}, {}, {}>({
-    url: "/v2/core-team-leader",
+export const fetchPostV2Leaderships = (variables: PostV2LeadershipsVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2LeadershipsResponse, PostV2LeadershipsError, PostV2LeadershipsRequestBody, {}, {}, {}>({
+    url: "/v2/leaderships",
     method: "post",
     ...variables,
     signal
   });
 
-export const usePostV2CoreTeamLeader = (
+export const usePostV2Leaderships = (
   options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2CoreTeamLeaderResponse,
-      PostV2CoreTeamLeaderError,
-      PostV2CoreTeamLeaderVariables
-    >,
+    reactQuery.UseMutationOptions<PostV2LeadershipsResponse, PostV2LeadershipsError, PostV2LeadershipsVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2CoreTeamLeaderResponse, PostV2CoreTeamLeaderError, PostV2CoreTeamLeaderVariables>(
-    (variables: PostV2CoreTeamLeaderVariables) => fetchPostV2CoreTeamLeader({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<PostV2LeadershipsResponse, PostV2LeadershipsError, PostV2LeadershipsVariables>(
+    (variables: PostV2LeadershipsVariables) => fetchPostV2Leaderships({ ...fetcherOptions, ...variables }),
     options
   );
 };
 
-export type PatchV2CoreTeamLeaderUUIDPathParams = {
+export type DeleteV2LeadershipsUUIDPathParams = {
   uuid: string;
 };
 
-export type PatchV2CoreTeamLeaderUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type DeleteV2LeadershipsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type PatchV2CoreTeamLeaderUUIDResponse = {
+export type DeleteV2LeadershipsUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
   position?: string;
   gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
   age?: number;
+  nationality?: string;
+  collection?: string;
 };
 
-export type PatchV2CoreTeamLeaderUUIDRequestBody = {
-  position?: string;
-  gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
-  age?: number;
-};
-
-export type PatchV2CoreTeamLeaderUUIDVariables = {
-  body?: PatchV2CoreTeamLeaderUUIDRequestBody;
-  pathParams: PatchV2CoreTeamLeaderUUIDPathParams;
+export type DeleteV2LeadershipsUUIDVariables = {
+  pathParams: DeleteV2LeadershipsUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchPatchV2CoreTeamLeaderUUID = (variables: PatchV2CoreTeamLeaderUUIDVariables, signal?: AbortSignal) =>
+export const fetchDeleteV2LeadershipsUUID = (variables: DeleteV2LeadershipsUUIDVariables, signal?: AbortSignal) =>
   apiFetch<
-    PatchV2CoreTeamLeaderUUIDResponse,
-    PatchV2CoreTeamLeaderUUIDError,
-    PatchV2CoreTeamLeaderUUIDRequestBody,
-    {},
-    {},
-    PatchV2CoreTeamLeaderUUIDPathParams
-  >({ url: "/v2/core-team-leader/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2CoreTeamLeaderUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2CoreTeamLeaderUUIDResponse,
-      PatchV2CoreTeamLeaderUUIDError,
-      PatchV2CoreTeamLeaderUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2CoreTeamLeaderUUIDResponse,
-    PatchV2CoreTeamLeaderUUIDError,
-    PatchV2CoreTeamLeaderUUIDVariables
-  >(
-    (variables: PatchV2CoreTeamLeaderUUIDVariables) =>
-      fetchPatchV2CoreTeamLeaderUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2CoreTeamLeaderUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2CoreTeamLeaderUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2CoreTeamLeaderUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  first_name?: string;
-  last_name?: string;
-  role?: string;
-  age?: number;
-};
-
-export type DeleteV2CoreTeamLeaderUUIDVariables = {
-  pathParams: DeleteV2CoreTeamLeaderUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2CoreTeamLeaderUUID = (variables: DeleteV2CoreTeamLeaderUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    DeleteV2CoreTeamLeaderUUIDResponse,
-    DeleteV2CoreTeamLeaderUUIDError,
+    DeleteV2LeadershipsUUIDResponse,
+    DeleteV2LeadershipsUUIDError,
     undefined,
     {},
     {},
-    DeleteV2CoreTeamLeaderUUIDPathParams
-  >({ url: "/v2/core-team-leader/{uuid}", method: "delete", ...variables, signal });
+    DeleteV2LeadershipsUUIDPathParams
+  >({ url: "/v2/leaderships/{uuid}", method: "delete", ...variables, signal });
 
-export const useDeleteV2CoreTeamLeaderUUID = (
+export const useDeleteV2LeadershipsUUID = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      DeleteV2CoreTeamLeaderUUIDResponse,
-      DeleteV2CoreTeamLeaderUUIDError,
-      DeleteV2CoreTeamLeaderUUIDVariables
+      DeleteV2LeadershipsUUIDResponse,
+      DeleteV2LeadershipsUUIDError,
+      DeleteV2LeadershipsUUIDVariables
     >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<
-    DeleteV2CoreTeamLeaderUUIDResponse,
-    DeleteV2CoreTeamLeaderUUIDError,
-    DeleteV2CoreTeamLeaderUUIDVariables
+    DeleteV2LeadershipsUUIDResponse,
+    DeleteV2LeadershipsUUIDError,
+    DeleteV2LeadershipsUUIDVariables
   >(
-    (variables: DeleteV2CoreTeamLeaderUUIDVariables) =>
-      fetchDeleteV2CoreTeamLeaderUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2LeadershipTeamError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2LeadershipTeamResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-};
-
-export type PostV2LeadershipTeamRequestBody = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-};
-
-export type PostV2LeadershipTeamVariables = {
-  body?: PostV2LeadershipTeamRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2LeadershipTeam = (variables: PostV2LeadershipTeamVariables, signal?: AbortSignal) =>
-  apiFetch<PostV2LeadershipTeamResponse, PostV2LeadershipTeamError, PostV2LeadershipTeamRequestBody, {}, {}, {}>({
-    url: "/v2/leadership-team",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2LeadershipTeam = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2LeadershipTeamResponse,
-      PostV2LeadershipTeamError,
-      PostV2LeadershipTeamVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PostV2LeadershipTeamResponse, PostV2LeadershipTeamError, PostV2LeadershipTeamVariables>(
-    (variables: PostV2LeadershipTeamVariables) => fetchPostV2LeadershipTeam({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2LeadershipTeamUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2LeadershipTeamUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2LeadershipTeamUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-};
-
-export type PatchV2LeadershipTeamUUIDRequestBody = {
-  position?: string;
-  gender?: string;
-  age?: number;
-};
-
-export type PatchV2LeadershipTeamUUIDVariables = {
-  body?: PatchV2LeadershipTeamUUIDRequestBody;
-  pathParams: PatchV2LeadershipTeamUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2LeadershipTeamUUID = (variables: PatchV2LeadershipTeamUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PatchV2LeadershipTeamUUIDResponse,
-    PatchV2LeadershipTeamUUIDError,
-    PatchV2LeadershipTeamUUIDRequestBody,
-    {},
-    {},
-    PatchV2LeadershipTeamUUIDPathParams
-  >({ url: "/v2/leadership-team/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2LeadershipTeamUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2LeadershipTeamUUIDResponse,
-      PatchV2LeadershipTeamUUIDError,
-      PatchV2LeadershipTeamUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2LeadershipTeamUUIDResponse,
-    PatchV2LeadershipTeamUUIDError,
-    PatchV2LeadershipTeamUUIDVariables
-  >(
-    (variables: PatchV2LeadershipTeamUUIDVariables) =>
-      fetchPatchV2LeadershipTeamUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2LeadershipTeamUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2LeadershipTeamUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2LeadershipTeamUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-};
-
-export type DeleteV2LeadershipTeamUUIDVariables = {
-  pathParams: DeleteV2LeadershipTeamUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2LeadershipTeamUUID = (variables: DeleteV2LeadershipTeamUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    DeleteV2LeadershipTeamUUIDResponse,
-    DeleteV2LeadershipTeamUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2LeadershipTeamUUIDPathParams
-  >({ url: "/v2/leadership-team/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2LeadershipTeamUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      DeleteV2LeadershipTeamUUIDResponse,
-      DeleteV2LeadershipTeamUUIDError,
-      DeleteV2LeadershipTeamUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    DeleteV2LeadershipTeamUUIDResponse,
-    DeleteV2LeadershipTeamUUIDError,
-    DeleteV2LeadershipTeamUUIDVariables
-  >(
-    (variables: DeleteV2LeadershipTeamUUIDVariables) =>
-      fetchDeleteV2LeadershipTeamUUID({ ...fetcherOptions, ...variables }),
+    (variables: DeleteV2LeadershipsUUIDVariables) => fetchDeleteV2LeadershipsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -28238,81 +28013,6 @@ export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsRe
   );
 };
 
-export type GetV2DashboardProjectsProjectPolygonsPathParams = {
-  /**
-   * The project uuid
-   */
-  project: string;
-};
-
-export type GetV2DashboardProjectsProjectPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardProjectsProjectPolygonsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    site_polygons?: {
-      uuid?: string;
-      site_id?: string;
-      poly_name?: string;
-      poly_id?: string;
-    }[];
-  }[];
-};
-
-export type GetV2DashboardProjectsProjectPolygonsVariables = {
-  pathParams: GetV2DashboardProjectsProjectPolygonsPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all site polygons data and site for a project .
- */
-export const fetchGetV2DashboardProjectsProjectPolygons = (
-  variables: GetV2DashboardProjectsProjectPolygonsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardProjectsProjectPolygonsResponse,
-    GetV2DashboardProjectsProjectPolygonsError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardProjectsProjectPolygonsPathParams
-  >({ url: "/v2/dashboard/projects/{project}/polygons", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all site polygons data and site for a project .
- */
-export const useGetV2DashboardProjectsProjectPolygons = <TData = GetV2DashboardProjectsProjectPolygonsResponse>(
-  variables: GetV2DashboardProjectsProjectPolygonsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardProjectsProjectPolygonsResponse,
-      GetV2DashboardProjectsProjectPolygonsError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardProjectsProjectPolygonsResponse,
-    GetV2DashboardProjectsProjectPolygonsError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/projects/{project}/polygons",
-      operationId: "getV2DashboardProjectsProjectPolygons",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardProjectsProjectPolygons({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
   /**
    * The uuid of the polygon
@@ -32884,11 +32584,6 @@ export type QueryOperation =
       path: "/v2/dashboard/get-polygons";
       operationId: "getV2DashboardGetPolygons";
       variables: GetV2DashboardGetPolygonsVariables;
-    }
-  | {
-      path: "/v2/dashboard/projects/{project}/polygons";
-      operationId: "getV2DashboardProjectsProjectPolygons";
-      variables: GetV2DashboardProjectsProjectPolygonsVariables;
     }
   | {
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";

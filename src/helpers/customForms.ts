@@ -338,14 +338,15 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "leadershipTeam": {
+    case "leaderships": {
       return {
         ...sharedProps,
-        type: FieldType.LeadershipTeamDataTable,
+        type: FieldType.LeadershipsDataTable,
 
         fieldProps: {
           required,
-          addButtonCaption: question.add_button_text
+          addButtonCaption: question.add_button_text,
+          collection: question.collection
         }
       };
     }
@@ -431,18 +432,6 @@ export const apiFormQuestionToFormField = (
       }
     }
 
-    case "coreTeamLeaders": {
-      return {
-        ...sharedProps,
-        type: FieldType.CoreTeamLeadersDataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text
-        }
-      };
-    }
-
     case "fundingType": {
       return {
         ...sharedProps,
@@ -458,9 +447,11 @@ export const apiFormQuestionToFormField = (
     case "workdays":
     case "restorationPartners":
     case "jobs":
+    case "employees":
     case "volunteers":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries": {
       return {
         ...sharedProps,
         type: question.input_type,

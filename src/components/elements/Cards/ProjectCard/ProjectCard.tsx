@@ -150,7 +150,12 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
               }
             >
               {(typeof siteCount === "undefined" || siteCount > 0) && (
-                <SitesTable project={project} hasAddButton={false} onFetch={data => setSiteCount(data?.indexTotal)} />
+                <SitesTable
+                  project={project}
+                  hasAddButton={false}
+                  onFetch={data => setSiteCount(data?.indexTotal)}
+                  alwaysShowPagination
+                />
               )}
             </ExpandedCard>
 
@@ -184,6 +189,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
                   project={project}
                   hasAddButton={false}
                   onFetch={data => setNurseriesCount(data?.indexTotal)}
+                  alwaysShowPagination
                 />
               )}
             </ExpandedCard>

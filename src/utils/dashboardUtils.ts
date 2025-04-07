@@ -151,6 +151,13 @@ type YearlyData = {
   treeCoverLossFires: number;
 };
 
+export const cohortNames = {
+  ppc: "PPC",
+  terrafund: "TerraFund Top 100",
+  "terrafund-landscapes": "TerraFund Landscapes",
+  hbf: "HBF",
+  "epa-ghana-pilot": "EPA-Ghana Pilot"
+};
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";
 
@@ -374,6 +381,9 @@ export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
 export const getBarColorRestoration = (name: string) => {
   if (name.includes("Tree Planting")) return "#7BBD31";
   if (name.includes("Direct Seeding")) return "#27A9E0";
+  if (name.includes("Assisted Natural Regeneration")) return "#13487A";
+  if (name.includes("Multiple Strategies")) return "#24555C";
+  if (name.includes("No Strategy Identified")) return "#795305";
   return "#13487A";
 };
 
@@ -432,7 +442,7 @@ export const parseHectaresUnderRestorationData = (
   };
 
   const formatValueText = (value: number): string => {
-    if (!total_hectares_restored) return "0 ha 0%";
+    if (!total_hectares_restored) return "0 ha (0%)";
 
     const percentage = (value / total_hectares_restored) * 100;
 
@@ -443,16 +453,19 @@ export const parseHectaresUnderRestorationData = (
         decimals++;
         if (decimals > 6) break;
       }
-      return `${Math.round(value).toLocaleString()} ha ${percentage.toFixed(decimals)}%`;
+      return `${Number(value.toFixed(1)).toLocaleString()} ha (${percentage.toFixed(decimals)}%)`;
     }
 
-    return `${Math.round(value).toLocaleString()} ha ${percentage.toFixed(1)}%`;
+    return `${Number(value.toFixed(1)).toLocaleString()} ha (${percentage.toFixed(1)}%)`;
   };
 
-  const getLandUseTypeTitle = (value: string): string => {
+  const getLandUseTypeTitle = (value: string | null): string => {
+    if (!value) return "No Type Identified";
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
+
+  const noStrategyValue = hectaresUnderRestoration?.restoration_strategies_represented?.[""] || 0;
 
   const restorationStrategiesRepresented: ParsedDataItem[] = [
     {
@@ -470,8 +483,14 @@ export const parseHectaresUnderRestorationData = (
     {
       label: "Multiple Strategies",
       value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
-        .filter(key => !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key))
+        .filter(
+          key => key !== "" && !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key)
+        )
         .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+    },
+    {
+      label: "No Strategy Identified",
+      value: noStrategyValue
     }
   ].filter(item => item.value > 0);
 
@@ -509,6 +528,10 @@ export const parseDataToObjetive = (data: InputData): Objetive => {
 export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
   const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
   return framework ? framework.name : undefined;
+};
+
+export const getCohortName = (cohortKey: string): string | undefined => {
+  return cohortNames[cohortKey as keyof typeof cohortNames];
 };
 
 export const isEmptyChartData = (chartType: string, data: any): boolean => {

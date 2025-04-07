@@ -5,7 +5,9 @@ import { When } from "react-if";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
+import { getCountriesOptions } from "@/constants/options/countries";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { formatOptionsList } from "@/utils/options";
 
 type TeamAndResourcesProps = {
   organization?: V2OrganisationRead;
@@ -21,7 +23,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
         <When condition={organization?.leadership_team && organization?.leadership_team.length > 0}>
           <Table
             initialTableState={{
-              pagination: { pageSize: 5 }
+              pagination: { pageSize: 10 }
             }}
             columns={[
               {
@@ -47,6 +49,10 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               {
                 accessorKey: "role",
                 header: t("Role")
+              },
+              {
+                accessorKey: "nationality",
+                header: t("Nationality")
               }
             ]}
             // @ts-expect-error
@@ -56,9 +62,12 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               lastName: member.last_name,
               age: member.age,
               role: member.position,
-              gender: member.gender
+              gender: member.gender,
+              nationality: formatOptionsList(getCountriesOptions(t), member.nationality as string)
             }))}
             variant={VARIANT_TABLE_BORDER_ALL}
+            alwaysShowPagination
+            hasPagination
           />
         </When>
         <Table

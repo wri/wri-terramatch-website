@@ -1,10 +1,11 @@
 import { RowData, SortingState } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Table, { TableProps } from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
+import { EntityIndexConnectionProps } from "@/connections/Entity";
 import { getQueryParams } from "@/helpers/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -22,14 +23,53 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
   defaultPageSize?: number;
+  alwaysShowPagination?: boolean;
 }
+
+export type QueryParams = {
+  sort?: string;
+  page?: number;
+  per_page?: number;
+};
+
+export const queryParamsToEntityIndexProps = (params: QueryParams): EntityIndexConnectionProps => {
+  let sortDirection: EntityIndexConnectionProps["sortDirection"];
+  let sortField: EntityIndexConnectionProps["sortField"];
+  if (params.sort != null) {
+    const startWithMinus = params.sort.startsWith("-");
+    sortDirection = startWithMinus ? "DESC" : "ASC";
+    sortField = startWithMinus ? (params.sort as string).substring(1, params.sort.length) : params.sort;
+  }
+  return {
+    pageNumber: params.page,
+    pageSize: params.per_page,
+    sortDirection,
+    sortField
+  };
+};
+
+export const DEFAULT_PAGE_SIZE = 5;
+
+export const initialEntityIndexQuery = (initialPageSize = DEFAULT_PAGE_SIZE) => ({
+  pageNumber: 1,
+  pageSize: initialPageSize
+});
+
+export const useEntityIndexQueryParams = (initialPageSize = DEFAULT_PAGE_SIZE) => {
+  const [queryParams, setQueryParams] = useState<EntityIndexConnectionProps>(initialEntityIndexQuery(initialPageSize));
+  const onQueryParamChange = useCallback((params: QueryParams) => {
+    setQueryParams(queryParamsToEntityIndexProps(params));
+  }, []);
+  return { queryParams, onQueryParamChange };
+};
 
 export function ServerSideTable<TData extends RowData>({
   onTableStateChange,
   onQueryParamChange,
   variant,
-  defaultPageSize = 5,
+  defaultPageSize = DEFAULT_PAGE_SIZE,
   children,
+  alwaysShowPagination = false,
   ...props
 }: ServerSideTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
@@ -55,10 +95,11 @@ export function ServerSideTable<TData extends RowData>({
         }}
         classNameWrapper="!overflow-visible"
         variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
+        alwaysShowPagination={alwaysShowPagination}
       >
         {children}
       </Table>
-      {props.meta?.last_page > 1 && (
+      {(props.meta?.last_page > 1 || alwaysShowPagination) && (
         <div className="relative z-20 pt-4">
           <Pagination
             variant={VARIANT_PAGINATION_DASHBOARD}

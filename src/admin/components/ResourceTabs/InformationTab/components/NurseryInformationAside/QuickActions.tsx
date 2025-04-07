@@ -14,8 +14,8 @@ const NuseryQuickActions: FC = () => {
     if (!record) return;
 
     const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ nursery_uuid: true }),
-      filter: JSON.stringify({ nursery_uuid: record.uuid }),
+      displayedFilters: JSON.stringify({ nurseryUuid: true }),
+      filter: JSON.stringify({ nurseryUuid: record.uuid }),
       order: "ASC",
       page: "1",
       perPage: "10",

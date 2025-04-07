@@ -4,12 +4,11 @@ import { AnySchema } from "yup";
 
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import { RHFCoreTeamLeadersTableProps } from "@/components/elements/Inputs/DataTable/RHFCoreTeamLeadersTable";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { RHFLeadershipTeamTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { RHFLeadershipsTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { RHFOwnershipStakeTableProps } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { RHFSeedingProps } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
@@ -58,8 +57,7 @@ export enum FieldType {
   TreeSpecies = "treeSpecies",
   SeedingsTableInput = "seedingsTableInput",
   DataTable = "dataTable",
-  LeadershipTeamDataTable = "leadershipTeamDataTable",
-  CoreTeamLeadersDataTable = "coreTeamLeadersDataTable",
+  LeadershipsDataTable = "leadershipsDataTable",
   FundingTypeDataTable = "fundingTypeDataTable",
   StrataDataTable = "strataDataTable",
   DisturbanceDataTable = "disturbanceDataTable",
@@ -71,6 +69,8 @@ export enum FieldType {
   VolunteersTable = "volunteers",
   AllBeneficiariesTable = "allBeneficiaries",
   TrainingBeneficiariesTable = "trainingBeneficiaries",
+  IndirectBeneficiariesTable = "indirectBeneficiaries",
+  EmployeesTable = "employees",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
@@ -100,16 +100,12 @@ export type FormField =
     >
   | FieldTypeBuilder<FieldType.DataTable, Omit<RHFDataTableProps, "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<
-      FieldType.LeadershipTeamDataTable,
-      Omit<RHFLeadershipTeamTableProps, "onChangeCapture" | keyof UseControllerProps>
+      FieldType.LeadershipsDataTable,
+      Omit<RHFLeadershipsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
       FieldType.OwnershipStakeDataTable,
       Omit<RHFOwnershipStakeTableProps, "onChangeCapture" | keyof UseControllerProps>
-    >
-  | FieldTypeBuilder<
-      FieldType.CoreTeamLeadersDataTable,
-      Omit<RHFCoreTeamLeadersTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
       FieldType.FundingTypeDataTable,
@@ -144,6 +140,14 @@ export type FormField =
     >
   | FieldTypeBuilder<
       FieldType.TrainingBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.IndirectBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.EmployeesTable,
       Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
