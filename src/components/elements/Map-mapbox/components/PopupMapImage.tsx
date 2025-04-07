@@ -10,11 +10,15 @@ type PopupMapImageProps = {
   label: string;
   imageUrl?: string;
   items?: Item[];
+  learnMore?: () => void;
 };
 
-const PopupMapImage = ({ label, imageUrl, items = [] }: PopupMapImageProps) => {
+const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImageProps) => {
   return (
-    <div className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
+    <div
+      className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] cursor-pointer rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]"
+      onClick={learnMore}
+    >
       <div className="flex flex-col">
         <img
           src={imageUrl || "/images/no-image-available.png"}
