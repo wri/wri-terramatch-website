@@ -1,21 +1,24 @@
-import { GetV2ReportingFrameworksUUIDResponse, useGetV2ReportingFrameworksUUID } from "@/generated/apiComponents";
+import {
+  GetV2ReportingFrameworksFrameworkKeyResponse,
+  useGetV2ReportingFrameworksFrameworkKey
+} from "@/generated/apiComponents";
 import { EntityName } from "@/types/common";
 
 /**
  * To fetch reporting framework custom form uuid
- * @param frameworkUUID UUID
+ * @param frameworkKey UUID
  * @param entity EntityName
  * @returns custom form UUID
  */
-export const useGetReportingFrameworkFormUUID = (frameworkUUID: string, entity: EntityName) => {
-  const { data } = useGetV2ReportingFrameworksUUID(
-    { pathParams: { uuid: frameworkUUID } },
+export const useGetReportingFrameworkFormKey = (frameworkKey: string, entity: EntityName) => {
+  const { data } = useGetV2ReportingFrameworksFrameworkKey(
+    { pathParams: { frameworkKey } },
     {
       staleTime: process.env.NODE_ENV === "development" ? 0 : 30_000
     }
   );
   //@ts-ignore
-  const frameworkData = (data?.data || {}) as GetV2ReportingFrameworksUUIDResponse;
+  const frameworkData = (data?.data || {}) as GetV2ReportingFrameworksFrameworkKeyResponse;
 
   switch (entity) {
     case "projects":

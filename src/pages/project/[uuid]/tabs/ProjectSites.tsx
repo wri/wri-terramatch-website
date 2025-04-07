@@ -42,7 +42,7 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
                   )}
                   ctaProps={{
                     as: Link,
-                    href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`,
+                    href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
                     children: "Add Site"
                   }}
                 />

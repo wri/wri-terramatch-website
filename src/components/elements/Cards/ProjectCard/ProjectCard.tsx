@@ -142,7 +142,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Site")}
                   </Button>
@@ -177,7 +177,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/nurseries/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Nursery")}
                   </Button>
