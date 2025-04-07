@@ -38,8 +38,7 @@ export const getLeadershipsTableColumns = (
   },
   {
     accessorKey: "nationality",
-    header: t("Nationality"),
-    cell: props => formatOptionsList(getCountriesOptions(t), props.getValue() as string)
+    header: t("Nationality")
   }
 ];
 
