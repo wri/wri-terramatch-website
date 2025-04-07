@@ -84,6 +84,8 @@ export type EntityIndexConnectionProps = {
 
 export type SupportedEntity = EntityGetPathParams["entity"];
 
+type PolygonStatus = EntityIndexQueryParams["polygonStatus"];
+
 const entitySelector =
   <T extends EntityDtoType>(entityName: SupportedEntity) =>
   (store: ApiDataStore) =>
@@ -104,19 +106,8 @@ const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
 
   if (props?.filter != null) {
     for (const [key, value] of Object.entries(props.filter)) {
-      const filterKey = key as EntityIndexFilterKey;
-      if (filterKey === "polygonStatus") {
-        const isValidPolygonStatus = (
-          val: string
-        ): val is "approved" | "needs-more-information" | "draft" | "submitted" | "no-polygons" => {
-          return ["approved", "needs-more-information", "draft", "submitted", "no-polygons"].includes(val);
-        };
-        if (value && isValidPolygonStatus(value)) {
-          queryParams[filterKey] = value;
-        }
-      } else {
-        queryParams[filterKey] = value;
-      }
+      if (key === "polygonStatus") queryParams.polygonStatus = value as PolygonStatus;
+      else queryParams[key as Exclude<EntityIndexFilterKey, "polygonStatus">] = value;
     }
   }
 
