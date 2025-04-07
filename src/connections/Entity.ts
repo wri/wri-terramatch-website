@@ -98,19 +98,16 @@ const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
     "page[size]": props?.pageSize,
     sideloads: props?.sideloads
   } as EntityIndexQueryParams;
-
   if (props?.sortField != null) {
     queryParams["sort[field]"] = props.sortField;
     queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
   }
-
   if (props?.filter != null) {
     for (const [key, value] of Object.entries(props.filter)) {
       if (key === "polygonStatus") queryParams.polygonStatus = value as PolygonStatus;
       else queryParams[key as Exclude<EntityIndexFilterKey, "polygonStatus">] = value;
     }
   }
-
   return queryParams;
 };
 const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectionProps) => ({
