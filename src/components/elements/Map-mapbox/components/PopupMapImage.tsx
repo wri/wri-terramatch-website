@@ -14,7 +14,7 @@ type PopupMapImageProps = {
 
 const PopupMapImage = ({ label, imageUrl, items = [] }: PopupMapImageProps) => {
   return (
-    <div className="w-auto min-w-[17vw] max-w-[20vw] rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
+    <div className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
       <div className="flex flex-col">
         <img
           src={imageUrl || "/images/no-image-available.png"}
