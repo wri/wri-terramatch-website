@@ -47,6 +47,7 @@ export type EntityIndexQueryParams = {
    * If the base entity supports it, this will load the first page of associated entities
    */
   sideloads?: Schemas.EntitySideload[];
+  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
