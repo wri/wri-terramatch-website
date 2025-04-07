@@ -47,7 +47,7 @@ export const getSchemaFields = (fields: FormField[]) => {
       schema[field.name] = field.validation?.nullable().label(" ");
     }
 
-    if (field.fieldProps.required) schema[field.name] = schema[field.name]?.required();
+    if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
   }
 
   return schema;

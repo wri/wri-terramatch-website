@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
@@ -47,13 +47,10 @@ export const getLeadershipsTableColumns = (
  * @param props PropsWithChildren<RHFSelectProps>
  * @returns React Hook Form Ready Select Component
  */
-const RHFLeadershipsDataTable = ({
-  onChangeCapture,
-  collection,
-  ...props
-}: PropsWithChildren<RHFLeadershipsTableProps>) => {
+const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFLeadershipsTableProps>) => {
   const t = useT();
   const { field } = useController(props);
+  const { formHook, collection } = props;
   const value = field?.value || [];
 
   const [, { organisationId }] = useMyOrg();
@@ -64,6 +61,7 @@ const RHFLeadershipsDataTable = ({
       //@ts-ignore
       _tmp.push(data.data);
       field.onChange(_tmp);
+      clearErrors();
     }
   });
 
@@ -72,8 +70,13 @@ const RHFLeadershipsDataTable = ({
       //@ts-ignore
       _.remove(value, v => v.uuid === variables.pathParams.uuid);
       field.onChange(value);
+      clearErrors();
     }
   });
+
+  const clearErrors = useCallback(() => {
+    formHook?.clearErrors(props.name);
+  }, [formHook, props.name]);
 
   return (
     <DataTable
