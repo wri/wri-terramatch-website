@@ -90,7 +90,7 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const updateSingleCriteriaData = context?.updateSingleCriteriaData;
+  const updateSingleSitePolygonData = context?.updateSingleSitePolygonData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
   const {
@@ -372,7 +372,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  updateSingleCriteriaData={updateSingleCriteriaData ?? (() => {})}
+                  updateSingleSitePolygonData={updateSingleSitePolygonData ?? (() => {})}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}

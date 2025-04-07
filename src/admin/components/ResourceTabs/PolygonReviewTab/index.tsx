@@ -54,7 +54,7 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -154,7 +154,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     setSelectedPolygonsInCheckbox,
-    setPolygonCriteriaMap,
     setPolygonData,
     polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList,
@@ -203,11 +202,10 @@ const PolygonReviewTab: FC<IProps> = props => {
   const {
     data: sitePolygonData,
     refetch,
-    polygonCriteriaMap,
     loading,
     total,
-    updateSingleCriteriaData
-  } = useLoadCriteriaSite(record.uuid, "sites");
+    updateSingleSitePolygonData
+  } = useLoadSitePolygonsData(record.uuid, "sites");
 
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
@@ -249,7 +247,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     id: (index + 1).toString(),
     status: data.status,
     label: data.poly_name ?? `Unnamed Polygon`,
-    uuid: data.poly_id
+    uuid: data.poly_id,
+    isValid: data.is_valid ?? "notChecked"
   }));
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
@@ -307,10 +306,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   useEffect(() => {
     setPolygonData(sitePolygonData);
   }, [loading, setPolygonData, sitePolygonData]);
-
-  useEffect(() => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-  }, [polygonCriteriaMap, setPolygonCriteriaMap]);
 
   useEffect(() => {
     if (shouldRefetchValidation) {
@@ -621,7 +616,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     <SitePolygonDataProvider
       sitePolygonData={sitePolygonData}
       reloadSiteData={refetch}
-      updateSingleCriteriaData={updateSingleCriteriaData}
+      updateSingleSitePolygonData={updateSingleSitePolygonData}
     >
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>

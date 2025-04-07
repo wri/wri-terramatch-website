@@ -1,44 +1,31 @@
 import { useRef, useState } from "react";
 
-import {
-  fetchGetV2EntityPolygons,
-  fetchGetV2EntityPolygonsCount,
-  fetchPostV2TerrafundValidationCriteriaData
-} from "@/generated/apiComponents";
+import { fetchGetV2EntityPolygons, fetchGetV2EntityPolygonsCount } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
 
-interface LoadCriteriaSiteHook {
+interface LoadSitePolygonsDataHook {
   data: any[];
   loading: boolean;
   total: number;
   progress: number;
-  polygonCriteriaMap: Record<string, any>;
   refetch: () => void;
-  fetchCriteriaData: (uuids: string[]) => void;
-  loadCriteriaInOrder: () => void;
-  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void;
+  updateSingleSitePolygonData: (poly_id: string, updatedData: any) => void;
+  polygonCriteriaMap: any;
+  setPolygonCriteriaMap: (polygonCriteriaMap: any) => void;
 }
 
-const useLoadCriteriaSite = (
+const useLoadSitePolygonsData = (
   entity_uuid: string,
   entity_type: string,
   statuses: any = null,
   sortOrder: string = "created_at"
-): LoadCriteriaSiteHook => {
+): LoadSitePolygonsDataHook => {
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
-  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, any>>({});
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  const loadCriteriaInOrder = async () => {
-    setLoading(true);
-    for (const polygon of data) {
-      await fetchCriteriaData(polygon.poly_id);
-    }
-    setLoading(false);
-  };
 
   const loadInBatches = async () => {
     if (abortControllerRef.current) {
@@ -85,19 +72,10 @@ const useLoadCriteriaSite = (
 
         if (signal.aborted) return;
 
-        const polyUuids = partialResponse.map((polygon: any) => polygon.poly_id);
-        await fetchCriteriaData(polyUuids);
-
-        if (signal.aborted) return;
-
         result = result.concat(partialResponse);
         setData(result as any);
 
-        if (offset + limit > count!) {
-          setProgress(count!);
-        } else {
-          setProgress(offset);
-        }
+        setProgress(Math.min(offset + limit, count!));
         offset += limit;
       }
     } catch (error) {
@@ -120,44 +98,12 @@ const useLoadCriteriaSite = (
     setProgress(0);
     setTotal(0);
     setData([]);
-    setPolygonCriteriaMap({});
 
     loadInBatches();
   };
 
-  const fetchCriteriaData = async (polyUuids: string[]) => {
-    const signal = abortControllerRef.current?.signal;
-
-    try {
-      if (signal && signal.aborted) return;
-
-      const criteriaData = await fetchPostV2TerrafundValidationCriteriaData({
-        body: {
-          uuids: polyUuids
-        }
-      });
-
-      if (signal && signal.aborted) return;
-
-      setPolygonCriteriaMap(prev => {
-        const newMap = { ...prev };
-        polyUuids.forEach(uuid => {
-          if (criteriaData[uuid]) {
-            newMap[uuid] = criteriaData[uuid];
-          }
-        });
-        return newMap;
-      });
-    } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError") {
-        console.error("Error in fetchCriteriaData:", error);
-      }
-    }
-  };
-
-  const updateSingleCriteriaData = async (old_id: string, updatedData: any) => {
+  const updateSingleSitePolygonData = async (old_id: string, updatedData: any) => {
     setData((prevData: any) => prevData.map((item: any) => (item.uuid === old_id ? updatedData : item)));
-    await fetchCriteriaData([updatedData.uuid]);
   };
 
   useOnMount(loadInBatches);
@@ -167,12 +113,12 @@ const useLoadCriteriaSite = (
     loading,
     total,
     progress,
-    polygonCriteriaMap,
     refetch,
-    fetchCriteriaData,
-    loadCriteriaInOrder,
-    updateSingleCriteriaData
+    polygonCriteriaMap,
+
+    setPolygonCriteriaMap,
+    updateSingleSitePolygonData
   };
 };
 
-export default useLoadCriteriaSite;
+export default useLoadSitePolygonsData;

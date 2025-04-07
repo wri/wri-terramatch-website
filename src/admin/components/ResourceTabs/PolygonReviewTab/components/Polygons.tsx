@@ -30,6 +30,7 @@ export interface IPolygonItem {
   status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
+  isValid?: string;
 }
 
 export interface IpolygonFromMap {
@@ -279,6 +280,7 @@ const Polygons = (props: IPolygonProps) => {
               uuid={item.uuid}
               title={item.label}
               status={item.status}
+              isValid={item.isValid}
               isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
               onCheckboxChange={handleCheckboxChange}
               menu={

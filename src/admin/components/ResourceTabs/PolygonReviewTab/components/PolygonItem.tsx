@@ -13,11 +13,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import {
-  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
-  isValidCriteriaData,
-  parseValidationData
-} from "@/helpers/polygonValidation";
+import { hasCompletedDataWhitinStimatedAreaCriteriaInvalid, parseValidationData } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -30,6 +26,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   menu: any;
   primaryUuid?: string;
   isCollapsed?: boolean;
+  isValid?: string;
 }
 
 const PolygonItem = ({
@@ -43,11 +40,11 @@ const PolygonItem = ({
   isCollapsed = false,
   isChecked = false,
   onCheckboxChange,
+  isValid,
   ...props
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [validationStatus, setValidationStatus] = useState<string | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
@@ -61,10 +58,7 @@ const PolygonItem = ({
     const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
-      setValidationStatus(isValidCriteriaData(criteriaData) ? "passed" : "failed");
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
-    } else if (criteriaData?.criteria_list && criteriaData.criteria_list.length === 0) {
-      setValidationStatus("notChecked");
     }
   }, [polygonMap, uuid]);
 
@@ -106,22 +100,22 @@ const PolygonItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={validationStatus == undefined}>
+            <When condition={isValid == null}>
               <Box sx={{ width: "100%", maxWidth: 100, ml: 1 }}>
                 <LinearProgress />
               </Box>
             </When>
-            <When condition={validationStatus == "notChecked"}>
+            <When condition={isValid == "notChecked"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 Not Checked
               </Text>
             </When>
-            <When condition={validationStatus == "passed"}>
+            <When condition={isValid == "passed"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
-                  "text-green": validationStatus,
+                  "text-green": isValid == "passed",
                   "text-yellow-700": showWarning
                 })}
               >
@@ -132,7 +126,7 @@ const PolygonItem = ({
                 Passed
               </Text>
             </When>
-            <When condition={validationStatus === "failed"}>
+            <When condition={isValid === "failed"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 Failed
@@ -142,7 +136,7 @@ const PolygonItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={validationStatus}>
+        <When condition={isValid == "failed"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
             staff.

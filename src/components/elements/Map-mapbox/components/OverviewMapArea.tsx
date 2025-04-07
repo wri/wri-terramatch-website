@@ -14,7 +14,7 @@ import {
   useGetV2MODELUUIDFiles
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -75,7 +75,7 @@ const OverviewMapArea = ({
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);

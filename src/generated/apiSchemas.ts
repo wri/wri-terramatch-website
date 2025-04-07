@@ -16141,6 +16141,7 @@ export type SitePolygon = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  is_valid?: string;
 };
 
 export type GeometryString = {
