@@ -14,6 +14,7 @@ import ApiSlice from "@/store/apiSlice";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
+import PopupMapImage from "./PopupMapImage";
 const client = new QueryClient();
 
 type Item = {
@@ -26,7 +27,8 @@ export const DashboardPopup = (event: any) => {
   const isoCountry = event?.feature?.properties?.iso;
   const itemUuid = event?.feature?.properties?.uuid;
   const { addPopupToMap, layerName, setFilters, dashboardCountries, removePopupFromMap, isDashboard } = event;
-
+  const [popupType, setPopupType] = useState<"country" | "project" | "polygon" | null>(null);
+  const [popupData, setPopupData] = useState<any>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
 
@@ -74,6 +76,18 @@ export const DashboardPopup = (event: any) => {
     async function fetchProjectData() {
       const response: any = await fetchGetV2DashboardProjectDataUuid({ pathParams: { uuid: itemUuid } });
       if (response) {
+        const label = response.data.find((item: any) => item.key === "project_name")?.value;
+        const organization = response.data.find((item: any) => item.key === "organisation")?.value;
+        const hectares = response.data.find((item: any) => item.key === "hectares_under_restoration")?.value;
+
+        setPopupType("project");
+        setPopupData({
+          label,
+          organization,
+          hectares,
+          imageUrl: null
+        });
+
         const filteredItems = response.data
           .filter((item: any) => item.key !== "project_name")
           .map((item: any) => ({
@@ -82,12 +96,12 @@ export const DashboardPopup = (event: any) => {
             value: item.value
           }));
 
-        const projectLabel = response.data.find((item: any) => item.key === "project_name")?.value;
-        setLabel(projectLabel);
+        setLabel(label);
         setItems(filteredItems);
         addPopupToMap();
       }
     }
+
     async function fetchPolygonData() {
       const response: any = await fetchGetV2DashboardPolygonDataUuid({ pathParams: { uuid: itemUuid } });
       if (response) {
@@ -132,16 +146,21 @@ export const DashboardPopup = (event: any) => {
     }
     removePopupFromMap();
   };
-
   return (
     <ReduxProvider store={ApiSlice.redux}>
       <QueryClientProvider client={client}>
-        <TooltipGridMap
-          label={label}
-          learnMore={layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null}
-          isoCountry={isoCountry}
-          items={items}
-        />
+        {popupType === "project" && layerName === LAYERS_NAMES.CENTROIDS ? (
+          <PopupMapImage label={popupData?.label || "-"} imageUrl={popupData?.imageUrl} items={items} />
+        ) : (
+          <TooltipGridMap
+            label={label}
+            learnMore={
+              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null
+            }
+            isoCountry={isoCountry}
+            items={items}
+          />
+        )}
       </QueryClientProvider>
     </ReduxProvider>
   );

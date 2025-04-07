@@ -6,7 +6,6 @@ import React, { useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
-import PopupMapImage from "@/components/elements/Map-mapbox/components/PopupMapImage";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
@@ -421,9 +420,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             </div>
           </div>
         </When>
-        <div className="absolute right-14 top-14 z-20">
-          <PopupMapImage />
-        </div>
       </div>
       <When condition={!country}>
         <PageCard
