@@ -85,11 +85,11 @@ export const DashboardPopup = (event: any) => {
           label,
           organization,
           hectares,
-          imageUrl: null
+          imageUrl: response.data.find((item: any) => item.key === "cover_image")?.value ?? null
         });
 
         const filteredItems = response.data
-          .filter((item: any) => item.key !== "project_name")
+          .filter((item: any) => item.key !== "project_name" && item.key !== "cover_image")
           .map((item: any) => ({
             id: item.key,
             title: item.title === "No. of Site - Polygons" ? "Number of Site - Polygons" : item.title,
