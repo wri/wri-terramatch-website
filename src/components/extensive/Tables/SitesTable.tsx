@@ -158,7 +158,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           name: t("Add Site"),
           hide: !hasAddButton,
           as: Link,
-          href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`
+          href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`
         }
       ]}
       alwaysShowPagination={alwaysShowPagination}
