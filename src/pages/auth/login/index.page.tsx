@@ -56,7 +56,7 @@ const LoginPage = () => {
 
     if (redirectTarget) {
       setTimeout(() => {
-        router.push(redirectTarget);
+        router.push(redirectTarget as string);
       }, 100);
     }
   }, [isLoggedIn, returnUrl, router, router.isReady]);
