@@ -18,7 +18,8 @@ const useLoadSitePolygonsData = (
   entity_uuid: string,
   entity_type: string,
   statuses: any = null,
-  sortOrder: string = "created_at"
+  sortOrder: string = "created_at",
+  validFilter: string = ""
 ): LoadSitePolygonsDataHook => {
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,10 +46,10 @@ const useLoadSitePolygonsData = (
           uuid: entity_uuid,
           type: entity_type,
           status: statuses ?? "",
-          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
+          ...(validFilter !== "all" && { valid: validFilter })
         }
       });
-
       if (signal.aborted) return;
 
       setTotal(count!);
@@ -63,7 +64,8 @@ const useLoadSitePolygonsData = (
           uuid: entity_uuid,
           type: entity_type,
           status: statuses ?? "",
-          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
+          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
+          ...(validFilter !== "all" && { valid: validFilter })
         };
 
         const partialResponse = (await fetchGetV2EntityPolygons({
@@ -98,7 +100,6 @@ const useLoadSitePolygonsData = (
     setProgress(0);
     setTotal(0);
     setData([]);
-
     loadInBatches();
   };
 

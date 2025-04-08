@@ -23,6 +23,7 @@ import {
   fetchGetV2TerrafundGeojsonComplete,
   fetchGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
+import { OptionValue } from "@/types/common";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 import PolygonItem from "./PolygonItem";
@@ -70,7 +71,7 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
   const sitePolygonData = context?.sitePolygonData;
-  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
+  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox, setValidFilter } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
 
   useEffect(() => {
@@ -267,15 +268,16 @@ const Polygons = (props: IPolygonProps) => {
       <div className="mb-4 flex items-center justify-between gap-2">
         <Dropdown
           options={[
-            { title: t("All"), value: "all" },
+            { title: t("All validation statuses"), value: "all" },
             { title: "Not checked", value: "not_checked" },
             { title: "Failed", value: "failed" },
-            { title: "Partial Passed", value: "partial_passed" },
+            { title: "Partial Passed", value: "partial" },
             { title: "Passed", value: "passed" }
           ]}
           defaultValue={["all"]}
-          onChange={e => {
-            console.log(e);
+          value={["all"]}
+          onChange={(value: OptionValue[]) => {
+            setValidFilter(value[0] as string);
           }}
           titleClassname="leading-[normal] !text-darkCustom"
           inputVariant={window.innerWidth > 1900 ? "text-14-semibold" : "text-12-semibold"}

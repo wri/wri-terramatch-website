@@ -55,6 +55,7 @@ import {
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -158,7 +159,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList,
     shouldRefetchValidation,
-    setShouldRefetchValidation
+    setShouldRefetchValidation,
+    validFilter
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -205,12 +207,13 @@ const PolygonReviewTab: FC<IProps> = props => {
     loading,
     total,
     updateSingleSitePolygonData
-  } = useLoadSitePolygonsData(record.uuid, "sites");
-
+  } = useLoadSitePolygonsData(record.uuid, "sites", undefined, undefined, validFilter);
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
   });
-
+  useValueChanged(validFilter, () => {
+    refetch();
+  });
   const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
     pathParams: {
       site: record.uuid
