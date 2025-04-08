@@ -168,6 +168,22 @@ const handleLayerClick = (
   setLoader?: (value: boolean) => void
 ) => {
   removePopups("POLYGON");
+  const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
+  const popupOptions: mapboxgl.PopupOptions = {
+    className: isCentroidLayer ? "popup-map no-tip" : "popup-map",
+    offset: isCentroidLayer
+      ? {
+          top: [0, 9],
+          "top-left": [0, 9],
+          "top-right": [0, 9],
+          bottom: [0, -9],
+          "bottom-left": [0, -9],
+          "bottom-right": [0, -9],
+          left: [9, 0],
+          right: [-9, 0]
+        }
+      : 0
+  };
   const { lngLat, features } = e;
   const feature = features?.[0];
   if (!feature) {
@@ -180,7 +196,7 @@ const handleLayerClick = (
   const root = createRoot(popupContent);
 
   const createPopup = (lngLat: mapboxgl.LngLat) =>
-    new mapboxgl.Popup({ className: "popup-map" }).setLngLat(lngLat).setDOMContent(popupContent);
+    new mapboxgl.Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
 
   const newPopup = createPopup(lngLat);
 

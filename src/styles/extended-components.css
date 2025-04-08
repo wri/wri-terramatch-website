@@ -27,6 +27,12 @@
   padding: 0;
 }
 
+.popup-map .mapboxgl-popup-tip {
+  display: none;
+}
+.mapboxgl-popup.no-tip .mapboxgl-popup-tip {
+  display: none;
+}
 .popup-map .mapboxgl-popup-close-button {
   font-size: 25px;
   color: #718184;
@@ -71,14 +77,14 @@
 
   .mapboxgl-popup-close-button:hover {
     background-color: #f2f2f2;
-    color: #27A9E0;
-    border: 1px solid #27A9E0;
+    color: #27a9e0;
+    border: 1px solid #27a9e0;
   }
 }
 .custom-popup-close-button :has(.popup-project-image-map) .mapboxgl-popup-close-button {
   top: 8px !important;
   right: 8px !important;
-  background: #FFFFFF66 !important;
+  background: #ffffff66 !important;
 }
 .custom-popup-close-button :has(.popup-project-image-map) .mapboxgl-popup-close-button:hover {
   background: white !important;
@@ -98,7 +104,7 @@
     padding-bottom: 56.25% !important;
     position: relative !important;
   }
-  
+
   .modal-impact-story-content iframe,
   .modal-impact-story-content .ql-video iframe {
     position: absolute !important;
