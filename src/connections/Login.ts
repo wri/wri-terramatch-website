@@ -50,7 +50,7 @@ export const useLoginRedirect = () => {
     if (isLoggedIn && isRouterReady.current && !hasRedirected.current) {
       hasRedirected.current = true;
 
-      let redirectTarget = null;
+      let redirectTarget: string | null = null;
 
       if (returnUrl && typeof returnUrl === "string") {
         redirectTarget = decodeURIComponent(returnUrl);
@@ -63,9 +63,9 @@ export const useLoginRedirect = () => {
       }
       if (redirectTarget) {
         setTimeout(() => {
-          router.push(redirectTarget);
+          router.push(redirectTarget as string);
         }, 50);
       }
     }
-  }, [isLoggedIn, returnUrl, router, isRouterReady]);
+  }, [isLoggedIn, returnUrl, router]);
 };

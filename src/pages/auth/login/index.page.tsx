@@ -41,7 +41,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (!isLoggedIn || !router.isReady) return;
 
-    let redirectTarget = null;
+    let redirectTarget: string | null = null;
 
     if (returnUrl && typeof returnUrl === "string") {
       redirectTarget = decodeURIComponent(returnUrl);
