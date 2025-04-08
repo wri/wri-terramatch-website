@@ -46,7 +46,7 @@ const PolygonItem = ({
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
+  const [showWarning, setShowWarning] = useState(isValid == "partial");
   // const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
@@ -121,7 +121,7 @@ const PolygonItem = ({
                 Not Checked
               </Text>
             </When>
-            <When condition={isValid == "passed"}>
+            <When condition={isValid == "passed" || isValid == "partial"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
