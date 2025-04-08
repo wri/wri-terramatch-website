@@ -36,7 +36,7 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
               </Text>
             </div>
           ))}
-          <button onClick={learnMore} className="text-blue-600 mt-1 self-start text-xs hover:underline">
+          <button onClick={learnMore} className="!text-blue-600 mt-1 self-start text-xs hover:underline">
             Visit Project Page
           </button>
         </div>
