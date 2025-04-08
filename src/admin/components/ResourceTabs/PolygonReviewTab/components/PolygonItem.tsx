@@ -12,7 +12,8 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMapAreaContext } from "@/context/mapArea.provider";
+// import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import { hasCompletedDataWhitinStimatedAreaCriteriaInvalid, parseValidationData } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -46,21 +47,30 @@ const PolygonItem = ({
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(isValid == "partial");
-  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
+  // const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+
+  const { data: criteriaData, isLoading } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: { uuid }
+    },
+    {
+      enabled: openCollapse,
+      staleTime: 5 * 60 * 1000
+    }
+  );
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
-    const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
     }
-  }, [polygonMap, uuid]);
+  }, [criteriaData, uuid]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);
@@ -136,6 +146,11 @@ const PolygonItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
+        <When condition={isLoading}>
+          <Box sx={{ width: "90%", ml: 1 }}>
+            <LinearProgress />
+          </Box>
+        </When>
         <When condition={isValid == "failed"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
