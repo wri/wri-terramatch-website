@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createSelector } from "reselect";
 
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
@@ -37,18 +37,35 @@ export const useLoginRedirect = () => {
   const router = useRouter();
   const { returnUrl } = router.query;
   const [, { isLoggedIn }] = useLogin();
+  const hasRedirected = useRef(false);
+  const isRouterReady = useRef(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      if (returnUrl) {
-        router.push(decodeURIComponent(returnUrl as string));
-      } else if (typeof window !== "undefined" && localStorage.getItem("dashboardReturnUrl")) {
+    if (router.isReady) {
+      isRouterReady.current = true;
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if (isLoggedIn && isRouterReady.current && !hasRedirected.current) {
+      hasRedirected.current = true;
+
+      let redirectTarget = null;
+
+      if (returnUrl && typeof returnUrl === "string") {
+        redirectTarget = decodeURIComponent(returnUrl);
+      } else if (typeof window !== "undefined") {
         const savedUrl = localStorage.getItem("dashboardReturnUrl");
-        localStorage.removeItem("dashboardReturnUrl");
         if (savedUrl) {
-          router.push(savedUrl);
+          redirectTarget = savedUrl;
+          localStorage.removeItem("dashboardReturnUrl");
         }
       }
+      if (redirectTarget) {
+        setTimeout(() => {
+          router.push(redirectTarget);
+        }, 50);
+      }
     }
-  }, [isLoggedIn, returnUrl, router]);
+  }, [isLoggedIn, returnUrl, router, isRouterReady]);
 };

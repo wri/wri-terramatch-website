@@ -1,9 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { login, useLogin, useLoginRedirect } from "@/connections/Login";
+import { login, useLogin } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -26,15 +28,38 @@ export const LoginFormDataSchema = (t: any) => {
 const LoginPage = () => {
   useSetInviteToken();
   const t = useT();
+  const router = useRouter();
+  const { returnUrl } = router.query;
   const [, { isLoggedIn, isLoggingIn, loginFailed }] = useLogin();
   const { openToast } = useToastContext();
-
-  useLoginRedirect();
 
   const form = useForm<LoginFormDataType>({
     resolver: yupResolver(LoginFormDataSchema(t)),
     mode: "onSubmit"
   });
+
+  useEffect(() => {
+    if (!isLoggedIn || !router.isReady) return;
+
+    let redirectTarget = null;
+
+    if (returnUrl && typeof returnUrl === "string") {
+      redirectTarget = decodeURIComponent(returnUrl);
+    } else if (typeof window !== "undefined") {
+      const savedUrl = localStorage.getItem("dashboardReturnUrl");
+      if (savedUrl) {
+        redirectTarget = savedUrl;
+        localStorage.removeItem("dashboardReturnUrl");
+        localStorage.removeItem("dashboardReturnUrlTimestamp");
+      }
+    }
+
+    if (redirectTarget) {
+      setTimeout(() => {
+        router.push(redirectTarget);
+      }, 100);
+    }
+  }, [isLoggedIn, returnUrl, router, router.isReady]);
 
   useValueChanged(loginFailed, () => {
     if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
