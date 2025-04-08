@@ -1,4 +1,5 @@
 import { Box, LinearProgress } from "@mui/material";
+import { useT } from "@transifex/react";
 import React, { useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
@@ -55,6 +56,7 @@ export const polygonData = [
 ];
 
 const Polygons = (props: IPolygonProps) => {
+  const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
   const [polygonMenu, setPolygonMenu] = useState<IPolygonItem[]>(props.menu);
   const { polygonFromMap, setPolygonFromMap, mapFunctions } = props;
@@ -244,6 +246,17 @@ const Polygons = (props: IPolygonProps) => {
           Polygons
         </Text>
         <div className="flex items-center justify-start">
+          <select
+            className="border-gray-300 text-gray-700 focus:ring-blue-500 rounded-md border px-2 py-1 text-sm focus:outline-none focus:ring-2"
+            onChange={e => console.log(e.target.value)}
+            defaultValue=""
+          >
+            <option value="">{t("All")}</option>
+            <option value="not_checked">{t("Not checked")}</option>
+            <option value="failed">{t("Failed")}</option>
+            <option value="partial_passed">{t("Partial Passed")}</option>
+            <option value="passed">{t("Passed")}</option>
+          </select>
           <Button
             variant="white-border"
             onClick={() => setOpenCollapseAll(!openCollapseAll)}
