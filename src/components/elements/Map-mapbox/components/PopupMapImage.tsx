@@ -15,10 +15,7 @@ type PopupMapImageProps = {
 
 const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImageProps) => {
   return (
-    <div
-      className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] cursor-pointer rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]"
-      onClick={learnMore}
-    >
+    <div className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] cursor-pointer rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
       <div className="flex flex-col">
         <img
           src={imageUrl || "/images/no-image-available.png"}
@@ -26,7 +23,7 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
           className="h-30 w-full rounded-t-lg object-cover"
         />
         <div className="flex flex-col gap-2 p-2">
-          <Text variant="text-12-bold" className="leading-[normal]">
+          <Text variant="text-12-bold" className="overflow-hidden leading-[normal] line-clamp-2">
             {label}
           </Text>
           {items.map(item => (
@@ -39,6 +36,9 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
               </Text>
             </div>
           ))}
+          <button onClick={learnMore} className="text-blue-600 mt-1 self-start text-xs hover:underline">
+            Visit Project Page
+          </button>
         </div>
       </div>
     </div>
