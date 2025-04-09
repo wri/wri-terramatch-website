@@ -64,6 +64,7 @@ const useLoadSitePolygonsData = (
           uuid: entity_uuid,
           type: entity_type,
           status: statuses ?? "",
+          lightResource: true,
           [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
           ...(validFilter !== "all" && { valid: validFilter })
         };
