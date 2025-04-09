@@ -54,6 +54,12 @@ type MapAreaType = {
   setPolygonData: (value: any[]) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
+  validationData: Record<string, any>;
+  setValidationData: (value: Record<string, any>) => void;
+  validationDataTimestamp: number;
+  setValidationDataTimestamp: (value: number) => void;
+  isFetchingValidationData: boolean;
+  setIsFetchingValidationData: (value: boolean) => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -100,7 +106,13 @@ const defaultValue: MapAreaType = {
   polygonData: [],
   setPolygonData: () => {},
   validFilter: "",
-  setValidFilter: () => {}
+  setValidFilter: () => {},
+  validationData: {},
+  setValidationData: () => {},
+  validationDataTimestamp: 0,
+  setValidationDataTimestamp: () => {},
+  isFetchingValidationData: false,
+  setIsFetchingValidationData: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -123,6 +135,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
   const [polygonData, setPolygonData] = useState<any[]>([]);
   const [validFilter, setValidFilter] = useState<string>("");
+  const [validationData, setValidationData] = useState<Record<string, any>>({});
+  const [validationDataTimestamp, setValidationDataTimestamp] = useState<number>(0);
+  const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
@@ -194,7 +209,13 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     polygonData,
     setPolygonData,
     validFilter,
-    setValidFilter
+    setValidFilter,
+    validationData,
+    setValidationData,
+    validationDataTimestamp,
+    setValidationDataTimestamp,
+    isFetchingValidationData,
+    setIsFetchingValidationData
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;

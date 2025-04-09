@@ -102,7 +102,8 @@ const PolygonReviewAside: FC<{
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons }) => {
+  siteUuid?: string;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid }) => {
   switch (type) {
     case "sites":
       return (
@@ -113,6 +114,7 @@ const PolygonReviewAside: FC<{
           mapFunctions={mapFunctions}
           refresh={refresh}
           totalPolygons={totalPolygons}
+          siteUuid={siteUuid}
         />
       );
     default:
@@ -820,6 +822,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
+              siteUuid={record.uuid}
             />
           </Grid>
         </Grid>

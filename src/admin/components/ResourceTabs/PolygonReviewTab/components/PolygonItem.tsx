@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
@@ -12,9 +12,13 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-// import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import { hasCompletedDataWhitinStimatedAreaCriteriaInvalid, parseValidationData } from "@/helpers/polygonValidation";
+import {
+  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
+  parseValidationData,
+  parseValidationDataFromContext
+} from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -38,6 +42,7 @@ const PolygonItem = ({
   primaryUuid: primary_uuid,
   className,
   menu,
+  siteId,
   isCollapsed = false,
   isChecked = false,
   onCheckboxChange,
@@ -47,16 +52,23 @@ const PolygonItem = ({
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(isValid == "partial");
-  // const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
+  const { validationData } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
 
-  const { data: criteriaData, isLoading } = useGetV2TerrafundValidationCriteriaData(
+  const getPolygonValidationFromContext = useCallback(() => {
+    if (siteId && validationData[siteId]) {
+      return validationData[siteId].find((item: any) => item.uuid === uuid);
+    }
+    return null;
+  }, [siteId, validationData, uuid]);
+
+  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
     {
       queryParams: { uuid }
     },
     {
-      enabled: openCollapse,
+      enabled: openCollapse && !getPolygonValidationFromContext(),
       staleTime: 5 * 60 * 1000
     }
   );
@@ -70,7 +82,14 @@ const PolygonItem = ({
       setPolygonValidationData(parseValidationData(criteriaData));
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
     }
-  }, [criteriaData, uuid]);
+  }, [criteriaData]);
+
+  useEffect(() => {
+    const polygonValidation = getPolygonValidationFromContext();
+    if (polygonValidation) {
+      setPolygonValidationData(parseValidationDataFromContext(polygonValidation));
+    }
+  }, [getPolygonValidationFromContext, openCollapse]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);
@@ -146,11 +165,6 @@ const PolygonItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={isLoading}>
-          <Box sx={{ width: "90%", ml: 1 }}>
-            <LinearProgress />
-          </Box>
-        </When>
         <When condition={isValid == "failed"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             This polygon passes even though both validations below have failed. It can still be approved by TerraMatch

@@ -54,7 +54,7 @@ const useLoadSitePolygonsData = (
 
       setTotal(count!);
       let result: any[] = [];
-      const limit = 10;
+      const limit = 500;
       let offset = 0;
 
       while (offset < count! && !signal.aborted) {

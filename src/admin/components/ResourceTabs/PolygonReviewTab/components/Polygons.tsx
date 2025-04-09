@@ -1,6 +1,6 @@
 import { Box, LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -21,7 +21,8 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonComplete,
-  fetchGetV2TerrafundPolygonBboxUuid
+  fetchGetV2TerrafundPolygonBboxUuid,
+  useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
 import { OptionValue } from "@/types/common";
 
@@ -40,6 +41,7 @@ export interface IpolygonFromMap {
   isOpen: boolean;
   uuid: string;
 }
+
 export interface IPolygonProps {
   menu: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
@@ -47,6 +49,7 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
+  siteUuid?: string;
 }
 
 export const polygonData = [
@@ -61,7 +64,7 @@ const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
   const [polygonMenu, setPolygonMenu] = useState<IPolygonItem[]>(props.menu);
-  const { polygonFromMap, setPolygonFromMap, mapFunctions } = props;
+  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid } = props;
   const { map } = mapFunctions;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
@@ -71,8 +74,40 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
   const sitePolygonData = context?.sitePolygonData;
-  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox, setValidFilter } = contextMapArea;
+  const {
+    setSelectedPolygonsInCheckbox,
+    selectedPolygonsInCheckbox,
+    setValidFilter,
+    validationData,
+    setValidationData,
+    validationDataTimestamp,
+    setValidationDataTimestamp,
+    isFetchingValidationData,
+    setIsFetchingValidationData
+  } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
+
+  const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
+    {
+      queryParams: {
+        uuid: siteUuid ?? ""
+      }
+    },
+    {
+      enabled: false, // Don't fetch on mount, only when explicitly called
+      staleTime: 5 * 60 * 1000,
+      onSuccess: data => {
+        if (data && siteUuid) {
+          setValidationData((prev: any) => ({
+            ...prev,
+            [siteUuid]: data
+          }));
+          setValidationDataTimestamp(Date.now());
+        }
+        setIsFetchingValidationData(false);
+      }
+    }
+  );
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -87,6 +122,25 @@ const Polygons = (props: IPolygonProps) => {
       setSelectedPolygon(undefined);
     }
   }, [polygonFromMap, polygonMenu]);
+
+  const handleExpandCollapseToggle = useCallback(() => {
+    if (
+      !openCollapseAll &&
+      siteUuid &&
+      (!validationData[siteUuid] || Date.now() - validationDataTimestamp > 5 * 60 * 1000)
+    ) {
+      setIsFetchingValidationData(true);
+      fetchValidationData();
+    }
+    setOpenCollapseAll(!openCollapseAll);
+  }, [
+    openCollapseAll,
+    siteUuid,
+    validationData,
+    validationDataTimestamp,
+    setIsFetchingValidationData,
+    fetchValidationData
+  ]);
 
   const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
@@ -285,8 +339,9 @@ const Polygons = (props: IPolygonProps) => {
         />
         <Button
           variant="white-border"
-          onClick={() => setOpenCollapseAll(!openCollapseAll)}
+          onClick={handleExpandCollapseToggle}
           className="flex h-9 gap-1.5 !rounded-lg px-2 !capitalize !text-darkCustom lg:px-3"
+          disabled={isFetchingValidationData} // Disable button while fetching
         >
           {openCollapseAll ? (
             <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem] !text-darkCustom" />
@@ -296,7 +351,7 @@ const Polygons = (props: IPolygonProps) => {
           <span
             className={window.innerWidth > 1900 ? "text-14-bold !text-darkCustom" : "text-12-bold !text-darkCustom"}
           >
-            {openCollapseAll ? "Shrink  " : "Expand"}
+            {isFetchingValidationData ? "Loading..." : openCollapseAll ? "Shrink  " : "Expand"}
           </span>
         </Button>
       </div>
@@ -321,6 +376,7 @@ const Polygons = (props: IPolygonProps) => {
                 </Menu>
               }
               isCollapsed={openCollapseAll}
+              siteId={siteUuid}
             />
           </div>
         ))}
