@@ -236,13 +236,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": parseText(data.practice ?? ""),
-    "target-land-use-system": parseText(data.target_sys ?? ""),
-    "tree-distribution": parseText(data.distr ?? ""),
-    "planting-start-date": data.plantstart,
-    source: parseText(data.source ?? ""),
-    uuid: data.poly_id,
+    "polygon-name": data?.poly_name ?? `Unnamed Polygon`,
+    "restoration-practice": parseText(data?.practice ?? ""),
+    "target-land-use-system": parseText(data?.target_sys ?? ""),
+    "tree-distribution": parseText(data?.distr ?? ""),
+    "planting-start-date": data?.plantstart ?? "",
+    source: parseText(data?.source ?? ""),
+    uuid: data?.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
   }));
 
