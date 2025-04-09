@@ -19,7 +19,7 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
   const t = useT();
   return (
     <div className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] cursor-pointer rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
-      <div className="flex flex-col pb-2">
+      <div className="flex flex-col pb-1">
         <img
           src={imageUrl || "/images/no-image-available.png"}
           alt="Map preview of the project location"
@@ -40,7 +40,10 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
             </div>
           ))}
           <button onClick={learnMore}>
-            <Text className="hover:opacity-7 0 mt-1 text-start text-primary underline" variant="text-12-bold">
+            <Text
+              className="text-start text-primary underline underline-offset-1 hover:opacity-70"
+              variant="text-12-semibold"
+            >
               {t("View Project Page")}
             </Text>
           </button>
