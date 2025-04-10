@@ -58,7 +58,6 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
-
   const flyToPolygonBounds = async (polygonUuid: string) => {
     const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
     const bounds: any = bbox.bbox;
@@ -239,6 +238,7 @@ const MapSidePanel = ({
                 refContainer={refContainer}
                 type={type}
                 poly_id={item.poly_id}
+                isValid={item.isValid}
               />
             )}
           />

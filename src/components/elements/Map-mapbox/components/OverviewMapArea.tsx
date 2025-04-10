@@ -168,7 +168,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              isValid: item.is_valid ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -197,7 +198,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              isValid: item.is_valid ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}

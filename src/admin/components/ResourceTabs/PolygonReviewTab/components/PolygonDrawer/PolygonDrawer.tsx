@@ -112,7 +112,6 @@ const PolygonDrawer = ({
     {
       enabled: !!polygonSelected,
       onSuccess: data => {
-        console.log("data", data);
         if (data?.polygon_id) {
           setPolygonCriteriaMap((oldPolygonMap: Record<string, unknown>) => ({
             ...oldPolygonMap,
