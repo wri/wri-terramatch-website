@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
@@ -41,6 +42,7 @@ import Log from "@/utils/log";
 import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
+import { PopupMobile } from "./components/PopupMobile";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -192,7 +194,9 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
+  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
@@ -279,7 +283,8 @@ export const MapContainer = ({
             setFilters,
             dashboardCountries,
             setLoader,
-            selectedCountry
+            selectedCountry,
+            isMobile ? setMobilePopupData : undefined
           );
         }
       };
@@ -684,7 +689,7 @@ export const MapContainer = ({
           </button>
         </ControlGroup>
         <When condition={!formMap && showViewGallery}>
-          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
             <When condition={showImagesButton}>
               <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
             </When>
@@ -724,6 +729,9 @@ export const MapContainer = ({
       </When>
       <When condition={!polygonsExists}>
         <EmptyStateDisplay />
+      </When>
+      <When condition={isMobile && mobilePopupData !== null}>
+        <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
       </When>
     </div>
   );
