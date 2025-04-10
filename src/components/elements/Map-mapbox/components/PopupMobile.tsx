@@ -9,9 +9,10 @@ import { usePopupData } from "@/pages/dashboard/hooks/usePopupsData";
 
 interface MobilePopupProps {
   event: any;
+  onClose: () => void;
 }
 
-export const PopupMobile: React.FC<MobilePopupProps> = ({ event }) => {
+export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
   const t = useT();
   const { items, label, isoCountry, itemUuid, layerName } = usePopupData(event);
   const { setFilters, dashboardCountries } = event;
@@ -31,11 +32,15 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event }) => {
     } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
       setFilters((prevValues: any) => ({ ...prevValues, uuid: itemUuid }));
     }
+    onClose();
   };
   return (
     <div className="fixed bottom-4 left-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 rounded-xl bg-white p-3 shadow-monitored">
       <div className="relative w-full">
-        <button className="absolute -right-4 -top-4 z-10 rounded-full border border-neutral-600 bg-white p-1.5 text-neutral-600 hover:border-primary hover:text-primary">
+        <button
+          onClick={onClose}
+          className="absolute -right-4 -top-4 z-10 rounded-full border border-neutral-600 bg-white p-1.5 text-neutral-600 hover:border-primary hover:text-primary"
+        >
           <Icon name={IconNames.CLEAR} className="h-2.5 w-2.5" />
         </button>
       </div>
@@ -54,15 +59,16 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event }) => {
             </Text>
           </div>
         ))}
-
-        <button onClick={learnMore}>
-          <Text
-            className="text-start text-primary underline underline-offset-1 hover:opacity-70"
-            variant="text-12-semibold"
-          >
-            {t("View Project Page")}
-          </Text>
-        </button>
+        {layerName === LAYERS_NAMES.CENTROIDS && (
+          <button onClick={learnMore}>
+            <Text
+              className="text-start text-primary underline underline-offset-1 hover:opacity-70"
+              variant="text-12-semibold"
+            >
+              {t("View Project Page")}
+            </Text>
+          </button>
+        )}
       </div>
     </div>
   );

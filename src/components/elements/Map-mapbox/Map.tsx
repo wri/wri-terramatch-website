@@ -731,7 +731,7 @@ export const MapContainer = ({
         <EmptyStateDisplay />
       </When>
       <When condition={isMobile && mobilePopupData !== null}>
-        <PopupMobile event={mobilePopupData} />
+        <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
       </When>
     </div>
   );
