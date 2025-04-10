@@ -588,10 +588,13 @@ export const addPopupToLayer = (
     targetLayers.forEach(targetLayer => {
       if (activeClickHandlers[targetLayer.id]) {
         map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+        map.off("touchend", targetLayer.id, activeClickHandlers[targetLayer.id]);
         delete activeClickHandlers[targetLayer.id];
       }
+
       activeClickHandlers[targetLayer.id] = clickHandler;
       map.on("click", targetLayer.id, clickHandler);
+      map.on("touchend", targetLayer.id, clickHandler);
     });
   }
 };
