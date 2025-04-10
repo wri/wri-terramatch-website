@@ -1,8 +1,8 @@
 * {
-  @apply text-base font-light font-primary;
+  @apply font-primary text-base font-light;
 }
 
-body{
+body {
   @apply mobile:h-full mobile:w-full mobile:overflow-hidden;
 }
 
@@ -12,7 +12,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked {
-  @apply bg-white border-primary-500;
+  @apply border-primary-500 bg-white;
 }
 
 input[type="radio"]:before {
@@ -39,8 +39,8 @@ input[type="radio"]:focus {
   transform: translate(0, -108%) scale(1) !important;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
@@ -50,35 +50,34 @@ input[type=number]::-webkit-outer-spin-button {
   filter: invert(100%) brightness(1000%);
 }
 
-.lastRow:last-child>:last-child{
-  @apply rounded-br-lg
+.lastRow:last-child > :last-child {
+  @apply rounded-br-lg;
 }
 
-.lastRow:last-child>:first-child{
-  @apply rounded-bl-lg
+.lastRow:last-child > :first-child {
+  @apply rounded-bl-lg;
 }
 
-.custom-popup-close-button .mapboxgl-popup-content{
+.custom-popup-close-button .mapboxgl-popup-content {
   width: max-content;
 }
 
-.custom-popup-close-button .mapboxgl-popup{
+.custom-popup-close-button .mapboxgl-popup {
   z-index: 2;
 }
-
 strong {
-  font-size: inherit
+  font-size: inherit;
 }
 
 @media (max-width: 1200px) {
-  html, body {
+  html,
+  body {
     height: 100%;
     width: 100%;
     overflow: hidden;
     overscroll-behavior: none;
   }
 }
-
 
 @import url("./extended-base.css");
 @import url("./extended-utilities.css");
