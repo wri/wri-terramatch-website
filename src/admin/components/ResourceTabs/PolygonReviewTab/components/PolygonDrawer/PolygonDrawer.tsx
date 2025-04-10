@@ -15,6 +15,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
+  fetchGetV2TerrafundPolygonUuid,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
@@ -122,13 +123,33 @@ const PolygonDrawer = ({
     }
   );
 
+  const updatePolygonData = async (polygonId: string) => {
+    try {
+      const updatedPolygonData = await fetchGetV2TerrafundPolygonUuid({
+        pathParams: { uuid: polygonId }
+      });
+
+      if (updatedPolygonData?.site_polygon?.uuid) {
+        updateSingleSitePolygonData?.(updatedPolygonData.site_polygon.uuid, updatedPolygonData.site_polygon);
+      }
+    } catch (error) {
+      Log.error("Error fetching updated polygon data:", error);
+      openNotification("warning", t("Warning"), t("Updated polygon data could not be retrieved."));
+    }
+  };
+
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       setCheckPolygonValidation(false);
       setPolygonCriteriaMap((oldPolygonMap: any) => ({
         ...oldPolygonMap,
         [data.polygon_id]: data
       }));
+
+      if (data.polygon_id) {
+        await updatePolygonData(data.polygon_id);
+      }
+
       refetchValidationCriteria();
       openNotification(
         "success",
