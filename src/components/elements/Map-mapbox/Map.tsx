@@ -689,7 +689,7 @@ export const MapContainer = ({
           </button>
         </ControlGroup>
         <When condition={!formMap && showViewGallery}>
-          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
             <When condition={showImagesButton}>
               <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
             </When>
