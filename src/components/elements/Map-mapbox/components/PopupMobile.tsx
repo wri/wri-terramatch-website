@@ -17,6 +17,8 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
   const { items, label, isoCountry, itemUuid, layerName } = usePopupData(event);
   const { setFilters, dashboardCountries } = event;
 
+  if (!items.length) return null;
+
   const learnMore = () => {
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
       const selectedCountry = dashboardCountries?.find(
@@ -49,25 +51,29 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
           {t(label)}
         </Text>
 
-        {items.map(item => (
-          <div key={item.id} className="flex flex-col gap-0.5">
-            <Text variant="text-12-light" className="leading-[normal]">
-              {t(item.title)}
-            </Text>
-            <Text variant="text-12-semibold" className="leading-[normal]">
-              {t(item.value)}
-            </Text>
-          </div>
-        ))}
-        {layerName === LAYERS_NAMES.CENTROIDS && (
-          <button onClick={learnMore}>
-            <Text
-              className="text-start text-primary underline underline-offset-1 hover:opacity-70"
-              variant="text-12-semibold"
-            >
-              {t("View Project Page")}
-            </Text>
-          </button>
+        {items.length > 0 && (
+          <>
+            {items.map(item => (
+              <div key={item.id} className="flex flex-col gap-0.5">
+                <Text variant="text-12-light" className="leading-[normal]">
+                  {t(item.title)}
+                </Text>
+                <Text variant="text-12-semibold" className="leading-[normal]">
+                  {t(item.value)}
+                </Text>
+              </div>
+            ))}
+            {layerName === LAYERS_NAMES.CENTROIDS && (
+              <button onClick={learnMore}>
+                <Text
+                  className="text-start text-primary underline underline-offset-1 hover:opacity-70"
+                  variant="text-12-semibold"
+                >
+                  {t("View Project Page")}
+                </Text>
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

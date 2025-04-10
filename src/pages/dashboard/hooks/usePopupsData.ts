@@ -133,7 +133,7 @@ export function usePopupData(event: any) {
         setIsLoading(false);
       }
     }
-
+    setItems([]);
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
       fetchCountryData();
     } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
