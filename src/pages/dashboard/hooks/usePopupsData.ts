@@ -1,4 +1,3 @@
-// usePopupData.ts
 import { useEffect, useState } from "react";
 
 import { LAYERS_NAMES } from "@/constants/layers";
