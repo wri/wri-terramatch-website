@@ -190,6 +190,7 @@ const OverviewMapArea = ({
           polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
+          entityUuid={entityModel?.uuid}
         />
       ) : (
         <MapSidePanel
@@ -210,6 +211,7 @@ const OverviewMapArea = ({
           setSortOrder={setSortOrder}
           type={type}
           recallEntityData={refetch}
+          entityUuid={entityModel?.uuid}
         />
       )}
       <MapContainer

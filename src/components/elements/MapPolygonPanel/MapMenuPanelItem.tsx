@@ -1,9 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem,
+  WITHIN_COUNTRY_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -11,7 +16,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { hasCompletedDataWhitinStimatedAreaCriteriaInvalid, parseValidationData } from "@/helpers/polygonValidation";
+import { parseValidationDataFromContext } from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -42,6 +47,7 @@ const MapMenuPanelItem = ({
   subtitle,
   status,
   poly_id = "",
+  site_id,
   primary_uuid,
   isSelected,
   setClickedButton,
@@ -54,19 +60,36 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring, validationData } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(isValid === "partial");
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
-  useEffect(() => {
-    const criteriaDataPolygon = polygonMap[poly_id];
-    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
+
+  const getPolygonValidationFromContext = useCallback(() => {
+    if (site_id && validationData[site_id]) {
+      return validationData[site_id].find((item: any) => item.uuid === poly_id);
     }
-  }, [poly_id, polygonMap]);
+    return null;
+  }, [site_id, validationData, poly_id]);
+
+  useEffect(() => {
+    const polygonValidation = getPolygonValidationFromContext();
+
+    if (polygonValidation) {
+      const parsedData = parseValidationDataFromContext(polygonValidation);
+      setPolygonValidationData(parsedData);
+      setShowWarning(
+        polygonValidation.nonValidCriteria?.some(
+          (criteria: any) =>
+            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
+            criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID ||
+            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID
+        )
+      );
+    }
+  }, [poly_id, polygonMap, site_id, uuid, validationData, getPolygonValidationFromContext]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(

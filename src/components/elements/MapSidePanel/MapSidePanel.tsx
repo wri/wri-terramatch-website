@@ -32,6 +32,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
   type: string;
   recallEntityData?: any;
+  entityUuid?: string;
 }
 
 const MapSidePanel = ({
@@ -47,6 +48,7 @@ const MapSidePanel = ({
   setSortOrder,
   type,
   recallEntityData,
+  entityUuid,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -238,6 +240,7 @@ const MapSidePanel = ({
                 refContainer={refContainer}
                 type={type}
                 poly_id={item.poly_id}
+                site_id={entityUuid}
                 isValid={item.isValid}
               />
             )}
