@@ -323,10 +323,10 @@ const Polygons = (props: IPolygonProps) => {
         <Dropdown
           options={[
             { title: t("All validation statuses"), value: "all" },
-            { title: "Not checked", value: "not_checked" },
-            { title: "Failed", value: "failed" },
-            { title: "Partial Passed", value: "partial" },
-            { title: "Passed", value: "passed" }
+            { title: t("Not checked"), value: "not_checked" },
+            { title: t("Failed"), value: "failed" },
+            { title: t("Partial Passed"), value: "partial" },
+            { title: t("Passed"), value: "passed" }
           ]}
           defaultValue={["all"]}
           value={["all"]}
@@ -341,7 +341,7 @@ const Polygons = (props: IPolygonProps) => {
           variant="white-border"
           onClick={handleExpandCollapseToggle}
           className="flex h-9 gap-1.5 !rounded-lg px-2 !capitalize !text-darkCustom lg:px-3"
-          disabled={isFetchingValidationData} // Disable button while fetching
+          disabled={isFetchingValidationData}
         >
           {openCollapseAll ? (
             <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem] !text-darkCustom" />

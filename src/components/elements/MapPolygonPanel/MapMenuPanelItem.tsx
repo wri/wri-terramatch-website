@@ -286,7 +286,7 @@ const MapMenuPanelItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={validationStatus === "failed"}>
+        <When condition={validationStatus === "partial"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             {t(
               "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
