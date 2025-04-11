@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
@@ -10,13 +9,14 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import Text from "@/components/elements/Text/Text";
 import ModalAddImages from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useMedias } from "@/connections/EntityAssocation";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssocation";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { EntityAssociationIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
 import Log from "@/utils/log";
+
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: EntityName;
@@ -28,7 +28,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [pagination, setPagination] = useState({ page: 1, pageSize: 6 });
   const [filter] = useState<string>("all");
   const [searchString, setSearchString] = useState<string>("");
-  const [isGeotagged, setIsGeotagged] = useState<number>(0);
+  const [isGeotagged, setIsGeotagged] = useState<boolean | undefined>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const { openModal, closeModal } = useModalContext();
   const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
@@ -37,25 +37,37 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   });
   const resource = entity ?? ctx.resource;
 
-  const queryParams: any = useMemo(() => {
-    return {
+  const queryParams = useMemo(() => {
+    const params: EntityAssociationIndexQueryParams = {
       "page[number]": pagination.page,
       "page[size]": pagination.pageSize
     };
-  }, [pagination]);
 
-  if (filter !== "all") {
-    queryParams["filter[is_public]"] = filter === "public";
-  }
-  if (filters.isPublic !== undefined) {
-    queryParams["filter[is_public]"] = filters.isPublic;
-  }
-  if (filters.modelType) {
-    queryParams["filter[model_type]"] = filters.modelType;
-  }
-  queryParams["search"] = searchString;
-  queryParams["isGeotagged"] = isGeotagged;
-  queryParams["direction"] = sortOrder;
+    if (filter !== "all") {
+      params.isPublic = filter === "public";
+    }
+    if (filters.isPublic !== undefined) {
+      params.isPublic = filters.isPublic;
+    }
+    if (filters.modelType) {
+      params.modelType = filters.modelType;
+    }
+    params.search = searchString;
+    params.isGeotagged = isGeotagged;
+    params.direction = sortOrder;
+
+    return params;
+  }, [
+    filter,
+    filters.isPublic,
+    filters.modelType,
+    isGeotagged,
+    pagination.page,
+    pagination.pageSize,
+    searchString,
+    sortOrder
+  ]);
+
   const [isLoaded, { associations: mediaList, indexTotal }] = useMedias({
     entity: resource as SupportedEntity,
     uuid: ctx?.record?.uuid,
@@ -116,50 +128,48 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   };
 
   return (
-    <When condition={isLoaded}>
-      <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
-        <div className="flex flex-col gap-8">
-          <div className="flex items-center justify-between">
-            <Text variant="text-24-bold">{t("All Images")}</Text>
-            <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
-              {t("UPLOAD IMAGES")}
-            </Button>
-          </div>
-          <ImageGallery
-            data={
-              mediaList?.map(file => ({
-                //@ts-ignore
-                uuid: file.uuid!,
-                fullImageUrl: file.url!,
-                thumbnailImageUrl: file.thumbUrl!,
-                label: file.name,
-                isPublic: file.isPublic!,
-                isGeotagged: file?.lat !== 0 && file?.lng !== 0,
-                isCover: file.isCover,
-                raw: file
-              })) || []
-            }
-            entity={resource}
-            entityData={ctx.record}
-            pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
-            onGalleryStateChange={pagination => {
-              setPagination(pagination);
-            }}
-            onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
-            ItemComponent={ImageGalleryItem}
-            onChangeSearch={setSearchString}
-            onChangeGeotagged={setIsGeotagged}
-            reloadGalleryImages={() => {}}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            setFilters={setFilters}
-            className="mt-3"
-            isAdmin={true}
-            isLoading={!isLoaded}
-          />
+    <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <Text variant="text-24-bold">{t("All Images")}</Text>
+          <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
+            {t("UPLOAD IMAGES")}
+          </Button>
         </div>
-      </TabbedShowLayout.Tab>
-    </When>
+        <ImageGallery
+          data={
+            mediaList?.map(file => ({
+              //@ts-ignore
+              uuid: file.uuid!,
+              fullImageUrl: file.url!,
+              thumbnailImageUrl: file.thumbUrl!,
+              label: file.name,
+              isPublic: file.isPublic!,
+              isGeotagged: file?.lat !== 0 && file?.lng !== 0,
+              isCover: file.isCover,
+              raw: file
+            })) || []
+          }
+          entity={resource}
+          entityData={ctx.record}
+          pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
+          onGalleryStateChange={pagination => {
+            setPagination(pagination);
+          }}
+          onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+          ItemComponent={ImageGalleryItem}
+          onChangeSearch={setSearchString}
+          onChangeGeotagged={setIsGeotagged}
+          reloadGalleryImages={() => {}}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          setFilters={setFilters}
+          className="mt-3"
+          isAdmin={true}
+          isLoading={!isLoaded}
+        />
+      </div>
+    </TabbedShowLayout.Tab>
   );
 };
 

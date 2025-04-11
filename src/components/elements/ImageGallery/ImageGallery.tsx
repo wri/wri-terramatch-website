@@ -32,7 +32,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
-  onChangeGeotagged: Dispatch<SetStateAction<number>>;
+  onChangeGeotagged: Dispatch<SetStateAction<boolean | undefined>>;
   sortOrder: "asc" | "desc";
   setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
   setFilters: Dispatch<SetStateAction<any>>;
@@ -324,7 +324,7 @@ const ImageGallery = ({
   }, [pageIndex, pageSize, modelName]);
 
   useValueChanged(activeIndex, () => {
-    onChangeGeotagged(activeIndex);
+    onChangeGeotagged(activeIndex === 0 ? undefined : activeIndex === 1);
   });
 
   return (
