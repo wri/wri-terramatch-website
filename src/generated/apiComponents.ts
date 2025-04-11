@@ -28013,6 +28013,81 @@ export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsRe
   );
 };
 
+export type GetV2DashboardProjectsProjectPolygonsPathParams = {
+  /**
+   * The project uuid
+   */
+  project: string;
+};
+
+export type GetV2DashboardProjectsProjectPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DashboardProjectsProjectPolygonsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    site_polygons?: {
+      uuid?: string;
+      site_id?: string;
+      poly_name?: string;
+      poly_id?: string;
+    }[];
+  }[];
+};
+
+export type GetV2DashboardProjectsProjectPolygonsVariables = {
+  pathParams: GetV2DashboardProjectsProjectPolygonsPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * This endpoint returns all site polygons data and site for a project .
+ */
+export const fetchGetV2DashboardProjectsProjectPolygons = (
+  variables: GetV2DashboardProjectsProjectPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2DashboardProjectsProjectPolygonsResponse,
+    GetV2DashboardProjectsProjectPolygonsError,
+    undefined,
+    {},
+    {},
+    GetV2DashboardProjectsProjectPolygonsPathParams
+  >({ url: "/v2/dashboard/projects/{project}/polygons", method: "get", ...variables, signal });
+
+/**
+ * This endpoint returns all site polygons data and site for a project .
+ */
+export const useGetV2DashboardProjectsProjectPolygons = <TData = GetV2DashboardProjectsProjectPolygonsResponse>(
+  variables: GetV2DashboardProjectsProjectPolygonsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetV2DashboardProjectsProjectPolygonsResponse,
+      GetV2DashboardProjectsProjectPolygonsError,
+      TData
+    >,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<
+    GetV2DashboardProjectsProjectPolygonsResponse,
+    GetV2DashboardProjectsProjectPolygonsError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/dashboard/projects/{project}/polygons",
+      operationId: "getV2DashboardProjectsProjectPolygons",
+      variables
+    }),
+    ({ signal }) => fetchGetV2DashboardProjectsProjectPolygons({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
   /**
    * The uuid of the polygon
@@ -32584,6 +32659,11 @@ export type QueryOperation =
       path: "/v2/dashboard/get-polygons";
       operationId: "getV2DashboardGetPolygons";
       variables: GetV2DashboardGetPolygonsVariables;
+    }
+  | {
+      path: "/v2/dashboard/projects/{project}/polygons";
+      operationId: "getV2DashboardProjectsProjectPolygons";
+      variables: GetV2DashboardProjectsProjectPolygonsVariables;
     }
   | {
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";

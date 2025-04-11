@@ -17412,6 +17412,19 @@ export type V2ImpactStoryCreate = {
   status?: "draft" | "published" | "archived";
 };
 
+export type DashboardGetSitePolygonsDataProjectsResponse = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    site_polygons?: {
+      uuid?: string;
+      site_id?: string;
+      poly_name?: string;
+      poly_id?: string;
+    }[];
+  }[];
+};
+
 export type DashboardGetPolygonCentroidResponse = {
   centroid?: number[];
 };
