@@ -8,6 +8,7 @@ import {
   EntityIndexQueryParams,
   entityUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
+import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
   NurseryFullDto,
   NurseryLightDto,
@@ -33,6 +34,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
@@ -253,8 +255,13 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
   )
 });
 
-export const pruneEntityCache = (entity: SupportedEntity, uuid: string) => {
-  ApiSlice.pruneCache(entity, [uuid]);
+export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
+  SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
+
+export const pruneEntityCache = (entity: EntityName, uuid: string) => {
+  if (entityIsSupported(entity)) {
+    ApiSlice.pruneCache(entity, [uuid]);
+  }
 };
 
 // The "light" version of entity connections will return the full DTO if it's what's cached in the store. However,

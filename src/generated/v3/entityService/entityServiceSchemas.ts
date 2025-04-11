@@ -49,6 +49,21 @@ export type EntitySideload = {
   pageSize: number;
 };
 
+/**
+ * CONSTANTS
+ */
+export type SupportedEntities = {
+  /**
+   * @example projects
+   * @example sites
+   * @example nurseries
+   * @example projectReports
+   * @example siteReports
+   * @example nurseryReports
+   */
+  ENTITY_TYPES: string[];
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
