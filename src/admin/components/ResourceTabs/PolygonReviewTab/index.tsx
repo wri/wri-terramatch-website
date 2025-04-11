@@ -253,7 +253,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     status: data.status,
     label: data.poly_name ?? `Unnamed Polygon`,
     uuid: data.poly_id,
-    isValid: data.is_valid ?? "notChecked"
+    validationStatus: data.validation_status ?? "notChecked"
   }));
 
   const polygonDataMap = parsePolygonData(sitePolygonData);

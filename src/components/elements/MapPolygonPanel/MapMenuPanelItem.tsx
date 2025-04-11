@@ -38,7 +38,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   poly_name?: string;
   primary_uuid?: string;
   isCollapsed?: boolean;
-  isValid?: string;
+  validationStatus?: string;
 }
 
 const MapMenuPanelItem = ({
@@ -55,14 +55,14 @@ const MapMenuPanelItem = ({
   refContainer,
   type,
   isCollapsed,
-  isValid,
+  validationStatus,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
   const { isMonitoring, validationData } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [showWarning, setShowWarning] = useState(isValid === "partial");
+  const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
@@ -255,17 +255,17 @@ const MapMenuPanelItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={isValid === "notChecked"}>
+            <When condition={validationStatus === "notChecked"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 {t("Not Checked")}
               </Text>
             </When>
-            <When condition={isValid === "passed" || isValid === "partial"}>
+            <When condition={validationStatus === "passed" || validationStatus === "partial"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
-                  "text-green": isValid === "passed",
+                  "text-green": validationStatus === "passed",
                   "text-yellow-700": showWarning
                 })}
               >
@@ -276,7 +276,7 @@ const MapMenuPanelItem = ({
                 {t("Passed")}
               </Text>
             </When>
-            <When condition={isValid === "failed"}>
+            <When condition={validationStatus === "failed"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 {t("Failed")}
@@ -286,7 +286,7 @@ const MapMenuPanelItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={isValid === "failed"}>
+        <When condition={validationStatus === "failed"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             {t(
               "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."

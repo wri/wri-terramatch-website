@@ -241,7 +241,7 @@ const MapSidePanel = ({
                 type={type}
                 poly_id={item.poly_id}
                 site_id={entityUuid}
-                isValid={item.isValid}
+                validationStatus={item.validationStatus}
               />
             )}
           />

@@ -24010,7 +24010,7 @@ export type GetV2SitesUUIDPolygonsResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
-  is_valid?: boolean;
+  validation_status?: boolean;
 }[];
 
 export type GetV2SitesUUIDPolygonsVariables = {
@@ -26100,7 +26100,7 @@ export type GetV2SitesSitePolygonResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
-  is_valid?: boolean;
+  validation_status?: boolean;
 }[];
 
 export type GetV2SitesSitePolygonVariables = {
@@ -29949,7 +29949,7 @@ export type GetV2TypeEntityResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -30150,7 +30150,7 @@ export type GetV2EntityPolygonsResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   }[];
 };
 
@@ -30415,7 +30415,7 @@ export type PutV2SitePolygonStatusBulkResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   }[];
 };
 
@@ -30521,7 +30521,7 @@ export type GetV2SitePolygonUuidResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   };
 };
 
@@ -30613,7 +30613,7 @@ export type GetV2SitePolygonUuidVersionsResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   }[];
 };
 
@@ -30710,7 +30710,7 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   };
 };
 
@@ -30811,7 +30811,7 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
-    is_valid?: boolean;
+    validation_status?: boolean;
   };
 };
 
