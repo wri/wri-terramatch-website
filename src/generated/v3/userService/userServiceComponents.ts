@@ -251,7 +251,7 @@ export type UserUpdateResponse = {
 };
 
 export type UserUpdateVariables = {
-  body: Schemas.UserUpdateBodyDto;
+  body: Schemas.UserUpdateBody;
   pathParams: UserUpdatePathParams;
 };
 
@@ -259,7 +259,7 @@ export type UserUpdateVariables = {
  * Update a user by UUID
  */
 export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBodyDto, {}, {}, UserUpdatePathParams>({
+  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBody, {}, {}, UserUpdatePathParams>({
     url: "/users/v3/users/{uuid}",
     method: "patch",
     ...variables,
