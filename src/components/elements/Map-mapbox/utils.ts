@@ -1200,15 +1200,18 @@ export const enableTerrainAndAnimateCamera = async (
   setCurrentStyle: (style: MapStyle) => void,
   currentStyle: string,
   centroid: LngLat
-) => {
+): Promise<() => void> => {
   const shouldChangeStyle = currentStyle !== MapStyle.Satellite;
   if (shouldChangeStyle) {
     setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle);
-    map.once("style.load", () => {
-      setupTerrainAndAnimate(map, centroid);
+    return new Promise(resolve => {
+      map.once("style.load", () => {
+        const cleanup = setupTerrainAndAnimate(map, centroid);
+        resolve(cleanup);
+      });
     });
   } else {
-    setupTerrainAndAnimate(map, centroid);
+    return setupTerrainAndAnimate(map, centroid);
   }
 };
 
@@ -1222,26 +1225,40 @@ const setupTerrainAndAnimate = (map: mapboxgl.Map, centroid: LngLat) => {
     });
     map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
   }
-  animateCamera(map, centroid);
+  return animateCamera(map, centroid);
 };
-
 const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
   let angle = 0;
+  let animationFrameId: number | null = null;
+  let lastTime = 0;
+  const rotationSpeed = 5;
 
-  function frame() {
-    angle += 0.4;
+  function frame(currentTime: number) {
+    if (!lastTime) lastTime = currentTime;
+
+    const deltaTime = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    angle += rotationSpeed * deltaTime;
+
     map.easeTo({
       center: centroid,
-      zoom: 16,
+      zoom: 14,
       pitch: 60,
       bearing: angle,
-      duration: 80
+      duration: 160
     });
 
-    // if (map.getTerrain()) {
-    requestAnimationFrame(frame);
-    // }
+    animationFrameId = requestAnimationFrame(frame);
   }
 
-  frame();
+  animationFrameId = requestAnimationFrame(frame);
+
+  // Return a function to stop the animation
+  return () => {
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  };
 };

@@ -198,6 +198,7 @@ export const MapContainer = ({
     setLoader
   } = props;
   const isMobile = useMediaQuery("(max-width: 1200px)");
+  const [stopAnimation, setStopAnimation] = useState<(() => void) | null>(null);
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
@@ -381,12 +382,20 @@ export const MapContainer = ({
 
   useValueChanged(polygonCentroid, () => {
     if (map.current && polygonCentroid) {
+      // Stop any existing animation before starting a new one
+      if (stopAnimation) {
+        stopAnimation();
+      }
+
+      // Start the animation and save its cleanup function
       enableTerrainAndAnimateCamera(
         map.current,
         setCurrentStyle,
         currentStyle,
         new mapboxgl.LngLat(polygonCentroid[0], polygonCentroid[1])
-      );
+      ).then(cleanupFunction => {
+        setStopAnimation(() => cleanupFunction);
+      });
     }
   });
 
@@ -630,6 +639,15 @@ export const MapContainer = ({
     }
   });
 
+  const handleZoomToBbox = () => {
+    if (stopAnimation) {
+      stopAnimation();
+    }
+    if (bbox && map.current) {
+      zoomToBbox(bbox, map.current, hasControls);
+    }
+  };
+
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
       <When condition={hasControls}>
@@ -705,7 +723,7 @@ export const MapContainer = ({
             type="button"
             className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
             onClick={() => {
-              bbox && map.current && zoomToBbox(bbox, map.current, hasControls);
+              handleZoomToBbox();
             }}
           >
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
@@ -729,7 +747,11 @@ export const MapContainer = ({
       <When condition={isDashboard === "dashboard"}>
         <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
           <When condition={!isLoadingPolygonsList}>
-            <ListPolygon polygonsListData={polygonsListData} setPolygonCentroid={setPolygonCentroid} />
+            <ListPolygon
+              polygonsListData={polygonsListData}
+              setPolygonCentroid={setPolygonCentroid}
+              handleZoomToBbox={handleZoomToBbox}
+            />
           </When>
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel

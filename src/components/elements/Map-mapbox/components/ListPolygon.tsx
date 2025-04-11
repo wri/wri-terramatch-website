@@ -9,7 +9,15 @@ import { fetchGetV2DashboardPolygonsPolyUuidCentroid } from "@/generated/apiComp
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
-const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListData: any; setPolygonCentroid: any }) => {
+const ListPolygon = ({
+  polygonsListData,
+  setPolygonCentroid,
+  handleZoomToBbox
+}: {
+  polygonsListData: any;
+  setPolygonCentroid: any;
+  handleZoomToBbox: any;
+}) => {
   const [isOpenListPolygon, setIsOpenListPolygon] = useState(false);
   const [selectedPolygon, setSelectedPolygon] = useState<any>(null);
   const handlePolygonClick = async (polygon: any) => {
@@ -27,6 +35,13 @@ const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListDat
     }
   };
 
+  const handleShowAllPolygons = () => {
+    setSelectedPolygon(null);
+    setPolygonCentroid(null);
+    setIsOpenListPolygon(false);
+    handleZoomToBbox();
+  };
+
   return (
     <div className="relative">
       <Button
@@ -38,7 +53,7 @@ const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListDat
           <Icon name={IconNames.CHEVRON_DOWN} className="h-[14px] w-[14px] rotate-90" />
         </div>
         <Text variant="text-14" className="w-40 text-black">
-          {selectedPolygon?.poly_name || "Polygon ABC"}
+          {selectedPolygon?.poly_name || "Select a polygon"}
         </Text>
         <div
           className={classNames("-rotate-90 text-black hover:text-primary", {
@@ -51,7 +66,11 @@ const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListDat
       </Button>
       <When condition={isOpenListPolygon}>
         <div className="absolute left-0 top-full z-10 mt-2 flex h-96 w-full flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-lg bg-white py-2">
-          <Text variant="text-14" className="px-4 py-1.5 text-black">
+          <Text
+            variant="text-12"
+            className="cursor-pointer px-4 py-1.5 text-black hover:text-primary"
+            onClick={handleShowAllPolygons}
+          >
             Show All Polygons
           </Text>
           <List
@@ -59,7 +78,7 @@ const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListDat
             render={(item: any) => {
               return (
                 <div key={item.uuid}>
-                  <Text variant="text-14" className="px-4 text-black">
+                  <Text variant="text-12" className="px-4 text-black">
                     {item.name}
                   </Text>
                   <List
@@ -91,7 +110,7 @@ const ListPolygon = ({ polygonsListData, setPolygonCentroid }: { polygonsListDat
                               ></hr>
                             </div>
                             <Text
-                              variant="text-14"
+                              variant="text-12"
                               className={classNames("", {
                                 "text-primary": itemPolygon.uuid === selectedPolygon?.uuid,
                                 "text-black": itemPolygon.uuid !== selectedPolygon?.uuid
