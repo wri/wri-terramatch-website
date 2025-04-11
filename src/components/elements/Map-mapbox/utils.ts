@@ -1218,7 +1218,7 @@ const setupTerrainAndAnimate = (map: mapboxgl.Map, centroid: LngLat) => {
       type: "raster-dem",
       url: "mapbox://mapbox.mapbox-terrain-dem-v1",
       tileSize: 512,
-      maxzoom: 14
+      maxzoom: 16
     });
     map.setTerrain({ source: "mapbox-dem", exaggeration: 2 });
   }
@@ -1232,7 +1232,7 @@ const animateCamera = (map: mapboxgl.Map, centroid: LngLat) => {
     angle += 0.4;
     map.easeTo({
       center: centroid,
-      zoom: 14,
+      zoom: 16,
       pitch: 60,
       bearing: angle,
       duration: 80
