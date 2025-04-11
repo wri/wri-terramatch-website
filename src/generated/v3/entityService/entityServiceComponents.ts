@@ -596,7 +596,31 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies";
+  association: "demographics" | "seedings" | "treeSpecies" | "media";
+};
+
+export type EntityAssociationIndexQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  modelType?: string;
+  search?: string;
+  fileType?: string;
+  isPublic?: boolean;
+  isPrivate?: boolean;
+  /**
+   * @default ASC
+   */
+  direction?: "ASC" | "DESC";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -630,6 +654,7 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
 
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
+  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
@@ -690,11 +715,30 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example media
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example media
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.MediaDto;
+        }[];
       },
     EntityAssociationIndexError,
     undefined,
     {},
-    {},
+    EntityAssociationIndexQueryParams,
     EntityAssociationIndexPathParams
   >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
 

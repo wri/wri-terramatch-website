@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { format } from "date-fns";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import { MenuItemProps } from "@/components/elements/Menu/Menu";
@@ -217,7 +216,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         <Text variant="text-14-bold" className="flex items-center gap-1">
           {t("Date uploaded")}:{" "}
           <Text variant="text-14-light" className="capitalize">
-            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
+            {/* {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")} */}
           </Text>
         </Text>
         <Text variant="text-14-bold" className="flex items-center gap-1">

@@ -3,9 +3,15 @@ import { createSelector } from "reselect";
 
 import {
   entityAssociationIndex,
-  EntityAssociationIndexPathParams
+  EntityAssociationIndexPathParams,
+  EntityAssociationIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { DemographicDto, SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  DemographicDto,
+  MediaDto,
+  SeedingDto,
+  TreeSpeciesDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   entityAssociationIndexFetchFailed,
   entityAssociationIndexIndexMeta
@@ -17,18 +23,20 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto;
+export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto | MediaDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
 export type EntityAssociationIndexConnection<T extends EntityAssociationDtoType> = {
   associations?: T[];
+  indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
 };
 
 export type EntityAssociationIndexConnectionProps = {
   entity: SupportedEntity;
   uuid: string;
+  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 const associationSelector =
@@ -38,9 +46,10 @@ const associationSelector =
 
 const associationGetParams = (
   association: SupportedAssociation,
-  { entity, uuid }: EntityAssociationIndexConnectionProps
+  { entity, uuid, queryParams }: EntityAssociationIndexConnectionProps
 ) => ({
-  pathParams: { entity, uuid, association }
+  pathParams: { entity, uuid, association },
+  queryParams
 });
 
 const indexIsLoaded = <T extends EntityAssociationDtoType>({
@@ -126,10 +135,16 @@ const collectionTypeHook =
   };
 
 const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
+const mediaConnection = createAssociationIndexConnection<MediaDto>("media");
+
 /** Returns the one demographic that matches the given type / collection on the given entity */
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+/** Returns the one media that matches the given type / collection on the given entity */
+export const useMedia = collectionTypeHook(mediaConnection);
+/** Returns all media for the given entity */
+export const useMedias = connectionHook(mediaConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");

@@ -313,7 +313,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               {t("Date Captured")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {new Date(raw.created_date).toLocaleDateString()}
+              {/* {new Date(raw.created_date).toLocaleDateString()} */}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Filename")}
