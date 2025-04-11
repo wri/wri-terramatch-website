@@ -1,9 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  COMPLETED_DATA_CRITERIA_ID,
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem,
+  WITHIN_COUNTRY_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -11,11 +16,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
-  isValidCriteriaData,
-  parseValidationData
-} from "@/helpers/polygonValidation";
+import { parseValidationDataFromContext } from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -37,6 +38,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   poly_name?: string;
   primary_uuid?: string;
   isCollapsed?: boolean;
+  validationStatus?: string;
 }
 
 const MapMenuPanelItem = ({
@@ -45,6 +47,7 @@ const MapMenuPanelItem = ({
   subtitle,
   status,
   poly_id = "",
+  site_id,
   primary_uuid,
   isSelected,
   setClickedButton,
@@ -52,28 +55,41 @@ const MapMenuPanelItem = ({
   refContainer,
   type,
   isCollapsed,
+  validationStatus,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring, validationData } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
-  const [showWarning, setShowWarning] = useState(false);
+  const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
-  useEffect(() => {
-    const criteriaDataPolygon = polygonMap[poly_id];
-    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
-      setValidationStatus(isValidCriteriaData(criteriaDataPolygon));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
-    } else {
-      setValidationStatus(undefined);
+  const getPolygonValidationFromContext = useCallback(() => {
+    if (site_id && validationData[site_id]) {
+      return validationData[site_id].find((item: any) => item.uuid === poly_id);
     }
-  }, [poly_id, polygonMap, setValidationStatus]);
+    return null;
+  }, [site_id, validationData, poly_id]);
+
+  useEffect(() => {
+    const polygonValidation = getPolygonValidationFromContext();
+
+    if (polygonValidation) {
+      const parsedData = parseValidationDataFromContext(polygonValidation);
+      setPolygonValidationData(parsedData);
+      setShowWarning(
+        polygonValidation.nonValidCriteria?.some(
+          (criteria: any) =>
+            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
+            criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID ||
+            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID
+        )
+      );
+    }
+  }, [poly_id, polygonMap, site_id, uuid, validationData, getPolygonValidationFromContext]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -239,17 +255,17 @@ const MapMenuPanelItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={validationStatus == undefined}>
+            <When condition={validationStatus === "notChecked"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 {t("Not Checked")}
               </Text>
             </When>
-            <When condition={validationStatus}>
+            <When condition={validationStatus === "passed" || validationStatus === "partial"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
-                  "text-green": validationStatus,
+                  "text-green": validationStatus === "passed",
                   "text-yellow-700": showWarning
                 })}
               >
@@ -260,7 +276,7 @@ const MapMenuPanelItem = ({
                 {t("Passed")}
               </Text>
             </When>
-            <When condition={validationStatus === false}>
+            <When condition={validationStatus === "failed"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 {t("Failed")}
@@ -270,7 +286,7 @@ const MapMenuPanelItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={validationStatus}>
+        <When condition={validationStatus === "partial"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             {t(
               "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
