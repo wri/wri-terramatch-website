@@ -54,7 +54,8 @@ import {
   SitePolygonsDataResponse,
   SitePolygonsLoadedDataResponse
 } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -101,7 +102,8 @@ const PolygonReviewAside: FC<{
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons }) => {
+  siteUuid?: string;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid }) => {
   switch (type) {
     case "sites":
       return (
@@ -112,6 +114,7 @@ const PolygonReviewAside: FC<{
           mapFunctions={mapFunctions}
           refresh={refresh}
           totalPolygons={totalPolygons}
+          siteUuid={siteUuid}
         />
       );
     default:
@@ -154,12 +157,12 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     setSelectedPolygonsInCheckbox,
-    setPolygonCriteriaMap,
     setPolygonData,
     polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList,
     shouldRefetchValidation,
-    setShouldRefetchValidation
+    setShouldRefetchValidation,
+    validFilter
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -203,16 +206,16 @@ const PolygonReviewTab: FC<IProps> = props => {
   const {
     data: sitePolygonData,
     refetch,
-    polygonCriteriaMap,
     loading,
     total,
-    updateSingleCriteriaData
-  } = useLoadCriteriaSite(record.uuid, "sites");
-
+    updateSingleSitePolygonData
+  } = useLoadSitePolygonsData(record.uuid, "sites", undefined, undefined, validFilter);
   const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
     pathParams: { model: "sites", uuid: record.uuid }
   });
-
+  useValueChanged(validFilter, () => {
+    refetch();
+  });
   const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
     pathParams: {
       site: record.uuid
@@ -235,13 +238,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": parseText(data.practice ?? ""),
-    "target-land-use-system": parseText(data.target_sys ?? ""),
-    "tree-distribution": parseText(data.distr ?? ""),
-    "planting-start-date": data.plantstart,
-    source: parseText(data.source ?? ""),
-    uuid: data.poly_id,
+    "polygon-name": data?.poly_name ?? `Unnamed Polygon`,
+    "restoration-practice": parseText(data?.practice ?? ""),
+    "target-land-use-system": parseText(data?.target_sys ?? ""),
+    "tree-distribution": parseText(data?.distr ?? ""),
+    "planting-start-date": data?.plantstart ?? "",
+    source: parseText(data?.source ?? ""),
+    uuid: data?.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
   }));
 
@@ -249,7 +252,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     id: (index + 1).toString(),
     status: data.status,
     label: data.poly_name ?? `Unnamed Polygon`,
-    uuid: data.poly_id
+    uuid: data.poly_id,
+    validationStatus: data.validation_status ?? "notChecked"
   }));
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
@@ -307,10 +311,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   useEffect(() => {
     setPolygonData(sitePolygonData);
   }, [loading, setPolygonData, sitePolygonData]);
-
-  useEffect(() => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-  }, [polygonCriteriaMap, setPolygonCriteriaMap]);
 
   useEffect(() => {
     if (shouldRefetchValidation) {
@@ -621,7 +621,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     <SitePolygonDataProvider
       sitePolygonData={sitePolygonData}
       reloadSiteData={refetch}
-      updateSingleCriteriaData={updateSingleCriteriaData}
+      updateSingleSitePolygonData={updateSingleSitePolygonData}
     >
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
@@ -822,6 +822,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
+              siteUuid={record.uuid}
             />
           </Grid>
         </Grid>

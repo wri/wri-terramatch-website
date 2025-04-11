@@ -165,7 +165,8 @@ const handleLayerClick = (
   isDashboard?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
-  setLoader?: (value: boolean) => void
+  setLoader?: (value: boolean) => void,
+  setMobilePopupData?: (value: any) => void
 ) => {
   removePopups("POLYGON");
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
@@ -188,6 +189,22 @@ const handleLayerClick = (
   const feature = features?.[0];
   if (!feature) {
     Log.warn("No feature found in click event");
+    return;
+  }
+  if (setMobilePopupData) {
+    const popupData = {
+      feature,
+      layerName,
+      type,
+      setPolygonFromMap,
+      sitePolygonData,
+      isDashboard,
+      editPolygon,
+      setEditPolygon,
+      setFilters,
+      dashboardCountries
+    };
+    setMobilePopupData(popupData);
     return;
   }
 
@@ -491,7 +508,8 @@ export const addPopupsToMap = (
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null
+  selectedCountry?: string | null,
+  setMobilePopupData?: (value: any) => void
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -509,7 +527,8 @@ export const addPopupsToMap = (
         setFilters,
         dashboardCountries,
         setLoader,
-        selectedCountry
+        selectedCountry,
+        setMobilePopupData
       );
     });
   }
@@ -530,7 +549,8 @@ export const addPopupToLayer = (
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null
+  selectedCountry?: string | null,
+  setMobilePopupData?: (value: any) => void
 ) => {
   if (popupComponent) {
     const { name } = layer;
@@ -548,7 +568,6 @@ export const addPopupToLayer = (
       if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
       // keep commented for future possible use
       // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
-
       handleLayerClick(
         e,
         popupComponent,
@@ -562,16 +581,20 @@ export const addPopupToLayer = (
         isDashboard,
         setFilters,
         dashboardCountries,
-        setLoader
+        setLoader,
+        setMobilePopupData
       );
     };
     targetLayers.forEach(targetLayer => {
       if (activeClickHandlers[targetLayer.id]) {
         map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+        map.off("touchend", targetLayer.id, activeClickHandlers[targetLayer.id]);
         delete activeClickHandlers[targetLayer.id];
       }
+
       activeClickHandlers[targetLayer.id] = clickHandler;
       map.on("click", targetLayer.id, clickHandler);
+      map.on("touchend", targetLayer.id, clickHandler);
     });
   }
 };

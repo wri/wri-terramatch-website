@@ -81,7 +81,7 @@ const dropdownOptionsTree = [
 ];
 const AttributeInformation = ({
   selectedPolygon,
-  updateSingleCriteriaData,
+  updateSingleSitePolygonData,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
   refetchPolygonVersions,
@@ -93,7 +93,7 @@ const AttributeInformation = ({
   setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygon;
-  updateSingleCriteriaData: (poly_id: string, updatedData: any) => void | undefined;
+  updateSingleSitePolygonData: (poly_id: string, updatedData: any) => void | undefined;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
@@ -192,7 +192,7 @@ const AttributeInformation = ({
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon.uuid) {
-                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
+                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
               }
 
               setSelectedPolygonData(polygonActive);
