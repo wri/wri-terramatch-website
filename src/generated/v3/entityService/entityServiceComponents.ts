@@ -613,14 +613,24 @@ export type EntityAssociationIndexQueryParams = {
    */
   ["page[number]"]?: number;
   modelType?: string;
+  /**
+   * @default false
+   */
+  isGeotagged?: boolean;
   search?: string;
   fileType?: string;
+  /**
+   * @default false
+   */
   isPublic?: boolean;
+  /**
+   * @default false
+   */
   isPrivate?: boolean;
   /**
-   * @default ASC
+   * @default asc
    */
-  direction?: "ASC" | "DESC";
+  direction?: "asc" | "desc";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<

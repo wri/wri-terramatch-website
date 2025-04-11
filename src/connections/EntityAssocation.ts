@@ -16,6 +16,7 @@ import {
   entityAssociationIndexFetchFailed,
   entityAssociationIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
+import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
@@ -44,7 +45,7 @@ const associationSelector =
   (store: ApiDataStore) =>
     store[association] as StoreResourceMap<T>;
 
-const associationGetParams = (
+const associationIndexParams = (
   association: SupportedAssociation,
   { entity, uuid, queryParams }: EntityAssociationIndexConnectionProps
 ) => ({
@@ -57,23 +58,26 @@ const indexIsLoaded = <T extends EntityAssociationDtoType>({
   fetchFailure
 }: EntityAssociationIndexConnection<T>) => associations != null || fetchFailure != null;
 
+const indexCacheKey = ({ entity, uuid, queryParams }: EntityAssociationIndexConnectionProps) =>
+  `${entity}:${uuid}:${getStableQuery(queryParams)}`;
+
 const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   association: SupportedAssociation
 ): Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps> => ({
   load: (connection, props) => {
-    if (!indexIsLoaded(connection)) entityAssociationIndex(associationGetParams(association, props));
+    if (!indexIsLoaded(connection)) entityAssociationIndex(associationIndexParams(association, props));
   },
 
   isLoaded: indexIsLoaded,
 
   selector: selectorCache(
-    ({ entity, uuid }) => `${entity}:${uuid}`,
+    props => indexCacheKey(props),
     props =>
       createSelector(
         [
-          entityAssociationIndexIndexMeta(association, associationGetParams(association, props)),
+          entityAssociationIndexIndexMeta(association, associationIndexParams(association, props)),
           associationSelector(association),
-          entityAssociationIndexFetchFailed(associationGetParams(association, props))
+          entityAssociationIndexFetchFailed(associationIndexParams(association, props))
         ],
         (indexMeta, associationsStore, fetchFailure) => {
           if (indexMeta == null) return { fetchFailure };
