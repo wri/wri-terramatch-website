@@ -68,6 +68,19 @@ const FloatNotification = () => {
     return null;
   };
 
+  function clearJob(item: DelayedJobDto) {
+    const newJobsData: DelayedJobData[] = [
+      {
+        uuid: item.uuid,
+        type: "delayedJobs",
+        attributes: {
+          isAcknowledged: true
+        }
+      }
+    ];
+    triggerBulkUpdate(newJobsData);
+  }
+
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <div className="relative">
@@ -108,7 +121,7 @@ const FloatNotification = () => {
                         {item.name}
                       </Text>
                       {
-                        <button className="absolute right-0 hover:text-primary">
+                        <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
                           <ToolTip content={t("Cancel")}>
                             <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                           </ToolTip>
