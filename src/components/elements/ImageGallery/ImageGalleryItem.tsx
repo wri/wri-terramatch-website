@@ -179,7 +179,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           height: 211,
           width: 1440
         }}
-        isGeotagged={data.lat !== 0 && data.lng !== 0}
+        isGeotagged={data.lat !== null && data.lng !== null}
         isCover={data.isCover}
         className="h-[226px] rounded-t-xl"
       >
