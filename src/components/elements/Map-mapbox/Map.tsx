@@ -27,7 +27,6 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
@@ -35,6 +34,7 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -118,7 +118,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
+  modelFilesData?: MediaDto[];
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
@@ -697,7 +697,7 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
               isDashboard !== "modal" && (
-                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+                <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
               )
             )}
           </ControlGroup>
@@ -708,7 +708,7 @@ export const MapContainer = ({
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel
               className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-              modelFilesData={props?.modelFilesData}
+              modelFilesData={props?.modelFilesData ?? []}
               imageGalleryRef={imageGalleryRef}
             />
           </When>
