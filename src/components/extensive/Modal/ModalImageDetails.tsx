@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { LngLat } from "mapbox-gl";
 import Image from "next/image";
 import React, { FC, useState } from "react";
 
@@ -14,6 +15,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
 
@@ -27,7 +29,7 @@ export interface ModalImageDetailProps extends ModalProps {
   onClose?: () => void;
   reloadGalleryImages?: () => void;
   handleDelete?: (uuid: string) => void;
-  data: any;
+  data: MediaDto;
   entityData: any;
   updateValuesInForm?: (updatedItem: any) => void;
 }
@@ -52,16 +54,14 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const { openModal, closeModal } = useModalContext();
   const [activeIndex, setActiveIndex] = useState(0);
   const [formData, setFormData] = useState({
-    name: data.raw.name,
-    is_cover: data.raw.is_cover,
-    is_public: data.raw.is_public,
-    photographer: data.raw.photographer || "",
-    description: data.raw.description
+    name: data.name,
+    is_cover: data.isCover,
+    is_public: data.isPublic,
+    photographer: data.photographer || "",
+    description: data.description
   });
   const [initialFormData, setInitialFormData] = useState({ ...formData });
-  const [descriptionCharCount, setDescriptionCharCount] = useState(
-    data.raw.description ? data.raw.description.length : 0
-  );
+  const [descriptionCharCount, setDescriptionCharCount] = useState(data.description ? data.description.length : 0);
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
@@ -102,6 +102,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         pathParams: { uuid: data.uuid },
         body: {
           name: formData.name,
+          //@ts-ignore
           description: formData.description,
           photographer: formData.photographer,
           is_public: formData.is_public
@@ -124,7 +125,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       reloadGalleryImages?.();
 
       const updatedData = {
-        ...data.raw,
+        // ...data.raw,
         name: formData.name,
         title: formData.name,
         description: formData.description,
@@ -142,7 +143,8 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     }
   };
 
-  const { thumbnailImageUrl, label, isGeotagged, raw } = data;
+  const { thumbUrl, lat, lng, name, fileName, mimeType } = data;
+  const isGeotagged = lat != null && lng != null;
   const tabs = [
     { key: "Image", render: "Image" },
     { key: "Location", render: "Location" }
@@ -190,9 +192,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               ? [
                   { title: entityData.project.name, path: "/#" },
                   { title: entityData.name, path: "/#" },
-                  { title: label }
+                  { title: name }
                 ]
-              : [{ title: entityData.name, path: "/#" }, { title: label }]
+              : [{ title: entityData.name, path: "/#" }, { title: name }]
           }
           className="bg-white pt-0"
           textVariant="text-12"
@@ -268,7 +270,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             required={false}
             placeholder=" "
             id="description"
-            value={formData.description}
+            value={formData.description ?? ""}
             onChange={e => handleDescriptionChange(e.target.value)}
             labelClassName="text-14-bold !normal-case"
             className="resize-none"
@@ -286,7 +288,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
           />
           {activeIndex === 0 ? (
             <Image
-              src={thumbnailImageUrl}
+              src={thumbUrl}
               alt={t("Image")}
               height={400}
               width={300}
@@ -299,7 +301,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               showPopups={false}
               showLegend={false}
               mapFunctions={mapFunctions}
-              location={data.raw?.location}
+              location={new LngLat(lng ?? 0, lat ?? 0)}
             />
           )}
           <div className="grid grid-cols-2">
@@ -307,25 +309,25 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               {t("Uploaded By")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {raw?.created_by?.first_name ? `${raw.created_by.first_name} ${raw.created_by.last_name}` : t("Unknown")}
+              {data?.createdBy?.firstName ? `${data.createdBy.firstName} ${data.createdBy.lastName}` : t("Unknown")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Date Captured")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {/* {new Date(raw.created_date).toLocaleDateString()} */}
+              {new Date(data.createdAt).toLocaleDateString()}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Filename")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {raw.file_name}
+              {fileName}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("File Type")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {raw.mime_type.split("/")[1].toUpperCase()}
+              {mimeType?.split("/")[1].toUpperCase()}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Geotagged")}
@@ -337,7 +339,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               {t("Coordinates")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {isGeotagged ? `(${raw.location.lat.toFixed(4)}, ${raw.location.lng.toFixed(4)})` : "-"}
+              {isGeotagged ? `(${lat?.toFixed(4)}, ${lng?.toFixed(4)})` : "-"}
             </Text>
           </div>
         </div>

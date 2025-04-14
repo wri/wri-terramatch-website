@@ -5,14 +5,11 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssocation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2DashboardCountryCountry,
-  GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles
-} from "@/generated/apiComponents";
+import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
@@ -67,9 +64,12 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    pathParams: { model: type, uuid: entityModel?.uuid }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, { associations: modelFilesData }] = useMedias({
+    entity: type as SupportedEntity,
+    uuid: entityModel?.uuid
   });
+
   const {
     data: polygonsData,
     refetch,
@@ -230,7 +230,7 @@ const OverviewMapArea = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
-        modelFilesData={modelFilesData?.data}
+        modelFilesData={modelFilesData}
         pdView={true}
       />
     </>

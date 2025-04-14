@@ -39,7 +39,6 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
 import { PopupMobile } from "./components/PopupMobile";
@@ -376,22 +375,12 @@ export const MapContainer = ({
       closeModal(ModalId.DELETE_IMAGE);
     };
 
-    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
-      const dataImage = {
-        uuid: data.uuid!,
-        fullImageUrl: data.file_url!,
-        thumbnailImageUrl: data.file_url!,
-        label: data.model_name,
-        isPublic: data.is_public!,
-        isGeotagged: true,
-        isCover: data.is_cover,
-        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
-      };
+    const openModalImageDetail = (data: MediaDto) => {
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
           title="IMAGE DETAILS"
-          data={dataImage}
+          data={data}
           entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
           reloadGalleryImages={() => {
