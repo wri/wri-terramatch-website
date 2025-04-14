@@ -28,7 +28,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const [pagination, setPagination] = useState({ page: 1, pageSize: 6 });
   const [filter] = useState<string>("all");
   const [searchString, setSearchString] = useState<string>("");
-  const [isGeotagged, setIsGeotagged] = useState<boolean | undefined>();
+  const [isGeotagged, setIsGeotagged] = useState<boolean | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const { openModal, closeModal } = useModalContext();
   const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
@@ -53,7 +53,11 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       params.modelType = filters.modelType;
     }
     params.search = searchString;
-    params.isGeotagged = isGeotagged;
+
+    if (isGeotagged !== null) {
+      params.isGeotagged = isGeotagged;
+    }
+
     params.direction = sortOrder;
 
     return params;
