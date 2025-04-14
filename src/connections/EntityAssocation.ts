@@ -18,7 +18,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
-import { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
@@ -32,6 +32,7 @@ export type EntityAssociationIndexConnection<T extends EntityAssociationDtoType>
   associations?: T[];
   indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
+  refetch?: () => void;
 };
 
 export type EntityAssociationIndexConnectionProps = {
@@ -90,7 +91,14 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
             associations.push(associationsStore[id].attributes as T);
           }
 
-          return { associations, fetchFailure };
+          return {
+            associations,
+            fetchFailure,
+            indexTotal: indexMeta.total,
+            refetch: () => {
+              if (props.uuid != null) ApiSlice.pruneIndex(association, props.uuid);
+            }
+          };
         }
       )
   )

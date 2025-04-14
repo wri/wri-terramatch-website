@@ -3211,13 +3211,13 @@ export const useGetV2ReportingFrameworksAccessCodeACCESSCODE = <
   );
 };
 
-export type GetV2ReportingFrameworksUUIDPathParams = {
-  uuid: string;
+export type GetV2ReportingFrameworksFrameworkKeyPathParams = {
+  frameworkKey: string;
 };
 
-export type GetV2ReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2ReportingFrameworksFrameworkKeyError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2ReportingFrameworksUUIDResponse = {
+export type GetV2ReportingFrameworksFrameworkKeyResponse = {
   uuid?: string;
   name?: string;
   slug?: string;
@@ -3230,34 +3230,46 @@ export type GetV2ReportingFrameworksUUIDResponse = {
   nursery_report_form_uuid?: string;
 };
 
-export type GetV2ReportingFrameworksUUIDVariables = {
-  pathParams: GetV2ReportingFrameworksUUIDPathParams;
+export type GetV2ReportingFrameworksFrameworkKeyVariables = {
+  pathParams: GetV2ReportingFrameworksFrameworkKeyPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ReportingFrameworksUUID = (
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const fetchGetV2ReportingFrameworksFrameworkKey = (
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2ReportingFrameworksUUIDResponse,
-    GetV2ReportingFrameworksUUIDError,
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
     undefined,
     {},
     {},
-    GetV2ReportingFrameworksUUIDPathParams
-  >({ url: "/v2/reporting-frameworks/{uuid}", method: "get", ...variables, signal });
+    GetV2ReportingFrameworksFrameworkKeyPathParams
+  >({ url: "/v2/reporting-frameworks/{frameworkKey}", method: "get", ...variables, signal });
 
-export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworksUUIDResponse>(
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const useGetV2ReportingFrameworksFrameworkKey = <TData = GetV2ReportingFrameworksFrameworkKeyResponse>(
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>,
+    reactQuery.UseQueryOptions<
+      GetV2ReportingFrameworksFrameworkKeyResponse,
+      GetV2ReportingFrameworksFrameworkKeyError,
+      TData
+    >,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>(
-    queryKeyFn({ path: "/v2/reporting-frameworks/{UUID}", operationId: "getV2ReportingFrameworksUUID", variables }),
-    ({ signal }) => fetchGetV2ReportingFrameworksUUID({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/reporting-frameworks/{frameworkKey}",
+      operationId: "getV2ReportingFrameworksFrameworkKey",
+      variables
+    }),
+    ({ signal }) => fetchGetV2ReportingFrameworksFrameworkKey({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -32131,9 +32143,9 @@ export type QueryOperation =
       variables: GetV2ReportingFrameworksAccessCodeACCESSCODEVariables;
     }
   | {
-      path: "/v2/reporting-frameworks/{UUID}";
-      operationId: "getV2ReportingFrameworksUUID";
-      variables: GetV2ReportingFrameworksUUIDVariables;
+      path: "/v2/reporting-frameworks/{frameworkKey}";
+      operationId: "getV2ReportingFrameworksFrameworkKey";
+      variables: GetV2ReportingFrameworksFrameworkKeyVariables;
     }
   | {
       path: "/v2/forms/{ENTITY}/{UUID}";

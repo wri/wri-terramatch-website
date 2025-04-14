@@ -13,6 +13,7 @@ import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import Loader from "@/components/generic/Loading/Loader";
 import { useModalContext } from "@/context/modal.provider";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option } from "@/types/common";
 
@@ -22,7 +23,7 @@ import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from ".
 import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
 
 export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  data: ImageGalleryItemData[];
+  data: MediaDto[];
   pageCount: number;
   onGalleryStateChange: (
     pagination: { page: number; pageSize: number },
@@ -400,7 +401,7 @@ const ImageGallery = ({
                     key={item.uuid}
                     data={item}
                     entityData={entityData}
-                    onClickGalleryItem={onClickGalleryItem}
+                    onClickGalleryItem={onClickGalleryItem as unknown as (data: MediaDto) => void}
                     onDelete={handleDelete}
                     reloadGalleryImages={reloadGalleryImages}
                   />

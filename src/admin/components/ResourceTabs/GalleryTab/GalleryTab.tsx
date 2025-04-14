@@ -68,32 +68,17 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     sortOrder
   ]);
 
-  const [isLoaded, { associations: mediaList, indexTotal }] = useMedias({
+  const [isLoaded, { associations: mediaList, indexTotal, refetch }] = useMedias({
     entity: resource as SupportedEntity,
     uuid: ctx?.record?.uuid,
     queryParams
   });
 
-  // const { refetch } = useGetV2MODELUUIDFiles(
-  //   {
-  //     // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
-  //     pathParams: { model: resource, uuid: ctx?.record?.uuid },
-  //     queryParams
-  //   },
-  //   {
-  //     enabled: !!ctx?.record?.uuid
-  //   }
-  // );
-
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess() {
-      // refetch();
+      refetch?.();
     }
   });
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [filters, pagination, searchString, isGeotagged, sortOrder, refetch]);
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
@@ -113,7 +98,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            // refetch();
+            refetch?.();
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
@@ -137,19 +122,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Button>
         </div>
         <ImageGallery
-          data={
-            mediaList?.map(file => ({
-              //@ts-ignore
-              uuid: file.uuid!,
-              fullImageUrl: file.url!,
-              thumbnailImageUrl: file.thumbUrl!,
-              label: file.name,
-              isPublic: file.isPublic!,
-              isGeotagged: file?.lat !== 0 && file?.lng !== 0,
-              isCover: file.isCover,
-              raw: file
-            })) || []
-          }
+          data={mediaList!}
           entity={resource}
           entityData={ctx.record}
           pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
@@ -160,7 +133,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}
-          reloadGalleryImages={() => {}}
+          reloadGalleryImages={refetch}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           setFilters={setFilters}

@@ -44,6 +44,8 @@ export type MediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  modelType: string | null;
+  modelName: string | null;
 };
 
 export type EntitySideload = {
