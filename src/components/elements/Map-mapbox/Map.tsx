@@ -299,8 +299,27 @@ export const MapContainer = ({
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [
+    sitePolygonData,
+    polygonsCentroids,
+    polygonsData,
+    showPopups,
+    centroids,
+    styleLoaded,
+    dashboardCountries,
+    draw,
+    editPolygonSelected,
+    isDashboard,
+    isMobile,
+    map,
+    selectedCountry,
+    setChangeStyle,
+    setEditPolygon,
+    setFilters,
+    setLoader,
+    setPolygonFromMap,
+    tooltipType
+  ]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {

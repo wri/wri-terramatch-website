@@ -30,27 +30,10 @@ import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
-type EditPolygon = {
-  isOpen: boolean;
-  uuid: string;
-  primary_uuid?: string;
-};
-
 type DataPolygonOverview = {
   status: string;
   count: number;
 }[];
-
-type PopupComponentProps = {
-  feature: mapboxgl.MapboxGeoJSONFeature;
-  popup: mapboxgl.Popup;
-  setPolygonFromMap: (polygon: any) => void;
-  sitePolygonData: SitePolygonsDataResponse | undefined;
-  type: TooltipType;
-  editPolygon: EditPolygon;
-  setEditPolygon: (value: EditPolygon) => void;
-  addPopupToMap?: () => void;
-};
 
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
@@ -135,7 +118,6 @@ const showPolygons = (
   });
 };
 
-let popup: mapboxgl.Popup | null = null;
 let popupAttachedMap: Record<string, mapboxgl.Popup[]> = {
   POLYGON: [],
   MEDIA: []
@@ -168,29 +150,14 @@ const handleLayerClick = (
   setLoader?: (value: boolean) => void,
   setMobilePopupData?: (value: any) => void
 ) => {
-  removePopups("POLYGON");
-  const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
-  const popupOptions: mapboxgl.PopupOptions = {
-    className: isCentroidLayer ? "popup-map no-tip" : "popup-map",
-    offset: isCentroidLayer
-      ? {
-          top: [0, 9],
-          "top-left": [0, 9],
-          "top-right": [0, 9],
-          bottom: [0, -9],
-          "bottom-left": [0, -9],
-          "bottom-right": [0, -9],
-          left: [9, 0],
-          right: [-9, 0]
-        }
-      : 0
-  };
   const { lngLat, features } = e;
   const feature = features?.[0];
   if (!feature) {
     Log.warn("No feature found in click event");
     return;
   }
+
+  // Handle mobile/dashboard popups
   if (setMobilePopupData && isDashboard) {
     const popupData = {
       feature,
@@ -208,6 +175,25 @@ const handleLayerClick = (
     return;
   }
 
+  // Handle regular popups for non-dashboard/non-mobile views
+  removePopups("POLYGON");
+  const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
+  const popupOptions: mapboxgl.PopupOptions = {
+    className: isCentroidLayer ? "popup-map no-tip" : "popup-map",
+    offset: isCentroidLayer
+      ? {
+          top: [0, 9],
+          "top-left": [0, 9],
+          "top-right": [0, 9],
+          bottom: [0, -9],
+          "bottom-left": [0, -9],
+          "bottom-right": [0, -9],
+          left: [9, 0],
+          right: [-9, 0]
+        }
+      : 0
+  };
+
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
@@ -217,7 +203,7 @@ const handleLayerClick = (
 
   const newPopup = createPopup(lngLat);
 
-  const commonProps: PopupComponentProps = {
+  const commonProps = {
     feature,
     popup: newPopup,
     setPolygonFromMap,
@@ -390,11 +376,11 @@ export const addMediaSourceAndLayer = (
           isProjectPath: isProjectPath
         })
       );
-      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
+      const mediaPopup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);
-      popupAttachedMap["MEDIA"].push(popup);
+      popupAttachedMap["MEDIA"].push(mediaPopup);
     });
   });
 };
@@ -528,51 +514,50 @@ export const addPopupToLayer = (
   selectedCountry?: string | null,
   setMobilePopupData?: (value: any) => void
 ) => {
-  if (popupComponent) {
-    const { name } = layer;
+  if (!popupComponent) return;
 
-    let layers = map.getStyle().layers;
+  const { name } = layer;
+  let layers = map.getStyle().layers;
+  let targetLayers = layers.filter(layer => layer.id.startsWith(name));
 
-    let targetLayers = layers.filter(layer => layer.id.startsWith(name));
-    if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-      targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
-    }
-    const clickHandler = (e: any) => {
-      const currentMode = draw?.getMode();
-      if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
-
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
-      // keep commented for future possible use
-      // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
-      handleLayerClick(
-        e,
-        popupComponent,
-        map,
-        setPolygonFromMap,
-        sitePolygonData,
-        type,
-        editPolygon,
-        setEditPolygon,
-        name,
-        isDashboard,
-        setFilters,
-        dashboardCountries,
-        setLoader,
-        setMobilePopupData
-      );
-    };
-    targetLayers.forEach(targetLayer => {
-      if (activeClickHandlers[targetLayer.id]) {
-        map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
-        map.off("touchend", targetLayer.id, activeClickHandlers[targetLayer.id]);
-        delete activeClickHandlers[targetLayer.id];
-      }
-
-      activeClickHandlers[targetLayer.id] = clickHandler;
-      map.on("click", targetLayer.id, clickHandler);
-      map.on("touchend", targetLayer.id, clickHandler);
-    });
+  if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
+    targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
   }
+
+  const clickHandler = (e: any) => {
+    const currentMode = draw?.getMode();
+    if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+    if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
+
+    handleLayerClick(
+      e,
+      popupComponent,
+      map,
+      setPolygonFromMap,
+      sitePolygonData,
+      type,
+      editPolygon,
+      setEditPolygon,
+      name,
+      isDashboard,
+      setFilters,
+      dashboardCountries,
+      setLoader,
+      setMobilePopupData
+    );
+  };
+
+  targetLayers.forEach(targetLayer => {
+    if (activeClickHandlers[targetLayer.id]) {
+      map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+      map.off("touchend", targetLayer.id, activeClickHandlers[targetLayer.id]);
+      delete activeClickHandlers[targetLayer.id];
+    }
+
+    activeClickHandlers[targetLayer.id] = clickHandler;
+    map.on("click", targetLayer.id, clickHandler);
+    map.on("touchend", targetLayer.id, clickHandler);
+  });
 };
 
 const getGeoserverURL = (layerName: string, isDashboard?: string | undefined) => {
