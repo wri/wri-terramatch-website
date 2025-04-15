@@ -11,6 +11,7 @@ import {
   minLength,
   NumberInput,
   required,
+  SelectArrayInput,
   TextInput,
   useInput
 } from "react-admin";
@@ -60,6 +61,11 @@ export const QuestionArrayInput = ({
 
   const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
 
+  const years = Array.from({ length: 10 }, (_, i) => {
+    const year = new Date().getFullYear() - i;
+    return { id: year, name: year.toString() };
+  });
+
   return (
     <>
       <ArrayInput {...arrayInputProps}>
@@ -96,6 +102,47 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
+          <SelectArrayInput
+            source="years"
+            label="Years multi select"
+            helperText="Select one or more years"
+            choices={years}
+            fullWidth
+            validate={required()}
+          />
+          {/* <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              const field = getFieldByUUID(scopedFormData.linked_field_key);
+              return field?.input_type == "financialIndicators" ? (
+                <>
+                  <SelectArrayInput
+                    source="years"
+                    label="Years multi select"
+                    helperText="Select one or more years"
+                    choices={years}
+                    fullWidth
+                    validate={required()}
+                    sx={{
+                      '& .MuiChip-root': {  // Estilos para los chips seleccionados
+                          backgroundColor: '#e3f2fd',
+                          margin: '2px',
+                      },
+                      '& .MuiInputBase-root': {  // Estilos para el input
+                          padding: '8px',
+                      },
+                      '& .MuiAutocomplete-tag': {  // Estilos para los tags
+                          margin: 0,
+                      },
+                  }}
+                  />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer> */}
+
           {!hideDescriptionInput && (
             <RichTextInput
               source="description"
