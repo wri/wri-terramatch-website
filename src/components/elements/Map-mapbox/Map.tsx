@@ -284,7 +284,7 @@ export const MapContainer = ({
             dashboardCountries,
             setLoader,
             selectedCountry,
-            isMobile ? setMobilePopupData : undefined
+            isMobile || isDashboard ? setMobilePopupData : undefined
           );
         }
       };
@@ -730,7 +730,7 @@ export const MapContainer = ({
       <When condition={!polygonsExists}>
         <EmptyStateDisplay />
       </When>
-      <When condition={isMobile && mobilePopupData !== null}>
+      <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
         <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
       </When>
     </div>

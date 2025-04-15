@@ -191,7 +191,7 @@ const handleLayerClick = (
     Log.warn("No feature found in click event");
     return;
   }
-  if (setMobilePopupData) {
+  if (setMobilePopupData && isDashboard) {
     const popupData = {
       feature,
       layerName,
@@ -226,33 +226,9 @@ const handleLayerClick = (
     editPolygon,
     setEditPolygon
   };
-  if (isDashboard) {
-    setLoader?.(true);
-    const addPopupToMap = () => {
-      newPopup.addTo(map);
-      removePopups("POLYGON");
-      popupAttachedMap["POLYGON"].push(newPopup);
-      setLoader?.(false);
-    };
-    const removePopupFromMap = () => {
-      newPopup.remove();
-    };
-    root.render(
-      createElement(PopupComponent, {
-        ...commonProps,
-        addPopupToMap,
-        layerName,
-        setFilters,
-        dashboardCountries,
-        removePopupFromMap,
-        isDashboard
-      })
-    );
-  } else {
-    newPopup.addTo(map);
-    popupAttachedMap["POLYGON"].push(newPopup);
-    root.render(createElement(PopupComponent, commonProps));
-  }
+  newPopup.addTo(map);
+  popupAttachedMap["POLYGON"].push(newPopup);
+  root.render(createElement(PopupComponent, commonProps));
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
