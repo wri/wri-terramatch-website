@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -14,9 +15,10 @@ interface MobilePopupProps {
     [key: string]: any;
   };
   onClose: () => void;
+  variant: "mobile" | "desktop";
 }
 
-export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
+export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
   const { items, label, isoCountry, itemUuid, layerName } = usePopupData(event);
   const { setFilters, dashboardCountries } = event;
@@ -40,26 +42,41 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
     onClose();
   };
 
+  const classNamesVariants = {
+    desktop: {
+      container: "absolute top-6 left-5 z-50 w-[90vw] max-w-[14rem]"
+    },
+    mobile: {
+      container:
+        "fixed bottom-4 left-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 rounded-xl bg-white p-3 shadow-monitored"
+    }
+  };
+
   return (
-    <div className="fixed bottom-4 left-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 rounded-xl bg-white p-3 shadow-monitored">
-      <div className="relative w-full">
+    <div className={twMerge("rounded-xl bg-white p-3 shadow-monitored", classNamesVariants[variant].container)}>
+      <div className="max-w w-full">
         <button
           onClick={onClose}
-          className="absolute -right-4 -top-4 z-10 rounded-full border border-neutral-600 bg-white p-1.5 text-neutral-600 hover:border-primary hover:text-primary"
+          className="absolute right-3 top-3 z-10 rounded-full border border-neutral-600 bg-white p-1.5 text-neutral-600 hover:border-primary hover:text-primary"
           aria-label={t("Close popup")}
         >
           <Icon name={IconNames.CLEAR} className="h-2.5 w-2.5" />
         </button>
       </div>
 
-      <div className="flex flex-col gap-2 p-2">
-        <Text variant="text-12-bold" className="overflow-hidden leading-[normal] line-clamp-2">
-          {t(label)}
-        </Text>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-0.5">
+          <Text variant="text-12-light" className="leading-[normal] text-darkCustom">
+            {t("Project")}
+          </Text>
+          <Text variant="text-12-bold" className="max-w-[95%] overflow-hidden leading-[normal]">
+            {t(label)}
+          </Text>
+        </div>
 
         {items.map(item => (
           <div key={item.id} className="flex flex-col gap-0.5">
-            <Text variant="text-12-light" className="leading-[normal]">
+            <Text variant="text-12-light" className="leading-[normal] text-darkCustom">
               {t(item.title)}
             </Text>
             <Text variant="text-12-semibold" className="leading-[normal]">
@@ -71,7 +88,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose }) => {
         {layerName === LAYERS_NAMES.CENTROIDS && (
           <button onClick={handleLearnMore}>
             <Text
-              className="text-start text-primary underline underline-offset-1 hover:opacity-70"
+              className="text-start text-blue-50 underline underline-offset-1 hover:opacity-70"
               variant="text-12-semibold"
             >
               {t("View Project Page")}

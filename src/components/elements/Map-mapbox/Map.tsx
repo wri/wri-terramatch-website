@@ -731,7 +731,11 @@ export const MapContainer = ({
         <EmptyStateDisplay />
       </When>
       <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
-        <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
+        <PopupMobile
+          event={mobilePopupData}
+          onClose={() => setMobilePopupData(null)}
+          variant={isMobile ? "mobile" : "desktop"}
+        />
       </When>
     </div>
   );
