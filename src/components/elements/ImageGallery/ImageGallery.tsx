@@ -34,8 +34,8 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
   onChangeGeotagged: Dispatch<SetStateAction<boolean | null>>;
-  sortOrder: "asc" | "desc";
-  setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
+  sortOrder: "ASC" | "DESC";
+  setSortOrder: Dispatch<SetStateAction<"ASC" | "DESC">>;
   setFilters: Dispatch<SetStateAction<any>>;
   entity: string;
   isAdmin?: boolean;
@@ -105,7 +105,7 @@ const ImageGallery = ({
   }, [privacy, source]);
 
   useValueChanged(sortOrder, () => {
-    setSortLabel(sortOrder === "asc" ? t("Oldest to Newest") : t("Newest to Oldest"));
+    setSortLabel(sortOrder === "ASC" ? t("Oldest to Newest") : t("Newest to Oldest"));
   });
 
   const tabs = [
@@ -229,7 +229,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("DESC")}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -238,7 +238,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("ASC")}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>

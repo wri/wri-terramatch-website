@@ -51,7 +51,7 @@ const EntityMapAndGalleryCard = ({
   const [filter, setFilter] = useState<{ key: string; value: string }>();
   const [searchString, setSearchString] = useState<string>("");
   const [isGeotagged, setIsGeotagged] = useState<boolean | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
     isPublic: undefined,
     modelType: undefined
@@ -85,7 +85,7 @@ const EntityMapAndGalleryCard = ({
       params.modelType = filter.value;
     }
 
-    params.direction = sortOrder;
+    params["sort[direction]"] = sortOrder;
 
     return params;
   }, [

@@ -600,6 +600,11 @@ export type EntityAssociationIndexPathParams = {
 };
 
 export type EntityAssociationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
   /**
    * The size of page being requested
    *
@@ -612,12 +617,27 @@ export type EntityAssociationIndexQueryParams = {
    * The page number to return. If page[number] is not provided, the first page is returned.
    */
   ["page[number]"]?: number;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
+  country?: string;
+  status?: string;
+  updateRequestStatus?: string;
+  projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
+  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   modelType?: string;
   /**
    * @default false
    */
   isGeotagged?: boolean;
-  search?: string;
   fileType?: string;
   /**
    * @default false
@@ -627,10 +647,6 @@ export type EntityAssociationIndexQueryParams = {
    * @default false
    */
   isPrivate?: boolean;
-  /**
-   * @default asc
-   */
-  direction?: "asc" | "desc";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
