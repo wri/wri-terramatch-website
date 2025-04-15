@@ -3,7 +3,7 @@ import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
+import { If, When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import {
@@ -287,11 +287,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
-        <Text variant="text-16" className="absolute top-3 right-3 text-white ">
-          {t("Last Updated on {date}", {
-            date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
-          })}
-        </Text>
+        <If condition={!isHomepage}>
+          <Text variant="text-16" className="absolute top-3 right-3 text-white">
+            {t("Last Updated on {date}", {
+              date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
+            })}
+          </Text>
+        </If>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="hidden w-full items-center gap-2 mobile:flex">
             <When condition={router.pathname !== "/dashboard"}>
