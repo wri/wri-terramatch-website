@@ -34,6 +34,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
+  handleUpdate?: (value: any) => void;
 }
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
@@ -46,6 +47,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     onChange,
     handleCreate,
     handleDelete,
+    handleUpdate,
     generateUuids = false,
     additionalValues = {},
     ...inputWrapperProps
@@ -100,6 +102,23 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
 
         return header;
       }),
+      ...(handleUpdate
+        ? [
+            {
+              id: "delete",
+              accessorKey: "uuid",
+              header: "",
+              cell: props => (
+                <IconButton
+                  iconProps={{ name: IconNames.EDIT }}
+                  onClick={() => onDeleteEntry(props.getValue() as string)}
+                />
+              ),
+              meta: { align: "right" },
+              enableSorting: false
+            } as ColumnDef<TData>
+          ]
+        : []),
       {
         id: "delete",
         accessorKey: "uuid",
