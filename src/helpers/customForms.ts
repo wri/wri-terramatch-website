@@ -360,6 +360,7 @@ export const apiFormQuestionToFormField = (
           required,
           addButtonCaption: question.add_button_text,
           collection: question.collection,
+          years: question.years,
           model: question?.collection!
         }
       };

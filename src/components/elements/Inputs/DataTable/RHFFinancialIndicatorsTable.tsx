@@ -1,7 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren, useCallback } from "react";
-import { useShowContext } from "react-admin";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
@@ -23,6 +22,7 @@ export interface RHFFinancialIndicatorsTableProps
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   collection?: string;
+  years?: Array<number>;
   model?: string;
 }
 
@@ -46,11 +46,8 @@ export const getFinancialIndicatorsColumns = (
 const RHFFinancialIndicators = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFinancialIndicatorsTableProps>) => {
   const t = useT();
   const { field } = useController(props);
-  const { formHook, collection } = props;
-  const ctx = useShowContext();
-  console.log(ctx);
-  console.log(props);
-  console.log(collection);
+  const { formHook, collection, years } = props;
+
   const value = field?.value || [];
 
   const [, { organisationId }] = useMyOrg();
@@ -135,12 +132,10 @@ const RHFFinancialIndicators = ({ onChangeCapture, ...props }: PropsWithChildren
           type: FieldType.Dropdown,
           validation: yup.string().required(),
           fieldProps: {
-            options: Array(6)
-              .fill(0)
-              .map((_, index) => {
-                const year = new Date().getFullYear() - 5 + index;
+            options:
+              years?.map(year => {
                 return { title: `${year}`, value: year };
-              }),
+              }) ?? [],
             required: true
           }
         },
