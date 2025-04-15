@@ -11679,7 +11679,7 @@ export const fetchPostV2FinancialIndicators = (variables: PostV2FinancialIndicat
     {},
     {},
     {}
-  >({ url: "/v2/financialIndicators", method: "post", ...variables, signal });
+  >({ url: "/v2/financial-indicators", method: "post", ...variables, signal });
 
 export const usePostV2FinancialIndicators = (
   options?: Omit<
