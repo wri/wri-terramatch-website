@@ -354,7 +354,7 @@ export const apiFormQuestionToFormField = (
     case "financialIndicators": {
       return {
         ...sharedProps,
-        type: FieldType.FinancialIndicatorDataTable,
+        type: FieldType.FinancialIndicatorsDataTable,
 
         fieldProps: {
           required,

@@ -159,7 +159,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     }
 
     case FieldType.LeadershipsDataTable:
-    case FieldType.FinancialIndicatorDataTable:
+    case FieldType.FinancialIndicatorsDataTable:
     case FieldType.OwnershipStakeDataTable:
     case FieldType.FundingTypeDataTable:
     case FieldType.StrataDataTable:
@@ -182,7 +182,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
       else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);
       else if (field.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns();
-      else if (field.type === FieldType.FinancialIndicatorDataTable) headers = getFinancialIndicatorsColumns();
+      else if (field.type === FieldType.FinancialIndicatorsDataTable) headers = getFinancialIndicatorsColumns();
       else if (field.type === FieldType.SeedingsDataTable)
         headers = getSeedingTableColumns(undefined, field.fieldProps.captureCount);
 
