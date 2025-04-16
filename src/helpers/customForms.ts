@@ -162,6 +162,16 @@ export const apiQuestionsToFormFields = (
     })
     .filter(field => !!field) as FormField[];
 
+// If a select field with the key's linked field shows up, use the value's linked field question
+// to filter the options.
+const SELECT_FILTER_QUESTION = {
+  "org-hq-state": "org-hq-country",
+  "org-states": "org-countries",
+  "pro-pit-states": "pro-pit-country",
+  "org-level-1-past-restoration": "org-level-0-past-restoration",
+  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed"
+};
+
 export const apiFormQuestionToFormField = (
   question: FormQuestionRead,
   t: typeof useT,
@@ -245,12 +255,9 @@ export const apiFormQuestionToFormField = (
        * We need a more robust solution than hardcoded linked_field_key
        */
       let optionsFilterFieldName: string | undefined;
-      if (question.linked_field_key === "org-hq-state") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "org-hq-country")?.uuid;
-      } else if (question.linked_field_key === "org-states") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "org-countries")?.uuid;
-      } else if (question.linked_field_key === "pro-pit-states") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "pro-pit-country")?.uuid;
+      const filterQuestion = SELECT_FILTER_QUESTION[question.linked_field_key];
+      if (filterQuestion != null) {
+        optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
       }
 
       return {
