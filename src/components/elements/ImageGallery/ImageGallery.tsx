@@ -338,6 +338,7 @@ const ImageGallery = ({
               onChange={e => {
                 setSearchText(e);
                 onChangeSearch(e);
+                reloadGalleryImages?.();
               }}
               placeholder={t("Search...")}
               className="w-64"
