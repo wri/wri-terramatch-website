@@ -1,6 +1,6 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { Fragment, ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useEffect, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -58,11 +58,11 @@ export const QuestionArrayInput = ({
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
   const linkedFieldChoices = linkedFieldsData?.map(item => ({ id: item.uuid, name: item.name } as Choice)) || [];
-
+  const selectRef = useRef<HTMLDivElement | null>(null);
   const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
 
   return (
-    <>
+    <div ref={selectRef}>
       <ArrayInput {...arrayInputProps}>
         <AccordionFormIterator
           accordionSummaryTitle={(index, fields) =>
@@ -89,7 +89,6 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
-
           <TextInput
             source="label"
             label="Question Text"
@@ -115,6 +114,15 @@ export const QuestionArrayInput = ({
                       })}
                     fullWidth
                     validate={required()}
+                    options={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
+                          }
+                        }
+                      }
+                    }}
                   />
                 </>
               ) : (
@@ -164,7 +172,6 @@ export const QuestionArrayInput = ({
             helperText="Please keep this option on if you want to make this question required. When this option is enabled, project developers will be obligated to provide an answer to the question before they can submit the form."
             defaultValue={false}
           />
-
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (!scopedFormData || !getSource) return null;
@@ -383,6 +390,6 @@ export const QuestionArrayInput = ({
         linkedFieldData={linkedFieldsData as any[]}
         onClose={() => setPreviewQuestion(undefined)}
       />
-    </>
+    </div>
   );
 };
