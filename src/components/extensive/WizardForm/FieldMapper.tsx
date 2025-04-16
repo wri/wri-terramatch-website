@@ -4,7 +4,7 @@ import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
-import RHFFinancialIndicators from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
+import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -137,7 +137,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
 
     case FieldType.FinancialIndicatorDataTable:
       return (
-        <RHFFinancialIndicators
+        <RHFFinancialIndicatorsDataTable
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}

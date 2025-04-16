@@ -6,7 +6,7 @@ import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/Boo
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
-import { RHFFinancialIndicatorsTableProps } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
+import { RHFFinancialIndicatorsDataTableProps } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { RHFLeadershipsTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -73,7 +73,7 @@ export enum FieldType {
   IndirectBeneficiariesTable = "indirectBeneficiaries",
   EmployeesTable = "employees",
   InputTable = "inputTable",
-  FinancialIndicatorDataTable = "financialIndicatorDataTable",
+  FinancialIndicatorsDataTable = "financialIndicatorsDataTable",
   SelectImage = "selectImage",
   Map = "map",
   Conditional = "conditional",
@@ -164,9 +164,9 @@ export type FormField =
   | FieldTypeBuilder<FieldType.Conditional, Omit<ConditionalInputProps, "formHook" | "onChangeCapture">>
   | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>
   | FieldTypeBuilder<
-      FieldType.FinancialIndicatorDataTable,
+      FieldType.FinancialIndicatorsDataTable,
       Omit<
-        RHFFinancialIndicatorsTableProps,
+        RHFFinancialIndicatorsDataTableProps,
         "formHook" | "onChangeCapture" | "errors" | "error" | keyof UseControllerProps
       >
     >;

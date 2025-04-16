@@ -158,7 +158,7 @@ export const getFormEntries = (
       }
 
       case FieldType.LeadershipsDataTable:
-      case FieldType.FinancialIndicatorDataTable:
+      case FieldType.FinancialIndicatorsDataTable:
       case FieldType.OwnershipStakeDataTable:
       case FieldType.FundingTypeDataTable:
       case FieldType.StrataDataTable:
@@ -174,7 +174,7 @@ export const getFormEntries = (
         else if (f.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(f.fieldProps, t);
         else if (f.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns(t);
         else if (f.type === FieldType.SeedingsDataTable) headers = getSeedingTableColumns(t, f.fieldProps.captureCount);
-        else if (f.type === FieldType.FinancialIndicatorDataTable) headers = getFinancialIndicatorsColumns(t);
+        else if (f.type === FieldType.FinancialIndicatorsDataTable) headers = getFinancialIndicatorsColumns(t);
 
         const stringValues: string[] = [];
         values?.[f.name]?.forEach((entry: any) => {

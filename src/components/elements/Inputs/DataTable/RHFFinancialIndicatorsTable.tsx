@@ -16,7 +16,7 @@ import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
-export interface RHFFinancialIndicatorsTableProps
+export interface RHFFinancialIndicatorsDataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
@@ -43,7 +43,10 @@ export const getFinancialIndicatorsColumns = (
  * @param props PropsWithChildren<RHFSelectProps>
  * @returns React Hook Form Ready Select Component
  */
-const RHFFinancialIndicators = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFinancialIndicatorsTableProps>) => {
+const RHFFinancialIndicatorsDataTable = ({
+  onChangeCapture,
+  ...props
+}: PropsWithChildren<RHFFinancialIndicatorsDataTableProps>) => {
   const t = useT();
   const { field } = useController(props);
   const { formHook, collection, years } = props;
@@ -166,4 +169,4 @@ const RHFFinancialIndicators = ({ onChangeCapture, ...props }: PropsWithChildren
   );
 };
 
-export default RHFFinancialIndicators;
+export default RHFFinancialIndicatorsDataTable;
