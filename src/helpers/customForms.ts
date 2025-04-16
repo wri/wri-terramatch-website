@@ -60,7 +60,7 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   return values;
 };
 
-export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[], isMigrated?: boolean): T {
+export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
 
   delete values.uuid;
@@ -70,14 +70,14 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      normalizedFieldDefaultValue(values, field, isMigrated);
+      normalizedFieldDefaultValue(values, field);
     }
   }
 
   return values;
 }
 
-export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
+export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField): T {
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date") {
@@ -102,8 +102,8 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
     }
 
     case FieldType.Conditional: {
-      if (isMigrated && typeof values[field.name] !== "boolean") values[field.name] = true;
-      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f, isMigrated));
+      if (typeof values[field.name] !== "boolean") values[field.name] = true;
+      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f));
       break;
     }
 
