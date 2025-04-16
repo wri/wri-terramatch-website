@@ -3211,13 +3211,13 @@ export const useGetV2ReportingFrameworksAccessCodeACCESSCODE = <
   );
 };
 
-export type GetV2ReportingFrameworksUUIDPathParams = {
-  uuid: string;
+export type GetV2ReportingFrameworksFrameworkKeyPathParams = {
+  frameworkKey: string;
 };
 
-export type GetV2ReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2ReportingFrameworksFrameworkKeyError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2ReportingFrameworksUUIDResponse = {
+export type GetV2ReportingFrameworksFrameworkKeyResponse = {
   uuid?: string;
   name?: string;
   slug?: string;
@@ -3230,34 +3230,46 @@ export type GetV2ReportingFrameworksUUIDResponse = {
   nursery_report_form_uuid?: string;
 };
 
-export type GetV2ReportingFrameworksUUIDVariables = {
-  pathParams: GetV2ReportingFrameworksUUIDPathParams;
+export type GetV2ReportingFrameworksFrameworkKeyVariables = {
+  pathParams: GetV2ReportingFrameworksFrameworkKeyPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ReportingFrameworksUUID = (
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const fetchGetV2ReportingFrameworksFrameworkKey = (
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2ReportingFrameworksUUIDResponse,
-    GetV2ReportingFrameworksUUIDError,
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
     undefined,
     {},
     {},
-    GetV2ReportingFrameworksUUIDPathParams
-  >({ url: "/v2/reporting-frameworks/{uuid}", method: "get", ...variables, signal });
+    GetV2ReportingFrameworksFrameworkKeyPathParams
+  >({ url: "/v2/reporting-frameworks/{frameworkKey}", method: "get", ...variables, signal });
 
-export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworksUUIDResponse>(
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const useGetV2ReportingFrameworksFrameworkKey = <TData = GetV2ReportingFrameworksFrameworkKeyResponse>(
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>,
+    reactQuery.UseQueryOptions<
+      GetV2ReportingFrameworksFrameworkKeyResponse,
+      GetV2ReportingFrameworksFrameworkKeyError,
+      TData
+    >,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>(
-    queryKeyFn({ path: "/v2/reporting-frameworks/{UUID}", operationId: "getV2ReportingFrameworksUUID", variables }),
-    ({ signal }) => fetchGetV2ReportingFrameworksUUID({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/reporting-frameworks/{frameworkKey}",
+      operationId: "getV2ReportingFrameworksFrameworkKey",
+      variables
+    }),
+    ({ signal }) => fetchGetV2ReportingFrameworksFrameworkKey({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -10948,115 +10960,6 @@ export const usePatchV2AdminUsersVerifyUUID = (
     (variables: PatchV2AdminUsersVerifyUUIDVariables) =>
       fetchPatchV2AdminUsersVerifyUUID({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2MODELUUIDFilesPathParams = {
-  /**
-   * Currently only projects, sites, nurseries, project-reports, nursery-reports, site-reports, project-monitorings and site-monitorings are set up
-   */
-  model: string;
-  uuid: string;
-};
-
-export type GetV2MODELUUIDFilesQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * dependent on model available options are projects, project-reports, sites, site-reports, nurseries, nursery-reports
-   */
-  model_name?: string;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2MODELUUIDFilesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2MODELUUIDFilesResponse = {
-  data?: {
-    uuid?: string;
-    file_url?: string;
-    thumb_url?: string;
-    file_name?: string;
-    name?: string;
-    created_date?: string;
-    model_name?: string;
-    is_public?: boolean;
-    is_cover?: boolean;
-    location?: {
-      lat?: number;
-      lng?: number;
-    };
-    mime_type?: string;
-    file_size?: number;
-    collection_name?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2MODELUUIDFilesVariables = {
-  pathParams: GetV2MODELUUIDFilesPathParams;
-  queryParams?: GetV2MODELUUIDFilesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Available Filters : file_type
- */
-export const fetchGetV2MODELUUIDFiles = (variables: GetV2MODELUUIDFilesVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2MODELUUIDFilesResponse,
-    GetV2MODELUUIDFilesError,
-    undefined,
-    {},
-    GetV2MODELUUIDFilesQueryParams,
-    GetV2MODELUUIDFilesPathParams
-  >({ url: "/v2/{model}/{uuid}/files", method: "get", ...variables, signal });
-
-/**
- * Available Filters : file_type
- */
-export const useGetV2MODELUUIDFiles = <TData = GetV2MODELUUIDFilesResponse>(
-  variables: GetV2MODELUUIDFilesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2MODELUUIDFilesResponse, GetV2MODELUUIDFilesError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2MODELUUIDFilesResponse, GetV2MODELUUIDFilesError, TData>(
-    queryKeyFn({ path: "/v2/{MODEL}/{UUID}/files", operationId: "getV2MODELUUIDFiles", variables }),
-    ({ signal }) => fetchGetV2MODELUUIDFiles({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -32131,9 +32034,9 @@ export type QueryOperation =
       variables: GetV2ReportingFrameworksAccessCodeACCESSCODEVariables;
     }
   | {
-      path: "/v2/reporting-frameworks/{UUID}";
-      operationId: "getV2ReportingFrameworksUUID";
-      variables: GetV2ReportingFrameworksUUIDVariables;
+      path: "/v2/reporting-frameworks/{frameworkKey}";
+      operationId: "getV2ReportingFrameworksFrameworkKey";
+      variables: GetV2ReportingFrameworksFrameworkKeyVariables;
     }
   | {
       path: "/v2/forms/{ENTITY}/{UUID}";
@@ -32254,11 +32157,6 @@ export type QueryOperation =
       path: "/v2/admin/users/export";
       operationId: "getV2AdminUsersExport";
       variables: GetV2AdminUsersExportVariables;
-    }
-  | {
-      path: "/v2/{MODEL}/{UUID}/files";
-      operationId: "getV2MODELUUIDFiles";
-      variables: GetV2MODELUUIDFilesVariables;
     }
   | {
       path: "/v2/{MODEL}/{UUID}/image/locations";

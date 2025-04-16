@@ -29,11 +29,15 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   /**
-   * Filter results by project UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Filter results by project UUID(s). Only one of siteId, projectId, projectCohort and includeTestProjects may be used in a single request
    */
   ["projectId[]"]?: string[];
   /**
-   * Filter results by site UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Filter results by project UUID(s). Only one of siteId, projectId, projectCohort and includeTestProjects may be used in a single request
+   */
+  projectCohort?: string;
+  /**
+   * Filter results by site UUID(s). Only one of siteId, projectId, projectCohort and includeTestProjects may be used in a single request
    */
   ["siteId[]"]?: string[];
   /**
@@ -73,11 +77,11 @@ export type SitePolygonsIndexQueryParams = {
    */
   lastModifiedDate?: string;
   /**
-   * Filter results by polygons that intersect with the boundary of the polygon referenced by this UUID
+   * Filter results by landscape boundaries. Referenced by landscape ID
    */
-  boundaryPolygon?: string;
+  boundaryPolygon?: number;
   /**
-   * Include polygons for test projects in the results. Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Include polygons for test projects in the results. Only one of siteId, projectId, projectCohort and includeTestProjects may be used in a single request
    *
    * @default false
    */

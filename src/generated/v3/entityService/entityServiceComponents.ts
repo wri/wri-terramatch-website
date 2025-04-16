@@ -596,7 +596,57 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies";
+  association: "demographics" | "seedings" | "treeSpecies" | "media";
+};
+
+export type EntityAssociationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
+  country?: string;
+  status?: string;
+  updateRequestStatus?: string;
+  projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
+  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
+  modelType?: string;
+  /**
+   * @default false
+   */
+  isGeotagged?: boolean;
+  fileType?: string;
+  /**
+   * @default false
+   */
+  isPublic?: boolean;
+  /**
+   * @default false
+   */
+  isPrivate?: boolean;
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -630,6 +680,7 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
 
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
+  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
@@ -690,11 +741,30 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
         }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example media
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example media
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.MediaDto;
+        }[];
       },
     EntityAssociationIndexError,
     undefined,
     {},
-    {},
+    EntityAssociationIndexQueryParams,
     EntityAssociationIndexPathParams
   >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
 

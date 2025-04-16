@@ -17,7 +17,47 @@ export type ProjectApplicationDto = {
   projectPitchUuid: string;
 };
 
+export type UserFramework = {
+  /**
+   * @example TerraFund Landscapes
+   */
+  name: string;
+  /**
+   * @example terrafund-landscapes
+   */
+  slug: string;
+};
+
+export type UserDto = {
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * Currently just calculated by appending lastName to firstName.
+   */
+  fullName: string | null;
+  primaryRole: string;
+  /**
+   * @example person@foocorp.net
+   */
+  emailAddress: string;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: UserFramework[];
+};
+
 export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
   uuid: string;
   collectionName: string;
   url: string;
@@ -36,6 +76,9 @@ export type MediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  modelType: string | null;
+  modelName: string | null;
+  createdBy: UserDto;
 };
 
 export type EntitySideload = {
