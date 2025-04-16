@@ -135,7 +135,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
         />
       );
 
-    case FieldType.FinancialIndicatorDataTable:
+    case FieldType.FinancialIndicatorsDataTable:
       return (
         <RHFFinancialIndicatorsDataTable
           {...field.fieldProps}
