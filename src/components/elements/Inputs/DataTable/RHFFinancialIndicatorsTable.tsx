@@ -89,6 +89,8 @@ const RHFFinancialIndicatorsDataTable = ({
         _tmp.push(data.data);
         field.onChange(_tmp);
       }
+      onChangeCapture?.();
+      formHook?.reset(formHook.getValues());
       clearErrors();
     }
   });
@@ -140,6 +142,7 @@ const RHFFinancialIndicatorsDataTable = ({
         //@ts-ignore
         _tmp[index] = data.data;
         field.onChange(_tmp);
+        onChangeCapture?.();
         formHook?.reset(formHook.getValues());
         clearErrors();
       }
