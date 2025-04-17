@@ -11821,6 +11821,57 @@ export const usePatchV2FinancialIndicatorsUUID = (
   );
 };
 
+export type GetV2FinancialIndicatorsUUIDPathParams = {
+  uuid: string;
+};
+
+export type GetV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2FinancialIndicatorsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type GetV2FinancialIndicatorsUUIDVariables = {
+  pathParams: GetV2FinancialIndicatorsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2FinancialIndicatorsUUID = (
+  variables: GetV2FinancialIndicatorsUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2FinancialIndicatorsUUIDResponse,
+    GetV2FinancialIndicatorsUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2FinancialIndicatorsUUIDPathParams
+  >({ url: "/v2/financial-indicators/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2FinancialIndicatorsUUID = <TData = GetV2FinancialIndicatorsUUIDResponse>(
+  variables: GetV2FinancialIndicatorsUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>(
+    queryKeyFn({ path: "/v2/financial-indicators/{UUID}", operationId: "getV2FinancialIndicatorsUUID", variables }),
+    ({ signal }) => fetchGetV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2OwnershipStakeResponse = {
@@ -32451,6 +32502,11 @@ export type QueryOperation =
       path: "/v2/{MODEL}/{UUID}/image/locations";
       operationId: "getV2MODELUUIDImageLocations";
       variables: GetV2MODELUUIDImageLocationsVariables;
+    }
+  | {
+      path: "/v2/financial-indicators/{UUID}";
+      operationId: "getV2FinancialIndicatorsUUID";
+      variables: GetV2FinancialIndicatorsUUIDVariables;
     }
   | {
       path: "/v2/admin/sites";
