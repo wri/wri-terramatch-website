@@ -417,7 +417,13 @@
 .grid-user-show .MuiTypography-body1{
   @apply !font-primary !font-medium !text-darkCustom/60 !text-sm lg:!text-base wide:!text-md;
 }
+.custom-modal-form label{
+  @apply text-sm font-normal lg:text-base wide:text-md !capitalize text-darkCustom-300;
+}
 
+.custom-modal-form .space-y-2{
+  @apply !space-y-1
+}
 
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{

@@ -3211,13 +3211,13 @@ export const useGetV2ReportingFrameworksAccessCodeACCESSCODE = <
   );
 };
 
-export type GetV2ReportingFrameworksUUIDPathParams = {
-  uuid: string;
+export type GetV2ReportingFrameworksFrameworkKeyPathParams = {
+  frameworkKey: string;
 };
 
-export type GetV2ReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2ReportingFrameworksFrameworkKeyError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2ReportingFrameworksUUIDResponse = {
+export type GetV2ReportingFrameworksFrameworkKeyResponse = {
   uuid?: string;
   name?: string;
   slug?: string;
@@ -3230,34 +3230,46 @@ export type GetV2ReportingFrameworksUUIDResponse = {
   nursery_report_form_uuid?: string;
 };
 
-export type GetV2ReportingFrameworksUUIDVariables = {
-  pathParams: GetV2ReportingFrameworksUUIDPathParams;
+export type GetV2ReportingFrameworksFrameworkKeyVariables = {
+  pathParams: GetV2ReportingFrameworksFrameworkKeyPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ReportingFrameworksUUID = (
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const fetchGetV2ReportingFrameworksFrameworkKey = (
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2ReportingFrameworksUUIDResponse,
-    GetV2ReportingFrameworksUUIDError,
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
     undefined,
     {},
     {},
-    GetV2ReportingFrameworksUUIDPathParams
-  >({ url: "/v2/reporting-frameworks/{uuid}", method: "get", ...variables, signal });
+    GetV2ReportingFrameworksFrameworkKeyPathParams
+  >({ url: "/v2/reporting-frameworks/{frameworkKey}", method: "get", ...variables, signal });
 
-export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworksUUIDResponse>(
-  variables: GetV2ReportingFrameworksUUIDVariables,
+export const useGetV2ReportingFrameworksFrameworkKey = <TData = GetV2ReportingFrameworksFrameworkKeyResponse>(
+  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>,
+    reactQuery.UseQueryOptions<
+      GetV2ReportingFrameworksFrameworkKeyResponse,
+      GetV2ReportingFrameworksFrameworkKeyError,
+      TData
+    >,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>(
-    queryKeyFn({ path: "/v2/reporting-frameworks/{UUID}", operationId: "getV2ReportingFrameworksUUID", variables }),
-    ({ signal }) => fetchGetV2ReportingFrameworksUUID({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<
+    GetV2ReportingFrameworksFrameworkKeyResponse,
+    GetV2ReportingFrameworksFrameworkKeyError,
+    TData
+  >(
+    queryKeyFn({
+      path: "/v2/reporting-frameworks/{frameworkKey}",
+      operationId: "getV2ReportingFrameworksFrameworkKey",
+      variables
+    }),
+    ({ signal }) => fetchGetV2ReportingFrameworksFrameworkKey({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -11631,6 +11643,232 @@ export const useDeleteV2LeadershipsUUID = (
   >(
     (variables: DeleteV2LeadershipsUUIDVariables) => fetchDeleteV2LeadershipsUUID({ ...fetcherOptions, ...variables }),
     options
+  );
+};
+
+export type PostV2FinancialIndicatorsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2FinancialIndicatorsResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type PostV2FinancialIndicatorsRequestBody = {
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type PostV2FinancialIndicatorsVariables = {
+  body?: PostV2FinancialIndicatorsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2FinancialIndicators = (variables: PostV2FinancialIndicatorsVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PostV2FinancialIndicatorsResponse,
+    PostV2FinancialIndicatorsError,
+    PostV2FinancialIndicatorsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/financial-indicators", method: "post", ...variables, signal });
+
+export const usePostV2FinancialIndicators = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2FinancialIndicatorsResponse,
+      PostV2FinancialIndicatorsError,
+      PostV2FinancialIndicatorsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2FinancialIndicatorsResponse,
+    PostV2FinancialIndicatorsError,
+    PostV2FinancialIndicatorsVariables
+  >(
+    (variables: PostV2FinancialIndicatorsVariables) =>
+      fetchPostV2FinancialIndicators({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type DeleteV2FinancialIndicatorsUUIDPathParams = {
+  uuid: string;
+};
+
+export type DeleteV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type DeleteV2FinancialIndicatorsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type DeleteV2FinancialIndicatorsUUIDVariables = {
+  pathParams: DeleteV2FinancialIndicatorsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchDeleteV2FinancialIndicatorsUUID = (
+  variables: DeleteV2FinancialIndicatorsUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    DeleteV2FinancialIndicatorsUUIDResponse,
+    DeleteV2FinancialIndicatorsUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2FinancialIndicatorsUUIDPathParams
+  >({ url: "/v2/financial-indicators/{uuid}", method: "delete", ...variables, signal });
+
+export const useDeleteV2FinancialIndicatorsUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      DeleteV2FinancialIndicatorsUUIDResponse,
+      DeleteV2FinancialIndicatorsUUIDError,
+      DeleteV2FinancialIndicatorsUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    DeleteV2FinancialIndicatorsUUIDResponse,
+    DeleteV2FinancialIndicatorsUUIDError,
+    DeleteV2FinancialIndicatorsUUIDVariables
+  >(
+    (variables: DeleteV2FinancialIndicatorsUUIDVariables) =>
+      fetchDeleteV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PatchV2FinancialIndicatorsUUIDPathParams = {
+  uuid: string;
+};
+
+export type PatchV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2FinancialIndicatorsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type PatchV2FinancialIndicatorsUUIDRequestBody = {
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+};
+
+export type PatchV2FinancialIndicatorsUUIDVariables = {
+  body?: PatchV2FinancialIndicatorsUUIDRequestBody;
+  pathParams: PatchV2FinancialIndicatorsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2FinancialIndicatorsUUID = (
+  variables: PatchV2FinancialIndicatorsUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PatchV2FinancialIndicatorsUUIDResponse,
+    PatchV2FinancialIndicatorsUUIDError,
+    PatchV2FinancialIndicatorsUUIDRequestBody,
+    {},
+    {},
+    PatchV2FinancialIndicatorsUUIDPathParams
+  >({ url: "/v2/financial-indicators/{uuid}", method: "patch", ...variables, signal });
+
+export const usePatchV2FinancialIndicatorsUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2FinancialIndicatorsUUIDResponse,
+      PatchV2FinancialIndicatorsUUIDError,
+      PatchV2FinancialIndicatorsUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2FinancialIndicatorsUUIDResponse,
+    PatchV2FinancialIndicatorsUUIDError,
+    PatchV2FinancialIndicatorsUUIDVariables
+  >(
+    (variables: PatchV2FinancialIndicatorsUUIDVariables) =>
+      fetchPatchV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2FinancialIndicatorsUUIDPathParams = {
+  uuid: string;
+};
+
+export type GetV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2FinancialIndicatorsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type GetV2FinancialIndicatorsUUIDVariables = {
+  pathParams: GetV2FinancialIndicatorsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2FinancialIndicatorsUUID = (
+  variables: GetV2FinancialIndicatorsUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2FinancialIndicatorsUUIDResponse,
+    GetV2FinancialIndicatorsUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2FinancialIndicatorsUUIDPathParams
+  >({ url: "/v2/financial-indicators/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2FinancialIndicatorsUUID = <TData = GetV2FinancialIndicatorsUUIDResponse>(
+  variables: GetV2FinancialIndicatorsUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>(
+    queryKeyFn({ path: "/v2/financial-indicators/{UUID}", operationId: "getV2FinancialIndicatorsUUID", variables }),
+    ({ signal }) => fetchGetV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
   );
 };
 
@@ -32131,9 +32369,9 @@ export type QueryOperation =
       variables: GetV2ReportingFrameworksAccessCodeACCESSCODEVariables;
     }
   | {
-      path: "/v2/reporting-frameworks/{UUID}";
-      operationId: "getV2ReportingFrameworksUUID";
-      variables: GetV2ReportingFrameworksUUIDVariables;
+      path: "/v2/reporting-frameworks/{frameworkKey}";
+      operationId: "getV2ReportingFrameworksFrameworkKey";
+      variables: GetV2ReportingFrameworksFrameworkKeyVariables;
     }
   | {
       path: "/v2/forms/{ENTITY}/{UUID}";
@@ -32264,6 +32502,11 @@ export type QueryOperation =
       path: "/v2/{MODEL}/{UUID}/image/locations";
       operationId: "getV2MODELUUIDImageLocations";
       variables: GetV2MODELUUIDImageLocationsVariables;
+    }
+  | {
+      path: "/v2/financial-indicators/{UUID}";
+      operationId: "getV2FinancialIndicatorsUUID";
+      variables: GetV2FinancialIndicatorsUUIDVariables;
     }
   | {
       path: "/v2/admin/sites";
