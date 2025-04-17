@@ -76,14 +76,19 @@ const RHFFinancialIndicatorsDataTable = ({
       const body = new FormData();
       if (file) {
         body.append("upload_file", file);
-      }
-      upload?.({
+        upload?.({
+          //@ts-ignore
+          pathParams: { model: "financial-indicators", collection: "documentation", uuid: data?.data?.uuid },
+          file,
+          //@ts-ignore swagger issue
+          body
+        });
+      } else {
+        const _tmp = [...value];
         //@ts-ignore
-        pathParams: { model: "financial-indicators", collection: "documentation", uuid: data?.data?.uuid },
-        file,
-        //@ts-ignore swagger issue
-        body
-      });
+        _tmp.push(data.data);
+        field.onChange(_tmp);
+      }
       clearErrors();
     }
   });
@@ -135,10 +140,9 @@ const RHFFinancialIndicatorsDataTable = ({
         //@ts-ignore
         _tmp[index] = data.data;
         field.onChange(_tmp);
+        formHook?.reset(formHook.getValues());
         clearErrors();
       }
-
-      formHook?.reset(formHook.getValues());
     }
   });
 
