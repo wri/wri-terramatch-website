@@ -12,11 +12,12 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { GetV2TerrafundValidationSiteResponse } from "@/generated/apiComponents";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
+
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -24,7 +25,6 @@ export interface ModalApproveProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
-  polygonsCriteriaData: any;
   polygonList: any;
 }
 
@@ -35,24 +35,19 @@ export interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
   status: StatusEnum | undefined;
+  validation_status?: string | null;
 }
-type ValidationCriteria = GetV2TerrafundValidationSiteResponse[number];
 
-const checkCriteriaCanBeApproved = (criteria: ValidationCriteria) => {
-  if (!criteria.checked) {
-    return false;
-  }
-  if (criteria?.nonValidCriteria?.length === 0) {
+const checkCriteriaCanBeApproved = (validationStatus: string | null, failingCriterias: string[] | undefined) => {
+  if (validationStatus === "passed") {
     return true;
   }
-  const excludedFromValidationCriterias = [
-    COMPLETED_DATA_CRITERIA_ID,
-    ESTIMATED_AREA_CRITERIA_ID,
-    WITHIN_COUNTRY_CRITERIA_ID
-  ];
-  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id);
-  const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-  return failingCriterias?.length === 0;
+
+  if (validationStatus === "failed") {
+    return false;
+  }
+
+  return failingCriterias && failingCriterias.length === 0;
 };
 
 const ModalApprove: FC<ModalApproveProps> = ({
@@ -68,81 +63,62 @@ const ModalApprove: FC<ModalApproveProps> = ({
   status,
   site,
   onClose,
-  polygonsCriteriaData,
   polygonList,
   ...rest
 }) => {
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-  const [criteriaDataParsed, setCriteriaDataParsed] = useState<any>(null);
-  useEffect(() => {
-    if (!polygonList || !polygonsCriteriaData) {
-      return;
-    }
-
-    const parsedData = polygonList.reduce((acc: Record<string, any>, polygon: any) => {
-      const criteria = polygonsCriteriaData[polygon.poly_id];
-      const polygonId = polygon.poly_id;
-      let isValid = true;
-      const nonValidCriteria: any[] = [];
-      const { criteria_list } = criteria;
-
-      if (!criteria_list || criteria_list.length === 0) {
-        isValid = false;
-      } else {
-        criteria_list.forEach((criteria: any) => {
-          if (criteria.valid === 0) {
-            isValid = false;
-            nonValidCriteria.push(criteria);
-          }
-        });
-      }
-
-      const checked = Array.isArray(criteria_list) && criteria_list.length > 0;
-
-      acc[polygonId] = {
-        polygonId,
-        isValid,
-        nonValidCriteria,
-        checked
-      };
-
-      return acc;
-    }, {});
-
-    setCriteriaDataParsed(parsedData);
-    setPolygonsSelected(polygonList.map((_: any) => false));
-  }, [polygonsCriteriaData, polygonList]);
+  const { validationData } = useMapAreaContext();
 
   useEffect(() => {
-    if (!polygonList || !criteriaDataParsed) {
+    if (!polygonList) {
       return;
     }
     setPolygonsSelected(polygonList.map((_: any) => false));
+  }, [polygonList]);
+
+  useEffect(() => {
+    if (!polygonList) {
+      return;
+    }
+
+    setPolygonsSelected(polygonList.map((_: any) => false));
+
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const criteria = criteriaDataParsed[polygon.poly_id];
+        const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+
         const excludedFromValidationCriterias = [
           COMPLETED_DATA_CRITERIA_ID,
           ESTIMATED_AREA_CRITERIA_ID,
           WITHIN_COUNTRY_CRITERIA_ID
         ];
-        const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
-        const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
-        const approved = checkCriteriaCanBeApproved(criteria as ValidationCriteria);
-        const status = polygon.status;
+
+        let failingCriterias: string[] = [];
+        if (validationInfo?.nonValidCriteria) {
+          const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
+          failingCriterias = nonValidCriteriasIds.filter((r: any) => !excludedFromValidationCriterias.includes(r));
+        }
+
+        const checked =
+          polygon.validation_status === "passed" ||
+          polygon.validation_status === "partial" ||
+          polygon.validation_status === "failed";
+
+        const canBeApproved = checkCriteriaCanBeApproved(polygon.validation_status, failingCriterias);
 
         return {
           id: polygon.poly_id,
-          checked: criteria?.checked,
+          checked,
           name: polygon.poly_name ?? "Unnamed Polygon",
-          canBeApproved: approved,
+          canBeApproved,
           failingCriterias,
-          status: status as StatusEnum
+          status: polygon.status as StatusEnum,
+          validation_status: polygon.validation_status
         };
       })
     );
-  }, [polygonList, criteriaDataParsed]);
+  }, [polygonList, validationData]);
 
   const handleSelectAll = (isChecked: boolean) => {
     if (displayedPolygons) {
@@ -155,6 +131,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
       setPolygonsSelected(newSelected as boolean[]);
     }
   };
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -211,7 +188,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
               index={index}
               polygonsSelected={polygonsSelected}
               setPolygonsSelected={setPolygonsSelected}
-              criteriaData={item.id ? polygonsCriteriaData[item.id] : []}
             />
           ))}
         </div>
