@@ -189,7 +189,7 @@ const RHFFinancialIndicatorsDataTable = ({
         {
           label: t("Amount"),
           name: "amount",
-          placeholder: "Insert Amount",
+          placeholder: t("Insert Amount"),
           type: FieldType.Input,
           validation: yup.number().required(),
           fieldProps: {
@@ -227,7 +227,7 @@ const RHFFinancialIndicatorsDataTable = ({
         {
           label: t("Description"),
           name: "description",
-          placeholder: "Insert Description",
+          placeholder: t("Insert Description"),
           type: FieldType.TextArea,
           validation: yup.string().required(),
           fieldProps: {
