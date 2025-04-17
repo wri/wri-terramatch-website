@@ -223,8 +223,17 @@ export const apiFormQuestionToFormField = (
             min: question.min_number_limit
           }
         };
+      } else {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            type: "number"
+          }
+        };
       }
-      break;
     }
     case "password":
     case "color":
@@ -634,6 +643,9 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       ) {
         validation = yup
           .number()
+          .transform((value, originalValue) => {
+            return originalValue === "" || originalValue == null ? undefined : value;
+          })
           .min(limitMinNumber)
           .max(limitMaxNumber)
           .test("decimal-places", "Max 2 decimal places allowed", val => /^-?\d+(\.\d{1,2})?$/.test(String(val)));
