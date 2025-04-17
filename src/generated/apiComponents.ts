@@ -3211,13 +3211,13 @@ export const useGetV2ReportingFrameworksAccessCodeACCESSCODE = <
   );
 };
 
-export type GetV2ReportingFrameworksFrameworkKeyPathParams = {
-  frameworkKey: string;
+export type GetV2ReportingFrameworksUUIDPathParams = {
+  uuid: string;
 };
 
-export type GetV2ReportingFrameworksFrameworkKeyError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2ReportingFrameworksUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2ReportingFrameworksFrameworkKeyResponse = {
+export type GetV2ReportingFrameworksUUIDResponse = {
   uuid?: string;
   name?: string;
   slug?: string;
@@ -3230,46 +3230,34 @@ export type GetV2ReportingFrameworksFrameworkKeyResponse = {
   nursery_report_form_uuid?: string;
 };
 
-export type GetV2ReportingFrameworksFrameworkKeyVariables = {
-  pathParams: GetV2ReportingFrameworksFrameworkKeyPathParams;
+export type GetV2ReportingFrameworksUUIDVariables = {
+  pathParams: GetV2ReportingFrameworksUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ReportingFrameworksFrameworkKey = (
-  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
+export const fetchGetV2ReportingFrameworksUUID = (
+  variables: GetV2ReportingFrameworksUUIDVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2ReportingFrameworksFrameworkKeyResponse,
-    GetV2ReportingFrameworksFrameworkKeyError,
+    GetV2ReportingFrameworksUUIDResponse,
+    GetV2ReportingFrameworksUUIDError,
     undefined,
     {},
     {},
-    GetV2ReportingFrameworksFrameworkKeyPathParams
-  >({ url: "/v2/reporting-frameworks/{frameworkKey}", method: "get", ...variables, signal });
+    GetV2ReportingFrameworksUUIDPathParams
+  >({ url: "/v2/reporting-frameworks/{uuid}", method: "get", ...variables, signal });
 
-export const useGetV2ReportingFrameworksFrameworkKey = <TData = GetV2ReportingFrameworksFrameworkKeyResponse>(
-  variables: GetV2ReportingFrameworksFrameworkKeyVariables,
+export const useGetV2ReportingFrameworksUUID = <TData = GetV2ReportingFrameworksUUIDResponse>(
+  variables: GetV2ReportingFrameworksUUIDVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2ReportingFrameworksFrameworkKeyResponse,
-      GetV2ReportingFrameworksFrameworkKeyError,
-      TData
-    >,
+    reactQuery.UseQueryOptions<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2ReportingFrameworksFrameworkKeyResponse,
-    GetV2ReportingFrameworksFrameworkKeyError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/reporting-frameworks/{frameworkKey}",
-      operationId: "getV2ReportingFrameworksFrameworkKey",
-      variables
-    }),
-    ({ signal }) => fetchGetV2ReportingFrameworksFrameworkKey({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2ReportingFrameworksUUIDResponse, GetV2ReportingFrameworksUUIDError, TData>(
+    queryKeyFn({ path: "/v2/reporting-frameworks/{UUID}", operationId: "getV2ReportingFrameworksUUID", variables }),
+    ({ signal }) => fetchGetV2ReportingFrameworksUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -22858,6 +22846,7 @@ export type GetV2SitesUUIDPolygonsResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type GetV2SitesUUIDPolygonsVariables = {
@@ -24947,6 +24936,7 @@ export type GetV2SitesSitePolygonResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type GetV2SitesSitePolygonVariables = {
@@ -28795,6 +28785,7 @@ export type GetV2TypeEntityResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -28855,6 +28846,10 @@ export type GetV2EntityPolygonsCountQueryParams = {
    * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
    */
   sort?: string;
+  /**
+   * Valid value to filter by
+   */
+  valid?: string;
 };
 
 export type GetV2EntityPolygonsCountError = Fetcher.ErrorWrapper<undefined>;
@@ -28918,6 +28913,10 @@ export type GetV2EntityPolygonsQueryParams = {
    * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
    */
   sort?: string;
+  /**
+   * Valid value to filter by
+   */
+  valid?: string;
 };
 
 export type GetV2EntityPolygonsError = Fetcher.ErrorWrapper<{
@@ -28987,6 +28986,7 @@ export type GetV2EntityPolygonsResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
 };
 
@@ -29251,6 +29251,7 @@ export type PutV2SitePolygonStatusBulkResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
 };
 
@@ -29356,6 +29357,7 @@ export type GetV2SitePolygonUuidResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   };
 };
 
@@ -29447,6 +29449,7 @@ export type GetV2SitePolygonUuidVersionsResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
 };
 
@@ -29543,6 +29546,7 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   };
 };
 
@@ -29643,6 +29647,7 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   };
 };
 
@@ -30962,9 +30967,9 @@ export type QueryOperation =
       variables: GetV2ReportingFrameworksAccessCodeACCESSCODEVariables;
     }
   | {
-      path: "/v2/reporting-frameworks/{frameworkKey}";
-      operationId: "getV2ReportingFrameworksFrameworkKey";
-      variables: GetV2ReportingFrameworksFrameworkKeyVariables;
+      path: "/v2/reporting-frameworks/{UUID}";
+      operationId: "getV2ReportingFrameworksUUID";
+      variables: GetV2ReportingFrameworksUUIDVariables;
     }
   | {
       path: "/v2/forms/{ENTITY}/{UUID}";
