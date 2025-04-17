@@ -68,6 +68,7 @@ const RHFFinancialIndicatorsDataTable = ({
     onSuccess() {
       setMemberAdded(true);
       clearErrors();
+      setFile(undefined);
     }
   });
 
