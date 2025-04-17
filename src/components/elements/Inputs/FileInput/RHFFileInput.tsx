@@ -28,7 +28,7 @@ export interface RHFFileInputProps
   onChangeCapture?: () => void;
   isPhotosAndVideo?: boolean;
   isTemporary?: boolean;
-  onCaptureFile?: any;
+  onCaptureFile?: (file: File) => void;
 }
 
 /**
