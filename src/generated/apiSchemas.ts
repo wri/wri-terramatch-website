@@ -17314,10 +17314,6 @@ export type UserCreateComplete = {
   role?: string;
 };
 
-export type V2AdminProjectUpdate = {
-  is_test?: boolean;
-};
-
 export type IndicatorPost = {
   uuids?: string[];
 };

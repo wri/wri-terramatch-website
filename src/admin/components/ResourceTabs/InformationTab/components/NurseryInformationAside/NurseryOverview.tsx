@@ -7,7 +7,7 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const NurseryOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
 
   const { record } = useShowContext();
 
@@ -41,7 +41,7 @@ const NurseryOverview: FC = () => {
             <Button
               variant="outlined"
               disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("moreinfo")}
+              onClick={() => setStatusModal("needs-more-information")}
             >
               Request More Info
             </Button>
@@ -49,7 +49,7 @@ const NurseryOverview: FC = () => {
               variant="contained"
               startIcon={<Check />}
               disabled={record?.status === "approved"}
-              onClick={() => setStatusModal("approve")}
+              onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>

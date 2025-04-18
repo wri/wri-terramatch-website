@@ -124,6 +124,7 @@ export type SitePolygonFullDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string;
+  projectId: string;
   /**
    * @format date-time
    */
@@ -174,6 +175,7 @@ export type SitePolygonLightDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string;
+  projectId: string;
   /**
    * @format date-time
    */
