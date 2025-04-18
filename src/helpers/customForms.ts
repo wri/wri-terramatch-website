@@ -218,7 +218,6 @@ export const apiFormQuestionToFormField = (
 
           fieldProps: {
             required,
-            type: "number",
             max: question.max_number_limit,
             min: question.min_number_limit
           }
@@ -229,8 +228,7 @@ export const apiFormQuestionToFormField = (
           type: FieldType.Input,
 
           fieldProps: {
-            required,
-            type: "number"
+            required
           }
         };
       }
