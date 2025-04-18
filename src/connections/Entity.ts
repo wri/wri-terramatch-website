@@ -14,6 +14,7 @@ import {
   NurseryLightDto,
   NurseryReportFullDto,
   NurseryReportLightDto,
+  NurseryUpdateData,
   ProjectFullDto,
   ProjectLightDto,
   ProjectReportFullDto,
@@ -22,7 +23,8 @@ import {
   SiteFullDto,
   SiteLightDto,
   SiteReportFullDto,
-  SiteReportLightDto
+  SiteReportLightDto,
+  SiteUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   entityDeleteFetchFailed,
@@ -56,7 +58,7 @@ export type EntityLightDto =
   | SiteReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
 
-export type EntityUpdateData = ProjectUpdateData;
+export type EntityUpdateData = ProjectUpdateData | SiteUpdateData | NurseryUpdateData;
 
 export type EntityConnection<T extends EntityDtoType> = {
   entity?: T;
@@ -106,8 +108,8 @@ const entitySelector =
 
 const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
 
-const updateEntity = (entity: SupportedEntity, uuid: string, attributes: EntityUpdateData["attributes"]) =>
-  entityUpdate({ pathParams: { entity, uuid }, body: { data: { type: entity, id: uuid, attributes } } });
+const updateEntity = <U extends EntityUpdateData>(entity: U["type"], uuid: string, attributes: U["attributes"]) =>
+  entityUpdate({ pathParams: { entity, uuid }, body: { data: { type: entity, id: uuid, attributes } as U } });
 
 const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
   const queryParams = {
@@ -207,7 +209,7 @@ const createGetEntityConnectionWithUpdate = <T extends EntityDtoType, U extends 
           entityIsUpdating: isUpdating,
           updateFailure: updateFailure ?? undefined,
           update: (attributes: Partial<U["attributes"]>) =>
-            updateEntity(entityName, uuid, attributes as U["attributes"])
+            updateEntity<U>(entityName, uuid, attributes as U["attributes"])
         })
       )
   )
@@ -282,7 +284,7 @@ export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 
 // Sites
-const fullSiteConnection = createGetEntityConnection<SiteFullDto>("sites", true);
+const fullSiteConnection = createGetEntityConnectionWithUpdate<SiteFullDto, EntityUpdateData>("sites", true);
 export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);
 export const deleteSite = connectedResourceDeleter(
@@ -295,7 +297,7 @@ export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
 
 // Nurseries
-const fullNurseryConnection = createGetEntityConnection<NurseryFullDto>("nurseries", true);
+const fullNurseryConnection = createGetEntityConnectionWithUpdate<NurseryFullDto, EntityUpdateData>("nurseries", true);
 export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
 export const deleteNursery = connectedResourceDeleter(

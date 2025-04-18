@@ -81,7 +81,11 @@ function useUpdateStatus() {
       return {
         isUpdating: updateConnection.entityIsUpdating,
         updateStatus: async (status: string, feedback?: string, feedbackFields?: string[]) =>
-          updateConnection.update({ status: status as "approved" | "needs-more-information", feedback, feedbackFields })
+          updateConnection.update({
+            status: status as EntityUpdateData["attributes"]["status"],
+            feedback,
+            feedbackFields
+          })
       };
     } else {
       return {
