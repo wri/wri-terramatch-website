@@ -81,12 +81,16 @@ const SiteReportDataGrid: FC = () => {
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
       <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
       <FunctionField
-        source="updateRequestStatus"
+        source="nothingToReport"
         label="Nothing to Report"
         render={(record: SiteReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6"></Icon>
+              {record.nothingToReport ? (
+                <Icon name={IconNames.CHECK_CIRCLE} className="h-6 w-6" />
+              ) : (
+                <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6" />
+              )}
             </div>
           );
         }}
