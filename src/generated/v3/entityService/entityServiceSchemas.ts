@@ -746,10 +746,10 @@ export type NurseryReportFullDto = {
    * @format date-time
    */
   createdAt: string;
-  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
+  nothingToReport: boolean | null;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
