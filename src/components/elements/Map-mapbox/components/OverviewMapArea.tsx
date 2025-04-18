@@ -14,7 +14,7 @@ import {
   useGetV2MODELUUIDFiles
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -75,7 +75,7 @@ const OverviewMapArea = ({
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -168,7 +168,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -189,6 +190,7 @@ const OverviewMapArea = ({
           polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
+          entityUuid={entityModel?.uuid}
         />
       ) : (
         <MapSidePanel
@@ -197,7 +199,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -208,6 +211,7 @@ const OverviewMapArea = ({
           setSortOrder={setSortOrder}
           type={type}
           recallEntityData={refetch}
+          entityUuid={entityModel?.uuid}
         />
       )}
       <MapContainer

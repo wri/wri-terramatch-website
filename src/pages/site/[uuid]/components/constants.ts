@@ -19,5 +19,3 @@ export const TOOLTIP_TREES_PLANTED_SITE = "Number of trees planted at this site"
 export const TOOLTIP_SEEDS_PLANTED_SITE = "Number of seeds planted at this site";
 export const TOOLTIP_TREES_REGENERATING_SITE =
   "Number of trees estimated to be naturally regenerating due to this project’s interventions at this site";
-
-export const GOALS = "goals";

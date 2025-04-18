@@ -29,7 +29,8 @@ const SimpleBarChart = ({ data, total }: { data: ResturationStrategy[]; total?: 
       "Direct Seeding": t("Direct Seeding"),
       "Assisted Natural Regeneration": t("Assisted Natural Regeneration"),
       "Tree Planting": t("Tree Planting"),
-      "Multiple Strategies": t("Multiple Strategies")
+      "Multiple Strategies": t("Multiple Strategies"),
+      "No Strategy Identified": t("No Strategy Identified")
     };
 
     return data.map(item => {

@@ -372,7 +372,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     <ContentDashboardtWrapper isLeftWrapper={false}>
       <div className="shadow-lg relative w-full rounded-lg border-4 border-white mobile:order-2">
         <Button
-          className="absolute right-5 top-6 z-10"
+          className="absolute right-5 top-6 z-10 mobile:hidden"
           variant="white-button-map"
           onClick={() => {
             ModalMap();
@@ -391,7 +391,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showLegend={false}
             mapFunctions={dashboardMapFunctions}
             isDashboard={"dashboard"}
-            className="custom-popup-close-button mobile:!h-[381px]"
+            className="custom-popup-close-button !h-[600px] mobile:!h-[381px]"
             centroids={centroids}
             showPopups={true}
             polygonsData={polygonsData?.data as Record<string, string[]>}

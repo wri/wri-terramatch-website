@@ -60,12 +60,6 @@ export type ProjectLightDto = {
    */
   frameworkKey: string | null;
   /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
-  /**
    * The associated organisation name
    */
   organisationName: string | null;
@@ -104,12 +98,6 @@ export type SiteLightDto = {
    * Framework key for this project
    */
   frameworkKey: string | null;
-  /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
   /**
    * Entity status for this site
    */
@@ -161,7 +149,6 @@ export type NurseryLightDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
-  migrated: string | null;
   /**
    * @format date-time
    */
@@ -188,7 +175,6 @@ export type ProjectReportLightDto = {
   lightResource: boolean;
   uuid: string;
   frameworkKey: string;
-  frameworkUuid: string;
   /**
    * The associated organisation name
    */
@@ -345,12 +331,6 @@ export type ProjectFullDto = {
    */
   frameworkKey: string | null;
   /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
-  /**
    * The associated organisation name
    */
   organisationName: string | null;
@@ -454,12 +434,6 @@ export type SiteFullDto = {
    * Framework key for this project
    */
   frameworkKey: string | null;
-  /**
-   * Framework UUID. Will be removed after the FE is refactored to not use these IDs
-   *
-   * @deprecated true
-   */
-  frameworkUuid: string | null;
   /**
    * Entity status for this site
    */
@@ -570,7 +544,6 @@ export type NurseryFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
-  migrated: string | null;
   /**
    * @format date-time
    */
@@ -609,7 +582,6 @@ export type ProjectReportFullDto = {
   lightResource: boolean;
   uuid: string;
   frameworkKey: string;
-  frameworkUuid: string;
   /**
    * The associated organisation name
    */
@@ -697,7 +669,6 @@ export type ProjectReportFullDto = {
   volunteersWorkDescription: string | null;
   siteReportsCount: number | null;
   nurseryReportsCount: number | null;
-  migrated: boolean;
   seedlingsGrown: number;
   communityProgress: string | null;
   localEngagement: string | null;
@@ -783,7 +754,6 @@ export type NurseryReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  migrated: boolean;
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   treeSeedlingContributions: MediaDto[];
@@ -856,7 +826,6 @@ export type SiteReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  migrated: boolean;
   numTreesRegenerating: number | null;
   regenerationDescription: string | null;
   invasiveSpeciesRemoved: string | null;
@@ -997,7 +966,15 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
-  type: "workdays" | "restoration-partners" | "jobs" | "volunteers" | "all-beneficiaries" | "training-beneficiaries";
+  type:
+    | "workdays"
+    | "restoration-partners"
+    | "jobs"
+    | "employees"
+    | "volunteers"
+    | "all-beneficiaries"
+    | "training-beneficiaries"
+    | "indirect-beneficiaries";
   collection: string;
   entries: DemographicEntryDto[];
 };

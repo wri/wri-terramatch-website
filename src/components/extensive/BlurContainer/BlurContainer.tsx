@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { useCallback } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -17,13 +17,33 @@ export interface BlurContainerProps {
 const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurContainerProps) => {
   const t = useT();
 
+  const getCurrentPath = useCallback(() => {
+    if (typeof window !== "undefined") {
+      return `${window.location.pathname}${window.location.search}`;
+    }
+    return "";
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    if (typeof window !== "undefined") {
+      const currentPath = getCurrentPath();
+      localStorage.setItem("dashboardReturnUrl", currentPath);
+      localStorage.setItem("dashboardReturnUrlTimestamp", new Date().toISOString());
+    }
+
+    logout && logout();
+  }, [logout, getCurrentPath]);
+
   if (!isBlur) {
     return <>{children}</>;
   }
 
+  const currentPath = getCurrentPath();
+  const returnUrl = encodeURIComponent(currentPath);
+
   const LoginText = () => (
     <>
-      <a href="/auth/login" className="text-12-semibold underline">
+      <a href={`/auth/login?returnUrl=${returnUrl}`} className="text-12-semibold underline">
         Login to view.
       </a>{" "}
       If you are a funder or representing a government agency, please{" "}
@@ -38,7 +58,7 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
 
   const ProjectAccessText = () => (
     <>
-      <button onClick={logout} className="text-12-semibold underline">
+      <button onClick={handleLogout} className="text-12-semibold underline">
         Sign in
       </button>{" "}
       with an account associated with this project

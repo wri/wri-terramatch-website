@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { useRouter } from "next/router";
 import React from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
@@ -8,7 +7,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 
 import {
-  GOALS,
   TOOLTIP_HECTARES_RESTORED_PROJECT,
   TOOLTIP_HECTARES_RESTORED_SITE,
   TOOLTIP_SAPLING_RESTORED_PROJECT,
@@ -47,9 +45,6 @@ type ChartsData = {
 };
 
 const ProgressDataCard = (values: ProgressDataCardItem) => {
-  const router = useRouter();
-  const tab = router.query.tab as string;
-
   return (
     <GoalProgressCard
       label={values.cardValues.label}
@@ -61,8 +56,8 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
       labelVariant="text-14"
       classNameCard="text-center flex flex-col items-center"
       classNameLabelValue="justify-center"
-      tootipContent={values.tooltipContent && tab === GOALS ? values.tooltipContent : undefined}
-      tooltipTitle={values.tooltipContent && tab === GOALS ? values.cardValues.label : undefined}
+      tootipContent={values.tooltipContent ? values.tooltipContent : undefined}
+      tooltipTitle={values.tooltipContent ? values.cardValues.label : undefined}
       chart={<ProgressGoalsDoughnutChart key={"items"} data={values.chartData} />}
     />
   );
@@ -70,8 +65,6 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
-  const router = useRouter();
-  const tab = router.query.tab as string;
   const totalTreesRestoredCount =
     (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
     (entity?.approved_regenerated_trees_count ?? entity?.regeneratedTreesCount) +
@@ -198,14 +191,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         chartData={chartDataHectares}
         hectares={true}
         graph={true}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"terrafund-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={project}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
       />
     ],
     ppc: [
@@ -215,14 +208,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         chartData={chartDataHectares}
         graph={project}
         hectares={true}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"ppc-2"}
         cardValues={chartDataTreesRestored.cardValues}
         chartData={chartDataTreesRestored}
         graph={project}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"ppc-3"}
@@ -243,14 +236,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         cardValues={chartDataHectares.cardValues}
         chartData={chartDataHectares}
         hectares={true}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_HECTARES_RESTORED_PROJECT : TOOLTIP_HECTARES_RESTORED_SITE}
       />,
       <ProgressDataCard
         key={"hbf-3"}
         cardValues={chartDataSaplings.cardValues}
         chartData={chartDataSaplings}
         graph={project}
-        tooltipContent={project && tab === GOALS ? TOOLTIP_SAPLING_RESTORED_PROJECT : TOOLTIP_SAPLING_RESTORED_SITE}
+        tooltipContent={project ? TOOLTIP_SAPLING_RESTORED_PROJECT : TOOLTIP_SAPLING_RESTORED_SITE}
       />
     ]
   };
@@ -273,8 +266,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
             value: entity.trees_planted_count ?? entity.treesPlantedCount,
-            tooltipContent:
-              tab === GOALS ? (project ? TOOLTIP_TREES_PLANTED_PROJECT : TOOLTIP_TREES_PLANTED_SITE) : undefined,
+            tooltipContent: project ? TOOLTIP_TREES_PLANTED_PROJECT : TOOLTIP_TREES_PLANTED_SITE,
             classNameLabelValue: "flex items-center gap-2"
           },
           {
@@ -283,8 +275,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
             value: entity.seeds_planted_count ?? entity.seedsPlantedCount,
-            tooltipContent:
-              tab === GOALS ? (project ? TOOLTIP_SEEDS_PLANTED_PROJECT : TOOLTIP_SEEDS_PLANTED_SITE) : undefined
+            tooltipContent: project ? TOOLTIP_SEEDS_PLANTED_PROJECT : TOOLTIP_SEEDS_PLANTED_SITE
           },
           {
             iconName: IconNames.REFRESH_CIRCLE_PD,
@@ -292,12 +283,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
             value: entity.approved_regenerated_trees_count ?? entity.regeneratedTreesCount,
-            tooltipContent:
-              tab === GOALS
-                ? project
-                  ? TOOLTIP_TREES_REGENERATING_PROJECT
-                  : TOOLTIP_TREES_REGENERATING_SITE
-                : undefined
+            tooltipContent: project ? TOOLTIP_TREES_REGENERATING_PROJECT : TOOLTIP_TREES_REGENERATING_SITE
           }
         ]}
         className="pr-[41px] lg:pr-[150px]"

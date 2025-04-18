@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
@@ -13,10 +13,11 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
 import {
   hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
-  isValidCriteriaData,
-  parseValidationData
+  parseValidationData,
+  parseValidationDataFromContext
 } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -30,6 +31,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   menu: any;
   primaryUuid?: string;
   isCollapsed?: boolean;
+  validationStatus?: string;
 }
 
 const PolygonItem = ({
@@ -40,33 +42,54 @@ const PolygonItem = ({
   primaryUuid: primary_uuid,
   className,
   menu,
+  siteId,
   isCollapsed = false,
   isChecked = false,
   onCheckboxChange,
+  validationStatus,
   ...props
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [validationStatus, setValidationStatus] = useState<string | undefined>(undefined);
-  const [showWarning, setShowWarning] = useState(false);
-  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
+  const [showWarning, setShowWarning] = useState(validationStatus == "partial");
+  const { validationData } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+
+  const getPolygonValidationFromContext = useCallback(() => {
+    if (siteId && validationData[siteId]) {
+      return validationData[siteId].find((item: any) => item.uuid === uuid);
+    }
+    return null;
+  }, [siteId, validationData, uuid]);
+
+  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: { uuid }
+    },
+    {
+      enabled: openCollapse && !getPolygonValidationFromContext(),
+      staleTime: 5 * 60 * 1000
+    }
+  );
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
-    const criteriaData = polygonMap[uuid];
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
       setPolygonValidationData(parseValidationData(criteriaData));
-      setValidationStatus(isValidCriteriaData(criteriaData) ? "passed" : "failed");
       setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
-    } else if (criteriaData?.criteria_list && criteriaData.criteria_list.length === 0) {
-      setValidationStatus("notChecked");
     }
-  }, [polygonMap, uuid]);
+  }, [criteriaData]);
+
+  useEffect(() => {
+    const polygonValidation = getPolygonValidationFromContext();
+    if (polygonValidation) {
+      setPolygonValidationData(parseValidationDataFromContext(polygonValidation));
+    }
+  }, [getPolygonValidationFromContext, openCollapse]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);
@@ -106,7 +129,7 @@ const PolygonItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={validationStatus == undefined}>
+            <When condition={validationStatus == null}>
               <Box sx={{ width: "100%", maxWidth: 100, ml: 1 }}>
                 <LinearProgress />
               </Box>
@@ -117,11 +140,11 @@ const PolygonItem = ({
                 Not Checked
               </Text>
             </When>
-            <When condition={validationStatus == "passed"}>
+            <When condition={validationStatus == "passed" || validationStatus == "partial"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
-                  "text-green": validationStatus,
+                  "text-green": validationStatus == "passed",
                   "text-yellow-700": showWarning
                 })}
               >
@@ -142,7 +165,7 @@ const PolygonItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={validationStatus}>
+        <When condition={validationStatus === "partial"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
             staff.

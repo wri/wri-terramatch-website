@@ -99,7 +99,7 @@ const InformationTab: FC<IProps> = props => {
       <TabbedShowLayout.Tab label={tabTitle} {...props}>
         <Grid spacing={2} container>
           <Grid xs={8} item>
-            <If condition={record.nothing_to_report}>
+            <If condition={record.nothingToReport}>
               <Then>
                 <Card sx={{ padding: 4 }}>
                   <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>

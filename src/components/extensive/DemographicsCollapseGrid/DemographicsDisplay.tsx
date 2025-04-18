@@ -66,8 +66,15 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
         "indirect-other": t("Indirect Other")
       },
       jobs: {
+        all: t("All"),
         "full-time": t("Full-time"),
         "part-time": t("Part-time")
+      },
+      employees: {
+        all: t("All"),
+        "full-time": t("Full-time"),
+        "part-time": t("Part-time"),
+        temp: t("Temp")
       },
       volunteers: {
         volunteer: t("Volunteer")
@@ -77,6 +84,9 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
       },
       trainingBeneficiaries: {
         training: t("Training Beneficiaries")
+      },
+      indirectBeneficiaries: {
+        indirect: t("Indirect Beneficiaries")
       }
     }),
     [t]
