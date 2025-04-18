@@ -60,7 +60,7 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   return values;
 };
 
-export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[], isMigrated?: boolean): T {
+export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
 
   delete values.uuid;
@@ -70,14 +70,14 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      normalizedFieldDefaultValue(values, field, isMigrated);
+      normalizedFieldDefaultValue(values, field);
     }
   }
 
   return values;
 }
 
-export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
+export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField): T {
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date") {
@@ -102,8 +102,8 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
     }
 
     case FieldType.Conditional: {
-      if (isMigrated && typeof values[field.name] !== "boolean") values[field.name] = true;
-      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f, isMigrated));
+      if (typeof values[field.name] !== "boolean") values[field.name] = true;
+      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f));
       break;
     }
 
@@ -194,6 +194,8 @@ export const apiFormQuestionToFormField = (
     parent_id: question.parent_id,
     min_character_limit: question.min_character_limit,
     max_character_limit: question.max_character_limit,
+    min_number_limit: question.min_number_limit,
+    max_number_limit: question.max_number_limit,
     feedbackRequired
   };
 
@@ -205,7 +207,34 @@ export const apiFormQuestionToFormField = (
     case "week":
     case "search":
     case "month":
-    case "number":
+    case "number": {
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            max: question.max_number_limit,
+            min: question.min_number_limit,
+            type: question.input_type
+          }
+        };
+      } else {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            type: question.input_type
+          }
+        };
+      }
+    }
     case "password":
     case "color":
     case "date":
@@ -565,6 +594,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
   const min = question.validation?.min;
   const limitMin = question.min_character_limit;
   const limitMax = question.max_character_limit;
+  const limitMinNumber = question.min_number_limit;
+  const limitMaxNumber = question.max_number_limit;
 
   switch (question.input_type) {
     case "text":
@@ -606,6 +637,19 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        validation = yup
+          .number()
+          .transform((value, originalValue) => {
+            return originalValue === "" || originalValue == null ? undefined : value;
+          })
+          .min(limitMinNumber)
+          .max(limitMaxNumber)
+          .test("decimal-places", "Max 2 decimal places allowed", val => /^-?\d+(\.\d{1,2})?$/.test(String(val)));
+      }
 
       return validation;
     }

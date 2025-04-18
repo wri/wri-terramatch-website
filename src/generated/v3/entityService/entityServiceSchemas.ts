@@ -149,7 +149,6 @@ export type NurseryLightDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
-  migrated: string | null;
   /**
    * @format date-time
    */
@@ -545,7 +544,6 @@ export type NurseryFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
-  migrated: string | null;
   /**
    * @format date-time
    */
@@ -671,7 +669,6 @@ export type ProjectReportFullDto = {
   volunteersWorkDescription: string | null;
   siteReportsCount: number | null;
   nurseryReportsCount: number | null;
-  migrated: boolean;
   seedlingsGrown: number;
   communityProgress: string | null;
   localEngagement: string | null;
@@ -757,7 +754,6 @@ export type NurseryReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  migrated: boolean;
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   treeSeedlingContributions: MediaDto[];
@@ -830,7 +826,6 @@ export type SiteReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  migrated: boolean;
   numTreesRegenerating: number | null;
   regenerationDescription: string | null;
   invasiveSpeciesRemoved: string | null;

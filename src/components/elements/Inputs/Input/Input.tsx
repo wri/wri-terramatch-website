@@ -150,8 +150,17 @@ const Input = forwardRef(
         onClick: () => clearInput()
       };
     }
-    const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) =>
-      ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+
+    const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) => {
+      const disallowed = ["e", "E", "+"];
+      const min = inputProps.min;
+      const shouldBlockMinus = !min || Number(min) >= 0;
+
+      if (shouldBlockMinus) disallowed.push("-");
+
+      disallowed.includes(e.key) && e.preventDefault();
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (inputProps.type === "number" && format === "number") {
         const value = e.target.value;

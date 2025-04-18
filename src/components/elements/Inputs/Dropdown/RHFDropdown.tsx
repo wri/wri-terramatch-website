@@ -61,13 +61,17 @@ const RHFDropdown = ({
     }
   );
 
-  const additionalOptions =
+  const additionalOptions = useMemo(
+    () =>
+      //@ts-ignore
+      (optionsData?.data?.map((option: any) => ({
+        title: option.label,
+        value: option.slug,
+        meta: { image_url: option.image_url }
+      })) || []) as Option[],
     //@ts-ignore
-    (optionsData?.data?.map((option: any) => ({
-      title: option.label,
-      value: option.slug,
-      meta: { image_url: option.image_url }
-    })) || []) as Option[];
+    [optionsData?.data]
+  );
 
   const notFoundOptions = useMemo(
     () =>
@@ -79,14 +83,18 @@ const RHFDropdown = ({
     [additionalOptions]
   );
 
+  const options = useMemo(
+    () =>
+      enableAdditionalOptions && !props.hasOtherOptions
+        ? [...props.options, ...additionalOptions, ...notFoundOptions]
+        : props.options,
+    [additionalOptions, enableAdditionalOptions, notFoundOptions, props.hasOtherOptions, props.options]
+  );
+
   return (
     <Dropdown
       {...props}
-      options={
-        enableAdditionalOptions && !props.hasOtherOptions
-          ? [...props.options, ...additionalOptions, ...notFoundOptions]
-          : props.options
-      }
+      options={options}
       value={toArray(value)}
       defaultValue={toArray(props.defaultValue)}
       onChange={_onChange}
