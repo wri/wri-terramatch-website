@@ -131,6 +131,20 @@ export const QuestionArrayInput = ({
               );
             }}
           </FormDataConsumer>
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              return scopedFormData.linked_field_key == "pro-pit-long-proposed" ||
+                scopedFormData.linked_field_key == "pro-pit-lat-proposed" ? (
+                <>
+                  <NumberInput source={getSource("min_number_limit")} label="Minimum Number Limit" />
+                  <NumberInput source={getSource("max_number_limit")} label="Maximum Number Limit" />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
           <BooleanInput
             source="validation.required"
             label="Required"
@@ -243,6 +257,7 @@ export const QuestionArrayInput = ({
                     </QuestionArrayInput>
                   );
 
+                case "strategy-area":
                 case "select":
                 case "select-image":
                 case "workdays":
