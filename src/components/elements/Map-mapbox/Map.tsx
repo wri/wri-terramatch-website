@@ -284,7 +284,7 @@ export const MapContainer = ({
             dashboardCountries,
             setLoader,
             selectedCountry,
-            isMobile ? setMobilePopupData : undefined
+            isMobile || isDashboard ? setMobilePopupData : undefined
           );
         }
       };
@@ -299,8 +299,27 @@ export const MapContainer = ({
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [
+    sitePolygonData,
+    polygonsCentroids,
+    polygonsData,
+    showPopups,
+    centroids,
+    styleLoaded,
+    dashboardCountries,
+    draw,
+    editPolygonSelected,
+    isDashboard,
+    isMobile,
+    map,
+    selectedCountry,
+    setChangeStyle,
+    setEditPolygon,
+    setFilters,
+    setLoader,
+    setPolygonFromMap,
+    tooltipType
+  ]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {
@@ -730,8 +749,12 @@ export const MapContainer = ({
       <When condition={!polygonsExists}>
         <EmptyStateDisplay />
       </When>
-      <When condition={isMobile && mobilePopupData !== null}>
-        <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
+      <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
+        <PopupMobile
+          event={mobilePopupData}
+          onClose={() => setMobilePopupData(null)}
+          variant={isMobile ? "mobile" : "desktop"}
+        />
       </When>
     </div>
   );
