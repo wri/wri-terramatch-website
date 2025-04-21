@@ -7,7 +7,6 @@ import { Else, If, Then } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
-import { getFinancialIndicatorsColumns } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -202,7 +201,6 @@ export const getFormEntries = (
         else if (f.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(f.fieldProps, t);
         else if (f.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns(t);
         else if (f.type === FieldType.SeedingsDataTable) headers = getSeedingTableColumns(t, f.fieldProps.captureCount);
-        else if (f.type === FieldType.FinancialIndicatorsDataTable) headers = getFinancialIndicatorsColumns(t);
 
         const stringValues: string[] = [];
         values?.[f.name]?.forEach((entry: any) => {
