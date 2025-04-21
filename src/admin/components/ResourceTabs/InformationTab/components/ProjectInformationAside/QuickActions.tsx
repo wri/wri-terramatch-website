@@ -57,6 +57,11 @@ const QuickActions: FC = () => {
     navigate(`/${view}?${queryParams}`);
   };
 
+  const openProjectViewer = () => {
+    if (!record) return;
+    window.open(`/project-viewer?projectUuid=${record.uuid}`, "_blank");
+  };
+
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
     justifyContent: "space-between"
@@ -137,6 +142,9 @@ const QuickActions: FC = () => {
         </Button>
         <Button variant="outlined" onClick={() => handleExport("project-reports")}>
           Export Project Reports
+        </Button>
+        <Button variant="outlined" onClick={openProjectViewer}>
+          Open Project Viewer
         </Button>
         <Button variant="outlined" onClick={() => navigate("./4")}>
           Add Monitored Data

@@ -76,13 +76,37 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
+// Standalone pages that need some app context but bypass Bootstrap redirects
+const StandaloneStack = ({ children }: PropsWithChildren) => (
+  <ToastProvider>
+    <WrappedQueryClientProvider>
+      <WrappedReduxProvider>
+        <LoadingProvider>
+          <NotificationProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </NotificationProvider>
+        </LoadingProvider>
+      </WrappedReduxProvider>
+    </WrappedQueryClientProvider>
+  </ToastProvider>
+);
+
 const _App = ({ Component, pageProps }: AppProps) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
+  const isProjectViewer = router.asPath.includes("/project-viewer");
 
   setupYup(t);
+
+  if (isProjectViewer) {
+    return (
+      <StandaloneStack>
+        <Component {...pageProps} />
+      </StandaloneStack>
+    );
+  }
 
   return (
     <ToastProvider>
