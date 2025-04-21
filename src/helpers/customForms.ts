@@ -27,7 +27,13 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "number") {
-        values[field.name] = Number(values[field.name]);
+        const fieldValue = values[field.name];
+        const isEmpty = fieldValue === undefined || fieldValue === null;
+        if (isEmpty && field.fieldProps.min < 0) {
+          values[field.name] = fieldValue;
+        } else {
+          values[field.name] = Number(fieldValue);
+        }
       }
       break;
     }
@@ -665,15 +671,14 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
         validation = yup
           .number()
           .transform((value, originalValue) => {
-            return originalValue === "" || originalValue == null ? null : value;
+            return originalValue === "" || originalValue == null ? undefined : value;
           })
           .min(limitMinNumber)
           .max(limitMaxNumber)
-          .test(
-            "decimal-places",
-            "Max 2 decimal places allowed",
-            val => val === null || (typeof val === "number" && /^-?\d+(\.\d{1,2})?$/.test(val.toString()))
-          );
+          .test("decimal-places", "Max 2 decimal places allowed", val => {
+            if (val <= 0 || val === undefined || val === null || val === "") return true;
+            return /^-?\d+(\.\d{1,2})?$/.test(Number(val));
+          });
       }
 
       return validation;
