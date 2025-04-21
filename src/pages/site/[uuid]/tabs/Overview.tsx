@@ -105,7 +105,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       site: site.uuid
     }
   });
-  console.log("polygonsCriteriaData", JSON.stringify(polygonsCriteriaData, null, 2));
   useEffect(() => {
     setSiteData(site);
     if (site.projectUuid) {

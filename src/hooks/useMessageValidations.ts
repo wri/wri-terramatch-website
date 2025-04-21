@@ -7,7 +7,6 @@ interface IntersectionInfo {
   intersectSmaller: boolean;
   percentage: number;
   poly_name: string | null;
-
   site_name: string | null;
 }
 
