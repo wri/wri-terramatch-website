@@ -257,6 +257,7 @@ export const QuestionArrayInput = ({
                     </QuestionArrayInput>
                   );
 
+                case "strategy-area":
                 case "select":
                 case "select-image":
                 case "workdays":

@@ -552,6 +552,27 @@ export const apiFormQuestionToFormField = (
         }
       };
 
+    case "strategy-area": {
+      let optionsFilterFieldName: string | undefined;
+      const filterQuestion = SELECT_FILTER_QUESTION[question.linked_field_key];
+      if (filterQuestion != null) {
+        optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
+      }
+
+      return {
+        ...sharedProps,
+        type: FieldType.StrategyAreaInput,
+
+        fieldProps: {
+          required,
+          options: getOptions(question, t),
+          hasOtherOptions: question.options_other,
+          optionsFilterFieldName,
+          collection: question.linked_field_key
+        }
+      };
+    }
+
     default:
       return null;
   }
@@ -813,6 +834,38 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "boolean": {
       validation = yup.boolean();
       if (required) validation = validation.required();
+
+      return validation;
+    }
+
+    case "strategy-area": {
+      validation = yup.string().test("total-percentage", "Total percentage must not exceed 100%", value => {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (!Array.isArray(parsed)) return true;
+
+          const hasValues = parsed.some((item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return percentage > 0;
+          });
+
+          if (!hasValues) return true;
+
+          const total = parsed.reduce((sum: number, item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return sum + percentage;
+          }, 0);
+
+          return total <= 100;
+        } catch {
+          return false;
+        }
+      });
+
+      if (required) {
+        validation = validation.required("This field is required");
+      }
 
       return validation;
     }
