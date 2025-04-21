@@ -7,6 +7,8 @@ interface IntersectionInfo {
   intersectSmaller: boolean;
   percentage: number;
   poly_name: string | null;
+
+  site_name: string | null;
 }
 
 interface ProjectGoalInfo {
@@ -43,16 +45,24 @@ export const useMessageValidators = () => {
         if (!extraInfo) return [];
         try {
           const infoArray: IntersectionInfo[] = JSON.parse(extraInfo);
-          return infoArray.map(({ intersectSmaller, percentage, poly_name }: IntersectionInfo) => {
+          return infoArray.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
             return intersectSmaller
-              ? t("Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name})", {
-                  percentage,
-                  poly_name: poly_name || "Unnamed Polygon"
-                })
-              : t("Geometries intersect: approx. {percentage}% of this polygon is intersected by {poly_name}", {
-                  percentage,
-                  poly_name: poly_name || "Unnamed Polygon"
-                });
+              ? t(
+                  "Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name}) [in site: {site_name}]",
+                  {
+                    percentage,
+                    poly_name: poly_name || "Unnamed Polygon",
+                    site_name: site_name || "Unnamed Site"
+                  }
+                )
+              : t(
+                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by {poly_name} [in site: {site_name}]",
+                  {
+                    percentage,
+                    poly_name: poly_name || "Unnamed Polygon",
+                    site_name: site_name || "Unnamed Site"
+                  }
+                );
           });
         } catch (error) {
           Log.error("Failed to get intersection messages", error);
