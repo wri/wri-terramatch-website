@@ -157,7 +157,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonData,
-    polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList,
     shouldRefetchValidation,
     setShouldRefetchValidation,
@@ -538,7 +537,6 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "white-page-admin",
           onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
         }}
-        polygonsCriteriaData={polygonsCriteriaData}
         polygonList={polygonList}
       />
     );
