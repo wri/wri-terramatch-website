@@ -32,7 +32,6 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
         if (isEmpty && field.fieldProps.min < 0) {
           values[field.name] = fieldValue;
         } else {
-          console.log(fieldValue);
           values[field.name] = Number(fieldValue);
         }
       }
