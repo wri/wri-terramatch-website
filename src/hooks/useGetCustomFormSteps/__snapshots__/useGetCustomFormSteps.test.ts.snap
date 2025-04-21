@@ -2699,7 +2699,7 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "feedbackRequired": undefined,
         "fieldProps": {
           "required": false,
-          "type": "number",
+          "type": "url",
         },
         "is_parent_conditional_default": undefined,
         "label": "Organization Twitter URL(optional)",
@@ -3901,7 +3901,7 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "feedbackRequired": undefined,
         "fieldProps": {
           "required": false,
-          "type": "number",
+          "type": "text",
         },
         "is_parent_conditional_default": undefined,
         "label": "What is the name of your proposed project?",
@@ -5043,7 +5043,7 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "feedbackRequired": undefined,
         "fieldProps": {
           "required": false,
-          "type": "number",
+          "type": "text",
         },
         "is_parent_conditional_default": undefined,
         "label": "In which subnational jurisdictions would you carry out this project? ",
