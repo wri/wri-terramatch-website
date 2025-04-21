@@ -3,9 +3,8 @@ import { useT } from "@transifex/react";
 import { useEffect, useId, useState } from "react";
 import { FieldError, FieldValues, UseFormReturn } from "react-hook-form";
 
-import { Option, OptionValue } from "@/types/common";
+import { Option } from "@/types/common";
 
-import Dropdown from "../Dropdown/Dropdown";
 import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
 
 export interface StrategyAreaInputProps extends InputWrapperProps {
@@ -31,10 +30,20 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
   const id = useId();
   const t = useT();
   const { value } = props;
-  const [strategyAreas, setStrategyAreas] = useState<{ strategy: string; percentage: number | null }[]>([
-    { strategy: "", percentage: null },
-    { strategy: "", percentage: null }
-  ]);
+  const options = props.optionsFilter
+    ? props.options.filter(option => props.optionsFilter?.includes(option.meta))
+    : props.options;
+
+  const [strategyAreas, setStrategyAreas] = useState<{ strategy: string; percentage: number | null }[]>([]);
+  useEffect(() => {
+    if (options) {
+      const initialStrategyAreas = options?.map(option => ({
+        strategy: option.title,
+        percentage: null
+      }));
+      setStrategyAreas(initialStrategyAreas as { strategy: string; percentage: number | null }[]);
+    }
+  }, [props.options, options]);
 
   const titleActionsMap = {
     ["pro-pit-restoration-strategy-distribution" as string]: {
@@ -71,10 +80,6 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
     }
   }, [value]);
 
-  const options = props.optionsFilter
-    ? props.options.filter(option => props.optionsFilter?.includes(option.meta))
-    : props.options;
-
   const handlePercentageChange = (value: number, index: number) => {
     const updated = [...strategyAreas];
     updated[index].percentage = value;
@@ -85,14 +90,6 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
     props.formHook.trigger();
   };
 
-  const handleStrategyChange = (selectedValue: OptionValue[], index: number) => {
-    const updated = [...strategyAreas];
-    updated[index].strategy = selectedValue.toString();
-    setStrategyAreas(updated);
-
-    const formatted = updated.map(item => ({ [item.strategy]: item.percentage }));
-    props.onChange(JSON.stringify(formatted));
-  };
   return (
     <InputWrapper
       label={props.label}
@@ -116,26 +113,14 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
           <Grid
             item
             xs={6}
-            sx={{
-              borderRight: "1px solid #e0e0e0",
-              padding: "12px",
-              textAlign: "center",
-              borderTopLeftRadius: "12px"
-            }}
+            sx={{ borderRight: "1px solid #e0e0e0", padding: "12px", textAlign: "center", borderTopLeftRadius: "12px" }}
           >
             <Typography fontWeight="bold">{titleActionsMap[props.collection!]?.firstColumnTitle}</Typography>
           </Grid>
-          <Grid
-            item
-            xs={6}
-            sx={{
-              padding: "12px",
-              textAlign: "center",
-              borderTopRightRadius: "12px"
-            }}
-          >
+          <Grid item xs={5} sx={{ padding: "12px", textAlign: "center" }}>
             <Typography fontWeight="bold">{titleActionsMap[props.collection!]?.secondColumnTitle}</Typography>
           </Grid>
+          <Grid item xs={1} />
         </Grid>
 
         {strategyAreas.map((field, index) => (
@@ -143,36 +128,14 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
             container
             key={index}
             sx={{
-              borderBottom: index < strategyAreas.length - 1 ? "1px solid #e0e0e0" : "none"
+              borderBottom: index < strategyAreas.length - 1 ? "1px solid #e0e0e0" : "none",
+              alignItems: "center"
             }}
           >
-            <Grid
-              item
-              xs={6}
-              sx={{
-                borderBottom: index === strategyAreas.length - 1 ? "none" : "1px solid #e0e0e0",
-                borderRight: "1px solid #e0e0e0",
-                p: 2,
-                ...(index === strategyAreas.length - 1 && { borderBottomLeftRadius: "12px" })
-              }}
-            >
-              <Dropdown
-                options={options}
-                label=""
-                placeholder={`Select ${titleActionsMap[props.collection!]?.firstColumnTitle?.toLowerCase()}`}
-                onChange={value => handleStrategyChange(value, index)}
-                value={[field.strategy]}
-              />
+            <Grid item xs={6} sx={{ borderRight: "1px solid #e0e0e0", p: 2 }}>
+              <Typography>{field.strategy}</Typography>
             </Grid>
-            <Grid
-              item
-              xs={6}
-              sx={{
-                borderBottom: index === strategyAreas.length - 1 ? "none" : "1px solid #e0e0e0",
-                p: 2,
-                ...(index === strategyAreas.length - 1 && { borderBottomRightRadius: "12px" })
-              }}
-            >
+            <Grid item xs={5} sx={{ p: 2 }}>
               <Input
                 name={`strategy_areas.${index}.percentage`}
                 type="number"

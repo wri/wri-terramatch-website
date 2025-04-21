@@ -89,7 +89,8 @@ export const getAnswer = (
         const formatted = parsedValue
           .filter(entry => {
             const key = Object.keys(entry)[0];
-            return key;
+            const percent = entry[key];
+            return key && percent !== null && percent !== undefined && !isNaN(percent);
           })
           .map(entry => {
             const key = Object.keys(entry)[0];

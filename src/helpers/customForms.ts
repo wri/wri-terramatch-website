@@ -665,11 +665,15 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
         validation = yup
           .number()
           .transform((value, originalValue) => {
-            return originalValue === "" || originalValue == null ? undefined : value;
+            return originalValue === "" || originalValue == null ? null : value;
           })
           .min(limitMinNumber)
           .max(limitMaxNumber)
-          .test("decimal-places", "Max 2 decimal places allowed", val => /^-?\d+(\.\d{1,2})?$/.test(String(val)));
+          .test(
+            "decimal-places",
+            "Max 2 decimal places allowed",
+            val => val === null || (typeof val === "number" && /^-?\d+(\.\d{1,2})?$/.test(val.toString()))
+          );
       }
 
       return validation;
@@ -839,7 +843,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "strategy-area": {
-      validation = yup.string().test("total-percentage", "Total percentage must not exceed 100%", value => {
+      validation = yup.string().test("total-percentage", function (value) {
         try {
           const parsed = JSON.parse(value);
 
@@ -857,9 +861,21 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
             return sum + percentage;
           }, 0);
 
-          return total <= 100;
+          if (total > 100) {
+            return this.createError({
+              message: "Your total exceeds 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          if (total < 100) {
+            return this.createError({
+              message: "Your total is under 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          return true;
         } catch {
-          return false;
+          return this.createError({ message: "There was a problem validating this field." });
         }
       });
 
