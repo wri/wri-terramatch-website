@@ -39,14 +39,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status:
-    | "approve"
-    | "approved"
-    | "moreinfo"
-    | "needs-more-information"
-    | "restoration-in-progress"
-    | "reminder"
-    | undefined;
+  status?: "approve" | "approved" | "moreinfo" | "needs-more-information" | "restoration-in-progress" | "reminder";
 }
 
 const moreInfoValidationSchema = yup.object({
