@@ -76,7 +76,6 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
-// Standalone pages that need some app context but bypass Bootstrap redirects
 const StandaloneStack = ({ children }: PropsWithChildren) => (
   <ToastProvider>
     <WrappedQueryClientProvider>
