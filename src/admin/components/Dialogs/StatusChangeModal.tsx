@@ -17,20 +17,14 @@ import * as yup from "yup";
 
 import modules from "@/admin/modules";
 import { validateForm } from "@/admin/utils/forms";
-import {
-  EntityConnectionWithUpdate,
-  EntityDtoType,
-  EntityUpdateData,
-  SupportedEntity,
-  useFullEntity
-} from "@/connections/Entity";
+import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
-  usePostV2AdminENTITYUUIDReminder,
-  usePutV2AdminENTITYUUIDSTATUS
+  usePostV2AdminENTITYUUIDReminder
 } from "@/generated/apiComponents";
+import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
@@ -39,7 +33,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status?: "approve" | "approved" | "moreinfo" | "needs-more-information" | "restoration-in-progress" | "reminder";
+  status?: "approved" | "needs-more-information" | "restoration-in-progress" | "reminder";
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -50,59 +44,6 @@ const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
 });
 
-// While we transition, some entities are getting status updates in v2, and some in v3. This hook supports both.
-function useUpdateStatus() {
-  const { record, resource } = useShowContext();
-
-  const resourceName = useMemo(() => kebabCase(singularEntityNameToPlural(resource as SingularEntityName)), [resource]);
-  const v3Resource = useMemo(
-    () => singularEntityNameToPlural(resource as SingularEntityName) as SupportedEntity,
-    [resource]
-  );
-  const [, entityConnection] = useFullEntity(v3Resource, record.uuid);
-  const { mutateAsync, isLoading } = usePutV2AdminENTITYUUIDSTATUS({
-    onSuccess: () => {
-      // Temporary until the entity update goes through v3. Then the prune isn't needed, and the
-      // refetch() will pull the updated resource from the store without an API request.
-      entityConnection?.refetch();
-    }
-  });
-
-  return useMemo(() => {
-    if ((entityConnection as EntityConnectionWithUpdate<EntityDtoType, EntityUpdateData>).update != null) {
-      const updateConnection = entityConnection as EntityConnectionWithUpdate<EntityDtoType, EntityUpdateData>;
-      return {
-        isUpdating: updateConnection.entityIsUpdating,
-        updateStatus: async (status: string, feedback?: string, feedbackFields?: string[]) =>
-          updateConnection.update({
-            status: status as EntityUpdateData["attributes"]["status"],
-            feedback,
-            feedbackFields
-          })
-      };
-    } else {
-      return {
-        isUpdating: isLoading,
-        updateStatus: async (status: string, feedback?: string, feedbackFields?: string[]) => {
-          const body: any = { feedback };
-          if (status === "moreinfo" && feedbackFields != null) {
-            body.feedback_fields = feedbackFields;
-          }
-
-          await mutateAsync({
-            pathParams: {
-              uuid: record.id,
-              entity: resourceName,
-              status
-            },
-            body
-          });
-        }
-      };
-    }
-  }, [entityConnection, isLoading, mutateAsync, record.id, resourceName]);
-}
-
 const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChangeModalProps) => {
   const { record, refetch, resource } = useShowContext();
   const [feedbackValue, setFeedbackValue] = useState("");
@@ -110,9 +51,14 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   const t = useT();
 
   const resourceName = useMemo(() => kebabCase(singularEntityNameToPlural(resource as SingularEntityName)), [resource]);
-  const { isUpdating, updateStatus } = useUpdateStatus();
-  const previousIsUpdating = usePrevious(isUpdating);
-  if (previousIsUpdating && !isUpdating) {
+  const v3Resource = useMemo(
+    () => singularEntityNameToPlural(resource as SingularEntityName) as SupportedEntity,
+    [resource]
+  );
+  const [, { entityIsUpdating, update }] = useFullEntity(v3Resource, record.uuid);
+
+  const previousIsUpdating = usePrevious(entityIsUpdating);
+  if (previousIsUpdating && !entityIsUpdating) {
     // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
     // This will be a quick cache get in that case, instead of another server round trip.
     refetch();
@@ -142,11 +88,9 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     }
 
     switch (status) {
-      case "approve":
       case "approved":
         return `Are you sure you want to approve this ${name}`;
 
-      case "moreinfo":
       case "needs-more-information":
         return `Request more information for ${name}`;
 
@@ -188,24 +132,21 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   const handleSave = async (data: any) => {
     if (!record || !status) return;
 
-    const body: any = {
-      feedback: feedbackValue
-    };
-
-    if (data.feedback_fields && status === "moreinfo") {
-      body.feedback_fields = data.feedback_fields;
-    }
-
     if (status === "reminder") {
       await mutateAsyncReminder({
         pathParams: {
           uuid: record.id,
           entity: resourceName
         },
-        body
+        body: { feedback: feedbackValue }
       });
     } else {
-      await updateStatus(status, feedbackValue, data.feedback_fields);
+      // A little type munging to get this happy with the site-specific status update.
+      (update as (attributes: Partial<SiteUpdateAttributes>) => undefined)({
+        status,
+        feedback: feedbackValue,
+        feedbackFields: data.feedback_fields
+      });
     }
     setFeedbackValue("");
     handleClose();
@@ -215,7 +156,9 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
-        validate={validateForm(status === "moreinfo" ? moreInfoValidationSchema : genericValidationSchema)}
+        validate={validateForm(
+          status === "needs-more-information" ? moreInfoValidationSchema : genericValidationSchema
+        )}
       >
         <DialogTitle>{dialogTitle}</DialogTitle>
 
@@ -231,7 +174,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
               helperText={false}
             />
           </When>
-          <When condition={status === "moreinfo" && feedbackChoices.length > 0}>
+          <When condition={status === "needs-more-information" && feedbackChoices.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
@@ -245,8 +188,8 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <When condition={status !== "reminder"}>
-            <Button variant="contained" type="submit" disabled={isUpdating}>
-              <When condition={isUpdating}>
+            <Button variant="contained" type="submit" disabled={entityIsUpdating}>
+              <When condition={entityIsUpdating}>
                 <CircularProgress size={18} sx={{ marginRight: 1 }} />
               </When>
               Update Status
