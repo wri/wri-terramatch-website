@@ -584,11 +584,11 @@ export const entityDelete = (variables: EntityDeleteVariables, signal?: AbortSig
     signal
   });
 
-export type GetProjectPdfDataPathParams = {
+export type ProjectReportDataPathParams = {
   uuid: string;
 };
 
-export type GetProjectPdfDataError = Fetcher.ErrorWrapper<
+export type ProjectReportDataError = Fetcher.ErrorWrapper<
   | {
       status: 401;
       payload: {
@@ -617,13 +617,13 @@ export type GetProjectPdfDataError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type GetProjectPdfDataVariables = {
-  pathParams: GetProjectPdfDataPathParams;
+export type ProjectReportDataVariables = {
+  pathParams: ProjectReportDataPathParams;
 };
 
-export const getProjectPdfData = (variables: GetProjectPdfDataVariables, signal?: AbortSignal) =>
-  entityServiceFetch<undefined, GetProjectPdfDataError, undefined, {}, {}, GetProjectPdfDataPathParams>({
-    url: "/entities/v3/projects/{uuid}/pdf-data",
+export const projectReportData = (variables: ProjectReportDataVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, ProjectReportDataError, undefined, {}, {}, ProjectReportDataPathParams>({
+    url: "/entities/v3/projects/{uuid}/report-data",
     method: "get",
     ...variables,
     signal
@@ -926,7 +926,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  entities: { entityIndex, entityGet, entityDelete, getProjectPdfData },
+  entities: { entityIndex, entityGet, entityDelete, projectReportData },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };

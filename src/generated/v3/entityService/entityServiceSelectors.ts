@@ -8,8 +8,8 @@ import {
   EntityGetVariables,
   EntityDeletePathParams,
   EntityDeleteVariables,
-  GetProjectPdfDataPathParams,
-  GetProjectPdfDataVariables,
+  ProjectReportDataPathParams,
+  ProjectReportDataVariables,
   EntityAssociationIndexPathParams,
   EntityAssociationIndexVariables,
   TreeScientificNamesSearchQueryParams,
@@ -61,16 +61,16 @@ export const entityDeleteFetchFailed = (variables: Omit<EntityDeleteVariables, "
     ...variables
   });
 
-export const getProjectPdfDataIsFetching = (variables: Omit<GetProjectPdfDataVariables, "body">) =>
-  isFetchingSelector<{}, GetProjectPdfDataPathParams>({
-    url: "/entities/v3/projects/{uuid}/pdf-data",
+export const projectReportDataIsFetching = (variables: Omit<ProjectReportDataVariables, "body">) =>
+  isFetchingSelector<{}, ProjectReportDataPathParams>({
+    url: "/entities/v3/projects/{uuid}/report-data",
     method: "get",
     ...variables
   });
 
-export const getProjectPdfDataFetchFailed = (variables: Omit<GetProjectPdfDataVariables, "body">) =>
-  fetchFailedSelector<{}, GetProjectPdfDataPathParams>({
-    url: "/entities/v3/projects/{uuid}/pdf-data",
+export const projectReportDataFetchFailed = (variables: Omit<ProjectReportDataVariables, "body">) =>
+  fetchFailedSelector<{}, ProjectReportDataPathParams>({
+    url: "/entities/v3/projects/{uuid}/report-data",
     method: "get",
     ...variables
   });
