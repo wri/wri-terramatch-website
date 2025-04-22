@@ -74,7 +74,6 @@ const ImageGallery = ({
 
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
-  const [modelName] = useState<string>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [source, setSource] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -317,12 +316,9 @@ const ImageGallery = ({
   };
 
   useEffect(() => {
-    onGalleryStateChange(
-      { page: pageIndex + 1, pageSize },
-      modelName && modelName != "-1" ? { key: "model_name", value: modelName } : undefined
-    );
+    onGalleryStateChange({ page: pageIndex + 1, pageSize }, undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize, modelName]);
+  }, [pageIndex, pageSize]);
 
   useValueChanged(activeIndex, () => {
     onChangeGeotagged(activeIndex === 0 ? null : activeIndex === 1);

@@ -205,7 +205,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           <Text variant="text-14-bold" className="flex items-center gap-1">
             {t("Uploaded via")}:{" "}
             <Text variant="text-14-light" className="capitalize">
-              {getReadableEntityName(data?.modelName as SingularEntityName, true)}
+              {getReadableEntityName(data?.entityType as SingularEntityName, true)}
             </Text>
           </Text>
           <button
