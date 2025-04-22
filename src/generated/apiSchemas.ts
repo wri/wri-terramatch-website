@@ -3620,6 +3620,32 @@ export type V2LeadershipsRead = {
   collection?: string;
 };
 
+export type V2FinancialIndicatorsCreate = {
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type V2FinancialIndicatorsRead = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type V2FinancialIndicatorsUpdate = {
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+};
+
 export type V2OwnershipStakeCreate = {
   organisation_id?: string;
   position?: string;
