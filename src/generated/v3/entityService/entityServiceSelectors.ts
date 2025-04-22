@@ -8,6 +8,8 @@ import {
   EntityGetVariables,
   EntityDeletePathParams,
   EntityDeleteVariables,
+  EntityUpdatePathParams,
+  EntityUpdateVariables,
   EntityAssociationIndexPathParams,
   EntityAssociationIndexQueryParams,
   EntityAssociationIndexVariables,
@@ -57,6 +59,20 @@ export const entityDeleteFetchFailed = (variables: Omit<EntityDeleteVariables, "
   fetchFailedSelector<{}, EntityDeletePathParams>({
     url: "/entities/v3/{entity}/{uuid}",
     method: "delete",
+    ...variables
+  });
+
+export const entityUpdateIsFetching = (variables: Omit<EntityUpdateVariables, "body">) =>
+  isFetchingSelector<{}, EntityUpdatePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "patch",
+    ...variables
+  });
+
+export const entityUpdateFetchFailed = (variables: Omit<EntityUpdateVariables, "body">) =>
+  fetchFailedSelector<{}, EntityUpdatePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "patch",
     ...variables
   });
 

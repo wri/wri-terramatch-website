@@ -2,6 +2,7 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import * as yup from "yup";
 
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import { getFinancialIndicatorsColumns } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -158,6 +159,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     }
 
     case FieldType.LeadershipsDataTable:
+    case FieldType.FinancialIndicatorsDataTable:
     case FieldType.OwnershipStakeDataTable:
     case FieldType.FundingTypeDataTable:
     case FieldType.StrataDataTable:
@@ -180,6 +182,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
       else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);
       else if (field.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns();
+      else if (field.type === FieldType.FinancialIndicatorsDataTable) headers = getFinancialIndicatorsColumns();
       else if (field.type === FieldType.SeedingsDataTable)
         headers = getSeedingTableColumns(undefined, field.fieldProps.captureCount);
 

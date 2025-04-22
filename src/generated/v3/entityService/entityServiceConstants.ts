@@ -53,6 +53,10 @@ export type EntityServiceApiResources = {
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
 };
 
+export const SupportedEntities = {
+  ENTITY_TYPES: ["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const
+} as const;
+
 export const DemographicCollections = {
   WORKDAYS_PROJECT: [
     "paid-project-management",
