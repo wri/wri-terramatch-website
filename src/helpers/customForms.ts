@@ -27,7 +27,13 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "number") {
-        values[field.name] = Number(values[field.name]);
+        const fieldValue = values[field.name];
+        const isEmpty = fieldValue === undefined || fieldValue === null;
+        if (isEmpty && field.fieldProps.min < 0) {
+          values[field.name] = fieldValue;
+        } else {
+          values[field.name] = Number(fieldValue);
+        }
       }
       break;
     }
@@ -194,6 +200,8 @@ export const apiFormQuestionToFormField = (
     parent_id: question.parent_id,
     min_character_limit: question.min_character_limit,
     max_character_limit: question.max_character_limit,
+    min_number_limit: question.min_number_limit,
+    max_number_limit: question.max_number_limit,
     feedbackRequired
   };
 
@@ -205,7 +213,34 @@ export const apiFormQuestionToFormField = (
     case "week":
     case "search":
     case "month":
-    case "number":
+    case "number": {
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            max: question.max_number_limit,
+            min: question.min_number_limit,
+            type: question.input_type
+          }
+        };
+      } else {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            type: question.input_type
+          }
+        };
+      }
+    }
     case "password":
     case "color":
     case "date":
@@ -538,6 +573,27 @@ export const apiFormQuestionToFormField = (
         }
       };
 
+    case "strategy-area": {
+      let optionsFilterFieldName: string | undefined;
+      const filterQuestion = SELECT_FILTER_QUESTION[question.linked_field_key];
+      if (filterQuestion != null) {
+        optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
+      }
+
+      return {
+        ...sharedProps,
+        type: FieldType.StrategyAreaInput,
+
+        fieldProps: {
+          required,
+          options: getOptions(question, t),
+          hasOtherOptions: question.options_other,
+          optionsFilterFieldName,
+          collection: question.linked_field_key
+        }
+      };
+    }
+
     default:
       return null;
   }
@@ -580,6 +636,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
   const min = question.validation?.min;
   const limitMin = question.min_character_limit;
   const limitMax = question.max_character_limit;
+  const limitMinNumber = question.min_number_limit;
+  const limitMaxNumber = question.max_number_limit;
 
   switch (question.input_type) {
     case "text":
@@ -621,6 +679,22 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        validation = yup
+          .number()
+          .transform((value, originalValue) => {
+            return originalValue === "" || originalValue == null ? undefined : value;
+          })
+          .min(limitMinNumber)
+          .max(limitMaxNumber)
+          .test("decimal-places", "Max 2 decimal places allowed", val => {
+            if (val <= 0 || val === undefined || val === null || val === "") return true;
+            return /^-?\d+(\.\d{1,2})?$/.test(Number(val));
+          });
+      }
 
       return validation;
     }
@@ -785,6 +859,50 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "boolean": {
       validation = yup.boolean();
       if (required) validation = validation.required();
+
+      return validation;
+    }
+
+    case "strategy-area": {
+      validation = yup.string().test("total-percentage", function (value) {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (!Array.isArray(parsed)) return true;
+
+          const hasValues = parsed.some((item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return percentage > 0;
+          });
+
+          if (!hasValues) return true;
+
+          const total = parsed.reduce((sum: number, item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return sum + percentage;
+          }, 0);
+
+          if (total > 100) {
+            return this.createError({
+              message: "Your total exceeds 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          if (total < 100) {
+            return this.createError({
+              message: "Your total is under 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          return true;
+        } catch {
+          return this.createError({ message: "There was a problem validating this field." });
+        }
+      });
+
+      if (required) {
+        validation = validation.required("This field is required");
+      }
 
       return validation;
     }

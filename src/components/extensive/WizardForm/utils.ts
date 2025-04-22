@@ -82,6 +82,30 @@ export const getAnswer = (
         return options.find(o => o.value === value)?.title || value;
       }
     }
+    case FieldType.StrategyAreaInput: {
+      const { options } = field.fieldProps;
+      const parsedValue: { [key: string]: number }[] = JSON.parse(value);
+
+      if (Array.isArray(parsedValue)) {
+        const formatted = parsedValue
+          .filter(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            return key && percent !== null && percent !== undefined && !isNaN(percent);
+          })
+          .map(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            const title = options.find(o => o.value === key)?.title || key;
+
+            return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
+          });
+
+        return formatted;
+      }
+
+      return value;
+    }
 
     default:
       return undefined;

@@ -92,7 +92,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   useEffect(() => {
     const isReset = !props.value || (Array.isArray(props.value) && props.value.length === 0);
 
-    if ((!!props.value && !!props.options && updateControl.current < 5) || isReset) {
+    if ((!!props.value && !!props.options && updateControl.current < 5) || (isReset && updateControl.current === 0)) {
       setSelected(getDefaultDropDownValue(props.value || [], props.options, !!props.hasOtherOptions));
       setOtherValue(getDefaultOtherValue(props.value || [], props.options, !!props.hasOtherOptions));
       updateControl.current++;
@@ -154,7 +154,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
-
+  // console.log(otherIsSelected);
   const formatSelectedValues = (
     selected: OptionValue[],
     options: Option[],
