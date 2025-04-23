@@ -9,6 +9,7 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
+import ReportTab from "@/admin/components/ResourceTabs/ReportTab/ReportTab";
 import { useFullProject } from "@/connections/Entity";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
@@ -30,6 +31,7 @@ const ProjectShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" />}>
         <InformationTab type="projects" />
+        <ReportTab label="Project Reports" type="projects" />
         <GalleryTab label="Project Gallery" entity="projects" />
         <DocumentTab label="Project Documents" entity="projects" />
         <ChangeRequestsTab entity="projects" singularEntity="project" />
