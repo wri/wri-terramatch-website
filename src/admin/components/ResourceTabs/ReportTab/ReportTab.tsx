@@ -1,6 +1,6 @@
 import { Card, Grid, Typography } from "@mui/material";
 import { FC, useEffect } from "react";
-import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
+import { TabbedShowLayout, TabProps, useDataProvider, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import ReportDoughnutChart from "./ReportDoughnutChart";
@@ -131,10 +131,38 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   type: string;
 }
 
+// Define a type for the project reports
+interface ProjectReport {
+  id: string;
+  uuid: string;
+  status: string;
+  createdAt: string;
+  reportTitle: string;
+  [key: string]: any; // For other properties
+}
+
 const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
   const ctx = useShowContext();
   const { record } = useShowContext();
-  console.log("record", record);
+  const dataProvider = useDataProvider();
+  useEffect(() => {
+    const fetchReports = async () => {
+      if (record?.id) {
+        try {
+          const { data } = await dataProvider.getList<ProjectReport>("projectReport", {
+            filter: { status: "approved", projectUuid: record?.id },
+            pagination: { page: 1, perPage: 100 },
+            sort: { field: "createdAt", order: "DESC" }
+          });
+          console.log("Approved reports:", data);
+        } catch (error) {
+          console.error("Error fetching approved reports:", error);
+        }
+      }
+    };
+
+    fetchReports();
+  }, [record?.id, dataProvider]);
 
   // In a real implementation, you would fetch the report data
   // using a custom hook or API call similar to other tabs
@@ -240,7 +268,6 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
     };
   }, []);
 
-  // Completely redesigned report content with simpler structure for better printing
   const ReportContent = () => (
     <div id="printable-report-content">
       <div className="section-container">
