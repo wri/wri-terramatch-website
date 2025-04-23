@@ -1,6 +1,11 @@
-import { GetListParams, GetListResult } from "react-admin";
+import { GetListParams, GetListResult, RaRecord } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+
+// Extend the standard GetListResult to include the 'included' property for JSON:API responses
+export interface ExtendedGetListResult<T extends RaRecord = any> extends GetListResult<T> {
+  included?: any[];
+}
 
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
@@ -28,6 +33,9 @@ export const raConnectionProps = (params: GetListParams) => {
   if (params.sort.field != null) {
     queryParams.sortField = params.sort.field;
     queryParams.sortDirection = (params.sort.order as "ASC" | "DESC") ?? "ASC";
+  }
+  if (params.meta?.sideloads) {
+    queryParams.sideloads = params.meta.sideloads;
   }
 
   return queryParams;
@@ -76,6 +84,7 @@ export const raListParamsToQueryParams = (
 interface ApiListResponse {
   data?: { [index: string]: any; uuid?: string }[];
   meta?: any;
+  included?: any[]; // Add included property for JSON:API responses
 }
 
 export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({
@@ -83,13 +92,14 @@ export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTo
   total: indexTotal
 });
 
-export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => {
+export const apiListResponseToRAListResult = (response: ApiListResponse): ExtendedGetListResult => {
   return {
     data: response?.data?.map(item => ({ ...item, id: item.uuid })) || [],
     total: (response?.meta?.total || response?.data?.length) as number,
     pageInfo: {
       hasNextPage: response?.meta?.last_page > response?.meta?.current_page || false,
       hasPreviousPage: response?.meta?.current_page > 1 || false
-    }
+    },
+    included: response?.included // Return the included data
   };
 };

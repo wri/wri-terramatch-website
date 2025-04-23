@@ -40,9 +40,18 @@ export type MediaDto = {
 
 export type EntitySideload = {
   /**
-   * Entity type to sideload
+   * Entity or association type to sideload
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "demographics"
+    | "seedings"
+    | "treeSpecies";
   /**
    * The page size to include.
    */
@@ -903,7 +912,7 @@ export type ProjectUpdateData = {
 
 export type SiteUpdateAttributes = {
   /**
-   * Request to change to the status of the given entity
+   * Request to change to the status of the given site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
@@ -949,13 +958,32 @@ export type NurseryUpdateData = {
   attributes: EntityUpdateAttributes;
 };
 
+export type ReportUpdateAttributes = {
+  /**
+   * Request to change to the status of the given report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport: boolean | null;
+};
+
 export type ProjectReportUpdateData = {
   type: "projectReports";
   /**
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type SiteReportUpdateData = {
@@ -964,7 +992,7 @@ export type SiteReportUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type NurseryReportUpdateData = {
@@ -973,7 +1001,7 @@ export type NurseryReportUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type EntityUpdateBody = {

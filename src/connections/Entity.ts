@@ -82,6 +82,7 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
+  included?: any[];
 };
 
 type EntityIndexFilterKey = keyof Omit<
@@ -251,7 +252,19 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, indexTotal: indexMeta.total, refetch, fetchFailure };
+          // Get the included data if it exists in the response
+          let included: any[] | undefined;
+          if (indexMeta.included) {
+            included = indexMeta.included;
+          }
+
+          return {
+            entities,
+            indexTotal: indexMeta.total,
+            refetch,
+            fetchFailure,
+            included
+          };
         }
       )
   )

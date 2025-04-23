@@ -1,7 +1,9 @@
 import { Card, Grid, Typography } from "@mui/material";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useDataProvider, useShowContext } from "react-admin";
 import { When } from "react-if";
+
+import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
 
 import ReportDoughnutChart from "./ReportDoughnutChart";
 import ReportPieChart from "./ReportPieChart";
@@ -141,20 +143,166 @@ interface ProjectReport {
   [key: string]: any; // For other properties
 }
 
+// Define interface for demographic entries received from API
+interface DemographicEntry {
+  type: string;
+  subtype: string;
+  name: string | null;
+  amount: number;
+}
+
+// Define interface for demographic data included in API response
+interface IncludedDemographic {
+  type: string;
+  id: string;
+  attributes: {
+    entityType: string;
+    entityUuid: string;
+    uuid: string;
+    type: string;
+    collection: string;
+    entries: DemographicEntry[];
+  };
+}
+
+// Define interfaces for processed demographic data
+interface DemographicCounts {
+  total: number;
+  male: number;
+  female: number;
+  youth: number;
+  nonYouth: number;
+}
+
+interface EmploymentDemographicData {
+  fullTimeJobs: DemographicCounts;
+  partTimeJobs: DemographicCounts;
+  volunteers: DemographicCounts;
+}
+
+interface BeneficiaryData {
+  beneficiaries: number;
+  farmers: number;
+}
+
 const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
   const ctx = useShowContext();
   const { record } = useShowContext();
   const dataProvider = useDataProvider();
+
+  // Add state for employment data and beneficiary data
+  const [employmentData, setEmploymentData] = useState<EmploymentDemographicData>({
+    fullTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+    partTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+    volunteers: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 }
+  });
+
+  const [beneficiaryData, setBeneficiaryData] = useState<BeneficiaryData>({
+    beneficiaries: 0,
+    farmers: 0
+  });
+
+  // Process demographic data from included array
+  const processDemographicData = (demographics: IncludedDemographic[]): EmploymentDemographicData => {
+    // Initialize default data structure
+    const result: EmploymentDemographicData = {
+      fullTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+      partTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+      volunteers: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 }
+    };
+
+    // Process each demographic entry
+    demographics.forEach(demographic => {
+      if (demographic.attributes.type === "jobs" || demographic.attributes.type === "volunteers") {
+        let targetCategory: keyof EmploymentDemographicData;
+
+        if (demographic.attributes.type === "jobs") {
+          if (demographic.attributes.collection === "full-time") {
+            targetCategory = "fullTimeJobs";
+          } else if (demographic.attributes.collection === "part-time") {
+            targetCategory = "partTimeJobs";
+          } else {
+            return;
+          }
+        } else {
+          targetCategory = "volunteers";
+        }
+
+        const genderEntries = demographic.attributes.entries.filter(entry => entry.type === "gender");
+        const maleEntry = genderEntries.find(entry => entry.subtype === "male");
+        const femaleEntry = genderEntries.find(entry => entry.subtype === "female");
+        const ageEntries = demographic.attributes.entries.filter(entry => entry.type === "age");
+        const youthEntry = ageEntries.find(entry => entry.subtype === "youth");
+        const nonYouthEntry = ageEntries.find(entry => entry.subtype === "non-youth");
+        const genderTotal = genderEntries.reduce((sum, entry) => sum + entry.amount, 0);
+        result[targetCategory].male += maleEntry?.amount || 0;
+        result[targetCategory].female += femaleEntry?.amount || 0;
+        result[targetCategory].youth += youthEntry?.amount || 0;
+        result[targetCategory].total += genderTotal;
+        if (nonYouthEntry) {
+          result[targetCategory].nonYouth += nonYouthEntry.amount;
+        } else {
+          if (youthEntry) {
+            result[targetCategory].nonYouth = genderTotal - (youthEntry?.amount || 0);
+          }
+        }
+      }
+    });
+
+    return result;
+  };
+
+  const processBeneficiaryData = (demographics: IncludedDemographic[]): BeneficiaryData => {
+    const result: BeneficiaryData = {
+      beneficiaries: 0,
+      farmers: 0
+    };
+
+    // Find all beneficiary demographics
+    const beneficiaryDemographics = demographics.filter(
+      d => d.attributes.type === "all-beneficiaries" && d.attributes.collection === "all"
+    );
+
+    beneficiaryDemographics.forEach(demographic => {
+      // Get gender entries for total beneficiaries
+      const genderEntries = demographic.attributes.entries.filter(entry => entry.type === "gender");
+      result.beneficiaries += genderEntries.reduce((sum, entry) => sum + entry.amount, 0);
+
+      // Get smallholder farmer entries
+      const smallholderEntries = demographic.attributes.entries.filter(
+        entry => entry.type === "farmer" && entry.subtype === "smallholder"
+      );
+      result.farmers += smallholderEntries.reduce((sum, entry) => sum + entry.amount, 0);
+    });
+
+    return result;
+  };
+
   useEffect(() => {
     const fetchReports = async () => {
       if (record?.id) {
         try {
-          const { data } = await dataProvider.getList<ProjectReport>("projectReport", {
+          const { included } = (await dataProvider.getList<ProjectReport>("projectReport", {
             filter: { status: "approved", projectUuid: record?.id },
             pagination: { page: 1, perPage: 100 },
-            sort: { field: "createdAt", order: "DESC" }
-          });
-          console.log("Approved reports:", data);
+            sort: { field: "createdAt", order: "DESC" },
+            meta: {
+              sideloads: [{ entity: "demographics", pageSize: 100 }]
+            }
+          })) as ExtendedGetListResult<ProjectReport>;
+
+          if (included && Array.isArray(included)) {
+            const demographicsData = included.filter(item => item.type === "demographics");
+
+            if (demographicsData.length > 0) {
+              const processedEmploymentData = processDemographicData(demographicsData as IncludedDemographic[]);
+              setEmploymentData(processedEmploymentData);
+              const processedBeneficiaryData = processBeneficiaryData(demographicsData as IncludedDemographic[]);
+              setBeneficiaryData(processedBeneficiaryData);
+            } else {
+              console.log("No demographic data found in included array");
+            }
+          }
         } catch (error) {
           console.error("Error fetching approved reports:", error);
         }
@@ -183,24 +331,24 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
         percentage: 45
       },
       jobs: {
-        fullTime: 43,
-        partTime: 12
+        fullTime: employmentData.fullTimeJobs.total,
+        partTime: employmentData.partTimeJobs.total
       }
     },
     metrics: {
       sites: 2,
       survivalRate: 72,
-      beneficiaries: 441,
-      smallholderFarmers: 265
+      beneficiaries: beneficiaryData.beneficiaries,
+      smallholderFarmers: beneficiaryData.farmers
     },
     employment: {
-      fullTimeJobs: 5,
-      partTimeJobs: 37,
-      volunteers: 67,
+      fullTimeJobs: employmentData.fullTimeJobs.total,
+      partTimeJobs: employmentData.partTimeJobs.total,
+      volunteers: employmentData.volunteers.total,
       demographics: {
-        fullTime: { total: 5, male: 4, female: 2, youth: 10, nonYouth: 6 },
-        partTime: { total: 37, male: 22, female: 12, youth: 10, nonYouth: 6 },
-        volunteers: { total: 67, male: 11, female: 56, youth: 10, nonYouth: 6 }
+        fullTime: employmentData.fullTimeJobs,
+        partTime: employmentData.partTimeJobs,
+        volunteers: employmentData.volunteers
       }
     },
     sites: [
