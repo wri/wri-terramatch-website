@@ -4,7 +4,9 @@ import { TabbedShowLayout, TabProps, useDataProvider, useShowContext } from "rea
 import { When } from "react-if";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
+import { usePlants } from "@/connections/EntityAssocation";
 
+import AggregatedTreeSpeciesTable from "./AggregatedTreeSpeciesTable";
 import ReportDoughnutChart from "./ReportDoughnutChart";
 import ReportPieChart from "./ReportPieChart";
 
@@ -189,6 +191,10 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
   const ctx = useShowContext();
   const { record } = useShowContext();
   const dataProvider = useDataProvider();
+  const [sites, setSites] = useState<any[]>([]);
+
+  const [, { associations: plants }] = usePlants({ entity: "projects", uuid: record?.id, collection: "tree-planted" });
+  console.log("Plants:", JSON.stringify(plants));
 
   // Add state for employment data and beneficiary data
   const [employmentData, setEmploymentData] = useState<EmploymentDemographicData>({
@@ -309,7 +315,25 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
       }
     };
 
+    const fetchSites = async () => {
+      if (record?.id) {
+        try {
+          const { data } = await dataProvider.getList("site", {
+            filter: {
+              projectUuid: record?.id,
+              status: ["approved", "restoration-in-progress"]
+            },
+            pagination: { page: 1, perPage: 100 },
+            sort: { field: "createdAt", order: "DESC" }
+          });
+          setSites(data);
+        } catch (error) {
+          console.error("Error fetching sites:", error);
+        }
+      }
+    };
     fetchReports();
+    fetchSites();
   }, [record?.id, dataProvider]);
 
   // In a real implementation, you would fetch the report data
@@ -715,6 +739,12 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="print-page-break section-container">
+        <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
+          Tree Species Analysis
+        </Typography>
+        <AggregatedTreeSpeciesTable sites={sites} />
       </div>
     </div>
   );
