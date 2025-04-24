@@ -1,10 +1,10 @@
 import { Card, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { orderBy } from "lodash";
+import { chunk, orderBy } from "lodash";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useTableData } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-// Interfaces
 interface SiteInfo {
   id: string;
   uuid: string;
@@ -14,12 +14,12 @@ interface SiteInfo {
   status?: string;
   updateRequestStatus?: string;
 }
-
 interface TreeSpecies {
   name: string;
   speciesTypes: string[];
   totalCount: number;
   siteCounts: Record<string, number>;
+  goalCount?: number;
 }
 
 interface TreeSpeciesTableRowData {
@@ -30,7 +30,6 @@ interface TreeSpeciesTableRowData {
   treeCountGoal?: [number, number];
 }
 
-// Define SingleSiteDataComponent outside main component
 const SingleSiteDataComponent: FC<{
   site: SiteInfo;
   onDataLoaded: (data: TreeSpeciesTableRowData[] | undefined, siteUuid: string) => void;
@@ -43,11 +42,9 @@ const SingleSiteDataComponent: FC<{
     plants: []
   });
 
-  // Use ref to track if we've already processed this data
   const processedRef = useRef(false);
 
   useEffect(() => {
-    // Only process data if it exists and hasn't been processed yet
     if (siteData !== undefined && !processedRef.current) {
       const normalizedData = siteData.map(row => ({
         ...row,
@@ -62,24 +59,99 @@ const SingleSiteDataComponent: FC<{
   return null;
 };
 
-// Main component
-const AggregatedTreeSpeciesTable: FC<{ sites: SiteInfo[] }> = ({ sites }) => {
+// Separate progress bar component for better readability
+const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) => {
+  const progressValue = Math.min(Math.round((current / goal) * 100), 100);
+
+  return (
+    <div>
+      <LinearProgress variant="determinate" value={progressValue} sx={{ height: 8, borderRadius: 1 }} />
+      <Typography variant="caption" color="textSecondary" sx={{ display: "block", mt: 0.5 }}>
+        {current.toLocaleString()} of {goal.toLocaleString()}
+      </Typography>
+    </div>
+  );
+};
+
+// Component for a single table with up to 3 sites
+const TreeSpeciesTableGroup: FC<{
+  sites: SiteInfo[];
+  aggregatedSpecies: TreeSpecies[];
+  siteTotals: Record<string, number>;
+  grandTotal: number;
+}> = ({ sites, aggregatedSpecies, siteTotals, grandTotal }) => {
+  return (
+    <Table size="small">
+      <TableHead>
+        <TableRow>
+          <TableCell style={{ fontWeight: "bold" }}>Species Name</TableCell>
+          <TableCell align="right" style={{ fontWeight: "bold" }}>
+            Total Trees
+          </TableCell>
+          {sites.map(site => (
+            <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
+              {site.name}
+            </TableCell>
+          ))}
+          <TableCell align="right" style={{ fontWeight: "bold" }}>
+            Progress Towards Goal
+          </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {aggregatedSpecies.map(species => (
+          <TableRow key={species.name}>
+            <TableCell>
+              {species.name}
+              {species.speciesTypes.includes("non-scientific") && " (non-scientific)"}
+              {species.speciesTypes.includes("new") && " (new)"}
+            </TableCell>
+            <TableCell align="right">{species.totalCount.toLocaleString()}</TableCell>
+            {sites.map(site => (
+              <TableCell key={site.uuid} align="right">
+                {species.siteCounts[site.uuid] ? species.siteCounts[site.uuid].toLocaleString() : "-"}
+              </TableCell>
+            ))}
+            <TableCell align="right">
+              {species.goalCount ? <ProgressBar current={species.totalCount} goal={species.goalCount} /> : "-"}
+            </TableCell>
+          </TableRow>
+        ))}
+        <TableRow style={{ backgroundColor: "#f5f5f5" }}>
+          <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
+          <TableCell align="right" style={{ fontWeight: "bold" }}>
+            {grandTotal.toLocaleString()}
+          </TableCell>
+          {sites.map(site => (
+            <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
+              {siteTotals[site.uuid]?.toLocaleString() || "-"}
+            </TableCell>
+          ))}
+          <TableCell></TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+};
+
+const AggregatedTreeSpeciesTable: FC<{
+  sites: SiteInfo[];
+  goalPlants?: TreeSpeciesDto[];
+}> = ({ sites, goalPlants = [] }) => {
   const [siteDataMap, setSiteDataMap] = useState<Record<string, TreeSpeciesTableRowData[]>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Use a callback to prevent recreating this function on each render
+  // Calculate site groups - sites divided into chunks of 3
+  const siteGroups = useMemo(() => chunk(sites, 3), [sites]);
+
   const handleSiteDataLoaded = useCallback(
     (data: TreeSpeciesTableRowData[] | undefined, siteUuid: string) => {
       if (!data) return;
-
       setSiteDataMap(prevMap => {
-        // Skip if we already have data for this site
         if (prevMap[siteUuid]) return prevMap;
 
-        // Add site data to the map
         const newMap = { ...prevMap, [siteUuid]: data };
 
-        // Check if all sites are processed
         if (Object.keys(newMap).length === sites.length) {
           setIsLoading(false);
         }
@@ -90,13 +162,21 @@ const AggregatedTreeSpeciesTable: FC<{ sites: SiteInfo[] }> = ({ sites }) => {
     [sites.length]
   );
 
-  // Process all site data to create aggregated species data
+  // Create a map of goal counts by species name
+  const goalCountMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    goalPlants?.forEach(plant => {
+      if (plant.name) {
+        map[plant.name] = plant.amount || 0;
+      }
+    });
+    return map;
+  }, [goalPlants]);
+
   const aggregatedSpecies = useMemo(() => {
     const speciesMap = new Map<string, TreeSpecies>();
 
-    // Process data for each site
     Object.entries(siteDataMap).forEach(([siteUuid, siteData]) => {
-      // Process each species in the site
       siteData.forEach(item => {
         const nameData = item.name;
         const name = nameData[0];
@@ -105,42 +185,48 @@ const AggregatedTreeSpeciesTable: FC<{ sites: SiteInfo[] }> = ({ sites }) => {
 
         if (!name) return;
 
-        // Get or create species entry
         if (!speciesMap.has(name)) {
           speciesMap.set(name, {
             name,
             speciesTypes,
             totalCount: 0,
-            siteCounts: {}
+            siteCounts: {},
+            goalCount: goalCountMap[name]
           });
         }
 
-        // Update species data
         const species = speciesMap.get(name)!;
         species.totalCount += count;
         species.siteCounts[siteUuid] = count;
 
-        // Ensure we keep any special markers (like "new" or "non-scientific")
         if (speciesTypes.length > 0) {
           species.speciesTypes = [...new Set([...species.speciesTypes, ...speciesTypes])];
         }
       });
     });
 
-    // Sort by total count
+    goalPlants?.forEach(plant => {
+      if (plant.name && !speciesMap.has(plant.name)) {
+        speciesMap.set(plant.name, {
+          name: plant.name,
+          speciesTypes: [],
+          totalCount: 0,
+          siteCounts: {},
+          goalCount: plant.amount
+        });
+      }
+    });
+
     const sortedArray = orderBy(Array.from(speciesMap.values()), ["totalCount"], ["desc"]);
 
     return sortedArray;
-  }, [siteDataMap]);
+  }, [siteDataMap, goalCountMap, goalPlants]);
 
-  // Calculate progress
   const progress = sites.length > 0 ? (Object.keys(siteDataMap).length / sites.length) * 100 : 0;
 
-  // Calculate total trees per site (for the footer row)
   const siteTotals = useMemo(() => {
     const totals: Record<string, number> = {};
 
-    // Use the pre-calculated treesPlantedCount for each site
     sites.forEach(site => {
       totals[site.uuid] = site.treesPlantedCount;
     });
@@ -148,77 +234,53 @@ const AggregatedTreeSpeciesTable: FC<{ sites: SiteInfo[] }> = ({ sites }) => {
     return totals;
   }, [sites]);
 
-  // Grand total across all species
   const grandTotal = useMemo(() => {
     return aggregatedSpecies.reduce((sum, species) => sum + species.totalCount, 0);
   }, [aggregatedSpecies]);
 
   return (
-    <Card sx={{ p: 2, mt: 3 }}>
-      <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
-        Tree Species Planted Across All Sites
-      </Typography>
+    <>
+      <Card sx={{ p: 2, mt: 3 }}>
+        <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
+          Tree Species Planted Across All Sites
+        </Typography>
 
-      {isLoading && (
-        <div style={{ marginBottom: 16 }}>
-          <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />
-          <Typography variant="body2" color="textSecondary">
-            Processed {Object.keys(siteDataMap).length} of {sites.length} sites
-          </Typography>
-        </div>
-      )}
+        {isLoading && (
+          <div style={{ marginBottom: 16 }}>
+            <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />
+            <Typography variant="body2" color="textSecondary">
+              Processed {Object.keys(siteDataMap).length} of {sites.length} sites
+            </Typography>
+          </div>
+        )}
 
-      {!isLoading && aggregatedSpecies.length === 0 ? (
-        <Typography>No tree species data available</Typography>
-      ) : (
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell style={{ fontWeight: "bold" }}>Species Name</TableCell>
-              <TableCell align="right" style={{ fontWeight: "bold" }}>
-                Total Trees
-              </TableCell>
-              {sites.map(site => (
-                <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
-                  {site.name}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {aggregatedSpecies.map(species => (
-              <TableRow key={species.name}>
-                <TableCell>
-                  {species.name}
-                  {species.speciesTypes.includes("non-scientific") && " (non-scientific)"}
-                  {species.speciesTypes.includes("new") && " (new)"}
-                </TableCell>
-                <TableCell align="right">{species.totalCount.toLocaleString()}</TableCell>
-                {sites.map(site => (
-                  <TableCell key={site.uuid} align="right">
-                    {species.siteCounts[site.uuid] ? species.siteCounts[site.uuid].toLocaleString() : "-"}
-                  </TableCell>
-                ))}
-              </TableRow>
+        {!isLoading && aggregatedSpecies.length === 0 ? (
+          <Typography>No tree species data available</Typography>
+        ) : (
+          <>
+            {/* Render each site group in a separate table for printing */}
+            {siteGroups.map((groupSites, index) => (
+              <div key={index} className={index > 0 ? "print-page-break" : ""}>
+                {index > 0 && (
+                  <Typography variant="h6" component="h4" sx={{ mb: 2, mt: 4 }}>
+                    Tree Species Planted (Continued)
+                  </Typography>
+                )}
+                <TreeSpeciesTableGroup
+                  sites={groupSites}
+                  aggregatedSpecies={aggregatedSpecies}
+                  siteTotals={siteTotals}
+                  grandTotal={grandTotal}
+                />
+              </div>
             ))}
-            <TableRow style={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
-              <TableCell align="right" style={{ fontWeight: "bold" }}>
-                {grandTotal.toLocaleString()}
-              </TableCell>
-              {sites.map(site => (
-                <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
-                  {siteTotals[site.uuid]?.toLocaleString() || "-"}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableBody>
-        </Table>
-      )}
-      {sites.map(site => (
-        <SingleSiteDataComponent key={site.uuid} site={site} onDataLoaded={handleSiteDataLoaded} />
-      ))}
-    </Card>
+          </>
+        )}
+        {sites.map(site => (
+          <SingleSiteDataComponent key={site.uuid} site={site} onDataLoaded={handleSiteDataLoaded} />
+        ))}
+      </Card>
+    </>
   );
 };
 

@@ -14,7 +14,9 @@ import { useFullProject } from "@/connections/Entity";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const ProjectShowActions: FC = () => {
-  const { uuid, isTest } = useRecordContext();
+  const record = useRecordContext();
+  if (!record) return null;
+  const { uuid, isTest } = record;
   const [, { entityIsUpdating, update }] = useFullProject({ uuid });
   const refresh = useRefresh();
   const wasUpdating = usePrevious(entityIsUpdating);

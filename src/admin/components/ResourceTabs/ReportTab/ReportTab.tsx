@@ -744,7 +744,7 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
         <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
           Tree Species Analysis
         </Typography>
-        <AggregatedTreeSpeciesTable sites={sites} />
+        <AggregatedTreeSpeciesTable sites={sites} goalPlants={plants} />
       </div>
     </div>
   );
