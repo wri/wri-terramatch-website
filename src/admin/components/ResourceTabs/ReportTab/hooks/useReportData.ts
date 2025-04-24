@@ -1,0 +1,155 @@
+import { useEffect, useState } from "react";
+import { useDataProvider, useShowContext } from "react-admin";
+
+import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
+import { usePlants } from "@/connections/EntityAssocation";
+
+import {
+  BeneficiaryData,
+  EmploymentDemographicData,
+  IncludedDemographic,
+  ProjectReport,
+  ReportData,
+  Site
+} from "../types";
+import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
+
+export const useReportData = () => {
+  const { record } = useShowContext();
+  const dataProvider = useDataProvider();
+  const [sites, setSites] = useState<Site[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const [, { associations: plants }] = usePlants({
+    entity: "projects",
+    uuid: record?.id,
+    collection: "tree-planted"
+  });
+
+  const [employmentData, setEmploymentData] = useState<EmploymentDemographicData>({
+    fullTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+    partTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
+    volunteers: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 }
+  });
+
+  const [beneficiaryData, setBeneficiaryData] = useState<BeneficiaryData>({
+    beneficiaries: 0,
+    farmers: 0
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!record?.id) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const reportsPromise = dataProvider.getList<ProjectReport>("projectReport", {
+          filter: { status: "approved", projectUuid: record.id },
+          pagination: { page: 1, perPage: 100 },
+          sort: { field: "createdAt", order: "DESC" },
+          meta: {
+            sideloads: [{ entity: "demographics", pageSize: 100 }]
+          }
+        }) as Promise<ExtendedGetListResult<ProjectReport>>;
+
+        const sitesPromise = dataProvider.getList<Site>("site", {
+          filter: {
+            projectUuid: record.id,
+            status: ["approved", "restoration-in-progress"]
+          },
+          pagination: { page: 1, perPage: 100 },
+          sort: { field: "createdAt", order: "DESC" }
+        });
+
+        const [reportsResult, sitesResult] = await Promise.all([reportsPromise, sitesPromise]);
+
+        if (reportsResult.included && Array.isArray(reportsResult.included)) {
+          const demographicsData = reportsResult.included.filter(item => item.type === "demographics");
+
+          if (demographicsData.length > 0) {
+            const processedEmploymentData = processDemographicData(demographicsData as IncludedDemographic[]);
+            setEmploymentData(processedEmploymentData);
+
+            const processedBeneficiaryData = processBeneficiaryData(demographicsData as IncludedDemographic[]);
+            setBeneficiaryData(processedBeneficiaryData);
+          }
+        }
+
+        setSites(sitesResult.data as Site[]);
+      } catch (err) {
+        console.error("Error fetching report data:", err);
+        setError(err instanceof Error ? err : new Error("Unknown error occurred"));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [record?.id, dataProvider]);
+
+  const reportData: ReportData = {
+    organization: {
+      name: record?.organisationName || "Foundation"
+    },
+    project: {
+      name: record?.name || "Ecosystem and livelihoods enhancement for People, Nature and Climate",
+      trees: {
+        planted: record?.treesPlantedCount || 0,
+        goal: record?.treesGrownGoal || 0,
+        percentage:
+          record?.treesPlantedCount && record?.treesGrownGoal
+            ? Math.round((record.treesPlantedCount / record.treesGrownGoal) * 100)
+            : 0
+      },
+      hectares: {
+        restored: record?.totalHectaresRestoredSum || 0,
+        goal: record?.totalHectaresRestoredGoal || 0,
+        percentage:
+          record?.totalHectaresRestoredSum && record?.totalHectaresRestoredGoal
+            ? Math.round((record.totalHectaresRestoredSum / record.totalHectaresRestoredGoal) * 100)
+            : 0
+      },
+      jobs: {
+        fullTime: employmentData.fullTimeJobs.total,
+        partTime: employmentData.partTimeJobs.total
+      }
+    },
+    metrics: {
+      sites: sites.length,
+      survivalRate: 151515151,
+      beneficiaries: beneficiaryData.beneficiaries,
+      smallholderFarmers: beneficiaryData.farmers
+    },
+    employment: {
+      fullTimeJobs: employmentData.fullTimeJobs.total,
+      partTimeJobs: employmentData.partTimeJobs.total,
+      volunteers: employmentData.volunteers.total,
+      demographics: {
+        fullTime: employmentData.fullTimeJobs,
+        partTime: employmentData.partTimeJobs,
+        volunteers: employmentData.volunteers
+      }
+    },
+    sites: sites.map(site => ({
+      name: site.name,
+      hectareGoal: site.hectaresToRestoreGoal,
+      hectaresUnderRestoration: site.totalHectaresRestoredSum || 0,
+      totalReportedDisturbances: site.totalReportedDisturbances || 0,
+      climaticDisturbances: site.climaticDisturbances || 0,
+      manmadeDisturbances: site.manmadeDisturbances || 0
+    }))
+  };
+
+  return {
+    sites,
+    plants,
+    employmentData,
+    beneficiaryData,
+    reportData,
+    isLoading,
+    error
+  };
+};

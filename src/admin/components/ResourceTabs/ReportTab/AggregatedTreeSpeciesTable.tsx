@@ -5,15 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTableData } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-interface SiteInfo {
-  id: string;
-  uuid: string;
-  name: string;
-  treesPlantedCount: number;
-  frameworkKey?: string;
-  status?: string;
-  updateRequestStatus?: string;
-}
+import { Site } from "./types";
 interface TreeSpecies {
   name: string;
   speciesTypes: string[];
@@ -31,7 +23,7 @@ interface TreeSpeciesTableRowData {
 }
 
 const SingleSiteDataComponent: FC<{
-  site: SiteInfo;
+  site: Site;
   onDataLoaded: (data: TreeSpeciesTableRowData[] | undefined, siteUuid: string) => void;
 }> = ({ site, onDataLoaded }) => {
   const siteData = useTableData({
@@ -75,7 +67,7 @@ const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) =
 
 // Component for a single table with up to 3 sites
 const TreeSpeciesTableGroup: FC<{
-  sites: SiteInfo[];
+  sites: Site[];
   aggregatedSpecies: TreeSpecies[];
   siteTotals: Record<string, number>;
   grandTotal: number;
@@ -135,7 +127,7 @@ const TreeSpeciesTableGroup: FC<{
 };
 
 const AggregatedTreeSpeciesTable: FC<{
-  sites: SiteInfo[];
+  sites: Site[];
   goalPlants?: TreeSpeciesDto[];
 }> = ({ sites, goalPlants = [] }) => {
   const [siteDataMap, setSiteDataMap] = useState<Record<string, TreeSpeciesTableRowData[]>>({});
