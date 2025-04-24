@@ -469,9 +469,9 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
               </tr>
               <tr>
                 <td style={{ padding: "8px", fontWeight: "bold" }}>Total direct beneficiaries:</td>
-                {/* <td style={{ padding: "8px" }}>{reportData.metrics.beneficiaries}</td> */}
+                <td style={{ padding: "8px" }}>{beneficiaryData.beneficiaries}</td>
                 <td style={{ padding: "8px", fontWeight: "bold" }}>Total smallholder farmers engaged:</td>
-                {/* <td style={{ padding: "8px" }}>{reportData.metrics.smallholderFarmers}</td> */}
+                <td style={{ padding: "8px" }}>{beneficiaryData.farmers}</td>
               </tr>
             </tbody>
           </table>
