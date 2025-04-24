@@ -719,12 +719,17 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
             </tr>
           </thead>
           <tbody>
-            {reportData.sites.map((site, index) => (
+            {sites.map((site, index) => (
               <tr key={index}>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>{site.name}</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>{site.hectareGoal}</td>
                 <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {site.hectaresUnderRestoration}
+                  {site.hectaresToRestoreGoal.toLocaleString()}
+                </td>
+                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
+                  {site.totalHectaresRestoredSum?.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
                   {site.totalReportedDisturbances}
