@@ -1,8 +1,9 @@
-import { Typography } from "@mui/material";
 import { FC } from "react";
 import { useShowContext } from "react-admin";
 
-import { tableStyles } from "../styles/printStyles";
+import { GridsContentReport } from "../GridsReportContent";
+import { GridsTitleReport } from "../GridsReportContent";
+import HeaderSecReportGemeration from "../HeaderSecReportGemeration";
 import { BeneficiaryData, ReportData } from "../types";
 
 interface GeneralInformationProps {
@@ -15,41 +16,22 @@ const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData, repo
 
   return (
     <div className="section-container">
-      <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
-        Background Information for site visit
-      </Typography>
-
-      <div className="section-container">
-        <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-          General
-        </Typography>
-
-        <table style={{ ...tableStyles.table, borderCollapse: "collapse" as const }}>
-          <tbody>
-            <tr>
-              <td style={{ ...tableStyles.boldCell, width: "25%", textAlign: "left" as const }}>Organization Name:</td>
-              <td style={tableStyles.cell}>{record.organisationName}</td>
-              <td style={{ ...tableStyles.boldCell, width: "25%", textAlign: "left" as const }}>Project name:</td>
-              <td style={tableStyles.cell}>{record.name}</td>
-            </tr>
-            <tr>
-              <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Number of sites:</td>
-              <td style={tableStyles.cell}>{record.totalSites}</td>
-              <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Most recent survival rate:</td>
-              <td style={tableStyles.cell}>
-                {reportData?.metrics?.survivalRate ? `${reportData?.metrics?.survivalRate}%` : "-"}
-              </td>
-            </tr>
-            <tr>
-              <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Total direct beneficiaries:</td>
-              <td style={tableStyles.cell}>{beneficiaryData.beneficiaries}</td>
-              <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>
-                Total smallholder farmers engaged:
-              </td>
-              <td style={tableStyles.cell}>{beneficiaryData.farmers}</td>
-            </tr>
-          </tbody>
-        </table>
+      <HeaderSecReportGemeration title="General" />
+      <div className="grid grid-cols-2 divide-y-2 divide-black/10 border-b-2 border-black/10">
+        <GridsTitleReport title="Organization Name" />
+        <GridsContentReport content={record.organisationName} />
+        <GridsTitleReport title="Project Name" />
+        <GridsContentReport content={record.name} />
+        <GridsTitleReport title="Number of sites" />
+        <GridsContentReport content={record.totalSites} />
+        <GridsTitleReport title="Most recent survival rate" />
+        <GridsContentReport
+          content={reportData?.metrics?.survivalRate ? `${reportData?.metrics?.survivalRate}%` : "-"}
+        />
+        <GridsTitleReport title="Total direct beneficiaries" />
+        <GridsContentReport content={beneficiaryData.beneficiaries} />
+        <GridsTitleReport title="Total smallholder farmers engaged" />
+        <GridsContentReport content={beneficiaryData.farmers} />
       </div>
     </div>
   );

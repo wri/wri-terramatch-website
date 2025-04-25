@@ -229,10 +229,6 @@ const AggregatedTreeSpeciesTable: FC<{
   return (
     <>
       <Card sx={{ p: 2, mt: 3 }}>
-        <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
-          Tree Species Planted Across All Sites
-        </Typography>
-
         {isLoading && (
           <div style={{ marginBottom: 16 }}>
             <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />

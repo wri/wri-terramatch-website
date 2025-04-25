@@ -2,7 +2,7 @@ import Text from "@/components/elements/Text/Text";
 
 const ResportTabHeader = () => {
   return (
-    <div className="flex items-center justify-between border-b-2 border-black pb-2">
+    <div id="pdf-header" className="print-header flex items-center justify-between border-b-2 border-black pb-2">
       <div>
         <Text variant="text-24" className="leading-[normal]">
           Report Generation

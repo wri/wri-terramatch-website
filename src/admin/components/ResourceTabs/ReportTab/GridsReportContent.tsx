@@ -10,7 +10,7 @@ const GridsTitleReport = ({ title, className }: { title: string; className?: str
   );
 };
 
-const GridsContentReport = ({ content }: { content: string | number }) => {
+const GridsContentReport = ({ content }: { content: string | number | undefined }) => {
   return (
     <Text variant="text-12-light" className="px-2.5 py-2 leading-[normal] text-black">
       {content}
@@ -21,7 +21,8 @@ const GridsContentReport = ({ content }: { content: string | number }) => {
 const GrdTitleEmployment = () => {
   return (
     <>
-      <GridsTitleReport title="Total" className="col-span-3" />
+      <GridsTitleReport title="" className="col-span-3" />
+      <GridsTitleReport title="Total" />
       <GridsTitleReport title="Male" />
       <GridsTitleReport title="Female" />
       <GridsTitleReport title="Youth" />

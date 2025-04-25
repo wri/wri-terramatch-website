@@ -22,7 +22,7 @@ export const printStyles = `
     #printable-report-content {
       width: 100% !important;
       margin: 0 !important;
-      padding: 10px !important;
+      padding: 50px 0px 0px 0px !important;
       position: static !important;
       overflow: visible !important;
       display: block !important;
@@ -59,7 +59,6 @@ export const printStyles = `
     .section-container {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
-      margin-bottom: 20px !important;
       display: block !important;
     }
     
@@ -79,7 +78,7 @@ export const printStyles = `
     
     @page {
       size: A4 portrait;
-      margin: 1cm;
+      margin: 0cm;
     }
     
     .RaLayout-content, .RaLayout-contentWithSidebar {
@@ -98,6 +97,28 @@ export const printStyles = `
     .RaTabbedShowLayout-content {
       display: block !important;
       visibility: visible !important;
+    }
+
+    .print-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: white;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 20px 20px;
+      border-bottom: 1px solid #ccc;
+      z-index: 9999;
+    }
+    .MuiAppBar-root {
+      display: none !important;
+    }
+
+    .MuiBox-root {
+      display: none !important;
     }
   }
 `;

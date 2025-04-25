@@ -17,7 +17,12 @@ const ReportTab: FC<ReportTabProps> = ({ label, type, ...rest }) => {
 
   return (
     <When condition={!isLoading && !ctx.isLoading}>
-      <TabbedShowLayout.Tab style={{ flexDirection: "row", minHeight: "unset" }} label={label ?? "Reports"} {...rest}>
+      <TabbedShowLayout.Tab
+        style={{ flexDirection: "row", minHeight: "unset" }}
+        label={label ?? "Reports"}
+        className="p-0"
+        {...rest}
+      >
         <ReportContent sites={sites} plants={plants ?? []} beneficiaryData={beneficiaryData} reportData={reportData} />
       </TabbedShowLayout.Tab>
     </When>
