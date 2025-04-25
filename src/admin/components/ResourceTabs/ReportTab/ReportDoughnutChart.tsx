@@ -1,11 +1,13 @@
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
+import Text from "@/components/elements/Text/Text";
+
 interface ReportDoughnutChartProps {
   label: string;
   currentValue: number;
   goalValue: number;
-  description: string;
+  description: React.ReactNode;
   color?: string;
   hidePercentage?: boolean;
   backgroundColor?: string;
@@ -32,7 +34,9 @@ const ReportDoughnutChart: React.FC<ReportDoughnutChartProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      <strong className="mt-2 text-center">{label}</strong>
+      <Text variant="text-12" className="text-center uppercase leading-[normal] text-neutral-650">
+        {label}
+      </Text>
       <div className="relative h-32 w-32">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -56,12 +60,19 @@ const ReportDoughnutChart: React.FC<ReportDoughnutChartProps> = ({
 
         {!hidePercentage && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-gray-800 text-sm">{currentValuePercentage.toFixed(0)}%</span>
+            <div className="flex flex-col items-center">
+              <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
+                {currentValuePercentage.toFixed(0)}%
+              </Text>
+              <Text variant="text-10-light" className="text-center leading-[normal] text-darkCustom">
+                complete
+              </Text>
+            </div>
           </div>
         )}
       </div>
 
-      <small className="mt-1 text-center">{description}</small>
+      <div className="mt-0.5 text-center">{description}</div>
     </div>
   );
 };

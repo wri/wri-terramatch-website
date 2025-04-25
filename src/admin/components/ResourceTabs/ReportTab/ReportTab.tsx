@@ -1,14 +1,17 @@
-import { Card, Grid, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useDataProvider, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
+import Text from "@/components/elements/Text/Text";
 import { usePlants } from "@/connections/EntityAssocation";
 
 import AggregatedTreeSpeciesTable from "./AggregatedTreeSpeciesTable";
+import { GrdTitleEmployment, GrdTitleSites, GridsContentReport, GridsTitleReport } from "./GridsReportContent";
+import HeaderSecReportGemeration from "./HeaderSecReportGemeration";
 import ReportDoughnutChart from "./ReportDoughnutChart";
 import ReportPieChart from "./ReportPieChart";
+import ResportTabHeader from "./ResportTabHeader";
 
 // Print-specific styles - Complete redesign for reliable pagination
 const printStyles = `
@@ -442,142 +445,103 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
 
   const ReportContent = () => (
     <div id="printable-report-content">
-      <div className="section-container">
-        <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
-          Background Information for site visit
-        </Typography>
+      <div className="p-4">
+        <ResportTabHeader />
+        <div className="grid grid-cols-2 gap-y-6 gap-x-2 py-6">
+          <div>
+            <HeaderSecReportGemeration title="General" />
+            <div className="grid grid-cols-2 divide-y-2 divide-black/10 border-b-2 border-black/10">
+              <GridsTitleReport title="Organization Name" />
+              <GridsContentReport content={record.organisationName} />
+              <GridsTitleReport title="Project Name" />
+              <GridsContentReport content={record.name} />
+              <GridsTitleReport title="Number of sites" />
+              <GridsContentReport content={record.totalSites} />
+              <GridsTitleReport title="Most recent survival rate" />
+              <GridsContentReport content={80} />
+              <GridsTitleReport title="Total direct beneficiaries" />
+              <GridsContentReport content={beneficiaryData.beneficiaries} />
+              <GridsTitleReport title="Total smallholder farmers engaged" />
+              <GridsContentReport content={beneficiaryData.farmers} />
+            </div>
+          </div>
 
-        {/* General Information Section */}
-        <div className="section-container">
-          <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-            General
-          </Typography>
-
-          <table style={{ width: "100%", marginBottom: "20px", borderCollapse: "collapse" }}>
-            <tbody>
-              <tr>
-                <td style={{ padding: "8px", width: "25%", fontWeight: "bold" }}>Organization Name:</td>
-                <td style={{ padding: "8px" }}>{record.organisationName}</td>
-                <td style={{ padding: "8px", width: "25%", fontWeight: "bold" }}>Project name:</td>
-                <td style={{ padding: "8px" }}>{record.name}</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "8px", fontWeight: "bold" }}>Number of sites:</td>
-                <td style={{ padding: "8px" }}>{record.totalSites}</td>
-                <td style={{ padding: "8px", fontWeight: "bold" }}>Most recent survival rate:</td>
-                <td style={{ padding: "8px" }}>{80}%</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "8px", fontWeight: "bold" }}>Total direct beneficiaries:</td>
-                {/* <td style={{ padding: "8px" }}>{reportData.metrics.beneficiaries}</td> */}
-                <td style={{ padding: "8px", fontWeight: "bold" }}>Total smallholder farmers engaged:</td>
-                {/* <td style={{ padding: "8px" }}>{reportData.metrics.smallholderFarmers}</td> */}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Project and Goals Section - UPDATED with ReportDoughnutChart */}
-        <div className="section-container">
-          <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-            Project and Goals
-          </Typography>
-
-          {/* Using Grid for responsive layout, with fallback to table display for printing */}
-          <Grid container spacing={3} className="metrics-container">
-            <Grid item xs={12} md={4}>
-              <Card sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div className="h-full">
+            <HeaderSecReportGemeration title="Project and Goals" />
+            <div className="grid h-[calc(100%-2rem)] grid-cols-3 border-b-2 border-black/10">
+              <div className="flex h-full items-center justify-center">
                 <ReportDoughnutChart
                   label="Trees Planted"
                   currentValue={record.treesPlantedCount}
                   goalValue={record.treesGrownGoal}
-                  description={`${record.treesPlantedCount.toLocaleString()} of ${record.treesGrownGoal.toLocaleString()}`}
-                  color="#2196F3"
+                  description={
+                    <div>
+                      <Text variant="text-12-bold" as="span" className="text-center leading-[normal] text-darkCustom">
+                        {record.treesPlantedCount.toLocaleString()}
+                      </Text>
+                      &nbsp;
+                      <Text variant="text-10-light" as="span" className="text-center leading-[normal] text-darkCustom">
+                        of {record.treesGrownGoal.toLocaleString()}
+                      </Text>
+                    </div>
+                  }
+                  color="#27A9E0"
                 />
-              </Card>
-            </Grid>
+              </div>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div className="flex h-full items-center justify-center">
                 <ReportDoughnutChart
                   label="Hectares Restored"
                   currentValue={record.totalHectaresRestoredSum}
                   goalValue={record.totalHectaresRestoredGoal}
-                  description={`${record.totalHectaresRestoredSum.toLocaleString(undefined, {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1
-                  })} of ${record.totalHectaresRestoredGoal.toLocaleString(undefined, {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1
-                  })} ha`}
-                  color="#2196F3"
+                  description={
+                    <div>
+                      <Text variant="text-12-bold" as="span" className="text-center leading-[normal] text-darkCustom">
+                        {record.totalHectaresRestoredSum.toLocaleString(undefined, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1
+                        })}
+                      </Text>
+                      &nbsp;
+                      <Text variant="text-10-light" as="span" className="text-center leading-[normal] text-darkCustom">
+                        of{" "}
+                        {record.totalHectaresRestoredGoal.toLocaleString(undefined, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1
+                        })}{" "}
+                        ha
+                      </Text>
+                    </div>
+                  }
+                  color="#27A9E0"
                 />
-              </Card>
-            </Grid>
+              </div>
 
-            <Grid item xs={12} md={4}>
-              <Card sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div className="flex h-full items-center justify-center">
                 <ReportDoughnutChart
                   label="Jobs Created"
                   currentValue={record.totalJobsCreated}
                   goalValue={record.totalJobsCreated}
-                  description={`FT: ${reportData.project.jobs.fullTime} / PT: ${reportData.project.jobs.partTime}`}
-                  color="#2196F3"
+                  description={
+                    <div>
+                      <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
+                        {reportData.project.jobs.fullTime} Full-time
+                      </Text>
+                      <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
+                        {reportData.project.jobs.partTime} Part-time
+                      </Text>
+                    </div>
+                  }
+                  color="#27A9E0"
                   hidePercentage
                 />
-              </Card>
-            </Grid>
-          </Grid>
+              </div>
+            </div>
+          </div>
 
-          {/* Hidden table for print layout only - this ensures the data is displayed properly when printing */}
-          <table
-            style={{ width: "100%", marginBottom: "20px", borderCollapse: "collapse", display: "none" }}
-            className="print-only-table"
-          >
-            <thead>
-              <tr>
-                <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Trees Planted</th>
-                <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Hectares Restored</th>
-                <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Jobs Created</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-                  <div style={{ fontSize: "24px", fontWeight: "bold" }}>{reportData.project.trees.percentage}%</div>
-                  <div>
-                    {reportData.project.trees.planted} / {reportData.project.trees.goal}
-                  </div>
-                </td>
-                <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-                  <div style={{ fontSize: "24px", fontWeight: "bold" }}>{reportData.project.hectares.percentage}%</div>
-                  <div>
-                    {reportData.project.hectares.restored} / {reportData.project.hectares.goal}
-                  </div>
-                </td>
-                <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-                  <div style={{ fontSize: "24px", fontWeight: "bold" }}>
-                    {reportData.project.jobs.fullTime + reportData.project.jobs.partTime}
-                  </div>
-                  <div>
-                    FT: {reportData.project.jobs.fullTime} / PT: {reportData.project.jobs.partTime}
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Employment Opportunities Section - explicit page break */}
-      <div className="print-page-break section-container">
-        <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-          Employment Opportunities Created
-        </Typography>
-
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Card sx={{ p: 2, height: "100%" }}>
+          <div className="h-full grid-cols-3 border-b-2 border-black/10">
+            <HeaderSecReportGemeration title="Employment Opportunities Created" />
+            <div className="flex h-full items-center justify-center">
               <ReportPieChart
                 data={{
                   fullTime: reportData.employment.fullTimeJobs,
@@ -585,166 +549,62 @@ const ReportTab: FC<IProps> = ({ label, type, ...rest }) => {
                   volunteers: reportData.employment.volunteers
                 }}
               />
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6}></Grid>
-        </Grid>
+            </div>
+          </div>
+          {/* Demographics Section */}
+          <div>
+            <HeaderSecReportGemeration title="Employment Opportunities Created by Demographics" />
+            <div className="grid grid-cols-8 divide-y-2 divide-black/10 border-b-2 border-black/10">
+              <GrdTitleEmployment />
 
-        {/* Demographics Section */}
-        <div style={{ marginTop: "30px" }}>
-          <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-            Employment Opportunities Created by Demographics
-          </Typography>
+              <GridsTitleReport title="Full Time Jobs created" className="col-span-3" />
+              <GridsContentReport content={reportData.employment.demographics.fullTime.total} />
+              <GridsContentReport content={reportData.employment.demographics.fullTime.male} />
+              <GridsContentReport content={reportData.employment.demographics.fullTime.female} />
+              <GridsContentReport content={reportData.employment.demographics.fullTime.youth} />
+              <GridsContentReport content={reportData.employment.demographics.fullTime.nonYouth} />
 
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left", backgroundColor: "#f2f2f2" }}>
-                  Category
-                </th>
-                <th
-                  style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}
-                >
-                  Total
-                </th>
-                <th
-                  style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}
-                >
-                  Male
-                </th>
-                <th
-                  style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}
-                >
-                  Female
-                </th>
-                <th
-                  style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}
-                >
-                  Youth
-                </th>
-                <th
-                  style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}
-                >
-                  Non-Youth
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>Full-time</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.fullTime.total}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.fullTime.male}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.fullTime.female}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.fullTime.youth}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.fullTime.nonYouth}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>Part-time</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.partTime.total}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.partTime.male}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.partTime.female}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.partTime.youth}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.partTime.nonYouth}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>Volunteers</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.volunteers.total}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.volunteers.male}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.volunteers.female}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.volunteers.youth}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {reportData.employment.demographics.volunteers.nonYouth}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              <GridsTitleReport title="Part Time Jobs created" className="col-span-3" />
+              <GridsContentReport content={reportData.employment.demographics.partTime.total} />
+              <GridsContentReport content={reportData.employment.demographics.partTime.male} />
+              <GridsContentReport content={reportData.employment.demographics.partTime.female} />
+              <GridsContentReport content={reportData.employment.demographics.partTime.youth} />
+              <GridsContentReport content={reportData.employment.demographics.partTime.nonYouth} />
+
+              <GridsTitleReport title="Volunteers created" className="col-span-3" />
+              <GridsContentReport content={reportData.employment.demographics.volunteers.total} />
+              <GridsContentReport content={reportData.employment.demographics.volunteers.male} />
+              <GridsContentReport content={reportData.employment.demographics.volunteers.female} />
+              <GridsContentReport content={reportData.employment.demographics.volunteers.youth} />
+              <GridsContentReport content={reportData.employment.demographics.volunteers.nonYouth} />
+            </div>
+          </div>
+
+          {/* Sites Section - explicit page break */}
+
+          <div className="col-span-2 h-full">
+            <HeaderSecReportGemeration title="Sites" />
+            <div className="grid grid-cols-6 divide-y-2 divide-black/10 border-b-2 border-black/10">
+              <GrdTitleSites />
+
+              {reportData.sites.map((site, index) => (
+                <Fragment key={index}>
+                  <GridsContentReport content={site.name} />
+                  <GridsContentReport content={site.hectareGoal} />
+                  <GridsContentReport content={site.hectaresUnderRestoration} />
+                  <GridsContentReport content={site.totalReportedDisturbances} />
+                  <GridsContentReport content={site.climaticDisturbances} />
+                  <GridsContentReport content={site.manmadeDisturbances} />
+                </Fragment>
+              ))}
+            </div>
+          </div>
+
+          <div className="col-span-2">
+            <HeaderSecReportGemeration title="Tree Species Analysis" />
+            <AggregatedTreeSpeciesTable sites={sites} goalPlants={plants} />
+          </div>
         </div>
-      </div>
-
-      {/* Sites Section - explicit page break */}
-      <div className="print-page-break section-container">
-        <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-          Sites
-        </Typography>
-
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "left", backgroundColor: "#f2f2f2" }}>
-                Site Name
-              </th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}>
-                Hectare Goal
-              </th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}>
-                Hectares Under Restoration
-              </th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}>
-                Total Disturbances
-              </th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}>
-                Climatic
-              </th>
-              <th style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right", backgroundColor: "#f2f2f2" }}>
-                Man-made
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {reportData.sites.map((site, index) => (
-              <tr key={index}>
-                <td style={{ border: "1px solid #ddd", padding: "8px" }}>{site.name}</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>{site.hectareGoal}</td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {site.hectaresUnderRestoration}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {site.totalReportedDisturbances}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {site.climaticDisturbances}
-                </td>
-                <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                  {site.manmadeDisturbances}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="print-page-break section-container">
-        <Typography variant="h6" component="h4" sx={{ marginBottom: 2 }}>
-          Tree Species Analysis
-        </Typography>
-        <AggregatedTreeSpeciesTable sites={sites} goalPlants={plants} />
       </div>
     </div>
   );
