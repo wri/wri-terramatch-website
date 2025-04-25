@@ -20,6 +20,7 @@ export const useReportData = () => {
   const [sites, setSites] = useState<Site[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [latestSurvivalRate, setLatestSurvivalRate] = useState<number>(0);
 
   const [, { associations: plants }] = usePlants({
     entity: "projects",
@@ -65,6 +66,12 @@ export const useReportData = () => {
         });
 
         const [reportsResult, sitesResult] = await Promise.all([reportsPromise, sitesPromise]);
+
+        const latestReportWithSurvivalRate = reportsResult.data
+          .filter(report => report.pctSurvivalToDate !== null)
+          .sort((a, b) => new Date(b.dueAt).getTime() - new Date(a.dueAt).getTime())[0];
+
+        setLatestSurvivalRate(latestReportWithSurvivalRate?.pctSurvivalToDate || 0);
 
         if (reportsResult.included && Array.isArray(reportsResult.included)) {
           const demographicsData = reportsResult.included.filter(item => item.type === "demographics");
@@ -119,7 +126,7 @@ export const useReportData = () => {
     },
     metrics: {
       sites: sites.length,
-      survivalRate: 151515151,
+      survivalRate: latestSurvivalRate,
       beneficiaries: beneficiaryData.beneficiaries,
       smallholderFarmers: beneficiaryData.farmers
     },

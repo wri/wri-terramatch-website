@@ -3,13 +3,14 @@ import { FC } from "react";
 import { useShowContext } from "react-admin";
 
 import { tableStyles } from "../styles/printStyles";
-import { BeneficiaryData } from "../types";
+import { BeneficiaryData, ReportData } from "../types";
 
 interface GeneralInformationProps {
   beneficiaryData: BeneficiaryData;
+  reportData: ReportData;
 }
 
-const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData }) => {
+const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData, reportData }) => {
   const { record } = useShowContext();
 
   return (
@@ -35,7 +36,9 @@ const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData }) =>
               <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Number of sites:</td>
               <td style={tableStyles.cell}>{record.totalSites}</td>
               <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Most recent survival rate:</td>
-              <td style={tableStyles.cell}>{80}%</td>
+              <td style={tableStyles.cell}>
+                {reportData?.metrics?.survivalRate ? `${reportData?.metrics?.survivalRate}%` : "-"}
+              </td>
             </tr>
             <tr>
               <td style={{ ...tableStyles.boldCell, textAlign: "left" as const }}>Total direct beneficiaries:</td>

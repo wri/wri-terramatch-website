@@ -20,7 +20,7 @@ interface ReportContentProps {
 const ReportContent: FC<ReportContentProps> = ({ beneficiaryData, employmentData, reportData, sites, plants }) => {
   return (
     <div id="printable-report-content">
-      <GeneralInformation beneficiaryData={beneficiaryData} />
+      <GeneralInformation beneficiaryData={beneficiaryData} reportData={reportData} />
 
       <ProjectGoals reportData={reportData} />
 
