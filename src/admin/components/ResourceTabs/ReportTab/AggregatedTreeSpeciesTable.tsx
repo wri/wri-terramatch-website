@@ -5,15 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTableData } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-interface SiteInfo {
-  id: string;
-  uuid: string;
-  name: string;
-  treesPlantedCount: number;
-  frameworkKey?: string;
-  status?: string;
-  updateRequestStatus?: string;
-}
+import { Site } from "./types";
 interface TreeSpecies {
   name: string;
   speciesTypes: string[];
@@ -31,7 +23,7 @@ interface TreeSpeciesTableRowData {
 }
 
 const SingleSiteDataComponent: FC<{
-  site: SiteInfo;
+  site: Site;
   onDataLoaded: (data: TreeSpeciesTableRowData[] | undefined, siteUuid: string) => void;
 }> = ({ site, onDataLoaded }) => {
   const siteData = useTableData({
@@ -59,7 +51,6 @@ const SingleSiteDataComponent: FC<{
   return null;
 };
 
-// Separate progress bar component for better readability
 const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) => {
   const progressValue = Math.min(Math.round((current / goal) * 100), 100);
 
@@ -73,9 +64,8 @@ const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) =
   );
 };
 
-// Component for a single table with up to 3 sites
 const TreeSpeciesTableGroup: FC<{
-  sites: SiteInfo[];
+  sites: Site[];
   aggregatedSpecies: TreeSpecies[];
   siteTotals: Record<string, number>;
   grandTotal: number;
@@ -135,13 +125,12 @@ const TreeSpeciesTableGroup: FC<{
 };
 
 const AggregatedTreeSpeciesTable: FC<{
-  sites: SiteInfo[];
+  sites: Site[];
   goalPlants?: TreeSpeciesDto[];
 }> = ({ sites, goalPlants = [] }) => {
   const [siteDataMap, setSiteDataMap] = useState<Record<string, TreeSpeciesTableRowData[]>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Calculate site groups - sites divided into chunks of 3
   const siteGroups = useMemo(() => chunk(sites, 3), [sites]);
 
   const handleSiteDataLoaded = useCallback(
@@ -162,7 +151,6 @@ const AggregatedTreeSpeciesTable: FC<{
     [sites.length]
   );
 
-  // Create a map of goal counts by species name
   const goalCountMap = useMemo(() => {
     const map: Record<string, number> = {};
     goalPlants?.forEach(plant => {
@@ -258,7 +246,6 @@ const AggregatedTreeSpeciesTable: FC<{
           <Typography>No tree species data available</Typography>
         ) : (
           <>
-            {/* Render each site group in a separate table for printing */}
             {siteGroups.map((groupSites, index) => (
               <div key={index} className={index > 0 ? "print-page-break" : ""}>
                 {index > 0 && (
