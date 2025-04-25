@@ -10,7 +10,7 @@ import { ReportTabProps } from "./types";
 const ReportTab: FC<ReportTabProps> = ({ label, type, ...rest }) => {
   const ctx = useShowContext();
 
-  const { sites, plants, employmentData, beneficiaryData, reportData, isLoading } = useReportData();
+  const { sites, plants, beneficiaryData, reportData, isLoading } = useReportData();
   const { addDebugPrintButton } = usePrintHandler();
 
   addDebugPrintButton();
@@ -18,13 +18,7 @@ const ReportTab: FC<ReportTabProps> = ({ label, type, ...rest }) => {
   return (
     <When condition={!isLoading && !ctx.isLoading}>
       <TabbedShowLayout.Tab style={{ flexDirection: "row", minHeight: "unset" }} label={label ?? "Reports"} {...rest}>
-        <ReportContent
-          sites={sites}
-          plants={plants ?? []}
-          employmentData={employmentData}
-          beneficiaryData={beneficiaryData}
-          reportData={reportData}
-        />
+        <ReportContent sites={sites} plants={plants ?? []} beneficiaryData={beneficiaryData} reportData={reportData} />
       </TabbedShowLayout.Tab>
     </When>
   );
