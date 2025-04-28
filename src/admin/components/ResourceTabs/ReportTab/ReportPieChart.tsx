@@ -40,8 +40,8 @@ const ReportPieChart: React.FC<ReportPieChartProps> = ({ data }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "200px", position: "relative" }}>
-      <ResponsiveContainer width="100%" height={200}>
+    <div style={{ width: "100%", height: "125px", position: "relative" }}>
+      <ResponsiveContainer width="100%" height={125}>
         <PieChart>
           <Pie
             data={chartData}

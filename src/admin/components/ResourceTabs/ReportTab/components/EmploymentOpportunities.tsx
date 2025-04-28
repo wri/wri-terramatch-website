@@ -1,4 +1,7 @@
+import classNames from "classnames";
 import { FC } from "react";
+
+import Text from "@/components/elements/Text/Text";
 
 import HeaderSecReportGemeration from "../HeaderSecReportGemeration";
 import ReportPieChart from "../ReportPieChart";
@@ -19,7 +22,7 @@ const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData 
   ];
 
   return (
-    <div className="section-container h-full grid-cols-3 border-b-2 border-black/10">
+    <div className="section-container h-fit grid-cols-3 border-b border-black/10">
       <HeaderSecReportGemeration title="Employment Opportunities Created" />
 
       <div className="grid grid-cols-2 gap-y-6 gap-x-2 py-6">
@@ -31,22 +34,32 @@ const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData 
           }}
         />
         <div className="flex flex-col justify-center">
-          <div className="flex flex-col">
+          <div className="flex w-fit flex-col pr-4">
             {chartData.map((entry, index) => (
-              <div key={`legend-${index}`} className="flex items-center text-sm">
-                <div
-                  className="mr-3 h-4 w-4 rounded"
-                  style={{ backgroundColor: entry.color, WebkitPrintColorAdjust: "exact" }}
-                />
-                <span className="text-10-light px-2 py-2 leading-[normal] text-black">{entry.name}:</span>
-                <span className="text-10-light px-2 py-2 leading-[normal] text-black">{entry.value}</span>
+              <div
+                key={`legend-${index}`}
+                className={classNames("flex items-center justify-between border-b border-black/20 ", {
+                  "!border-b-2 !border-black": index === chartData.length - 1
+                })}
+              >
+                <div className="flex items-center gap-0.5">
+                  <div
+                    className="h-4 w-4 rounded"
+                    style={{ backgroundColor: entry.color, WebkitPrintColorAdjust: "exact" }}
+                  />
+                  <Text variant={"text-10-light"} className="px-2 py-2 leading-[normal] text-black">
+                    {entry.name}
+                  </Text>
+                </div>
+                <Text variant={"text-10-light"} className="px-2 py-2 leading-[normal] text-black">
+                  {entry.value}
+                </Text>
               </div>
             ))}
-            <div className="mt-2 border-t border-black/20 pt-3">
-              <div className="flex items-center text-sm">
-                <span className="text-10-light px-2 py-2 leading-[normal] text-black">Total:</span>
-                <span className="text-10-light px-2 py-2 leading-[normal] text-black">{total}</span>
-              </div>
+            <div className="flex items-center justify-end text-end">
+              <Text variant={"text-10-bold"} className="px-2 py-2 text-end leading-[normal] text-black">
+                {total}
+              </Text>
             </div>
           </div>
         </div>
