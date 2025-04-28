@@ -73,12 +73,17 @@ const TreeSpeciesTableGroup: FC<{
   siteTotals: Record<string, number>;
   grandTotal: number;
   siteDataMap: Record<string, TreeSpeciesTableRowData[]>;
-}> = ({ sites, aggregatedSpecies, siteTotals, grandTotal, siteDataMap }) => {
+  groupIndex: number;
+  totalSites: number;
+}> = ({ sites, aggregatedSpecies, siteTotals, grandTotal, siteDataMap, groupIndex, totalSites }) => {
+  const startIndex = groupIndex * 3 + 1;
+  const endIndex = Math.min(startIndex + 2, totalSites);
+
   return (
     <>
       <div className=" space-table print-page-break" />
       <Text variant="text-12" className="mb-2 text-black">
-        Showing Sites 1 - {Object.keys(siteDataMap).length} (of {sites.length})
+        Showing Sites {startIndex} - {endIndex} (of {totalSites})
       </Text>
       <HeaderSecReportGemeration title="Tree Species" />
       <div
@@ -236,6 +241,8 @@ const AggregatedTreeSpeciesTable: FC<{
                 siteTotals={siteTotals}
                 grandTotal={grandTotal}
                 siteDataMap={siteDataMap}
+                groupIndex={index}
+                totalSites={sites.length}
               />
             </div>
           ))}
