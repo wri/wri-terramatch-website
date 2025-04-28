@@ -21,8 +21,8 @@ const SitesOverview: FC<SitesOverviewProps> = ({ sites }) => {
             <GridsContentReport content={site?.hectaresToRestoreGoal?.toLocaleString()} />
             <GridsContentReport
               content={site?.totalHectaresRestoredSum?.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
               })}
             />
             <GridsContentReport content={site?.totalReportedDisturbances} />

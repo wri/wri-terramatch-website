@@ -16,25 +16,25 @@ const EmploymentDemographics: FC<EmploymentDemographicsProps> = ({ reportData })
         <GrdTitleEmployment />
 
         <GridsTitleReport title="Full Time Jobs created" className="col-span-3" />
-        <GridsContentReport content={reportData.employment.demographics.fullTime.total} />
-        <GridsContentReport content={reportData.employment.demographics.fullTime.male} />
-        <GridsContentReport content={reportData.employment.demographics.fullTime.female} />
-        <GridsContentReport content={reportData.employment.demographics.fullTime.youth} />
-        <GridsContentReport content={reportData.employment.demographics.fullTime.nonYouth} />
+        <GridsContentReport content={reportData.employment.demographics.fullTime.total.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.fullTime.male.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.fullTime.female.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.fullTime.youth.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.fullTime.nonYouth.toLocaleString()} />
 
         <GridsTitleReport title="Part Time Jobs created" className="col-span-3" />
-        <GridsContentReport content={reportData.employment.demographics.partTime.total} />
-        <GridsContentReport content={reportData.employment.demographics.partTime.male} />
-        <GridsContentReport content={reportData.employment.demographics.partTime.female} />
-        <GridsContentReport content={reportData.employment.demographics.partTime.youth} />
-        <GridsContentReport content={reportData.employment.demographics.partTime.nonYouth} />
+        <GridsContentReport content={reportData.employment.demographics.partTime.total.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.partTime.male.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.partTime.female.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.partTime.youth.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.partTime.nonYouth.toLocaleString()} />
 
         <GridsTitleReport title="Volunteers created" className="col-span-3" />
-        <GridsContentReport content={reportData.employment.demographics.volunteers.total} />
-        <GridsContentReport content={reportData.employment.demographics.volunteers.male} />
-        <GridsContentReport content={reportData.employment.demographics.volunteers.female} />
-        <GridsContentReport content={reportData.employment.demographics.volunteers.youth} />
-        <GridsContentReport content={reportData.employment.demographics.volunteers.nonYouth} />
+        <GridsContentReport content={reportData.employment.demographics.volunteers.total.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.volunteers.male.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.volunteers.female.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.volunteers.youth.toLocaleString()} />
+        <GridsContentReport content={reportData.employment.demographics.volunteers.nonYouth.toLocaleString()} />
       </div>
     </div>
   );

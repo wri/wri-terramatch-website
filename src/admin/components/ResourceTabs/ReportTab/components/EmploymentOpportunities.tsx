@@ -52,13 +52,13 @@ const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData 
                   </Text>
                 </div>
                 <Text variant={"text-10-light"} className="px-2 py-2 leading-[normal] text-black">
-                  {entry.value}
+                  {entry.value.toLocaleString()}
                 </Text>
               </div>
             ))}
             <div className="flex items-center justify-end text-end">
               <Text variant={"text-10-bold"} className="px-2 py-2 text-end leading-[normal] text-black">
-                {total}
+                {total.toLocaleString()}
               </Text>
             </div>
           </div>

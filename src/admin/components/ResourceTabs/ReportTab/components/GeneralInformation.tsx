@@ -29,9 +29,9 @@ const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData, repo
           content={reportData?.metrics?.survivalRate ? `${reportData?.metrics?.survivalRate}%` : "-"}
         />
         <GridsTitleReport title="Total direct beneficiaries" />
-        <GridsContentReport content={beneficiaryData.beneficiaries} />
+        <GridsContentReport content={beneficiaryData.beneficiaries.toLocaleString()} />
         <GridsTitleReport title="Total smallholder farmers engaged" />
-        <GridsContentReport content={beneficiaryData.farmers} />
+        <GridsContentReport content={beneficiaryData.farmers.toLocaleString()} />
       </div>
     </div>
   );

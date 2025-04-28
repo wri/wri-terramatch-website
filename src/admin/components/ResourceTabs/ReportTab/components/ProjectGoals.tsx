@@ -47,18 +47,13 @@ const ProjectGoals: FC<ProjectGoalsProps> = ({ reportData }) => {
               <div>
                 <Text variant="text-12-bold" as="span" className="text-center leading-[normal] text-darkCustom">
                   {record.totalHectaresRestoredSum.toLocaleString(undefined, {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
                   })}
                 </Text>
                 &nbsp;
                 <Text variant="text-10-light" as="span" className="text-center leading-[normal] text-darkCustom">
-                  of{" "}
-                  {record.totalHectaresRestoredGoal.toLocaleString(undefined, {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1
-                  })}{" "}
-                  ha
+                  of {record.totalHectaresRestoredGoal.toLocaleString()} ha
                 </Text>
               </div>
             }
@@ -73,10 +68,10 @@ const ProjectGoals: FC<ProjectGoalsProps> = ({ reportData }) => {
             description={
               <div>
                 <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
-                  {reportData.project.jobs.fullTime} Full-time
+                  {reportData.project.jobs.fullTime.toLocaleString()} Full-time
                 </Text>
                 <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
-                  {reportData.project.jobs.partTime} Part-time
+                  {reportData.project.jobs.partTime.toLocaleString()} Part-time
                 </Text>
               </div>
             }
