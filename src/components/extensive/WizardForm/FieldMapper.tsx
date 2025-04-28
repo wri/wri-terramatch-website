@@ -4,12 +4,14 @@ import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
@@ -125,6 +127,30 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
     case FieldType.LeadershipsDataTable:
       return (
         <RHFLeadershipsDataTable
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error as any}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
+    case FieldType.FinancialIndicatorsDataTable:
+      return (
+        <RHFFinancialIndicatorsDataTable
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error as any}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
+    case FieldType.StrategyAreaInput:
+      return (
+        <RHFStrategyAreaDataTable
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}

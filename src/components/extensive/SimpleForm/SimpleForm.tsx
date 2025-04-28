@@ -16,7 +16,7 @@ const SimpleForm = (props: SimpleFormProps) => {
   return (
     <List<FormField, FormHTMLAttributes<HTMLFormElement>>
       as="div"
-      className="w-full space-y-8"
+      className="w-full space-y-5"
       items={props.fields}
       itemAs={Fragment}
       uniqueId="name"

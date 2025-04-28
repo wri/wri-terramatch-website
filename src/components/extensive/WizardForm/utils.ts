@@ -2,6 +2,7 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import * as yup from "yup";
 
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import { getFinancialIndicatorsColumns } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -81,6 +82,30 @@ export const getAnswer = (
         return options.find(o => o.value === value)?.title || value;
       }
     }
+    case FieldType.StrategyAreaInput: {
+      const { options } = field.fieldProps;
+      const parsedValue: { [key: string]: number }[] = JSON.parse(value);
+
+      if (Array.isArray(parsedValue)) {
+        const formatted = parsedValue
+          .filter(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            return key && percent !== null && percent !== undefined && !isNaN(percent);
+          })
+          .map(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            const title = options.find(o => o.value === key)?.title || key;
+
+            return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
+          });
+
+        return formatted;
+      }
+
+      return value;
+    }
 
     default:
       return undefined;
@@ -158,6 +183,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     }
 
     case FieldType.LeadershipsDataTable:
+    case FieldType.FinancialIndicatorsDataTable:
     case FieldType.OwnershipStakeDataTable:
     case FieldType.FundingTypeDataTable:
     case FieldType.StrataDataTable:
@@ -180,6 +206,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
       else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);
       else if (field.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns();
+      else if (field.type === FieldType.FinancialIndicatorsDataTable) headers = getFinancialIndicatorsColumns();
       else if (field.type === FieldType.SeedingsDataTable)
         headers = getSeedingTableColumns(undefined, field.fieldProps.captureCount);
 
