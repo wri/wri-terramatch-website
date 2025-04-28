@@ -1,4 +1,4 @@
-import { LinearProgress, Typography } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { chunk, orderBy } from "lodash";
 import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -60,9 +60,9 @@ const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) =
   return (
     <div className="flex items-center gap-2">
       <LinearProgress variant="determinate" value={progressValue} sx={{ height: 8, borderRadius: 1, width: "50%" }} />
-      <Typography variant="caption" color="textSecondary" sx={{ display: "block", mt: 0.5 }}>
-        {current.toLocaleString()} of {goal.toLocaleString()}
-      </Typography>
+      <Text variant="text-10-light" className="mt-0.5">
+        <span className="text-10-bold">{current.toLocaleString()}</span> of {goal.toLocaleString()}
+      </Text>
     </div>
   );
 };
