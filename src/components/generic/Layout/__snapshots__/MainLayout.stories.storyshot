@@ -275,7 +275,7 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
       </section>
     </header>
     <main
-      className="flex flex-[1_1_0] flex-col undefined"
+      className="flex flex-[1_1_0] flex-col mobile:overflow-auto undefined"
     >
       <div
         className="h-[400px] "
