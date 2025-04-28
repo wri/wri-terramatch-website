@@ -42,6 +42,7 @@ const GrdTitleSites = () => {
       <GridsTitleReport title="Total Reported Disturbances" />
       <GridsTitleReport title="Climatic Disturbances" />
       <GridsTitleReport title="Manmade Disturbances" />
+      <GridsTitleReport title="Ecological Disturbances" />
     </>
   );
 };

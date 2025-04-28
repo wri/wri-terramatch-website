@@ -55,6 +55,7 @@ export interface Site {
   totalReportedDisturbances: number;
   climaticDisturbances: number;
   manmadeDisturbances: number;
+  ecologicalDisturbances: number;
   [key: string]: any;
 }
 export interface ReportData {
@@ -101,5 +102,6 @@ export interface ReportData {
     totalReportedDisturbances: number;
     climaticDisturbances: number;
     manmadeDisturbances: number;
+    ecologicalDisturbances: number;
   }>;
 }
