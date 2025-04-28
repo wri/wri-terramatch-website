@@ -75,6 +75,7 @@ const TreeSpeciesTableGroup: FC<{
 }> = ({ sites, aggregatedSpecies, siteTotals, grandTotal }) => {
   return (
     <>
+      <HeaderSecReportGemeration title="Tree Species" />
       <div
         style={{ gridTemplateColumns: `repeat(${sites.length + 3}, 1fr)` }}
         className="grid divide-y divide-black/10 border-b border-black/10"
@@ -217,11 +218,11 @@ const AggregatedTreeSpeciesTable: FC<{
   return (
     <>
       <div className="mt-16"></div>
-      {isLoading && (
+      {
         <Text variant="text-12" className="mb-2 text-black">
           Showing Sites 1 - {Object.keys(siteDataMap).length} (of {sites.length})
         </Text>
-      )}
+      }
       <HeaderSecReportGemeration title="Tree Species" />
       {!isLoading && aggregatedSpecies.length === 0 ? (
         <Text variant="text-12" className="mb-1 text-center text-black">
