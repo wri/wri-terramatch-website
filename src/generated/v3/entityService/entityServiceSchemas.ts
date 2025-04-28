@@ -51,7 +51,10 @@ export type EntitySideload = {
     | "siteReports"
     | "demographics"
     | "seedings"
-    | "treeSpecies";
+    | "treeSpecies"
+    | "disturbances"
+    | "invasives"
+    | "stratas";
   /**
    * The page size to include.
    */
@@ -136,6 +139,8 @@ export type SiteLightDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
+  hectaresToRestoreGoal: number | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -233,6 +238,7 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  pctSurvivalToDate: number | null;
 };
 
 export type NurseryReportLightDto = {
@@ -288,6 +294,7 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type SiteReportLightDto = {
@@ -342,6 +349,7 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type ProjectFullDto = {
@@ -472,6 +480,8 @@ export type SiteFullDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
+  hectaresToRestoreGoal: number | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -481,7 +491,6 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
-  totalHectaresRestoredSum: number;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -491,7 +500,6 @@ export type SiteFullDto = {
   ppcExternalId: number | null;
   sitingStrategy: string | null;
   descriptionSitingStrategy: string | null;
-  hectaresToRestoreGoal: number | null;
   description: string | null;
   controlSite: boolean | null;
   history: string | null;
@@ -640,6 +648,7 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  pctSurvivalToDate: number | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   completion: number | null;
@@ -670,7 +679,6 @@ export type ProjectReportFullDto = {
   lessonsLearned: string | null;
   maintenanceAndMonitoringActivities: string | null;
   significantChange: string | null;
-  pctSurvivalToDate: number | null;
   survivalCalculation: string | null;
   survivalComparison: string | null;
   ftSmallholderFarmers: number | null;
@@ -707,6 +715,22 @@ export type ProjectReportFullDto = {
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   photos: MediaDto[];
+  baselineReportUpload: MediaDto[];
+  localGovernanceOrderLetterUpload: MediaDto[];
+  eventsMeetingsPhotos: MediaDto[];
+  localGovernanceProofOfPartnershipUpload: MediaDto[];
+  topThreeSuccessesUpload: MediaDto[];
+  directJobsUpload: MediaDto[];
+  convergenceJobsUpload: MediaDto[];
+  convergenceSchemesUpload: MediaDto[];
+  livelihoodActivitiesUpload: MediaDto[];
+  directLivelihoodImpactsUpload: MediaDto[];
+  certifiedDatabaseUpload: MediaDto[];
+  physicalAssetsPhotos: MediaDto[];
+  indirectCommunityPartnersUpload: MediaDto[];
+  trainingCapacityBuildingUpload: MediaDto[];
+  trainingCapacityBuildingPhotos: MediaDto[];
+  financialReportUpload: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
@@ -765,10 +789,10 @@ export type NurseryReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
@@ -839,10 +863,10 @@ export type SiteReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   title: string | null;
   sharedDriveLink: string | null;
@@ -880,6 +904,10 @@ export type SiteReportFullDto = {
   treeSpecies: MediaDto[];
   siteSubmission: MediaDto[];
   documentFiles: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  anrPhotos: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
 };
 
 export type ProjectUpdateAttributes = {
@@ -1166,6 +1194,53 @@ export type TreeSpeciesDto = {
   amount?: number;
   taxonId?: string;
   collection?: string;
+};
+
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  collection: string | null;
+  type: string | null;
+  intensity: string | null;
+  extent: string | null;
+  description: string | null;
+  oldId: number | null;
+  oldModel: string | null;
+  hidden: number | null;
+};
+
+export type InvasiveDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  type: string | null;
+  name: string | null;
+  oldId: number | null;
+  oldModel: string | null;
+  hidden: number | null;
+};
+
+export type StrataDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  hidden: number | null;
 };
 
 export type PlantingCountDto = {

@@ -3,6 +3,7 @@ import { useDataProvider, useShowContext } from "react-admin";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
 import { usePlants } from "@/connections/EntityAssocation";
+import { fetchGetV2DisturbancesENTITYUUID } from "@/generated/apiComponents";
 
 import {
   BeneficiaryData,
@@ -85,7 +86,79 @@ export const useReportData = () => {
           }
         }
 
-        setSites(sitesResult.data as Site[]);
+        const sitesData = sitesResult.data as Site[];
+
+        const sitesWithDisturbances = await Promise.all(
+          sitesData.map(async site => {
+            try {
+              const siteReportsResult = await dataProvider.getList("siteReport", {
+                filter: { status: "approved", siteUuid: site.uuid },
+                pagination: { page: 1, perPage: 100 },
+                sort: { field: "updatedAt", order: "DESC" }
+              });
+
+              let totalDisturbances = 0;
+              let climaticDisturbances = 0;
+              let manmadeDisturbances = 0;
+              let ecologicalDisturbances = 0;
+
+              if (siteReportsResult?.data && siteReportsResult.data.length > 0) {
+                await Promise.all(
+                  siteReportsResult.data.map(async siteReport => {
+                    try {
+                      const response = await fetchGetV2DisturbancesENTITYUUID({
+                        pathParams: {
+                          entity: "site-reports",
+                          uuid: siteReport.uuid
+                        }
+                      });
+
+                      if (response?.data && Array.isArray(response.data)) {
+                        response.data.forEach((disturbance: any) => {
+                          if (disturbance.type && typeof disturbance.type === "string") {
+                            const disturbanceType = disturbance.type.toLowerCase();
+                            if (disturbanceType === "climatic") {
+                              climaticDisturbances++;
+                            } else if (disturbanceType === "manmade") {
+                              manmadeDisturbances++;
+                            } else if (disturbanceType === "ecological") {
+                              ecologicalDisturbances++;
+                            }
+                          }
+                        });
+                        totalDisturbances = climaticDisturbances + manmadeDisturbances + ecologicalDisturbances;
+                      }
+                    } catch (disturbanceError) {
+                      console.error(
+                        `Error fetching disturbances for site report ${siteReport.uuid}:`,
+                        disturbanceError
+                      );
+                    }
+                  })
+                );
+              }
+
+              return {
+                ...site,
+                totalReportedDisturbances: totalDisturbances,
+                climaticDisturbances: climaticDisturbances,
+                manmadeDisturbances: manmadeDisturbances,
+                ecologicalDisturbances: ecologicalDisturbances
+              };
+            } catch (siteReportError) {
+              console.error(`Error fetching site reports for site ${site.uuid}:`, siteReportError);
+              return {
+                ...site,
+                totalReportedDisturbances: 0,
+                climaticDisturbances: 0,
+                manmadeDisturbances: 0,
+                ecologicalDisturbances: 0
+              };
+            }
+          })
+        );
+
+        setSites(sitesWithDisturbances);
       } catch (err) {
         console.error("Error fetching report data:", err);
         setError(err instanceof Error ? err : new Error("Unknown error occurred"));
@@ -146,7 +219,8 @@ export const useReportData = () => {
       hectaresUnderRestoration: site.totalHectaresRestoredSum || 0,
       totalReportedDisturbances: site.totalReportedDisturbances || 0,
       climaticDisturbances: site.climaticDisturbances || 0,
-      manmadeDisturbances: site.manmadeDisturbances || 0
+      manmadeDisturbances: site.manmadeDisturbances || 0,
+      ecologicalDisturbances: site.ecologicalDisturbances || 0
     }))
   };
 

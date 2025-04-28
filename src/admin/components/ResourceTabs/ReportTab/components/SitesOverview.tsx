@@ -13,7 +13,7 @@ const SitesOverview: FC<SitesOverviewProps> = ({ sites }) => {
   return (
     <div className="section-container col-span-2 h-full">
       <HeaderSecReportGemeration title="Sites" />
-      <div className="grid grid-cols-6 divide-y divide-black/10 border-b border-black/10">
+      <div className="grid grid-cols-7 divide-y divide-black/10 border-b border-black/10">
         <GrdTitleSites />
         {sites.map((site, index) => (
           <Fragment key={index}>
@@ -26,8 +26,9 @@ const SitesOverview: FC<SitesOverviewProps> = ({ sites }) => {
               })}
             />
             <GridsContentReport content={site?.totalReportedDisturbances} />
-            <GridsContentReport content={site?.manmadeDisturbances} />
             <GridsContentReport content={site?.climaticDisturbances} />
+            <GridsContentReport content={site?.manmadeDisturbances} />
+            <GridsContentReport content={site?.ecologicalDisturbances} />
           </Fragment>
         ))}
       </div>
