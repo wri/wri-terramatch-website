@@ -59,7 +59,17 @@ const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) =
 
   return (
     <div className="flex items-center gap-2">
-      <LinearProgress variant="determinate" value={progressValue} sx={{ height: 8, borderRadius: 1, width: "50%" }} />
+      <LinearProgress
+        variant="determinate"
+        value={progressValue}
+        sx={{
+          height: 8,
+          borderRadius: 1,
+          width: "50%",
+          backgroundColor: "#DFF2FB",
+          "& .MuiLinearProgress-bar": { backgroundColor: "#27A9E0" }
+        }}
+      />
       <Text variant="text-10-light" className="mt-0.5">
         <span className="text-10-bold">{current.toLocaleString()}</span> of {goal.toLocaleString()}
       </Text>

@@ -18,9 +18,9 @@ const ReportDoughnutChart: React.FC<ReportDoughnutChartProps> = ({
   currentValue,
   goalValue,
   description,
-  color = "#00aaff",
+  color = "#27A9E0",
   hidePercentage = false,
-  backgroundColor = "#eee"
+  backgroundColor = "#DFF2FB"
 }) => {
   const currentValuePercentage = (currentValue / goalValue) * 100;
   const clampedCurrentValuePercentage = currentValue > goalValue ? 100 : currentValuePercentage;
