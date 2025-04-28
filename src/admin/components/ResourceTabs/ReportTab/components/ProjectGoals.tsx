@@ -85,43 +85,6 @@ const ProjectGoals: FC<ProjectGoalsProps> = ({ reportData }) => {
           />
         </div>
       </div>
-
-      <table
-        style={{ width: "100%", marginBottom: "20px", borderCollapse: "collapse", display: "none" }}
-        className="print-only-table"
-      >
-        <thead>
-          <tr>
-            <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Trees Planted</th>
-            <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Hectares Restored</th>
-            <th style={{ padding: "10px", textAlign: "center", border: "1px solid #ddd" }}>Jobs Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold" }}>{reportData.project.trees.percentage}%</div>
-              <div>
-                {reportData.project.trees.planted} / {reportData.project.trees.goal}
-              </div>
-            </td>
-            <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold" }}>{reportData.project.hectares.percentage}%</div>
-              <div>
-                {reportData.project.hectares.restored} / {reportData.project.hectares.goal}
-              </div>
-            </td>
-            <td style={{ padding: "15px", textAlign: "center", border: "1px solid #ddd" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold" }}>
-                {reportData.project.jobs.fullTime + reportData.project.jobs.partTime}
-              </div>
-              <div>
-                FT: {reportData.project.jobs.fullTime} / PT: {reportData.project.jobs.partTime}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   );
 };
