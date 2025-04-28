@@ -17,17 +17,17 @@ const SitesOverview: FC<SitesOverviewProps> = ({ sites }) => {
         <GrdTitleSites />
         {sites.map((site, index) => (
           <Fragment key={index}>
-            <GridsContentReport content={site.name} />
-            <GridsContentReport content={site.hectaresToRestoreGoal.toLocaleString()} />
+            <GridsContentReport content={site?.name} />
+            <GridsContentReport content={site?.hectaresToRestoreGoal?.toLocaleString()} />
             <GridsContentReport
-              content={site.totalHectaresRestoredSum?.toLocaleString("en-US", {
+              content={site?.totalHectaresRestoredSum?.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}
             />
-            <GridsContentReport content={site.totalReportedDisturbances} />
-            <GridsContentReport content={site.manmadeDisturbances} />
-            <GridsContentReport content={site.climaticDisturbances} />
+            <GridsContentReport content={site?.totalReportedDisturbances} />
+            <GridsContentReport content={site?.manmadeDisturbances} />
+            <GridsContentReport content={site?.climaticDisturbances} />
           </Fragment>
         ))}
       </div>
