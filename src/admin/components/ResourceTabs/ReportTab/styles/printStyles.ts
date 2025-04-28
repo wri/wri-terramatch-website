@@ -128,6 +128,10 @@ export const printStyles = `
       border-bottom: 2px solid black !important;
       box-shadow: #CECECE 0px 40px 70px -22px inset, #CECECE 0px 28px 46px -28px inset;
     }
+
+    .space-table {
+      margin-top: 60px !important;
+    }
   }
 `;
 

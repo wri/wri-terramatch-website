@@ -40,7 +40,7 @@ const ReportPieChart: React.FC<ReportPieChartProps> = ({ data }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "160px", position: "relative" }}>
+    <div style={{ width: "100%", height: "160px", position: "relative" }} className="pie-chart-container-report">
       <ResponsiveContainer width="100%" height={160}>
         <PieChart>
           <Pie
@@ -63,15 +63,15 @@ const ReportPieChart: React.FC<ReportPieChartProps> = ({ data }) => {
       <style>
         {`
           @media print {
-            .recharts-wrapper {
+            .pie-chart-container-report .recharts-wrapper {
               width: 100% !important;
               height: 125px !important;
             }
-            .recharts-surface {
+            .pie-chart-container-report .recharts-surface {
               width: 100% !important;
               height: 125px !important;
             }
-            .recharts-pie {
+            .pie-chart-container-report .recharts-pie {
               transform: scale(1.5);
               transform-origin: center;
             }

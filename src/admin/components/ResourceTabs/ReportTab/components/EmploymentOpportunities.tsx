@@ -16,9 +16,9 @@ const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData 
     reportData.employment.fullTimeJobs + reportData.employment.partTimeJobs + reportData.employment.volunteers;
 
   const chartData = [
-    { name: "Full Time Jobs created", value: reportData.employment.fullTimeJobs, color: "#F59E0C" },
-    { name: "Part Time Jobs created", value: reportData.employment.partTimeJobs, color: "#FACC14" },
-    { name: "Volunteers created", value: reportData.employment.volunteers, color: "#15B8A6" }
+    { name: "Full-Time Jobs Created", value: reportData.employment.fullTimeJobs, color: "#F59E0C" },
+    { name: "Part-Time Jobs Created", value: reportData.employment.partTimeJobs, color: "#FACC14" },
+    { name: "Volunteers Created", value: reportData.employment.volunteers, color: "#15B8A6" }
   ];
 
   return (
@@ -34,7 +34,7 @@ const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData 
           }}
         />
         <div className="flex flex-col justify-center">
-          <div className="flex w-fit flex-col pr-4">
+          <div className="flex w-fit flex-col pr-3">
             {chartData.map((entry, index) => (
               <div
                 key={`legend-${index}`}

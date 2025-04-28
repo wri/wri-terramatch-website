@@ -6,7 +6,7 @@ import { Site } from "./types";
 
 const GridsTitleReport = ({ title, className }: { title: string | React.ReactNode; className?: string }) => {
   return (
-    <Text variant="text-10-semibold" className={twMerge("px-2 py-2 leading-[normal] text-black", className)}>
+    <Text variant="text-10-semibold" className={twMerge("py-2 pl-2 pr-1 leading-[normal] text-black", className)}>
       {title}
     </Text>
   );

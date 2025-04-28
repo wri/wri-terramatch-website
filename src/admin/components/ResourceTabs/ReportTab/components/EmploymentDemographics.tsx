@@ -15,21 +15,21 @@ const EmploymentDemographics: FC<EmploymentDemographicsProps> = ({ reportData })
       <div className="grid grid-cols-8 divide-y divide-black/10 border-b border-black/10">
         <GrdTitleEmployment />
 
-        <GridsTitleReport title="Full Time Jobs created" className="col-span-3" />
+        <GridsTitleReport title="Full-Time Jobs Created" className="col-span-3" />
         <GridsContentReport content={reportData.employment.demographics.fullTime.total.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.fullTime.male.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.fullTime.female.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.fullTime.youth.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.fullTime.nonYouth.toLocaleString()} />
 
-        <GridsTitleReport title="Part Time Jobs created" className="col-span-3" />
+        <GridsTitleReport title="Part-Time Jobs Created" className="col-span-3" />
         <GridsContentReport content={reportData.employment.demographics.partTime.total.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.partTime.male.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.partTime.female.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.partTime.youth.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.partTime.nonYouth.toLocaleString()} />
 
-        <GridsTitleReport title="Volunteers created" className="col-span-3" />
+        <GridsTitleReport title="Volunteers Created" className="col-span-3" />
         <GridsContentReport content={reportData.employment.demographics.volunteers.total.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.volunteers.male.toLocaleString()} />
         <GridsContentReport content={reportData.employment.demographics.volunteers.female.toLocaleString()} />

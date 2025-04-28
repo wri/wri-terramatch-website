@@ -72,9 +72,14 @@ const TreeSpeciesTableGroup: FC<{
   aggregatedSpecies: TreeSpecies[];
   siteTotals: Record<string, number>;
   grandTotal: number;
-}> = ({ sites, aggregatedSpecies, siteTotals, grandTotal }) => {
+  siteDataMap: Record<string, TreeSpeciesTableRowData[]>;
+}> = ({ sites, aggregatedSpecies, siteTotals, grandTotal, siteDataMap }) => {
   return (
     <>
+      <div className=" space-table print-page-break" />
+      <Text variant="text-12" className="mb-2 text-black">
+        Showing Sites 1 - {Object.keys(siteDataMap).length} (of {sites.length})
+      </Text>
       <HeaderSecReportGemeration title="Tree Species" />
       <div
         style={{ gridTemplateColumns: `repeat(${sites.length + 3}, 1fr)` }}
@@ -217,13 +222,6 @@ const AggregatedTreeSpeciesTable: FC<{
 
   return (
     <>
-      <div className="mt-16"></div>
-      {
-        <Text variant="text-12" className="mb-2 text-black">
-          Showing Sites 1 - {Object.keys(siteDataMap).length} (of {sites.length})
-        </Text>
-      }
-      <HeaderSecReportGemeration title="Tree Species" />
       {!isLoading && aggregatedSpecies.length === 0 ? (
         <Text variant="text-12" className="mb-1 text-center text-black">
           No tree species data available
@@ -237,6 +235,7 @@ const AggregatedTreeSpeciesTable: FC<{
                 aggregatedSpecies={aggregatedSpecies}
                 siteTotals={siteTotals}
                 grandTotal={grandTotal}
+                siteDataMap={siteDataMap}
               />
             </div>
           ))}

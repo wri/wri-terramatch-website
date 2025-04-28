@@ -22,15 +22,15 @@ const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData, repo
         <GridsContentReport content={record.organisationName} />
         <GridsTitleReport title="Project Name" />
         <GridsContentReport content={record.name} />
-        <GridsTitleReport title="Number of sites" />
+        <GridsTitleReport title="Number of Sites" />
         <GridsContentReport content={record.totalSites} />
-        <GridsTitleReport title="Most recent survival rate" />
+        <GridsTitleReport title="Most Recent Survival Rate" />
         <GridsContentReport
           content={reportData?.metrics?.survivalRate ? `${reportData?.metrics?.survivalRate}%` : "-"}
         />
-        <GridsTitleReport title="Total direct beneficiaries" />
+        <GridsTitleReport title="Total Direct Beneficiaries" />
         <GridsContentReport content={beneficiaryData.beneficiaries.toLocaleString()} />
-        <GridsTitleReport title="Total smallholder farmers engaged" />
+        <GridsTitleReport title="Total Smallholder Farmers Engaged" />
         <GridsContentReport content={beneficiaryData.farmers.toLocaleString()} />
       </div>
     </div>

@@ -67,11 +67,11 @@ const ProjectGoals: FC<ProjectGoalsProps> = ({ reportData }) => {
             goalValue={record.totalJobsCreated}
             description={
               <div>
-                <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
-                  {reportData.project.jobs.fullTime.toLocaleString()} Full-time
+                <Text variant="text-10-light" className="text-center leading-[normal] text-darkCustom">
+                  <span className="text-10-bold">{reportData.project.jobs.fullTime.toLocaleString()}</span> Full-Time
                 </Text>
-                <Text variant="text-10-bold" className="text-center leading-[normal] text-darkCustom">
-                  {reportData.project.jobs.partTime.toLocaleString()} Part-time
+                <Text variant="text-10-light" className="text-center leading-[normal] text-darkCustom">
+                  <span className="text-10-bold">{reportData.project.jobs.partTime.toLocaleString()}</span> Part-Time
                 </Text>
               </div>
             }
