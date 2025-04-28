@@ -12,7 +12,7 @@ const EmploymentDemographics: FC<EmploymentDemographicsProps> = ({ reportData })
   return (
     <div className="section-container">
       <HeaderSecReportGemeration title="Employment Opportunities Created by Demographics" />
-      <div className="grid grid-cols-8 divide-y-2 divide-black/10 border-b-2 border-black/10">
+      <div className="grid grid-cols-8 divide-y divide-black/10 border-b border-black/10">
         <GrdTitleEmployment />
 
         <GridsTitleReport title="Full Time Jobs created" className="col-span-3" />

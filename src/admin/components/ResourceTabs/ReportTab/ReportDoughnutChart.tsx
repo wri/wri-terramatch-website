@@ -33,11 +33,11 @@ const ReportDoughnutChart: React.FC<ReportDoughnutChartProps> = ({
   const COLORS = [color, backgroundColor];
 
   return (
-    <div className="flex flex-col items-center">
-      <Text variant="text-12" className="text-center uppercase leading-[normal] text-neutral-650">
+    <div className="flex flex-col items-center gap-0">
+      <Text variant="text-10-light" className="text-center uppercase leading-[normal] text-neutral-650">
         {label}
       </Text>
-      <div className="relative h-32 w-32">
+      <div className="relative h-26 w-26">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

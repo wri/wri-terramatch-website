@@ -4,7 +4,7 @@ import Text from "@/components/elements/Text/Text";
 
 const GridsTitleReport = ({ title, className }: { title: string; className?: string }) => {
   return (
-    <Text variant="text-12-semibold" className={twMerge("px-2.5 py-2 leading-[normal] text-black", className)}>
+    <Text variant="text-10-semibold" className={twMerge("px-2 py-2 leading-[normal] text-black", className)}>
       {title}
     </Text>
   );
@@ -12,7 +12,7 @@ const GridsTitleReport = ({ title, className }: { title: string; className?: str
 
 const GridsContentReport = ({ content }: { content: string | number | undefined }) => {
   return (
-    <Text variant="text-12-light" className="px-2.5 py-2 leading-[normal] text-black">
+    <Text variant="text-10-light" className="px-2 py-2 leading-[normal] text-black">
       {content}
     </Text>
   );

@@ -15,7 +15,7 @@ export const printStyles = `
       width: 100% !important;
       margin: 0 !important;
       padding: 0 !important;
-      background-color: white !important;
+
       display: block !important;
     }
     
@@ -107,7 +107,6 @@ export const printStyles = `
       height: 80px;
       background: white;
       text-align: center;
-      font-size: 20px;
       font-weight: bold;
       padding: 20px 20px;
       border-bottom: 1px solid #ccc;
@@ -119,6 +118,11 @@ export const printStyles = `
 
     .MuiBox-root {
       display: none !important;
+    }
+
+    .header-section-report {
+      border-bottom: 2px solid black !important;
+      box-shadow: #CECECE 0px 40px 70px -22px inset, #CECECE 0px 28px 46px -28px inset;
     }
   }
 `;

@@ -17,7 +17,7 @@ const GeneralInformation: FC<GeneralInformationProps> = ({ beneficiaryData, repo
   return (
     <div className="section-container">
       <HeaderSecReportGemeration title="General" />
-      <div className="grid grid-cols-2 divide-y-2 divide-black/10 border-b-2 border-black/10">
+      <div className="grid grid-cols-2 divide-y divide-black/10 border-b border-black/10">
         <GridsTitleReport title="Organization Name" />
         <GridsContentReport content={record.organisationName} />
         <GridsTitleReport title="Project Name" />

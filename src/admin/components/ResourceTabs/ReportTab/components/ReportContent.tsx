@@ -22,7 +22,7 @@ const ReportContent: FC<ReportContentProps> = ({ beneficiaryData, reportData, si
   return (
     <div id="printable-report-content" className="!p-0">
       <ResportTabHeader />
-      <div className="grid grid-cols-2 gap-y-6 gap-x-2 py-6">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-8 py-6">
         <GeneralInformation beneficiaryData={beneficiaryData} reportData={reportData} />
 
         <ProjectGoals reportData={reportData} />
