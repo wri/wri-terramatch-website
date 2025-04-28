@@ -1,47 +1,52 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useMemo } from "react";
 
-import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { GetV2InvasivesENTITYUUIDResponse, useGetV2InvasivesENTITYUUID } from "@/generated/apiComponents";
+import Table from "@/components/elements/Table/Table";
+import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
+import { useInvasives } from "@/connections/EntityAssocation";
+import { getInvasiveTypeOptions } from "@/constants/options/invasives";
+import { formatOptionsList } from "@/utils/options";
+
+import { DemographicEntity } from "../DemographicsCollapseGrid/types";
 
 export interface InvasiveTableProps {
-  modelName: string;
+  modelName: DemographicEntity;
   modelUUID: string;
   collection?: string;
   hasCountColumn?: boolean;
-  onFetch?: (data: GetV2InvasivesENTITYUUIDResponse) => void;
+  onFetch?: (data: any) => void;
 }
 
 const InvasiveTable = ({ modelName, modelUUID, collection, onFetch }: InvasiveTableProps) => {
   const t = useT();
 
-  const [queryParams, setQueryParams] = useState<any>();
+  const [, { associations: invasives }] = useInvasives({ entity: modelName, uuid: modelUUID });
 
-  if (collection && queryParams) {
-    queryParams["filter[collection]"] = collection;
-  }
-
-  const { data: invasives, isLoading } = useGetV2InvasivesENTITYUUID(
-    {
-      queryParams,
-      pathParams: { entity: modelName, uuid: modelUUID }
-    },
-    {
-      enabled: !!modelUUID,
-      keepPreviousData: true,
-      onSuccess: data => onFetch?.(data)
-    }
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: t("Plant Species"),
+        enableSorting: false
+      },
+      {
+        accessorKey: "type",
+        header: t("Type"),
+        enableSorting: false,
+        cell: (prop: any) => formatOptionsList(getInvasiveTypeOptions(), prop.getValue() as string)
+      }
+    ],
+    [t]
   );
 
   return (
     <div>
-      <ServerSideTable
-        meta={invasives?.meta}
-        data={invasives?.data || []}
-        isLoading={isLoading}
-        onQueryParamChange={setQueryParams}
-        columns={getInvasiveTableColumns(t)}
+      <Table
+        data={invasives || []}
+        columns={columns}
+        variant={VARIANT_TABLE_TREE_SPECIES}
+        hasPagination
+        invertSelectPagination
       />
     </div>
   );

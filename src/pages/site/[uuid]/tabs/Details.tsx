@@ -76,7 +76,7 @@ const SiteDetailTab = ({ site }: SiteDetailsTabProps) => {
               <SeedingsTable entity="sites" entityUuid={site.uuid} />
             </PageCard>
             <PageCard title={t("Invasives")}>
-              <InvasiveTable modelName="site" modelUUID={site.uuid} collection="invasive" />
+              <InvasiveTable modelName="sites" modelUUID={site.uuid} collection="invasive" />
             </PageCard>
           </ContextCondition>
           <PageCard title={t("Additional Information")} gap={4}>

@@ -5,7 +5,12 @@ import {
   entityAssociationIndex,
   EntityAssociationIndexPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { DemographicDto, SeedingDto, TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  DemographicDto,
+  DisturbanceDto,
+  SeedingDto,
+  TreeSpeciesDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   entityAssociationIndexFetchFailed,
   entityAssociationIndexIndexMeta
@@ -17,7 +22,7 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto;
+export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto | DisturbanceDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
@@ -130,6 +135,12 @@ const demographicConnection = createAssociationIndexConnection<DemographicDto>("
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+
+const disturbanceConnection = createAssociationIndexConnection<DisturbanceDto>("disturbances");
+export const useDisturbances = connectionHook(disturbanceConnection);
+
+const invasiveConnection = createAssociationIndexConnection<DisturbanceDto>("invasives");
+export const useInvasives = connectionHook(invasiveConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
