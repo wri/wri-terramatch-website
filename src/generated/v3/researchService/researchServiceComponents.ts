@@ -29,13 +29,21 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   /**
-   * Filter results by project UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Filter results by project UUID(s). May not be used with siteId[], projectCohort or landscape
    */
   ["projectId[]"]?: string[];
   /**
-   * Filter results by site UUID(s). Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
    */
   ["siteId[]"]?: string[];
+  /**
+   * Filter results by project cohort. May not be used with projectId[] or siteId[]
+   */
+  projectCohort?: string;
+  /**
+   * Filter results by project landscape. May not be used with projectId[] or siteId[]
+   */
+  landscape?: "gcb" | "grv" | "ikr";
   /**
    * Filter results by polygons that are missing at least one of the indicators listed
    */
@@ -73,18 +81,14 @@ export type SitePolygonsIndexQueryParams = {
    */
   lastModifiedDate?: string;
   /**
-   * Filter results by polygons that intersect with the boundary of the polygon referenced by this UUID
-   */
-  boundaryPolygon?: string;
-  /**
-   * Include polygons for test projects in the results. Only one of siteId, projectId and includeTestProjects may be used in a single request
+   * Include polygons for test projects in the results.
    *
    * @default false
    */
   includeTestProjects?: boolean;
   search?: string;
   /**
-   * Wheter to include the complete sitePolygon Dto or not
+   * Whether to include the complete sitePolygon Dto or not
    *
    * @default false
    */

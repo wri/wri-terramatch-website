@@ -49,6 +49,21 @@ export type EntitySideload = {
   pageSize: number;
 };
 
+/**
+ * CONSTANTS
+ */
+export type SupportedEntities = {
+  /**
+   * @example projects
+   * @example sites
+   * @example nurseries
+   * @example projectReports
+   * @example siteReports
+   * @example nurseryReports
+   */
+  ENTITY_TYPES: string[];
+};
+
 export type ProjectLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -66,7 +81,7 @@ export type ProjectLightDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this project
    */
@@ -337,7 +352,7 @@ export type ProjectFullDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this project
    */
@@ -856,6 +871,138 @@ export type SiteReportFullDto = {
   treeSpecies: MediaDto[];
   siteSubmission: MediaDto[];
   documentFiles: MediaDto[];
+};
+
+export type ProjectUpdateAttributes = {
+  /**
+   * Request to change to the status of the given entity
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the isTest flag.
+   */
+  isTest: boolean | null;
+};
+
+export type ProjectUpdateData = {
+  type: "projects";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ProjectUpdateAttributes;
+};
+
+export type SiteUpdateAttributes = {
+  /**
+   * Request to change to the status of the given site
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+};
+
+export type SiteUpdateData = {
+  type: "sites";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: SiteUpdateAttributes;
+};
+
+export type EntityUpdateAttributes = {
+  /**
+   * Request to change to the status of the given entity
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+};
+
+export type NurseryUpdateData = {
+  type: "nurseries";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: EntityUpdateAttributes;
+};
+
+export type ReportUpdateAttributes = {
+  /**
+   * Request to change to the status of the given report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport: boolean | null;
+};
+
+export type ProjectReportUpdateData = {
+  type: "projectReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type SiteReportUpdateData = {
+  type: "siteReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type NurseryReportUpdateData = {
+  type: "nurseryReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type EntityUpdateBody = {
+  data:
+    | ProjectUpdateData
+    | SiteUpdateData
+    | NurseryUpdateData
+    | ProjectReportUpdateData
+    | SiteReportUpdateData
+    | NurseryReportUpdateData;
 };
 
 export type DemographicEntryDto = {

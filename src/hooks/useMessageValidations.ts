@@ -55,7 +55,7 @@ export const useMessageValidators = () => {
                   }
                 )
               : t(
-                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by {poly_name} [in site: {site_name}]",
+                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by polygon: {poly_name} [in site: {site_name}]",
                   {
                     percentage,
                     poly_name: poly_name || "Unnamed Polygon",
