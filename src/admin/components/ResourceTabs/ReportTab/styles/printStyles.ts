@@ -120,6 +120,10 @@ export const printStyles = `
       display: none !important;
     }
 
+    .MuiLinearProgress-bar1 {
+      background-color: #27A9E0 !important;
+    }
+
     .header-section-report {
       border-bottom: 2px solid black !important;
       box-shadow: #CECECE 0px 40px 70px -22px inset, #CECECE 0px 28px 46px -28px inset;

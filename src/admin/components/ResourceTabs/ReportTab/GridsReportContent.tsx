@@ -2,7 +2,9 @@ import { twMerge } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 
-const GridsTitleReport = ({ title, className }: { title: string; className?: string }) => {
+import { Site } from "./types";
+
+const GridsTitleReport = ({ title, className }: { title: string | React.ReactNode; className?: string }) => {
   return (
     <Text variant="text-10-semibold" className={twMerge("px-2 py-2 leading-[normal] text-black", className)}>
       {title}
@@ -10,7 +12,7 @@ const GridsTitleReport = ({ title, className }: { title: string; className?: str
   );
 };
 
-const GridsContentReport = ({ content }: { content: string | number | undefined }) => {
+const GridsContentReport = ({ content }: { content: string | number | React.ReactNode | undefined }) => {
   return (
     <Text variant="text-10-light" className="px-2 py-2 leading-[normal] text-black">
       {content}
@@ -44,4 +46,17 @@ const GrdTitleSites = () => {
   );
 };
 
-export { GridsTitleReport, GridsContentReport, GrdTitleEmployment, GrdTitleSites };
+const GrdTitleTreeSpecies = ({ sites }: { sites: Site[] }) => {
+  return (
+    <>
+      <GridsTitleReport title="Species Name" />
+      <GridsTitleReport title="Total Trees" />
+      {sites.map(site => (
+        <GridsTitleReport key={site.uuid} title={site.name} />
+      ))}
+      <GridsTitleReport title="Progress Towards Goal" />
+    </>
+  );
+};
+
+export { GridsTitleReport, GridsContentReport, GrdTitleEmployment, GrdTitleSites, GrdTitleTreeSpecies };

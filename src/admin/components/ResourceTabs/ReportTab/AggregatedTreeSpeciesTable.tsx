@@ -1,10 +1,13 @@
-import { Card, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { LinearProgress, Typography } from "@mui/material";
 import { chunk, orderBy } from "lodash";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import Text from "@/components/elements/Text/Text";
 import { useTableData } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
+import { GrdTitleTreeSpecies, GridsContentReport, GridsTitleReport } from "./GridsReportContent";
+import HeaderSecReportGemeration from "./HeaderSecReportGemeration";
 import { Site } from "./types";
 interface TreeSpecies {
   name: string;
@@ -55,8 +58,8 @@ const ProgressBar: FC<{ current: number; goal: number }> = ({ current, goal }) =
   const progressValue = Math.min(Math.round((current / goal) * 100), 100);
 
   return (
-    <div>
-      <LinearProgress variant="determinate" value={progressValue} sx={{ height: 8, borderRadius: 1 }} />
+    <div className="flex items-center gap-2">
+      <LinearProgress variant="determinate" value={progressValue} sx={{ height: 8, borderRadius: 1, width: "50%" }} />
       <Typography variant="caption" color="textSecondary" sx={{ display: "block", mt: 0.5 }}>
         {current.toLocaleString()} of {goal.toLocaleString()}
       </Typography>
@@ -71,56 +74,43 @@ const TreeSpeciesTableGroup: FC<{
   grandTotal: number;
 }> = ({ sites, aggregatedSpecies, siteTotals, grandTotal }) => {
   return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell style={{ fontWeight: "bold" }}>Species Name</TableCell>
-          <TableCell align="right" style={{ fontWeight: "bold" }}>
-            Total Trees
-          </TableCell>
-          {sites.map(site => (
-            <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
-              {site.name}
-            </TableCell>
-          ))}
-          <TableCell align="right" style={{ fontWeight: "bold" }}>
-            Progress Towards Goal
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
+    <>
+      <div
+        style={{ gridTemplateColumns: `repeat(${sites.length + 3}, 1fr)` }}
+        className="grid divide-y divide-black/10 border-b border-black/10"
+      >
+        {/* {Title} */}
+        <GrdTitleTreeSpecies sites={sites} />
+        {/* {Content} */}
         {aggregatedSpecies.map(species => (
-          <TableRow key={species.name}>
-            <TableCell>
-              {species.name}
-              {species.speciesTypes.includes("non-scientific") && " (non-scientific)"}
-              {species.speciesTypes.includes("new") && " (new)"}
-            </TableCell>
-            <TableCell align="right">{species.totalCount.toLocaleString()}</TableCell>
+          <Fragment key={species.name}>
+            <GridsTitleReport
+              title={
+                <>
+                  {species.name}
+                  {species.speciesTypes.includes("non-scientific") && " (non-scientific)"}
+                  {species.speciesTypes.includes("new") && " (new)"}
+                </>
+              }
+            />
+            <GridsContentReport content={species.totalCount.toLocaleString()} />
             {sites.map(site => (
-              <TableCell key={site.uuid} align="right">
-                {species.siteCounts[site.uuid] ? species.siteCounts[site.uuid].toLocaleString() : "-"}
-              </TableCell>
+              <GridsContentReport key={site.uuid} content={species.siteCounts[site.uuid]?.toLocaleString() || "-"} />
             ))}
-            <TableCell align="right">
-              {species.goalCount ? <ProgressBar current={species.totalCount} goal={species.goalCount} /> : "-"}
-            </TableCell>
-          </TableRow>
+            <GridsContentReport
+              content={species.goalCount ? <ProgressBar current={species.totalCount} goal={species.goalCount} /> : "-"}
+            />
+          </Fragment>
         ))}
-        <TableRow style={{ backgroundColor: "#f5f5f5" }}>
-          <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
-          <TableCell align="right" style={{ fontWeight: "bold" }}>
-            {grandTotal.toLocaleString()}
-          </TableCell>
-          {sites.map(site => (
-            <TableCell key={site.uuid} align="right" style={{ fontWeight: "bold" }}>
-              {siteTotals[site.uuid]?.toLocaleString() || "-"}
-            </TableCell>
-          ))}
-          <TableCell></TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+        {/* {Footer} */}
+        <GridsTitleReport title="Total" />
+        <GridsContentReport content={grandTotal.toLocaleString()} />
+        {sites.map(site => (
+          <GridsContentReport key={site.uuid} content={siteTotals[site.uuid]?.toLocaleString() || "-"} />
+        ))}
+        <GridsContentReport content="" />
+      </div>
+    </>
   );
 };
 
@@ -210,8 +200,6 @@ const AggregatedTreeSpeciesTable: FC<{
     return sortedArray;
   }, [siteDataMap, goalCountMap, goalPlants]);
 
-  const progress = sites.length > 0 ? (Object.keys(siteDataMap).length / sites.length) * 100 : 0;
-
   const siteTotals = useMemo(() => {
     const totals: Record<string, number> = {};
 
@@ -228,41 +216,34 @@ const AggregatedTreeSpeciesTable: FC<{
 
   return (
     <>
-      <Card sx={{ p: 2, mt: 3 }}>
-        {isLoading && (
-          <div style={{ marginBottom: 16 }}>
-            <LinearProgress variant="determinate" value={progress} sx={{ mb: 1 }} />
-            <Typography variant="body2" color="textSecondary">
-              Processed {Object.keys(siteDataMap).length} of {sites.length} sites
-            </Typography>
-          </div>
-        )}
-
-        {!isLoading && aggregatedSpecies.length === 0 ? (
-          <Typography>No tree species data available</Typography>
-        ) : (
-          <>
-            {siteGroups.map((groupSites, index) => (
-              <div key={index} className={index > 0 ? "print-page-break" : ""}>
-                {index > 0 && (
-                  <Typography variant="h6" component="h4" sx={{ mb: 2, mt: 4 }}>
-                    Tree Species Planted (Continued)
-                  </Typography>
-                )}
-                <TreeSpeciesTableGroup
-                  sites={groupSites}
-                  aggregatedSpecies={aggregatedSpecies}
-                  siteTotals={siteTotals}
-                  grandTotal={grandTotal}
-                />
-              </div>
-            ))}
-          </>
-        )}
-        {sites.map(site => (
-          <SingleSiteDataComponent key={site.uuid} site={site} onDataLoaded={handleSiteDataLoaded} />
-        ))}
-      </Card>
+      <div className="mt-16"></div>
+      {isLoading && (
+        <Text variant="text-12" className="mb-2 text-black">
+          Showing Sites 1 - {Object.keys(siteDataMap).length} (of {sites.length})
+        </Text>
+      )}
+      <HeaderSecReportGemeration title="Tree Species" />
+      {!isLoading && aggregatedSpecies.length === 0 ? (
+        <Text variant="text-12" className="mb-1 text-center text-black">
+          No tree species data available
+        </Text>
+      ) : (
+        <>
+          {siteGroups.map((groupSites, index) => (
+            <div key={index} className={index > 0 ? "print-page-break" : ""}>
+              <TreeSpeciesTableGroup
+                sites={groupSites}
+                aggregatedSpecies={aggregatedSpecies}
+                siteTotals={siteTotals}
+                grandTotal={grandTotal}
+              />
+            </div>
+          ))}
+        </>
+      )}
+      {sites.map(site => (
+        <SingleSiteDataComponent key={site.uuid} site={site} onDataLoaded={handleSiteDataLoaded} />
+      ))}
     </>
   );
 };
