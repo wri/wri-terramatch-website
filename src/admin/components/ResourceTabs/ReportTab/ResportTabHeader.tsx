@@ -25,7 +25,7 @@ const ResportTabHeader = () => {
           .
         </Text>
         <Text variant="text-10" className="mt-1 leading-[normal]">
-          Printed on 25 May, 2025
+          Printed on {new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
         </Text>
       </div>
     </div>
