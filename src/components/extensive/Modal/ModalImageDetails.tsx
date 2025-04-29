@@ -309,7 +309,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
               {t("Uploaded By")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom">
-              {data?.createdBy?.firstName ? `${data.createdBy.firstName} ${data.createdBy.lastName}` : t("Unknown")}
+              {data?.createdByUserName ?? t("Unknown")}
             </Text>
             <Text variant="text-12" className="border-b border-grey-350 py-1 text-darkCustom-60">
               {t("Date Captured")}

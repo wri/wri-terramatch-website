@@ -16,11 +16,11 @@ import {
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  GetV2MODELUUIDFilesResponse,
   useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
@@ -29,7 +29,6 @@ import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from ".
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
-
 type DataPolygonOverview = {
   status: string;
   count: number;
@@ -280,7 +279,7 @@ export const addGeojsonToDraw = (
 
 export const addMediaSourceAndLayer = (
   map: mapboxgl.Map,
-  modelFilesData: GetV2MODELUUIDFilesResponse["data"],
+  modelFilesData: MediaDto[],
   setImageCover: Function,
   handleDownload: Function,
   handleDelete: Function,
@@ -290,9 +289,7 @@ export const addMediaSourceAndLayer = (
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
-  const modelFilesGeolocalized = modelFilesData!.filter(
-    modelFile => modelFile.location?.lat && modelFile.location?.lng
-  );
+  const modelFilesGeolocalized = modelFilesData!.filter(modelFile => modelFile.lat && modelFile.lng);
   if (modelFilesGeolocalized.length === 0) {
     return;
   }
@@ -301,23 +298,23 @@ export const addMediaSourceAndLayer = (
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: [modelFile.location!.lng, modelFile.location!.lat]
+      coordinates: [modelFile.lng, modelFile.lat]
     },
     properties: {
       uuid: modelFile.uuid,
       name: modelFile.name,
-      created_date: modelFile.created_date,
-      file_url: modelFile.file_url,
+      created_date: modelFile.createdAt,
+      file_url: modelFile.url,
       location: {
-        lat: modelFile.location?.lat,
-        lng: modelFile.location?.lng
+        lat: modelFile.lat,
+        lng: modelFile.lng
       },
-      is_cover: modelFile.is_cover,
-      is_public: modelFile.is_public,
-      photographer: (modelFile as any).photographer || null,
-      description: (modelFile as any).description || null,
-      mime_type: modelFile.mime_type,
-      file_name: modelFile.file_name
+      is_cover: modelFile.isCover,
+      is_public: modelFile.isPublic,
+      photographer: modelFile.photographer || null,
+      description: modelFile.description || null,
+      mime_type: modelFile.mimeType,
+      file_name: modelFile.fileName
     }
   }));
 
