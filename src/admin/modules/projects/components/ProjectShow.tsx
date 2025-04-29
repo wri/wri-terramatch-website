@@ -33,7 +33,7 @@ const ProjectShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" />}>
         <InformationTab type="projects" />
-        <ReportTab label="Project Reports" type="projects" />
+        <ReportTab label="Project Report" type="projects" />
         <GalleryTab label="Project Gallery" entity="projects" />
         <DocumentTab label="Project Documents" entity="projects" />
         <ChangeRequestsTab entity="projects" singularEntity="project" />

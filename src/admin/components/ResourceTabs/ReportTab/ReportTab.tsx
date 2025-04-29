@@ -11,9 +11,8 @@ const ReportTab: FC<ReportTabProps> = ({ label, type, ...rest }) => {
   const ctx = useShowContext();
 
   const { sites, plants, beneficiaryData, reportData, isLoading } = useReportData();
-  const { addDebugPrintButton } = usePrintHandler();
-
-  addDebugPrintButton();
+  // Importamos el hook pero solo para mantener la funcionalidad de impresión con Ctrl+P/Cmd+P
+  usePrintHandler();
 
   return (
     <When condition={!isLoading && !ctx.isLoading}>

@@ -46,40 +46,7 @@ export const usePrintHandler = () => {
     }
   };
 
-  /**
-   * Create debug print button (in development mode only)
-   */
-  const addDebugPrintButton = () => {
-    useEffect(() => {
-      if (process.env.NODE_ENV !== "development") {
-        return;
-      }
-
-      const printButton = document.createElement("button");
-      printButton.textContent = "Print Report (Debug)";
-      printButton.style.position = "fixed";
-      printButton.style.bottom = "20px";
-      printButton.style.right = "20px";
-      printButton.style.zIndex = "9999";
-      printButton.style.padding = "10px";
-      printButton.style.backgroundColor = "#f0f0f0";
-      printButton.style.border = "1px solid #ccc";
-      printButton.style.borderRadius = "4px";
-      printButton.style.cursor = "pointer";
-
-      printButton.addEventListener("click", handlePrint);
-      document.body.appendChild(printButton);
-
-      return () => {
-        if (document.body.contains(printButton)) {
-          document.body.removeChild(printButton);
-        }
-      };
-    }, []);
-  };
-
   return {
-    handlePrint,
-    addDebugPrintButton
+    handlePrint
   };
 };
