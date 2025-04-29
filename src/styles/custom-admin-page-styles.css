@@ -1,3 +1,7 @@
+.RaLayout-contentWithSidebar {
+  @apply !overflow-auto !h-16;
+}
+
 .search-page-admin>div:first-of-type {
   @apply flex flex-row-reverse bg-white rounded-lg;
 }
