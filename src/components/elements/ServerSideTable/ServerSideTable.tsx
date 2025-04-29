@@ -85,7 +85,7 @@ export function ServerSideTable<TData extends RowData>({
   }, [page, pageSize, filters, sorting, onQueryParamChange, onTableStateChange]);
 
   return (
-    <>
+    <div className="mobile:overflow-auto">
       <Table<TData>
         {...props}
         serverSideData
@@ -120,6 +120,6 @@ export function ServerSideTable<TData extends RowData>({
           />
         </div>
       )}
-    </>
+    </div>
   );
 }
