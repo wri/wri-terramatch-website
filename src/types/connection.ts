@@ -1,14 +1,19 @@
 import { ApiDataStore } from "@/store/apiSlice";
+import { AppStore } from "@/store/store";
 
 export type OptionalProps = Record<string, unknown> | undefined;
 
-export type Selector<SelectedType, PropsType extends OptionalProps = undefined> = (
-  state: ApiDataStore,
+export type Selector<State, SelectedType, PropsType extends OptionalProps = undefined> = (
+  state: State,
   props: PropsType
 ) => SelectedType;
 
-export type Connection<SelectedType, PropsType extends OptionalProps = undefined> = {
-  selector: Selector<SelectedType, PropsType>;
+export type Connection<SelectedType, PropsType extends OptionalProps = undefined, State = ApiDataStore> = {
+  // If the `State` is not ApiDataStore, this method is required to provide the State from the overall redux store.
+  // Note: this method must _not_ do any data mapping, it should simply select a subset of the AppStore and
+  // return it.
+  getState?: (store: AppStore) => State;
+  selector: Selector<State, SelectedType, PropsType>;
   isLoaded?: (selected: SelectedType, props: PropsType) => boolean;
   load?: (selected: SelectedType, props: PropsType) => void;
 };

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useStore } from "react-redux";
 
+import ApiSlice from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps } from "@/types/connection";
 
@@ -22,18 +23,19 @@ const propsInOrder = (props?: OptionalProps) =>
  * whole API state. This limits redraws of the component to the times that the connected state of
  * the Connection changes.
  */
-export function useConnection<TSelected, TProps extends OptionalProps = undefined>(
-  connection: Connection<TSelected, TProps>,
+export function useConnection<TSelected, TProps extends OptionalProps, State>(
+  connection: Connection<TSelected, TProps, State>,
   props: TProps | Record<any, never> = {}
 ): Connected<TSelected> {
-  const { selector, isLoaded, load } = connection;
+  const { getState, selector, isLoaded, load } = connection;
   const store = useStore<AppStore>();
 
   const getConnected = useCallback(() => {
-    const connected = selector(store.getState().api, props);
+    const state = (getState ?? ApiSlice.getState)(store.getState()) as State;
+    const connected = selector(state, props);
     const loadingDone = isLoaded == null || isLoaded(connected, props);
     return { loadingDone, connected };
-  }, [store, isLoaded, props, selector]);
+  }, [getState, store, selector, props, isLoaded]);
 
   const [connected, setConnected] = useState(() => {
     const { loadingDone, connected } = getConnected();
