@@ -1,15 +1,18 @@
-import { Dictionary, filter, merge } from "lodash";
+import { useT } from "@transifex/react";
+import { Dictionary, difference, filter, isEmpty, merge, sortBy } from "lodash";
+import { useMemo } from "react";
 import { createSelector } from "reselect";
 
 import { PendingErrorState } from "@/store/apiSlice";
 import DataApiSlice, { DataApiStore } from "@/store/dataApiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
-import { fetchGadmLevels, gadmFindFetchFailedSelector } from "@/utils/dataApi";
+import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
+import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type GadmConnection = {
-  byCode?: Dictionary<Dictionary<string>>;
+  byParentCode?: Dictionary<Dictionary<string>>;
   codeMapping?: Dictionary<string>;
   fetchFailure?: PendingErrorState | null;
 };
@@ -21,11 +24,15 @@ type GadmConnectionProps = {
   parentCodes?: string[];
 };
 
-const isLoaded = ({ byCode, fetchFailure }: GadmConnection, { parentCodes }: GadmConnectionProps) =>
-  filter(Object.values(byCode ?? {})).length === (parentCodes?.length ?? 1) || fetchFailure != null;
+const isLoaded = ({ byParentCode, fetchFailure }: GadmConnection, { level, parentCodes }: GadmConnectionProps) => {
+  if (level > 0 && isEmpty(parentCodes)) return true; // Prevent attempting to load when our props aren't yet valid.
+  return filter(Object.values(byParentCode ?? {})).length === (parentCodes?.length ?? 1) || fetchFailure != null;
+};
 
 const gadmSelector = (level: 0 | 1 | 2, parentCodes?: string[]) =>
   createSelector([({ gadm }: DataApiStore) => gadm[`level${level}`]], levelCodes => {
+    if (level > 0 && isEmpty(parentCodes)) return {};
+
     const result: Dictionary<Dictionary<string>> = {};
     for (const code of parentCodes ?? ["global"]) {
       result[code] = levelCodes[code];
@@ -38,12 +45,19 @@ const gadmConnection: Connection<GadmConnection, GadmConnectionProps, DataApiSto
   getState: DataApiSlice.getState,
 
   load: (connection, props) => {
-    const { byCode } = connection;
+    if (isLoaded(connection, props)) return;
+
     // We have to be careful here because we're loading multiple requests. If one finishes but the
-    // others haven't, and we call fetchGadmLevels() again, it will re-load the first repeatedly
-    // until all requests have finished.
-    const someLoaded = filter(Object.values(byCode ?? {})).length > 0;
-    if (!isLoaded(connection, props) && !someLoaded) fetchGadmLevels(props.level, props.parentCodes);
+    // others haven't, and we call fetchGadmLevel() on the already loaded resource again, it will
+    // re-load the first repeatedly until all requests have finished.
+    const { byParentCode } = connection;
+    const loaded = Object.entries(byParentCode ?? {})
+      .filter(([, values]) => !isEmpty(values))
+      .map(([parentCode]) => parentCode);
+    const missingCodes = difference(props.parentCodes, loaded);
+    for (const parentCode of missingCodes) {
+      fetchGadmLevel(props.level, parentCode);
+    }
   },
 
   isLoaded,
@@ -53,12 +67,12 @@ const gadmConnection: Connection<GadmConnection, GadmConnectionProps, DataApiSto
     ({ level, parentCodes }) =>
       createSelector(
         [gadmSelector(level, parentCodes), gadmFindFetchFailedSelector(level, parentCodes)],
-        (byCode, fetchFailure) => ({
-          byCode,
+        (byParentCode, fetchFailure) => ({
+          byParentCode,
           // don't bother providing the codeMapping until all of the fetches are complete; it won't
           // get passed to the component until isLoaded returns true anyway.
-          codeMapping: isLoaded({ byCode, fetchFailure }, { level, parentCodes })
-            ? (merge({}, ...Object.values(byCode)) as Dictionary<string>)
+          codeMapping: isLoaded({ byParentCode, fetchFailure }, { level, parentCodes })
+            ? (merge({}, ...Object.values(byParentCode)) as Dictionary<string>)
             : undefined,
           fetchFailure
         })
@@ -67,3 +81,27 @@ const gadmConnection: Connection<GadmConnection, GadmConnectionProps, DataApiSto
 };
 
 export const useGadmCodes = connectionHook(gadmConnection);
+
+export const useGadmOptions = (props: GadmConnectionProps) => {
+  const [loaded, { codeMapping, fetchFailure }] = useGadmCodes(props);
+  const t = useT();
+  return useMemo(() => {
+    if (!loaded) return null;
+    if (fetchFailure != null) {
+      Log.error("Failed to fetch some GADM code data", { props, fetchFailure });
+      return null;
+    }
+    if (codeMapping == null) {
+      Log.error("GADM data fetch complete, but no codeMapping provided", { props });
+      return null;
+    }
+
+    return sortBy(
+      Object.entries(codeMapping).map(([code, name]) => ({
+        value: code,
+        title: t(name)
+      })),
+      "title"
+    );
+  }, [codeMapping, fetchFailure, loaded, props, t]);
+};

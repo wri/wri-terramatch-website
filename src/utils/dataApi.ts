@@ -1,4 +1,4 @@
-import { isEmpty, keyBy, mapValues } from "lodash";
+import { keyBy, mapValues } from "lodash";
 import { createSelector } from "reselect";
 
 import { isErrorState } from "@/store/apiSlice";
@@ -85,14 +85,10 @@ async function fetchDataSet(
 }
 
 export const gadmFindFetchFailedSelector = (level: 0 | 1 | 2, parentCodes?: string[]) => {
-  if (level > 0 && isEmpty(parentCodes)) {
-    throw new Error("parentCodes are required for levels 1 and 2");
-  }
-
   const urls =
     level === 0
       ? [queryUrl(GADM_QUERY, gadmLevel0Sql())]
-      : (parentCodes as string[]).map(code => queryUrl(GADM_QUERY, gadmSql(level, code)));
+      : (parentCodes ?? []).map(code => queryUrl(GADM_QUERY, gadmSql(level, code)));
   return createSelector(
     ({ meta: { pending } }: DataApiStore) => pending,
     pendingStates => {
@@ -106,7 +102,7 @@ export const gadmFindFetchFailedSelector = (level: 0 | 1 | 2, parentCodes?: stri
   );
 };
 
-function fetchGadmLevel(level: number, parentCode?: string) {
+export function fetchGadmLevel(level: number, parentCode?: string) {
   const sql = gadmSql(level, parentCode);
   const payloadMutator = ({ data }: { data: object }) => ({
     gadmLevel: `level${level}` as GadmLevel,
@@ -115,23 +111,4 @@ function fetchGadmLevel(level: number, parentCode?: string) {
   });
   // Promise intentionally ignored
   fetchDataSet(GADM_QUERY, sql, payloadMutator);
-}
-
-export function fetchGadmLevels(level: 0 | 1 | 2, parentCodes?: string[]) {
-  if (level === 0) {
-    if (!isEmpty(parentCodes)) {
-      throw new Error("parentCodes are not expected for level 0");
-    }
-
-    fetchGadmLevel(0);
-    return;
-  }
-
-  if (isEmpty(parentCodes)) {
-    throw new Error("parentCodes are required for levels 1 and 2");
-  }
-
-  for (const code of parentCodes as string[]) {
-    fetchGadmLevel(level, code);
-  }
 }

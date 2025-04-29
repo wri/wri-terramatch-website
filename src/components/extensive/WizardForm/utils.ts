@@ -76,6 +76,8 @@ export const getAnswer = (
     case FieldType.SelectImage: {
       const { options } = field.fieldProps;
 
+      if (options == null) return value; // TODO
+
       if (Array.isArray(value)) {
         return (value.map(v => options.find(o => o.value === v)?.title).filter(title => !!title) as string[]) || value;
       } else {
