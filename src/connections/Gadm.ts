@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dictionary, difference, filter, isEmpty, merge, sortBy } from "lodash";
+import { Dictionary, difference, filter, isEmpty, merge } from "lodash";
 import { useMemo } from "react";
 import { createSelector } from "reselect";
 
@@ -98,13 +98,12 @@ export const useGadmOptions = (props: GadmConnectionProps) => {
       return null;
     }
 
-    return sortBy(
-      Object.entries(codeMapping).map(([code, name]) => ({
+    return Object.entries(codeMapping)
+      .map(([code, name]) => ({
         value: code,
         title: t(name)
-      })),
-      "title"
-    );
+      }))
+      .sort(({ title: a }, { title: b }) => a.localeCompare(b));
   }, [codeMapping, fetchFailure, loaded, props, t]);
 };
 
