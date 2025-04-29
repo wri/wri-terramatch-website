@@ -1,5 +1,5 @@
 .RaLayout-contentWithSidebar {
-  @apply !overflow-auto !h-16;
+  @apply mobile:!overflow-auto mobile:!h-16;
 }
 
 .search-page-admin>div:first-of-type {
@@ -106,7 +106,7 @@
 }
 
 .RaList-main > span {
-  @apply mt-16;
+  @apply mt-[74px];
 }
 
 .RaList-main div {

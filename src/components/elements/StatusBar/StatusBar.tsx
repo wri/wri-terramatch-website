@@ -59,7 +59,7 @@ const StatusBar = ({
     <div {...props} className={classnames(className, statusProps.classNames, "w-full")}>
       <div
         className={classnames(
-          "mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0",
+          "mx-auto flex w-[82vw] items-center justify-between gap-3 p-3.5 px-10 xl:px-0 mobile:w-full",
           classNameStatusBar
         )}
       >
