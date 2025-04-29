@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -30,7 +30,7 @@ import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
-import { getAnswer, getFormattedAnswer } from "./utils";
+import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -60,10 +60,16 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
     bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
   }
   const mapFunctions = useMap();
-  return useMemo<any[]>(
-    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+
+  const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
+  useEffect(() => {
+    loadExternalAnswerSources(props.step.fields, props.values).finally(() => setExternalSourcesLoaded(true));
+  }, [props.step.fields, props.values]);
+
+  return useMemo(
+    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props, t, entityPolygonData, bbox]
+    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
 };
 

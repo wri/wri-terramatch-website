@@ -7,7 +7,7 @@ import DataApiSlice, { DataApiPayload, DataApiStore, GadmLevel } from "@/store/d
 import Log from "./log";
 
 const DATA_API_DATASET = "https://data-api.globalforestwatch.org/dataset";
-const GADM_QUERY = "/gadm_administrative_boundaries/v4.1.85/query";
+const GADM_QUERY = "/gadm_administrative_boundaries/v4.1.85/query/json";
 
 const gadmLevel0Sql = () => `
   SELECT country AS name, gid_0 AS id

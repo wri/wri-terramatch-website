@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 import { PendingErrorState } from "@/store/apiSlice";
 import DataApiSlice, { DataApiStore } from "@/store/dataApiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
+import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
@@ -54,7 +54,8 @@ const gadmConnection: Connection<GadmConnection, GadmConnectionProps, DataApiSto
     const loaded = Object.entries(byParentCode ?? {})
       .filter(([, values]) => !isEmpty(values))
       .map(([parentCode]) => parentCode);
-    const missingCodes = difference(props.parentCodes, loaded);
+    const expectedCodes = props.level === 0 ? ["global"] : props.parentCodes;
+    const missingCodes = difference(expectedCodes, loaded);
     for (const parentCode of missingCodes) {
       fetchGadmLevel(props.level, parentCode);
     }
@@ -81,6 +82,7 @@ const gadmConnection: Connection<GadmConnection, GadmConnectionProps, DataApiSto
 };
 
 export const useGadmCodes = connectionHook(gadmConnection);
+export const loadGadmCodes = connectionLoader(gadmConnection);
 
 export const useGadmOptions = (props: GadmConnectionProps) => {
   const [loaded, { codeMapping, fetchFailure }] = useGadmCodes(props);
@@ -104,4 +106,16 @@ export const useGadmOptions = (props: GadmConnectionProps) => {
       "title"
     );
   }, [codeMapping, fetchFailure, loaded, props, t]);
+};
+
+export const findCachedGadmTitle = (level: 0 | 1 | 2, code: string, parentCodes?: string[]) => {
+  if (level > 0 && isEmpty(parentCodes)) return null;
+
+  const { gadm } = DataApiSlice.currentState;
+  parentCodes = isEmpty(parentCodes) ? ["global"] : (parentCodes as string[]);
+  for (const parentCode of parentCodes) {
+    const title = gadm[`level${level}`][parentCode]?.[code];
+    if (title != null) return title;
+  }
+  return null;
 };
