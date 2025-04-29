@@ -98,7 +98,7 @@
 }
 
 .RaLayout-content {
-  @apply !bg-neutral-100 !p-8;
+  @apply !bg-neutral-100 !pt-8 !px-8 !pb-4;
 }
 
 .RaList-main > span {
