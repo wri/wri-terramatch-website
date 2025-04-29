@@ -102,7 +102,7 @@
 }
 
 .RaList-main > span {
-  @apply mt-4;
+  @apply mt-10;
 }
 
 .RaList-main div {

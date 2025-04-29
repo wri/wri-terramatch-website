@@ -82,7 +82,7 @@ const FloatNotification = () => {
   }
 
   return (
-    <div className="fixed bottom-[3.25rem] right-2.5 z-50">
+    <div className="fixed bottom-[3.5rem] right-2 z-50">
       <div className="relative">
         <div
           className={classNames(
