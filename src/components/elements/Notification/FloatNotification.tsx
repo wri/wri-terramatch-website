@@ -82,7 +82,7 @@ const FloatNotification = () => {
   }
 
   return (
-    <div className="fixed bottom-[3.5rem] right-2 z-50">
+    <div className="fixed bottom-[3.5rem] right-6 z-50">
       <div className="relative">
         <div
           className={classNames(
@@ -195,7 +195,7 @@ const FloatNotification = () => {
             setOpenModalNotification(!openModalNotification);
           }}
           className={classNames(
-            "z-10 flex h-12 w-12 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
+            "z-10 flex h-13 w-13 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
               hidden: (notAcknowledgedJobs?.length ?? 0) === 0,
               visible: (notAcknowledgedJobs?.length ?? 0) > 0
