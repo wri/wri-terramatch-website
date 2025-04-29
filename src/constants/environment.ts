@@ -35,29 +35,11 @@ const GATEWAYS = {
 };
 
 const LOCAL_SERVICE_URLS = {
-  // apiBaseUrl: "http://localhost:8080",
-  // userServiceUrl: "http://localhost:4010",
-  // jobServiceUrl: "http://localhost:4020",
-  // researchServiceUrl: "http://localhost:4030",
-  // entityServiceUrl: "http://localhost:4050"
-
-  // apiBaseUrl: "https://api.terramatch.org",
-  // userServiceUrl: "https://api.terramatch.org",
-  // jobServiceUrl: "https://api.terramatch.org",
-  // researchServiceUrl: "https://api.terramatch.org",
-  // entityServiceUrl: "https://api.terramatch.org"
-
-  // apiBaseUrl: "https://api-staging.terramatch.org",
-  // userServiceUrl: "https://api-staging.terramatch.org",
-  // jobServiceUrl: "https://api-staging.terramatch.org",
-  // researchServiceUrl: "https://api-staging.terramatch.org",
-  // entityServiceUrl: "https://api-staging.terramatch.org"
-
-  apiBaseUrl: "https://api-dev.terramatch.org",
-  userServiceUrl: "https://api-dev.terramatch.org",
-  jobServiceUrl: "https://api-dev.terramatch.org",
-  researchServiceUrl: "https://api-dev.terramatch.org",
-  entityServiceUrl: "https://api-dev.terramatch.org"
+  apiBaseUrl: "http://localhost:8080",
+  userServiceUrl: "http://localhost:4010",
+  jobServiceUrl: "http://localhost:4020",
+  researchServiceUrl: "http://localhost:4030",
+  entityServiceUrl: "http://localhost:4050"
 };
 
 const defaultServiceUrl = (env: EnvironmentName, service: Service) =>
