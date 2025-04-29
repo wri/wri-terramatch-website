@@ -1,4 +1,5 @@
-import { keyBy, mapValues } from "lodash";
+import { isEmpty, keyBy, mapValues } from "lodash";
+import { createSelector } from "reselect";
 
 import { isErrorState } from "@/store/apiSlice";
 import DataApiSlice, { DataApiPayload, DataApiStore, GadmLevel } from "@/store/dataApiSlice";
@@ -83,22 +84,54 @@ async function fetchDataSet(
   }
 }
 
-export function gadmFetchFailedSelector(level: 0 | 1 | 2, parentCode?: string) {
-  const sql = gadmSql(level, parentCode);
-  const url = queryUrl(GADM_QUERY, sql);
-  return (store: DataApiStore) => {
-    const pending = store.meta.pending[url];
-    return isErrorState(pending) ? pending : null;
-  };
-}
+export const gadmFindFetchFailedSelector = (level: 0 | 1 | 2, parentCodes?: string[]) => {
+  if (level > 0 && isEmpty(parentCodes)) {
+    throw new Error("parentCodes are required for levels 1 and 2");
+  }
 
-export function fetchGadmLevel(level: 0 | 1 | 2, parentCode?: string) {
+  const urls =
+    level === 0
+      ? [queryUrl(GADM_QUERY, gadmLevel0Sql())]
+      : (parentCodes as string[]).map(code => queryUrl(GADM_QUERY, gadmSql(level, code)));
+  return createSelector(
+    ({ meta: { pending } }: DataApiStore) => pending,
+    pendingStates => {
+      for (const url of urls) {
+        const pending = pendingStates[url];
+        if (isErrorState(pending)) return pending;
+      }
+
+      return null;
+    }
+  );
+};
+
+function fetchGadmLevel(level: number, parentCode?: string) {
   const sql = gadmSql(level, parentCode);
   const payloadMutator = ({ data }: { data: object }) => ({
     gadmLevel: `level${level}` as GadmLevel,
-    parentCode,
+    parentCode: parentCode,
     data: mapValues(keyBy(data, "id"), "name")
   });
   // Promise intentionally ignored
   fetchDataSet(GADM_QUERY, sql, payloadMutator);
+}
+
+export function fetchGadmLevels(level: 0 | 1 | 2, parentCodes?: string[]) {
+  if (level === 0) {
+    if (!isEmpty(parentCodes)) {
+      throw new Error("parentCodes are not expected for level 0");
+    }
+
+    fetchGadmLevel(0);
+    return;
+  }
+
+  if (isEmpty(parentCodes)) {
+    throw new Error("parentCodes are required for levels 1 and 2");
+  }
+
+  for (const code of parentCodes as string[]) {
+    fetchGadmLevel(level, code);
+  }
 }
