@@ -279,6 +279,7 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type SiteReportLightDto = {
@@ -333,6 +334,7 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type ProjectFullDto = {
@@ -759,7 +761,7 @@ export type NurseryReportFullDto = {
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
+  nothingToReport: boolean | null;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
@@ -830,10 +832,10 @@ export type SiteReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   title: string | null;
   sharedDriveLink: string | null;
