@@ -9,6 +9,7 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
 import Log from "@/utils/log";
+import { optionToChoices } from "@/utils/options";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type GadmConnection = {
@@ -105,6 +106,11 @@ export const useGadmOptions = (props: GadmConnectionProps) => {
       }))
       .sort(({ title: a }, { title: b }) => a.localeCompare(b));
   }, [codeMapping, fetchFailure, loaded, props, t]);
+};
+
+export const useGadmChoices = (props: GadmConnectionProps) => {
+  const options = useGadmOptions(props);
+  return useMemo(() => (options == null ? [] : optionToChoices(options)), [options]);
 };
 
 export const findCachedGadmTitle = (level: 0 | 1 | 2, code: string, parentCodes?: string[]) => {
