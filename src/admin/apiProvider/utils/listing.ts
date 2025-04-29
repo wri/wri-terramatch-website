@@ -2,7 +2,6 @@ import { GetListParams, GetListResult, RaRecord } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
 
-// Extend the standard GetListResult to include the 'included' property for JSON:API responses
 export interface ExtendedGetListResult<T extends RaRecord = any> extends GetListResult<T> {
   included?: any[];
 }
@@ -84,7 +83,7 @@ export const raListParamsToQueryParams = (
 interface ApiListResponse {
   data?: { [index: string]: any; uuid?: string }[];
   meta?: any;
-  included?: any[]; // Add included property for JSON:API responses
+  included?: any[];
 }
 
 export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({
@@ -100,6 +99,6 @@ export const apiListResponseToRAListResult = (response: ApiListResponse): Extend
       hasNextPage: response?.meta?.last_page > response?.meta?.current_page || false,
       hasPreviousPage: response?.meta?.current_page > 1 || false
     },
-    included: response?.included // Return the included data
+    included: response?.included
   };
 };

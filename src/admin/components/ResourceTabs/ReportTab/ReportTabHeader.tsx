@@ -1,6 +1,6 @@
 import Text from "@/components/elements/Text/Text";
 
-const ResportTabHeader = () => {
+const ReportTabHeader = () => {
   return (
     <div id="pdf-header" className="print-header flex items-center justify-between border-b-2 border-black pb-2">
       <div>
@@ -32,4 +32,4 @@ const ResportTabHeader = () => {
   );
 };
 
-export default ResportTabHeader;
+export default ReportTabHeader;

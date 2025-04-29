@@ -60,24 +60,6 @@ const ReportPieChart: React.FC<ReportPieChartProps> = ({ data }) => {
           <Tooltip content={<CustomTooltip />} />
         </PieChart>
       </ResponsiveContainer>
-      <style>
-        {`
-          @media print {
-            .pie-chart-container-report .recharts-wrapper {
-              width: 100% !important;
-              height: 125px !important;
-            }
-            .pie-chart-container-report .recharts-surface {
-              width: 100% !important;
-              height: 125px !important;
-            }
-            .pie-chart-container-report .recharts-pie {
-              transform: scale(1.5);
-              transform-origin: center;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };

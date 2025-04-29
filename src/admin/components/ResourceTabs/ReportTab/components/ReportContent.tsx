@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import ResportTabHeader from "../ResportTabHeader";
+import ReportTabHeader from "../ReportTabHeader";
 import { BeneficiaryData, ReportData, Site } from "../types";
 import EmploymentDemographics from "./EmploymentDemographics";
 import EmploymentOpportunities from "./EmploymentOpportunities";
@@ -21,7 +21,7 @@ interface ReportContentProps {
 const ReportContent: FC<ReportContentProps> = ({ beneficiaryData, reportData, sites, plants }) => {
   return (
     <div id="printable-report-content" className="!p-0">
-      <ResportTabHeader />
+      <ReportTabHeader />
       <div className="grid grid-cols-2 gap-x-3 gap-y-8 py-6">
         <GeneralInformation beneficiaryData={beneficiaryData} reportData={reportData} />
 

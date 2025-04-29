@@ -72,7 +72,7 @@ export const useReportData = () => {
           .filter(report => report.pctSurvivalToDate !== null)
           .sort((a, b) => new Date(b.dueAt).getTime() - new Date(a.dueAt).getTime())[0];
 
-        setLatestSurvivalRate(latestReportWithSurvivalRate?.pctSurvivalToDate || 0);
+        setLatestSurvivalRate(latestReportWithSurvivalRate?.pctSurvivalToDate ?? 0);
 
         if (reportsResult.included && Array.isArray(reportsResult.included)) {
           const demographicsData = reportsResult.included.filter(item => item.type === "demographics");
@@ -172,21 +172,21 @@ export const useReportData = () => {
 
   const reportData: ReportData = {
     organization: {
-      name: record?.organisationName || "Foundation"
+      name: record?.organisationName ?? "Foundation"
     },
     project: {
-      name: record?.name || "Ecosystem and livelihoods enhancement for People, Nature and Climate",
+      name: record?.name ?? "Ecosystem and livelihoods enhancement for People, Nature and Climate",
       trees: {
-        planted: record?.treesPlantedCount || 0,
-        goal: record?.treesGrownGoal || 0,
+        planted: record?.treesPlantedCount ?? 0,
+        goal: record?.treesGrownGoal ?? 0,
         percentage:
           record?.treesPlantedCount && record?.treesGrownGoal
             ? Math.round((record.treesPlantedCount / record.treesGrownGoal) * 100)
             : 0
       },
       hectares: {
-        restored: record?.totalHectaresRestoredSum || 0,
-        goal: record?.totalHectaresRestoredGoal || 0,
+        restored: record?.totalHectaresRestoredSum ?? 0,
+        goal: record?.totalHectaresRestoredGoal ?? 0,
         percentage:
           record?.totalHectaresRestoredSum && record?.totalHectaresRestoredGoal
             ? Math.round((record.totalHectaresRestoredSum / record.totalHectaresRestoredGoal) * 100)
@@ -216,11 +216,11 @@ export const useReportData = () => {
     sites: sites.map(site => ({
       name: site.name,
       hectareGoal: site.hectaresToRestoreGoal,
-      hectaresUnderRestoration: site.totalHectaresRestoredSum || 0,
-      totalReportedDisturbances: site.totalReportedDisturbances || 0,
-      climaticDisturbances: site.climaticDisturbances || 0,
-      manmadeDisturbances: site.manmadeDisturbances || 0,
-      ecologicalDisturbances: site.ecologicalDisturbances || 0
+      hectaresUnderRestoration: site.totalHectaresRestoredSum ?? 0,
+      totalReportedDisturbances: site.totalReportedDisturbances ?? 0,
+      climaticDisturbances: site.climaticDisturbances ?? 0,
+      manmadeDisturbances: site.manmadeDisturbances ?? 0,
+      ecologicalDisturbances: site.ecologicalDisturbances ?? 0
     }))
   };
 

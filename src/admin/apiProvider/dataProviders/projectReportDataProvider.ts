@@ -6,7 +6,6 @@ import { EntityLightDto } from "@/connections/Entity";
 import { v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, ExtendedGetListResult, raConnectionProps } from "../utils/listing";
 
-// Create a custom entities list result function that includes sideloaded data
 export const entitiesListResultWithIncluded = <T extends EntityLightDto>({
   entities,
   indexTotal,
@@ -30,10 +29,8 @@ export const projectReportDataProvider: DataProvider = {
       throw v3ErrorForRA("Project report index fetch failed", connection.fetchFailure);
     }
 
-    // Extract any included data from the API response if available
     const included = (connection as any).included;
 
-    // Use the standard result if no included data, otherwise use our extended result
     if (!included) {
       return entitiesListResult(connection);
     } else {

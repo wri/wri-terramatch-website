@@ -100,9 +100,7 @@ const TreeSpeciesTableGroup: FC<{
         style={{ gridTemplateColumns: `repeat(${sites.length + 3}, 1fr)` }}
         className="grid divide-y divide-black/10 border-b border-black/10"
       >
-        {/* {Title} */}
         <GrdTitleTreeSpecies sites={sites} />
-        {/* {Content} */}
         {aggregatedSpecies.map(species => (
           <Fragment key={species.name}>
             <GridsTitleReport
@@ -123,7 +121,6 @@ const TreeSpeciesTableGroup: FC<{
             />
           </Fragment>
         ))}
-        {/* {Footer} */}
         <GridsTitleReport title="Total" />
         <GridsContentReport content={grandTotal.toLocaleString()} />
         {sites.map(site => (
@@ -166,7 +163,7 @@ const AggregatedTreeSpeciesTable: FC<{
     const map: Record<string, number> = {};
     goalPlants?.forEach(plant => {
       if (plant.name) {
-        map[plant.name] = plant.amount || 0;
+        map[plant.name] = plant.amount ?? 0;
       }
     });
     return map;
@@ -179,8 +176,8 @@ const AggregatedTreeSpeciesTable: FC<{
       siteData.forEach(item => {
         const nameData = item.name;
         const name = nameData[0];
-        const speciesTypes = nameData[1] || [];
-        const count = item.treeCount || 0;
+        const speciesTypes = nameData[1] ?? [];
+        const count = item.treeCount ?? 0;
 
         if (!name) return;
 

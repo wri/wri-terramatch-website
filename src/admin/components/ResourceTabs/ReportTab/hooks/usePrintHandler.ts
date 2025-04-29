@@ -27,9 +27,6 @@ export const usePrintHandler = () => {
     };
   }, []);
 
-  /**
-   * Trigger print operation with proper formatting
-   */
   const handlePrint = () => {
     const content = document.getElementById("printable-report-content");
     if (content) {

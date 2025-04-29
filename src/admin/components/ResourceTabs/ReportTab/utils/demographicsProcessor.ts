@@ -32,15 +32,15 @@ export const processDemographicData = (demographics: IncludedDemographic[]): Emp
 
       const genderTotal = genderEntries.reduce((sum, entry) => sum + entry.amount, 0);
 
-      result[targetCategory].male += maleEntry?.amount || 0;
-      result[targetCategory].female += femaleEntry?.amount || 0;
-      result[targetCategory].youth += youthEntry?.amount || 0;
+      result[targetCategory].male += maleEntry?.amount ?? 0;
+      result[targetCategory].female += femaleEntry?.amount ?? 0;
+      result[targetCategory].youth += youthEntry?.amount ?? 0;
       result[targetCategory].total += genderTotal;
 
       if (nonYouthEntry) {
         result[targetCategory].nonYouth += nonYouthEntry.amount;
       } else if (youthEntry) {
-        result[targetCategory].nonYouth = genderTotal - (youthEntry?.amount || 0);
+        result[targetCategory].nonYouth = genderTotal - (youthEntry?.amount ?? 0);
       }
     }
   });
