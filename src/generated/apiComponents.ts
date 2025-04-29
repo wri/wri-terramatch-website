@@ -3828,8 +3828,13 @@ export type PutV2AdminUpdateRequestsUUIDSTATUSResponse = {
   created_by?: Record<string, any>;
 };
 
+export type PutV2AdminUpdateRequestsUUIDSTATUSRequestBody = {
+  feedback?: string;
+  feedback_fields?: string[];
+};
+
 export type PutV2AdminUpdateRequestsUUIDSTATUSVariables = {
-  body?: RequestBodies.PutV2AdminUpdateRequestsUuidStatusBody;
+  body?: PutV2AdminUpdateRequestsUUIDSTATUSRequestBody;
   pathParams: PutV2AdminUpdateRequestsUUIDSTATUSPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -3840,7 +3845,7 @@ export const fetchPutV2AdminUpdateRequestsUUIDSTATUS = (
   apiFetch<
     PutV2AdminUpdateRequestsUUIDSTATUSResponse,
     PutV2AdminUpdateRequestsUUIDSTATUSError,
-    RequestBodies.PutV2AdminUpdateRequestsUuidStatusBody,
+    PutV2AdminUpdateRequestsUUIDSTATUSRequestBody,
     {},
     {},
     PutV2AdminUpdateRequestsUUIDSTATUSPathParams
@@ -3864,49 +3869,6 @@ export const usePutV2AdminUpdateRequestsUUIDSTATUS = (
   >(
     (variables: PutV2AdminUpdateRequestsUUIDSTATUSVariables) =>
       fetchPutV2AdminUpdateRequestsUUIDSTATUS({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PutV2AdminENTITYUUIDSTATUSPathParams = {
-  /**
-   * allowed values are projects, project-reports, site, site-reports, nurseries, nursery-reports
-   */
-  entity: string;
-  uuid: string;
-  /**
-   * allowed values are approve, moreinfo
-   */
-  status: string;
-};
-
-export type PutV2AdminENTITYUUIDSTATUSError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2AdminENTITYUUIDSTATUSVariables = {
-  body?: RequestBodies.PutV2AdminUpdateRequestsUuidStatusBody;
-  pathParams: PutV2AdminENTITYUUIDSTATUSPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2AdminENTITYUUIDSTATUS = (variables: PutV2AdminENTITYUUIDSTATUSVariables, signal?: AbortSignal) =>
-  apiFetch<
-    undefined,
-    PutV2AdminENTITYUUIDSTATUSError,
-    RequestBodies.PutV2AdminUpdateRequestsUuidStatusBody,
-    {},
-    {},
-    PutV2AdminENTITYUUIDSTATUSPathParams
-  >({ url: "/v2/admin/{entity}/{uuid}/{status}", method: "put", ...variables, signal });
-
-export const usePutV2AdminENTITYUUIDSTATUS = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PutV2AdminENTITYUUIDSTATUSError, PutV2AdminENTITYUUIDSTATUSVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PutV2AdminENTITYUUIDSTATUSError, PutV2AdminENTITYUUIDSTATUSVariables>(
-    (variables: PutV2AdminENTITYUUIDSTATUSVariables) =>
-      fetchPutV2AdminENTITYUUIDSTATUS({ ...fetcherOptions, ...variables }),
     options
   );
 };

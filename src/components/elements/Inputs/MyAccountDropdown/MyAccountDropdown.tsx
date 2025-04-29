@@ -66,7 +66,11 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
         }
         router.push("/home");
       } else {
-        router.push("/dashboard");
+        if (isAdmin) {
+          router.push("/dashboard");
+        } else {
+          router.push("/dashboard/learn-more");
+        }
       }
     }
     setTimeout(() => {

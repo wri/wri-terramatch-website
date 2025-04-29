@@ -322,6 +322,7 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type SiteReportLightDto = {
@@ -376,6 +377,7 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type ProjectFullDto = {
@@ -802,7 +804,7 @@ export type NurseryReportFullDto = {
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
+  nothingToReport: boolean | null;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
@@ -873,10 +875,10 @@ export type SiteReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   title: string | null;
   sharedDriveLink: string | null;
@@ -946,7 +948,7 @@ export type ProjectUpdateData = {
 
 export type SiteUpdateAttributes = {
   /**
-   * Request to change to the status of the given entity
+   * Request to change to the status of the given site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
   /**
@@ -992,13 +994,32 @@ export type NurseryUpdateData = {
   attributes: EntityUpdateAttributes;
 };
 
+export type ReportUpdateAttributes = {
+  /**
+   * Request to change to the status of the given report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport: boolean | null;
+};
+
 export type ProjectReportUpdateData = {
   type: "projectReports";
   /**
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type SiteReportUpdateData = {
@@ -1007,7 +1028,7 @@ export type SiteReportUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type NurseryReportUpdateData = {
@@ -1016,7 +1037,7 @@ export type NurseryReportUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: EntityUpdateAttributes;
+  attributes: ReportUpdateAttributes;
 };
 
 export type EntityUpdateBody = {

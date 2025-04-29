@@ -11,6 +11,7 @@ import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFL
 import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
@@ -138,6 +139,18 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
     case FieldType.FinancialIndicatorsDataTable:
       return (
         <RHFFinancialIndicatorsDataTable
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error as any}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
+    case FieldType.StrategyAreaInput:
+      return (
+        <RHFStrategyAreaDataTable
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}
