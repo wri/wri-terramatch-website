@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import Text from "../../Text/Text";
 
 export type Item = {
@@ -14,9 +16,10 @@ type PopupMapImageProps = {
 };
 
 const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImageProps) => {
+  const t = useT();
   return (
     <div className="popup-project-image-map w-auto min-w-[17vw] max-w-[20vw] cursor-pointer rounded-lg bg-white lg:min-w-[17vw] lg:max-w-[15vw]">
-      <div className="flex flex-col">
+      <div className="flex flex-col pb-1">
         <img
           src={imageUrl || "/images/no-image-available.png"}
           alt="Map preview of the project location"
@@ -24,20 +27,25 @@ const PopupMapImage = ({ label, imageUrl, items = [], learnMore }: PopupMapImage
         />
         <div className="flex flex-col gap-2 p-2">
           <Text variant="text-12-bold" className="overflow-hidden leading-[normal] line-clamp-2">
-            {label}
+            {t(label)}
           </Text>
           {items.map(item => (
             <div key={item.id} className="flex flex-col gap-0.5">
               <Text variant="text-12-light" className="leading-[normal]">
-                {item.title}
+                {t(item.title)}
               </Text>
               <Text variant="text-12-semibold" className="leading-[normal]">
-                {item.value}
+                {t(item.value)}
               </Text>
             </div>
           ))}
-          <button onClick={learnMore} className="!text-blue-600 mt-1 self-start text-xs hover:underline">
-            Visit Project Page
+          <button onClick={learnMore}>
+            <Text
+              className="text-start text-primary underline underline-offset-1 hover:opacity-70"
+              variant="text-12-semibold"
+            >
+              {t("View Project Page")}
+            </Text>
           </button>
         </div>
       </div>

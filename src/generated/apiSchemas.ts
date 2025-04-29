@@ -3620,6 +3620,32 @@ export type V2LeadershipsRead = {
   collection?: string;
 };
 
+export type V2FinancialIndicatorsCreate = {
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type V2FinancialIndicatorsRead = {
+  uuid?: string;
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+  collection?: string;
+};
+
+export type V2FinancialIndicatorsUpdate = {
+  amount?: number;
+  year?: number;
+  documentation?: string;
+  description?: string;
+};
+
 export type V2OwnershipStakeCreate = {
   organisation_id?: string;
   position?: string;
@@ -16141,6 +16167,7 @@ export type SitePolygon = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 };
 
 export type GeometryString = {
@@ -16193,6 +16220,7 @@ export type SitePolygonsDataResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -16732,6 +16760,7 @@ export type EntityTypeResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -16796,6 +16825,7 @@ export type EntityPolygonResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
 };
 
@@ -16875,6 +16905,7 @@ export type PolygonChangeStatus = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type PolygonChangeStatusUpdate = {
@@ -17307,10 +17338,6 @@ export type UserCreateComplete = {
   job_role?: string;
   phone_number?: string;
   role?: string;
-};
-
-export type V2AdminProjectUpdate = {
-  is_test?: boolean;
 };
 
 export type IndicatorPost = {

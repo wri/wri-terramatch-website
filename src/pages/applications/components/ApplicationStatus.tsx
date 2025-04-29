@@ -48,6 +48,8 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
   const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
+    // TODO: using the framework key as an access code here is really confusing and needs to be updated.
+    // Will be related to some general application cleanup that Ben is getting set up in an epic.
     pathParams: { accessCode: currentForm?.framework_key ? currentForm?.framework_key : "terrafund" }
   });
   //@ts-ignore
@@ -207,7 +209,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             primaryAction: {
               children: t("Set up monitoring project"),
               as: Link,
-              href: `/entity/projects/create/${terrafundReportingFramework.uuid}?parent_name=application&parent_uuid=${application.uuid}`
+              href: `/entity/projects/create/${terrafundReportingFramework.slug}?parent_name=application&parent_uuid=${application.uuid}`
             },
             secondaryAction: {
               children: t("Learn More"),

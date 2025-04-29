@@ -19,6 +19,24 @@ export const parseValidationData = (criteriaData: any) => {
   return transformedData;
 };
 
+export const parseValidationDataFromContext = (polygonValidation: any) => {
+  if (!polygonValidation?.nonValidCriteria) {
+    return [];
+  }
+
+  const transformedData: ICriteriaCheckItem[] = polygonValidation.nonValidCriteria.map((criteria: any) => {
+    return {
+      id: criteria.criteria_id,
+      date: criteria.latest_created_at,
+      status: false, // Non-valid criteria are always false
+      label: validationLabels[criteria.criteria_id],
+      extra_info: criteria.extra_info
+    };
+  });
+
+  return transformedData;
+};
+
 export const isValidCriteriaData = (criteriaData: any) => {
   if (!criteriaData?.criteria_list?.length) {
     return true;
