@@ -12,7 +12,7 @@ import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
-// import ToolTip from "../Tooltip/Tooltip";
+import ToolTip from "../Tooltip/Tooltip";
 
 const FloatNotification = () => {
   const firstRender = useRef(true);
@@ -68,8 +68,21 @@ const FloatNotification = () => {
     return null;
   };
 
+  function clearJob(item: DelayedJobDto) {
+    const newJobsData: DelayedJobData[] = [
+      {
+        uuid: item.uuid,
+        type: "delayedJobs",
+        attributes: {
+          isAcknowledged: true
+        }
+      }
+    ];
+    triggerBulkUpdate(newJobsData);
+  }
+
   return (
-    <div className="fixed bottom-10 right-10 z-50">
+    <div className="fixed bottom-[3.5rem] right-2 z-50">
       <div className="relative">
         <div
           className={classNames(
@@ -107,11 +120,13 @@ const FloatNotification = () => {
                       <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
                         {item.name}
                       </Text>
-                      {/* <button className="absolute right-0 hover:text-primary">
-                        <ToolTip content={t("Cancel")}>
-                          <Icon name={IconNames.CLEAR} className="h-3 w-3" />
-                        </ToolTip>
-                      </button> */}
+                      {
+                        <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
+                          <ToolTip content={t("Cancel")}>
+                            <Icon name={IconNames.CLEAR} className="h-3 w-3" />
+                          </ToolTip>
+                        </button>
+                      }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
                       Site: <b>{item.entityName}</b>
@@ -180,7 +195,7 @@ const FloatNotification = () => {
             setOpenModalNotification(!openModalNotification);
           }}
           className={classNames(
-            "z-10 flex h-13 w-13 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
+            "z-10 flex h-12 w-12 items-center justify-center rounded-full border border-grey-950 bg-primary duration-300  hover:scale-105",
             {
               hidden: (notAcknowledgedJobs?.length ?? 0) === 0,
               visible: (notAcknowledgedJobs?.length ?? 0) > 0

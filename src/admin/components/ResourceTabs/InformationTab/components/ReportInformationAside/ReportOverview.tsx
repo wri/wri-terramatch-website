@@ -8,7 +8,7 @@ import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "reminder" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | "reminder" | undefined>();
 
   const { record } = useShowContext();
   const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.updateRequestStatus);
@@ -64,7 +64,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="outlined"
               disabled={reportActionDisabled || record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("moreinfo")}
+              onClick={() => setStatusModal("needs-more-information")}
             >
               Request More Info
             </Button>
@@ -72,7 +72,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               variant="contained"
               startIcon={<Check />}
               disabled={reportActionDisabled || record?.status === "approved"}
-              onClick={() => setStatusModal("approve")}
+              onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>

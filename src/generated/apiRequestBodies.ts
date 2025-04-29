@@ -3,11 +3,6 @@
  *
  * @version 1.0.0
  */
-export type PutV2AdminUpdateRequestsUuidStatusBody = {
-  feedback?: string;
-  feedback_fields?: string[];
-};
-
 export type PatchAuthChangeBody = {
   token?: string;
   password?: string;

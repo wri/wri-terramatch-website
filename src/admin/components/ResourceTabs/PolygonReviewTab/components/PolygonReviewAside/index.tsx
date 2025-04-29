@@ -9,6 +9,7 @@ interface SitePolygonReviewAsideProps {
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
+  siteUuid?: string;
 }
 
 const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
@@ -20,6 +21,7 @@ const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
       refresh={props?.refresh}
       mapFunctions={props?.mapFunctions}
       totalPolygons={props?.totalPolygons}
+      siteUuid={props?.siteUuid}
     />
   </Stack>
 );

@@ -27,6 +27,8 @@ export interface RHFFileInputProps
   showPrivateCheckbox?: boolean;
   onChangeCapture?: () => void;
   isPhotosAndVideo?: boolean;
+  isTemporary?: boolean;
+  onCaptureFile?: (file: File) => void;
 }
 
 /**
@@ -41,6 +43,8 @@ const RHFFileInput = ({
   showPrivateCheckbox,
   onChangeCapture,
   isPhotosAndVideo = false,
+  isTemporary = false,
+  onCaptureFile,
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
@@ -140,7 +144,7 @@ const RHFFileInput = ({
 
   const onSelectFile = async (file: File) => {
     const maxSize = fileInputProps.maxFileSize;
-
+    onCaptureFile?.(file);
     if (maxSize && file.size > maxSize * 1024 * 1024) {
       const error = getErrorMessages(t, "UPLOAD_ERROR", { max: maxSize });
       formHook?.setError(fileInputProps.name, error);
@@ -169,7 +173,8 @@ const RHFFileInput = ({
       mime_type: file.type,
       rawFile: file,
       uploadState: {
-        isLoading: true
+        isLoading: isTemporary ? false : true,
+        isSuccess: isTemporary
       }
     });
 
@@ -187,12 +192,14 @@ const RHFFileInput = ({
       Log.error("Failed to append geotagging information", e);
     }
 
-    upload?.({
-      pathParams: { model, collection, uuid },
-      file: file,
-      //@ts-ignore swagger issue
-      body
-    });
+    if (!isTemporary) {
+      upload?.({
+        pathParams: { model, collection, uuid },
+        file: file,
+        //@ts-ignore swagger issue
+        body
+      });
+    }
     formHook?.clearErrors(fileInputProps.name);
   };
 

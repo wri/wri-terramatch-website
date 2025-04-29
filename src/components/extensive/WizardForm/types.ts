@@ -6,6 +6,7 @@ import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/Boo
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import { RHFFinancialIndicatorsDataTableProps } from "@/components/elements/Inputs/DataTable/RHFFinancialIndicatorsTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { RHFLeadershipsTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
@@ -20,6 +21,7 @@ import { RHFInputTableProps } from "@/components/elements/Inputs/InputTable/RHFI
 import { RHFMapProps } from "@/components/elements/Inputs/Map/RHFMap";
 import { RHFSelectProps } from "@/components/elements/Inputs/Select/RHFSelect";
 import { RHFSelectImageProps } from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
+import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAreaInput/StrategyAreaInput";
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
@@ -72,11 +74,13 @@ export enum FieldType {
   IndirectBeneficiariesTable = "indirectBeneficiaries",
   EmployeesTable = "employees",
   InputTable = "inputTable",
+  FinancialIndicatorsDataTable = "financialIndicatorsDataTable",
   SelectImage = "selectImage",
   Map = "map",
   Conditional = "conditional",
   Boolean = "boolean",
-  OwnershipStakeDataTable = "OwnershipStakeDataTable"
+  OwnershipStakeDataTable = "OwnershipStakeDataTable",
+  StrategyAreaInput = "strategyAreaInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -84,6 +88,7 @@ export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
 export type FormField =
   | InputFormField
   | FieldTypeBuilder<FieldType.TextArea, TextAreaProps>
+  | FieldTypeBuilder<FieldType.StrategyAreaInput, StrategyAreaInputProps>
   | FieldTypeBuilder<
       FieldType.Dropdown,
       Omit<RHFDropdownProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
@@ -160,4 +165,11 @@ export type FormField =
     >
   | FieldTypeBuilder<FieldType.Map, Omit<RHFMapProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<FieldType.Conditional, Omit<ConditionalInputProps, "formHook" | "onChangeCapture">>
-  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>;
+  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>
+  | FieldTypeBuilder<
+      FieldType.FinancialIndicatorsDataTable,
+      Omit<
+        RHFFinancialIndicatorsDataTableProps,
+        "formHook" | "onChangeCapture" | "errors" | "error" | keyof UseControllerProps
+      >
+    >;
