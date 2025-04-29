@@ -14,16 +14,19 @@ import {
   NurseryLightDto,
   NurseryReportFullDto,
   NurseryReportLightDto,
+  NurseryReportUpdateData,
   NurseryUpdateData,
   ProjectFullDto,
   ProjectLightDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
+  ProjectReportUpdateData,
   ProjectUpdateData,
   SiteFullDto,
   SiteLightDto,
   SiteReportFullDto,
   SiteReportLightDto,
+  SiteReportUpdateData,
   SiteUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
@@ -58,16 +61,19 @@ export type EntityLightDto =
   | SiteReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
 
-export type EntityUpdateData = ProjectUpdateData | SiteUpdateData | NurseryUpdateData;
+export type EntityUpdateData =
+  | ProjectUpdateData
+  | SiteUpdateData
+  | NurseryUpdateData
+  | ProjectReportUpdateData
+  | SiteReportUpdateData
+  | NurseryReportUpdateData;
 
-export type EntityConnection<T extends EntityDtoType> = {
+export type EntityConnection<T extends EntityDtoType, U extends EntityUpdateData> = {
   entity?: T;
   entityIsDeleted: boolean;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
-};
-
-export type EntityConnectionWithUpdate<T extends EntityDtoType, U extends EntityUpdateData> = EntityConnection<T> & {
   update: (updateAttributes: Partial<U["attributes"]>) => void;
   entityIsUpdating: boolean;
   entityUpdateFailure?: PendingErrorState | null;
@@ -137,8 +143,8 @@ const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectio
 
 const entityIsLoaded =
   (requireFullEntity: boolean) =>
-  <T extends EntityDtoType>(
-    { entity, entityIsDeleted, fetchFailure }: EntityConnection<T>,
+  <T extends EntityDtoType, U extends EntityUpdateData>(
+    { entity, entityIsDeleted, fetchFailure }: EntityConnection<T, U>,
     { uuid }: EntityConnectionProps
   ) => {
     if (uuid == null || entityIsDeleted || fetchFailure != null) return true;
@@ -146,48 +152,14 @@ const entityIsLoaded =
     return !requireFullEntity || !entity.lightResource;
   };
 
-const createGetEntityConnection = <T extends EntityDtoType>(
-  entityName: SupportedEntity,
-  requireFullEntity: boolean
-): Connection<EntityConnection<T>, EntityConnectionProps> => ({
+const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpdateData>(
+  entityName: U["type"]
+): Connection<EntityConnection<T, U>, EntityConnectionProps> => ({
   load: (connection, props) => {
-    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
+    if (!entityIsLoaded(true)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
   },
 
-  isLoaded: entityIsLoaded(requireFullEntity),
-
-  selector: selectorCache(
-    ({ uuid }) => uuid,
-    ({ uuid }) =>
-      createSelector(
-        [
-          entitySelector(entityName),
-          resourcesDeletedSelector(entityName),
-          entityGetFetchFailed(specificEntityParams(entityName, uuid))
-        ],
-        (entities, deleted, failure) => ({
-          entity: entities[uuid]?.attributes as T,
-          entityIsDeleted: uuid != null && deleted.includes(uuid),
-          fetchFailure: failure ?? undefined,
-          refetch: () => {
-            if (uuid != null) ApiSlice.pruneCache(entityName, [uuid]);
-          }
-        })
-      )
-  )
-});
-
-// While we transition each entity to the ability to update in v3, this separate connection is needed.
-// Once we've finished supporting it for all 6 entity types, this will become the only entity connection.
-const createGetEntityConnectionWithUpdate = <T extends EntityDtoType, U extends EntityUpdateData>(
-  entityName: U["type"],
-  requireFullEntity: boolean
-): Connection<EntityConnectionWithUpdate<T, U>, EntityConnectionProps> => ({
-  load: (connection, props) => {
-    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
-  },
-
-  isLoaded: entityIsLoaded(requireFullEntity),
+  isLoaded: entityIsLoaded(true),
 
   selector: selectorCache(
     ({ uuid }) => uuid,
@@ -284,7 +256,7 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
 // currently cached is the "light" version, it will issue a request to the server to get the full version.
 
 // Projects
-const fullProjectConnection = createGetEntityConnectionWithUpdate<ProjectFullDto, ProjectUpdateData>("projects", true);
+const fullProjectConnection = createGetEntityConnection<ProjectFullDto, ProjectUpdateData>("projects");
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = connectedResourceDeleter(
@@ -297,7 +269,7 @@ export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 
 // Sites
-const fullSiteConnection = createGetEntityConnectionWithUpdate<SiteFullDto, EntityUpdateData>("sites", true);
+const fullSiteConnection = createGetEntityConnection<SiteFullDto, EntityUpdateData>("sites");
 export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);
 export const deleteSite = connectedResourceDeleter(
@@ -310,7 +282,7 @@ export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
 
 // Nurseries
-const fullNurseryConnection = createGetEntityConnectionWithUpdate<NurseryFullDto, EntityUpdateData>("nurseries", true);
+const fullNurseryConnection = createGetEntityConnection<NurseryFullDto, EntityUpdateData>("nurseries");
 export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
 export const deleteNursery = connectedResourceDeleter(
@@ -325,7 +297,9 @@ export const useNurseryIndex = connectionHook(indexNurseryConnection);
 // Project Reports
 const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
 export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
-const fullProjectReportConnection = createGetEntityConnection<ProjectReportFullDto>("projectReports", true);
+const fullProjectReportConnection = createGetEntityConnection<ProjectReportFullDto, ProjectReportUpdateData>(
+  "projectReports"
+);
 export const loadFullProjectReport = connectionLoader(fullProjectReportConnection);
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 export const deleteProjectReport = connectedResourceDeleter(
@@ -338,7 +312,7 @@ export const deleteProjectReport = connectedResourceDeleter(
 const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
 export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
-const fullSiteReportConnection = createGetEntityConnection<SiteReportFullDto>("siteReports", true);
+const fullSiteReportConnection = createGetEntityConnection<SiteReportFullDto, SiteReportUpdateData>("siteReports");
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 export const deleteSiteReport = connectedResourceDeleter(
@@ -351,7 +325,9 @@ export const deleteSiteReport = connectedResourceDeleter(
 const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
 export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
 export const useNurseryReportIndex = connectionHook(indexNurseryReportConnection);
-const fullNurseryReportConnection = createGetEntityConnection<NurseryReportFullDto>("nurseryReports", true);
+const fullNurseryReportConnection = createGetEntityConnection<NurseryReportFullDto, NurseryReportUpdateData>(
+  "nurseryReports"
+);
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 export const deleteNurseryReport = connectedResourceDeleter(
