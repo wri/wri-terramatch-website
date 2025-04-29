@@ -2,14 +2,6 @@
   @apply mobile:!overflow-auto mobile:!h-16;
 }
 
-.RaList-main{
-  /* @apply !pb-4; */
-}
-
-/* .RaLayout-content{
-  @apply !justify-between;
-} */
-
 .search-page-admin>div:first-of-type {
   @apply flex flex-row-reverse bg-white rounded-lg;
 }
