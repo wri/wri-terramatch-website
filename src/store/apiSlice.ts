@@ -18,7 +18,7 @@ import {
 } from "@/generated/v3/researchService/researchServiceConstants";
 import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
-import { __TEST_HYDRATE__ } from "@/store/store";
+import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 
 export type PendingErrorState = {
   statusCode: number;
@@ -384,8 +384,12 @@ export default class ApiSlice {
     this._queryClient = value;
   }
 
-  static get currentState(): ApiDataStore {
-    return this.redux.getState().api;
+  static get currentState() {
+    return ApiSlice.getState(this.redux.getState());
+  }
+
+  static getState({ api }: AppStore) {
+    return api;
   }
 
   static fetchStarting(props: ApiFetchStartingProps) {

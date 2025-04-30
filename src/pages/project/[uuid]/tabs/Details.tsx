@@ -14,7 +14,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { ContextCondition } from "@/context/ContextCondition";
@@ -36,6 +36,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const { format } = useDate();
   const { openModal } = useModalContext();
   const { framework } = useFrameworkContext();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
@@ -153,7 +154,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           <PageCard title={t("Project Details")}>
             <TextField label={t("Project Name")} value={project.name ?? ""} />
             <TextField frameworksShow={[Framework.PPC]} label={t("Continent")} value={project.continent ?? ""} />
-            <TextField label={t("Country")} value={formatOptionsList(getCountriesOptions(t), project.country ?? [])} />
+            <TextField label={t("Country")} value={formatOptionsList(countryOptions ?? [], project.country ?? [])} />
             <TextField frameworksShow={[Framework.HBF]} label={t("State")} value={(project.states ?? []).join(", ")} />
             <TextField
               frameworksHide={[Framework.PPC]}

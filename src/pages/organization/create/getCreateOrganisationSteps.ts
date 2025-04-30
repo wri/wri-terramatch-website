@@ -2,14 +2,13 @@ import { useT } from "@transifex/react";
 import * as yup from "yup";
 
 import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { FileType } from "@/types/common";
+import { FileType, Option } from "@/types/common";
 import { urlValidation } from "@/utils/yup";
 
 const ModelName = "organisation";
 
-export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
+export const getSteps = (t: typeof useT, uuid: string, countryOptions: Option[]): FormStepSchema[] => {
   return [
     {
       title: t("Organization Details"),
@@ -82,7 +81,7 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           placeholder: t("Add Headquarters address Country"),
           type: FieldType.Dropdown,
           validation: yup.string().required(),
-          fieldProps: { options: getCountriesOptions(t), required: true }
+          fieldProps: { options: countryOptions, required: true }
         },
         {
           name: "phone",
@@ -101,7 +100,7 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => {
           placeholder: t("Select Country"),
           type: FieldType.Dropdown,
           validation: yup.array().required(),
-          fieldProps: { options: getCountriesOptions(t), multiSelect: true, required: true }
+          fieldProps: { options: countryOptions, multiSelect: true, required: true }
         },
         {
           name: "legal_registration",

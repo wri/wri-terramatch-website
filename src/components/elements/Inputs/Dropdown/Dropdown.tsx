@@ -154,7 +154,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const verifyDisableOption = (title: string) => {
     return props?.disableOptionTitles?.includes(title);
   };
-  // console.log(otherIsSelected);
+
   const formatSelectedValues = (
     selected: OptionValue[],
     options: Option[],
