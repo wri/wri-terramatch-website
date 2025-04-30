@@ -311,7 +311,7 @@ const SiteReportDetailPage = () => {
                     </div>
                     <div>
                       <Text variant="text-20-bold">{t("Disturbances")}</Text>
-                      <DisturbancesTablePD modelName="site-report" modelUUID={siteReportUUID} />
+                      <DisturbancesTablePD modelName="siteReports" modelUUID={siteReportUUID} />
                     </div>
                   </PageCard>
                 </PageColumn>
