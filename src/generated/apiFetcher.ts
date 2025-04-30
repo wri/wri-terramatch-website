@@ -194,9 +194,9 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult = await loadJob(signal, delayedJobId)
   ) {
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
-    if (totalContent != null && processedContent != null) {
-      JobsSlice.setJobsProgress(totalContent, processedContent, progressMessage);
-    }
+    const effectiveTotalContent =
+      jobResult.data?.attributes?.status === "pending" && totalContent === null ? 1 : totalContent ?? 0;
+    JobsSlice.setJobsProgress(effectiveTotalContent, processedContent ?? 0, progressMessage);
 
     if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
