@@ -1,6 +1,6 @@
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import { useDisturbances } from "@/connections/EntityAssocation";
+import { useDisturbances } from "@/connections/EntityAssociation";
 
 export type DisturbanceEntity = "projectReports" | "siteReports" | "sites" | "projects";
 export interface DisturbancesTableProps {

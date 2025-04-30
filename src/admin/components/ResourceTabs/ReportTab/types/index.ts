@@ -49,6 +49,7 @@ export interface BeneficiaryData {
 }
 export interface Site {
   id: string;
+  uuid: string;
   name: string;
   hectaresToRestoreGoal: number;
   totalHectaresRestoredSum?: number;
@@ -56,8 +57,20 @@ export interface Site {
   climaticDisturbances: number;
   manmadeDisturbances: number;
   ecologicalDisturbances: number;
+  siteReports?: SiteReport[];
   [key: string]: any;
 }
+
+export interface SiteReport {
+  id: string;
+  uuid: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  siteUuid: string;
+  [key: string]: any;
+}
+
 export interface ReportData {
   organization: {
     name: string;

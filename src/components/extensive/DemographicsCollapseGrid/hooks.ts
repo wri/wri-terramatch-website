@@ -1,7 +1,7 @@
 import { Dictionary, findLastIndex, kebabCase, uniq } from "lodash";
 import { useMemo } from "react";
 
-import { useDemographics } from "@/connections/EntityAssocation";
+import { useDemographics } from "@/connections/EntityAssociation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 

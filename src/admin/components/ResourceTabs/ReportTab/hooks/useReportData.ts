@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useDataProvider, useShowContext } from "react-admin";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
-import { usePlants } from "@/connections/EntityAssocation";
-import { fetchGetV2DisturbancesENTITYUUID } from "@/generated/apiComponents";
+import { usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
 
 import {
   BeneficiaryData,
@@ -11,7 +10,8 @@ import {
   IncludedDemographic,
   ProjectReport,
   ReportData,
-  Site
+  Site,
+  SiteReport
 } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
 
@@ -22,6 +22,9 @@ export const useReportData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [latestSurvivalRate, setLatestSurvivalRate] = useState<number>(0);
+  const [siteReportUuids, setSiteReportUuids] = useState<string[]>([]);
+
+  const disturbances = useSiteReportDisturbances(siteReportUuids);
 
   const [, { associations: plants }] = usePlants({
     entity: "projects",
@@ -78,86 +81,50 @@ export const useReportData = () => {
           const demographicsData = reportsResult.included.filter(item => item.type === "demographics");
 
           if (demographicsData.length > 0) {
-            const processedEmploymentData = processDemographicData(demographicsData as IncludedDemographic[]);
+            const typedDemographicsData = demographicsData as unknown as IncludedDemographic[];
+            const processedEmploymentData = processDemographicData(typedDemographicsData);
             setEmploymentData(processedEmploymentData);
 
-            const processedBeneficiaryData = processBeneficiaryData(demographicsData as IncludedDemographic[]);
+            const processedBeneficiaryData = processBeneficiaryData(typedDemographicsData);
             setBeneficiaryData(processedBeneficiaryData);
           }
         }
 
         const sitesData = sitesResult.data as Site[];
+        const allSiteReportUuids: string[] = [];
 
         const sitesWithDisturbances = await Promise.all(
           sitesData.map(async site => {
             try {
-              const siteReportsResult = await dataProvider.getList("siteReport", {
+              const siteReportsResult = await dataProvider.getList<SiteReport>("siteReport", {
                 filter: { status: "approved", siteUuid: site.uuid },
                 pagination: { page: 1, perPage: 100 },
                 sort: { field: "updatedAt", order: "DESC" }
               });
 
-              let totalDisturbances = 0;
-              let climaticDisturbances = 0;
-              let manmadeDisturbances = 0;
-              let ecologicalDisturbances = 0;
-
               if (siteReportsResult?.data && siteReportsResult.data.length > 0) {
-                await Promise.all(
-                  siteReportsResult.data.map(async siteReport => {
-                    try {
-                      const response = await fetchGetV2DisturbancesENTITYUUID({
-                        pathParams: {
-                          entity: "site-reports",
-                          uuid: siteReport.uuid
-                        }
-                      });
-
-                      if (response?.data && Array.isArray(response.data)) {
-                        response.data.forEach((disturbance: any) => {
-                          if (disturbance.type && typeof disturbance.type === "string") {
-                            const disturbanceType = disturbance.type.toLowerCase();
-                            if (disturbanceType === "climatic") {
-                              climaticDisturbances++;
-                            } else if (disturbanceType === "manmade") {
-                              manmadeDisturbances++;
-                            } else if (disturbanceType === "ecological") {
-                              ecologicalDisturbances++;
-                            }
-                          }
-                        });
-                        totalDisturbances = climaticDisturbances + manmadeDisturbances + ecologicalDisturbances;
-                      }
-                    } catch (disturbanceError) {
-                      console.error(
-                        `Error fetching disturbances for site report ${siteReport.uuid}:`,
-                        disturbanceError
-                      );
-                    }
-                  })
-                );
+                siteReportsResult.data.forEach(report => {
+                  if (report.uuid) {
+                    allSiteReportUuids.push(report.uuid);
+                  }
+                });
               }
 
               return {
                 ...site,
-                totalReportedDisturbances: totalDisturbances,
-                climaticDisturbances: climaticDisturbances,
-                manmadeDisturbances: manmadeDisturbances,
-                ecologicalDisturbances: ecologicalDisturbances
+                siteReports: siteReportsResult?.data || []
               };
             } catch (siteReportError) {
               console.error(`Error fetching site reports for site ${site.uuid}:`, siteReportError);
               return {
                 ...site,
-                totalReportedDisturbances: 0,
-                climaticDisturbances: 0,
-                manmadeDisturbances: 0,
-                ecologicalDisturbances: 0
+                siteReports: []
               };
             }
           })
         );
 
+        setSiteReportUuids(allSiteReportUuids);
         setSites(sitesWithDisturbances);
       } catch (err) {
         console.error("Error fetching report data:", err);
@@ -169,6 +136,47 @@ export const useReportData = () => {
 
     fetchData();
   }, [record?.id, dataProvider]);
+
+  useEffect(() => {
+    if (!disturbances || !sites.length) return;
+
+    const sitesWithDisturbances = sites.map(site => {
+      let totalDisturbances = 0;
+      let climaticDisturbances = 0;
+      let manmadeDisturbances = 0;
+      let ecologicalDisturbances = 0;
+
+      if (site.siteReports && site.siteReports.length > 0) {
+        site.siteReports.forEach(siteReport => {
+          const reportDisturbances = disturbances[siteReport.uuid] || [];
+          reportDisturbances.forEach(disturbance => {
+            if (disturbance.type) {
+              const disturbanceType = disturbance.type.toLowerCase();
+              if (disturbanceType === "climatic") {
+                climaticDisturbances++;
+              } else if (disturbanceType === "manmade") {
+                manmadeDisturbances++;
+              } else if (disturbanceType === "ecological") {
+                ecologicalDisturbances++;
+              }
+            }
+          });
+        });
+
+        totalDisturbances = climaticDisturbances + manmadeDisturbances + ecologicalDisturbances;
+      }
+
+      return {
+        ...site,
+        totalReportedDisturbances: totalDisturbances,
+        climaticDisturbances,
+        manmadeDisturbances,
+        ecologicalDisturbances
+      };
+    });
+
+    setSites(sitesWithDisturbances);
+  }, [disturbances, sites]);
 
   const reportData: ReportData = {
     organization: {
