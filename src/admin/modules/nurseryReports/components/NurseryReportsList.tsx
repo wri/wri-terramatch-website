@@ -81,6 +81,22 @@ const NurseryReportDataGrid: FC = () => {
         }
         sortable={false}
       />
+      <FunctionField
+        source="nothingToReport"
+        label="Nothing to Report"
+        render={(record: NurseryReportLightDto) => {
+          return (
+            <div className="flex items-center justify-center">
+              {record.nothingToReport ? (
+                <Icon name={IconNames.CHECK_CIRCLE} className="h-6 w-6" />
+              ) : (
+                <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6" />
+              )}
+            </div>
+          );
+        }}
+        sortable={false}
+      />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
