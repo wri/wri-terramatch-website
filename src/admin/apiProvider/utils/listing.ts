@@ -1,9 +1,10 @@
 import { GetListParams, GetListResult, RaRecord } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+import { JsonApiResource } from "@/store/apiSlice";
 
 export interface ExtendedGetListResult<T extends RaRecord = any> extends GetListResult<T> {
-  included?: any[];
+  included?: JsonApiResource[];
 }
 
 interface ListQueryParams extends Record<string, unknown> {
@@ -83,7 +84,7 @@ export const raListParamsToQueryParams = (
 interface ApiListResponse {
   data?: { [index: string]: any; uuid?: string }[];
   meta?: any;
-  included?: any[];
+  included?: JsonApiResource[];
 }
 
 export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({

@@ -2,6 +2,7 @@ import { DataProvider } from "react-admin";
 
 import { deleteProjectReport, loadFullProjectReport, loadProjectReportIndex } from "@/connections/Entity";
 import { EntityLightDto } from "@/connections/Entity";
+import { JsonApiResource } from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, ExtendedGetListResult, raConnectionProps } from "../utils/listing";
@@ -13,7 +14,7 @@ export const entitiesListResultWithIncluded = <T extends EntityLightDto>({
 }: {
   entities?: T[];
   indexTotal?: number;
-  included?: any[];
+  included?: JsonApiResource[];
 }) => ({
   data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
   total: indexTotal,
