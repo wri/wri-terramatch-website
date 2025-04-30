@@ -2,10 +2,9 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import { useDisturbances } from "@/connections/EntityAssocation";
 
-import { DemographicEntity } from "../DemographicsCollapseGrid/types";
-
+export type DisturbanceEntity = "projectReports" | "siteReports" | "sites" | "projects";
 export interface DisturbancesTableProps {
-  modelName: DemographicEntity;
+  modelName: DisturbanceEntity;
   modelUUID: string;
   collection?: string;
   visibleRows?: number;
@@ -32,7 +31,7 @@ const DisturbancesTablePD = ({
     }));
   };
 
-  const tableData = processDisturbanceData(disturbances || []);
+  const tableData = processDisturbanceData(disturbances ?? []);
 
   const rowDisturbanceType = {
     accessorKey: "name",

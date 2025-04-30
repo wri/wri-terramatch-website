@@ -7,17 +7,15 @@ import { useInvasives } from "@/connections/EntityAssocation";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
 import { formatOptionsList } from "@/utils/options";
 
-import { DemographicEntity } from "../DemographicsCollapseGrid/types";
+export type InvasiveEntity = "projectReports" | "siteReports" | "sites" | "projects";
 
 export interface InvasiveTableProps {
-  modelName: DemographicEntity;
+  modelName: InvasiveEntity;
   modelUUID: string;
-  collection?: string;
   hasCountColumn?: boolean;
-  onFetch?: (data: any) => void;
 }
 
-const InvasiveTable = ({ modelName, modelUUID, collection, onFetch }: InvasiveTableProps) => {
+const InvasiveTable = ({ modelName, modelUUID }: InvasiveTableProps) => {
   const t = useT();
 
   const [, { associations: invasives }] = useInvasives({ entity: modelName, uuid: modelUUID });
@@ -42,7 +40,7 @@ const InvasiveTable = ({ modelName, modelUUID, collection, onFetch }: InvasiveTa
   return (
     <div>
       <Table
-        data={invasives || []}
+        data={invasives ?? []}
         columns={columns}
         variant={VARIANT_TABLE_TREE_SPECIES}
         hasPagination

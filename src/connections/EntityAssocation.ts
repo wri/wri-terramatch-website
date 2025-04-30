@@ -8,6 +8,7 @@ import {
 import {
   DemographicDto,
   DisturbanceDto,
+  InvasiveDto,
   SeedingDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -22,7 +23,7 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto | DisturbanceDto;
+export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto | DisturbanceDto | InvasiveDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
@@ -139,7 +140,7 @@ export const useDemographics = connectionHook(demographicConnection);
 const disturbanceConnection = createAssociationIndexConnection<DisturbanceDto>("disturbances");
 export const useDisturbances = connectionHook(disturbanceConnection);
 
-const invasiveConnection = createAssociationIndexConnection<DisturbanceDto>("invasives");
+const invasiveConnection = createAssociationIndexConnection<InvasiveDto>("invasives");
 export const useInvasives = connectionHook(invasiveConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
