@@ -5,7 +5,7 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export type DemographicEntity = "projectReports" | "siteReports" | "sites" | "projects";
+export type DemographicEntity = "projectReports" | "siteReports";
 
 export type Status = "complete" | "not-started" | "in-progress";
 
