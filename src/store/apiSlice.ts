@@ -46,6 +46,7 @@ export type ApiPendingStore = {
 export type ApiFilteredIndexCache = {
   ids: string[];
   total?: number;
+  included?: any[];
 };
 
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
@@ -109,6 +110,7 @@ export type IndexData = {
   total?: number;
   cursor?: string;
   pageNumber?: number;
+  included?: any[];
 };
 
 export type ResponseMeta = {
@@ -286,7 +288,11 @@ export const apiSlice = createSlice({
           let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
           if (cache == null) cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath] = {};
 
-          cache[indexMeta.pageNumber ?? 1] = { ids: indexMeta.ids, total: indexMeta.total };
+          cache[indexMeta.pageNumber ?? 1] = {
+            ids: indexMeta.ids,
+            total: indexMeta.total,
+            included: response.included
+          };
         }
       }
 

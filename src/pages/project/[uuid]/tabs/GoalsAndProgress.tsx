@@ -15,7 +15,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";

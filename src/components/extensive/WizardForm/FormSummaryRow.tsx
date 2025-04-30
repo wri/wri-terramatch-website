@@ -22,7 +22,7 @@ import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollaps
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";

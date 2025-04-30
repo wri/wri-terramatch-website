@@ -9,11 +9,14 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
+import ReportTab from "@/admin/components/ResourceTabs/ReportTab/ReportTab";
 import { useFullProject } from "@/connections/Entity";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const ProjectShowActions: FC = () => {
-  const { uuid, isTest } = useRecordContext();
+  const record = useRecordContext();
+  if (!record) return null;
+  const { uuid, isTest } = record;
   const [, { entityIsUpdating, update }] = useFullProject({ uuid });
   const refresh = useRefresh();
   const wasUpdating = usePrevious(entityIsUpdating);
@@ -30,6 +33,7 @@ const ProjectShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" />}>
         <InformationTab type="projects" />
+        <ReportTab label="Project Report" type="projects" />
         <GalleryTab label="Project Gallery" entity="projects" />
         <DocumentTab label="Project Documents" entity="projects" />
         <ChangeRequestsTab entity="projects" singularEntity="project" />
