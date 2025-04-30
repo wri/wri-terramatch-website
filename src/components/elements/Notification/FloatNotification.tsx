@@ -82,11 +82,11 @@ const FloatNotification = () => {
   }
 
   return (
-    <div className="fixed bottom-10 right-10 z-50">
+    <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">
       <div className="relative">
         <div
           className={classNames(
-            "absolute right-[107%] flex max-h-[61vh] w-[414px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300",
+            "absolute right-[107%] flex max-h-[61vh] w-[414px] flex-col overflow-hidden rounded-xl bg-white shadow-monitored transition-all duration-300 mobile:w-[300px]",
             { " bottom-[-4px] z-10  opacity-100": openModalNotification },
             { " bottom-[-300px] -z-10 !h-0  opacity-0": !openModalNotification }
           )}

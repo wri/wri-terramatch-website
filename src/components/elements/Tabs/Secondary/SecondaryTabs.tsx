@@ -132,7 +132,7 @@ const SecondaryTabs = ({
         )}
         <HTab.List
           {...divProps}
-          className={classNames(className, "h-max w-full", variant.classNameContentList, {
+          className={classNames(className, "h-max w-full  mobile:overflow-x-auto", variant.classNameContentList, {
             "scroll-indicator-hide relative": scrollable
           })}
           ref={ContentListRef}
