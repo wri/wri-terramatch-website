@@ -8,7 +8,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -34,7 +34,7 @@ exports[`Storyshots Components/Elements/Table Default 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -954,7 +954,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -980,7 +980,7 @@ exports[`Storyshots Components/Elements/Table Primary 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -1900,7 +1900,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -1926,7 +1926,7 @@ exports[`Storyshots Components/Elements/Table Secundary White 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -2846,7 +2846,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -2872,7 +2872,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -3795,7 +3795,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
       >
         <div>
           <div
@@ -3821,7 +3821,7 @@ exports[`Storyshots Components/Elements/Table Table Airtable Dashboard 1`] = `
           className="flex gap-5"
         >
           <div
-            className="flex items-center gap-5"
+            className="flex items-center gap-5 mobile:flex-col"
           >
             <div
               className="space-y-2"
@@ -4742,7 +4742,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -4768,7 +4768,7 @@ exports[`Storyshots Components/Elements/Table Table Border 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -5688,7 +5688,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -5714,7 +5714,7 @@ exports[`Storyshots Components/Elements/Table Table Border All 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -6637,7 +6637,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
       >
         <div>
           <div
@@ -6663,7 +6663,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries 1`] = `
           className="flex gap-5"
         >
           <div
-            className="flex items-center gap-5"
+            className="flex items-center gap-5 mobile:flex-col"
           >
             <div
               className="space-y-2"
@@ -7587,7 +7587,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
       >
         <div>
           <div
@@ -7613,7 +7613,7 @@ exports[`Storyshots Components/Elements/Table Table Dashboard Countries Modal 1`
           className="flex gap-5"
         >
           <div
-            className="flex items-center gap-5"
+            className="flex items-center gap-5 mobile:flex-col"
           >
             <div
               className="space-y-2"
@@ -8537,7 +8537,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
       >
         <div>
           <div
@@ -8563,7 +8563,7 @@ exports[`Storyshots Components/Elements/Table Table Organization 1`] = `
           className="flex gap-5"
         >
           <div
-            className="flex items-center gap-5"
+            className="flex items-center gap-5 mobile:flex-col"
           >
             <div
               className="space-y-2"
@@ -9484,7 +9484,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
     className="overflow-x-auto px-4 md:px-0 undefined"
   >
     <div
-      className="flex w-full items-center justify-between"
+      className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
     >
       <div>
         <div
@@ -9510,7 +9510,7 @@ exports[`Storyshots Components/Elements/Table Table Site Polygon 1`] = `
         className="flex gap-5"
       >
         <div
-          className="flex items-center gap-5"
+          className="flex items-center gap-5 mobile:flex-col"
         >
           <div
             className="space-y-2"
@@ -10433,7 +10433,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
       className="overflow-x-auto px-4 md:px-0 undefined"
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center justify-between mobile:flex-col mobile:gap-3"
       >
         <div>
           <div
@@ -10459,7 +10459,7 @@ exports[`Storyshots Components/Elements/Table Table Version 1`] = `
           className="flex gap-5"
         >
           <div
-            className="flex items-center gap-5"
+            className="flex items-center gap-5 mobile:flex-col"
           >
             <div
               className="space-y-2"

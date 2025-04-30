@@ -82,7 +82,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
   return (
     <FrameworkProvider frameworkKey={project.frameworkKey}>
       <Paper {...rest} className={classNames(className, "p-0")}>
-        <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6">
+        <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6 mobile:flex-col mobile:px-3">
           <div className="flex flex-1 flex-col gap-2">
             <Text variant="text-bold-headline-800">{project.name}</Text>
             {statusProps && (
@@ -102,7 +102,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
               <Text variant="text-light-subtitle-400">{project.organisationName}</Text>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
             <If condition={statusProps?.status === "edit"}>
               <Then>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
@@ -125,7 +125,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
           </div>
         </div>
         <When condition={statusProps?.status !== "edit"}>
-          <div className="space-y-6 p-8">
+          <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={
                 <>

@@ -5,7 +5,7 @@ exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
   className="gap-8, mx-auto flex max-w-[82vw] flex-wrap mobile:m-0 mobile:w-full mobile:max-w-[100%]"
 >
   <div
-    className="min-w-[500px] flex-1 space-y-8"
+    className="min-w-[500px] flex-1 space-y-8 mobile:w-full mobile:min-w-[100%]"
   >
     <div
       className="w-full rounded-xl border border-neutral-200 bg-white p-8"
@@ -26,7 +26,7 @@ exports[`Storyshots Components/Extensive/Page/Row Default 1`] = `
     </div>
   </div>
   <div
-    className="min-w-[500px] flex-1 space-y-8"
+    className="min-w-[500px] flex-1 space-y-8 mobile:w-full mobile:min-w-[100%]"
   >
     <div
       className="w-full rounded-xl border border-neutral-200 bg-white p-8"
