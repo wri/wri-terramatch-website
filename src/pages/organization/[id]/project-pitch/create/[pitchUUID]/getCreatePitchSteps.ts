@@ -3,16 +3,15 @@ import * as yup from "yup";
 
 import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { getCapacityBuildingNeedOptions } from "@/constants/options/capacityBuildingNeeds";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getMarketingReferenceOptions } from "@/constants/options/marketingReferenceOptions";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
 import { sustainableDevelopmentGoalsOptions } from "@/constants/options/sustainableDevelopmentGoals";
-import { FileType } from "@/types/common";
+import { FileType, Option } from "@/types/common";
 
 const ModelName = "project-pitch";
 
-export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => [
+export const getSteps = (t: typeof useT, uuid: string, countryOptions: Option[]): FormStepSchema[] => [
   {
     title: t("Proposed Project Information"),
     fields: [
@@ -41,7 +40,7 @@ export const getSteps = (t: typeof useT, uuid: string): FormStepSchema[] => [
         ),
         type: FieldType.Dropdown,
         validation: yup.string(),
-        fieldProps: { options: getCountriesOptions(t) }
+        fieldProps: { options: countryOptions }
       },
       {
         name: "project_county_district",
