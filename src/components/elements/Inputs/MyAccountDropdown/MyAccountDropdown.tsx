@@ -61,16 +61,13 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
 
   const onChange = (item: any) => {
     if (item.value === "Go To Login") {
-      // Save the current path for redirection after login
       if (isOnDashboard) {
-        // If on dashboard, explicitly save the correct return path for PD users
         if (typeof window !== "undefined") {
           localStorage.setItem("dashboardReturnUrl", "/dashboard/learn-more");
           localStorage.setItem("dashboardReturnUrlTimestamp", new Date().toISOString());
         }
         router.push("/auth/login");
       } else {
-        // For non-dashboard pages, use the current path as returnUrl
         const currentPath = getCurrentPath();
         const returnUrl = encodeURIComponent(currentPath);
         router.push(`/auth/login?returnUrl=${returnUrl}`);
@@ -84,7 +81,6 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
         if (isAdmin) {
           router.push("/admin");
         } else {
-          // This is used to redirect when clicking on "Project Developer view"
           router.push("/home");
         }
       } else {
@@ -94,7 +90,7 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
           router.push("/dashboard/learn-more");
         }
       }
-      // Only reload if not transitioning between login states
+
       setTimeout(() => {
         router.reload();
       }, 1000);
