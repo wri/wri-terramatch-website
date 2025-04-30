@@ -139,8 +139,6 @@ export type SiteLightDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
-  hectaresToRestoreGoal: number | null;
-  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -480,8 +478,6 @@ export type SiteFullDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
-  hectaresToRestoreGoal: number | null;
-  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -491,6 +487,7 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
+  totalHectaresRestoredSum: number;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -500,6 +497,7 @@ export type SiteFullDto = {
   ppcExternalId: number | null;
   sitingStrategy: string | null;
   descriptionSitingStrategy: string | null;
+  hectaresToRestoreGoal: number | null;
   description: string | null;
   controlSite: boolean | null;
   history: string | null;
@@ -793,6 +791,7 @@ export type NurseryReportFullDto = {
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
+  nothingToReport: boolean | null;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
@@ -1210,6 +1209,9 @@ export type DisturbanceDto = {
   intensity: string | null;
   extent: string | null;
   description: string | null;
+  oldId: number | null;
+  oldModel: string | null;
+  hidden: number | null;
 };
 
 export type InvasiveDto = {
@@ -1223,6 +1225,9 @@ export type InvasiveDto = {
   entityUuid: string;
   type: string | null;
   name: string | null;
+  oldId: number | null;
+  oldModel: string | null;
+  hidden: number | null;
 };
 
 export type StrataDto = {
@@ -1234,6 +1239,7 @@ export type StrataDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
+  hidden: number | null;
 };
 
 export type PlantingCountDto = {
