@@ -16,7 +16,7 @@ const ProjectGoals: FC<ProjectGoalsProps> = ({ reportData }) => {
 
   return (
     <div className="section-container h-full">
-      <HeaderSecReportGemeration title="Project and Goals" />
+      <HeaderSecReportGemeration title="Goals and Progress" />
       <div className="grid h-[calc(100%-2rem)] grid-cols-3 border-b border-black/10">
         <div className="flex h-full items-center justify-center">
           <ReportDoughnutChart
