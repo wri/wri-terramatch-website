@@ -162,35 +162,6 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.FinancialIndicatorsDataTable: {
-        const entries = values[f.name];
-
-        const output = {
-          title: f.label,
-          type: f.type,
-          value: entries
-            ? entries
-                ?.map(
-                  (row: {
-                    amount: number | null;
-                    year: number | null;
-                    documentation: { file_name: string | null; full_url: string | null };
-                    description: string | null;
-                  }) =>
-                    `${row.amount}, ${row.year}, <a href="${
-                      row?.documentation?.full_url
-                    }" target="_blank" rel="noopener noreferrer" className="text-primary underline">${
-                      row?.documentation?.file_name ?? ""
-                    }</a>, ${row.description}`
-                )
-                .join("<br/>")
-            : t("Answer Not Provided")
-        };
-
-        outputArr.push(output);
-        break;
-      }
-
       case FieldType.LeadershipsDataTable:
       case FieldType.OwnershipStakeDataTable:
       case FieldType.FundingTypeDataTable:
