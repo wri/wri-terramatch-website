@@ -193,7 +193,6 @@ export const useSiteReportDisturbances = (siteReportUuids: string[]) => {
     );
 
     Promise.all(connectionPromises).then(connectionResponses => {
-      console.log("connectionResponses", connectionResponses);
       if (connectionResponses.length !== siteReportUuids.length) {
         Log.error("Incorrect number of responses", { connectionResponses, siteReportUuids });
         return;
