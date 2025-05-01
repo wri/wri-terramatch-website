@@ -12,20 +12,8 @@ const ReportTabHeader = () => {
         </Text>
       </div>
       <div className="text-end">
-        <Text variant="text-10" className="leading-[normal]">
-          View more reports online at&nbsp;
-          <a
-            href="https://terramatch.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-10-bold text-primary hover:underline"
-          >
-            terramatch.org
-          </a>
-          .
-        </Text>
         <Text variant="text-10" className="mt-1 leading-[normal]">
-          Printed on {new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
+          Generated on {new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
         </Text>
       </div>
     </div>
