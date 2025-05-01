@@ -1,17 +1,8 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { isEmpty, uniq } from "lodash";
-import React, {
-  ChangeEvent,
-  Fragment,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { uniq } from "lodash";
+import React, { ChangeEvent, Fragment, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { ErrorOption, FieldError } from "react-hook-form";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -113,17 +104,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const [otherValue, setOtherValue] = useState<OptionValue>(() =>
     getDefaultOtherValue(props.defaultValue ?? props.value ?? [], props.options, props.hasOtherOptions === true)
   );
-  const updateControl = useRef(0);
 
   useEffect(() => {
-    if (
-      (props.value != null && props.options != null && updateControl.current < 5) ||
-      (isEmpty(props.value) && updateControl.current === 0)
-    ) {
-      setSelected(getDefaultDropDownValue(props.value ?? [], props.options, !!props.hasOtherOptions));
-      setOtherValue(getDefaultOtherValue(props.value ?? [], props.options, !!props.hasOtherOptions));
-      updateControl.current++;
-    }
+    setSelected(getDefaultDropDownValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
+    setOtherValue(getDefaultOtherValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
   }, [props.value, props.options, props.hasOtherOptions]);
 
   const onChange = useCallback(

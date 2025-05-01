@@ -1,6 +1,6 @@
-import { difference } from "lodash";
+import { difference, isEqual } from "lodash";
 import { useRouter } from "next/router";
-import { FC, PropsWithChildren, useMemo } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import Loader from "@/components/generic/Loading/Loader";
@@ -32,14 +32,22 @@ type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "apiOptionsSource">;
 type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "apiOptionsSource">;
 
 const WithApiOptions: FC<WithApiOptionsProps> = props => {
-  const { apiOptionsSource, optionsFilterFieldName, ...displayProps } = props;
+  const { apiOptionsSource, optionsFilterFieldName, formHook, ...displayProps } = props;
+  // If the parentCodes change, it can cause the useGadmOptions hook to return null until all options
+  // have loaded. In that case, we want to avoid sending null options to DropdownDisplay, as that will
+  // cause it to unselect its current selections.
+  const [optionsCache, setOptionsCache] = useState<Option[] | undefined>();
 
   const parentCodes =
-    optionsFilterFieldName != null ? (displayProps.formHook?.watch(optionsFilterFieldName) as string[]) : undefined;
+    optionsFilterFieldName != null ? (formHook?.watch(optionsFilterFieldName) as string[]) : undefined;
   const level = useMemo(() => Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2, [apiOptionsSource]);
   const options = useGadmOptions({ level, parentCodes });
 
-  return options == null ? <Loader /> : <DropdownDisplay {...displayProps} options={options} />;
+  useEffect(() => {
+    if (options != null) setOptionsCache(options);
+  }, [options]);
+
+  return optionsCache == null ? <Loader /> : <DropdownDisplay {...displayProps} options={optionsCache} />;
 };
 
 const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
@@ -106,28 +114,46 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
 };
 
 const DropdownDisplay: FC<DropdownDisplayProps> = props => {
-  const { onChangeCapture, formHook, optionsFilterFieldName, ...dropdownProps } = props;
+  const { onChangeCapture, formHook, optionsFilterFieldName, defaultValue, ...dropdownProps } = props;
+  const { options } = dropdownProps;
 
   const {
     field: { value, onChange }
   } = useController(props);
 
-  const _onChange = (value: OptionValue[]) => {
-    onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
-    onChangeCapture?.();
-    formHook?.trigger();
-  };
+  const _onChange = useCallback(
+    (value: OptionValue[]) => {
+      onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
+      onChangeCapture?.();
+    },
+    [onChange, onChangeCapture, props.multiSelect]
+  );
+
+  const valueArray = useMemo(() => toArray(value), [value]);
+  const defaultValueArray = useMemo(() => toArray(defaultValue), [defaultValue]);
+
+  useEffect(() => {
+    // if our options change and our current values aren't available, reset to the default.
+    const filtered = valueArray.filter(value => options.find(option => option.value === value) != null);
+    if (!isEqual(filtered, valueArray)) {
+      if (filtered.length === 0) {
+        _onChange(defaultValueArray);
+      } else {
+        _onChange(filtered);
+      }
+    }
+  }, [_onChange, defaultValueArray, options, valueArray]);
 
   return (
     <Dropdown
       {...dropdownProps}
-      value={toArray(value)}
-      defaultValue={toArray(props.defaultValue)}
+      value={valueArray}
+      defaultValue={defaultValueArray}
       onChange={_onChange}
-      optionsFilter={optionsFilterFieldName ? props.formHook?.watch(optionsFilterFieldName) : undefined}
+      optionsFilter={optionsFilterFieldName ? formHook?.watch(optionsFilterFieldName) : undefined}
       onInternalError={error => {
-        if (error) props.formHook?.setError(props.name, error);
-        else props.formHook?.clearErrors(props.name);
+        if (error) formHook?.setError(props.name, error);
+        else formHook?.clearErrors(props.name);
       }}
     />
   );
