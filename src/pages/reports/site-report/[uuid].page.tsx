@@ -141,7 +141,7 @@ const SiteReportDetailPage = () => {
               </PageRow>
               <ContextCondition frameworksShow={[Framework.HBF]}>
                 <PageRow>
-                  <PageCard title={t("General Documents")} gap={8}>
+                  <PageCard title={t("Site Report Files")} gap={8}>
                     <If condition={totalFiles === 0}>
                       <Then>
                         <h3>{t("Files not found")}</h3>
