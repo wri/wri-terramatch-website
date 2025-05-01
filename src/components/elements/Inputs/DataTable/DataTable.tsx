@@ -24,7 +24,6 @@ declare module "@tanstack/react-table" {
 
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
-  modalEditTitle?: string;
   fields: FormField[];
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
@@ -35,7 +34,6 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
-  handleUpdate?: (value: any) => void;
 }
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
@@ -48,67 +46,15 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     onChange,
     handleCreate,
     handleDelete,
-    handleUpdate,
     generateUuids = false,
     additionalValues = {},
-    modalEditTitle,
     ...inputWrapperProps
   } = props;
 
   const openFormModalHandler = () => {
-    const patchedFields = fields.map(field => {
-      if (
-        field.name === "documentation" &&
-        field.type === FieldType.FileUpload &&
-        field.fieldProps?.isTemporary === false
-      ) {
-        return {
-          ...field,
-          fieldProps: {
-            ...field.fieldProps,
-            isTemporary: true
-          }
-        };
-      }
-      return field;
-    });
-
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal title={props.modalTitle || props.addButtonCaption} fields={patchedFields} onSubmit={onAddNewEntry} />
-    );
-  };
-
-  const openFormUpdateModalHandler = (props: any) => {
-    const rowValues = props.row.original;
-    const patchedFields = fields.map(field => {
-      if (
-        field.name === "documentation" &&
-        field.type === FieldType.FileUpload &&
-        field.fieldProps?.uuid === "__INJECT_UUID__"
-      ) {
-        return {
-          ...field,
-          fieldProps: {
-            ...field.fieldProps,
-            uuid: rowValues.uuid
-          }
-        };
-      }
-      return field;
-    });
-
-    openModal(
-      ModalId.FORM_MODAL,
-      <FormModal
-        title={modalEditTitle}
-        fields={patchedFields}
-        defaultValues={rowValues}
-        onSubmit={updatedValues => {
-          handleUpdate?.({ ...rowValues, ...updatedValues });
-          closeModal(ModalId.FORM_MODAL);
-        }}
-      />
+      <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
     );
   };
 
@@ -154,20 +100,6 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
 
         return header;
       }),
-      ...(handleUpdate
-        ? [
-            {
-              id: "update",
-              accessorKey: "uuid",
-              header: "",
-              cell: props => (
-                <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
-              ),
-              meta: { align: "right" },
-              enableSorting: false
-            } as ColumnDef<TData>
-          ]
-        : []),
       {
         id: "delete",
         accessorKey: "uuid",
