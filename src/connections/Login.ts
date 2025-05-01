@@ -52,18 +52,23 @@ export const useLoginRedirect = () => {
 
       let redirectTarget: string | null = null;
 
-      if (returnUrl && typeof returnUrl === "string") {
-        redirectTarget = decodeURIComponent(returnUrl);
-      } else if (typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
         const savedUrl = localStorage.getItem("dashboardReturnUrl");
         if (savedUrl) {
           redirectTarget = savedUrl;
           localStorage.removeItem("dashboardReturnUrl");
+          localStorage.removeItem("dashboardReturnUrlTimestamp");
         }
       }
+
+      if (!redirectTarget && returnUrl && typeof returnUrl === "string") {
+        redirectTarget = decodeURIComponent(returnUrl);
+      }
+
       if (redirectTarget) {
+        // Use router.replace helps prevent Bootstrap's useRedirect from catching and redirecting again
         setTimeout(() => {
-          router.push(redirectTarget as string);
+          router.replace(redirectTarget as string);
         }, 50);
       }
     }

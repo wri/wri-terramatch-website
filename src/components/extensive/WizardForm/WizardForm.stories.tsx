@@ -8,7 +8,6 @@ import {
   getFundingTypeFields,
   getFundingTypeTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { FileType } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -95,7 +94,14 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
           placeholder: "Select country ...",
           type: FieldType.Dropdown,
           validation: yup.string().required(),
-          fieldProps: { options: getCountriesOptions(), required: true }
+          fieldProps: {
+            options: [
+              { title: "United States", value: "USA" },
+              { title: "México", value: "MEX" },
+              { title: "Colombia", value: "COL" }
+            ],
+            required: true
+          }
         }
       ]
     },

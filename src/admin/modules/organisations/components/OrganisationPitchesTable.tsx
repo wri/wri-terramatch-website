@@ -1,10 +1,10 @@
 import { Typography } from "@mui/material";
 import { ArrayField, Datagrid, SelectField, TextField } from "react-admin";
 
-import { getCountriesOptions } from "@/constants/options/countries";
-import { optionToChoices } from "@/utils/options";
+import { useGadmChoices } from "@/connections/Gadm";
 
 const OrganisationPitchesTable = () => {
+  const countryChoices = useGadmChoices({ level: 0 });
   return (
     <div>
       <Typography variant="h6" component="h3" mb={2}>
@@ -18,12 +18,7 @@ const OrganisationPitchesTable = () => {
           }}
         >
           <TextField source="project_name" label="Project Name" emptyText="Not Provided" />
-          <SelectField
-            source="project_country"
-            label="Countries"
-            choices={optionToChoices(getCountriesOptions())}
-            emptyText="Not Provided"
-          />
+          <SelectField source="project_country" label="Countries" choices={countryChoices} emptyText="Not Provided" />
         </Datagrid>
       </ArrayField>
     </div>
