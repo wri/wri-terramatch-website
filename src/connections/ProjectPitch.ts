@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 
 import { projectPitchesGetUUIDIndex } from "@/generated/v3/entityService/entityServiceComponents";
+import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   projectPitchesGetUUIDIndexFetchFailed,
   projectPitchesGetUUIDIndexIsFetching
@@ -15,7 +16,8 @@ export const selectProjectPitch = (store: ApiDataStore) => Object.values(store.p
 type ProjectPitchConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  isSuccess: boolean | null;
+  isSuccess: boolean;
+  projectPitch: ProjectPitchDto | any;
 };
 
 type ProjectPitchConnectionProps = {
@@ -23,21 +25,25 @@ type ProjectPitchConnectionProps = {
 };
 
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
-  load: ({ isSuccess, requestFailed }, { uuid }) => {
-    if (isSuccess == null && requestFailed == null) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
+  load: ({ projectPitch }, { uuid }) => {
+    if (!projectPitch) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
   },
 
-  isLoaded: ({ isSuccess }) => isSuccess !== null,
+  isLoaded: ({ projectPitch }) => projectPitch !== undefined,
   selector: selectorCache(
     ({ uuid }: ProjectPitchConnectionProps) => uuid,
     ({ uuid }: ProjectPitchConnectionProps) =>
       createSelector(
-        (store: ApiDataStore) => projectPitchesGetUUIDIndexIsFetching({ pathParams: { uuid } }),
-        (store: ApiDataStore) => projectPitchesGetUUIDIndexFetchFailed({ pathParams: { uuid } }),
-        (isFetching, fetchFailed) => ({
-          isLoading: isFetching,
-          requestFailed: fetchFailed,
-          isSuccess: fetchFailed === null
+        [
+          projectPitchesGetUUIDIndexIsFetching({ pathParams: { uuid } }),
+          projectPitchesGetUUIDIndexFetchFailed({ pathParams: { uuid } }),
+          selectProjectPitch
+        ],
+        (isLoading, requestFailed, selector) => ({
+          isLoading,
+          requestFailed,
+          isSuccess: selector?.organisationId != null,
+          projectPitch: selector
         })
       )
   )

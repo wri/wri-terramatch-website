@@ -1,23 +1,21 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
+import { loadProjectPitch } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
   fetchGetV2AdminProjectPitches,
   fetchGetV2AdminProjectPitchesExport,
-  fetchGetV2ProjectPitchesUUID,
   fetchPatchV2ProjectPitchesUUID,
   GetV2AdminProjectPitchesError,
   GetV2AdminProjectPitchesExportError,
-  GetV2ProjectPitchesUUIDError,
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
-import { projectPitchesGetUUIDIndex } from "@/generated/v3/entityService/entityServiceComponents";
 import { downloadFileBlob } from "@/utils/network";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
 
 export interface PitchDataProvider extends DataProvider {
@@ -53,21 +51,14 @@ export const pitchDataProvider: PitchDataProvider = {
   },
 
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ProjectPitchesUUID({
-        //@ts-ignore
-        pathParams: { uuid: params.id }
-      });
-
-      const response2 = await projectPitchesGetUUIDIndex({
-        pathParams: { uuid: params.id }
-      });
-      console.log("response2", response2);
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ProjectPitchesUUIDError);
+    console.log("getOne", params);
+    const { requestFailed, projectPitch, isSuccess, isLoading } = await loadProjectPitch({ uuid: params.id });
+    console.log("getOne response", projectPitch, requestFailed, isSuccess, isLoading);
+    if (requestFailed != null) {
+      throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
     }
+    console.log("response", projectPitch);
+    return { data: { ...projectPitch, id: projectPitch?.id } };
   },
 
   //@ts-ignore
