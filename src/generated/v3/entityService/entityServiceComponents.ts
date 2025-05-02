@@ -7,6 +7,17 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
+export type ProjectPitchesIndexPathParams = {
+  /**
+   * pagination page
+   */
+  perPage: number;
+  /**
+   * uuids array to search
+   */
+  search: string[];
+};
+
 export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -36,10 +47,15 @@ export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export const projectPitchesIndex = (signal?: AbortSignal) =>
-  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, {}, {}>({
+export type ProjectPitchesIndexVariables = {
+  pathParams: ProjectPitchesIndexPathParams;
+};
+
+export const projectPitchesIndex = (variables: ProjectPitchesIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, {}, ProjectPitchesIndexPathParams>({
     url: "/entities/v3/projectPitches",
     method: "get",
+    ...variables,
     signal
   });
 

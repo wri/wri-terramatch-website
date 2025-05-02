@@ -1,6 +1,8 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
+  ProjectPitchesIndexPathParams,
+  ProjectPitchesIndexVariables,
   ProjectPitchesGetUUIDIndexPathParams,
   ProjectPitchesGetUUIDIndexVariables,
   EntityIndexPathParams,
@@ -22,15 +24,19 @@ import {
   TreeReportCountsFindVariables
 } from "./entityServiceComponents";
 
-export const projectPitchesIndexIsFetching = isFetchingSelector<{}, {}>({
-  url: "/entities/v3/projectPitches",
-  method: "get"
-});
+export const projectPitchesIndexIsFetching = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
+  isFetchingSelector<{}, ProjectPitchesIndexPathParams>({
+    url: "/entities/v3/projectPitches",
+    method: "get",
+    ...variables
+  });
 
-export const projectPitchesIndexFetchFailed = fetchFailedSelector<{}, {}>({
-  url: "/entities/v3/projectPitches",
-  method: "get"
-});
+export const projectPitchesIndexFetchFailed = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
+  fetchFailedSelector<{}, ProjectPitchesIndexPathParams>({
+    url: "/entities/v3/projectPitches",
+    method: "get",
+    ...variables
+  });
 
 export const adminProjectPitchesIndexIsFetching = isFetchingSelector<{}, {}>({
   url: "/entities/v3/projectPitches/admin",

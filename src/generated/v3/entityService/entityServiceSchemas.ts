@@ -4,6 +4,7 @@
  * @version 1.0
  */
 export type ProjectPitchDto = {
+  id: number;
   uuid: string;
   capacityBuildingNeeds?: string[];
   totalTrees?: number;

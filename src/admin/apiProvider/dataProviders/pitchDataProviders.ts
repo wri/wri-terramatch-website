@@ -7,6 +7,7 @@ import {
   fetchDeleteV2ProjectPitchesUUID,
   fetchGetV2AdminProjectPitches,
   fetchGetV2AdminProjectPitchesExport,
+  fetchGetV2ProjectPitchesUUID,
   fetchPatchV2ProjectPitchesUUID,
   GetV2AdminProjectPitchesError,
   GetV2AdminProjectPitchesExportError,
@@ -37,6 +38,14 @@ export const pitchesSortableList: string[] = [
   "deleted_at"
 ];
 
+// @ts-ignore
+const toSnakeCase = obj =>
+  Array.isArray(obj)
+    ? obj.map(toSnakeCase)
+    : obj !== null && typeof obj === "object"
+    ? Object.fromEntries(Object.entries(obj).map(([key, value]) => [_.snakeCase(key), toSnakeCase(value)]))
+    : obj;
+
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
     try {
@@ -57,8 +66,14 @@ export const pitchDataProvider: PitchDataProvider = {
     if (requestFailed != null) {
       throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
     }
-    console.log("response", projectPitch);
-    return { data: { ...projectPitch, id: projectPitch?.id } };
+    console.log("response v3", projectPitch);
+    const response = await fetchGetV2ProjectPitchesUUID({
+      //@ts-ignore
+      pathParams: { uuid: params.id }
+    });
+    console.log("response v2", response.data);
+    //return { data: { ...projectPitch, id: projectPitch!.uuid } };
+    return { data: { ...toSnakeCase(projectPitch), id: projectPitch.uuid } };
   },
 
   //@ts-ignore
