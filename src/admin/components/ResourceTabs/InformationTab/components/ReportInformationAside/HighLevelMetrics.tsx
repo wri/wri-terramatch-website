@@ -78,19 +78,28 @@ type DemographicsTotalFieldProps = CollectionsProps & {
   label: string;
   sx: SxProps<Theme>;
 };
-const DemographicsTotalField: FC<Omit<DemographicsTotalFieldProps, keyof CollectionsProps> & TotalShowProps> =
-  withTotalsShow<DemographicsTotalFieldProps>(({ label, entity, demographicType, collections, sx }) => {
-    const {
-      record: { uuid }
-    } = useShowContext();
-    const total = useCollectionsTotal({ entity, uuid, demographicType, collections }) ?? 0;
 
-    return (
-      <Labeled {...{ label, sx }}>
-        <FunctionField render={() => total} />
-      </Labeled>
-    );
-  });
+const DemographicsCollectionsField: FC<DemographicsTotalFieldProps> = ({
+  label,
+  entity,
+  demographicType,
+  collections,
+  sx
+}) => {
+  const {
+    record: { uuid }
+  } = useShowContext();
+  const total = useCollectionsTotal({ entity, uuid, demographicType, collections }) ?? 0;
+
+  return (
+    <Labeled {...{ label, sx }}>
+      <FunctionField render={() => total} />
+    </Labeled>
+  );
+};
+
+const DemographicsTotalField: FC<Omit<DemographicsTotalFieldProps, keyof CollectionsProps> & TotalShowProps> =
+  withTotalsShow<DemographicsTotalFieldProps>(DemographicsCollectionsField);
 
 const HighLevelMetrics: FC = () => {
   const { record, resource } = useShowContext();
@@ -114,16 +123,34 @@ const HighLevelMetrics: FC = () => {
         <Stack gap={3}>
           <ContextCondition frameworksHide={ALL_TF}>
             <DemographicsTotalField label="Total Number of Workdays Created" sx={inlineLabelSx} totalsType="workdays" />
-            <DemographicsTotalField
-              label={`Total Number of Paid ${workdaysType} Workdays Created`}
-              sx={inlineLabelSx}
-              totalsType="workdaysPaid"
-            />
-            <DemographicsTotalField
-              label={`Total Number of Volunteer ${workdaysType} Workdays Created`}
-              sx={inlineLabelSx}
-              totalsType="workdaysVolunteer"
-            />
+            <ContextCondition frameworksShow={[Framework.HBF]}>
+              <DemographicsCollectionsField
+                label={`Total Number of Direct Workdays Created`}
+                sx={inlineLabelSx}
+                demographicType="workdays"
+                entity={resource === "projectReport" ? "projectReports" : "siteReports"}
+                collections={["direct"]}
+              />
+              <DemographicsCollectionsField
+                label={`Total Number of Convergence Workdays Created`}
+                sx={inlineLabelSx}
+                demographicType="workdays"
+                entity={resource === "projectReport" ? "projectReports" : "siteReports"}
+                collections={["convergence"]}
+              />
+            </ContextCondition>
+            <ContextCondition frameworksHide={[Framework.HBF]}>
+              <DemographicsTotalField
+                label={`Total Number of Paid ${workdaysType} Workdays Created`}
+                sx={inlineLabelSx}
+                totalsType="workdaysPaid"
+              />
+              <DemographicsTotalField
+                label={`Total Number of Volunteer ${workdaysType} Workdays Created`}
+                sx={inlineLabelSx}
+                totalsType="workdaysVolunteer"
+              />
+            </ContextCondition>
           </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
             <DemographicsTotalField label="Total Number of Jobs Created" sx={inlineLabelSx} totalsType="jobs" />
