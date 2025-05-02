@@ -87,11 +87,7 @@ const SiteReportDataGrid: FC = () => {
         render={(record: SiteReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              {record.nothingToReport ? (
-                <Icon name={IconNames.CHECK_CIRCLE} className="h-6 w-6" />
-              ) : (
-                <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6" />
-              )}
+              {record.nothingToReport ? <Icon name={IconNames.DOCUMENT} className="h-6 w-6" /> : <></>}
             </div>
           );
         }}
