@@ -44,7 +44,7 @@ const MapEditPolygonPanel = ({
     setSelectedPolyVersion,
     setOpenModalConfirmation,
     setPreviewVersion,
-    polygonCriteriaMap: polygonMap,
+    validationData,
     setHasOverlaps
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;
@@ -63,9 +63,9 @@ const MapEditPolygonPanel = ({
   };
 
   const [criteriaData, setCriteriaData] = useState<any>(null);
-  const hasOverlaps = (polygonValidation: V2TerrafundCriteriaData) => {
-    if (polygonValidation.criteria_list) {
-      for (const criteria of polygonValidation.criteria_list) {
+  const hasOverlaps = (polygonValidation: any) => {
+    if (polygonValidation.nonValidCriteria) {
+      for (const criteria of polygonValidation.nonValidCriteria) {
         if (criteria.criteria_id === 3 && criteria.valid === 0) {
           return true;
         }
@@ -74,14 +74,26 @@ const MapEditPolygonPanel = ({
     return false;
   };
 
-  useValueChanged(polygonMap, () => {
-    const criteriaDataPolygon = polygonMap[editPolygon?.uuid ?? ""];
+  useValueChanged(validationData, () => {
+    const siteDataPolygon = validationData[siteData?.uuid ?? ""] ?? [];
+    const criteriaDataPolygon = siteDataPolygon.find((polygon: any) => polygon.uuid === editPolygon?.uuid);
     if (criteriaDataPolygon) {
       setHasOverlaps(hasOverlaps(criteriaDataPolygon));
-      setCriteriaData(criteriaDataPolygon);
+
+      const transformedData: V2TerrafundCriteriaData = {
+        polygon_id: criteriaDataPolygon.uuid,
+        criteria_list:
+          criteriaDataPolygon.nonValidCriteria?.map((criteria: any) => ({
+            criteria_id: criteria.criteria_id,
+            valid: criteria.valid,
+            latest_created_at: criteria.latest_created_at,
+            extra_info: criteria.extra_info
+          })) || []
+      };
+
+      setCriteriaData(transformedData);
     }
   });
-
   return (
     <>
       <div className="flex items-start justify-between gap-4">
