@@ -1,13 +1,13 @@
 import { createSelector } from "reselect";
 
+import { projectPitchesGetUUIDIndex } from "@/generated/v3/entityService/entityServiceComponents";
 import {
   projectPitchesGetUUIDIndexFetchFailed,
   projectPitchesGetUUIDIndexIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
+import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectProjectPitch = (store: ApiDataStore) => Object.values(store.projectPitches)?.[0]?.attributes;
@@ -19,27 +19,27 @@ type ProjectPitchConnection = {
 };
 
 type ProjectPitchConnectionProps = {
-  token: string;
+  uuid: string;
 };
 
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
-  load: ({ isSuccess, requestFailed }, { token }) => {
-    if (isSuccess == null && requestFailed == null) verifyUser({ body: { token } });
+  load: ({ isSuccess, requestFailed }, { uuid }) => {
+    if (isSuccess == null && requestFailed == null) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
   },
 
   isLoaded: ({ isSuccess }) => isSuccess !== null,
   selector: selectorCache(
-    ({ token }) => token,
-    ({ token }) =>
+    ({ uuid }: ProjectPitchConnectionProps) => uuid,
+    ({ uuid }: ProjectPitchConnectionProps) =>
       createSelector(
         [projectPitchesGetUUIDIndexIsFetching, projectPitchesGetUUIDIndexFetchFailed, selectProjectPitch],
-        (isLoading, requestFailed, selector) => ({
+        (isLoading, requestFailed, projectPitch) => ({
           isLoading,
           requestFailed,
-          isSuccess: selector?.uuid
+          isSuccess: projectPitch?.uuid || null
         })
       )
   )
 };
 
-export const useProjectPitch = connectionHook(projectPitchConnection);
+export const loadProjectPitch = connectionLoader(projectPitchConnection);
