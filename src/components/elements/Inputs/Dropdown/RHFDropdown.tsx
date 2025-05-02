@@ -39,7 +39,10 @@ const WithApiOptions: FC<WithApiOptionsProps> = props => {
   const [optionsCache, setOptionsCache] = useState<Option[] | undefined>();
 
   const parentFieldValue = optionsFilterFieldName != null ? formHook?.watch(optionsFilterFieldName) : undefined;
-  const parentCodes = useMemo(() => toArray(parentFieldValue), [parentFieldValue]);
+  const parentCodes = useMemo(
+    () => (parentFieldValue == null ? undefined : toArray(parentFieldValue)),
+    [parentFieldValue]
+  );
   const level = useMemo(() => Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2, [apiOptionsSource]);
   const options = useGadmOptions({ level, parentCodes });
 
