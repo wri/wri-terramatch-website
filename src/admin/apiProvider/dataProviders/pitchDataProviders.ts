@@ -14,6 +14,7 @@ import {
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
+import { projectPitchesGetUUIDIndex } from "@/generated/v3/entityService/entityServiceComponents";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
@@ -57,6 +58,11 @@ export const pitchDataProvider: PitchDataProvider = {
         //@ts-ignore
         pathParams: { uuid: params.id }
       });
+
+      const response2 = await projectPitchesGetUUIDIndex({
+        pathParams: { uuid: params.id }
+      });
+      console.log("response2", response2);
       //@ts-ignore
       return { data: { ...response.data, id: response.data.uuid } };
     } catch (err) {

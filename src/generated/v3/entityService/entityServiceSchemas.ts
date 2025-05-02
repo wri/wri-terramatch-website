@@ -3,6 +3,96 @@
  *
  * @version 1.0
  */
+export type ProjectPitchDto = {
+  uuid: string;
+  capacityBuildingNeeds?: string[];
+  totalTrees?: number;
+  totalHectares?: number;
+  restorationInterventionTypes?: string[];
+  landUseTypes?: string[];
+  restorationStrategy?: string[];
+  projectCountyDistrict?: string;
+  projectCountry?: string;
+  projectObjectives?: string;
+  projectName?: string;
+  organisationId?: string;
+  fundingProgrammeId?: string;
+  projectBudget?: number;
+  howDiscovered?: string[];
+  status: string;
+  /**
+   * @format date-time
+   */
+  expectedActiveRestorationStartDate?: string;
+  /**
+   * @format date-time
+   */
+  expectedActiveRestorationEndDate?: string;
+  descriptionOfProjectTimeline?: string;
+  projPartnerInfo?: string;
+  landTenureProjArea?: string[];
+  landholderCommEngage?: string;
+  projSuccessRisks?: string;
+  monitorEvalPlan?: string;
+  projBoundary?: string;
+  sustainableDevGoals?: string[];
+  projAreaDescription?: string;
+  environmentalGoals?: string;
+  proposedNumSites?: number;
+  proposedNumNurseries?: number;
+  currLandDegradation?: string;
+  mainDegradationCauses?: string;
+  seedlingsSource?: string;
+  projImpactSocieconom?: string;
+  projImpactFoodsec?: string;
+  projImpactWatersec?: string;
+  projImpactJobtypes?: string;
+  numJobsCreated?: number;
+  pctEmployeesMen?: number;
+  pctEmployeesWomen?: number;
+  pctEmployees18To35?: number;
+  pctEmployeesOlder35?: number;
+  projBeneficiaries?: number;
+  pctBeneficiariesWomen?: number;
+  pctBeneficiariesSmall?: number;
+  pctBeneficiariesLarge?: number;
+  pctBeneficiariesYouth?: number;
+  mainCausesOfDegradation?: string;
+  states?: string[];
+  hectaresFirstYr?: number;
+  totalTreesFirstYr?: number;
+  pctBeneficiariesBackwardClass?: number;
+  landSystems?: string[];
+  treeRestorationPractices?: string[];
+  detailedInterventionTypes?: string[];
+  monitoringEvaluationPlan?: string;
+  pctBeneficiariesScheduledClasses?: number;
+  pctBeneficiariesScheduledTribes?: number;
+  theoryOfChange?: string;
+  proposedGovPartners?: string;
+  pctSchTribe?: string;
+  sustainabilityPlan?: string;
+  replicationPlan?: string;
+  replicationChallenges?: string;
+  solutionMarketSite?: string;
+  affordabilityOfSolution?: string;
+  growthTrendsBusiness?: string;
+  limitationsOnScope?: string;
+  businessModelReplicationPlan?: string;
+  biodiversityImpact?: string;
+  waterSource?: string;
+  climateResilience?: string;
+  soilHealth?: string;
+  pctEmployeesMarginalised?: number;
+  pctBeneficiariesMarginalised?: number;
+  pctBeneficiariesMen?: number;
+  baselineBiodiversity?: string;
+  goalTreesRestoredPlanting?: number;
+  goalTreesRestoredAnr?: number;
+  goalTreesRestoredDirectSeeding?: number;
+  directSeedingSurvivalRate?: number;
+};
+
 export type ANRDto = {
   /**
    * Site name

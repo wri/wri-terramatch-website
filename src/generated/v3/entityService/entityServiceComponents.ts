@@ -7,6 +7,148 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
+export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export const projectPitchesIndex = (signal?: AbortSignal) =>
+  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, {}, {}>({
+    url: "/entities/v3/projectPitches",
+    method: "get",
+    signal
+  });
+
+export type AdminProjectPitchesIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export const adminProjectPitchesIndex = (signal?: AbortSignal) =>
+  entityServiceFetch<undefined, AdminProjectPitchesIndexError, undefined, {}, {}, {}>({
+    url: "/entities/v3/projectPitches/admin",
+    method: "get",
+    signal
+  });
+
+export type ProjectPitchesGetUUIDIndexPathParams = {
+  /**
+   * Entity UUID for association
+   */
+  uuid: string;
+};
+
+export type ProjectPitchesGetUUIDIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectPitchesGetUUIDIndexResponse = {
+  meta?: {
+    /**
+     * @example projectPitches
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPitches
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPitchDto;
+  };
+};
+
+export type ProjectPitchesGetUUIDIndexVariables = {
+  pathParams: ProjectPitchesGetUUIDIndexPathParams;
+};
+
+export const projectPitchesGetUUIDIndex = (variables: ProjectPitchesGetUUIDIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProjectPitchesGetUUIDIndexResponse,
+    ProjectPitchesGetUUIDIndexError,
+    undefined,
+    {},
+    {},
+    ProjectPitchesGetUUIDIndexPathParams
+  >({ url: "/entities/v3/projectPitches/{uuid}", method: "get", ...variables, signal });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -1004,6 +1146,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
+  projectPitches: { projectPitchesIndex, adminProjectPitchesIndex, projectPitchesGetUUIDIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
