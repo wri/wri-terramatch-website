@@ -32,11 +32,12 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
     ({ uuid }: ProjectPitchConnectionProps) => uuid,
     ({ uuid }: ProjectPitchConnectionProps) =>
       createSelector(
-        [projectPitchesGetUUIDIndexIsFetching, projectPitchesGetUUIDIndexFetchFailed, selectProjectPitch],
-        (isLoading, requestFailed, projectPitch) => ({
-          isLoading,
-          requestFailed,
-          isSuccess: projectPitch?.uuid || null
+        (store: ApiDataStore) => projectPitchesGetUUIDIndexIsFetching({ pathParams: { uuid } }),
+        (store: ApiDataStore) => projectPitchesGetUUIDIndexFetchFailed({ pathParams: { uuid } }),
+        (isFetching, fetchFailed) => ({
+          isLoading: isFetching,
+          requestFailed: fetchFailed,
+          isSuccess: fetchFailed === null
         })
       )
   )
