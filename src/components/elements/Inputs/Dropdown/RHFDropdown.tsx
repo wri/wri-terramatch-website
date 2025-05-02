@@ -38,10 +38,10 @@ const WithApiOptions: FC<WithApiOptionsProps> = props => {
   // cause it to unselect its current selections.
   const [optionsCache, setOptionsCache] = useState<Option[] | undefined>();
 
-  const parentCodes = optionsFilterFieldName != null ? formHook?.watch(optionsFilterFieldName) : undefined;
+  const parentFieldValue = optionsFilterFieldName != null ? formHook?.watch(optionsFilterFieldName) : undefined;
+  const parentCodes = useMemo(() => toArray(parentFieldValue), [parentFieldValue]);
   const level = useMemo(() => Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2, [apiOptionsSource]);
-
-  const options = useGadmOptions({ level, parentCodes: [parentCodes] });
+  const options = useGadmOptions({ level, parentCodes });
 
   useEffect(() => {
     if (options != null) setOptionsCache(options);
