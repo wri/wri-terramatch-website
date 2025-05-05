@@ -10,9 +10,10 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
@@ -145,6 +146,7 @@ const Dashboard = () => {
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
   const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
     dashboardHeader,
@@ -400,6 +402,23 @@ const Dashboard = () => {
     return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
   }, [t, filters.country.id, DATA_ACTIVE_COUNTRY, transformedStories]);
 
+  const countryData = useMemo(() => {
+    if (!dashboardProjectDetails?.data?.countrySlug || !countryChoices?.length) return undefined;
+
+    const gadmCountry = countryChoices.find(country => country.id === dashboardProjectDetails.data.countrySlug);
+    if (!gadmCountry) return undefined;
+
+    const countrySlug = gadmCountry.id;
+    return {
+      country_slug: countrySlug,
+      data: {
+        label: gadmCountry.name,
+        icon: `/flags/${String(countrySlug).toLowerCase()}.svg`
+      },
+      id: gadmCountry.id
+    };
+  }, [dashboardProjectDetails?.data?.countrySlug, countryChoices]);
+
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
@@ -412,7 +431,10 @@ const Dashboard = () => {
             <When condition={filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid}>
               <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <Text variant="text-24-semibold" className="text-black">
-                {t(filters.country?.data.label)}
+                {t(
+                  countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
+                    filters.country?.data.label
+                )}
               </Text>
             </When>
 
@@ -438,7 +460,7 @@ const Dashboard = () => {
           <div>
             <DashboardBreadcrumbs
               cohort={cohortName}
-              countryData={dashboardProjectDetails?.data?.countryData}
+              countryData={countryData as CountriesProps}
               projectName={dashboardProjectDetails?.data?.name}
               className="pt-0"
               textVariant="text-14"
@@ -501,9 +523,9 @@ const Dashboard = () => {
               <div>
                 <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
-                  {t(`Operations: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Registration: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
