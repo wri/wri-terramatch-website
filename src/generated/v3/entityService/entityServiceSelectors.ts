@@ -1,8 +1,10 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
-  ProjectPitchesIndexPathParams,
+  ProjectPitchesIndexQueryParams,
   ProjectPitchesIndexVariables,
+  AdminProjectPitchesIndexQueryParams,
+  AdminProjectPitchesIndexVariables,
   ProjectPitchesGetUUIDIndexPathParams,
   ProjectPitchesGetUUIDIndexVariables,
   EntityIndexPathParams,
@@ -25,28 +27,32 @@ import {
 } from "./entityServiceComponents";
 
 export const projectPitchesIndexIsFetching = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
-  isFetchingSelector<{}, ProjectPitchesIndexPathParams>({
+  isFetchingSelector<ProjectPitchesIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches",
     method: "get",
     ...variables
   });
 
 export const projectPitchesIndexFetchFailed = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
-  fetchFailedSelector<{}, ProjectPitchesIndexPathParams>({
+  fetchFailedSelector<ProjectPitchesIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches",
     method: "get",
     ...variables
   });
 
-export const adminProjectPitchesIndexIsFetching = isFetchingSelector<{}, {}>({
-  url: "/entities/v3/projectPitches/admin",
-  method: "get"
-});
+export const adminProjectPitchesIndexIsFetching = (variables: Omit<AdminProjectPitchesIndexVariables, "body">) =>
+  isFetchingSelector<AdminProjectPitchesIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches/admin",
+    method: "get",
+    ...variables
+  });
 
-export const adminProjectPitchesIndexFetchFailed = fetchFailedSelector<{}, {}>({
-  url: "/entities/v3/projectPitches/admin",
-  method: "get"
-});
+export const adminProjectPitchesIndexFetchFailed = (variables: Omit<AdminProjectPitchesIndexVariables, "body">) =>
+  fetchFailedSelector<AdminProjectPitchesIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches/admin",
+    method: "get",
+    ...variables
+  });
 
 export const projectPitchesGetUUIDIndexIsFetching = (variables: Omit<ProjectPitchesGetUUIDIndexVariables, "body">) =>
   isFetchingSelector<{}, ProjectPitchesGetUUIDIndexPathParams>({

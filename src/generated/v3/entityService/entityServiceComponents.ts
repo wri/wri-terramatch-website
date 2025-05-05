@@ -7,15 +7,19 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
-export type ProjectPitchesIndexPathParams = {
+export type ProjectPitchesIndexQueryParams = {
   /**
    * pagination page
    */
-  perPage: number;
+  pageNumber: number;
   /**
-   * uuids array to search
+   * pagination page
    */
-  search: string[];
+  pageSize: number;
+  /**
+   * text to search
+   */
+  search: string;
 };
 
 export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
@@ -48,16 +52,31 @@ export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
 >;
 
 export type ProjectPitchesIndexVariables = {
-  pathParams: ProjectPitchesIndexPathParams;
+  queryParams: ProjectPitchesIndexQueryParams;
 };
 
 export const projectPitchesIndex = (variables: ProjectPitchesIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, {}, ProjectPitchesIndexPathParams>({
+  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, ProjectPitchesIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches",
     method: "get",
     ...variables,
     signal
   });
+
+export type AdminProjectPitchesIndexQueryParams = {
+  /**
+   * pagination page
+   */
+  pageNumber: number;
+  /**
+   * pagination page
+   */
+  pageSize: number;
+  /**
+   * text to search
+   */
+  search: string;
+};
 
 export type AdminProjectPitchesIndexError = Fetcher.ErrorWrapper<
   | {
@@ -88,10 +107,15 @@ export type AdminProjectPitchesIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export const adminProjectPitchesIndex = (signal?: AbortSignal) =>
-  entityServiceFetch<undefined, AdminProjectPitchesIndexError, undefined, {}, {}, {}>({
+export type AdminProjectPitchesIndexVariables = {
+  queryParams: AdminProjectPitchesIndexQueryParams;
+};
+
+export const adminProjectPitchesIndex = (variables: AdminProjectPitchesIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, AdminProjectPitchesIndexError, undefined, {}, AdminProjectPitchesIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches/admin",
     method: "get",
+    ...variables,
     signal
   });
 

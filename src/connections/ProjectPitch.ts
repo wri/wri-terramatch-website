@@ -1,8 +1,14 @@
 import { createSelector } from "reselect";
 
-import { projectPitchesGetUUIDIndex, projectPitchesIndex } from "@/generated/v3/entityService/entityServiceComponents";
+import {
+  adminProjectPitchesIndex,
+  projectPitchesGetUUIDIndex,
+  projectPitchesIndex
+} from "@/generated/v3/entityService/entityServiceComponents";
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
+  adminProjectPitchesIndexFetchFailed,
+  adminProjectPitchesIndexIsFetching,
   projectPitchesGetUUIDIndexFetchFailed,
   projectPitchesGetUUIDIndexIsFetching,
   projectPitchesIndexFetchFailed,
@@ -27,9 +33,10 @@ type ProjectPitchConnectionProps = {
   uuid: string;
 };
 
-type ProjectPitchIndexConnectionProps = {
-  perPage: number;
-  search: string[];
+export type ProjectPitchIndexConnectionProps = {
+  pageNumber: number;
+  pageSize: number;
+  search: string;
 };
 
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
@@ -61,21 +68,27 @@ type ProjectsPitchesConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
   projectPitches: ProjectPitchDto[] | any;
+  total?: number;
 };
 
 const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ projectPitches }, { perPage, search }) => {
-    if (!projectPitches) projectPitchesIndex({ pathParams: { perPage: perPage, search: search } });
+  load: ({ projectPitches }, { pageSize, pageNumber, search }) => {
+    if (!projectPitches)
+      projectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
   isLoaded: ({ projectPitches }) => projectPitches !== undefined,
   selector: selectorCache(
-    ({ perPage, search }: ProjectPitchIndexConnectionProps) => perPage + search.join(""),
-    ({ perPage, search }: ProjectPitchIndexConnectionProps) =>
+    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
+    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
       createSelector(
         [
-          projectPitchesIndexIsFetching({ pathParams: { perPage: perPage, search: search } }),
-          projectPitchesIndexFetchFailed({ pathParams: { perPage: perPage, search: search } }),
+          projectPitchesIndexIsFetching({
+            queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search }
+          }),
+          projectPitchesIndexFetchFailed({
+            queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search }
+          }),
           selectProjectPitches
         ],
         (isLoading, requestFailed, selector) => ({
@@ -88,24 +101,30 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
 };
 
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ projectPitches }, { perPage, search }) => {
-    if (!projectPitches) projectPitchesIndex({ pathParams: { perPage: perPage, search: search } });
+  load: ({ projectPitches }, { pageNumber, pageSize, search }) => {
+    if (!projectPitches)
+      adminProjectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
   isLoaded: ({ projectPitches }) => projectPitches !== undefined,
   selector: selectorCache(
-    ({ perPage, search }: ProjectPitchIndexConnectionProps) => perPage + search.join(""),
-    ({ perPage, search }: ProjectPitchIndexConnectionProps) =>
+    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
+    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
       createSelector(
         [
-          projectPitchesIndexIsFetching({ pathParams: { perPage: perPage, search: search } }), // TODO to change
-          projectPitchesIndexFetchFailed({ pathParams: { perPage: perPage, search: search } }),
+          adminProjectPitchesIndexIsFetching({
+            queryParams: { pageNumber: pageNumber, pageSize: pageSize, search: search }
+          }),
+          adminProjectPitchesIndexFetchFailed({
+            queryParams: { pageNumber: pageNumber, pageSize: pageSize, search: search }
+          }),
           selectProjectPitches
         ],
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          projectPitches: selector
+          projectPitches: selector,
+          total: 0
         })
       )
   )
