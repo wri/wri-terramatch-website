@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import { useInvasives } from "@/connections/EntityAssocation";
+import { useInvasives } from "@/connections/EntityAssociation";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
 import { formatOptionsList } from "@/utils/options";
 

@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { Dictionary } from "lodash";
+import { useEffect, useMemo, useState } from "react";
 import { createSelector } from "reselect";
 
 import {
@@ -20,6 +21,7 @@ import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
+import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -173,4 +175,44 @@ export const usePlants = <T extends PlantDto = PlantDto>(
   }, [associations, loaded, props.collection]);
 
   return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
+};
+
+/**
+ * TODO: Temporary! We'll add a method for associations for multiple entities in a future ticket.
+ */
+export const useSiteReportDisturbances = (siteReportUuids: string[]) => {
+  const [disturbances, setDisturbances] = useState<Dictionary<DisturbanceDto[]> | undefined>();
+  useEffect(() => {
+    if (!siteReportUuids.length) {
+      setDisturbances({});
+      return;
+    }
+
+    const connectionPromises = siteReportUuids.map(uuid =>
+      loadConnection(disturbanceConnection, { entity: "siteReports", uuid })
+    );
+
+    Promise.all(connectionPromises).then(connectionResponses => {
+      if (connectionResponses.length !== siteReportUuids.length) {
+        Log.error("Incorrect number of responses", { connectionResponses, siteReportUuids });
+        return;
+      }
+
+      const result: Dictionary<DisturbanceDto[]> = {};
+      for (let i = 0; i < siteReportUuids.length; i++) {
+        const response = connectionResponses[i];
+        if (response.fetchFailure != null) {
+          Log.error("Fetching site report association failed", response.fetchFailure);
+          result[siteReportUuids[i]] = [];
+          continue;
+        }
+
+        result[siteReportUuids[i]] = response.associations ?? [];
+      }
+
+      setDisturbances(result);
+    });
+  }, [siteReportUuids]);
+
+  return disturbances;
 };

@@ -171,11 +171,12 @@ export const apiQuestionsToFormFields = (
 const SELECT_FILTER_QUESTION = {
   "org-hq-state": "org-hq-country",
   "org-states": "org-countries",
-  "pro-pit-states": "pro-pit-country",
   "org-level-1-past-restoration": "org-level-0-past-restoration",
   "org-level-2-past-restoration": "org-level-1-past-restoration",
+  "pro-pit-states": "pro-pit-country",
   "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
-  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed"
+  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
+  "pro-states": "pro-country"
 };
 
 export const apiFormQuestionToFormField = (
@@ -391,21 +392,6 @@ export const apiFormQuestionToFormField = (
           required,
           addButtonCaption: question.add_button_text,
           collection: question.collection
-        }
-      };
-    }
-
-    case "financialIndicators": {
-      return {
-        ...sharedProps,
-        type: FieldType.FinancialIndicatorsDataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text,
-          collection: question.collection,
-          years: question.years,
-          model: question?.collection!
         }
       };
     }
@@ -706,7 +692,6 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "checkboxes":
     case "dataTable":
     case "leaderships":
-    case "financialIndicators":
     case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":

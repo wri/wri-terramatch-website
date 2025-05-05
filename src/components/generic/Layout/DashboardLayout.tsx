@@ -11,6 +11,7 @@ import {
 } from "react";
 import { When } from "react-if";
 
+import { useGadmChoices } from "@/connections/Gadm";
 import { DashboardProvider } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardCountries } from "@/generated/apiComponents";
@@ -38,7 +39,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
   const { data: dashboardCountries } = useGetV2DashboardCountries<{ data: CountriesProps[] }>({
     queryParams: {}
   });
-
+  const countryChoices = useGadmChoices({ level: 0 });
   const [selectedCountry, setSelectedCountry] = useState<CountriesProps | undefined>(undefined);
   const { loading } = useLoading();
   useEffect(() => {
@@ -79,7 +80,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                   isProjectPage={isProjectPage}
                   isHomepage={isHomepage}
                   isImpactStoryPage={isImpactStoryPage}
-                  dashboardCountries={dashboardCountries.data}
+                  gadmCountries={countryChoices}
                   defaultSelectedCountry={selectedCountry}
                   setSelectedCountry={setSelectedCountry}
                 />
