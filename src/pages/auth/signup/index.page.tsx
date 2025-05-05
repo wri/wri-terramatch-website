@@ -51,7 +51,7 @@ const SignUpPage = ({
   useValueChanged(requestFailed, () => {
     if (requestFailed != null) {
       let message: string;
-      if (requestFailed.statusCode == 422 && requestFailed.message == "User already exist") {
+      if (requestFailed.statusCode == 422 && requestFailed.message == "User already exists") {
         message = t(
           "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
         );
