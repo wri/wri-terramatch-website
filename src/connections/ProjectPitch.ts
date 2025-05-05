@@ -27,6 +27,11 @@ type ProjectPitchConnectionProps = {
   uuid: string;
 };
 
+type ProjectPitchIndexConnectionProps = {
+  perPage: number;
+  search: string[];
+};
+
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
   load: ({ projectPitch }, { uuid }) => {
     if (!projectPitch) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
@@ -58,19 +63,43 @@ type ProjectsPitchesConnection = {
   projectPitches: ProjectPitchDto[] | any;
 };
 
-const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchConnectionProps> = {
-  load: ({ projectPitches }, { uuid }) => {
-    if (!projectPitches) projectPitchesIndex({ pathParams: { perPage: 10, search: [] } });
+const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
+  load: ({ projectPitches }, { perPage, search }) => {
+    if (!projectPitches) projectPitchesIndex({ pathParams: { perPage: perPage, search: search } });
   },
 
   isLoaded: ({ projectPitches }) => projectPitches !== undefined,
   selector: selectorCache(
-    ({ uuid }: ProjectPitchConnectionProps) => uuid,
-    ({ uuid }: ProjectPitchConnectionProps) =>
+    ({ perPage, search }: ProjectPitchIndexConnectionProps) => perPage + search.join(""),
+    ({ perPage, search }: ProjectPitchIndexConnectionProps) =>
       createSelector(
         [
-          projectPitchesIndexIsFetching({ pathParams: { perPage: 10, search: [] } }),
-          projectPitchesIndexFetchFailed({ pathParams: { perPage: 10, search: [] } }),
+          projectPitchesIndexIsFetching({ pathParams: { perPage: perPage, search: search } }),
+          projectPitchesIndexFetchFailed({ pathParams: { perPage: perPage, search: search } }),
+          selectProjectPitches
+        ],
+        (isLoading, requestFailed, selector) => ({
+          isLoading,
+          requestFailed,
+          projectPitches: selector
+        })
+      )
+  )
+};
+
+const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
+  load: ({ projectPitches }, { perPage, search }) => {
+    if (!projectPitches) projectPitchesIndex({ pathParams: { perPage: perPage, search: search } });
+  },
+
+  isLoaded: ({ projectPitches }) => projectPitches !== undefined,
+  selector: selectorCache(
+    ({ perPage, search }: ProjectPitchIndexConnectionProps) => perPage + search.join(""),
+    ({ perPage, search }: ProjectPitchIndexConnectionProps) =>
+      createSelector(
+        [
+          projectPitchesIndexIsFetching({ pathParams: { perPage: perPage, search: search } }), // TODO to change
+          projectPitchesIndexFetchFailed({ pathParams: { perPage: perPage, search: search } }),
           selectProjectPitches
         ],
         (isLoading, requestFailed, selector) => ({
@@ -83,4 +112,5 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
 };
 
 export const loadProjectPitches = connectionLoader(projectPitchesConnection);
+export const loadProjectPitchesAdmin = connectionLoader(projectPitchesAdminConnection);
 export const loadProjectPitch = connectionLoader(projectPitchConnection);

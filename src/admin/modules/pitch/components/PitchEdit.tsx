@@ -26,33 +26,29 @@ const PitchEdit = () => {
   return (
     <Edit actions={false} aside={<PitchAside asideType="edit" />}>
       <SimpleForm validate={validateForm(validationSchema)}>
-        <TextInput source="project_name" label="Name" fullWidth />
-        <TextInput source="project_objectives" label="Objectives" fullWidth />
+        <TextInput source="projectName" label="Name" fullWidth />
+        <TextInput source="projectObjectives" label="Objectives" fullWidth />
         <SelectInput
-          source="project_country"
+          source="projectCountry"
           label="Location of Restoration Project - Country"
           choices={countryChoices}
           fullWidth
         />
-        <TextInput
-          source="project_county_district"
-          label="Location of Restoration Project - County/District"
-          fullWidth
-        />
+        <TextInput source="projectCountyDistrict" label="Location of Restoration Project - County/District" fullWidth />
         <SelectArrayInput
-          source="restoration_intervention_types"
+          source="restorationInterventionTypes"
           label="Restoration Intervention Types"
           choices={optionToChoices(getRestorationInterventionTypeOptions())}
           fullWidth
         />
         <SelectArrayInput
-          source="capacity_building_needs"
+          source="capacityBuildingNeeds"
           choices={optionToChoices(getCapacityBuildingNeedOptions())}
           label="Capacity Building Needs"
           fullWidth
         />
-        <NumberInput source="total_hectares" label="Total Hectares to be restored" fullWidth />
-        <NumberInput source="total_trees" label="Total number of trees to be grown" fullWidth />
+        <NumberInput source="totalHectares" label="Total Hectares to be restored" fullWidth />
+        <NumberInput source="totalTrees" label="Total number of trees to be grown" fullWidth />
       </SimpleForm>
     </Edit>
   );
