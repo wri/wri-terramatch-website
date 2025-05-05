@@ -584,6 +584,72 @@ export const entityDelete = (variables: EntityDeleteVariables, signal?: AbortSig
     signal
   });
 
+export type EntityUpdatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type EntityUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityUpdateVariables = {
+  body: Schemas.EntityUpdateBody;
+  pathParams: EntityUpdatePathParams;
+};
+
+export const entityUpdate = (variables: EntityUpdateVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, EntityUpdateError, Schemas.EntityUpdateBody, {}, {}, EntityUpdatePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "patch",
+    ...variables,
+    signal
+  });
+
 export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
@@ -596,7 +662,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies";
+  association: "demographics" | "seedings" | "treeSpecies" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -689,6 +755,63 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.TreeSpeciesDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example disturbances
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example disturbances
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DisturbanceDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example invasives
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example invasives
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.InvasiveDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example stratas
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example stratas
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.StrataDto;
         }[];
       },
     EntityAssociationIndexError,
@@ -881,7 +1004,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  entities: { entityIndex, entityGet, entityDelete },
+  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
 };

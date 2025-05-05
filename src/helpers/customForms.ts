@@ -6,9 +6,7 @@ import * as yup from "yup";
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
-import { getCountriesStatesOptions } from "@/constants/options/states";
 import { Framework } from "@/context/framework.provider";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Entity, Option } from "@/types/common";
@@ -173,9 +171,12 @@ export const apiQuestionsToFormFields = (
 const SELECT_FILTER_QUESTION = {
   "org-hq-state": "org-hq-country",
   "org-states": "org-countries",
-  "pro-pit-states": "pro-pit-country",
   "org-level-1-past-restoration": "org-level-0-past-restoration",
-  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed"
+  "org-level-2-past-restoration": "org-level-1-past-restoration",
+  "pro-pit-states": "pro-pit-country",
+  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
+  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
+  "pro-states": "pro-country"
 };
 
 export const apiFormQuestionToFormField = (
@@ -295,18 +296,20 @@ export const apiFormQuestionToFormField = (
         optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
       }
 
-      return {
-        ...sharedProps,
-        type: FieldType.Dropdown,
-
-        fieldProps: {
-          required,
-          multiSelect: question.multichoice,
-          options: getOptions(question, t),
-          hasOtherOptions: question.options_other,
-          optionsFilterFieldName
-        }
+      const fieldProps = {
+        required,
+        multiSelect: question.multichoice,
+        hasOtherOptions: question.options_other,
+        optionsFilterFieldName
       };
+
+      if (question.options_list?.startsWith("gadm-level-")) {
+        fieldProps.apiOptionsSource = question.options_list;
+      } else {
+        fieldProps.options = getOptions(question, t);
+      }
+
+      return { ...sharedProps, type: FieldType.Dropdown, fieldProps };
     }
     case "checkboxes":
     case "radio":
@@ -598,16 +601,8 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   }
 
   switch (question.options_list) {
-    case "countries":
-      options = getCountriesOptions(t);
-      break;
-
     case "months":
       options = getMonthOptions(t);
-      break;
-
-    case "states":
-      options = getCountriesStatesOptions(t);
       break;
   }
 

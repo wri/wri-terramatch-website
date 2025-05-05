@@ -13,7 +13,7 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";

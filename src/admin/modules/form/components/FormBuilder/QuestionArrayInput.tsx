@@ -57,7 +57,6 @@ export const QuestionArrayInput = ({
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
   const linkedFieldChoices = linkedFieldsData?.map(item => ({ id: item.uuid, name: item.name } as Choice)) || [];
-
   const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
 
   return (
@@ -88,7 +87,6 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
-
           <TextInput
             source="label"
             label="Question Text"
@@ -151,7 +149,6 @@ export const QuestionArrayInput = ({
             helperText="Please keep this option on if you want to make this question required. When this option is enabled, project developers will be obligated to provide an answer to the question before they can submit the form."
             defaultValue={false}
           />
-
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (!scopedFormData || !getSource) return null;

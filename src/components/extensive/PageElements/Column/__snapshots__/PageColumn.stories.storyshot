@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Extensive/Page/Column Default 1`] = `
 <div
-  className="min-w-[500px] flex-1 space-y-8"
+  className="min-w-[500px] flex-1 space-y-8 mobile:w-full mobile:min-w-[100%]"
 >
   <div
     className="w-full rounded-xl border border-neutral-200 bg-white p-8"

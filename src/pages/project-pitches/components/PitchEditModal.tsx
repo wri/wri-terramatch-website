@@ -7,6 +7,7 @@ import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useModalContext } from "@/context/modal.provider";
 import { usePatchV2ProjectPitchesUUID } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
@@ -23,6 +24,7 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
   const uuid = router.query.id as string;
   const t = useT();
   const { closeModal, openModal } = useModalContext();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const { mutateAsync: updatePitch, error } = usePatchV2ProjectPitchesUUID({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["v2", "project-pitches"] })
@@ -42,7 +44,7 @@ const PitchEditModal = ({ pitch }: PitchEditModalProps) => {
     }
   };
 
-  const formSteps = getSteps(t, uuid ?? "");
+  const formSteps = getSteps(t, uuid ?? "", countryOptions ?? []);
   const defaultValues = normalizedFormDefaultValue(pitch, formSteps);
 
   return (

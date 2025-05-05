@@ -23,7 +23,7 @@ interface IProps {
   hasDelete?: boolean;
   deleteProps?: DeleteWithConfirmButtonProps<any>;
   hasEdit?: boolean;
-  toggleTestStatus?: (record: any) => void;
+  toggleTestStatus?: () => void;
 }
 
 const ShowActions = ({
@@ -62,7 +62,7 @@ const ShowActions = ({
           <Button
             label="Toggle Test"
             className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
-            onClick={() => toggleTestStatus(record)}
+            onClick={() => toggleTestStatus()}
           >
             <Icon
               className="h-5 w-5"

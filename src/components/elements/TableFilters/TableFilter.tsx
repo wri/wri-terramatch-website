@@ -58,7 +58,10 @@ function TableFilter({ filters, onChangeFilters, className, columnFilters, ...pr
   };
 
   return (
-    <div {...props} className={classNames(className, "flex w-full items-center justify-between")}>
+    <div
+      {...props}
+      className={classNames(className, "flex w-full items-center justify-between mobile:flex-col mobile:gap-3")}
+    >
       <div>
         {columnFilters
           ?.filter(filter => !filter.hide)
@@ -80,7 +83,7 @@ function TableFilter({ filters, onChangeFilters, className, columnFilters, ...pr
           })}
       </div>
       <div className="flex gap-5">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 mobile:flex-col">
           {columnFilters
             ?.filter(filter => !filter.hide)
             .map(filter => {

@@ -40,13 +40,40 @@ export type MediaDto = {
 
 export type EntitySideload = {
   /**
-   * Entity type to sideload
+   * Entity or association type to sideload
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "demographics"
+    | "seedings"
+    | "treeSpecies"
+    | "disturbances"
+    | "invasives"
+    | "stratas";
   /**
    * The page size to include.
    */
   pageSize: number;
+};
+
+/**
+ * CONSTANTS
+ */
+export type SupportedEntities = {
+  /**
+   * @example projects
+   * @example sites
+   * @example nurseries
+   * @example projectReports
+   * @example siteReports
+   * @example nurseryReports
+   */
+  ENTITY_TYPES: string[];
 };
 
 export type ProjectLightDto = {
@@ -66,7 +93,7 @@ export type ProjectLightDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this project
    */
@@ -112,6 +139,8 @@ export type SiteLightDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
+  hectaresToRestoreGoal: number | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -209,6 +238,7 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  pctSurvivalToDate: number | null;
 };
 
 export type NurseryReportLightDto = {
@@ -264,6 +294,7 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type SiteReportLightDto = {
@@ -318,6 +349,7 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
 };
 
 export type ProjectFullDto = {
@@ -337,7 +369,7 @@ export type ProjectFullDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this project
    */
@@ -448,6 +480,8 @@ export type SiteFullDto = {
    */
   projectName: string | null;
   treesPlantedCount: number;
+  hectaresToRestoreGoal: number | null;
+  totalHectaresRestoredSum: number;
   /**
    * @format date-time
    */
@@ -457,7 +491,6 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   totalSiteReports: number;
-  totalHectaresRestoredSum: number;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -467,7 +500,6 @@ export type SiteFullDto = {
   ppcExternalId: number | null;
   sitingStrategy: string | null;
   descriptionSitingStrategy: string | null;
-  hectaresToRestoreGoal: number | null;
   description: string | null;
   controlSite: boolean | null;
   history: string | null;
@@ -616,6 +648,7 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  pctSurvivalToDate: number | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   completion: number | null;
@@ -646,7 +679,6 @@ export type ProjectReportFullDto = {
   lessonsLearned: string | null;
   maintenanceAndMonitoringActivities: string | null;
   significantChange: string | null;
-  pctSurvivalToDate: number | null;
   survivalCalculation: string | null;
   survivalComparison: string | null;
   ftSmallholderFarmers: number | null;
@@ -683,6 +715,22 @@ export type ProjectReportFullDto = {
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   photos: MediaDto[];
+  baselineReportUpload: MediaDto[];
+  localGovernanceOrderLetterUpload: MediaDto[];
+  eventsMeetingsPhotos: MediaDto[];
+  localGovernanceProofOfPartnershipUpload: MediaDto[];
+  topThreeSuccessesUpload: MediaDto[];
+  directJobsUpload: MediaDto[];
+  convergenceJobsUpload: MediaDto[];
+  convergenceSchemesUpload: MediaDto[];
+  livelihoodActivitiesUpload: MediaDto[];
+  directLivelihoodImpactsUpload: MediaDto[];
+  certifiedDatabaseUpload: MediaDto[];
+  physicalAssetsPhotos: MediaDto[];
+  indirectCommunityPartnersUpload: MediaDto[];
+  trainingCapacityBuildingUpload: MediaDto[];
+  trainingCapacityBuildingPhotos: MediaDto[];
+  financialReportUpload: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
@@ -741,10 +789,10 @@ export type NurseryReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
@@ -815,10 +863,10 @@ export type SiteReportFullDto = {
    * @format date-time
    */
   createdAt: string;
+  nothingToReport: boolean | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  nothingToReport: boolean;
   completion: number | null;
   title: string | null;
   sharedDriveLink: string | null;
@@ -856,6 +904,142 @@ export type SiteReportFullDto = {
   treeSpecies: MediaDto[];
   siteSubmission: MediaDto[];
   documentFiles: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  anrPhotos: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
+};
+
+export type ProjectUpdateAttributes = {
+  /**
+   * Request to change to the status of the given entity
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the isTest flag.
+   */
+  isTest: boolean | null;
+};
+
+export type ProjectUpdateData = {
+  type: "projects";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ProjectUpdateAttributes;
+};
+
+export type SiteUpdateAttributes = {
+  /**
+   * Request to change to the status of the given site
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+};
+
+export type SiteUpdateData = {
+  type: "sites";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: SiteUpdateAttributes;
+};
+
+export type EntityUpdateAttributes = {
+  /**
+   * Request to change to the status of the given entity
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+};
+
+export type NurseryUpdateData = {
+  type: "nurseries";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: EntityUpdateAttributes;
+};
+
+export type ReportUpdateAttributes = {
+  /**
+   * Request to change to the status of the given report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Specific feedback for the PD
+   */
+  feedback: string | null;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields: string[] | null;
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport: boolean | null;
+};
+
+export type ProjectReportUpdateData = {
+  type: "projectReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type SiteReportUpdateData = {
+  type: "siteReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type NurseryReportUpdateData = {
+  type: "nurseryReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
+export type EntityUpdateBody = {
+  data:
+    | ProjectUpdateData
+    | SiteUpdateData
+    | NurseryUpdateData
+    | ProjectReportUpdateData
+    | SiteReportUpdateData
+    | NurseryReportUpdateData;
 };
 
 export type DemographicEntryDto = {
@@ -1010,6 +1194,46 @@ export type TreeSpeciesDto = {
   amount?: number;
   taxonId?: string;
   collection?: string;
+};
+
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  collection: string | null;
+  type: string | null;
+  intensity: string | null;
+  extent: string | null;
+  description: string | null;
+};
+
+export type InvasiveDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  type: string | null;
+  name: string | null;
+};
+
+export type StrataDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
 };
 
 export type PlantingCountDto = {
