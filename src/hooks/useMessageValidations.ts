@@ -28,7 +28,6 @@ interface ExtraInfoItem {
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   poly_name: "Polygon Name",
   plantstart: "Plant Start Date",
-  plantend: "Plant End Date",
   practice: "Restoration Practice",
   target_sys: "Target Land Use System",
   distr: "Tree Distribution",

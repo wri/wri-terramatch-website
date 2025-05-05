@@ -151,29 +151,6 @@ export type PostAuthResetBody = {
   callback_url?: string;
 };
 
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
-};
-
 export type PostV2FormsEntityFormUuidBody = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
@@ -368,10 +345,6 @@ export type PostV2GeometryValidateBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -398,10 +371,6 @@ export type PutV2GeometryBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -415,6 +384,25 @@ export type PutV2GeometryBody = {
       };
     }[];
   };
+};
+
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
 };
 
 export type PostV2FprojectPipelineBody = {

@@ -22596,10 +22596,6 @@ export type GetV2SitesUUIDPolygonsResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -24686,10 +24682,6 @@ export type GetV2SitesSitePolygonResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -24933,7 +24925,6 @@ export type GetV2TerrafundGeojsonCompleteResponse = {
     properties?: {
       poly_name?: string;
       plantstart?: string;
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -25027,10 +25018,6 @@ export type GetV2TerrafundPolygonUuidResponse = {
     id?: number;
     last_modified_by?: string | null;
     num_trees?: number | null;
-    /**
-     * @format date
-     */
-    plantend?: string | null;
     /**
      * @format date
      */
@@ -25874,10 +25861,6 @@ export type PutV2TerrafundSitePolygonUuidResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -25946,10 +25929,6 @@ export type PostV2TerrafundNewSitePolygonUuidNewVersionResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -28535,10 +28514,6 @@ export type GetV2TypeEntityResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -28736,10 +28711,6 @@ export type GetV2EntityPolygonsResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29001,10 +28972,6 @@ export type PutV2SitePolygonStatusBulkResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29107,10 +29074,6 @@ export type GetV2SitePolygonUuidResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29199,10 +29162,6 @@ export type GetV2SitePolygonUuidVersionsResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29296,10 +29255,6 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29397,10 +29352,6 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;

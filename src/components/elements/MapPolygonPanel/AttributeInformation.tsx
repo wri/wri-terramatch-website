@@ -83,7 +83,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const [polygonData, setPolygonData] = useState<SitePolygon>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
-  const [plantEndDate, setPlantEndDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
@@ -118,7 +117,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     if (polygonData) {
       setPolygonName(polygonData.poly_name);
       setPlantStartDate(polygonData.plantstart);
-      setPlantEndDate(polygonData.plantend);
       setTreesPlanted(polygonData.num_trees ?? 0);
       setCalculatedArea(polygonData.calc_area ?? 0);
       const restorationPracticeArray = polygonData?.practice
@@ -158,7 +156,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
       const updatedPolygonData = {
         poly_name: polygonName,
         plantstart: plantStartDate,
-        plantend: plantEndDate,
         practice: restorationPracticeToSend,
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
@@ -208,18 +205,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
           placeholder={t("Input Plant Start Date")}
           value={plantStartDate}
           onChange={e => setPlantStartDate(e.target.value)}
-        />
-      </label>
-      <label className="flex flex-col gap-2">
-        <Text variant="text-14-light" className="text-white">
-          {t("Plant End Date")}
-        </Text>
-        <input
-          type="date"
-          className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
-          placeholder={t("Input Plant Start Date")}
-          value={plantEndDate}
-          onChange={e => setPlantEndDate(e.target.value)}
         />
       </label>
       <Dropdown
