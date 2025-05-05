@@ -1,6 +1,8 @@
 import { GetListParams, GetListResult } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+import { ProjectPitchIndexConnectionProps, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
+import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
@@ -19,6 +21,16 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
 };
 
 export const raConnectionProps = (params: GetListParams) => {
+  const queryParams: ProjectPitchIndexConnectionProps = {
+    pageSize: params.pagination.perPage,
+    pageNumber: params.pagination.page,
+    search: params.filter
+  };
+
+  return queryParams;
+};
+
+export const raConnectionProjectPitchProps = (params: GetListParams) => {
   const queryParams: EntityIndexConnectionProps = {
     pageSize: params.pagination.perPage,
     pageNumber: params.pagination.page,
@@ -81,6 +93,11 @@ interface ApiListResponse {
 export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({
   data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
   total: indexTotal
+});
+
+export const projectPitchesListResult = ({ data, total }: ProjectsPitchesConnection) => ({
+  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })),
+  total: total
 });
 
 export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => {

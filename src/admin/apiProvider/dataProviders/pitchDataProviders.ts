@@ -1,14 +1,12 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
-import { loadProjectPitch } from "@/connections/ProjectPitch";
+import { loadProjectPitch, loadProjectPitchesAdmin } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
-  fetchGetV2AdminProjectPitches,
   fetchGetV2AdminProjectPitchesExport,
   fetchPatchV2ProjectPitchesUUID,
-  GetV2AdminProjectPitchesError,
   GetV2AdminProjectPitchesExportError,
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
@@ -16,7 +14,7 @@ import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { projectPitchesListResult, raConnectionProps } from "../utils/listing";
 
 export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
@@ -39,7 +37,7 @@ export const pitchesSortableList: string[] = [
 
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
-    try {
+    /*try {
       const response = await fetchGetV2AdminProjectPitches({
         queryParams: raListParamsToQueryParams(params, pitchesSortableList)
       });
@@ -47,7 +45,13 @@ export const pitchDataProvider: PitchDataProvider = {
       return apiListResponseToRAListResult(response);
     } catch (err) {
       throw getFormattedErrorForRA(err as GetV2AdminProjectPitchesError);
+    }*/
+    const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
+    if (connection.requestFailed != null) {
+      throw v3ErrorForRA("Site index fetch failed", connection.requestFailed);
     }
+
+    return projectPitchesListResult(connection);
   },
 
   async getOne(_, params) {

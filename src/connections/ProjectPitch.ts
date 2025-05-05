@@ -33,12 +33,6 @@ type ProjectPitchConnectionProps = {
   uuid: string;
 };
 
-export type ProjectPitchIndexConnectionProps = {
-  pageNumber: number;
-  pageSize: number;
-  search: string;
-};
-
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
   load: ({ projectPitch }, { uuid }) => {
     if (!projectPitch) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
@@ -64,20 +58,25 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
   )
 };
 
-type ProjectsPitchesConnection = {
+export type ProjectsPitchesConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  projectPitches: ProjectPitchDto[] | any;
+  data: ProjectPitchDto[] | any;
   total?: number;
 };
 
+export type ProjectPitchIndexConnectionProps = {
+  pageNumber: number;
+  pageSize: number;
+  search: string;
+};
+
 const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ projectPitches }, { pageSize, pageNumber, search }) => {
-    if (!projectPitches)
-      projectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
+  load: ({ data }, { pageSize, pageNumber, search }) => {
+    if (!data) projectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
-  isLoaded: ({ projectPitches }) => projectPitches !== undefined,
+  isLoaded: ({ data }) => data !== undefined,
   selector: selectorCache(
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
@@ -94,19 +93,19 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          projectPitches: selector
+          data: selector
         })
       )
   )
 };
 
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ projectPitches }, { pageNumber, pageSize, search }) => {
-    if (!projectPitches)
+  load: ({ data }, { pageNumber, pageSize, search }) => {
+    if (!data)
       adminProjectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
-  isLoaded: ({ projectPitches }) => projectPitches !== undefined,
+  isLoaded: ({ data }) => data !== undefined,
   selector: selectorCache(
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
@@ -123,7 +122,7 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          projectPitches: selector,
+          data: selector,
           total: 0
         })
       )
