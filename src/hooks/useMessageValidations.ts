@@ -25,6 +25,22 @@ interface ExtraInfoItem {
   error?: string;
 }
 
+interface PlantStartDateInfo {
+  error_type: string;
+  polygon_uuid: string;
+  polygon_name: string;
+  site_name: string;
+  provided_value?: string;
+  min_date?: string;
+  current_date?: string;
+  site_start_date?: string;
+  allowed_range?: {
+    min: string;
+    max: string;
+  };
+  error_details?: string;
+}
+
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   poly_name: "Polygon Name",
   plantstart: "Plant Start Date",
@@ -185,6 +201,93 @@ export const useMessageValidators = () => {
     [t]
   );
 
+  const getPlantStartDateMessage = useMemo(
+    () => (extraInfo: string | undefined) => {
+      if (!extraInfo) return [];
+      try {
+        const info: PlantStartDateInfo = JSON.parse(extraInfo);
+
+        switch (info.error_type) {
+          case "MISSING_VALUE":
+            return [
+              t("Plant Start Date is missing for polygon {polygon_name} in site {site_name}", {
+                polygon_name: info.polygon_name || "Unnamed Polygon",
+                site_name: info.site_name || "Unnamed Site"
+              })
+            ];
+          case "INVALID_FORMAT":
+            return [
+              t(
+                "Invalid format for Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}",
+                {
+                  provided_value: info.provided_value,
+                  polygon_name: info.polygon_name || "Unnamed Polygon",
+                  site_name: info.site_name || "Unnamed Site"
+                }
+              )
+            ];
+          case "DATE_TOO_EARLY":
+            return [
+              t(
+                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is before the minimum allowed date ({min_date})",
+                {
+                  provided_value: info.provided_value,
+                  polygon_name: info.polygon_name || "Unnamed Polygon",
+                  site_name: info.site_name || "Unnamed Site",
+                  min_date: info.min_date
+                }
+              )
+            ];
+          case "DATE_IN_FUTURE":
+            return [
+              t(
+                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is in the future (current date: {current_date})",
+                {
+                  provided_value: info.provided_value,
+                  polygon_name: info.polygon_name || "Unnamed Polygon",
+                  site_name: info.site_name || "Unnamed Site",
+                  current_date: info.current_date
+                }
+              )
+            ];
+          case "DATE_OUTSIDE_SITE_RANGE":
+            return [
+              t(
+                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} must be within one year of the site's establishment date ({site_start_date}). Allowed range: {min_date} to {max_date}",
+                {
+                  provided_value: info.provided_value,
+                  polygon_name: info.polygon_name || "Unnamed Polygon",
+                  site_name: info.site_name || "Unnamed Site",
+                  site_start_date: info.site_start_date,
+                  min_date: info.allowed_range?.min,
+                  max_date: info.allowed_range?.max
+                }
+              )
+            ];
+          case "PARSE_ERROR":
+            return [
+              t("Error parsing Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}", {
+                provided_value: info.provided_value,
+                polygon_name: info.polygon_name || "Unnamed Polygon",
+                site_name: info.site_name || "Unnamed Site"
+              })
+            ];
+          default:
+            return [
+              t("Invalid Plant Start Date for polygon {polygon_name} in site {site_name}", {
+                polygon_name: info.polygon_name || "Unnamed Polygon",
+                site_name: info.site_name || "Unnamed Site"
+              })
+            ];
+        }
+      } catch (error) {
+        Log.error("Failed to get plant start date message", error);
+        return [t("Error parsing extra info.")];
+      }
+    },
+    [t]
+  );
+
   const getFormatedExtraInfo = useMemo(
     () => (extraInfo: string | undefined, criteria_id: any) => {
       if (criteria_id === 12) {
@@ -195,11 +298,13 @@ export const useMessageValidators = () => {
         return getDataMessage(extraInfo);
       } else if (criteria_id === 7) {
         return getTargetCountryMessage(extraInfo);
+      } else if (criteria_id === 15) {
+        return getPlantStartDateMessage(extraInfo);
       } else {
         return [];
       }
     },
-    [getProjectGoalMessage, getIntersectionMessages, getDataMessage, getTargetCountryMessage]
+    [getProjectGoalMessage, getIntersectionMessages, getDataMessage, getTargetCountryMessage, getPlantStartDateMessage]
   );
 
   return {
