@@ -61,7 +61,7 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
 export type ProjectsPitchesConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  data: ProjectPitchDto[] | any;
+  data: any;
   total?: number;
 };
 
@@ -101,11 +101,11 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
 
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
   load: ({ data }, { pageNumber, pageSize, search }) => {
-    if (!data)
+    if (!data || data.length === 0)
       adminProjectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
-  isLoaded: ({ data }) => data !== undefined,
+  isLoaded: ({ data }) => data.length > 0,
   selector: selectorCache(
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
     ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>

@@ -2,7 +2,6 @@ import { GetListParams, GetListResult } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
 import { ProjectPitchIndexConnectionProps, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
-import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
@@ -96,8 +95,8 @@ export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTo
 });
 
 export const projectPitchesListResult = ({ data, total }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })),
-  total: total
+  data: data?.map((pitch: any) => ({ ...pitch.attributes, id: pitch.attributes.uuid })),
+  total: 10
 });
 
 export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => {

@@ -47,9 +47,17 @@ export const pitchDataProvider: PitchDataProvider = {
       throw getFormattedErrorForRA(err as GetV2AdminProjectPitchesError);
     }*/
     const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
+    console.log(connection);
     if (connection.requestFailed != null) {
-      throw v3ErrorForRA("Site index fetch failed", connection.requestFailed);
+      throw v3ErrorForRA("Project Pitch index fetch failed", connection.requestFailed);
     }
+
+    var newData = connection.data?.map((pitch: any) => {
+      console.log("pitch", pitch);
+      return { ...pitch.attributes, id: pitch.attributes.uuid };
+    });
+
+    console.log(newData);
 
     return projectPitchesListResult(connection);
   },
