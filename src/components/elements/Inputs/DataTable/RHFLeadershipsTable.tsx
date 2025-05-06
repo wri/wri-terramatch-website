@@ -5,8 +5,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getGenderOptions } from "@/constants/options/gender";
 import { useDeleteV2LeadershipsUUID, usePostV2Leaderships } from "@/generated/apiComponents";
 import { formatOptionsList } from "@/utils/options";
@@ -51,6 +51,7 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
   const { field } = useController(props);
   const { formHook, collection } = props;
   const value = field?.value || [];
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const [, { organisationId }] = useMyOrg();
 
@@ -154,7 +155,7 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
           type: FieldType.Dropdown,
           validation: yup.string().required(),
           fieldProps: {
-            options: getCountriesOptions(t),
+            options: countryOptions ?? [],
             required: true
           }
         }

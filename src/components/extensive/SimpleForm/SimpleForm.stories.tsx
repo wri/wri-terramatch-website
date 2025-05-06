@@ -3,8 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { getCountriesOptions } from "@/constants/options/countries";
-
 import { FieldType, FormField } from "../WizardForm/types";
 import Component, { SimpleFormProps as Props } from "./SimpleForm";
 
@@ -72,7 +70,14 @@ const fields: FormField[] = [
     placeholder: "Select country ...",
     type: FieldType.Dropdown,
     validation: yup.string().required(),
-    fieldProps: { options: getCountriesOptions(), required: true }
+    fieldProps: {
+      options: [
+        { title: "United States", value: "USA" },
+        { title: "México", value: "MEX" },
+        { title: "Colombia", value: "COL" }
+      ],
+      required: true
+    }
   },
   {
     name: "select_input",

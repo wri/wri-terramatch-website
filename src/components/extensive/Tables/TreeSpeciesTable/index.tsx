@@ -3,7 +3,7 @@ import { FC } from "react";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
-import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import Log from "@/utils/log";
 
 import { TreeSpeciesTableRowData, useTableData, useTableType, useTreeTableColumns } from "./hooks";

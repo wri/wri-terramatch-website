@@ -9,7 +9,7 @@ exports[`Storyshots Components/Elements/Tabs Secondary 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      className="h-max w-full border-b-2 border-neutral-200 bg-white"
+      className="h-max w-full  mobile:overflow-x-auto border-b-2 border-neutral-200 bg-white"
       onScrollCapture={[Function]}
       role="tablist"
     >

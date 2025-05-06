@@ -15884,10 +15884,6 @@ export type GeoJSON = {
        * @format date
        */
       plantstart?: string;
-      /**
-       * @format date
-       */
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -16136,10 +16132,6 @@ export type SitePolygon = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16189,10 +16181,6 @@ export type SitePolygonsDataResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16235,10 +16223,6 @@ export type SitePolygonResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16278,7 +16262,6 @@ export type GeoJSONResponse = {
     properties?: {
       poly_name?: string;
       plantstart?: string;
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -16729,10 +16712,6 @@ export type EntityTypeResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -16794,10 +16773,6 @@ export type EntityPolygonResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -16874,10 +16849,6 @@ export type PolygonChangeStatus = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16942,10 +16913,6 @@ export type SitePolygonsLoadedDataResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16991,10 +16958,6 @@ export type SitePolygonLoaded = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -17338,10 +17301,6 @@ export type UserCreateComplete = {
   job_role?: string;
   phone_number?: string;
   role?: string;
-};
-
-export type V2AdminProjectUpdate = {
-  is_test?: boolean;
 };
 
 export type IndicatorPost = {

@@ -13,8 +13,8 @@ import SectionHeader from "@/components/elements/Section/SectionHeader";
 import SelectImageList from "@/components/elements/SelectImageList/SelectImageList";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import { useGadmOptions } from "@/connections/Gadm";
 import { getCapacityBuildingNeedOptions } from "@/constants/options/capacityBuildingNeeds";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { sustainableDevelopmentGoalsOptions } from "@/constants/options/sustainableDevelopmentGoals";
 import { FORM_POLYGONS } from "@/constants/statuses";
@@ -46,6 +46,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
   const onEdit = () => openModal("pitchEditModal", <PitchEditModal pitch={pitch} />);
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const { data: projectPolygon } = useGetV2TerrafundProjectPolygon(
     {
@@ -107,7 +108,7 @@ const PitchOverviewTab = ({ pitch }: PitchOverviewTabProps) => {
 
           <SectionEntryRow title={t("Country")} isEmpty={!notEmpty(pitch.project_country)}>
             <Text variant="text-heading-100">
-              {formatOptionsList(getCountriesOptions(t), pitch.project_country || [])}
+              {formatOptionsList(countryOptions ?? [], pitch.project_country || [])}
             </Text>
           </SectionEntryRow>
 
