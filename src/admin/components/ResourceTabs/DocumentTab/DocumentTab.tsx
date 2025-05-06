@@ -30,8 +30,7 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
     []
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, { associations: mediaList }] = useMedias({
+  const [, { associations: mediaList }] = useMedias({
     entity: resource as SupportedEntity,
     uuid: ctx?.record?.uuid,
     queryParams
@@ -56,7 +55,7 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </Typography>
             <List
               className="my-4 flex flex-col gap-4"
-              items={mediaList || []}
+              items={mediaList ?? []}
               render={(entry: MediaDto) => {
                 return (
                   <div>

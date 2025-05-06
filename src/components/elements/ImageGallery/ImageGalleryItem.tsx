@@ -14,7 +14,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePostV2ExportImage } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { SingularEntityName } from "@/types/common";
+import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
@@ -109,7 +109,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = data?.fileName ? data?.fileName : "image.jpg";
+      link.download = link.download = data?.fileName ?? "image.jpg";
       document.body.appendChild(link);
       link.click();
 
@@ -205,7 +205,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           <Text variant="text-14-bold" className="flex items-center gap-1">
             {t("Uploaded via")}:{" "}
             <Text variant="text-14-light" className="capitalize">
-              {getReadableEntityName(data?.entityType as SingularEntityName, true)}
+              {getReadableEntityName(data?.entityType as EntityName, true)}
             </Text>
           </Text>
           <button

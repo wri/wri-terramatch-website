@@ -57,11 +57,11 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     name: data.name,
     is_cover: data.isCover,
     is_public: data.isPublic,
-    photographer: data.photographer || "",
+    photographer: data.photographer ?? "",
     description: data.description
   });
   const [initialFormData, setInitialFormData] = useState({ ...formData });
-  const [descriptionCharCount, setDescriptionCharCount] = useState(data.description ? data.description.length : 0);
+  const [descriptionCharCount, setDescriptionCharCount] = useState(data.description?.length ?? 0);
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
   const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
@@ -102,7 +102,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         pathParams: { uuid: data.uuid },
         body: {
           name: formData.name,
-          //@ts-ignore
+          // @ts-expect-error until we can have v3 media update endpoint
           description: formData.description,
           photographer: formData.photographer,
           is_public: formData.is_public
@@ -125,7 +125,6 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       reloadGalleryImages?.();
 
       const updatedData = {
-        // ...data.raw,
         name: formData.name,
         title: formData.name,
         description: formData.description,

@@ -289,7 +289,7 @@ export const addMediaSourceAndLayer = (
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
-  const modelFilesGeolocalized = modelFilesData!.filter(modelFile => modelFile.lat && modelFile.lng);
+  const modelFilesGeolocalized = modelFilesData!.filter(modelFile => modelFile.lat != null && modelFile.lng != null);
   if (modelFilesGeolocalized.length === 0) {
     return;
   }
@@ -311,8 +311,8 @@ export const addMediaSourceAndLayer = (
       },
       is_cover: modelFile.isCover,
       is_public: modelFile.isPublic,
-      photographer: modelFile.photographer || null,
-      description: modelFile.description || null,
+      photographer: modelFile.photographer,
+      description: modelFile.description,
       mime_type: modelFile.mimeType,
       file_name: modelFile.fileName
     }

@@ -316,7 +316,7 @@ const ImageGallery = ({
   };
 
   useEffect(() => {
-    onGalleryStateChange({ page: pageIndex + 1, pageSize }, undefined);
+    onGalleryStateChange({ page: pageIndex + 1, pageSize });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
 

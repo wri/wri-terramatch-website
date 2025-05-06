@@ -64,8 +64,7 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, { associations: modelFilesData }] = useMedias({
+  const [, { associations: modelFilesData }] = useMedias({
     entity: type as SupportedEntity,
     uuid: entityModel?.uuid
   });

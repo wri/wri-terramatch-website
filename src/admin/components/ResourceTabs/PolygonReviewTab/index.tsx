@@ -208,8 +208,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     total,
     updateSingleSitePolygonData
   } = useLoadSitePolygonsData(record.uuid, "sites", undefined, undefined, validFilter);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, { associations: modelFilesData }] = useMedias({
+
+  const [, { associations: modelFilesData }] = useMedias({
     entity: "sites",
     uuid: record.uuid
   });

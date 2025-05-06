@@ -35,10 +35,10 @@ const ViewImageCarousel = ({
         id: "1",
         title: t("Non-Geotagged Images"),
         images: modelFilesNonGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.url!,
-          title: modelFile.fileName!,
-          dateCreated: modelFile.createdAt!,
+          id: modelFile.uuid,
+          src: modelFile.url,
+          title: modelFile.fileName,
+          dateCreated: modelFile.createdAt,
           geoTag: t("Not Geo-Referenced")
         }))
       },
@@ -46,10 +46,10 @@ const ViewImageCarousel = ({
         id: "2",
         title: t("GeoTagged Images"),
         images: modelFilesGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.url!,
-          title: modelFile.fileName!,
-          dateCreated: modelFile.createdAt!,
+          id: modelFile.uuid,
+          src: modelFile.url,
+          title: modelFile.fileName,
+          dateCreated: modelFile.createdAt,
           geoTag: t("Geo-Referenced")
         }))
       }
