@@ -48,8 +48,8 @@ export const pitchDataProvider: PitchDataProvider = {
     }*/
     const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
     console.log(connection);
-    if (connection.requestFailed != null) {
-      throw v3ErrorForRA("Project Pitch index fetch failed", connection.requestFailed);
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
 
     var newData = connection.data?.map((pitch: any) => {

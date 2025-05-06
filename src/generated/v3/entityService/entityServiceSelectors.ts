@@ -40,6 +40,12 @@ export const projectPitchesIndexFetchFailed = (variables: Omit<ProjectPitchesInd
     ...variables
   });
 
+export const projectPitchesIndexIndexMeta = (
+  resource: ResourceType,
+  variables: Omit<ProjectPitchesIndexVariables, "body">
+) =>
+  indexMetaSelector<ProjectPitchesIndexQueryParams, {}>({ url: "/entities/v3/projectPitches", resource, ...variables });
+
 export const adminProjectPitchesIndexIsFetching = (variables: Omit<AdminProjectPitchesIndexVariables, "body">) =>
   isFetchingSelector<AdminProjectPitchesIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches/admin",

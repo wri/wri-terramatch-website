@@ -2,25 +2,27 @@ import { createSelector } from "reselect";
 
 import {
   adminProjectPitchesIndex,
-  projectPitchesGetUUIDIndex,
-  projectPitchesIndex
+  EntityIndexQueryParams,
+  projectPitchesGetUUIDIndex
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   adminProjectPitchesIndexFetchFailed,
-  adminProjectPitchesIndexIsFetching,
   projectPitchesGetUUIDIndexFetchFailed,
   projectPitchesGetUUIDIndexIsFetching,
-  projectPitchesIndexFetchFailed,
-  projectPitchesIndexIsFetching
+  projectPitchesIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { getStableQuery } from "@/generated/v3/utils";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectProjectPitch = (store: ApiDataStore) => Object.values(store.projectPitches)?.[0]?.attributes;
 export const selectProjectPitches = (store: ApiDataStore) => Object.values(store.projectPitches);
+
+const projectPitchSelector = () => (store: ApiDataStore) =>
+  store["projectPitches"] as StoreResourceMap<ProjectPitchDto>;
 
 type ProjectPitchConnection = {
   isLoading: boolean;
@@ -59,10 +61,10 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
 };
 
 export type ProjectsPitchesConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  data: any;
+  fetchFailure: PendingErrorState | null;
+  data: ProjectPitchDto[];
   total?: number;
+  refetch: () => void;
 };
 
 export type ProjectPitchIndexConnectionProps = {
@@ -71,6 +73,7 @@ export type ProjectPitchIndexConnectionProps = {
   search: string;
 };
 
+/*
 const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
   load: ({ data }, { pageSize, pageNumber, search }) => {
     if (!data) projectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
@@ -92,12 +95,33 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
         ],
         (isLoading, requestFailed, selector) => ({
           isLoading,
-          requestFailed,
+          fetchFailure: requestFailed,
           data: selector
         })
       )
   )
 };
+*/
+
+const entityIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
+  const queryParams = {
+    "page[number]": props?.pageNumber,
+    "page[size]": props?.pageSize
+  } as EntityIndexQueryParams;
+  /*if (props?.sortField != null) {
+    queryParams["sort[field]"] = props.sortField;
+    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
+  }
+  if (props?.filter != null) {
+    for (const [key, value] of Object.entries(props.filter)) {
+      if (key === "polygonStatus") queryParams.polygonStatus = value as PolygonStatus;
+      else queryParams[key as Exclude<EntityIndexFilterKey, "polygonStatus">] = value;
+    }
+  }*/
+  return queryParams;
+};
+
+const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
 
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
   load: ({ data }, { pageNumber, pageSize, search }) => {
@@ -107,28 +131,40 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
 
   isLoaded: ({ data }) => data.length > 0,
   selector: selectorCache(
-    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
-    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
+    props => indexCacheKey(props),
+    props =>
       createSelector(
         [
-          adminProjectPitchesIndexIsFetching({
-            queryParams: { pageNumber: pageNumber, pageSize: pageSize, search: search }
+          projectPitchesIndexIndexMeta("projectPitches", {
+            queryParams: { pageNumber: props.pageNumber, pageSize: props.pageSize, search: props.search }
           }),
           adminProjectPitchesIndexFetchFailed({
-            queryParams: { pageNumber: pageNumber, pageSize: pageSize, search: search }
+            queryParams: { pageNumber: props.pageNumber, pageSize: props.pageSize, search: props.search }
           }),
-          selectProjectPitches
+          projectPitchSelector()
         ],
-        (isLoading, requestFailed, selector) => ({
-          isLoading,
-          requestFailed,
-          data: selector,
-          total: 0
-        })
+        (indexMeta, fetchFailure, selector) => {
+          console.log(indexMeta);
+          const refetch = () => ApiSlice.pruneIndex("projectPitches", "");
+          console.log("refetch", refetch);
+          if (indexMeta == null) return { data: [], refetch, fetchFailure };
+
+          const entities = [] as ProjectPitchDto[];
+          for (const id of indexMeta.ids) {
+            // If we're missing any of the entities we're supposed to have, return nothing so the
+            // index endpoint is queried again.
+            if (selector[id] == null) return { data: [], refetch, fetchFailure };
+            entities.push(selector[id].attributes);
+          }
+
+          console.log("entities", entities);
+
+          return { data: entities ?? [], indexTotal: indexMeta.total, refetch, fetchFailure };
+        }
       )
   )
 };
 
-export const loadProjectPitches = connectionLoader(projectPitchesConnection);
+// export const loadProjectPitches = connectionLoader(projectPitchesConnection);
 export const loadProjectPitchesAdmin = connectionLoader(projectPitchesAdminConnection);
 export const loadProjectPitch = connectionLoader(projectPitchConnection);

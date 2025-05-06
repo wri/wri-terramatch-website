@@ -51,17 +51,63 @@ export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
+export type ProjectPitchesIndexResponse = {
+  meta?: {
+    /**
+     * @example projectPitches
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectPitches
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPitchDto;
+  }[];
+};
+
 export type ProjectPitchesIndexVariables = {
   queryParams: ProjectPitchesIndexQueryParams;
 };
 
 export const projectPitchesIndex = (variables: ProjectPitchesIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<undefined, ProjectPitchesIndexError, undefined, {}, ProjectPitchesIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches",
-    method: "get",
-    ...variables,
-    signal
-  });
+  entityServiceFetch<
+    ProjectPitchesIndexResponse,
+    ProjectPitchesIndexError,
+    undefined,
+    {},
+    ProjectPitchesIndexQueryParams,
+    {}
+  >({ url: "/entities/v3/projectPitches", method: "get", ...variables, signal });
 
 export type AdminProjectPitchesIndexQueryParams = {
   /**
