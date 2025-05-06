@@ -229,7 +229,6 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   dueAt: string;
-  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -639,7 +638,6 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   dueAt: string;
-  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -689,6 +687,7 @@ export type ProjectReportFullDto = {
   seasonalSmallholderFarmers: number | null;
   seasonalTotal: number | null;
   volunteerSmallholderFarmers: number | null;
+  taskTotalWorkdays: number;
   plantedTrees: number | null;
   sharedDriveLink: string | null;
   beneficiariesDescription: string | null;
@@ -707,7 +706,6 @@ export type ProjectReportFullDto = {
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
-  readableCompletionStatus: string;
   createdBy: number | null;
   createdByUser: Record<string, any> | null;
   media: MediaDto[];
