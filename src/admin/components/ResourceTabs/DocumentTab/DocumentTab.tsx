@@ -4,8 +4,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import List from "@/components/extensive/List/List";
-import { useMedias } from "@/connections/EntityAssocation";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";

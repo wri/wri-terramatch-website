@@ -1,13 +1,17 @@
-import { difference } from "lodash";
+import { difference, isEqual } from "lodash";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useMemo } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import Loader from "@/components/generic/Loading/Loader";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useGetV2FormsOptionLabels } from "@/generated/apiComponents";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 import Dropdown, { DropdownProps } from "./Dropdown";
+
+type ApiOptionsSource = "gadm-level-0" | "gadm-level-1" | "gadm-level-2";
 
 export interface RHFDropdownProps
   extends Omit<DropdownProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
@@ -16,27 +20,45 @@ export interface RHFDropdownProps
   formHook?: UseFormReturn;
   optionsFilterFieldName?: string;
   enableAdditionalOptions?: boolean;
+  apiOptionsSource?: ApiOptionsSource;
 }
 
-/**
- * @param props PropsWithChildren<RHFDropdownProps>
- * @returns React Hook Form Ready Dropdown Component
- */
-const RHFDropdown = ({
-  optionsFilterFieldName,
-  enableAdditionalOptions,
-  ...props
-}: PropsWithChildren<RHFDropdownProps>) => {
+type WithApiOptionsProps = Omit<RHFDropdownProps, "enableAdditionalOptions"> & {
+  apiOptionsSource: ApiOptionsSource; // make it required
+};
+
+type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "apiOptionsSource">;
+
+type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "apiOptionsSource">;
+
+const WithApiOptions: FC<WithApiOptionsProps> = props => {
+  const { apiOptionsSource, optionsFilterFieldName, formHook, ...displayProps } = props;
+  // If the parentCodes change, it can cause the useGadmOptions hook to return null until all options
+  // have loaded. In that case, we want to avoid sending null options to DropdownDisplay, as that will
+  // cause it to unselect its current selections.
+  const [optionsCache, setOptionsCache] = useState<Option[] | undefined>();
+
+  const parentFieldValue = optionsFilterFieldName != null ? formHook?.watch(optionsFilterFieldName) : undefined;
+  const parentCodes = useMemo(
+    () => (parentFieldValue == null ? undefined : toArray(parentFieldValue)),
+    [parentFieldValue]
+  );
+  const level = useMemo(() => Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2, [apiOptionsSource]);
+  const options = useGadmOptions({ level, parentCodes });
+
+  useEffect(() => {
+    if (options != null) setOptionsCache(options);
+  }, [options]);
+
+  return optionsCache == null ? <Loader /> : <DropdownDisplay {...displayProps} options={optionsCache} />;
+};
+
+const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
+  const { enableAdditionalOptions, ...displayProps } = props;
   const { locale } = useRouter();
   const {
-    field: { value, onChange }
+    field: { value }
   } = useController(props);
-
-  const _onChange = (value: OptionValue[]) => {
-    onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
-    props.onChangeCapture?.();
-    props.formHook?.trigger();
-  };
 
   const additionalOptionValue = useMemo(
     () =>
@@ -91,20 +113,60 @@ const RHFDropdown = ({
     [additionalOptions, enableAdditionalOptions, notFoundOptions, props.hasOtherOptions, props.options]
   );
 
+  return <DropdownDisplay {...displayProps} options={options} />;
+};
+
+const DropdownDisplay: FC<DropdownDisplayProps> = props => {
+  const { onChangeCapture, formHook, optionsFilterFieldName, defaultValue, ...dropdownProps } = props;
+  const { options } = dropdownProps;
+
+  const {
+    field: { value, onChange }
+  } = useController(props);
+
+  const _onChange = useCallback(
+    (value: OptionValue[]) => {
+      onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
+      onChangeCapture?.();
+    },
+    [onChange, onChangeCapture, props.multiSelect]
+  );
+
+  const valueArray = useMemo(() => toArray(value), [value]);
+  const defaultValueArray = useMemo(() => toArray(defaultValue), [defaultValue]);
+
+  useEffect(() => {
+    // if our options change and our current values aren't available, reset to the default.
+    const filtered = valueArray.filter(value => options.find(option => option.value === value) != null);
+    if (!isEqual(filtered, valueArray)) {
+      if (filtered.length === 0) {
+        _onChange(defaultValueArray);
+      } else {
+        _onChange(filtered);
+      }
+    }
+  }, [_onChange, defaultValueArray, options, valueArray]);
+
   return (
     <Dropdown
-      {...props}
-      options={options}
-      value={toArray(value)}
-      defaultValue={toArray(props.defaultValue)}
+      {...dropdownProps}
+      value={valueArray}
+      defaultValue={defaultValueArray}
       onChange={_onChange}
-      optionsFilter={optionsFilterFieldName ? props.formHook?.watch(optionsFilterFieldName) : undefined}
+      optionsFilter={optionsFilterFieldName ? formHook?.watch(optionsFilterFieldName) : undefined}
       onInternalError={error => {
-        if (error) props.formHook?.setError(props.name, error);
-        else props.formHook?.clearErrors(props.name);
+        if (error) formHook?.setError(props.name, error);
+        else formHook?.clearErrors(props.name);
       }}
     />
   );
 };
+
+const RHFDropdown = ({ apiOptionsSource, enableAdditionalOptions, ...props }: PropsWithChildren<RHFDropdownProps>) =>
+  apiOptionsSource == null ? (
+    <WithBuiltinOptions {...props} enableAdditionalOptions={enableAdditionalOptions} />
+  ) : (
+    <WithApiOptions {...props} apiOptionsSource={apiOptionsSource} />
+  );
 
 export default RHFDropdown;

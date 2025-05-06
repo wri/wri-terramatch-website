@@ -8,7 +8,7 @@ export interface PageColumnProps
     PropsWithChildren {}
 
 const PageColumn = ({ children, className, ...props }: PageColumnProps) => (
-  <div {...props} className={twMerge("min-w-[500px] flex-1 space-y-8", className)}>
+  <div {...props} className={twMerge("min-w-[500px] flex-1 space-y-8 mobile:w-full mobile:min-w-[100%]", className)}>
     {children}
   </div>
 );

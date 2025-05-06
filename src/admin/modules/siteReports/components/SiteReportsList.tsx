@@ -23,13 +23,14 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
+
 const SiteReportDataGrid: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
 
@@ -86,11 +87,7 @@ const SiteReportDataGrid: FC = () => {
         render={(record: SiteReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              {record.nothingToReport ? (
-                <Icon name={IconNames.CHECK_CIRCLE} className="h-6 w-6" />
-              ) : (
-                <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6" />
-              )}
+              {record.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
             </div>
           );
         }}
@@ -105,6 +102,7 @@ const SiteReportDataGrid: FC = () => {
 
 export const SiteReportsList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -162,7 +160,7 @@ export const SiteReportsList: FC = () => {
       key="country"
       label="Country"
       source="country"
-      choices={optionToChoices(getCountriesOptions())}
+      choices={countryChoices}
       className="select-page-admin"
     />,
     <SelectInput

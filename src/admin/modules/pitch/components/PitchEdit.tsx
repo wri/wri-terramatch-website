@@ -3,8 +3,8 @@ import { Edit, NumberInput, SelectArrayInput, SelectInput, SimpleForm, TextInput
 import * as yup from "yup";
 
 import { validateForm } from "@/admin/utils/forms";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getCapacityBuildingNeedOptions } from "@/constants/options/capacityBuildingNeeds";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
 import { optionToChoices } from "@/utils/options";
 
@@ -22,6 +22,7 @@ const validationSchema = yup.object({
 });
 
 const PitchEdit = () => {
+  const countryChoices = useGadmChoices({ level: 0 });
   return (
     <Edit actions={false} aside={<PitchAside asideType="edit" />}>
       <SimpleForm validate={validateForm(validationSchema)}>
@@ -30,7 +31,7 @@ const PitchEdit = () => {
         <SelectInput
           source="project_country"
           label="Location of Restoration Project - Country"
-          choices={optionToChoices(getCountriesOptions())}
+          choices={countryChoices}
           fullWidth
         />
         <TextInput

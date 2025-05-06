@@ -662,7 +662,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "media";
+  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexQueryParams = {
@@ -825,6 +825,63 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
            */
           id?: string;
           attributes?: Schemas.MediaDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example disturbances
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example disturbances
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DisturbanceDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example invasives
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example invasives
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.InvasiveDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
+           * @example stratas
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example stratas
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.StrataDto;
         }[];
       },
     EntityAssociationIndexError,

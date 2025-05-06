@@ -4068,199 +4068,6 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
   );
 };
 
-export type GetV2StratasENTITYUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2StratasENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2StratasENTITYUUIDResponse = {
-  data?: {
-    uuid?: string;
-    description?: string;
-    extent?: number;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2StratasENTITYUUIDVariables = {
-  pathParams: GetV2StratasENTITYUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2StratasENTITYUUID = (variables: GetV2StratasENTITYUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2StratasENTITYUUIDResponse,
-    GetV2StratasENTITYUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2StratasENTITYUUIDPathParams
-  >({ url: "/v2/stratas/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2StratasENTITYUUID = <TData = GetV2StratasENTITYUUIDResponse>(
-  variables: GetV2StratasENTITYUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2StratasENTITYUUIDResponse, GetV2StratasENTITYUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2StratasENTITYUUIDResponse, GetV2StratasENTITYUUIDError, TData>(
-    queryKeyFn({ path: "/v2/stratas/{ENTITY}/{UUID}", operationId: "getV2StratasENTITYUUID", variables }),
-    ({ signal }) => fetchGetV2StratasENTITYUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DisturbancesENTITYUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2DisturbancesENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DisturbancesENTITYUUIDResponse = {
-  data?: {
-    uuid?: string;
-    description?: string;
-    intensity?: string;
-    extent?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2DisturbancesENTITYUUIDVariables = {
-  pathParams: GetV2DisturbancesENTITYUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DisturbancesENTITYUUID = (
-  variables: GetV2DisturbancesENTITYUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DisturbancesENTITYUUIDResponse,
-    GetV2DisturbancesENTITYUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2DisturbancesENTITYUUIDPathParams
-  >({ url: "/v2/disturbances/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2DisturbancesENTITYUUID = <TData = GetV2DisturbancesENTITYUUIDResponse>(
-  variables: GetV2DisturbancesENTITYUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DisturbancesENTITYUUIDResponse, GetV2DisturbancesENTITYUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DisturbancesENTITYUUIDResponse, GetV2DisturbancesENTITYUUIDError, TData>(
-    queryKeyFn({ path: "/v2/disturbances/{ENTITY}/{UUID}", operationId: "getV2DisturbancesENTITYUUID", variables }),
-    ({ signal }) => fetchGetV2DisturbancesENTITYUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2InvasivesENTITYUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2InvasivesENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2InvasivesENTITYUUIDResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    type?: number;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2InvasivesENTITYUUIDVariables = {
-  pathParams: GetV2InvasivesENTITYUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2InvasivesENTITYUUID = (variables: GetV2InvasivesENTITYUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2InvasivesENTITYUUIDResponse,
-    GetV2InvasivesENTITYUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2InvasivesENTITYUUIDPathParams
-  >({ url: "/v2/invasives/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2InvasivesENTITYUUID = <TData = GetV2InvasivesENTITYUUIDResponse>(
-  variables: GetV2InvasivesENTITYUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2InvasivesENTITYUUIDResponse, GetV2InvasivesENTITYUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2InvasivesENTITYUUIDResponse, GetV2InvasivesENTITYUUIDError, TData>(
-    queryKeyFn({ path: "/v2/invasives/{ENTITY}/{UUID}", operationId: "getV2InvasivesENTITYUUID", variables }),
-    ({ signal }) => fetchGetV2InvasivesENTITYUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2FormsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2FormsResponse = {
@@ -11496,232 +11303,6 @@ export const useDeleteV2LeadershipsUUID = (
   >(
     (variables: DeleteV2LeadershipsUUIDVariables) => fetchDeleteV2LeadershipsUUID({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type PostV2FinancialIndicatorsError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2FinancialIndicatorsResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-  collection?: string;
-};
-
-export type PostV2FinancialIndicatorsRequestBody = {
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-  collection?: string;
-};
-
-export type PostV2FinancialIndicatorsVariables = {
-  body?: PostV2FinancialIndicatorsRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2FinancialIndicators = (variables: PostV2FinancialIndicatorsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PostV2FinancialIndicatorsResponse,
-    PostV2FinancialIndicatorsError,
-    PostV2FinancialIndicatorsRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/financial-indicators", method: "post", ...variables, signal });
-
-export const usePostV2FinancialIndicators = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2FinancialIndicatorsResponse,
-      PostV2FinancialIndicatorsError,
-      PostV2FinancialIndicatorsVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2FinancialIndicatorsResponse,
-    PostV2FinancialIndicatorsError,
-    PostV2FinancialIndicatorsVariables
-  >(
-    (variables: PostV2FinancialIndicatorsVariables) =>
-      fetchPostV2FinancialIndicators({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2FinancialIndicatorsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2FinancialIndicatorsUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-  collection?: string;
-};
-
-export type DeleteV2FinancialIndicatorsUUIDVariables = {
-  pathParams: DeleteV2FinancialIndicatorsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2FinancialIndicatorsUUID = (
-  variables: DeleteV2FinancialIndicatorsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    DeleteV2FinancialIndicatorsUUIDResponse,
-    DeleteV2FinancialIndicatorsUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2FinancialIndicatorsUUIDPathParams
-  >({ url: "/v2/financial-indicators/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2FinancialIndicatorsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      DeleteV2FinancialIndicatorsUUIDResponse,
-      DeleteV2FinancialIndicatorsUUIDError,
-      DeleteV2FinancialIndicatorsUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    DeleteV2FinancialIndicatorsUUIDResponse,
-    DeleteV2FinancialIndicatorsUUIDError,
-    DeleteV2FinancialIndicatorsUUIDVariables
-  >(
-    (variables: DeleteV2FinancialIndicatorsUUIDVariables) =>
-      fetchDeleteV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2FinancialIndicatorsUUIDPathParams = {
-  uuid: string;
-};
-
-export type PatchV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2FinancialIndicatorsUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-  collection?: string;
-};
-
-export type PatchV2FinancialIndicatorsUUIDRequestBody = {
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-};
-
-export type PatchV2FinancialIndicatorsUUIDVariables = {
-  body?: PatchV2FinancialIndicatorsUUIDRequestBody;
-  pathParams: PatchV2FinancialIndicatorsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2FinancialIndicatorsUUID = (
-  variables: PatchV2FinancialIndicatorsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PatchV2FinancialIndicatorsUUIDResponse,
-    PatchV2FinancialIndicatorsUUIDError,
-    PatchV2FinancialIndicatorsUUIDRequestBody,
-    {},
-    {},
-    PatchV2FinancialIndicatorsUUIDPathParams
-  >({ url: "/v2/financial-indicators/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2FinancialIndicatorsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2FinancialIndicatorsUUIDResponse,
-      PatchV2FinancialIndicatorsUUIDError,
-      PatchV2FinancialIndicatorsUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2FinancialIndicatorsUUIDResponse,
-    PatchV2FinancialIndicatorsUUIDError,
-    PatchV2FinancialIndicatorsUUIDVariables
-  >(
-    (variables: PatchV2FinancialIndicatorsUUIDVariables) =>
-      fetchPatchV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type GetV2FinancialIndicatorsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FinancialIndicatorsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FinancialIndicatorsUUIDResponse = {
-  uuid?: string;
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  documentation?: string;
-  description?: string;
-  collection?: string;
-};
-
-export type GetV2FinancialIndicatorsUUIDVariables = {
-  pathParams: GetV2FinancialIndicatorsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FinancialIndicatorsUUID = (
-  variables: GetV2FinancialIndicatorsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2FinancialIndicatorsUUIDResponse,
-    GetV2FinancialIndicatorsUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2FinancialIndicatorsUUIDPathParams
-  >({ url: "/v2/financial-indicators/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2FinancialIndicatorsUUID = <TData = GetV2FinancialIndicatorsUUIDResponse>(
-  variables: GetV2FinancialIndicatorsUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FinancialIndicatorsUUIDResponse, GetV2FinancialIndicatorsUUIDError, TData>(
-    queryKeyFn({ path: "/v2/financial-indicators/{UUID}", operationId: "getV2FinancialIndicatorsUUID", variables }),
-    ({ signal }) => fetchGetV2FinancialIndicatorsUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -22906,10 +22487,6 @@ export type GetV2SitesUUIDPolygonsResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -24996,10 +24573,6 @@ export type GetV2SitesSitePolygonResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -25243,7 +24816,6 @@ export type GetV2TerrafundGeojsonCompleteResponse = {
     properties?: {
       poly_name?: string;
       plantstart?: string;
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -25337,10 +24909,6 @@ export type GetV2TerrafundPolygonUuidResponse = {
     id?: number;
     last_modified_by?: string | null;
     num_trees?: number | null;
-    /**
-     * @format date
-     */
-    plantend?: string | null;
     /**
      * @format date
      */
@@ -26184,10 +25752,6 @@ export type PutV2TerrafundSitePolygonUuidResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -26256,10 +25820,6 @@ export type PostV2TerrafundNewSitePolygonUuidNewVersionResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -28845,10 +28405,6 @@ export type GetV2TypeEntityResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29046,10 +28602,6 @@ export type GetV2EntityPolygonsResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29311,10 +28863,6 @@ export type PutV2SitePolygonStatusBulkResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29417,10 +28965,6 @@ export type GetV2SitePolygonUuidResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29509,10 +29053,6 @@ export type GetV2SitePolygonUuidVersionsResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29606,10 +29146,6 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -29707,10 +29243,6 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -31088,21 +30620,6 @@ export type QueryOperation =
       variables: GetV2UpdateRequestsENTITYUUIDVariables;
     }
   | {
-      path: "/v2/stratas/{ENTITY}/{UUID}";
-      operationId: "getV2StratasENTITYUUID";
-      variables: GetV2StratasENTITYUUIDVariables;
-    }
-  | {
-      path: "/v2/disturbances/{ENTITY}/{UUID}";
-      operationId: "getV2DisturbancesENTITYUUID";
-      variables: GetV2DisturbancesENTITYUUIDVariables;
-    }
-  | {
-      path: "/v2/invasives/{ENTITY}/{UUID}";
-      operationId: "getV2InvasivesENTITYUUID";
-      variables: GetV2InvasivesENTITYUUIDVariables;
-    }
-  | {
       path: "/v2/forms";
       operationId: "getV2Forms";
       variables: GetV2FormsVariables;
@@ -31186,11 +30703,6 @@ export type QueryOperation =
       path: "/v2/{MODEL}/{UUID}/image/locations";
       operationId: "getV2MODELUUIDImageLocations";
       variables: GetV2MODELUUIDImageLocationsVariables;
-    }
-  | {
-      path: "/v2/financial-indicators/{UUID}";
-      operationId: "getV2FinancialIndicatorsUUID";
-      variables: GetV2FinancialIndicatorsUUIDVariables;
     }
   | {
       path: "/v2/admin/sites";

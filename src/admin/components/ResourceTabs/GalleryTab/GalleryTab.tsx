@@ -9,7 +9,7 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import Text from "@/components/elements/Text/Text";
 import ModalAddImages from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssocation";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { EntityAssociationIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";

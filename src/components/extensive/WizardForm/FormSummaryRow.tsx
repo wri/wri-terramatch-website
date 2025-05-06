@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -22,7 +22,7 @@ import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollaps
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
@@ -30,7 +30,7 @@ import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
-import { getAnswer, getFormattedAnswer } from "./utils";
+import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -60,10 +60,16 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
     bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
   }
   const mapFunctions = useMap();
-  return useMemo<any[]>(
-    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+
+  const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
+  useEffect(() => {
+    loadExternalAnswerSources(props.step.fields, props.values).finally(() => setExternalSourcesLoaded(true));
+  }, [props.step.fields, props.values]);
+
+  return useMemo(
+    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props, t, entityPolygonData, bbox]
+    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
 };
 
@@ -153,35 +159,6 @@ export const getFormEntries = (
             .map(row => `${row.label}: ${values[f.name]?.[row.name] ?? t("Answer Not Provided")}`)
             .join("<br/>")
         });
-        break;
-      }
-
-      case FieldType.FinancialIndicatorsDataTable: {
-        const entries = values[f.name];
-
-        const output = {
-          title: f.label,
-          type: f.type,
-          value: entries
-            ? entries
-                ?.map(
-                  (row: {
-                    amount: number | null;
-                    year: number | null;
-                    documentation: { file_name: string | null; full_url: string | null };
-                    description: string | null;
-                  }) =>
-                    `${row.amount}, ${row.year}, <a href="${
-                      row?.documentation?.full_url
-                    }" target="_blank" rel="noopener noreferrer" className="text-primary underline">${
-                      row?.documentation?.file_name ?? ""
-                    }</a>, ${row.description}`
-                )
-                .join("<br/>")
-            : t("Answer Not Provided")
-        };
-
-        outputArr.push(output);
         break;
       }
 

@@ -8,7 +8,7 @@ exports[`Storyshots Components/Extensive/Page/Header Default 1`] = `
     className="flex w-full flex-col bg-treesHeaderWithOverlay bg-cover bg-no-repeat min-h-[230px]"
   >
     <div
-      className="m-auto flex h-full w-full max-w-[82vw] flex-1 flex-col items-start justify-between gap-10 p-10 text-white xl:px-0"
+      className="m-auto flex h-full w-full max-w-[82vw] flex-1 flex-col items-start justify-between gap-10 p-10 text-white xl:px-0 mobile:w-full mobile:min-w-full mobile:p-3"
     >
       <a
         className="flex items-center justify-center tracking-wide w-fit-content gap-2 px-0"
@@ -38,7 +38,7 @@ exports[`Storyshots Components/Extensive/Page/Header Default 1`] = `
           className="space-y-2"
         >
           <h1
-            className="flex-1 text-white text-bold-headline-800"
+            className="flex-1 text-white mobile:text-lg mobile:leading-[normal] text-bold-headline-800"
             data-testid="txt"
           >
             Page title

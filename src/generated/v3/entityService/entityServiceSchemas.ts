@@ -61,7 +61,10 @@ export type EntitySideload = {
     | "demographics"
     | "seedings"
     | "treeSpecies"
-    | "media";
+    | "media"
+    | "disturbances"
+    | "invasives"
+    | "stratas";
   /**
    * The page size to include.
    */
@@ -1201,6 +1204,46 @@ export type TreeSpeciesDto = {
   amount?: number;
   taxonId?: string;
   collection?: string;
+};
+
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  collection: string | null;
+  type: string | null;
+  intensity: string | null;
+  extent: string | null;
+  description: string | null;
+};
+
+export type InvasiveDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  type: string | null;
+  name: string | null;
+};
+
+export type StrataDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
 };
 
 export type PlantingCountDto = {

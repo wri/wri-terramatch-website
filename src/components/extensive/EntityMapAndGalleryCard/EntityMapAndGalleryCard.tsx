@@ -13,7 +13,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssocation";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";

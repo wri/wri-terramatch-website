@@ -145,10 +145,6 @@ export type SitePolygonFullDto = {
    * The name of the associated Site.
    */
   siteName: string;
-  /**
-   * @format date-time
-   */
-  plantEnd: string | null;
   geometry: Record<string, any>;
   practice: string | null;
   targetSys: string | null;
