@@ -125,7 +125,7 @@ const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuer
 
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
   load: ({ data }, { pageNumber, pageSize, search }) => {
-    if (!data || data.length === 0)
+    if (data.length === 0)
       adminProjectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
   },
 
@@ -159,7 +159,7 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
 
           console.log("entities", entities);
 
-          return { data: entities ?? [], indexTotal: indexMeta.total, refetch, fetchFailure };
+          return { data: entities, indexTotal: indexMeta.total, refetch, fetchFailure };
         }
       )
   )
