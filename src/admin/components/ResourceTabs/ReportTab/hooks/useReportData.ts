@@ -26,6 +26,8 @@ export const useReportData = () => {
 
   const disturbances = useSiteReportDisturbances(siteReportUuids);
 
+  useEffect(() => {}, [disturbances]);
+
   const [, { associations: plants }] = usePlants({
     entity: "projects",
     uuid: record?.id,
@@ -125,6 +127,7 @@ export const useReportData = () => {
         );
 
         setSiteReportUuids(allSiteReportUuids);
+
         setSites(sitesWithDisturbances);
       } catch (err) {
         console.error("Error fetching report data:", err);
@@ -139,7 +142,6 @@ export const useReportData = () => {
 
   useEffect(() => {
     if (!disturbances || !sites.length) return;
-
     const sitesWithDisturbances = sites.map(site => {
       let totalDisturbances = 0;
       let climaticDisturbances = 0;
@@ -175,7 +177,13 @@ export const useReportData = () => {
       };
     });
 
-    setSites(sitesWithDisturbances);
+    const siteDisturbanceChanges = sitesWithDisturbances
+      .map((site, i) => site.totalReportedDisturbances !== sites[i]?.totalReportedDisturbances)
+      .filter(changed => changed).length;
+
+    if (siteDisturbanceChanges > 0) {
+      setSites(sitesWithDisturbances);
+    }
   }, [disturbances, sites]);
 
   const reportData: ReportData = {
