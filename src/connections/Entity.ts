@@ -147,7 +147,7 @@ const entityIsLoaded =
     { entity, entityIsDeleted, fetchFailure }: EntityConnection<T, U>,
     { uuid }: EntityConnectionProps
   ) => {
-    if (uuid == null || entityIsDeleted || fetchFailure != null) return true;
+    if (uuid == null || uuid.trim() === "" || entityIsDeleted || fetchFailure != null) return true;
     if (entity == null) return false;
     return !requireFullEntity || !entity.lightResource;
   };
@@ -156,9 +156,6 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
   entityName: U["type"]
 ): Connection<EntityConnection<T, U>, EntityConnectionProps> => ({
   load: (connection, props) => {
-    if (!props.uuid || props.uuid.trim() === "") {
-      return;
-    }
     if (!entityIsLoaded(true)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
   },
 
