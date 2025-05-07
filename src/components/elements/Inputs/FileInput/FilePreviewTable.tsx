@@ -10,6 +10,7 @@ import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -53,7 +54,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
       ModalId.MODAL_IMAGE_DETAIL,
       <ModalImageDetails
         title={t("IMAGE DETAILS")}
-        data={data}
+        data={data as unknown as MediaDto}
         entityData={entityData}
         onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
         reloadGalleryImages={() => {}}

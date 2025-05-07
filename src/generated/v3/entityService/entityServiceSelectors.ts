@@ -11,6 +11,7 @@ import {
   EntityUpdatePathParams,
   EntityUpdateVariables,
   EntityAssociationIndexPathParams,
+  EntityAssociationIndexQueryParams,
   EntityAssociationIndexVariables,
   TreeScientificNamesSearchQueryParams,
   TreeScientificNamesSearchVariables,
@@ -76,14 +77,14 @@ export const entityUpdateFetchFailed = (variables: Omit<EntityUpdateVariables, "
   });
 
 export const entityAssociationIndexIsFetching = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  isFetchingSelector<{}, EntityAssociationIndexPathParams>({
+  isFetchingSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
   });
 
 export const entityAssociationIndexFetchFailed = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  fetchFailedSelector<{}, EntityAssociationIndexPathParams>({
+  fetchFailedSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
@@ -93,7 +94,7 @@ export const entityAssociationIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<EntityAssociationIndexVariables, "body">
 ) =>
-  indexMetaSelector<{}, EntityAssociationIndexPathParams>({
+  indexMetaSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     resource,
     ...variables
