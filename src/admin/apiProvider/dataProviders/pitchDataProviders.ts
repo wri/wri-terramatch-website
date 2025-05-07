@@ -37,28 +37,10 @@ export const pitchesSortableList: string[] = [
 
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
-    /*try {
-      const response = await fetchGetV2AdminProjectPitches({
-        queryParams: raListParamsToQueryParams(params, pitchesSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminProjectPitchesError);
-    }*/
     const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
-    console.log(connection);
     if (connection.fetchFailure != null) {
       throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
-
-    var newData = connection.data?.map((pitch: any) => {
-      console.log("pitch", pitch);
-      return { ...pitch.attributes, id: pitch.attributes.uuid };
-    });
-
-    console.log(newData);
-
     return projectPitchesListResult(connection);
   },
 

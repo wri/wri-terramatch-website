@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { EntityIndexFilterKey } from "@/connections/Entity";
 import {
   adminProjectPitchesIndex,
   EntityIndexQueryParams,
@@ -8,9 +9,9 @@ import {
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   adminProjectPitchesIndexFetchFailed,
+  adminProjectPitchesIndexIndexMeta,
   projectPitchesGetUUIDIndexFetchFailed,
-  projectPitchesGetUUIDIndexIsFetching,
-  projectPitchesIndexIndexMeta
+  projectPitchesGetUUIDIndexIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
@@ -19,7 +20,6 @@ import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectProjectPitch = (store: ApiDataStore) => Object.values(store.projectPitches)?.[0]?.attributes;
-export const selectProjectPitches = (store: ApiDataStore) => Object.values(store.projectPitches);
 
 const projectPitchSelector = () => (store: ApiDataStore) =>
   store["projectPitches"] as StoreResourceMap<ProjectPitchDto>;
@@ -62,15 +62,17 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
 
 export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;
-  data: ProjectPitchDto[];
+  data?: ProjectPitchDto[];
   total?: number;
   refetch: () => void;
 };
 
 export type ProjectPitchIndexConnectionProps = {
-  pageNumber: number;
-  pageSize: number;
-  search: string;
+  pageSize?: number;
+  pageNumber?: number;
+  sortField?: string;
+  sortDirection?: "ASC" | "DESC";
+  filter?: Partial<Record<EntityIndexFilterKey, string>>;
 };
 
 /*
@@ -108,56 +110,49 @@ const entityIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
     "page[number]": props?.pageNumber,
     "page[size]": props?.pageSize
   } as EntityIndexQueryParams;
-  /*if (props?.sortField != null) {
+  if (props?.sortField != null) {
     queryParams["sort[field]"] = props.sortField;
     queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
   }
   if (props?.filter != null) {
     for (const [key, value] of Object.entries(props.filter)) {
-      if (key === "polygonStatus") queryParams.polygonStatus = value as PolygonStatus;
-      else queryParams[key as Exclude<EntityIndexFilterKey, "polygonStatus">] = value;
+      (queryParams as Record<string, string | number | undefined>)[key] = value;
     }
-  }*/
+  }
   return queryParams;
 };
 
 const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
 
+const projectPitchesIndexParams = (props?: ProjectPitchIndexConnectionProps) => ({
+  queryParams: entityIndexQuery(props)
+});
+
 const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ data }, { pageNumber, pageSize, search }) => {
-    if (data.length === 0)
-      adminProjectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
+  load: ({ data }, props) => {
+    if (!data) adminProjectPitchesIndex(projectPitchesIndexParams(props));
   },
 
-  isLoaded: ({ data }) => data.length > 0,
+  isLoaded: ({ data }) => data !== undefined,
   selector: selectorCache(
     props => indexCacheKey(props),
     props =>
       createSelector(
         [
-          projectPitchesIndexIndexMeta("projectPitches", {
-            queryParams: { pageNumber: props.pageNumber, pageSize: props.pageSize, search: props.search }
-          }),
-          adminProjectPitchesIndexFetchFailed({
-            queryParams: { pageNumber: props.pageNumber, pageSize: props.pageSize, search: props.search }
-          }),
+          adminProjectPitchesIndexIndexMeta("projectPitches", projectPitchesIndexParams(props)),
+          adminProjectPitchesIndexFetchFailed(projectPitchesIndexParams(props)),
           projectPitchSelector()
         ],
         (indexMeta, fetchFailure, selector) => {
           console.log(indexMeta);
           const refetch = () => ApiSlice.pruneIndex("projectPitches", "");
-          console.log("refetch", refetch);
-          if (indexMeta == null) return { data: [], refetch, fetchFailure };
+          if (indexMeta == null) return { refetch, fetchFailure };
 
           const entities = [] as ProjectPitchDto[];
           for (const id of indexMeta.ids) {
-            // If we're missing any of the entities we're supposed to have, return nothing so the
-            // index endpoint is queried again.
-            if (selector[id] == null) return { data: [], refetch, fetchFailure };
+            if (selector[id] == null) return { refetch, fetchFailure };
             entities.push(selector[id].attributes);
           }
-
-          console.log("entities", entities);
 
           return { data: entities, indexTotal: indexMeta.total, refetch, fetchFailure };
         }

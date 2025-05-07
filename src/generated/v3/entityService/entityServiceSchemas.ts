@@ -94,6 +94,29 @@ export type ProjectPitchDto = {
   directSeedingSurvivalRate?: number;
 };
 
+export type EntitySideload = {
+  /**
+   * Entity or association type to sideload
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "demographics"
+    | "seedings"
+    | "treeSpecies"
+    | "disturbances"
+    | "invasives"
+    | "stratas";
+  /**
+   * The page size to include.
+   */
+  pageSize: number;
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -127,29 +150,6 @@ export type MediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
-};
-
-export type EntitySideload = {
-  /**
-   * Entity or association type to sideload
-   */
-  entity:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "nurseryReports"
-    | "siteReports"
-    | "demographics"
-    | "seedings"
-    | "treeSpecies"
-    | "disturbances"
-    | "invasives"
-    | "stratas";
-  /**
-   * The page size to include.
-   */
-  pageSize: number;
 };
 
 /**

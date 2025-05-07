@@ -1,7 +1,7 @@
 import { GetListParams, GetListResult } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
-import { ProjectPitchIndexConnectionProps, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
+import { ProjectsPitchesConnection } from "@/connections/ProjectPitch";
 
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
@@ -20,16 +20,6 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
 };
 
 export const raConnectionProps = (params: GetListParams) => {
-  const queryParams: ProjectPitchIndexConnectionProps = {
-    pageSize: params.pagination.perPage,
-    pageNumber: params.pagination.page,
-    search: params.filter
-  };
-
-  return queryParams;
-};
-
-export const raConnectionProjectPitchProps = (params: GetListParams) => {
   const queryParams: EntityIndexConnectionProps = {
     pageSize: params.pagination.perPage,
     pageNumber: params.pagination.page,
@@ -39,6 +29,9 @@ export const raConnectionProjectPitchProps = (params: GetListParams) => {
   if (params.sort.field != null) {
     queryParams.sortField = params.sort.field;
     queryParams.sortDirection = (params.sort.order as "ASC" | "DESC") ?? "ASC";
+  }
+  if (params.meta?.sideloads) {
+    queryParams.sideloads = params.meta.sideloads;
   }
 
   return queryParams;
@@ -95,7 +88,7 @@ export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTo
 });
 
 export const projectPitchesListResult = ({ data, total }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: any) => ({ ...pitch.attributes, id: pitch.attributes.uuid })),
+  data: data?.map((pitch: any) => ({ ...pitch, id: pitch.uuid })),
   total: total
 });
 

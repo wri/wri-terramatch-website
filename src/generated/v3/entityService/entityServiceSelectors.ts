@@ -60,6 +60,16 @@ export const adminProjectPitchesIndexFetchFailed = (variables: Omit<AdminProject
     ...variables
   });
 
+export const adminProjectPitchesIndexIndexMeta = (
+  resource: ResourceType,
+  variables: Omit<AdminProjectPitchesIndexVariables, "body">
+) =>
+  indexMetaSelector<AdminProjectPitchesIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches/admin",
+    resource,
+    ...variables
+  });
+
 export const projectPitchesGetUUIDIndexIsFetching = (variables: Omit<ProjectPitchesGetUUIDIndexVariables, "body">) =>
   isFetchingSelector<{}, ProjectPitchesGetUUIDIndexPathParams>({
     url: "/entities/v3/projectPitches/{uuid}",
