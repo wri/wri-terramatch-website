@@ -53,7 +53,8 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
     "page[number]": props.pageNumber ?? 1,
     "page[size]": props.pageSize ?? 10,
     search: props.search,
-    lightResource: true
+    lightResource: true,
+    includeTestProjects: false
   };
 
   if (queryKey != null) {
