@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useFullProject } from "@/connections/Entity";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -12,7 +13,6 @@ import {
   useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardProjectDetailsProject,
   useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
@@ -148,8 +148,8 @@ export const useDashboardData = (filters: any) => {
     useGetV2DashboardIndicatorHectaresRestoration<any>({
       queryParams: queryParams
     });
-  const { data: dashboardProjectDetails, isLoading: isLoadingProjectDetails } =
-    useGetV2DashboardProjectDetailsProject<any>({ pathParams: { project: filters.uuid } }, { enabled: !!filters.uuid });
+
+  const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -264,8 +264,8 @@ export const useDashboardData = (filters: any) => {
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
-    dashboardProjectDetails,
-    isLoadingProjectDetails,
+    projectFullDto,
+    projectLoaded,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,

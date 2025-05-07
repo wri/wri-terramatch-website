@@ -160,8 +160,8 @@ const Dashboard = () => {
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
-    dashboardProjectDetails,
-    isLoadingProjectDetails = false,
+    projectLoaded,
+    projectFullDto,
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
@@ -175,7 +175,7 @@ const Dashboard = () => {
     isLoadingImpactStories
   } = useDashboardData(filters);
 
-  const cohortName = useMemo(() => dashboardProjectDetails?.data?.cohort, [dashboardProjectDetails?.data?.cohort]);
+  const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
 
   const dataToggle = useMemo(
     () => [
@@ -403,9 +403,9 @@ const Dashboard = () => {
   }, [t, filters.country.id, DATA_ACTIVE_COUNTRY, transformedStories]);
 
   const countryData = useMemo(() => {
-    if (!dashboardProjectDetails?.data?.countrySlug || !countryChoices?.length) return undefined;
+    if (!projectFullDto?.country || !countryChoices?.length) return undefined;
 
-    const gadmCountry = countryChoices.find(country => country.id === dashboardProjectDetails.data.countrySlug);
+    const gadmCountry = countryChoices.find(country => country.id === projectFullDto?.country);
     if (!gadmCountry) return undefined;
 
     const countrySlug = gadmCountry.id;
@@ -417,7 +417,7 @@ const Dashboard = () => {
       },
       id: gadmCountry.id
     };
-  }, [dashboardProjectDetails?.data?.countrySlug, countryChoices]);
+  }, [projectFullDto?.country, countryChoices]);
 
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
@@ -461,7 +461,7 @@ const Dashboard = () => {
             <DashboardBreadcrumbs
               cohort={cohortName}
               countryData={countryData as CountriesProps}
-              projectName={dashboardProjectDetails?.data?.name}
+              projectName={projectFullDto?.name}
               className="pt-0"
               textVariant="text-14"
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -506,22 +506,23 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <PageCard className="border-0 px-4 py-6" gap={8}>
             <div className="flex items-center">
-              <If condition={isLoadingProjectDetails}>
+              <If condition={!projectLoaded}>
                 <Then>
                   <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
                     <Text variant="text-20-bold">{t("Loading...")}</Text>
                   </div>
                 </Then>
                 <Else>
-                  <img
+                  {/* TODO: add cover image */}
+                  {/* <img
                     src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
                     alt="tree"
                     className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
-                  />
+                  /> */}
                 </Else>
               </If>
               <div>
-                <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
+                <Text variant="text-20-bold">{t(projectFullDto?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
                   {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
@@ -530,11 +531,7 @@ const Dashboard = () => {
                   {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Type: ${
-                      ORGANIZATIONS_TYPES[
-                        dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
-                      ]
-                    }`
+                    `Type: ${ORGANIZATIONS_TYPES[projectFullDto?.organisationType as keyof typeof ORGANIZATIONS_TYPES]}`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Cohort: ${cohortName}`)}
@@ -545,7 +542,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(dashboardProjectDetails?.data)}
+              data={parseDataToObjetive(projectFullDto)}
               variantTitle="text-18-semibold"
             />
           </PageCard>

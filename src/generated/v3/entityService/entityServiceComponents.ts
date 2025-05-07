@@ -713,6 +713,10 @@ export type EntityAssociationIndexQueryParams = {
    * @default false
    */
   isPrivate?: boolean;
+  /**
+   * @default false
+   */
+  isCover?: boolean;
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<

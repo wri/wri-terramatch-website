@@ -1,24 +1,13 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DataPoint = {
   time: string;
   Total: number;
   Enterprise: number;
   "Non Profit": number;
-};
-
-type InputData = {
-  country: string;
-  countrySlug: string;
-  descriptionObjetive: string;
-  landTenure: string | null;
-  name: string;
-  organisation: string;
-  restorationStrategy: string | null;
-  survivalRate: string | null;
-  targetLandUse: string | null;
 };
 
 type Objetive = {
@@ -515,13 +504,15 @@ export const parseHectaresUnderRestorationData = (
   };
 };
 
-export const parseDataToObjetive = (data: InputData): Objetive => {
-  const objetiveText = data?.descriptionObjetive;
-
+export const parseDataToObjetive = (projectFullDto?: ProjectFullDto): Objetive => {
+  const objetiveText = projectFullDto?.objectives || "No Objective";
+  const landTenure = projectFullDto?.landTenureProjectArea
+    ? projectFullDto?.landTenureProjectArea.join(", ")
+    : "Under Review";
   return {
     objetiveText,
     preferredLanguage: "English",
-    landTenure: data?.landTenure ? data?.landTenure : "Under Review"
+    landTenure
   };
 };
 
