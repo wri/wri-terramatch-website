@@ -19,9 +19,7 @@ import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export const selectProjectPitch = (store: ApiDataStore) => Object.values(store.projectPitches)?.[0]?.attributes;
-
-const projectPitchSelector = () => (store: ApiDataStore) =>
+const projectPitchesSelector = () => (store: ApiDataStore) =>
   store["projectPitches"] as StoreResourceMap<ProjectPitchDto>;
 
 type ProjectPitchConnection = {
@@ -48,13 +46,13 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
         [
           projectPitchesGetUUIDIndexIsFetching({ pathParams: { uuid } }),
           projectPitchesGetUUIDIndexFetchFailed({ pathParams: { uuid } }),
-          selectProjectPitch
+          projectPitchesSelector()
         ],
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
           isSuccess: selector?.organisationId != null,
-          projectPitch: selector
+          projectPitch: selector[uuid]
         })
       )
   )
@@ -63,7 +61,7 @@ const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchCon
 export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;
   data?: ProjectPitchDto[];
-  total?: number;
+  indexTotal?: number;
   refetch: () => void;
 };
 
@@ -141,7 +139,7 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
         [
           adminProjectPitchesIndexIndexMeta("projectPitches", projectPitchesIndexParams(props)),
           adminProjectPitchesIndexFetchFailed(projectPitchesIndexParams(props)),
-          projectPitchSelector()
+          projectPitchesSelector()
         ],
         (indexMeta, fetchFailure, selector) => {
           console.log(indexMeta);

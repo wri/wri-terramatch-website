@@ -90,7 +90,7 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   refetch: () => void;
 };
 
-type EntityIndexFilterKey = keyof Omit<
+export type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;

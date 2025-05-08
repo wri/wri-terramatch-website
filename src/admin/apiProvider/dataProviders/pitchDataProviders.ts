@@ -41,19 +41,20 @@ export const pitchDataProvider: PitchDataProvider = {
     if (connection.fetchFailure != null) {
       throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
+    console.log("pitches connection", connection);
+    console.log("pitches connection 2", projectPitchesListResult(connection));
     return projectPitchesListResult(connection);
   },
 
   async getOne(_, params) {
-    console.log("getOne", params);
-    const { requestFailed, projectPitch, isSuccess, isLoading } = await loadProjectPitch({ uuid: params.id });
-    console.log("getOne response", projectPitch, requestFailed, isSuccess, isLoading);
+    const { requestFailed, projectPitch } = await loadProjectPitch({ uuid: params.id });
+    console.log("getOne response", projectPitch, requestFailed);
     if (requestFailed != null) {
       throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
     }
     console.log("response v3", projectPitch);
 
-    return { data: { ...projectPitch, id: projectPitch.uuid } };
+    return { data: { ...projectPitch.attributes, id: projectPitch.attributes.uuid } };
   },
 
   //@ts-ignore

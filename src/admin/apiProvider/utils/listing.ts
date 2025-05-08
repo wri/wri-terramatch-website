@@ -87,9 +87,9 @@ export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTo
   total: indexTotal
 });
 
-export const projectPitchesListResult = ({ data, total }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: any) => ({ ...pitch, id: pitch.uuid })),
-  total: total
+export const projectPitchesListResult = ({ data, indexTotal }: ProjectsPitchesConnection) => ({
+  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })) ?? [],
+  total: indexTotal ?? 0
 });
 
 export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => {
