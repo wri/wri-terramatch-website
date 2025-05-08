@@ -17,7 +17,25 @@ interface UploadedFilesTabProps {
 const sections = [
   { name: "Socio Economic", property: "socioeconomicBenefits" },
   { name: "Files", property: "file" },
-  { name: "Other Additional Files", property: "otherAdditionalDocuments" }
+  { name: "Other Additional Files", property: "otherAdditionalDocuments" },
+  { name: "Media", property: "media" },
+  { name: "Photos", property: "photos" },
+  { name: "Baseline Report Upload", property: "baselineReportUpload" },
+  { name: "Local Governance Order or Letter Upload", property: "localGovernanceOrderLetterUpload" },
+  { name: "Events or Meetings Photos", property: "eventsMeetingsPhotos" },
+  { name: "Local Governance Proof of Partnership Upload", property: "localGovernanceProofOfPartnershipUpload" },
+  { name: "Top Three Successes Upload", property: "topThreeSuccessesUpload" },
+  { name: "Direct Jobs Upload", property: "directJobsUpload" },
+  { name: "Convergence Jobs Upload", property: "convergenceJobsUpload" },
+  { name: "Convergence Schemes Upload", property: "convergenceSchemesUpload" },
+  { name: "Livelihood Report Upload", property: "livelihoodActivitiesUpload" },
+  { name: "Direct Livelihood Impacts Upload", property: "directLivelihoodImpactsUpload" },
+  { name: "Certified Database Upload", property: "certifiedDatabaseUpload" },
+  { name: "Physical Assets Photos", property: "physicalAssetsPhotos" },
+  { name: "Indirect Community Partners Upload", property: "indirectCommunityPartnersUpload" },
+  { name: "Training or Capacity Building Upload", property: "trainingCapacityBuildingUpload" },
+  { name: "Training or Capacity Building Photos", property: "trainingCapacityBuildingPhotos" },
+  { name: "Financial Report Upload', ", property: "financialReportUpload" }
 ];
 
 const UploadedFilesTab = ({ report }: UploadedFilesTabProps) => {

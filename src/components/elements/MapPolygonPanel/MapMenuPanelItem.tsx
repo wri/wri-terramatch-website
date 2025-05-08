@@ -4,7 +4,6 @@ import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } f
 import { When } from "react-if";
 
 import {
-  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
   WITHIN_COUNTRY_CRITERIA_ID
@@ -83,9 +82,7 @@ const MapMenuPanelItem = ({
       setShowWarning(
         polygonValidation.nonValidCriteria?.some(
           (criteria: any) =>
-            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
-            criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID ||
-            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID
+            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID || criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID
         )
       );
     }

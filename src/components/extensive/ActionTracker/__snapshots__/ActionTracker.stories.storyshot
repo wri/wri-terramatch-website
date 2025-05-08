@@ -70,6 +70,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -136,6 +154,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
               }
             }
             data-testid="txt"
@@ -210,6 +246,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -280,6 +334,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -346,6 +418,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": undefined,
               }
             }
             data-testid="txt"

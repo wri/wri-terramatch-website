@@ -4,7 +4,6 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import {
-  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
@@ -79,11 +78,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
       polygonList.map((polygon: any) => {
         const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
 
-        const excludedFromValidationCriterias = [
-          COMPLETED_DATA_CRITERIA_ID,
-          ESTIMATED_AREA_CRITERIA_ID,
-          WITHIN_COUNTRY_CRITERIA_ID
-        ];
+        const excludedFromValidationCriterias = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID];
 
         let failingCriterias: string[] = [];
         if (validationInfo?.nonValidCriteria) {

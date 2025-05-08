@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index";
-import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
 

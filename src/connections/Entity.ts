@@ -38,7 +38,7 @@ import {
   entityUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, JsonApiResource, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
@@ -88,6 +88,7 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
+  included?: JsonApiResource[];
 };
 
 export type EntityIndexFilterKey = keyof Omit<
@@ -146,7 +147,7 @@ const entityIsLoaded =
     { entity, entityIsDeleted, fetchFailure }: EntityConnection<T, U>,
     { uuid }: EntityConnectionProps
   ) => {
-    if (uuid == null || entityIsDeleted || fetchFailure != null) return true;
+    if (uuid == null || uuid.trim() === "" || entityIsDeleted || fetchFailure != null) return true;
     if (entity == null) return false;
     return !requireFullEntity || !entity.lightResource;
   };
@@ -223,7 +224,19 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
             entities.push(entitiesStore[id].attributes as T);
           }
 
-          return { entities, indexTotal: indexMeta.total, refetch, fetchFailure };
+          // Get the included data if it exists in the response
+          let included: JsonApiResource[] | undefined;
+          if (indexMeta.included) {
+            included = indexMeta.included;
+          }
+
+          return {
+            entities,
+            indexTotal: indexMeta.total,
+            refetch,
+            fetchFailure,
+            included
+          };
         }
       )
   )

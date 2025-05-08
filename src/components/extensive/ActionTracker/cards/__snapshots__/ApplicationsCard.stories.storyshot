@@ -76,6 +76,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -146,6 +164,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -216,6 +252,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -264,6 +318,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
               }
             }
             data-testid="txt"
@@ -338,6 +410,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             }
             data-testid="txt"
           />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
@@ -404,6 +494,24 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated At</strong>: ",
+              }
+            }
+            data-testid="txt"
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
               }
             }
             data-testid="txt"

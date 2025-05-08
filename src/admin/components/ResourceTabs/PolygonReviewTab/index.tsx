@@ -32,6 +32,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useMedias } from "@/connections/EntityAssociation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -44,8 +45,6 @@ import {
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
   fetchPutV2SitePolygonStatusBulk,
-  GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles,
   useGetV2SitesSiteBbox
 } from "@/generated/apiComponents";
 import {
@@ -209,9 +208,12 @@ const PolygonReviewTab: FC<IProps> = props => {
     total,
     updateSingleSitePolygonData
   } = useLoadSitePolygonsData(record.uuid, "sites", undefined, undefined, validFilter);
-  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    pathParams: { model: "sites", uuid: record.uuid }
+
+  const [, { associations: modelFilesData }] = useMedias({
+    entity: "sites",
+    uuid: record.uuid
   });
+
   useValueChanged(validFilter, () => {
     refetch();
   });
@@ -731,7 +733,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
-                modelFilesData={modelFilesData?.data}
+                modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}
                 setAlertTitle={props.setAlertTitle}

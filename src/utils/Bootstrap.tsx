@@ -22,6 +22,16 @@ const useRedirect = () => {
       // Allow everybody to access the dashboard
       matcher.startsWith("/dashboard")?.allow();
 
+      // Check if we're coming from a login redirection
+      const isFromLogin = typeof window !== "undefined" && sessionStorage.getItem("isRedirectingFromLogin") === "true";
+
+      // If we're specifically redirecting to /dashboard/learn-more after login, allow it
+      if (isFromLogin && router.asPath === "/dashboard/learn-more") {
+        matcher.allow();
+        sessionStorage.removeItem("isRedirectingFromLogin");
+        return;
+      }
+
       matcher.if(user == null, () => {
         matcher.startsWith("/auth")?.allow();
         matcher.exact("/")?.allow();

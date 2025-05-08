@@ -87,11 +87,7 @@ const NurseryReportDataGrid: FC = () => {
         render={(record: NurseryReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              {record.nothingToReport ? (
-                <Icon name={IconNames.CHECK_CIRCLE} className="h-6 w-6" />
-              ) : (
-                <Icon name={IconNames.CROSS_CIRCLE} className="h-6 w-6" />
-              )}
+              {record.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
             </div>
           );
         }}

@@ -88,14 +88,15 @@ export const loadGadmCodes = connectionLoader(gadmConnection);
 export const useGadmOptions = (props: GadmConnectionProps) => {
   const [loaded, { codeMapping, fetchFailure }] = useGadmCodes(props);
   const t = useT();
+  const { level, parentCodes } = props;
   return useMemo(() => {
     if (!loaded) return null;
     if (fetchFailure != null) {
-      Log.error("Failed to fetch some GADM code data", { props, fetchFailure });
+      Log.error("Failed to fetch some GADM code data", { level, parentCodes, fetchFailure });
       return null;
     }
     if (codeMapping == null) {
-      Log.error("GADM data fetch complete, but no codeMapping provided", { props });
+      Log.error("GADM data fetch complete, but no codeMapping provided", { level, parentCodes });
       return null;
     }
 
@@ -105,7 +106,7 @@ export const useGadmOptions = (props: GadmConnectionProps) => {
         title: t(name)
       }))
       .sort(({ title: a }, { title: b }) => a.localeCompare(b));
-  }, [codeMapping, fetchFailure, loaded, props, t]);
+  }, [codeMapping, fetchFailure, level, loaded, parentCodes, t]);
 };
 
 export const useGadmChoices = (props: GadmConnectionProps) => {
