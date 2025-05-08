@@ -32,15 +32,23 @@ export const Default: Story = {
   args: {
     data: {
       uuid: faker.string.uuid(),
-      thumbnailImageUrl: faker.image.urlPicsumPhotos(),
-      fullImageUrl: faker.image.urlPicsumPhotos(),
-      label: faker.lorem.sentence({ min: 4, max: 8 }),
-      subtitle: faker.date.anytime().toLocaleDateString("en-GB", { timeZone: "Europe/London" }),
+      thumbUrl: faker.image.urlPicsumPhotos(),
+      url: faker.image.urlPicsumPhotos(),
+      name: faker.lorem.sentence({ min: 4, max: 8 }),
+      createdAt: new Date("2023-01-01T12:00:00").toISOString(),
+      entityType: "projects",
+      entityUuid: faker.string.uuid(),
+      collectionName: "images",
+      lat: faker.location.latitude(),
+      lng: faker.location.longitude(),
       isPublic: faker.datatype.boolean(),
-      isGeotagged: faker.datatype.boolean(),
-      raw: {
-        created_date: new Date("2023-01-01T12:00:00").toISOString()
-      }
+      fileName: faker.system.fileName(),
+      mimeType: faker.system.mimeType(),
+      size: faker.number.int({ min: 100, max: 1000 }),
+      isCover: faker.datatype.boolean(),
+      description: faker.lorem.sentence({ min: 4, max: 8 }),
+      photographer: faker.person.fullName(),
+      createdByUserName: faker.person.fullName()
     }
   }
 };
