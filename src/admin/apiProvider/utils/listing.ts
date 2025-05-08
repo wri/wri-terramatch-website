@@ -2,6 +2,7 @@ import { GetListParams, GetListResult } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
 import { ProjectsPitchesConnection } from "@/connections/ProjectPitch";
+import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ListQueryParams extends Record<string, unknown> {
   search?: string;
