@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useFullProject } from "@/connections/Entity";
+import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -150,6 +151,11 @@ export const useDashboardData = (filters: any) => {
     });
 
   const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
+  const [, { association: coverImage }] = useMedia({
+    entity: "projects",
+    uuid: filters?.uuid ?? null,
+    queryParams: { isCover: true }
+  });
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -266,6 +272,7 @@ export const useDashboardData = (filters: any) => {
     isLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,
+    coverImage,
     topProject,
     refetchTotalSectionHeader,
     activeCountries,

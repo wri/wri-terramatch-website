@@ -162,6 +162,7 @@ const Dashboard = () => {
     isLoadingVolunteers,
     projectLoaded,
     projectFullDto,
+    coverImage,
     topProject,
     refetchTotalSectionHeader,
     centroidsDataProjects,
@@ -513,12 +514,11 @@ const Dashboard = () => {
                   </div>
                 </Then>
                 <Else>
-                  {/* TODO: add cover image */}
-                  {/* <img
-                    src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
-                    alt="tree"
+                  <img
+                    src={coverImage?.thumbUrl ?? "/images/_AJL2963.jpg"}
+                    alt="project cover"
                     className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
-                  /> */}
+                  />
                 </Else>
               </If>
               <div>
