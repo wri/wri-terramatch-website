@@ -8,11 +8,6 @@ export type PatchAuthChangeBody = {
   password?: string;
 };
 
-export type V2PostOrganisationsApproveUserBody = {
-  organisation_uuid: string;
-  user_uuid: string;
-};
-
 export type GetV2FundingProgrammeIDBody = {
   id?: number;
   uuid?: string;
@@ -48,6 +43,7 @@ export type GetV2FundingProgrammeIDBody = {
       submission_message?: string;
       published?: boolean;
       stage_id?: string;
+      funding_programme_uuid?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -140,6 +136,11 @@ export type GetV2FundingProgrammeIDBody = {
   deleted_at?: string;
   created_at?: string;
   updated_at?: string;
+};
+
+export type V2PostOrganisationsApproveUserBody = {
+  organisation_uuid: string;
+  user_uuid: string;
 };
 
 export type PatchV2AuthVerifyBody = {
