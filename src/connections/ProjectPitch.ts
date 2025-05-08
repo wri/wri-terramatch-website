@@ -73,36 +73,6 @@ export type ProjectPitchIndexConnectionProps = {
   filter?: Partial<Record<EntityIndexFilterKey, string>>;
 };
 
-/*
-const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ data }, { pageSize, pageNumber, search }) => {
-    if (!data) projectPitchesIndex({ queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search } });
-  },
-
-  isLoaded: ({ data }) => data !== undefined,
-  selector: selectorCache(
-    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) => pageSize + search,
-    ({ pageSize, pageNumber, search }: ProjectPitchIndexConnectionProps) =>
-      createSelector(
-        [
-          projectPitchesIndexIsFetching({
-            queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search }
-          }),
-          projectPitchesIndexFetchFailed({
-            queryParams: { pageSize: pageSize, pageNumber: pageNumber, search: search }
-          }),
-          selectProjectPitches
-        ],
-        (isLoading, requestFailed, selector) => ({
-          isLoading,
-          fetchFailure: requestFailed,
-          data: selector
-        })
-      )
-  )
-};
-*/
-
 const entityIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
   const queryParams = {
     "page[number]": props?.pageNumber,
@@ -158,6 +128,5 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
   )
 };
 
-// export const loadProjectPitches = connectionLoader(projectPitchesConnection);
 export const loadProjectPitchesAdmin = connectionLoader(projectPitchesAdminConnection);
 export const loadProjectPitch = connectionLoader(projectPitchConnection);

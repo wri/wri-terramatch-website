@@ -20,29 +20,12 @@ export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
 }
 
-export const pitchesSortableList: string[] = [
-  "organisation_id",
-  "project_name",
-  "project_objectives",
-  "project_country",
-  "project_county_district",
-  "restoration_intervention_types",
-  "total_hectares",
-  "total_trees",
-  "capacity_building_needs",
-  "created_at",
-  "updated_at",
-  "deleted_at"
-];
-
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
     const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
     if (connection.fetchFailure != null) {
       throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
-    console.log("pitches connection", connection);
-    console.log("pitches connection 2", projectPitchesListResult(connection));
     return projectPitchesListResult(connection);
   },
 
