@@ -26,8 +26,6 @@ export const useReportData = () => {
 
   const disturbances = useSiteReportDisturbances(siteReportUuids);
 
-  useEffect(() => {}, [disturbances]);
-
   const [, { associations: plants }] = usePlants({
     entity: "projects",
     uuid: record?.id,
