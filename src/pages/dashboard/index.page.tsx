@@ -106,10 +106,10 @@ const getOrganizationByUuid = (activeProjects: any[], uuid: string) => {
 const parseJobCreatedByType = (data: any, type: string) => {
   if (!data) return { type, chartData: [] };
 
-  const ptWomen = data.total_pt_women || 0;
-  const ptMen = data.total_pt_men || 0;
-  const ptYouth = data.total_pt_youth || 0;
-  const ptNonYouth = data.total_pt_non_youth || 0;
+  const ptWomen = data.total_pt_women ?? 0;
+  const ptMen = data.total_pt_men ?? 0;
+  const ptYouth = data.total_pt_youth ?? 0;
+  const ptNonYouth = data.total_pt_non_youth ?? 0;
   const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
   const chartData = [
     {

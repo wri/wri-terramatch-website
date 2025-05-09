@@ -29,11 +29,11 @@ const DashboardBreadcrumbs = ({
     () =>
       [
         {
-          title: getCohortName(cohort || ""),
+          title: getCohortName(cohort ?? ""),
           onClick: () => {
             setFilters(prevValues => ({
               ...prevValues,
-              cohort: cohort || "",
+              cohort: cohort ?? "",
               country: {
                 country_slug: "",
                 id: 0,

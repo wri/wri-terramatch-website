@@ -37,12 +37,12 @@ export function usePopupData(event: any) {
       {
         key: "project_name",
         title: "title",
-        value: projectFullDto.name || "Unknown Project"
+        value: projectFullDto.name ?? "Unknown Project"
       },
       {
         key: "organizations",
         title: "Organization",
-        value: projectFullDto.organisationName || "Unknown Organization"
+        value: projectFullDto.organisationName ?? "Unknown Organization"
       }
     ];
 
@@ -74,22 +74,22 @@ export function usePopupData(event: any) {
             {
               id: "1",
               title: "No. of Projects",
-              value: ((response.total_enterprise_count || 0) + (response.total_non_profit_count || 0)).toLocaleString()
+              value: ((response.total_enterprise_count ?? 0) + (response.total_non_profit_count ?? 0)).toLocaleString()
             },
             {
               id: "2",
               title: "Trees Planted",
-              value: (response.total_trees_restored || 0).toLocaleString()
+              value: (response.total_trees_restored ?? 0).toLocaleString()
             },
             {
               id: "3",
               title: "Restoration Hectares",
-              value: (response.total_hectares_restored || 0).toLocaleString()
+              value: (response.total_hectares_restored ?? 0).toLocaleString()
             },
             {
               id: "4",
               title: "Jobs Created",
-              value: (response.total_entries || 0).toLocaleString()
+              value: (response.total_entries ?? 0).toLocaleString()
             }
           ];
           setItems(parsedItems);
@@ -111,7 +111,7 @@ export function usePopupData(event: any) {
           const entityData = createProjectDataFromEntity(projectFullDto);
 
           if (entityData) {
-            const label = projectFullDto.name || "Unknown Project";
+            const label = projectFullDto.name ?? "Unknown Project";
             const organization = projectFullDto.organisationName;
             const hectares = projectFullDto.totalHectaresRestoredSum?.toString();
 
@@ -127,7 +127,7 @@ export function usePopupData(event: any) {
               .map(item => ({
                 id: item.key,
                 title: item.title === "No. of Site - Polygons" ? "Number of Site - Polygons" : item.title,
-                value: item.value?.toString() || "-"
+                value: item.value?.toString() ?? "-"
               }));
 
             setLabel(label);
