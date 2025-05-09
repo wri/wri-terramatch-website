@@ -15,6 +15,7 @@ import { camelCase } from "lodash";
 import { useMemo } from "react";
 import { RaRecord, Show, ShowButton, useShowContext } from "react-admin";
 
+import { STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 
@@ -68,13 +69,13 @@ function ShowReports() {
   return (
     <Card sx={{ padding: 4 }}>
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-        {t("Project Name:")} {task.project.name}
+        {t("Project Name:")} {task.projectName}
       </Typography>
       <Typography>
-        {t("Task Status:")} {task.readable_status}
+        {t("Task Status:")} {t(STATUS_MAP[task.status])}
       </Typography>
       <Typography>
-        {t("Task Due Date:")} {format(new Date(task.due_at))}
+        {t("Task Due Date:")} {format(new Date(task.dueAt))}
       </Typography>
       <Typography>
         {t("Trees Planted:")} {task.number_of_trees_planted}

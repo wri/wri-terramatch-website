@@ -3,6 +3,8 @@ import { ResourceType } from "@/store/apiSlice";
 import {
   TaskIndexQueryParams,
   TaskIndexVariables,
+  TaskGetPathParams,
+  TaskGetVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -31,6 +33,12 @@ export const taskIndexFetchFailed = (variables: Omit<TaskIndexVariables, "body">
 
 export const taskIndexIndexMeta = (resource: ResourceType, variables: Omit<TaskIndexVariables, "body">) =>
   indexMetaSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", resource, ...variables });
+
+export const taskGetIsFetching = (variables: Omit<TaskGetVariables, "body">) =>
+  isFetchingSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+
+export const taskGetFetchFailed = (variables: Omit<TaskGetVariables, "body">) =>
+  fetchFailedSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({

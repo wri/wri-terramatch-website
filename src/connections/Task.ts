@@ -1,8 +1,12 @@
 import { createSelector } from "reselect";
 
-import { taskIndex, TaskIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
+import { taskGet, taskIndex, TaskIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { TaskDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { taskIndexFetchFailed, taskIndexIndexMeta } from "@/generated/v3/entityService/entityServiceSelectors";
+import {
+  taskGetFetchFailed,
+  taskIndexFetchFailed,
+  taskIndexIndexMeta
+} from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
@@ -27,6 +31,15 @@ export type TaskIndexProps = {
   sortDirection?: "ASC" | "DESC";
 };
 
+export type TaskConnection = {
+  task?: TaskDto;
+  fetchFailure?: PendingErrorState | null;
+};
+
+export type TaskProps = {
+  uuid: string;
+};
+
 const taskIndexQuery = (props?: TaskIndexProps) => {
   const query = {
     "page[number]": props?.pageNumber,
@@ -48,6 +61,10 @@ const taskIndexQuery = (props?: TaskIndexProps) => {
 };
 const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQuery(props) });
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
+
+const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid } });
+const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) =>
+  uuid == null || fetchFailure != null || task != null;
 
 const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
   load: (connection, props) => {
@@ -80,4 +97,26 @@ const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
   )
 };
 
+const taskConnection: Connection<TaskConnection, TaskProps> = {
+  load: (connection, props) => {
+    if (!taskIsLoaded(connection, props)) taskGet(taskParams(props));
+  },
+
+  isLoaded: taskIsLoaded,
+
+  selector: selectorCache(
+    ({ uuid }) => uuid ?? "",
+    props =>
+      createSelector(
+        [({ tasks }: ApiDataStore) => tasks, taskGetFetchFailed(taskParams(props))],
+        (tasks, getFailure) => ({
+          task: tasks[props.uuid]?.attributes,
+          fetchFailure: getFailure
+        })
+      )
+  )
+};
+
 export const loadTasks = connectionLoader(taskIndexConnection);
+
+export const loadTask = connectionLoader(taskConnection);

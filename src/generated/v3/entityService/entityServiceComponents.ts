@@ -30,7 +30,19 @@ export type TaskIndexQueryParams = {
   projectUuid?: string;
 };
 
-export type TaskIndexError = Fetcher.ErrorWrapper<undefined>;
+export type TaskIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
 
 export type TaskIndexResponse = {
   meta?: {
@@ -83,6 +95,74 @@ export type TaskIndexVariables = {
 export const taskIndex = (variables: TaskIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<TaskIndexResponse, TaskIndexError, undefined, {}, TaskIndexQueryParams, {}>({
     url: "/entities/v3/tasks",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export type TaskGetPathParams = {
+  /**
+   * Task UUID for task to retrieve
+   */
+  uuid: string;
+};
+
+export type TaskGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TaskGetResponse = {
+  meta?: {
+    /**
+     * @example tasks
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example tasks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TaskDto;
+  };
+};
+
+export type TaskGetVariables = {
+  pathParams: TaskGetPathParams;
+};
+
+export const taskGet = (variables: TaskGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<TaskGetResponse, TaskGetError, undefined, {}, {}, TaskGetPathParams>({
+    url: "/entities/v3/tasks/{uuid}",
     method: "get",
     ...variables,
     signal
@@ -1159,7 +1239,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  tasks: { taskIndex },
+  tasks: { taskIndex, taskGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
