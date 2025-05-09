@@ -33,6 +33,7 @@ const FormIntroPage = () => {
       <ContentLayout>
         <LoadingContainer loading={!formData?.data}>
           <WizardFormIntro
+            variant="small"
             title={formData?.data.title!}
             //@ts-ignore
             imageSrc={formData?.data?.banner?.url}
