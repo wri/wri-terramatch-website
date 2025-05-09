@@ -404,7 +404,12 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
+  cohort: string | null;
   continent: string | null;
+  /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**

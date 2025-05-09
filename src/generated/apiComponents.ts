@@ -26543,67 +26543,6 @@ export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDa
   );
 };
 
-export type GetV2DashboardProjectDataUuidPathParams = {
-  /**
-   * UUID of the project point
-   */
-  uuid: string;
-};
-
-export type GetV2DashboardProjectDataUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardProjectDataUuidResponse = {
-  data?: {
-    /**
-     * Title of the data field
-     */
-    title?: string;
-    /**
-     * Value of the data field
-     */
-    value?: string;
-    /**
-     * Key of the data field
-     */
-    key?: string;
-  }[];
-};
-
-export type GetV2DashboardProjectDataUuidVariables = {
-  pathParams: GetV2DashboardProjectDataUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardProjectDataUuid = (
-  variables: GetV2DashboardProjectDataUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardProjectDataUuidResponse,
-    GetV2DashboardProjectDataUuidError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardProjectDataUuidPathParams
-  >({ url: "/v2/dashboard/project-data/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2DashboardProjectDataUuid = <TData = GetV2DashboardProjectDataUuidResponse>(
-  variables: GetV2DashboardProjectDataUuidVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardProjectDataUuidResponse, GetV2DashboardProjectDataUuidError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardProjectDataUuidResponse, GetV2DashboardProjectDataUuidError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/project-data/{uuid}", operationId: "getV2DashboardProjectDataUuid", variables }),
-    ({ signal }) => fetchGetV2DashboardProjectDataUuid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardActiveProjectsQueryParams = {
   /**
    * search term to use on the collection
@@ -27207,88 +27146,6 @@ export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResp
   return reactQuery.useQuery<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>(
     queryKeyFn({ path: "/v2/dashboard/frameworks", operationId: "getV2DashboardFrameworks", variables }),
     ({ signal }) => fetchGetV2DashboardFrameworks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardProjectDetailsProjectPathParams = {
-  /**
-   * Optional. Filter counts and metrics by UUID.
-   */
-  project: string;
-};
-
-export type GetV2DashboardProjectDetailsProjectError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardProjectDetailsProjectResponse = {
-  data?: {
-    name?: string;
-    descriptionObjetive?: string;
-    country?: string;
-    organisation?: string;
-    survivalRate?: number;
-    countrySlug?: string;
-    restorationStrategy?: {
-      data?: string[];
-    };
-    targetLandUse?: {
-      data?: string[];
-    };
-    landTenure?: {
-      data?: string[];
-    };
-  };
-};
-
-export type GetV2DashboardProjectDetailsProjectVariables = {
-  pathParams: GetV2DashboardProjectDetailsProjectPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
- */
-export const fetchGetV2DashboardProjectDetailsProject = (
-  variables: GetV2DashboardProjectDetailsProjectVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardProjectDetailsProjectResponse,
-    GetV2DashboardProjectDetailsProjectError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardProjectDetailsProjectPathParams
-  >({ url: "/v2/dashboard/project-details/{project}", method: "get", ...variables, signal });
-
-/**
- * This endpoint return details to name of project, description objectives, restoration strategy, target land use type, and land tenure.
- */
-export const useGetV2DashboardProjectDetailsProject = <TData = GetV2DashboardProjectDetailsProjectResponse>(
-  variables: GetV2DashboardProjectDetailsProjectVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardProjectDetailsProjectResponse,
-      GetV2DashboardProjectDetailsProjectError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardProjectDetailsProjectResponse,
-    GetV2DashboardProjectDetailsProjectError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/project-details/{project}",
-      operationId: "getV2DashboardProjectDetailsProject",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardProjectDetailsProject({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -30666,11 +30523,6 @@ export type QueryOperation =
       variables: GetV2DashboardPolygonDataUuidVariables;
     }
   | {
-      path: "/v2/dashboard/project-data/{uuid}";
-      operationId: "getV2DashboardProjectDataUuid";
-      variables: GetV2DashboardProjectDataUuidVariables;
-    }
-  | {
       path: "/v2/dashboard/active-projects";
       operationId: "getV2DashboardActiveProjects";
       variables: GetV2DashboardActiveProjectsVariables;
@@ -30709,11 +30561,6 @@ export type QueryOperation =
       path: "/v2/dashboard/frameworks";
       operationId: "getV2DashboardFrameworks";
       variables: GetV2DashboardFrameworksVariables;
-    }
-  | {
-      path: "/v2/dashboard/project-details/{project}";
-      operationId: "getV2DashboardProjectDetailsProject";
-      variables: GetV2DashboardProjectDetailsProjectVariables;
     }
   | {
       path: "/v2/dashboard/top-trees-planted";
