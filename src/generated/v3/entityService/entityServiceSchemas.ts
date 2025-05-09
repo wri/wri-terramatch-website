@@ -3,6 +3,23 @@
  *
  * @version 1.0
  */
+export type TaskDto = {
+  uuid: string;
+  projectUuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type ANRDto = {
   /**
    * Site name

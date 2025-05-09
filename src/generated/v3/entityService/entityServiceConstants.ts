@@ -1,5 +1,6 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
+  TaskDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -25,6 +26,7 @@ import {
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
+  "tasks",
   "projects",
   "sites",
   "nurseries",
@@ -44,6 +46,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 ] as const;
 
 export type EntityServiceApiResources = {
+  tasks: StoreResourceMap<TaskDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;

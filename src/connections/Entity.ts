@@ -202,43 +202,41 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
 
   isLoaded: indexIsLoaded,
 
-  selector: selectorCache(
-    props => indexCacheKey(props),
-    props =>
-      createSelector(
-        [
-          entityIndexIndexMeta(entityName, entityIndexParams(entityName, props)),
-          entitySelector(entityName),
-          entityIndexFetchFailed(entityIndexParams(entityName, props))
-        ],
-        (indexMeta, entitiesStore, fetchFailure) => {
-          // For now, we don't have filter support, so all search queries should be ""
-          const refetch = () => ApiSlice.pruneIndex(entityName, "");
-          if (indexMeta == null) return { refetch, fetchFailure };
+  selector: selectorCache(indexCacheKey, props =>
+    createSelector(
+      [
+        entityIndexIndexMeta(entityName, entityIndexParams(entityName, props)),
+        entitySelector(entityName),
+        entityIndexFetchFailed(entityIndexParams(entityName, props))
+      ],
+      (indexMeta, entitiesStore, fetchFailure) => {
+        // For now, we don't have filter support, so all search queries should be ""
+        const refetch = () => ApiSlice.pruneIndex(entityName, "");
+        if (indexMeta == null) return { refetch, fetchFailure };
 
-          const entities = [] as T[];
-          for (const id of indexMeta.ids) {
-            // If we're missing any of the entities we're supposed to have, return nothing so the
-            // index endpoint is queried again.
-            if (entitiesStore[id] == null) return { refetch, fetchFailure };
-            entities.push(entitiesStore[id].attributes as T);
-          }
-
-          // Get the included data if it exists in the response
-          let included: JsonApiResource[] | undefined;
-          if (indexMeta.included) {
-            included = indexMeta.included;
-          }
-
-          return {
-            entities,
-            indexTotal: indexMeta.total,
-            refetch,
-            fetchFailure,
-            included
-          };
+        const entities = [] as T[];
+        for (const id of indexMeta.ids) {
+          // If we're missing any of the entities we're supposed to have, return nothing so the
+          // index endpoint is queried again.
+          if (entitiesStore[id] == null) return { refetch, fetchFailure };
+          entities.push(entitiesStore[id].attributes as T);
         }
-      )
+
+        // Get the included data if it exists in the response
+        let included: JsonApiResource[] | undefined;
+        if (indexMeta.included) {
+          included = indexMeta.included;
+        }
+
+        return {
+          entities,
+          indexTotal: indexMeta.total,
+          refetch,
+          fetchFailure,
+          included
+        };
+      }
+    )
   )
 });
 
