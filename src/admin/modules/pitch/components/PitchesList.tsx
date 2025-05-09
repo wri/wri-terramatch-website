@@ -35,14 +35,14 @@ const filters = (countryChoices: Choice[]) => [
     key="i"
     label="Intervention Type"
     className="select-page-admin"
-    source="restoration_intervention_types"
+    source="restorationInterventionTypes"
     choices={optionToChoices(getRestorationInterventionTypeOptions())}
   />,
   <SelectInput
     key="c"
     label="Project country"
     className="select-page-admin"
-    source="project_country"
+    source="projectCountry"
     choices={countryChoices}
   />
 ];
@@ -64,7 +64,7 @@ const ApplicationDataGrid = () => {
     <Datagrid rowClick={"show"}>
       <TextField source="project_name" label="Project Name" sortable />
       <ReferenceField
-        source="organisation_id"
+        source="organisationId"
         label="Organization"
         reference={modules.organisation.ResourceName}
         link="show"
@@ -72,12 +72,12 @@ const ApplicationDataGrid = () => {
         <TextField source="name" />
       </ReferenceField>
       <SimpleChipFieldArray
-        source="restoration_intervention_types"
+        source="restorationInterventionTypes"
         label="Restoration Intervention Types"
         choices={optionToChoices(getRestorationInterventionTypeOptions())}
       />
-      <SelectField source="project_country" label="Countries" choices={countryChoices} />
-      <DateField source="created_at" label="Date Added" locales="en-GB" />
+      <SelectField source="projectCountry" label="Countries" choices={countryChoices} />
+      <DateField source="createdAt" label="Date Added" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>

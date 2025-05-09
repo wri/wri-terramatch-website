@@ -1,67 +1,43 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
+import { loadProjectPitch, loadProjectPitchesAdmin } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
-  fetchGetV2AdminProjectPitches,
   fetchGetV2AdminProjectPitchesExport,
-  fetchGetV2ProjectPitchesUUID,
   fetchPatchV2ProjectPitchesUUID,
-  GetV2AdminProjectPitchesError,
   GetV2AdminProjectPitchesExportError,
-  GetV2ProjectPitchesUUIDError,
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { projectPitchesListResult, raConnectionProps } from "../utils/listing";
 
 export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
 }
 
-export const pitchesSortableList: string[] = [
-  "organisation_id",
-  "project_name",
-  "project_objectives",
-  "project_country",
-  "project_county_district",
-  "restoration_intervention_types",
-  "total_hectares",
-  "total_trees",
-  "capacity_building_needs",
-  "created_at",
-  "updated_at",
-  "deleted_at"
-];
-
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminProjectPitches({
-        queryParams: raListParamsToQueryParams(params, pitchesSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminProjectPitchesError);
+    const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
+    return projectPitchesListResult(connection);
   },
 
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ProjectPitchesUUID({
-        //@ts-ignore
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ProjectPitchesUUIDError);
+    const { requestFailed, projectPitch } = await loadProjectPitch({ uuid: params.id });
+    console.log("getOne response", projectPitch, requestFailed);
+    if (requestFailed != null) {
+      throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
     }
+    console.log("response v3", projectPitch);
+
+    return { data: { ...projectPitch.attributes, id: projectPitch.attributes.uuid } };
   },
 
   //@ts-ignore

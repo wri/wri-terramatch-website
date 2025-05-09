@@ -91,7 +91,7 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   included?: JsonApiResource[];
 };
 
-type EntityIndexFilterKey = keyof Omit<
+export type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
