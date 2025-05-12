@@ -202,7 +202,7 @@ export const useDashboardData = (filters: any) => {
         {
           ...prev[1],
           value: projectFullDto.totalHectaresRestoredSum
-            ? `${projectFullDto.totalHectaresRestoredSum.toLocaleString()} ha`
+            ? `${projectFullDto.totalHectaresRestoredSum.toFixed(0).toLocaleString()} ha`
             : "-"
         },
         {
