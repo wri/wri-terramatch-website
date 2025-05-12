@@ -16,6 +16,16 @@ type Objetive = {
   landTenure: string;
 };
 
+interface TotalSectionHeader {
+  country_name: string;
+  total_enterprise_count: number;
+  total_entries: number;
+  total_hectares_restored: number;
+  total_hectares_restored_goal: number;
+  total_non_profit_count: number;
+  total_trees_restored: number;
+  total_trees_restored_goal: number;
+}
 export interface ChartDataItem {
   name: string;
   [key: string]: number | string;
@@ -395,11 +405,11 @@ const getRestorationStrategyOptions = {
 };
 
 export const parseHectaresUnderRestorationData = (
-  totalHectaresRestored: number,
+  totalSectionHeader: TotalSectionHeader,
   dashboardVolunteersSurvivalRate: DashboardVolunteersSurvivalRate,
   hectaresUnderRestoration: HectaresUnderRestoration
 ): HectaresUnderRestorationData => {
-  if (!totalHectaresRestored || !dashboardVolunteersSurvivalRate || !hectaresUnderRestoration) {
+  if (!totalSectionHeader || !dashboardVolunteersSurvivalRate || !hectaresUnderRestoration) {
     return {
       totalSection: {
         totalHectaresRestored: 0,
@@ -409,6 +419,7 @@ export const parseHectaresUnderRestorationData = (
       graphicTargetLandUseTypes: []
     };
   }
+  const { total_hectares_restored } = totalSectionHeader;
   const { number_of_sites } = dashboardVolunteersSurvivalRate;
 
   const objectToArray = (obj: Record<string, number> = {}): ParsedDataItem[] => {
@@ -419,9 +430,9 @@ export const parseHectaresUnderRestorationData = (
   };
 
   const formatValueText = (value: number): string => {
-    if (!totalHectaresRestored) return "0 ha (0%)";
+    if (!total_hectares_restored) return "0 ha (0%)";
 
-    const percentage = (value / totalHectaresRestored) * 100;
+    const percentage = (value / total_hectares_restored) * 100;
 
     // Special handling for very small percentages
     if (percentage < 0.1 && percentage > 0) {
@@ -473,7 +484,7 @@ export const parseHectaresUnderRestorationData = (
 
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
     item => {
-      const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
+      const adjustedValue = total_hectares_restored < item.value ? total_hectares_restored : item.value;
       return {
         label: getLandUseTypeTitle(item.label),
         value: adjustedValue,
@@ -484,7 +495,7 @@ export const parseHectaresUnderRestorationData = (
 
   return {
     totalSection: {
-      totalHectaresRestored: Number((totalHectaresRestored ?? 0).toFixed(0)),
+      totalHectaresRestored: total_hectares_restored ?? 0,
       numberOfSites: number_of_sites ?? 0
     },
     restorationStrategiesRepresented,
