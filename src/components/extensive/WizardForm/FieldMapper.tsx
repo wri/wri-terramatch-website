@@ -13,6 +13,7 @@ import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTabl
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import FinancialTableInput from "@/components/elements/Inputs/FinancialTableInput/FinancialTableInput";
 import Input from "@/components/elements/Inputs/Input/Input";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
@@ -24,7 +25,6 @@ import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/R
 import { MapAreaProvider } from "@/context/mapArea.provider";
 
 import { FieldType, FormField } from "./types";
-
 interface FieldMapperProps {
   field: FormField;
   formHook: UseFormReturn<FieldValues, any>;
@@ -225,6 +225,17 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
         <RHFOwnershipStakeDataTable
           {...field.fieldProps}
           {...sharedProps}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
+    case FieldType.FinancialTableInput:
+      return (
+        <FinancialTableInput
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
           control={formHook.control}
           onChangeCapture={onChange}
         />
