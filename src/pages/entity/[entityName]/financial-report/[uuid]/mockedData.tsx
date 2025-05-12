@@ -9,7 +9,7 @@ export const MOCKED_FINANCIAL_REPORT_TITLE = "Financial Report";
 
 export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
   {
-    title: "Financial Year Settings",
+    title: "Financial Collection",
     subtitle:
       "The settings below will affect how your financial data is organized and displayed throughout the dashboard.",
     fields: [
