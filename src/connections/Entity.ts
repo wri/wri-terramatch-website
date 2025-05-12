@@ -153,13 +153,14 @@ const entityIsLoaded =
   };
 
 const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpdateData>(
-  entityName: U["type"]
+  entityName: U["type"],
+  requireFullEntity: boolean = true
 ): Connection<EntityConnection<T, U>, EntityConnectionProps> => ({
   load: (connection, props) => {
-    if (!entityIsLoaded(true)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
+    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(specificEntityParams(entityName, props.uuid));
   },
 
-  isLoaded: entityIsLoaded(true),
+  isLoaded: entityIsLoaded(requireFullEntity),
 
   selector: selectorCache(
     ({ uuid }) => uuid,
@@ -298,8 +299,13 @@ export const loadProjectReportIndex = connectionLoader(indexProjectReportConnect
 const fullProjectReportConnection = createGetEntityConnection<ProjectReportFullDto, ProjectReportUpdateData>(
   "projectReports"
 );
+const lightProjectReportConnection = createGetEntityConnection<ProjectReportLightDto, ProjectReportUpdateData>(
+  "projectReports",
+  false
+);
 export const loadFullProjectReport = connectionLoader(fullProjectReportConnection);
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
+export const useLightProjectReport = connectionHook(lightProjectReportConnection);
 export const deleteProjectReport = connectedResourceDeleter(
   "projectReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("projectReports", uuid)),
@@ -311,8 +317,13 @@ const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
 export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
 const fullSiteReportConnection = createGetEntityConnection<SiteReportFullDto, SiteReportUpdateData>("siteReports");
+const lightSiteReportConnection = createGetEntityConnection<SiteReportLightDto, SiteReportUpdateData>(
+  "siteReports",
+  false
+);
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
+export const useLightSiteReport = connectionHook(lightSiteReportConnection);
 export const deleteSiteReport = connectedResourceDeleter(
   "siteReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
@@ -326,8 +337,13 @@ export const useNurseryReportIndex = connectionHook(indexNurseryReportConnection
 const fullNurseryReportConnection = createGetEntityConnection<NurseryReportFullDto, NurseryReportUpdateData>(
   "nurseryReports"
 );
+const lightNurseryReportConnection = createGetEntityConnection<NurseryReportLightDto, NurseryReportUpdateData>(
+  "nurseryReports",
+  false
+);
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
+export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
 export const deleteNurseryReport = connectedResourceDeleter(
   "nurseryReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),

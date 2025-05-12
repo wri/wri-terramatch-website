@@ -17,11 +17,13 @@ export const taskDataProvider: DataProvider = {
 
   // @ts-expect-error until the types for this provider can be sorted out
   async getOne(_, params) {
-    const { task, fetchFailure } = await loadTask({ uuid: params.id });
+    const { task, projectReportUuid, siteReportUuids, nurseryReportUuids, fetchFailure } = await loadTask({
+      uuid: params.id
+    });
     if (fetchFailure != null) {
       throw v3ErrorForRA("Task get fetch failed", fetchFailure);
     }
 
-    return { data: { ...task, id: task!.uuid } };
+    return { data: { ...task, projectReportUuid, siteReportUuids, nurseryReportUuids, id: task!.uuid } };
   }
 };

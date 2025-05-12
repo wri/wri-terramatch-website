@@ -33,6 +33,9 @@ export type TaskIndexProps = {
 
 export type TaskConnection = {
   task?: TaskDto;
+  projectReportUuid?: string;
+  siteReportUuids?: string[];
+  nurseryReportUuids?: string[];
   fetchFailure?: PendingErrorState | null;
 };
 
@@ -109,10 +112,23 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
     props =>
       createSelector(
         [({ tasks }: ApiDataStore) => tasks, taskGetFetchFailed(taskParams(props))],
-        (tasks, getFailure) => ({
-          task: tasks[props.uuid]?.attributes,
-          fetchFailure: getFailure
-        })
+        (tasks, fetchFailure) => {
+          const taskResponse = tasks[props.uuid];
+          // If we don't have relationships loaded, we haven't pulled the individual GET endpoint for this
+          // task yet, so we don't have the sideloaded reports.
+          if (taskResponse?.relationships == null) return { fetchFailure };
+
+          const projectReportUuid = taskResponse?.relationships?.["projectReport"]?.[0]?.id;
+          const siteReportUuids = (taskResponse?.relationships?.["siteReports"] ?? []).map(({ id }) => id!);
+          const nurseryReportUuids = (taskResponse?.relationships?.["nurseryReports"] ?? []).map(({ id }) => id!);
+          return {
+            task: taskResponse?.attributes,
+            projectReportUuid,
+            siteReportUuids,
+            nurseryReportUuids,
+            fetchFailure
+          };
+        }
       )
   )
 };

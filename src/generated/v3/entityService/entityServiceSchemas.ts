@@ -20,6 +20,160 @@ export type TaskDto = {
   updatedAt: string;
 };
 
+export type ProjectReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  pctSurvivalToDate: number | null;
+};
+
+export type SiteReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated site name
+   */
+  siteName: string | null;
+  /**
+   * The associated site uuid
+   */
+  siteUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  nothingToReport: boolean | null;
+};
+
+export type NurseryReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string;
+  frameworkUuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  title: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  nothingToReport: boolean | null;
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -222,160 +376,6 @@ export type NurseryLightDto = {
    * @format date-time
    */
   updatedAt: string;
-};
-
-export type ProjectReportLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  frameworkKey: string;
-  /**
-   * The associated organisation name
-   */
-  organisationName: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
-  projectName: string | null;
-  projectUuid: string | null;
-  status: string;
-  /**
-   * @format date-time
-   */
-  submittedAt: string | null;
-  /**
-   * The associated task uuid
-   */
-  taskUuid: string | null;
-  title: string | null;
-  updateRequestStatus: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  pctSurvivalToDate: number | null;
-};
-
-export type NurseryReportLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  /**
-   * The associated nursery name
-   */
-  nurseryName: string | null;
-  /**
-   * The associated nursery uuid
-   */
-  nurseryUuid: string | null;
-  frameworkKey: string;
-  frameworkUuid: string;
-  status: string;
-  updateRequestStatus: string;
-  /**
-   * The associated project name
-   */
-  projectName: string | null;
-  /**
-   * The associated project uuid
-   */
-  projectUuid: string | null;
-  /**
-   * The associated organisation name
-   */
-  organisationName: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  /**
-   * @format date-time
-   */
-  submittedAt: string | null;
-  taskUuid: string | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  title: string | null;
-  reportTitle: string | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  nothingToReport: boolean | null;
-};
-
-export type SiteReportLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  /**
-   * The associated site name
-   */
-  siteName: string | null;
-  /**
-   * The associated site uuid
-   */
-  siteUuid: string | null;
-  frameworkKey: string;
-  frameworkUuid: string;
-  status: string;
-  updateRequestStatus: string;
-  /**
-   * The associated project name
-   */
-  projectName: string | null;
-  /**
-   * The associated project uuid
-   */
-  projectUuid: string | null;
-  /**
-   * The associated organisation name
-   */
-  organisationName: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  /**
-   * @format date-time
-   */
-  submittedAt: string | null;
-  taskUuid: string | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  reportTitle: string | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  nothingToReport: boolean | null;
 };
 
 export type ProjectFullDto = {

@@ -1,4 +1,5 @@
 export const STATUS_MAP: { [key: string]: string } = {
+  due: "Due",
   approved: "Approved",
   submitted: "Submitted",
   draft: "Draft",
