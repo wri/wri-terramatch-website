@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { PaginatedConnectionProps } from "@/connections/util/types";
 import {
   entityDelete,
   entityGet,
@@ -95,11 +96,7 @@ type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
-export type EntityIndexConnectionProps = {
-  pageSize?: number;
-  pageNumber?: number;
-  sortField?: string;
-  sortDirection?: "ASC" | "DESC";
+export type EntityIndexConnectionProps = PaginatedConnectionProps & {
   filter?: Partial<Record<EntityIndexFilterKey, string>>;
   sideloads?: EntityIndexQueryParams["sideloads"];
 };
@@ -276,7 +273,7 @@ export const deleteSite = connectedResourceDeleter(
   uuid => entityDeleteFetchFailed(specificEntityParams("sites", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("sites", uuid)))
 );
-const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
+export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
 
@@ -289,7 +286,7 @@ export const deleteNursery = connectedResourceDeleter(
   uuid => entityDeleteFetchFailed(specificEntityParams("nurseries", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseries", uuid)))
 );
-const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
+export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
 

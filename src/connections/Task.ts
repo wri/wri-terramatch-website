@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { PaginatedConnectionProps } from "@/connections/util/types";
 import { taskGet, taskIndex, TaskIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { TaskFullDto, TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
@@ -23,12 +24,8 @@ type TaskIndexFilterKey = keyof Omit<
   TaskIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
 >;
-export type TaskIndexProps = {
-  pageSize?: number;
-  pageNumber?: number;
+export type TaskIndexProps = PaginatedConnectionProps & {
   filter?: Partial<Record<TaskIndexFilterKey, string>>;
-  sortField?: string;
-  sortDirection?: "ASC" | "DESC";
 };
 
 export type TaskConnection = {
