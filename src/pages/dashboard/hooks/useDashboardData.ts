@@ -98,7 +98,7 @@ export const useDashboardData = (filters: any) => {
     data: totalSectionHeader,
     refetch: refetchTotalSectionHeader,
     isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters });
+  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters && !filters.uuid });
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
     { enabled: !!filters }
@@ -177,12 +177,44 @@ export const useDashboardData = (filters: any) => {
   }, [topData]);
 
   useEffect(() => {
-    if (isLoading) showLoader();
-    else hideLoader();
-  }, [isLoading, showLoader, hideLoader]);
+    if (filters.uuid) {
+      if (!projectLoaded) {
+        showLoader();
+      } else {
+        hideLoader();
+      }
+    } else {
+      if (isLoading) {
+        showLoader();
+      } else {
+        hideLoader();
+      }
+    }
+  }, [isLoading, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
-    if (totalSectionHeader) {
+    if (filters.uuid && projectFullDto) {
+      setDashboardHeader(prev => [
+        {
+          ...prev[0],
+          value: projectFullDto.treesPlantedCount ? projectFullDto.treesPlantedCount.toLocaleString() : "-"
+        },
+        {
+          ...prev[1],
+          value: projectFullDto.totalHectaresRestoredSum
+            ? `${projectFullDto.totalHectaresRestoredSum.toLocaleString()} ha`
+            : "-"
+        },
+        {
+          ...prev[2],
+          value: projectFullDto.totalJobsCreated ? projectFullDto.totalJobsCreated.toLocaleString() : "-"
+        }
+      ]);
+      setNumberTreesPlanted({
+        value: projectFullDto.treesPlantedCount ?? 0,
+        totalValue: projectFullDto.treesGrownGoal ?? 0
+      });
+    } else if (totalSectionHeader) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
@@ -206,7 +238,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: totalSectionHeader.total_trees_restored_goal
       });
     }
-  }, [totalSectionHeader]);
+  }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
