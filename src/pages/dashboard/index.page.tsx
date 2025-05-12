@@ -713,7 +713,7 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          totalSectionHeader,
+          projectFullDto?.totalHectaresRestoredSum ?? 0,
           dashboardVolunteersSurvivalRate,
           hectaresUnderRestoration
         )}
