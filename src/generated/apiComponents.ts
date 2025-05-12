@@ -26969,68 +26969,6 @@ export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCou
   );
 };
 
-export type GetV2DashboardCountriesQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardCountriesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardCountriesResponse = {
-  data?: {
-    id?: number;
-    country_slug?: string;
-    data?: {
-      label?: string;
-      icon?: string;
-    };
-  }[];
-};
-
-export type GetV2DashboardCountriesVariables = {
-  queryParams?: GetV2DashboardCountriesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
- */
-export const fetchGetV2DashboardCountries = (variables: GetV2DashboardCountriesVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardCountriesResponse,
-    GetV2DashboardCountriesError,
-    undefined,
-    {},
-    GetV2DashboardCountriesQueryParams,
-    {}
-  >({ url: "/v2/dashboard/countries", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all countries and metrics related to id of country, country slug, label of country, and icon data.
- */
-export const useGetV2DashboardCountries = <TData = GetV2DashboardCountriesResponse>(
-  variables: GetV2DashboardCountriesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardCountriesResponse, GetV2DashboardCountriesError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardCountriesResponse, GetV2DashboardCountriesError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/countries", operationId: "getV2DashboardCountries", variables }),
-    ({ signal }) => fetchGetV2DashboardCountries({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardGetProjectsQueryParams = {
   /**
    * search term to use on the collection
@@ -30546,11 +30484,6 @@ export type QueryOperation =
       path: "/v2/dashboard/active-countries";
       operationId: "getV2DashboardActiveCountries";
       variables: GetV2DashboardActiveCountriesVariables;
-    }
-  | {
-      path: "/v2/dashboard/countries";
-      operationId: "getV2DashboardCountries";
-      variables: GetV2DashboardCountriesVariables;
     }
   | {
       path: "/v2/dashboard/get-projects";
