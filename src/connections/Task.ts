@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
 import { taskGet, taskIndex, TaskIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import { TaskDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TaskFullDto, TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
@@ -14,7 +14,7 @@ import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type TaskIndexConnection = {
-  tasks?: TaskDto[];
+  tasks?: TaskLightDto[];
   indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
 };
@@ -32,7 +32,7 @@ export type TaskIndexProps = {
 };
 
 export type TaskConnection = {
-  task?: TaskDto;
+  task?: TaskFullDto;
   projectReportUuid?: string;
   siteReportUuids?: string[];
   nurseryReportUuids?: string[];
@@ -66,8 +66,10 @@ const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQue
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
 
 const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid } });
-const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) =>
-  uuid == null || fetchFailure != null || task != null;
+const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
+  if (uuid == null || fetchFailure != null) return true;
+  return task != null && !task.lightResource;
+};
 
 const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
   load: (connection, props) => {
@@ -88,7 +90,7 @@ const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
         (indexMeta, tasksStore, fetchFailure) => {
           if (indexMeta == null) return { fetchFailure };
 
-          const tasks: TaskDto[] = [];
+          const tasks: TaskLightDto[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
             tasks.push(tasksStore[id].attributes);
@@ -114,15 +116,13 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
         [({ tasks }: ApiDataStore) => tasks, taskGetFetchFailed(taskParams(props))],
         (tasks, fetchFailure) => {
           const taskResponse = tasks[props.uuid];
-          // If we don't have relationships loaded, we haven't pulled the individual GET endpoint for this
-          // task yet, so we don't have the sideloaded reports.
-          if (taskResponse?.relationships == null) return { fetchFailure };
+          if (taskResponse == null) return { fetchFailure };
 
           const projectReportUuid = taskResponse?.relationships?.["projectReport"]?.[0]?.id;
           const siteReportUuids = (taskResponse?.relationships?.["siteReports"] ?? []).map(({ id }) => id!);
           const nurseryReportUuids = (taskResponse?.relationships?.["nurseryReports"] ?? []).map(({ id }) => id!);
           return {
-            task: taskResponse?.attributes,
+            task: taskResponse?.attributes as TaskFullDto,
             projectReportUuid,
             siteReportUuids,
             nurseryReportUuids,

@@ -120,7 +120,7 @@ function ShowReports() {
         {t("Task Due Date:")} {format(new Date(task.dueAt))}
       </Typography>
       <Typography>
-        {t("Trees Planted:")} {task.number_of_trees_planted}
+        {t("Trees Planted:")} {task.treesPlantedCount}
       </Typography>
 
       <TableContainer component={Paper} sx={{ marginTop: 4 }}>

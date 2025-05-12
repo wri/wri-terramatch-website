@@ -3,9 +3,12 @@
  *
  * @version 1.0
  */
-export type TaskDto = {
+export type TaskLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
-  projectUuid: string;
   projectName: string;
   organisationName: string;
   frameworkKey: string;
@@ -18,6 +21,27 @@ export type TaskDto = {
    * @format date-time
    */
   updatedAt: string;
+};
+
+export type TaskFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number;
 };
 
 export type ProjectReportLightDto = {

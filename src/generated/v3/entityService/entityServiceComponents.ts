@@ -84,7 +84,7 @@ export type TaskIndexResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.TaskDto;
+    attributes?: Schemas.TaskLightDto;
   }[];
 };
 
@@ -152,7 +152,7 @@ export type TaskGetResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.TaskDto;
+    attributes?: Schemas.TaskFullDto;
     relationships?: {
       projectReport?: {
         /**

@@ -1,6 +1,7 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
-  TaskDto,
+  TaskLightDto,
+  TaskFullDto,
   ProjectReportLightDto,
   ProjectReportFullDto,
   SiteReportLightDto,
@@ -46,7 +47,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 ] as const;
 
 export type EntityServiceApiResources = {
-  tasks: StoreResourceMap<TaskDto>;
+  tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
