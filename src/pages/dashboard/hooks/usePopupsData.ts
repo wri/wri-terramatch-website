@@ -50,7 +50,7 @@ export function usePopupData(event: any) {
       data.push({
         key: "total_hectares_restored",
         title: "Total Hectares Restored",
-        value: projectFullDto.totalHectaresRestoredSum
+        value: projectFullDto.totalHectaresRestoredSum.toFixed(0)
       });
     }
     return { data };
