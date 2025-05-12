@@ -42,21 +42,32 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
           ],
           required: false
         }
-      }
-    ]
-  },
-  {
-    title: "Profit Analysis",
-    subtitle:
-      "Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes.",
-    fields: [
+      },
       {
-        label: "",
+        label: "Profit Analysis",
+        description:
+          "Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes.",
         name: "dropdown_input",
         placeholder: "Select ...",
         type: FieldType.FinancialTableInput,
         validation: yup.array().required(),
         fieldProps: {
+          fields: [
+            {
+              name: "revenue",
+              label: "Revenue",
+              type: FieldType.Input,
+              validation: yup.number().required(),
+              fieldProps: { type: "number" as const }
+            },
+            {
+              name: "expenses",
+              label: "Expenses",
+              type: FieldType.Input,
+              validation: yup.number().required(),
+              fieldProps: { type: "number" as const }
+            }
+          ],
           value: [
             {
               uuid: "1",
@@ -85,22 +96,6 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               revenue: "0",
               expenses: "0",
               netProfit: "$0"
-            }
-          ],
-          fields: [
-            {
-              name: "revenue",
-              label: "Revenue",
-              type: FieldType.Input,
-              validation: yup.number().required(),
-              fieldProps: { type: "number" as const }
-            },
-            {
-              name: "expenses",
-              label: "Expenses",
-              type: FieldType.Input,
-              validation: yup.number().required(),
-              fieldProps: { type: "number" as const }
             }
           ],
           tableColumns: [
@@ -151,21 +146,32 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
             }
           ]
         }
-      }
-    ]
-  },
-  {
-    title: "Current Ratio",
-    subtitle:
-      "Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations.",
-    fields: [
+      },
       {
-        label: "",
+        label: "Current Ratio",
+        description:
+          "Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations.",
         name: "dropdown_input",
         placeholder: "Select ...",
         type: FieldType.FinancialTableInput,
         validation: yup.array().required(),
         fieldProps: {
+          fields: [
+            {
+              name: "currentAssets",
+              label: "Current Assets",
+              type: FieldType.Input,
+              validation: yup.number().required(),
+              fieldProps: { type: "number" as const }
+            },
+            {
+              name: "currentLiabilities",
+              label: "Current Liabilities",
+              type: FieldType.Input,
+              validation: yup.number().required(),
+              fieldProps: { type: "number" as const }
+            }
+          ],
           value: [
             {
               uuid: "1",
@@ -194,22 +200,6 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               currentAssets: "0",
               currentLiabilities: "0",
               currentRatio: "$0"
-            }
-          ],
-          fields: [
-            {
-              name: "currentAssets",
-              label: "Current Assets",
-              type: FieldType.Input,
-              validation: yup.number().required(),
-              fieldProps: { type: "number" as const }
-            },
-            {
-              name: "currentLiabilities",
-              label: "Current Liabilities",
-              type: FieldType.Input,
-              validation: yup.number().required(),
-              fieldProps: { type: "number" as const }
             }
           ],
           tableColumns: [
@@ -260,21 +250,34 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
             }
           ]
         }
-      }
-    ]
-  },
-  {
-    title: "Documentation",
-    subtitle:
-      "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.",
-    fields: [
+      },
       {
-        label: "",
+        label: "Documentation",
+        description:
+          "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.",
         name: "dropdown_input",
         placeholder: "Select ...",
         type: FieldType.FinancialTableInput,
         validation: yup.array().required(),
         fieldProps: {
+          fields: [
+            {
+              name: "currentAssets",
+              label: "Current Assets",
+              type: FieldType.Input,
+              validation: yup.number().required(),
+              fieldProps: { type: "number" as const }
+            },
+            {
+              name: "currentLiabilities",
+              label: "Current Liabilities",
+              type: FieldType.TextArea,
+              validation: yup.string().required(),
+              fieldProps: {
+                rows: 2
+              }
+            }
+          ],
           value: [
             {
               uuid: "1",
@@ -334,24 +337,6 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               currentLiabilities: "0",
               currentRatio: "$0",
               status: "Not Set"
-            }
-          ],
-          fields: [
-            {
-              name: "currentAssets",
-              label: "Current Assets",
-              type: FieldType.Input,
-              validation: yup.number().required(),
-              fieldProps: { type: "number" as const }
-            },
-            {
-              name: "currentLiabilities",
-              label: "Current Liabilities",
-              type: FieldType.TextArea,
-              validation: yup.string().required(),
-              fieldProps: {
-                rows: 2
-              }
             }
           ],
           tableColumns: [
