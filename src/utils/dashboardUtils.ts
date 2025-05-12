@@ -44,18 +44,6 @@ interface Option {
   value: string;
 }
 
-interface DashboardVolunteersSurvivalRate {
-  enterprise_survival_rate: number;
-  men_volunteers: number;
-  non_profit_survival_rate: number;
-  non_youth_volunteers: number;
-  number_of_nurseries: number;
-  number_of_sites: number;
-  total_volunteers: number;
-  women_volunteers: number;
-  youth_volunteers: number;
-}
-
 interface HectaresUnderRestoration {
   restoration_strategies_represented: Record<string, number>;
   target_land_use_types_represented: Record<string, number>;
@@ -396,10 +384,10 @@ const getRestorationStrategyOptions = {
 
 export const parseHectaresUnderRestorationData = (
   totalHectaresRestored: number,
-  dashboardVolunteersSurvivalRate: DashboardVolunteersSurvivalRate,
+  numberOfSites: number,
   hectaresUnderRestoration: HectaresUnderRestoration
 ): HectaresUnderRestorationData => {
-  if (!totalHectaresRestored || !dashboardVolunteersSurvivalRate || !hectaresUnderRestoration) {
+  if (totalHectaresRestored === undefined || numberOfSites === undefined || !hectaresUnderRestoration) {
     return {
       totalSection: {
         totalHectaresRestored: 0,
@@ -409,7 +397,6 @@ export const parseHectaresUnderRestorationData = (
       graphicTargetLandUseTypes: []
     };
   }
-  const { number_of_sites } = dashboardVolunteersSurvivalRate;
 
   const objectToArray = (obj: Record<string, number> = {}): ParsedDataItem[] => {
     return Object.entries(obj).map(([name, value]) => ({
@@ -485,7 +472,7 @@ export const parseHectaresUnderRestorationData = (
   return {
     totalSection: {
       totalHectaresRestored: Number((totalHectaresRestored ?? 0).toFixed(0)),
-      numberOfSites: number_of_sites ?? 0
+      numberOfSites: numberOfSites ?? 0
     },
     restorationStrategiesRepresented,
     graphicTargetLandUseTypes
