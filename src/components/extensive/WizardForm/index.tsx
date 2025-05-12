@@ -217,6 +217,7 @@ function WizardForm(props: WizardFormProps) {
                 ? props.nextButtonText ?? t("Save and continue")
                 : props.submitButtonText ?? t("Submit"),
             onClick: formHook.handleSubmit(onSubmitStep),
+            className: "py-3",
             disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
           }}
         />
@@ -256,7 +257,8 @@ function WizardForm(props: WizardFormProps) {
           submitButtonProps={{
             children: t("Submit"),
             onClick: formHook.handleSubmit(onSubmitStep),
-            disabled: props.submitButtonDisable
+            disabled: props.submitButtonDisable,
+            className: "py-3"
           }}
         />
       </div>

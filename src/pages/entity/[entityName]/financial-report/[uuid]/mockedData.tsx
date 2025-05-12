@@ -63,32 +63,28 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               year: 2022,
               revenue: "0",
               expenses: "0",
-              netProfit: "$0",
-              profitMargin: "0.0%"
+              netProfit: "$0"
             },
             {
               uuid: "2",
               year: 2023,
               revenue: "0",
               expenses: "0",
-              netProfit: "$0",
-              profitMargin: "0.0%"
+              netProfit: "$0"
             },
             {
               uuid: "3",
               year: 2024,
               revenue: "0",
               expenses: "0",
-              netProfit: "$0",
-              profitMargin: "0.0%"
+              netProfit: "$0"
             },
             {
               uuid: "4",
               year: 2025,
               revenue: "0",
               expenses: "0",
-              netProfit: "$0",
-              profitMargin: "0.0%"
+              netProfit: "$0"
             }
           ],
           fields: [
@@ -111,7 +107,10 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
             {
               header: "Year",
               accessorKey: "year",
-              enableSorting: false
+              enableSorting: false,
+              meta: {
+                width: "15%"
+              }
             },
             {
               header: "Revenue",
@@ -145,12 +144,10 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               header: "Net Profit",
               accessorKey: "netProfit",
               enableSorting: false,
+              meta: {
+                width: "22.5%"
+              },
               cell: ({ row }: { row: any }) => <Text variant="text-14-semibold">{row.original.netProfit}</Text>
-            },
-            {
-              header: "Profit Margin",
-              accessorKey: "profitMargin",
-              enableSorting: false
             }
           ]
         }
@@ -175,32 +172,28 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               year: 2022,
               currentAssets: "0",
               currentLiabilities: "0",
-              currentRatio: "$0",
-              status: "Not Set"
+              currentRatio: "$0"
             },
             {
               uuid: "2",
               year: 2023,
               currentAssets: "0",
               currentLiabilities: "0",
-              currentRatio: "$0",
-              status: "Not Set"
+              currentRatio: "$0"
             },
             {
               uuid: "3",
               year: 2024,
               currentAssets: "0",
               currentLiabilities: "0",
-              currentRatio: "$0",
-              status: "Not Set"
+              currentRatio: "$0"
             },
             {
               uuid: "4",
               year: 2025,
               currentAssets: "0",
               currentLiabilities: "0",
-              currentRatio: "$0",
-              status: "Not Set"
+              currentRatio: "$0"
             }
           ],
           fields: [
@@ -223,11 +216,14 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
             {
               header: "Year",
               accessorKey: "year",
-              enableSorting: false
+              enableSorting: false,
+              meta: {
+                width: "15%"
+              }
             },
             {
-              header: "Current Assets",
-              accessorKey: "currentAssets",
+              header: "Assets",
+              accessorKey: "assets",
               enableSorting: false,
               cell: ({ row }: { row: any }) => (
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
@@ -240,8 +236,8 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               )
             },
             {
-              header: "Current Liabilities",
-              accessorKey: "currentLiabilities",
+              header: "Liabilities",
+              accessorKey: "liabilities",
               enableSorting: false,
               cell: ({ row }: { row: any }) => (
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
@@ -257,17 +253,10 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               header: "Current Ratio",
               accessorKey: "currentRatio",
               enableSorting: false,
+              meta: {
+                width: "22.5%"
+              },
               cell: ({ row }: { row: any }) => <Text variant="text-14-semibold">{row.original.currentRatio}</Text>
-            },
-            {
-              header: "Status",
-              accessorKey: "status",
-              enableSorting: false,
-              cell: ({ row }: { row: any }) => (
-                <div className="text-12 w-fit rounded bg-tertiary-200 px-2 py-1 text-tertiary-600">
-                  {row.original.status}
-                </div>
-              )
             }
           ]
         }
