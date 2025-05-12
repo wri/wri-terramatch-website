@@ -361,7 +361,7 @@ export const STEPS_MOCKED_DATA_FINANCIAL_REPORT: FormStepSchema[] = [
               enableSorting: false
             },
             {
-              header: "Current Assets",
+              header: "Financial Documents",
               accessorKey: "currentAssets",
               enableSorting: false,
               cell: ({ row }: { row: any }) => (
