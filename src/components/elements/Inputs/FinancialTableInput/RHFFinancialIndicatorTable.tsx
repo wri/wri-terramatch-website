@@ -299,7 +299,7 @@ const RHFFinancialIndicatorsDataTable = ({
             value={documentationData[row.index]?.[columnKey]}
             onChange={e => {
               handleChange(
-                { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
+                { value: e.target.value, row: row.index, cell: columnOrderIndex },
                 setDocumentationData,
                 documentationColumnMap,
                 currencyInput,
@@ -402,6 +402,8 @@ const RHFFinancialIndicatorsDataTable = ({
   useEffect(() => {
     setResetTable(prev => prev + 1);
   }, [selectCurrency]);
+
+  console.log(documentationData);
 
   return (
     <>
