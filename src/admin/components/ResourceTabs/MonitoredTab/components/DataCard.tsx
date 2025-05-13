@@ -109,7 +109,12 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     header: "Plant Start Date",
     cell: (props: any) => {
       const value = props.getValue();
-      return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
+      if (!value || value === "-") return "-";
+      try {
+        return format(new Date(value), "dd/MM/yyyy");
+      } catch (e) {
+        return "-";
+      }
     },
     meta: { style: { width: "13.65%" } }
   }
