@@ -1,12 +1,10 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
-  ProjectPitchesIndexQueryParams,
-  ProjectPitchesIndexVariables,
-  AdminProjectPitchesIndexQueryParams,
-  AdminProjectPitchesIndexVariables,
-  ProjectPitchesGetUUIDIndexPathParams,
-  ProjectPitchesGetUUIDIndexVariables,
+  ProjectPitchIndexQueryParams,
+  ProjectPitchIndexVariables,
+  ProjectPitchGetPathParams,
+  ProjectPitchGetVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -27,59 +25,35 @@ import {
   TreeReportCountsFindVariables
 } from "./entityServiceComponents";
 
-export const projectPitchesIndexIsFetching = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
-  isFetchingSelector<ProjectPitchesIndexQueryParams, {}>({
+export const projectPitchIndexIsFetching = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
+  isFetchingSelector<ProjectPitchIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches",
     method: "get",
     ...variables
   });
 
-export const projectPitchesIndexFetchFailed = (variables: Omit<ProjectPitchesIndexVariables, "body">) =>
-  fetchFailedSelector<ProjectPitchesIndexQueryParams, {}>({
+export const projectPitchIndexFetchFailed = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
+  fetchFailedSelector<ProjectPitchIndexQueryParams, {}>({
     url: "/entities/v3/projectPitches",
     method: "get",
     ...variables
   });
 
-export const projectPitchesIndexIndexMeta = (
+export const projectPitchIndexIndexMeta = (
   resource: ResourceType,
-  variables: Omit<ProjectPitchesIndexVariables, "body">
+  variables: Omit<ProjectPitchIndexVariables, "body">
 ) =>
-  indexMetaSelector<ProjectPitchesIndexQueryParams, {}>({ url: "/entities/v3/projectPitches", resource, ...variables });
+  indexMetaSelector<ProjectPitchIndexQueryParams, {}>({ url: "/entities/v3/projectPitches", resource, ...variables });
 
-export const adminProjectPitchesIndexIsFetching = (variables: Omit<AdminProjectPitchesIndexVariables, "body">) =>
-  isFetchingSelector<AdminProjectPitchesIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches/admin",
-    method: "get",
-    ...variables
-  });
-
-export const adminProjectPitchesIndexFetchFailed = (variables: Omit<AdminProjectPitchesIndexVariables, "body">) =>
-  fetchFailedSelector<AdminProjectPitchesIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches/admin",
-    method: "get",
-    ...variables
-  });
-
-export const adminProjectPitchesIndexIndexMeta = (
-  resource: ResourceType,
-  variables: Omit<AdminProjectPitchesIndexVariables, "body">
-) =>
-  indexMetaSelector<AdminProjectPitchesIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches/admin",
-    resource,
-    ...variables
-  });
-
-export const projectPitchesGetUUIDIndexIsFetching = (variables: Omit<ProjectPitchesGetUUIDIndexVariables, "body">) =>
-  isFetchingSelector<{}, ProjectPitchesGetUUIDIndexPathParams>({
+export const projectPitchGetIsFetching = (variables: Omit<ProjectPitchGetVariables, "body">) =>
+  isFetchingSelector<{}, ProjectPitchGetPathParams>({
     url: "/entities/v3/projectPitches/{uuid}",
     method: "get",
     ...variables
   });
 
-export const projectPitchesGetUUIDIndexFetchFailed = (variables: Omit<ProjectPitchesGetUUIDIndexVariables, "body">) =>
-  fetchFailedSelector<{}, ProjectPitchesGetUUIDIndexPathParams>({
+export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariables, "body">) =>
+  fetchFailedSelector<{}, ProjectPitchGetPathParams>({
     url: "/entities/v3/projectPitches/{uuid}",
     method: "get",
     ...variables

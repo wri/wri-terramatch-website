@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
-import { loadProjectPitch, loadProjectPitchesAdmin } from "@/connections/ProjectPitch";
+import { loadProjectPitch, loadProjectPitches, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
@@ -11,33 +11,38 @@ import {
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
+import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
-import { projectPitchesListResult, raConnectionProps } from "../utils/listing";
+import { raConnectionProps } from "../utils/listing";
 
 export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
 }
 
+const projectPitchesListResult = ({ data, indexTotal }: ProjectsPitchesConnection) => ({
+  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })) as any,
+  total: indexTotal ?? 0
+});
+
 export const pitchDataProvider: PitchDataProvider = {
   async getList(_, params) {
-    const connection = await loadProjectPitchesAdmin(raConnectionProps(params));
+    const connection = await loadProjectPitches(raConnectionProps(params));
     if (connection.fetchFailure != null) {
       throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
     }
     return projectPitchesListResult(connection);
   },
 
+  //@ts-ignore
   async getOne(_, params) {
     const { requestFailed, projectPitch } = await loadProjectPitch({ uuid: params.id });
-    console.log("getOne response", projectPitch, requestFailed);
     if (requestFailed != null) {
       throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
     }
-    console.log("response v3", projectPitch);
 
-    return { data: { ...projectPitch.attributes, id: projectPitch.attributes.uuid } };
+    return { data: { ...projectPitch, id: projectPitch?.uuid } };
   },
 
   //@ts-ignore

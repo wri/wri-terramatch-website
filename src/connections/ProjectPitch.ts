@@ -1,32 +1,29 @@
 import { createSelector } from "reselect";
 
-import { EntityIndexFilterKey } from "@/connections/Entity";
 import {
-  adminProjectPitchesIndex,
-  EntityIndexQueryParams,
-  projectPitchesGetUUIDIndex
+  projectPitchGet,
+  projectPitchIndex,
+  ProjectPitchIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
-  adminProjectPitchesIndexFetchFailed,
-  adminProjectPitchesIndexIndexMeta,
-  projectPitchesGetUUIDIndexFetchFailed,
-  projectPitchesGetUUIDIndexIsFetching
+  projectPitchGetFetchFailed,
+  projectPitchGetIsFetching,
+  projectPitchIndexFetchFailed,
+  projectPitchIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-const projectPitchesSelector = () => (store: ApiDataStore) =>
-  store["projectPitches"] as StoreResourceMap<ProjectPitchDto>;
+const projectPitchesSelector = ({ projectPitches }: ApiDataStore) => projectPitches;
 
 type ProjectPitchConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  isSuccess: boolean;
-  projectPitch: ProjectPitchDto | any;
+  projectPitch: ProjectPitchDto | null;
 };
 
 type ProjectPitchConnectionProps = {
@@ -35,24 +32,23 @@ type ProjectPitchConnectionProps = {
 
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
   load: ({ projectPitch }, { uuid }) => {
-    if (!projectPitch) projectPitchesGetUUIDIndex({ pathParams: { uuid } });
+    if (projectPitch == null) projectPitchGet({ pathParams: { uuid } });
   },
 
-  isLoaded: ({ projectPitch }) => projectPitch !== undefined,
+  isLoaded: ({ projectPitch }) => projectPitch !== null,
   selector: selectorCache(
     ({ uuid }: ProjectPitchConnectionProps) => uuid,
     ({ uuid }: ProjectPitchConnectionProps) =>
       createSelector(
         [
-          projectPitchesGetUUIDIndexIsFetching({ pathParams: { uuid } }),
-          projectPitchesGetUUIDIndexFetchFailed({ pathParams: { uuid } }),
-          projectPitchesSelector()
+          projectPitchGetIsFetching({ pathParams: { uuid } }),
+          projectPitchGetFetchFailed({ pathParams: { uuid } }),
+          projectPitchesSelector
         ],
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          isSuccess: selector?.organisationId != null,
-          projectPitch: selector[uuid]
+          projectPitch: selector[uuid]?.attributes ?? null
         })
       )
   )
@@ -65,19 +61,24 @@ export type ProjectsPitchesConnection = {
   refetch: () => void;
 };
 
+type ProjectPitchIndexFilterKey = keyof Omit<
+  ProjectPitchIndexQueryParams,
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
+>;
+
 export type ProjectPitchIndexConnectionProps = {
   pageSize?: number;
   pageNumber?: number;
   sortField?: string;
   sortDirection?: "ASC" | "DESC";
-  filter?: Partial<Record<EntityIndexFilterKey, string>>;
+  filter?: Partial<Record<ProjectPitchIndexFilterKey, string>>;
 };
 
-const entityIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
+const projectPitchIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
   const queryParams = {
     "page[number]": props?.pageNumber,
     "page[size]": props?.pageSize
-  } as EntityIndexQueryParams;
+  } as ProjectPitchIndexQueryParams;
   if (props?.sortField != null) {
     queryParams["sort[field]"] = props.sortField;
     queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
@@ -90,15 +91,15 @@ const entityIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
   return queryParams;
 };
 
-const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
+const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuery(projectPitchIndexQuery(props));
 
 const projectPitchesIndexParams = (props?: ProjectPitchIndexConnectionProps) => ({
-  queryParams: entityIndexQuery(props)
+  queryParams: projectPitchIndexQuery(props)
 });
 
-const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
+const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
   load: ({ data }, props) => {
-    if (!data) adminProjectPitchesIndex(projectPitchesIndexParams(props));
+    if (!data) projectPitchIndex(projectPitchesIndexParams(props));
   },
 
   isLoaded: ({ data }) => data !== undefined,
@@ -107,9 +108,9 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
     props =>
       createSelector(
         [
-          adminProjectPitchesIndexIndexMeta("projectPitches", projectPitchesIndexParams(props)),
-          adminProjectPitchesIndexFetchFailed(projectPitchesIndexParams(props)),
-          projectPitchesSelector()
+          projectPitchIndexIndexMeta("projectPitches", projectPitchesIndexParams(props)),
+          projectPitchIndexFetchFailed(projectPitchesIndexParams(props)),
+          projectPitchesSelector
         ],
         (indexMeta, fetchFailure, selector) => {
           console.log(indexMeta);
@@ -128,5 +129,5 @@ const projectPitchesAdminConnection: Connection<ProjectsPitchesConnection, Proje
   )
 };
 
-export const loadProjectPitchesAdmin = connectionLoader(projectPitchesAdminConnection);
+export const loadProjectPitches = connectionLoader(projectPitchesConnection);
 export const loadProjectPitch = connectionLoader(projectPitchConnection);

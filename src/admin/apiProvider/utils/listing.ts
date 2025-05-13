@@ -1,8 +1,6 @@
 import { GetListParams, GetListResult, RaRecord } from "react-admin";
 
 import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
-import { ProjectsPitchesConnection } from "@/connections/ProjectPitch";
-import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { JsonApiResource } from "@/store/apiSlice";
 
 export interface ExtendedGetListResult<T extends RaRecord = any> extends GetListResult<T> {
@@ -105,8 +103,3 @@ export const apiListResponseToRAListResult = (response: ApiListResponse): Extend
     included: response?.included
   };
 };
-
-export const projectPitchesListResult = ({ data, indexTotal }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })) as any,
-  total: indexTotal ?? 0
-});

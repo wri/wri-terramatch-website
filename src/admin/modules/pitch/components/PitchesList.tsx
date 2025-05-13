@@ -62,7 +62,7 @@ const ApplicationDataGrid = () => {
   const countryChoices = useGadmChoices({ level: 0 });
   return (
     <Datagrid rowClick={"show"}>
-      <TextField source="project_name" label="Project Name" sortable />
+      <TextField source="projectName" label="Project Name" sortable />
       <ReferenceField
         source="organisationId"
         label="Organization"
