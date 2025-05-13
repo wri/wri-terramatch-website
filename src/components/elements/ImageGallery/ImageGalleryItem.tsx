@@ -218,7 +218,13 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         <Text variant="text-14-bold" className="flex items-center gap-1">
           {t("Date uploaded")}:{" "}
           <Text variant="text-14-light" className="capitalize">
-            {format(new Date(Date.parse(data.createdAt)), "dd/MM/Y")}
+            {(() => {
+              try {
+                return format(new Date(Date.parse(data.createdAt)), "dd/MM/Y");
+              } catch (e) {
+                return "-";
+              }
+            })()}
           </Text>
         </Text>
         <Text variant="text-14-bold" className="flex items-center gap-1">
