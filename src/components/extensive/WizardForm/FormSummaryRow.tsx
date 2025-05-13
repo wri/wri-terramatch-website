@@ -162,6 +162,7 @@ export const getFormEntries = (
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
       case FieldType.InvasiveDataTable:
+      case FieldType.FinancialTableInput:
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 

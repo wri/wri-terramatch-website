@@ -13,7 +13,7 @@ import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTabl
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
-import FinancialTableInput from "@/components/elements/Inputs/FinancialTableInput/FinancialTableInput";
+import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import Input from "@/components/elements/Inputs/Input/Input";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
@@ -232,7 +232,7 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
 
     case FieldType.FinancialTableInput:
       return (
-        <FinancialTableInput
+        <RHFFinancialIndicatorsDataTable
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}

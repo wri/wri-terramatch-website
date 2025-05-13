@@ -15,7 +15,7 @@ import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFS
 import { RHFDemographicsTableProps } from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import { RHFDropdownProps } from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { RHFFileInputProps } from "@/components/elements/Inputs/FileInput/RHFFileInput";
-import { FinancialTableInputProps } from "@/components/elements/Inputs/FinancialTableInput/FinancialTableInput";
+import { RHFFinancialIndicatorsDataTableProps } from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import { RHFInputTableProps } from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { RHFMapProps } from "@/components/elements/Inputs/Map/RHFMap";
@@ -78,7 +78,7 @@ export enum FieldType {
   Conditional = "conditional",
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
-  FinancialTableInput = "FinancialTableInput"
+  FinancialTableInput = "financialTableInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -165,5 +165,5 @@ export type FormField =
   | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>
   | FieldTypeBuilder<
       FieldType.FinancialTableInput,
-      Omit<FinancialTableInputProps<any>, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+      Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >;
