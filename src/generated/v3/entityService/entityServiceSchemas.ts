@@ -91,6 +91,10 @@ export type ProjectPitchDto = {
   goalTreesRestoredAnr?: number;
   goalTreesRestoredDirectSeeding?: number;
   directSeedingSurvivalRate?: number;
+  /**
+   * @format date-time
+   */
+  createdAt?: string;
 };
 
 export type FilterItem = {};
