@@ -68,7 +68,7 @@ const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProp
   return task != null && !task.lightResource;
 };
 
-const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
+export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
   load: (connection, props) => {
     if (!indexIsLoaded(connection)) taskIndex(taskIndexParams(props));
   },
