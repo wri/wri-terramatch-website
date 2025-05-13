@@ -1,10 +1,5 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-// import { Tab as HTab } from "@headlessui/react";
-// import classNames from "classnames";
-// import { VARIANT_TABLE_PRIMARY } from "../../Table/TableVariants";
-// import { captureEvent } from "@sentry/nextjs";
-import { randomUUID } from "crypto";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { UseControllerProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
@@ -14,7 +9,6 @@ import { getMonthOptions } from "@/constants/options/months";
 import { OptionValue } from "@/types/common";
 
 import Text from "../../Text/Text";
-// import * as yup from "yup";
 // import { FieldType } from "@/components/extensive/WizardForm/types";
 // import { useMyOrg } from "@/connections/Organisation";
 import { DataTableProps } from "../DataTable/DataTable";
@@ -22,17 +16,6 @@ import Dropdown from "../Dropdown/Dropdown";
 import FileInput from "../FileInput/FileInput";
 import Input from "../Input/Input";
 import TextArea from "../textArea/TextArea";
-// import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-// import FrameworkProvider from "@/context/framework.provider";
-// import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-// import WizardForm from "@/components/extensive/WizardForm";
-// import {
-//   MOCKED_FINANCIAL_REPORT_TITLE,
-//   STEPS_MOCKED_DATA_FINANCIAL_REPORT
-// } from "@/pages/entity/[entityName]/financial-report/[uuid]/mockedData";
-// import Log from "@/utils/log";
-// import router from "next/router";
-// import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import FinancialTableInput from "./FinancialTableInput";
 // import {
 //   useDeleteV2FinancialIndicatorsUUID,
@@ -41,129 +24,6 @@ import FinancialTableInput from "./FinancialTableInput";
 //   usePostV2FileUploadMODELCOLLECTIONUUID,
 //   usePostV2FinancialIndicators
 // } from "@/generated/apiComponents";
-
-// const currentRadioData = [
-//   {
-//     uuid: "1",
-//     year: 2022,
-//     currentAssets: "0",
-//     currentLiabilities: "0",
-//     currentRatio: "$0"
-//   },
-//   {
-//     uuid: "2",
-//     year: 2023,
-//     currentAssets: "0",
-//     currentLiabilities: "0",
-//     currentRatio: "$0"
-//   },
-//   {
-//     uuid: "3",
-//     year: 2024,
-//     currentAssets: "0",
-//     currentLiabilities: "0",
-//     currentRatio: "$0"
-//   },
-//   {
-//     uuid: "4",
-//     year: 2025,
-//     currentAssets: "0",
-//     currentLiabilities: "0",
-//     currentRatio: "$0"
-//   }
-// ];
-// const documentationData = [
-//   {
-//     uuid: "1",
-//     year: 2022,
-//     currentAssets: [],
-//     currentLiabilities: "0",
-//     currentRatio: "$0",
-//     status: "Not Set"
-//   },
-//   {
-//     uuid: "2",
-//     year: 2023,
-//     currentAssets: [
-//       {
-//         uuid: "1",
-//         file_name: "file.pdf",
-//         src: "file.pdf",
-//         size: 100,
-//         mime_type: "application/pdf",
-//         extension: "pdf",
-//         is_public: true,
-//         is_cover: true,
-//         status: true,
-//         lat: 0,
-//         lng: 0,
-//         created_at: "2021-01-01",
-//         collection_name: "financial_report",
-//         title: "file.pdf",
-//         type: "application/pdf",
-//         url: "file.pdf",
-//         raw_url: "file.pdf",
-//         uploadState: {
-//           isSuccess: true,
-//           isError: false,
-//           isLoading: false,
-//           isPending: false,
-//           isUploading: false
-//         }
-//       }
-//     ],
-//     currentLiabilities: "0",
-//     currentRatio: "$0",
-//     status: "Not Set"
-//   },
-//   {
-//     uuid: "3",
-//     year: 2024,
-//     currentAssets: [],
-//     currentLiabilities: "0",
-//     currentRatio: "$0",
-//     status: "Not Set"
-//   },
-//   {
-//     uuid: "4",
-//     year: 2025,
-//     currentAssets: [],
-//     currentLiabilities: "0",
-//     currentRatio: "$0",
-//     status: "Not Set"
-//   }
-// ];
-
-// const profitAnalysisData = [
-//   {
-//     uuid: "1",
-//     year: 2022,
-//     revenue: "0",
-//     expenses: "0",
-//     netProfit: "$0"
-//   },
-//   {
-//     uuid: "2",
-//     year: 2023,
-//     revenue: "0",
-//     expenses: "0",
-//     netProfit: "$0"
-//   },
-//   {
-//     uuid: "3",
-//     year: 2024,
-//     revenue: "0",
-//     expenses: "0",
-//     netProfit: "$0"
-//   },
-//   {
-//     uuid: "4",
-//     year: 2025,
-//     revenue: "0",
-//     expenses: "0",
-//     netProfit: "$0"
-//   }
-// ];
 
 export interface RHFFinancialIndicatorsDataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
@@ -204,7 +64,9 @@ type HandleChangePayload = {
 const handleChange = (
   payload: HandleChangePayload,
   setData: React.Dispatch<React.SetStateAction<any>>,
-  columnMap: string[]
+  columnMap: string[],
+  currencyInput?: string,
+  selectCurrency?: any
 ) => {
   const { value, row, cell } = payload;
   const columnKey = columnMap[cell];
@@ -220,14 +82,14 @@ const handleChange = (
     if (lowerKeys.includes("revenue") && lowerKeys.includes("expenses") && lowerKeys.includes("netprofit")) {
       const revenue = Number(currentRow.revenue ?? 0);
       const expenses = Number(currentRow.expenses ?? 0);
-      currentRow.netProfit = `$${(revenue - expenses).toFixed(2)}`;
+      currentRow.netProfit = `${currencyInput?.[selectCurrency!] ?? ""}${(revenue - expenses).toFixed(2)}`;
     }
 
-    if (lowerKeys.includes("assets") && lowerKeys.includes("liabilities") && lowerKeys.includes("currentratio")) {
-      const assets = Number(currentRow.assets ?? 0);
-      const liabilities = Number(currentRow.liabilities ?? 0);
+    if (lowerKeys.includes("currentassets") && lowerKeys.includes("currentliabilities")) {
+      const assets = Number(currentRow.currentAssets ?? 0);
+      const liabilities = Number(currentRow.currentLiabilities ?? 0);
       const ratio = liabilities !== 0 ? (assets / liabilities).toFixed(2) : "0";
-      currentRow.currentRatio = `$${ratio}`;
+      currentRow.currentRatio = `${currencyInput?.[selectCurrency!] ?? ""}${ratio}`;
     }
 
     updated[row] = currentRow;
@@ -238,6 +100,12 @@ const handleChange = (
 const profitColumnMap = ["year", "revenue", "expenses", "netProfit"];
 const currentColumnMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
 const documentationColumnMap = ["year", "currentAssets", "description"];
+
+const currencyInput = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£"
+} as any;
 
 /**
  * @param props PropsWithChildren<RHFSelectProps>
@@ -252,27 +120,27 @@ const RHFFinancialIndicatorsDataTable = ({
   // const value = field?.value || [];
   // const [, { organisationId }] = useMyOrg();
   const { years } = props;
-  // const [file, setFile] = useState<File>();
   const [selectCurrency, setSelectCurrency] = useState<OptionValue>("USD");
+  const [resetTable, setResetTable] = useState(0);
 
-  const initialProfitAnalysisData = years?.map(item => ({
-    uuid: randomUUID,
+  const initialProfitAnalysisData = years?.map((item, index) => ({
+    uuid: index,
     year: item,
     revenue: 0,
     expenses: 0,
-    netProfit: "$0"
+    netProfit: `${currencyInput?.[selectCurrency!]}0`
   })) as any[];
 
-  const initialCurrentRadioData = years?.map(item => ({
-    uuid: randomUUID,
+  const initialCurrentRadioData = years?.map((item, index) => ({
+    uuid: index,
     year: item,
     currentAssets: 0,
     currentLiabilities: 0,
-    currentRatio: "$0"
+    currentRatio: `${currencyInput?.[selectCurrency!]}0`
   })) as any[];
 
-  const initialDocumentationData = years?.map(item => ({
-    uuid: randomUUID,
+  const initialDocumentationData = years?.map((item, index) => ({
+    uuid: index,
     year: item,
     currentAssets: [
       {
@@ -302,8 +170,7 @@ const RHFFinancialIndicatorsDataTable = ({
         }
       }
     ],
-    currentLiabilities: "0",
-    currentRatio: "$0",
+    description: "",
     status: "Not Set"
   })) as any[];
 
@@ -322,7 +189,7 @@ const RHFFinancialIndicatorsDataTable = ({
     },
     {
       header: "Assets",
-      accessorKey: "assets",
+      accessorKey: "currentAssets",
       enableSorting: false,
       cell: ({ cell, row }: { cell: any; row: any }) => {
         const visibleCells = row.getVisibleCells();
@@ -331,7 +198,7 @@ const RHFFinancialIndicatorsDataTable = ({
         return (
           <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
             <div className="flex items-center gap-0">
-              $
+              {currencyInput?.[selectCurrency!]}
               <Input
                 type="number"
                 variant="secondary"
@@ -339,28 +206,24 @@ const RHFFinancialIndicatorsDataTable = ({
                 name={`row-${row.index}-${columnKey}`}
                 value={currentRadioData[row.index]?.[columnKey]}
                 onChange={e => {
-                  // handleChange(
-                  //   { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                  //   currentRadioData,
-                  //   setCurrentRadioData,
-                  //   currentColumnMap
-                  // );
                   handleChange(
                     { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
                     setCurrentRadioData,
-                    currentColumnMap
+                    currentColumnMap,
+                    currencyInput,
+                    selectCurrency
                   );
                 }}
               />
             </div>
-            <span className="text-13">USD</span>
+            <span className="text-13">{selectCurrency}</span>
           </div>
         );
       }
     },
     {
       header: "Liabilities",
-      accessorKey: "liabilities",
+      accessorKey: "currentLiabilities",
       enableSorting: false,
       cell: ({ cell, row }: { cell: any; row: any }) => {
         const visibleCells = row.getVisibleCells();
@@ -369,7 +232,7 @@ const RHFFinancialIndicatorsDataTable = ({
         return (
           <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
             <div className="flex items-center gap-0">
-              $
+              {currencyInput?.[selectCurrency!]}
               <Input
                 type="number"
                 variant="secondary"
@@ -377,21 +240,17 @@ const RHFFinancialIndicatorsDataTable = ({
                 name={`row-${row.index}-${columnKey}`}
                 value={currentRadioData[row.index]?.[columnKey]}
                 onChange={e => {
-                  // handleChange(
-                  //   { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                  //   currentRadioData,
-                  //   setCurrentRadioData,
-                  //   profitColumnMap
-                  // );
                   handleChange(
                     { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setProfitAnalysisData,
-                    currentColumnMap
+                    setCurrentRadioData,
+                    currentColumnMap,
+                    currencyInput,
+                    selectCurrency
                   );
                 }}
               />
             </div>
-            <span className="text-13">USD</span>
+            <span className="text-13">{selectCurrency}</span>
           </div>
         );
       }
@@ -433,22 +292,18 @@ const RHFFinancialIndicatorsDataTable = ({
         const columnKey = documentationColumnMap[columnOrderIndex];
         return (
           <TextArea
-            name={row.original.name}
+            name={`row-${row.index}-${columnKey}`}
             className="h-fit min-h-min hover:border-primary hover:shadow-input"
             placeholder="Add description here"
             rows={2}
-            value={row.original[columnKey] ?? ""}
+            value={documentationData[row.index]?.[columnKey]}
             onChange={e => {
-              // handleChange(
-              //   { value: e.target.value, row: row.index, cell: columnOrderIndex },
-              //   documentationData,
-              //   setDocumentationData,
-              //   documentationColumnMap
-              // );
               handleChange(
                 { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
                 setDocumentationData,
-                currentColumnMap
+                documentationColumnMap,
+                currencyInput,
+                selectCurrency
               );
             }}
           />
@@ -476,7 +331,7 @@ const RHFFinancialIndicatorsDataTable = ({
         return (
           <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
             <div className="flex items-center gap-0">
-              $
+              {currencyInput?.[selectCurrency!]}
               <Input
                 type="number"
                 variant="secondary"
@@ -484,21 +339,17 @@ const RHFFinancialIndicatorsDataTable = ({
                 name={`row-${row.index}-${columnKey}`}
                 value={profitAnalysisData[row.index]?.[columnKey]}
                 onChange={e => {
-                  // handleChange(
-                  //   { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                  //   profitAnalysisData,
-                  //   setProfitAnalysisData,
-                  //   profitColumnMap
-                  // );
                   handleChange(
                     { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setCurrentRadioData,
-                    profitColumnMap
+                    setProfitAnalysisData,
+                    profitColumnMap,
+                    currencyInput,
+                    selectCurrency
                   );
                 }}
               />
             </div>
-            <span className="text-13">USD</span>
+            <span className="text-13">{selectCurrency}</span>
           </div>
         );
       }
@@ -514,30 +365,25 @@ const RHFFinancialIndicatorsDataTable = ({
         return (
           <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
             <div className="flex items-center gap-0">
-              $
+              {currencyInput?.[selectCurrency!]}
               <Input
                 type="number"
                 variant="secondary"
                 className="border-none !p-0"
-                // name={row.original.name}
                 name={`row-${row.index}-${columnKey}`}
                 value={profitAnalysisData[row.index]?.[columnKey]}
                 onChange={e => {
-                  // handleChange(
-                  //   { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                  //   profitAnalysisData,
-                  //   setProfitAnalysisData,
-                  //   profitColumnMap
-                  // );
                   handleChange(
                     { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setCurrentRadioData,
-                    profitColumnMap
+                    setProfitAnalysisData,
+                    profitColumnMap,
+                    currencyInput,
+                    selectCurrency
                   );
                 }}
               />
             </div>
-            <span className="text-13">USD</span>
+            <span className="text-13">{selectCurrency}</span>
           </div>
         );
       }
@@ -554,9 +400,8 @@ const RHFFinancialIndicatorsDataTable = ({
   ];
 
   useEffect(() => {
-    console.log("value", profitAnalysisData);
-    console.log("value", currentRadioData);
-  }, [profitAnalysisData, currentRadioData]);
+    setResetTable(prev => prev + 1);
+  }, [selectCurrency]);
 
   return (
     <>
@@ -570,38 +415,38 @@ const RHFFinancialIndicatorsDataTable = ({
         <div className="my-8 h-[2px] w-full bg-neutral-200" />
 
         <Dropdown
-          options={getMonthOptions(t)}
-          onChange={() => {}}
+          options={getCurrencyOptions(t)}
           label="Local Currency"
           placeholder="USD - US Dollar"
+          value={[selectCurrency]}
+          onChange={e => setSelectCurrency(e?.[0])}
         />
         <Dropdown
-          options={getCurrencyOptions(t)}
-          onChange={e => setSelectCurrency(e?.[0])}
-          value={[selectCurrency]}
+          options={getMonthOptions(t)}
+          onChange={() => {}}
           label="Financial Year Start Month"
           placeholder="Select Month"
         />
         <FinancialTableInput
+          resetTable={resetTable}
           label="Profit Analysis"
           description="Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes."
           tableColumns={profitAnalysisColumns}
           value={profitAnalysisData}
-          years={years}
         />
         <FinancialTableInput
+          resetTable={resetTable}
           label="Current Ratio"
           description="Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
           tableColumns={currentRadioColumns}
           value={currentRadioData}
-          years={years}
         />
         <FinancialTableInput
+          resetTable={resetTable}
           label="Documentation"
           description="Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
           tableColumns={documentationColumns}
           value={documentationData}
-          years={years}
         />
       </div>
     </>
