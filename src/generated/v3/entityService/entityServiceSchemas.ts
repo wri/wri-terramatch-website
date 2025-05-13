@@ -102,7 +102,6 @@ export type SiteReportLightDto = {
    */
   siteUuid: string | null;
   frameworkKey: string;
-  frameworkUuid: string;
   status: string;
   updateRequestStatus: string;
   /**
@@ -157,7 +156,6 @@ export type NurseryReportLightDto = {
    */
   nurseryUuid: string | null;
   frameworkKey: string;
-  frameworkUuid: string;
   status: string;
   updateRequestStatus: string;
   /**
@@ -511,9 +509,7 @@ export type ProjectFullDto = {
 
 export type SiteFullDto = {
   /**
-   * Indicates that this resource has the full resource definition.
-   *
-   * @example false
+   * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
   uuid: string;
@@ -802,7 +798,6 @@ export type NurseryReportFullDto = {
    */
   nurseryUuid: string | null;
   frameworkKey: string;
-  frameworkUuid: string;
   status: string;
   updateRequestStatus: string;
   /**
@@ -877,7 +872,6 @@ export type SiteReportFullDto = {
    */
   siteUuid: string | null;
   frameworkKey: string;
-  frameworkUuid: string;
   status: string;
   updateRequestStatus: string;
   /**
@@ -949,7 +943,6 @@ export type SiteReportFullDto = {
   technicalNarrative: string;
   publicNarrative: string;
   pctSurvivalToDate: number;
-  projectReport: ProjectReportLightDto;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
