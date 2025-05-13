@@ -6,7 +6,6 @@ export const processDemographicData = (demographics: IncludedDemographic[]): Emp
     partTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
     volunteers: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 }
   };
-
   demographics.forEach(demographic => {
     if (demographic.attributes.type === "jobs" || demographic.attributes.type === "volunteers") {
       let targetCategory: keyof EmploymentDemographicData;
@@ -36,12 +35,7 @@ export const processDemographicData = (demographics: IncludedDemographic[]): Emp
       result[targetCategory].female += femaleEntry?.amount ?? 0;
       result[targetCategory].youth += youthEntry?.amount ?? 0;
       result[targetCategory].total += genderTotal;
-
-      if (nonYouthEntry) {
-        result[targetCategory].nonYouth += nonYouthEntry.amount;
-      } else if (youthEntry) {
-        result[targetCategory].nonYouth = genderTotal - (youthEntry?.amount ?? 0);
-      }
+      result[targetCategory].nonYouth += nonYouthEntry?.amount ?? 0;
     }
   });
 
