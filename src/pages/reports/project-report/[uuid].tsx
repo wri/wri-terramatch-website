@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useGetV2TasksUUID } from "@/generated/apiComponents";
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -29,17 +29,8 @@ const ProjectReportDetailPage = () => {
   const [isLoaded, { entity: projectReport }] = useFullProjectReport({ uuid: uuid });
 
   const [, { entity: project }] = useFullProject({ uuid: projectReport?.projectUuid! });
+  const [, { task }] = useTask({ uuid: projectReport?.taskUuid! });
 
-  const { data: reportingTaskData } = useGetV2TasksUUID(
-    {
-      pathParams: { uuid: projectReport?.taskUuid! }
-    },
-    {
-      enabled: !!projectReport?.taskUuid
-    }
-  );
-
-  const reportingTask = reportingTaskData?.data as any;
   const report = (projectReport ?? {}) as ProjectReportFullDto;
   const reportTitle = report?.reportTitle ?? t("Project Report");
 
@@ -49,7 +40,7 @@ const ProjectReportDetailPage = () => {
         <Head>
           <title>{reportTitle}</title>
         </Head>
-        <ProjectReportBreadcrumbs title={reportTitle} report={report} task={reportingTask} />
+        <ProjectReportBreadcrumbs title={reportTitle} report={report} task={task} />
         <ProjectReportHeader report={report} title={reportTitle} />
         <StatusBar entityName="project-reports" entity={report} />
         <SecondaryTabs
@@ -57,7 +48,7 @@ const ProjectReportDetailPage = () => {
             {
               key: "report-data",
               title: t("Report Data"),
-              body: <ReportDataTab report={report} dueAt={reportingTask?.due_at} />
+              body: <ReportDataTab report={report} dueAt={task?.dueAt} />
             },
             {
               key: "gallery",

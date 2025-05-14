@@ -81,7 +81,7 @@ export type EntityConnection<T extends EntityDtoType, U extends EntityUpdateData
 };
 
 type EntityConnectionProps = {
-  uuid: string;
+  uuid?: string;
 };
 
 export type EntityIndexConnection<T extends EntityDtoType> = {
@@ -90,6 +90,14 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
   included?: JsonApiResource[];
+};
+
+export type EntityListConnection<T extends EntityLightDto> = {
+  entities?: T[];
+};
+
+export type EntityListProps = {
+  uuids?: string[];
 };
 
 type EntityIndexFilterKey = keyof Omit<
@@ -110,7 +118,7 @@ const entitySelector =
   (store: ApiDataStore) =>
     store[entityName] as StoreResourceMap<T>;
 
-const specificEntityParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
+const specificEntityParams = (entity: SupportedEntity, uuid?: string) => ({ pathParams: { entity, uuid: uuid ?? "" } });
 
 const updateEntity = <U extends EntityUpdateData>(entity: U["type"], uuid: string, attributes: U["attributes"]) =>
   entityUpdate({ pathParams: { entity, uuid }, body: { data: { type: entity, id: uuid, attributes } as U } });
@@ -160,7 +168,7 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
   isLoaded: entityIsLoaded(requireFullEntity),
 
   selector: selectorCache(
-    ({ uuid }) => uuid,
+    ({ uuid }) => uuid ?? "",
     ({ uuid }) =>
       createSelector(
         [
@@ -171,7 +179,7 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
           entityUpdateFetchFailed(specificEntityParams(entityName, uuid))
         ],
         (entities, deleted, getFailure, isUpdating, updateFailure) => ({
-          entity: entities[uuid]?.attributes as T,
+          entity: uuid == null ? undefined : (entities[uuid]?.attributes as T),
           entityIsDeleted: uuid != null && deleted.includes(uuid),
           fetchFailure: getFailure ?? undefined,
           refetch: () => {
@@ -180,7 +188,7 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
           entityIsUpdating: isUpdating,
           updateFailure: updateFailure ?? undefined,
           update: (attributes: Partial<U["attributes"]>) =>
-            updateEntity<U>(entityName, uuid, attributes as U["attributes"])
+            uuid == null ? undefined : updateEntity<U>(entityName, uuid, attributes as U["attributes"])
         })
       )
   )
@@ -235,6 +243,18 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
         };
       }
     )
+  )
+});
+
+const createEntityListConnection = <T extends EntityLightDto>(
+  entityName: SupportedEntity
+): Connection<EntityListConnection<T>, EntityListProps> => ({
+  selector: selectorCache(
+    ({ uuids }) => (uuids ?? []).join(),
+    ({ uuids }) =>
+      createSelector([entitySelector(entityName)], entitiesStore => ({
+        entities: (uuids ?? []).map(uuid => entitiesStore[uuid]?.attributes as T)
+      }))
   )
 });
 
@@ -301,6 +321,7 @@ const lightProjectReportConnection = createGetEntityConnection<ProjectReportLigh
   false
 );
 export const loadFullProjectReport = connectionLoader(fullProjectReportConnection);
+export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
 export const deleteProjectReport = connectedResourceDeleter(
@@ -321,6 +342,13 @@ const lightSiteReportConnection = createGetEntityConnection<SiteReportLightDto, 
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
+const siteReportListConnection = createEntityListConnection<SiteReportLightDto>("siteReports");
+/**
+ * Delivers the cached light DTOs for site reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightSiteReportList = connectionHook(siteReportListConnection);
+export const loadLightSiteReportList = connectionLoader(siteReportListConnection);
 export const deleteSiteReport = connectedResourceDeleter(
   "siteReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
@@ -341,6 +369,13 @@ const lightNurseryReportConnection = createGetEntityConnection<NurseryReportLigh
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
+const nurseryReportListConnection = createEntityListConnection<NurseryReportLightDto>("nurseryReports");
+/**
+ * Delivers the cached light DTOs for nursery reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightNurseryReportList = connectionHook(nurseryReportListConnection);
+export const loadLightNurseryReportList = connectionLoader(nurseryReportListConnection);
 export const deleteNurseryReport = connectedResourceDeleter(
   "nurseryReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),

@@ -62,6 +62,7 @@ export type ProjectReportLightDto = {
   projectName: string | null;
   projectUuid: string | null;
   status: string;
+  completion: number | null;
   /**
    * @format date-time
    */
@@ -104,6 +105,7 @@ export type SiteReportLightDto = {
   frameworkKey: string;
   status: string;
   updateRequestStatus: string;
+  completion: number | null;
   /**
    * The associated project name
    */
@@ -157,6 +159,7 @@ export type NurseryReportLightDto = {
   nurseryUuid: string | null;
   frameworkKey: string;
   status: string;
+  completion: number | null;
   updateRequestStatus: string;
   /**
    * The associated project name
@@ -676,6 +679,7 @@ export type ProjectReportFullDto = {
   projectName: string | null;
   projectUuid: string | null;
   status: string | null;
+  completion: number | null;
   /**
    * @format date-time
    */
@@ -701,7 +705,6 @@ export type ProjectReportFullDto = {
   pctSurvivalToDate: number | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  completion: number | null;
   localEngagementDescription: string | null;
   equitableOpportunities: string | null;
   resilienceProgress: string | null;
@@ -799,6 +802,7 @@ export type NurseryReportFullDto = {
   nurseryUuid: string | null;
   frameworkKey: string;
   status: string;
+  completion: number | null;
   updateRequestStatus: string;
   /**
    * The associated project name
@@ -842,7 +846,6 @@ export type NurseryReportFullDto = {
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  completion: number | null;
   seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
   sitePrep: string | null;
@@ -874,6 +877,7 @@ export type SiteReportFullDto = {
   frameworkKey: string;
   status: string;
   updateRequestStatus: string;
+  completion: number | null;
   /**
    * The associated project name
    */
@@ -915,7 +919,6 @@ export type SiteReportFullDto = {
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  completion: number | null;
   title: string | null;
   sharedDriveLink: string | null;
   createdByFirstName: string | null;

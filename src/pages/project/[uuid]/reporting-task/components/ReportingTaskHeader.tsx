@@ -10,16 +10,19 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useModalContext } from "@/context/modal.provider";
 import { usePutV2TasksUUIDSubmit } from "@/generated/apiComponents";
+import { ProjectFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 
+import { TaskReports } from "../[reportingTaskUUID].page";
+
 interface ReportingTaskHeaderProps {
-  project: any;
-  reportingTask: any;
-  reports: any;
+  project?: ProjectFullDto;
+  task?: TaskFullDto;
+  reports?: TaskReports;
 }
 
-const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskHeaderProps) => {
+const ReportingTaskHeader = ({ project, task, reports }: ReportingTaskHeaderProps) => {
   const t = useT();
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
@@ -44,7 +47,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
             children: "Close",
             onClick: () => {
               closeModal(ModalId.REPORTS_SUBMITTED);
-              router.replace(`/project/${project.uuid}?tab=reporting-tasks`);
+              router.replace(`/project/${project?.uuid}?tab=reporting-tasks`);
             }
           }}
         />
@@ -59,7 +62,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
+          submitReportingTask({ pathParams: { uuid: task?.uuid! } });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -82,13 +85,13 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
 
     has_outstanding_tasks: {
       title: t("Are you sure you want to submit these reports? You currently have {count} outstanding reports", {
-        count: reports.outstandingAdditionalCount
+        count: reports?.outstandingAdditionalCount
       }),
       content: t("Sending these reports will forward all the information to WRI for review."),
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
+          submitReportingTask({ pathParams: { uuid: task?.uuid! } });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -101,9 +104,9 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
 
   const submitReportingTaskHandler = () => {
     let modalProps: any = ModalsMapping.ready_to_submit;
-    if (reports.outstandingMandatoryCount > 0) {
+    if (reports?.outstandingMandatoryCount ?? 0 > 0) {
       modalProps = ModalsMapping.has_mandatory;
-    } else if (reports.outstandingAdditionalCount > 0) {
+    } else if (reports?.outstandingAdditionalCount ?? 0 > 0) {
       modalProps = ModalsMapping.has_outstanding_tasks;
     }
 
@@ -113,7 +116,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
     );
   };
 
-  const window = useReportingWindow(reportingTask?.due_at);
+  const window = useReportingWindow(task?.dueAt);
   const title = t("Reporting Task {window}", { window });
 
   return (
@@ -124,14 +127,14 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       <PageBreadcrumbs
         links={[
           { title: t("My Projects"), path: "/my-projects" },
-          { title: project.name, path: `/project/${project.uuid}` },
+          { title: project?.name, path: `/project/${project?.uuid}` },
           { title }
         ]}
       />
       <PageHeader
         className="h-[203px]"
         title={title}
-        subtitles={[t("Due by {due_at}", { due_at: format(reportingTask?.due_at, "d MMMM, yyyy, HH:mm") })]}
+        subtitles={[t("Due by {due_at}", { due_at: format(task?.dueAt, "d MMMM, yyyy, HH:mm") })]}
         hasBackButton={false}
       >
         <Button id="submit-button" onClick={submitReportingTaskHandler}>

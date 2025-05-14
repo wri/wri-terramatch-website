@@ -28,7 +28,6 @@ export type TaskIndexQueryParams = {
   status?: string;
   frameworkKey?: string;
   projectUuid?: string;
-  organisationUuid?: string;
 };
 
 export type TaskIndexError = Fetcher.ErrorWrapper<{

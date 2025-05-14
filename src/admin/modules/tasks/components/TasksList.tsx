@@ -15,7 +15,7 @@ import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { TaskDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -30,7 +30,7 @@ const TaskDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: TaskDto) => {
+        render={({ status }: TaskLightDto) => {
           const { title } = getTaskStatusOptions().find((option: any) => option.value === status) ?? {};
           return <CustomChipField label={title} />;
         }}
@@ -39,7 +39,7 @@ const TaskDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record: TaskDto) =>
+        render={(record: TaskLightDto) =>
           frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
           record?.frameworkKey
         }

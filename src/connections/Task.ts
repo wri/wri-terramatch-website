@@ -11,7 +11,7 @@ import {
 import { getStableQuery } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionLoader } from "@/utils/connectionShortcuts";
+import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type TaskIndexConnection = {
@@ -37,7 +37,7 @@ export type TaskConnection = {
 };
 
 export type TaskProps = {
-  uuid: string;
+  uuid?: string | null;
 };
 
 const taskIndexQuery = (props?: TaskIndexProps) => {
@@ -62,7 +62,7 @@ const taskIndexQuery = (props?: TaskIndexProps) => {
 const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQuery(props) });
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
 
-const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid } });
+const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid: uuid ?? "" } });
 const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
   if (uuid == null || fetchFailure != null) return true;
   return task != null && !task.lightResource;
@@ -112,7 +112,7 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
       createSelector(
         [({ tasks }: ApiDataStore) => tasks, taskGetFetchFailed(taskParams(props))],
         (tasks, fetchFailure) => {
-          const taskResponse = tasks[props.uuid];
+          const taskResponse = tasks[props.uuid ?? ""];
           if (taskResponse == null) return { fetchFailure };
 
           const projectReportUuid = taskResponse?.relationships?.["projectReport"]?.[0]?.id;
@@ -133,3 +133,4 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
 export const loadTasks = connectionLoader(taskIndexConnection);
 
 export const loadTask = connectionLoader(taskConnection);
+export const useTask = connectionHook(taskConnection);
