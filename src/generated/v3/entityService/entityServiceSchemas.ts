@@ -4,6 +4,7 @@
  * @version 1.0
  */
 export type ProjectPitchDto = {
+  id: number;
   uuid: string;
   capacityBuildingNeeds?: string[];
   totalTrees?: number;
@@ -91,13 +92,7 @@ export type ProjectPitchDto = {
   goalTreesRestoredAnr?: number;
   goalTreesRestoredDirectSeeding?: number;
   directSeedingSurvivalRate?: number;
-  /**
-   * @format date-time
-   */
-  createdAt?: string;
 };
-
-export type FilterItem = {};
 
 export type ANRDto = {
   /**
@@ -114,14 +109,6 @@ export type ProjectApplicationDto = {
 };
 
 export type MediaDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
   uuid: string;
   collectionName: string;
   url: string;
@@ -140,7 +127,6 @@ export type MediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
-  createdByUserName: string | null;
 };
 
 export type EntitySideload = {
@@ -157,7 +143,6 @@ export type EntitySideload = {
     | "demographics"
     | "seedings"
     | "treeSpecies"
-    | "media"
     | "disturbances"
     | "invasives"
     | "stratas";
@@ -335,6 +320,7 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   dueAt: string;
+  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -500,12 +486,7 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
-  cohort: string | null;
   continent: string | null;
-  /**
-   * The associated organisation type
-   */
-  organisationType: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**
@@ -749,6 +730,7 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   dueAt: string;
+  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -798,7 +780,6 @@ export type ProjectReportFullDto = {
   seasonalSmallholderFarmers: number | null;
   seasonalTotal: number | null;
   volunteerSmallholderFarmers: number | null;
-  taskTotalWorkdays: number;
   plantedTrees: number | null;
   sharedDriveLink: string | null;
   beneficiariesDescription: string | null;
@@ -817,6 +798,7 @@ export type ProjectReportFullDto = {
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
+  readableCompletionStatus: string;
   createdBy: number | null;
   createdByUser: Record<string, any> | null;
   media: MediaDto[];

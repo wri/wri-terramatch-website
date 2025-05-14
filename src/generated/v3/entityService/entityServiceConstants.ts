@@ -16,7 +16,6 @@ import {
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
-  MediaDto,
   DisturbanceDto,
   InvasiveDto,
   StrataDto,
@@ -36,7 +35,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "demographics",
   "seedings",
   "treeSpecies",
-  "media",
   "disturbances",
   "invasives",
   "stratas",
@@ -56,7 +54,6 @@ export type EntityServiceApiResources = {
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  media: StoreResourceMap<MediaDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;

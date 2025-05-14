@@ -7,32 +7,22 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
-export type ProjectPitchIndexQueryParams = {
-  ["sort[field]"]?: string;
+export type ProjectPitchesIndexQueryParams = {
   /**
-   * @default ASC
+   * pagination page
    */
-  ["sort[direction]"]?: "ASC" | "DESC";
+  pageNumber: number;
   /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
+   * pagination page
    */
-  ["page[size]"]?: number;
+  pageSize: number;
   /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
+   * text to search
    */
-  ["page[number]"]?: number;
-  search?: string;
-  /**
-   * Search query used for filtering selectable options in autocomplete fields.
-   */
-  filter?: Schemas.FilterItem;
+  search: string;
 };
 
-export type ProjectPitchIndexError = Fetcher.ErrorWrapper<
+export type ProjectPitchesIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -61,7 +51,7 @@ export type ProjectPitchIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type ProjectPitchIndexResponse = {
+export type ProjectPitchesIndexResponse = {
   meta?: {
     /**
      * @example projectPitches
@@ -105,28 +95,36 @@ export type ProjectPitchIndexResponse = {
   }[];
 };
 
-export type ProjectPitchIndexVariables = {
-  queryParams?: ProjectPitchIndexQueryParams;
+export type ProjectPitchesIndexVariables = {
+  queryParams: ProjectPitchesIndexQueryParams;
 };
 
-export const projectPitchIndex = (variables: ProjectPitchIndexVariables, signal?: AbortSignal) =>
+export const projectPitchesIndex = (variables: ProjectPitchesIndexVariables, signal?: AbortSignal) =>
   entityServiceFetch<
-    ProjectPitchIndexResponse,
-    ProjectPitchIndexError,
+    ProjectPitchesIndexResponse,
+    ProjectPitchesIndexError,
     undefined,
     {},
-    ProjectPitchIndexQueryParams,
+    ProjectPitchesIndexQueryParams,
     {}
   >({ url: "/entities/v3/projectPitches", method: "get", ...variables, signal });
 
-export type ProjectPitchGetPathParams = {
+export type AdminProjectPitchesIndexQueryParams = {
   /**
-   * Entity UUID for association
+   * pagination page
    */
-  uuid: string;
+  pageNumber: number;
+  /**
+   * pagination page
+   */
+  pageSize: number;
+  /**
+   * text to search
+   */
+  search: string;
 };
 
-export type ProjectPitchGetError = Fetcher.ErrorWrapper<
+export type AdminProjectPitchesIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -155,7 +153,55 @@ export type ProjectPitchGetError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type ProjectPitchGetResponse = {
+export type AdminProjectPitchesIndexVariables = {
+  queryParams: AdminProjectPitchesIndexQueryParams;
+};
+
+export const adminProjectPitchesIndex = (variables: AdminProjectPitchesIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, AdminProjectPitchesIndexError, undefined, {}, AdminProjectPitchesIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches/admin",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export type ProjectPitchesGetUUIDIndexPathParams = {
+  /**
+   * Entity UUID for association
+   */
+  uuid: string;
+};
+
+export type ProjectPitchesGetUUIDIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectPitchesGetUUIDIndexResponse = {
   meta?: {
     /**
      * @example projectPitches
@@ -175,17 +221,19 @@ export type ProjectPitchGetResponse = {
   };
 };
 
-export type ProjectPitchGetVariables = {
-  pathParams: ProjectPitchGetPathParams;
+export type ProjectPitchesGetUUIDIndexVariables = {
+  pathParams: ProjectPitchesGetUUIDIndexPathParams;
 };
 
-export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<ProjectPitchGetResponse, ProjectPitchGetError, undefined, {}, {}, ProjectPitchGetPathParams>({
-    url: "/entities/v3/projectPitches/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const projectPitchesGetUUIDIndex = (variables: ProjectPitchesGetUUIDIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProjectPitchesGetUUIDIndexResponse,
+    ProjectPitchesGetUUIDIndexError,
+    undefined,
+    {},
+    {},
+    ProjectPitchesGetUUIDIndexPathParams
+  >({ url: "/entities/v3/projectPitches/{uuid}", method: "get", ...variables, signal });
 
 export type EntityIndexPathParams = {
   /**
@@ -842,61 +890,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
-};
-
-export type EntityAssociationIndexQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
-  search?: string;
-  /**
-   * Search query used for filtering selectable options in autocomplete fields.
-   */
-  searchFilter?: string;
-  country?: string;
-  status?: string;
-  updateRequestStatus?: string;
-  projectUuid?: string;
-  nurseryUuid?: string;
-  siteUuid?: string;
-  /**
-   * If the base entity supports it, this will load the first page of associated entities
-   */
-  sideloads?: Schemas.EntitySideload[];
-  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
-  modelType?: string;
-  /**
-   * @default false
-   */
-  isGeotagged?: boolean;
-  fileType?: string;
-  /**
-   * @default false
-   */
-  isPublic?: boolean;
-  /**
-   * @default false
-   */
-  isPrivate?: boolean;
-  /**
-   * @default false
-   */
-  isCover?: boolean;
+  association: "demographics" | "seedings" | "treeSpecies" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -930,7 +924,6 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
 
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
-  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
@@ -995,25 +988,6 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
     | {
         meta?: {
           /**
-           * @example media
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example media
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.MediaDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
            * @example disturbances
            */
           resourceType?: string;
@@ -1071,7 +1045,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
     EntityAssociationIndexError,
     undefined,
     {},
-    EntityAssociationIndexQueryParams,
+    {},
     EntityAssociationIndexPathParams
   >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
 
@@ -1258,7 +1232,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  projectPitches: { projectPitchIndex, projectPitchGet },
+  projectPitches: { projectPitchesIndex, adminProjectPitchesIndex, projectPitchesGetUUIDIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
