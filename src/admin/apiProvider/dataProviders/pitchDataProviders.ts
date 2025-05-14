@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
+import { keysToSnakeCase } from "@/admin/utils/forms";
 import { loadProjectPitch, loadProjectPitches, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
@@ -22,11 +23,12 @@ export interface PitchDataProvider extends DataProvider {
 }
 
 const projectPitchesListResult = ({ data, indexTotal }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })) as any,
+  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })),
   total: indexTotal ?? 0
 });
 
 export const pitchDataProvider: PitchDataProvider = {
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
     const connection = await loadProjectPitches(raConnectionProps(params));
     if (connection.fetchFailure != null) {
@@ -39,7 +41,7 @@ export const pitchDataProvider: PitchDataProvider = {
   async getOne(_, params) {
     const { requestFailed, projectPitch } = await loadProjectPitch({ uuid: params.id });
     if (requestFailed != null) {
-      throw v3ErrorForRA("Nursery get fetch failed", requestFailed);
+      throw v3ErrorForRA("Project Pitch get fetch failed", requestFailed);
     }
 
     return { data: { ...projectPitch, id: projectPitch?.uuid } };
@@ -49,7 +51,7 @@ export const pitchDataProvider: PitchDataProvider = {
   async update(__, params) {
     try {
       const response = await fetchPatchV2ProjectPitchesUUID({
-        body: _.pick<ProjectPitchRead, keyof ProjectPitchRead>(params.data, [
+        body: _.pick<ProjectPitchRead, keyof ProjectPitchRead>(keysToSnakeCase(params.data) as ProjectPitchRead, [
           "capacity_building_needs",
           "project_country",
           "project_county_district",

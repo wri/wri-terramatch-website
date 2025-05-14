@@ -13,7 +13,7 @@ import {
   projectPitchIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -30,12 +30,15 @@ type ProjectPitchConnectionProps = {
   uuid: string;
 };
 
+const projectPitchIsLoaded = ({ requestFailed, projectPitch }: ProjectPitchConnection) =>
+  requestFailed != null || projectPitch != null;
+
 const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
-  load: ({ projectPitch }, { uuid }) => {
-    if (projectPitch == null) projectPitchGet({ pathParams: { uuid } });
+  load: (connection, { uuid }) => {
+    if (!projectPitchIsLoaded(connection)) projectPitchGet({ pathParams: { uuid } });
   },
 
-  isLoaded: ({ projectPitch }) => projectPitch !== null,
+  isLoaded: projectPitchIsLoaded,
   selector: selectorCache(
     ({ uuid }: ProjectPitchConnectionProps) => uuid,
     ({ uuid }: ProjectPitchConnectionProps) =>
@@ -58,7 +61,6 @@ export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;
   data?: ProjectPitchDto[];
   indexTotal?: number;
-  refetch: () => void;
 };
 
 type ProjectPitchIndexFilterKey = keyof Omit<
@@ -113,17 +115,15 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
           projectPitchesSelector
         ],
         (indexMeta, fetchFailure, selector) => {
-          console.log(indexMeta);
-          const refetch = () => ApiSlice.pruneIndex("projectPitches", "");
-          if (indexMeta == null) return { refetch, fetchFailure };
+          if (indexMeta == null) return { fetchFailure };
 
           const entities = [] as ProjectPitchDto[];
           for (const id of indexMeta.ids) {
-            if (selector[id] == null) return { refetch, fetchFailure };
+            if (selector[id] == null) return { fetchFailure };
             entities.push(selector[id].attributes);
           }
 
-          return { data: entities, indexTotal: indexMeta.total, refetch, fetchFailure };
+          return { data: entities, indexTotal: indexMeta.total, fetchFailure };
         }
       )
   )
