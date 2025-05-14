@@ -50,7 +50,7 @@ export const getSchemaFields = (fields: FormField[]) => {
         schema[field.name] = yup
           .mixed()
           .nullable()
-          .label(field.label || " ");
+          .label(field.label ?? " ");
       } else {
         schema[field.name] = field.validation.nullable().label(field.label ?? " ");
       }
