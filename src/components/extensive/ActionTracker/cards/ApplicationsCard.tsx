@@ -33,7 +33,7 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
           subtitle: t(`<strong>Stage</strong>: {name}`, {
             name: application.current_submission?.stage?.name || t("N/A")
           }),
-          updatedAt: t(`<strong>Updated At</strong>: {date}`, {
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
             date: format(application.current_submission?.updated_at)
           }),
           updatedBy: t(`<strong>Updated By</strong>: {name}`, { name: application.current_submission?.updated_by_name })

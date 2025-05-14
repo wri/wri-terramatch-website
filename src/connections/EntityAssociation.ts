@@ -76,6 +76,8 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   association: SupportedAssociation
 ): Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps> => ({
   load: (connection, props) => {
+    if (!props.uuid || props.uuid.trim() === "") return;
+
     if (!indexIsLoaded(connection)) entityAssociationIndex(associationIndexParams(association, props));
   },
 
