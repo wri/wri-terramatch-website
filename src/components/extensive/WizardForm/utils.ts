@@ -46,10 +46,19 @@ export const getSchemaFields = (fields: FormField[]) => {
         }
       });
     } else {
-      schema[field.name] = field.validation?.nullable().label(" ");
+      if (!field.validation) {
+        schema[field.name] = yup
+          .mixed()
+          .nullable()
+          .label(field.label || " ");
+      } else {
+        schema[field.name] = field.validation.nullable().label(field.label ?? " ");
+      }
     }
 
-    if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
+    if (field.fieldProps.required && schema[field.name]) {
+      schema[field.name] = schema[field.name].required();
+    }
   }
 
   return schema;
