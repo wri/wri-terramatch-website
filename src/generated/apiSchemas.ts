@@ -124,6 +124,207 @@ export type UserRead = {
       type?: string;
       collection?: string;
     }[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     web_url?: string;
     facebook_url?: string;
     instagram_url?: string;
@@ -418,6 +619,207 @@ export type UserReadAll = {
       amount?: number;
       type?: string;
       collection?: string;
+    }[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
     }[];
     web_url?: string;
     facebook_url?: string;
@@ -1549,6 +1951,207 @@ export type V2AdminOrganisationRead = {
     type?: string;
     collection?: string;
   }[];
+  project_pitches?: {
+    id?: string;
+    uuid?: string;
+    status?: string;
+    readable_status?: string;
+    organisation_id?: string;
+    funding_programmes?: {
+      id?: number;
+      uuid?: string;
+      name?: string;
+      description?: string;
+      read_more_url?: string;
+      organisation_types?: string[];
+      location?: string;
+      status?: string;
+    };
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    project_name?: string;
+    how_discovered?: string;
+    project_objectives?: string;
+    project_country?: string[];
+    project_county_district?: string;
+    restoration_intervention_types?: string[];
+    land_systems?: string[];
+    tree_restoration_practices?: string[];
+    total_hectares?: number;
+    project_budget?: number;
+    total_trees?: number;
+    capacity_building_needs?: string[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    restoration_photos?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    proof_of_land_tenure_mou?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    detailed_project_budget?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    expected_active_restoration_start_date?: string;
+    expected_active_restoration_end_date?: string;
+    description_of_project_timeline?: string;
+    proj_partner_info?: string;
+    land_tenure_proj_area?: string[];
+    landholder_comm_engage?: string;
+    proj_success_risks?: string;
+    monitor_eval_plan?: string;
+    proj_boundary?: string;
+    sustainable_dev_goals?: string[];
+    proj_area_description?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    proposed_num_sites?: number;
+    environmental_goals?: string;
+    main_degradation_causes?: string;
+    seedlings_source?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    proposed_num_nurseries?: number;
+    curr_land_degradation?: string;
+    proj_impact_socieconom?: string;
+    proj_impact_foodsec?: string;
+    proj_impact_watersec?: string;
+    proj_impact_jobtypes?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    num_jobs_created?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_men?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_women?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_18to35?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_older35?: number;
+    proj_beneficiaries?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_women?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_small?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_large?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_youth?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_scheduled_classes?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_scheduled_tribes?: number;
+    monitoring_evaluation_plan?: string;
+    main_causes_of_degradation?: string;
+    deleted_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  }[];
   web_url?: string;
   facebook_url?: string;
   instagram_url?: string;
@@ -2248,6 +2851,207 @@ export type V2OrganisationRead = {
   leadership_team?: string;
   countries?: string[];
   languages?: string[];
+  project_pitches?: {
+    id?: string;
+    uuid?: string;
+    status?: string;
+    readable_status?: string;
+    organisation_id?: string;
+    funding_programmes?: {
+      id?: number;
+      uuid?: string;
+      name?: string;
+      description?: string;
+      read_more_url?: string;
+      organisation_types?: string[];
+      location?: string;
+      status?: string;
+    };
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    project_name?: string;
+    how_discovered?: string;
+    project_objectives?: string;
+    project_country?: string[];
+    project_county_district?: string;
+    restoration_intervention_types?: string[];
+    land_systems?: string[];
+    tree_restoration_practices?: string[];
+    total_hectares?: number;
+    project_budget?: number;
+    total_trees?: number;
+    capacity_building_needs?: string[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    restoration_photos?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    proof_of_land_tenure_mou?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    detailed_project_budget?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    expected_active_restoration_start_date?: string;
+    expected_active_restoration_end_date?: string;
+    description_of_project_timeline?: string;
+    proj_partner_info?: string;
+    land_tenure_proj_area?: string[];
+    landholder_comm_engage?: string;
+    proj_success_risks?: string;
+    monitor_eval_plan?: string;
+    proj_boundary?: string;
+    sustainable_dev_goals?: string[];
+    proj_area_description?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    proposed_num_sites?: number;
+    environmental_goals?: string;
+    main_degradation_causes?: string;
+    seedlings_source?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    proposed_num_nurseries?: number;
+    curr_land_degradation?: string;
+    proj_impact_socieconom?: string;
+    proj_impact_foodsec?: string;
+    proj_impact_watersec?: string;
+    proj_impact_jobtypes?: string;
+    /**
+     * @minimum 0
+     * @maximum 4294967295
+     */
+    num_jobs_created?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_men?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_women?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_18to35?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_employees_older35?: number;
+    proj_beneficiaries?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_women?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_small?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_large?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_youth?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_scheduled_classes?: number;
+    /**
+     * @minimum 0
+     * @maximum 100
+     */
+    pct_beneficiaries_scheduled_tribes?: number;
+    monitoring_evaluation_plan?: string;
+    main_causes_of_degradation?: string;
+    deleted_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  }[];
   tree_species?: {
     uuid?: string;
     name?: string;
@@ -2863,6 +3667,212 @@ export type V2FundingTypeUpdate = {
   type?: string;
 };
 
+export type ProjectPitchCreate = {
+  organisation_id?: string;
+  project_name?: string;
+  project_objectives?: string;
+  how_discovered?: string;
+  project_country?: string[];
+  project_county_district?: string;
+  land_systems?: string[];
+  tree_restoration_practices?: string[];
+  restoration_intervention_types?: string[];
+  capacity_building_needs?: string[];
+  total_trees?: number;
+  total_hectares?: number;
+  project_budget?: number;
+  expected_active_restoration_start_date?: string;
+  expected_active_restoration_end_date?: string;
+  description_of_project_timeline?: string;
+  proj_partner_info?: string;
+  land_tenure_proj_area?: string[];
+  landholder_comm_engage?: string;
+  proj_success_risks?: string;
+  monitor_eval_plan?: string;
+  proj_boundary?: string;
+  sustainable_dev_goals?: string[];
+  proj_area_description?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_sites?: number;
+  environmental_goals?: string;
+  main_degradation_causes?: string;
+  seedlings_source?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_nurseries?: number;
+  curr_land_degradation?: string;
+  proj_impact_socieconom?: string;
+  proj_impact_foodsec?: string;
+  proj_impact_watersec?: string;
+  proj_impact_jobtypes?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  num_jobs_created?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_men?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_18to35?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_older35?: number;
+  proj_beneficiaries?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_small?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_large?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_youth?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_classes?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_tribes?: number;
+  monitoring_evaluation_plan?: string;
+  main_causes_of_degradation?: string;
+};
+
+export type ProjectPitchUpdate = {
+  funding_programme_id?: number;
+  project_name?: string;
+  project_objectives?: string;
+  project_county_district?: string;
+  how_discovered?: string;
+  land_systems?: string[];
+  tree_restoration_practices?: string[];
+  project_budget?: number;
+  project_country?: string[];
+  restoration_intervention_types?: string[];
+  capacity_building_needs?: string[];
+  total_hectares?: number;
+  total_trees?: number;
+  expected_active_restoration_start_date?: string;
+  expected_active_restoration_end_date?: string;
+  description_of_project_timeline?: string;
+  proj_partner_info?: string;
+  land_tenure_proj_area?: string[];
+  landholder_comm_engage?: string;
+  proj_success_risks?: string;
+  monitor_eval_plan?: string;
+  proj_boundary?: string;
+  sustainable_dev_goals?: string[];
+  proj_area_description?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_sites?: number;
+  environmental_goals?: string;
+  main_degradation_causes?: string;
+  seedlings_source?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_nurseries?: number;
+  curr_land_degradation?: string;
+  proj_impact_socieconom?: string;
+  proj_impact_foodsec?: string;
+  proj_impact_watersec?: string;
+  proj_impact_jobtypes?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  num_jobs_created?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_men?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_18to35?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_older35?: number;
+  proj_beneficiaries?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_small?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_large?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_youth?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_classes?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_tribes?: number;
+  monitoring_evaluation_plan?: string;
+  main_causes_of_degradation?: string;
+};
+
 export type V2SiteRead = {
   id?: number;
   site_id?: number;
@@ -3111,6 +4121,207 @@ export type V2NurseryLiteRead = {
       leadership_team?: string;
       countries?: string[];
       languages?: string[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       tree_species?: {
         uuid?: string;
         name?: string;
@@ -3489,6 +4700,207 @@ export type ProjectLiteRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -3775,6 +5187,207 @@ export type ProjectFullRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -4210,6 +5823,207 @@ export type ProjectFullRead = {
         type?: string;
         collection?: string;
       }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       web_url?: string;
       facebook_url?: string;
       instagram_url?: string;
@@ -4588,6 +6402,207 @@ export type SiteFullRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -4936,6 +6951,208 @@ export type SiteWithSchemaRead = {
     value?: string;
     options?: string[];
   }[];
+};
+
+export type ProjectPitchRead = {
+  id?: string;
+  uuid?: string;
+  status?: string;
+  readable_status?: string;
+  organisation_id?: string;
+  funding_programmes?: {
+    id?: number;
+    uuid?: string;
+    name?: string;
+    description?: string;
+    read_more_url?: string;
+    organisation_types?: string[];
+    location?: string;
+    status?: string;
+  };
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  project_name?: string;
+  how_discovered?: string;
+  project_objectives?: string;
+  project_country?: string[];
+  project_county_district?: string;
+  restoration_intervention_types?: string[];
+  land_systems?: string[];
+  tree_restoration_practices?: string[];
+  total_hectares?: number;
+  project_budget?: number;
+  total_trees?: number;
+  capacity_building_needs?: string[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  restoration_photos?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  proof_of_land_tenure_mou?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  detailed_project_budget?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  expected_active_restoration_start_date?: string;
+  expected_active_restoration_end_date?: string;
+  description_of_project_timeline?: string;
+  proj_partner_info?: string;
+  land_tenure_proj_area?: string[];
+  landholder_comm_engage?: string;
+  proj_success_risks?: string;
+  monitor_eval_plan?: string;
+  proj_boundary?: string;
+  sustainable_dev_goals?: string[];
+  proj_area_description?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_sites?: number;
+  environmental_goals?: string;
+  main_degradation_causes?: string;
+  seedlings_source?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  proposed_num_nurseries?: number;
+  curr_land_degradation?: string;
+  proj_impact_socieconom?: string;
+  proj_impact_foodsec?: string;
+  proj_impact_watersec?: string;
+  proj_impact_jobtypes?: string;
+  /**
+   * @minimum 0
+   * @maximum 4294967295
+   */
+  num_jobs_created?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_men?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_18to35?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_employees_older35?: number;
+  proj_beneficiaries?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_women?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_small?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_large?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_youth?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_classes?: number;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct_beneficiaries_scheduled_tribes?: number;
+  monitoring_evaluation_plan?: string;
+  main_causes_of_degradation?: string;
+  deleted_at?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type AuditRead = {
@@ -5691,6 +7908,207 @@ export type ApplicationRead = {
       type?: string;
       collection?: string;
     }[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     web_url?: string;
     facebook_url?: string;
     instagram_url?: string;
@@ -5997,6 +8415,207 @@ export type NurseryPaginated = {
       leadership_team?: string;
       countries?: string[];
       languages?: string[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       tree_species?: {
         uuid?: string;
         name?: string;
@@ -6298,6 +8917,207 @@ export type NurseryRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -6612,6 +9432,207 @@ export type NurseryLiteRead = {
       leadership_team?: string;
       countries?: string[];
       languages?: string[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       tree_species?: {
         uuid?: string;
         name?: string;
@@ -6907,6 +9928,207 @@ export type SiteLiteRead = {
       leadership_team?: string;
       countries?: string[];
       languages?: string[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       tree_species?: {
         uuid?: string;
         name?: string;
@@ -7207,6 +10429,207 @@ export type NurseryReportRead = {
         leadership_team?: string;
         countries?: string[];
         languages?: string[];
+        project_pitches?: {
+          id?: string;
+          uuid?: string;
+          status?: string;
+          readable_status?: string;
+          organisation_id?: string;
+          funding_programmes?: {
+            id?: number;
+            uuid?: string;
+            name?: string;
+            description?: string;
+            read_more_url?: string;
+            organisation_types?: string[];
+            location?: string;
+            status?: string;
+          };
+          tree_species?: {
+            uuid?: string;
+            name?: string;
+            amount?: number;
+            type?: string;
+            collection?: string;
+          }[];
+          project_name?: string;
+          how_discovered?: string;
+          project_objectives?: string;
+          project_country?: string[];
+          project_county_district?: string;
+          restoration_intervention_types?: string[];
+          land_systems?: string[];
+          tree_restoration_practices?: string[];
+          total_hectares?: number;
+          project_budget?: number;
+          total_trees?: number;
+          capacity_building_needs?: string[];
+          additional?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          restoration_photos?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          cover?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          };
+          proof_of_land_tenure_mou?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          detailed_project_budget?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          };
+          expected_active_restoration_start_date?: string;
+          expected_active_restoration_end_date?: string;
+          description_of_project_timeline?: string;
+          proj_partner_info?: string;
+          land_tenure_proj_area?: string[];
+          landholder_comm_engage?: string;
+          proj_success_risks?: string;
+          monitor_eval_plan?: string;
+          proj_boundary?: string;
+          sustainable_dev_goals?: string[];
+          proj_area_description?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          proposed_num_sites?: number;
+          environmental_goals?: string;
+          main_degradation_causes?: string;
+          seedlings_source?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          proposed_num_nurseries?: number;
+          curr_land_degradation?: string;
+          proj_impact_socieconom?: string;
+          proj_impact_foodsec?: string;
+          proj_impact_watersec?: string;
+          proj_impact_jobtypes?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          num_jobs_created?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_men?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_women?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_18to35?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_older35?: number;
+          proj_beneficiaries?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_women?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_small?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_large?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_youth?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_scheduled_classes?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_scheduled_tribes?: number;
+          monitoring_evaluation_plan?: string;
+          main_causes_of_degradation?: string;
+          deleted_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        }[];
         tree_species?: {
           uuid?: string;
           name?: string;
@@ -7509,6 +10932,207 @@ export type NurseryReportRead = {
         type?: string;
         collection?: string;
       }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       web_url?: string;
       facebook_url?: string;
       instagram_url?: string;
@@ -7803,6 +11427,207 @@ export type NurseryReportRead = {
         type?: string;
         collection?: string;
       }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       web_url?: string;
       facebook_url?: string;
       instagram_url?: string;
@@ -8088,6 +11913,207 @@ export type NurseryReportRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -8380,6 +12406,207 @@ export type SiteReportRead = {
         leadership_team?: string;
         countries?: string[];
         languages?: string[];
+        project_pitches?: {
+          id?: string;
+          uuid?: string;
+          status?: string;
+          readable_status?: string;
+          organisation_id?: string;
+          funding_programmes?: {
+            id?: number;
+            uuid?: string;
+            name?: string;
+            description?: string;
+            read_more_url?: string;
+            organisation_types?: string[];
+            location?: string;
+            status?: string;
+          };
+          tree_species?: {
+            uuid?: string;
+            name?: string;
+            amount?: number;
+            type?: string;
+            collection?: string;
+          }[];
+          project_name?: string;
+          how_discovered?: string;
+          project_objectives?: string;
+          project_country?: string[];
+          project_county_district?: string;
+          restoration_intervention_types?: string[];
+          land_systems?: string[];
+          tree_restoration_practices?: string[];
+          total_hectares?: number;
+          project_budget?: number;
+          total_trees?: number;
+          capacity_building_needs?: string[];
+          additional?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          restoration_photos?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          cover?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          };
+          proof_of_land_tenure_mou?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          }[];
+          detailed_project_budget?: {
+            uuid?: string;
+            url?: string;
+            thumb_url?: string;
+            collection_name?: string;
+            title?: string;
+            file_name?: string;
+            mime_type?: string;
+            size?: number;
+            lat?: number;
+            lng?: number;
+            is_public?: boolean;
+            is_cover?: boolean;
+            created_at?: string;
+          };
+          expected_active_restoration_start_date?: string;
+          expected_active_restoration_end_date?: string;
+          description_of_project_timeline?: string;
+          proj_partner_info?: string;
+          land_tenure_proj_area?: string[];
+          landholder_comm_engage?: string;
+          proj_success_risks?: string;
+          monitor_eval_plan?: string;
+          proj_boundary?: string;
+          sustainable_dev_goals?: string[];
+          proj_area_description?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          proposed_num_sites?: number;
+          environmental_goals?: string;
+          main_degradation_causes?: string;
+          seedlings_source?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          proposed_num_nurseries?: number;
+          curr_land_degradation?: string;
+          proj_impact_socieconom?: string;
+          proj_impact_foodsec?: string;
+          proj_impact_watersec?: string;
+          proj_impact_jobtypes?: string;
+          /**
+           * @minimum 0
+           * @maximum 4294967295
+           */
+          num_jobs_created?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_men?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_women?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_18to35?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_employees_older35?: number;
+          proj_beneficiaries?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_women?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_small?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_large?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_youth?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_scheduled_classes?: number;
+          /**
+           * @minimum 0
+           * @maximum 100
+           */
+          pct_beneficiaries_scheduled_tribes?: number;
+          monitoring_evaluation_plan?: string;
+          main_causes_of_degradation?: string;
+          deleted_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        }[];
         tree_species?: {
           uuid?: string;
           name?: string;
@@ -8678,6 +12905,207 @@ export type SiteReportRead = {
         type?: string;
         collection?: string;
       }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      }[];
       web_url?: string;
       facebook_url?: string;
       instagram_url?: string;
@@ -8971,6 +13399,207 @@ export type SiteReportRead = {
         amount?: number;
         type?: string;
         collection?: string;
+      }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
       }[];
       web_url?: string;
       facebook_url?: string;
@@ -9326,6 +13955,207 @@ export type SiteReportRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -9711,6 +14541,207 @@ export type ProjectReportRead = {
     leadership_team?: string;
     countries?: string[];
     languages?: string[];
+    project_pitches?: {
+      id?: string;
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      organisation_id?: string;
+      funding_programmes?: {
+        id?: number;
+        uuid?: string;
+        name?: string;
+        description?: string;
+        read_more_url?: string;
+        organisation_types?: string[];
+        location?: string;
+        status?: string;
+      };
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      project_name?: string;
+      how_discovered?: string;
+      project_objectives?: string;
+      project_country?: string[];
+      project_county_district?: string;
+      restoration_intervention_types?: string[];
+      land_systems?: string[];
+      tree_restoration_practices?: string[];
+      total_hectares?: number;
+      project_budget?: number;
+      total_trees?: number;
+      capacity_building_needs?: string[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      restoration_photos?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      proof_of_land_tenure_mou?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      detailed_project_budget?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      expected_active_restoration_start_date?: string;
+      expected_active_restoration_end_date?: string;
+      description_of_project_timeline?: string;
+      proj_partner_info?: string;
+      land_tenure_proj_area?: string[];
+      landholder_comm_engage?: string;
+      proj_success_risks?: string;
+      monitor_eval_plan?: string;
+      proj_boundary?: string;
+      sustainable_dev_goals?: string[];
+      proj_area_description?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_sites?: number;
+      environmental_goals?: string;
+      main_degradation_causes?: string;
+      seedlings_source?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      proposed_num_nurseries?: number;
+      curr_land_degradation?: string;
+      proj_impact_socieconom?: string;
+      proj_impact_foodsec?: string;
+      proj_impact_watersec?: string;
+      proj_impact_jobtypes?: string;
+      /**
+       * @minimum 0
+       * @maximum 4294967295
+       */
+      num_jobs_created?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_men?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_18to35?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_employees_older35?: number;
+      proj_beneficiaries?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_women?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_small?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_large?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_youth?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_classes?: number;
+      /**
+       * @minimum 0
+       * @maximum 100
+       */
+      pct_beneficiaries_scheduled_tribes?: number;
+      monitoring_evaluation_plan?: string;
+      main_causes_of_degradation?: string;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    }[];
     tree_species?: {
       uuid?: string;
       name?: string;
@@ -9996,6 +15027,207 @@ export type ProjectReportRead = {
         amount?: number;
         type?: string;
         collection?: string;
+      }[];
+      project_pitches?: {
+        id?: string;
+        uuid?: string;
+        status?: string;
+        readable_status?: string;
+        organisation_id?: string;
+        funding_programmes?: {
+          id?: number;
+          uuid?: string;
+          name?: string;
+          description?: string;
+          read_more_url?: string;
+          organisation_types?: string[];
+          location?: string;
+          status?: string;
+        };
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        project_name?: string;
+        how_discovered?: string;
+        project_objectives?: string;
+        project_country?: string[];
+        project_county_district?: string;
+        restoration_intervention_types?: string[];
+        land_systems?: string[];
+        tree_restoration_practices?: string[];
+        total_hectares?: number;
+        project_budget?: number;
+        total_trees?: number;
+        capacity_building_needs?: string[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        restoration_photos?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        proof_of_land_tenure_mou?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        detailed_project_budget?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        expected_active_restoration_start_date?: string;
+        expected_active_restoration_end_date?: string;
+        description_of_project_timeline?: string;
+        proj_partner_info?: string;
+        land_tenure_proj_area?: string[];
+        landholder_comm_engage?: string;
+        proj_success_risks?: string;
+        monitor_eval_plan?: string;
+        proj_boundary?: string;
+        sustainable_dev_goals?: string[];
+        proj_area_description?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_sites?: number;
+        environmental_goals?: string;
+        main_degradation_causes?: string;
+        seedlings_source?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        proposed_num_nurseries?: number;
+        curr_land_degradation?: string;
+        proj_impact_socieconom?: string;
+        proj_impact_foodsec?: string;
+        proj_impact_watersec?: string;
+        proj_impact_jobtypes?: string;
+        /**
+         * @minimum 0
+         * @maximum 4294967295
+         */
+        num_jobs_created?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_men?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_18to35?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_employees_older35?: number;
+        proj_beneficiaries?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_women?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_small?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_large?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_youth?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_classes?: number;
+        /**
+         * @minimum 0
+         * @maximum 100
+         */
+        pct_beneficiaries_scheduled_tribes?: number;
+        monitoring_evaluation_plan?: string;
+        main_causes_of_degradation?: string;
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
       }[];
       web_url?: string;
       facebook_url?: string;
