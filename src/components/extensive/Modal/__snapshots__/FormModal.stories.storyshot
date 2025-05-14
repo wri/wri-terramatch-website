@@ -8,42 +8,46 @@ exports[`Storyshots Components/Extensive/Modal/FormModal Default 1`] = `
     className="m-auto flex max-h-full flex-col items-center justify-start overflow-y-auto rounded-lg border-2 border-neutral-100 bg-white mobile:h-[calc(100%-60px)] mobile:w-full mobile:rounded-none mobile:mt-[60px] max-w-[800px] margin-4 z-50 w-[800px] p-0"
   >
     <div
-      className="flex w-full items-center justify-between gap-4 border-b border-neutral-300 bg-neutral-50 p-8"
+      className="flex w-full items-center justify-between gap-4 border-b border-neutral-300 bg-neutral-50 px-8 py-6"
     >
       <p
-        className="flex-1 text-bold-headline-1000"
+        className="flex-1 leading-[normal] text-20-bold"
         data-testid="txt"
       >
         Add new disturbance
       </p>
       <button
-        className="flex items-center justify-center rounded-full hover:bg-opacity-60"
+        className="flex items-center justify-center rounded-full hover:bg-opacity-60 text-darkCustom-100 hover:text-primary"
         onClick={[Function]}
       >
         <div
           style={
             Object {
               "height": undefined,
-              "width": 32,
+              "width": 24,
             }
           }
         />
       </button>
     </div>
     <form
-      className="w-full p-15"
+      className="custom-modal-form relative w-full overflow-y-auto px-8 py-10 "
       onSubmit={[Function]}
     >
-      <button
-        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content m-auto mt-15"
-        type="submit"
+      <div
+        className="mt-10 flex w-full justify-end"
       >
-        <span
-          className="flex items-center text-bold-caption-200 !leading-[normal]"
+        <button
+          className="bg-primary-500 hover:bg-primary-400 !text-white rounded-md uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content px-6 py-3"
+          type="submit"
         >
-          Save
-        </span>
-      </button>
+          <span
+            className="flex items-center text-bold-caption-200 !leading-[normal]"
+          >
+            Save
+          </span>
+        </button>
+      </div>
     </form>
   </div>
 </div>
