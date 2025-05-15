@@ -99,6 +99,12 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   return (
     <EntityProvider entityUuid={entityUUID} entityName={entityName}>
       <WizardForm
+        formSubmissionOrg={{
+          uuid: entity?.organisation?.uuid,
+          type: entity?.organisation?.type,
+          currency: entity?.organisation?.currency,
+          start_month: entity?.organisation?.fin_start_month
+        }}
         steps={formSteps!}
         errors={error}
         onBackFirstStep={router.back}

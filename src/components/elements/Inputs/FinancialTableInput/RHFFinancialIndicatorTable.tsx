@@ -171,7 +171,7 @@ function formatFinancialData(
     documentationData: years?.map((year, index) => {
       const row = groupedData.documentationData[year] ?? {};
       return {
-        uuid: row.uuid ?? index,
+        uuid: row?.uuid,
         year,
         currentAssets: [],
         description: row.description ?? ""
@@ -285,7 +285,7 @@ const RHFFinancialIndicatorsDataTable = ({
   const [documentationData, setDocumentationData] = useState(
     !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
   );
-  console.log(formatted);
+
   const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
     onSuccess(data: any) {
       // @ts-ignore
@@ -663,7 +663,7 @@ const RHFFinancialIndicatorsDataTable = ({
             />
           </div>
         </When>
-        <When condition={formSubmissionOrg.type?.includes("non-profit")}>
+        <When condition={formSubmissionOrg?.type?.includes("non-profit")}>
           <div className="mb-10">
             <FinancialTableInput
               resetTable={resetTable}
