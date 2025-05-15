@@ -235,6 +235,142 @@ export const taskGet = (variables: TaskGetVariables, signal?: AbortSignal) =>
     signal
   });
 
+export type TaskUpdatePathParams = {
+  /**
+   * Task UUID for task to retrieve
+   */
+  uuid: string;
+};
+
+export type TaskUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TaskUpdateResponse = {
+  meta?: {
+    /**
+     * @example tasks
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example tasks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TaskFullDto;
+    relationships?: {
+      projectReport?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      };
+      siteReports?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      nurseryReports?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+    };
+  };
+  included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
+    | {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }
+    | {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }
+  )[];
+};
+
+export type TaskUpdateVariables = {
+  body: Schemas.TaskUpdateBody;
+  pathParams: TaskUpdatePathParams;
+};
+
+export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal) =>
+  entityServiceFetch<TaskUpdateResponse, TaskUpdateError, Schemas.TaskUpdateBody, {}, {}, TaskUpdatePathParams>({
+    url: "/entities/v3/tasks/{uuid}",
+    method: "patch",
+    ...variables,
+    signal
+  });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -1306,7 +1442,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  tasks: { taskIndex, taskGet },
+  tasks: { taskIndex, taskGet, taskUpdate },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }

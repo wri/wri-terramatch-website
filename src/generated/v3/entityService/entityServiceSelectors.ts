@@ -5,6 +5,8 @@ import {
   TaskIndexVariables,
   TaskGetPathParams,
   TaskGetVariables,
+  TaskUpdatePathParams,
+  TaskUpdateVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -39,6 +41,12 @@ export const taskGetIsFetching = (variables: Omit<TaskGetVariables, "body">) =>
 
 export const taskGetFetchFailed = (variables: Omit<TaskGetVariables, "body">) =>
   fetchFailedSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+
+export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body">) =>
+  isFetchingSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
+
+export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
+  fetchFailedSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({

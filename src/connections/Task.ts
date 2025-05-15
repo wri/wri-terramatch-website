@@ -1,12 +1,19 @@
 import { createSelector } from "reselect";
 
 import { PaginatedConnectionProps } from "@/connections/util/types";
-import { taskGet, taskIndex, TaskIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import { TaskFullDto, TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  taskGet,
+  taskIndex,
+  TaskIndexQueryParams,
+  taskUpdate
+} from "@/generated/v3/entityService/entityServiceComponents";
+import { TaskFullDto, TaskLightDto, TaskUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
-  taskIndexIndexMeta
+  taskIndexIndexMeta,
+  taskUpdateFetchFailed,
+  taskUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
@@ -34,6 +41,10 @@ export type TaskConnection = {
   siteReportUuids?: string[];
   nurseryReportUuids?: string[];
   fetchFailure?: PendingErrorState | null;
+
+  taskIsUpdating: boolean;
+  taskUpdateFailure?: PendingErrorState | null;
+  submitForApproval?: () => void;
 };
 
 export type TaskProps = {
@@ -66,6 +77,10 @@ const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid: uuid ?? "" } 
 const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
   if (uuid == null || fetchFailure != null) return true;
   return task != null && !task.lightResource;
+};
+
+const updateTask = (uuid: string, update: TaskUpdateAttributes) => {
+  taskUpdate({ ...taskParams({ uuid }), body: { data: { id: uuid, type: "tasks", attributes: update } } });
 };
 
 export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps> = {
@@ -110,8 +125,13 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
     ({ uuid }) => uuid ?? "",
     props =>
       createSelector(
-        [({ tasks }: ApiDataStore) => tasks, taskGetFetchFailed(taskParams(props))],
-        (tasks, fetchFailure) => {
+        [
+          ({ tasks }: ApiDataStore) => tasks,
+          taskGetFetchFailed(taskParams(props)),
+          taskUpdateIsFetching(taskParams(props)),
+          taskUpdateFetchFailed(taskParams(props))
+        ],
+        (tasks, fetchFailure, taskIsUpdating, taskUpdateFailure) => {
           const taskResponse = tasks[props.uuid ?? ""];
           if (taskResponse == null) return { fetchFailure };
 
@@ -123,7 +143,12 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
             projectReportUuid,
             siteReportUuids,
             nurseryReportUuids,
-            fetchFailure
+            fetchFailure,
+
+            taskIsUpdating,
+            taskUpdateFailure,
+
+            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" })
           };
         }
       )

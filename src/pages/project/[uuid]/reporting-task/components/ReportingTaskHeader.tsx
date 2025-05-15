@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -8,9 +9,10 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import { useTask } from "@/connections/Task";
 import { useModalContext } from "@/context/modal.provider";
-import { usePutV2TasksUUIDSubmit } from "@/generated/apiComponents";
-import { ProjectFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useUpdateSuccess } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 
@@ -18,42 +20,42 @@ import { TaskReports } from "../[reportingTaskUUID].page";
 
 interface ReportingTaskHeaderProps {
   project?: ProjectFullDto;
-  task?: TaskFullDto;
+  taskUuid?: string;
   reports?: TaskReports;
 }
 
-const ReportingTaskHeader = ({ project, task, reports }: ReportingTaskHeaderProps) => {
+const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeaderProps) => {
   const t = useT();
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const router = useRouter();
+  const [, { task, submitForApproval, taskUpdateFailure, taskIsUpdating }] = useTask({ uuid: taskUuid });
 
-  const { mutate: submitReportingTask } = usePutV2TasksUUIDSubmit({
-    onSuccess() {
-      openModal(
-        ModalId.REPORTS_SUBMITTED,
-        <Modal
-          title={t("Reports submitted")}
-          content={t(
-            "Your reports have been submitted. You can view them in the ‘completed’ reports sections in your project page"
-          )}
-          iconProps={{
-            height: 60,
-            width: 60,
-            className: "fill-secondary",
-            name: IconNames.EXCLAMATION_CIRCLE
-          }}
-          primaryButtonProps={{
-            children: "Close",
-            onClick: () => {
-              closeModal(ModalId.REPORTS_SUBMITTED);
-              router.replace(`/project/${project?.uuid}?tab=reporting-tasks`);
-            }
-          }}
-        />
-      );
-    }
-  });
+  const onSuccess = useCallback(() => {
+    openModal(
+      ModalId.REPORTS_SUBMITTED,
+      <Modal
+        title={t("Reports submitted")}
+        content={t(
+          "Your reports have been submitted. You can view them in the ‘completed’ reports sections in your project page"
+        )}
+        iconProps={{
+          height: 60,
+          width: 60,
+          className: "fill-secondary",
+          name: IconNames.EXCLAMATION_CIRCLE
+        }}
+        primaryButtonProps={{
+          children: "Close",
+          onClick: () => {
+            closeModal(ModalId.REPORTS_SUBMITTED);
+            router.replace(`/project/${project?.uuid}?tab=reporting-tasks`);
+          }
+        }}
+      />
+    );
+  }, [closeModal, openModal, project?.uuid, router, t]);
+  useUpdateSuccess(taskIsUpdating, taskUpdateFailure, onSuccess);
 
   const ModalsMapping = {
     ready_to_submit: {
@@ -62,7 +64,7 @@ const ReportingTaskHeader = ({ project, task, reports }: ReportingTaskHeaderProp
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: task?.uuid! } });
+          submitForApproval?.();
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -91,7 +93,7 @@ const ReportingTaskHeader = ({ project, task, reports }: ReportingTaskHeaderProp
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: task?.uuid! } });
+          submitForApproval?.();
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
