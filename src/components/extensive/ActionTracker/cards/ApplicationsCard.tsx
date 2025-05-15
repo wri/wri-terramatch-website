@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { ApplicationLiteRead } from "@/generated/apiSchemas";
+import { useDate } from "@/hooks/useDate";
 
 import { IconNames } from "../../Icon/Icon";
 import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
@@ -14,6 +15,7 @@ export type ApplicationsCardProps = {
 
 const ApplicationsCard = (props: ApplicationsCardProps) => {
   const t = useT();
+  const { format } = useDate();
 
   const applications = useMemo(() => {
     if (!props.applications) return [];
@@ -30,7 +32,11 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
           title: application.funding_programme_name ?? t("N/A"),
           subtitle: t(`<strong>Stage</strong>: {name}`, {
             name: application.current_submission?.stage?.name || t("N/A")
-          })
+          }),
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+            date: format(application.current_submission?.updated_at)
+          }),
+          updatedBy: t(`<strong>Updated By</strong>: {name}`, { name: application.current_submission?.updated_by_name })
         } as ActionTrackerCardRowProps;
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -90,7 +90,6 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
-
           <TextInput
             source="label"
             label="Question Text"
@@ -169,13 +168,26 @@ export const QuestionArrayInput = ({
               );
             }}
           </FormDataConsumer>
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              return scopedFormData.linked_field_key == "pro-pit-long-proposed" ||
+                scopedFormData.linked_field_key == "pro-pit-lat-proposed" ? (
+                <>
+                  <NumberInput source={getSource("min_number_limit")} label="Minimum Number Limit" />
+                  <NumberInput source={getSource("max_number_limit")} label="Maximum Number Limit" />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
           <BooleanInput
             source="validation.required"
             label="Required"
             helperText="Please keep this option on if you want to make this question required. When this option is enabled, project developers will be obligated to provide an answer to the question before they can submit the form."
             defaultValue={false}
           />
-
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (!scopedFormData || !getSource) return null;
@@ -281,6 +293,7 @@ export const QuestionArrayInput = ({
                     </QuestionArrayInput>
                   );
 
+                case "strategy-area":
                 case "select":
                 case "select-image":
                 case "workdays":

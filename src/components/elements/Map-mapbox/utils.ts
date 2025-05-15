@@ -16,11 +16,11 @@ import {
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
   fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  GetV2MODELUUIDFilesResponse,
   useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
@@ -29,28 +29,10 @@ import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from ".
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
-
-type EditPolygon = {
-  isOpen: boolean;
-  uuid: string;
-  primary_uuid?: string;
-};
-
 type DataPolygonOverview = {
   status: string;
   count: number;
 }[];
-
-type PopupComponentProps = {
-  feature: mapboxgl.MapboxGeoJSONFeature;
-  popup: mapboxgl.Popup;
-  setPolygonFromMap: (polygon: any) => void;
-  sitePolygonData: SitePolygonsDataResponse | undefined;
-  type: TooltipType;
-  editPolygon: EditPolygon;
-  setEditPolygon: (value: EditPolygon) => void;
-  addPopupToMap?: () => void;
-};
 
 export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
   return properties[key] ?? properties[`user_${key}`];
@@ -135,7 +117,6 @@ const showPolygons = (
   });
 };
 
-let popup: mapboxgl.Popup | null = null;
 let popupAttachedMap: Record<string, mapboxgl.Popup[]> = {
   POLYGON: [],
   MEDIA: []
@@ -165,8 +146,35 @@ const handleLayerClick = (
   isDashboard?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
-  setLoader?: (value: boolean) => void
+  setLoader?: (value: boolean) => void,
+  setMobilePopupData?: (value: any) => void
 ) => {
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+  if (!feature) {
+    Log.warn("No feature found in click event");
+    return;
+  }
+
+  // Handle mobile/dashboard popups
+  if (setMobilePopupData && isDashboard) {
+    const popupData = {
+      feature,
+      layerName,
+      type,
+      setPolygonFromMap,
+      sitePolygonData,
+      isDashboard,
+      editPolygon,
+      setEditPolygon,
+      setFilters,
+      dashboardCountries
+    };
+    setMobilePopupData(popupData);
+    return;
+  }
+
+  // Handle regular popups for non-dashboard/non-mobile views
   removePopups("POLYGON");
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
   const popupOptions: mapboxgl.PopupOptions = {
@@ -184,12 +192,6 @@ const handleLayerClick = (
         }
       : 0
   };
-  const { lngLat, features } = e;
-  const feature = features?.[0];
-  if (!feature) {
-    Log.warn("No feature found in click event");
-    return;
-  }
 
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
@@ -200,7 +202,7 @@ const handleLayerClick = (
 
   const newPopup = createPopup(lngLat);
 
-  const commonProps: PopupComponentProps = {
+  const commonProps = {
     feature,
     popup: newPopup,
     setPolygonFromMap,
@@ -209,33 +211,9 @@ const handleLayerClick = (
     editPolygon,
     setEditPolygon
   };
-  if (isDashboard) {
-    setLoader?.(true);
-    const addPopupToMap = () => {
-      newPopup.addTo(map);
-      removePopups("POLYGON");
-      popupAttachedMap["POLYGON"].push(newPopup);
-      setLoader?.(false);
-    };
-    const removePopupFromMap = () => {
-      newPopup.remove();
-    };
-    root.render(
-      createElement(PopupComponent, {
-        ...commonProps,
-        addPopupToMap,
-        layerName,
-        setFilters,
-        dashboardCountries,
-        removePopupFromMap,
-        isDashboard
-      })
-    );
-  } else {
-    newPopup.addTo(map);
-    popupAttachedMap["POLYGON"].push(newPopup);
-    root.render(createElement(PopupComponent, commonProps));
-  }
+  newPopup.addTo(map);
+  popupAttachedMap["POLYGON"].push(newPopup);
+  root.render(createElement(PopupComponent, commonProps));
 };
 
 export const removePopups = (key: "POLYGON" | "MEDIA") => {
@@ -301,7 +279,7 @@ export const addGeojsonToDraw = (
 
 export const addMediaSourceAndLayer = (
   map: mapboxgl.Map,
-  modelFilesData: GetV2MODELUUIDFilesResponse["data"],
+  modelFilesData: MediaDto[],
   setImageCover: Function,
   handleDownload: Function,
   handleDelete: Function,
@@ -311,9 +289,7 @@ export const addMediaSourceAndLayer = (
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   removeMediaLayer(map);
   removePopups("MEDIA");
-  const modelFilesGeolocalized = modelFilesData!.filter(
-    modelFile => modelFile.location?.lat && modelFile.location?.lng
-  );
+  const modelFilesGeolocalized = modelFilesData!.filter(modelFile => modelFile.lat != null && modelFile.lng != null);
   if (modelFilesGeolocalized.length === 0) {
     return;
   }
@@ -322,23 +298,23 @@ export const addMediaSourceAndLayer = (
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: [modelFile.location!.lng, modelFile.location!.lat]
+      coordinates: [modelFile.lng, modelFile.lat]
     },
     properties: {
       uuid: modelFile.uuid,
       name: modelFile.name,
-      created_date: modelFile.created_date,
-      file_url: modelFile.file_url,
+      created_date: modelFile.createdAt,
+      file_url: modelFile.url,
       location: {
-        lat: modelFile.location?.lat,
-        lng: modelFile.location?.lng
+        lat: modelFile.lat,
+        lng: modelFile.lng
       },
-      is_cover: modelFile.is_cover,
-      is_public: modelFile.is_public,
-      photographer: (modelFile as any).photographer || null,
-      description: (modelFile as any).description || null,
-      mime_type: modelFile.mime_type,
-      file_name: modelFile.file_name
+      is_cover: modelFile.isCover,
+      is_public: modelFile.isPublic,
+      photographer: modelFile.photographer,
+      description: modelFile.description,
+      mime_type: modelFile.mimeType,
+      file_name: modelFile.fileName
     }
   }));
 
@@ -397,11 +373,11 @@ export const addMediaSourceAndLayer = (
           isProjectPath: isProjectPath
         })
       );
-      popup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
+      const mediaPopup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);
-      popupAttachedMap["MEDIA"].push(popup);
+      popupAttachedMap["MEDIA"].push(mediaPopup);
     });
   });
 };
@@ -491,7 +467,8 @@ export const addPopupsToMap = (
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null
+  selectedCountry?: string | null,
+  setMobilePopupData?: (value: any) => void
 ) => {
   if (popupComponent) {
     layersList.forEach((layer: LayerType) => {
@@ -509,7 +486,8 @@ export const addPopupsToMap = (
         setFilters,
         dashboardCountries,
         setLoader,
-        selectedCountry
+        selectedCountry,
+        setMobilePopupData
       );
     });
   }
@@ -530,50 +508,53 @@ export const addPopupToLayer = (
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null
+  selectedCountry?: string | null,
+  setMobilePopupData?: (value: any) => void
 ) => {
-  if (popupComponent) {
-    const { name } = layer;
+  if (!popupComponent) return;
 
-    let layers = map.getStyle().layers;
+  const { name } = layer;
+  let layers = map.getStyle().layers;
+  let targetLayers = layers.filter(layer => layer.id.startsWith(name));
 
-    let targetLayers = layers.filter(layer => layer.id.startsWith(name));
-    if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-      targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
-    }
-    const clickHandler = (e: any) => {
-      const currentMode = draw?.getMode();
-      if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
-
-      if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
-      // keep commented for future possible use
-      // if (name === LAYERS_NAMES.CENTROIDS && !selectedCountry) return;
-
-      handleLayerClick(
-        e,
-        popupComponent,
-        map,
-        setPolygonFromMap,
-        sitePolygonData,
-        type,
-        editPolygon,
-        setEditPolygon,
-        name,
-        isDashboard,
-        setFilters,
-        dashboardCountries,
-        setLoader
-      );
-    };
-    targetLayers.forEach(targetLayer => {
-      if (activeClickHandlers[targetLayer.id]) {
-        map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
-        delete activeClickHandlers[targetLayer.id];
-      }
-      activeClickHandlers[targetLayer.id] = clickHandler;
-      map.on("click", targetLayer.id, clickHandler);
-    });
+  if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
+    targetLayers = targetLayers.filter(layer => (layer as any)?.metadata?.type === "big-circle");
   }
+
+  const clickHandler = (e: any) => {
+    const currentMode = draw?.getMode();
+    if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
+    if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
+
+    handleLayerClick(
+      e,
+      popupComponent,
+      map,
+      setPolygonFromMap,
+      sitePolygonData,
+      type,
+      editPolygon,
+      setEditPolygon,
+      name,
+      isDashboard,
+      setFilters,
+      dashboardCountries,
+      setLoader,
+      setMobilePopupData
+    );
+  };
+
+  targetLayers.forEach(targetLayer => {
+    if (activeClickHandlers[targetLayer.id]) {
+      map.off("click", targetLayer.id, activeClickHandlers[targetLayer.id]);
+      map.off("touchend", targetLayer.id, activeClickHandlers[targetLayer.id]);
+      delete activeClickHandlers[targetLayer.id];
+    }
+
+    activeClickHandlers[targetLayer.id] = clickHandler;
+    map.on("click", targetLayer.id, clickHandler);
+    map.on("touchend", targetLayer.id, clickHandler);
+  });
 };
 
 const getGeoserverURL = (layerName: string, isDashboard?: string | undefined) => {

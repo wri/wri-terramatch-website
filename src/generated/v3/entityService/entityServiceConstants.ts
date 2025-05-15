@@ -15,6 +15,10 @@ import {
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
+  MediaDto,
+  DisturbanceDto,
+  InvasiveDto,
+  StrataDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto
@@ -30,6 +34,10 @@ export const ENTITY_SERVICE_RESOURCES = [
   "demographics",
   "seedings",
   "treeSpecies",
+  "media",
+  "disturbances",
+  "invasives",
+  "stratas",
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts"
@@ -45,10 +53,18 @@ export type EntityServiceApiResources = {
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
+  media: StoreResourceMap<MediaDto>;
+  disturbances: StoreResourceMap<DisturbanceDto>;
+  invasives: StoreResourceMap<InvasiveDto>;
+  stratas: StoreResourceMap<StrataDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
 };
+
+export const SupportedEntities = {
+  ENTITY_TYPES: ["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const
+} as const;
 
 export const DemographicCollections = {
   WORKDAYS_PROJECT: [

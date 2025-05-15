@@ -5,6 +5,7 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useGadmOptions } from "@/connections/Gadm";
 import {
   useGetV2ProjectPitchesUUID,
   usePatchV2ProjectPitchesUUID,
@@ -18,6 +19,7 @@ const ProjectPitchCreate = () => {
   const router = useRouter();
   const pitchUUID = router.query.pitchUUID as string;
   const t = useT();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const { data: pitch, isLoading } = useGetV2ProjectPitchesUUID(
     { pathParams: { uuid: pitchUUID } },
@@ -34,7 +36,7 @@ const ProjectPitchCreate = () => {
     }
   });
 
-  const formSteps = getSteps(t, pitchUUID);
+  const formSteps = getSteps(t, pitchUUID, countryOptions ?? []);
   //@ts-expect-error
   const defaultValues = useNormalizedFormDefaultValue(pitch?.data, formSteps);
 

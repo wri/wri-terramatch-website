@@ -11,7 +11,9 @@ import Text from "@/components/elements/Text/Text";
 import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
 const SiteOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "restoration-in-progress" | undefined>();
+  const [statusModal, setStatusModal] = useState<
+    "approved" | "needs-more-information" | "restoration-in-progress" | undefined
+  >();
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
 
   const { record } = useShowContext();
@@ -87,7 +89,7 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("moreinfo")}
+              onClick={() => setStatusModal("needs-more-information")}
             >
               Request More Info
             </Button>
@@ -102,7 +104,7 @@ const SiteOverview: FC = () => {
               className="button-aside-page-admin"
               startIcon={<Check />}
               disabled={record?.status === "approved" || !checkPolygons}
-              onClick={() => setStatusModal("approve")}
+              onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>

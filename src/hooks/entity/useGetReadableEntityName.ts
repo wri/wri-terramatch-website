@@ -19,12 +19,15 @@ export const useGetReadableEntityName = () => {
 
         "project-report": singular ? t("Project Report") : t("Project Reports"),
         "project-reports": singular ? t("Project Report") : t("Project Reports"),
+        projectReports: singular ? t("Project Report") : t("Project Reports"),
 
         "site-report": singular ? t("Site Report") : t("Site Reports"),
         "site-reports": singular ? t("Site Report") : t("Site Reports"),
+        siteReports: singular ? t("Site Report") : t("Site Reports"),
 
         "nursery-report": singular ? t("Nursery Report") : t("Nursery Reports"),
-        "nursery-reports": singular ? t("Nursery Report") : t("Nursery Reports")
+        "nursery-reports": singular ? t("Nursery Report") : t("Nursery Reports"),
+        nurseryReports: singular ? t("Nursery Report") : t("Nursery Reports")
       };
 
       return mapping[name];

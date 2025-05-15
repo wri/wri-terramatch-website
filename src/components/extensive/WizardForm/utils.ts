@@ -1,4 +1,5 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
+import { isEmpty } from "lodash";
 import * as yup from "yup";
 
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
@@ -9,6 +10,7 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { findCachedGadmTitle, loadGadmCodes } from "@/connections/Gadm";
 import { FormRead } from "@/generated/apiSchemas";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
@@ -44,19 +46,58 @@ export const getSchemaFields = (fields: FormField[]) => {
         }
       });
     } else {
-      schema[field.name] = field.validation?.nullable().label(" ");
+      if (!field.validation) {
+        schema[field.name] = yup
+          .mixed()
+          .nullable()
+          .label(field.label ?? " ");
+      } else {
+        schema[field.name] = field.validation.nullable().label(field.label ?? " ");
+      }
     }
 
-    if (field.fieldProps.required) schema[field.name] = schema[field.name].required();
+    if (field.fieldProps.required && schema[field.name]) {
+      schema[field.name] = schema[field.name].required();
+    }
   }
 
   return schema;
 };
 
-export const getAnswer = (
-  field: FormField,
-  values: any
-): string | string[] | UploadedFile[] | TreeSpeciesValue[] | undefined => {
+/**
+ * Some form answers require data from external sources to be able to display the title associated
+ * with the value in the form field (currently just GADM codes). This method goes through the given
+ * set of form fields and caches all data that will be needed by synchronous methods like getAnswer()
+ */
+export const loadExternalAnswerSources = async (fields: FormField[], values: any) => {
+  const promises: Promise<unknown>[] = [];
+
+  for (const field of fields) {
+    if (field.type === FieldType.Conditional) {
+      const children = field.fieldProps.fields.filter(child => child.condition === values[field.name]);
+      promises.push(loadExternalAnswerSources(children, values));
+    } else if (field.type === FieldType.Dropdown) {
+      const { options, apiOptionsSource, optionsFilterFieldName } = field.fieldProps;
+      if (options != null || !apiOptionsSource?.startsWith("gadm-level-")) continue;
+
+      const level = Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2;
+      if (level === 0) {
+        promises.push(loadGadmCodes({ level }));
+      } else if (optionsFilterFieldName != null) {
+        const parentCodes = toArray(values?.[optionsFilterFieldName] ?? []) as string[];
+        if (!isEmpty(parentCodes)) {
+          promises.push(loadGadmCodes({ level, parentCodes }));
+        }
+      }
+    }
+  }
+
+  await Promise.all(promises);
+};
+
+type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;
+
+export const getAnswer = (field: FormField, values: any): Answer => {
   const value = values?.[field.name];
 
   switch (field.type) {
@@ -70,7 +111,27 @@ export const getAnswer = (
     case FieldType.FileUpload:
       return toArray(value);
 
-    case FieldType.Dropdown:
+    case FieldType.Dropdown: {
+      const { options, apiOptionsSource, optionsFilterFieldName } = field.fieldProps;
+      if (options == null) {
+        if (!apiOptionsSource?.startsWith("gadm-level-")) return value;
+
+        // Pull titles for our values from the data api cache. If the title isn't found, return
+        // the base value.
+        const dropdownValues = toArray(value) as string[];
+        return dropdownValues.map(value => {
+          const level = Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2;
+          if (level === 0) return findCachedGadmTitle(level, value) ?? value;
+
+          if (optionsFilterFieldName == null) return value;
+          const parentCodes = toArray(values?.[optionsFilterFieldName]) as string[];
+          return findCachedGadmTitle(level, value, parentCodes) ?? value;
+        });
+      }
+
+      // Fall through to the default case.
+    }
+    // eslint-disable-next-line no-fallthrough
     case FieldType.Select:
     case FieldType.SelectImage: {
       const { options } = field.fieldProps;
@@ -81,6 +142,30 @@ export const getAnswer = (
         return options.find(o => o.value === value)?.title || value;
       }
     }
+    case FieldType.StrategyAreaInput: {
+      const { options } = field.fieldProps;
+      const parsedValue: { [key: string]: number }[] = JSON.parse(value);
+
+      if (Array.isArray(parsedValue)) {
+        const formatted = parsedValue
+          .filter(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            return key && percent !== null && percent !== undefined && !isNaN(percent);
+          })
+          .map(entry => {
+            const key = Object.keys(entry)[0];
+            const percent = entry[key];
+            const title = options.find(o => o.value === key)?.title || key;
+
+            return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
+          });
+
+        return formatted;
+      }
+
+      return value;
+    }
 
     default:
       return undefined;
@@ -88,23 +173,20 @@ export const getAnswer = (
 };
 
 export const getFormattedAnswer = (field: FormField, values: any): string | undefined => {
-  const answer: any = getAnswer(field, values);
-  let response;
+  const answer = getAnswer(field, values);
 
   if (Array.isArray(answer) && field.type === FieldType.FileUpload) {
-    response = answer
+    return (answer as UploadedFile[])
       .filter(file => !!file)
       ?.map(file => `<a href="${file.url}" target="_blank">${file.file_name}</a>`)
       .join(", ");
   } else if (Array.isArray(answer)) {
-    response = answer.length > 0 ? answer.join(", ") : undefined;
+    return answer.length > 0 ? answer.join(", ") : undefined;
   } else if (typeof answer === "boolean") {
-    response = answer ? "Yes" : "No";
+    return answer ? "Yes" : "No";
   } else {
-    response = answer;
+    return answer;
   }
-
-  return response;
 };
 
 export const downloadAnswersCSV = (steps: FormStepSchema[], values: any) => {

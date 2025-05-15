@@ -90,7 +90,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     setSiteData,
     setShouldRefetchPolygonData,
     setSelectedPolygonsInCheckbox,
-    polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList
   } = contextMapArea;
   const { openModal, closeModal } = useModalContext();
@@ -203,6 +202,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            openNotification(
+              "warning",
+              t("Your polygon includes attributes that are beyond the scope!"),
+              t("These attributes are not shown in TerraMatch and only be available when downloading the polygon.")
+            );
             setSaveFlags(true);
           }
         }}
@@ -383,7 +387,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
         }}
         site={site}
-        polygonsCriteriaData={polygonsCriteriaData}
         polygonList={polygonList}
       />,
       true

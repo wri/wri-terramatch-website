@@ -73,7 +73,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
     <PageHeader className="h-[203px]" title={project.name ?? ""} subtitles={subtitles} hasBackButton={false}>
       <If condition={project.status === "started"}>
         <Then>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:flex-col">
             <Button variant="secondary" onClick={() => onDeleteProject()}>
               {t("Delete")}
             </Button>
@@ -83,7 +83,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
           </div>
         </Then>
         <Else>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:flex-col">
             <Button variant="secondary" onClick={handleExport}>
               {t("Export")}
               <InlineLoader loading={exportLoader} />

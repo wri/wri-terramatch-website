@@ -8,7 +8,10 @@ import {
   EntityGetVariables,
   EntityDeletePathParams,
   EntityDeleteVariables,
+  EntityUpdatePathParams,
+  EntityUpdateVariables,
   EntityAssociationIndexPathParams,
+  EntityAssociationIndexQueryParams,
   EntityAssociationIndexVariables,
   TreeScientificNamesSearchQueryParams,
   TreeScientificNamesSearchVariables,
@@ -59,15 +62,29 @@ export const entityDeleteFetchFailed = (variables: Omit<EntityDeleteVariables, "
     ...variables
   });
 
+export const entityUpdateIsFetching = (variables: Omit<EntityUpdateVariables, "body">) =>
+  isFetchingSelector<{}, EntityUpdatePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "patch",
+    ...variables
+  });
+
+export const entityUpdateFetchFailed = (variables: Omit<EntityUpdateVariables, "body">) =>
+  fetchFailedSelector<{}, EntityUpdatePathParams>({
+    url: "/entities/v3/{entity}/{uuid}",
+    method: "patch",
+    ...variables
+  });
+
 export const entityAssociationIndexIsFetching = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  isFetchingSelector<{}, EntityAssociationIndexPathParams>({
+  isFetchingSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
   });
 
 export const entityAssociationIndexFetchFailed = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  fetchFailedSelector<{}, EntityAssociationIndexPathParams>({
+  fetchFailedSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
@@ -77,7 +94,7 @@ export const entityAssociationIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<EntityAssociationIndexVariables, "body">
 ) =>
-  indexMetaSelector<{}, EntityAssociationIndexPathParams>({
+  indexMetaSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     resource,
     ...variables

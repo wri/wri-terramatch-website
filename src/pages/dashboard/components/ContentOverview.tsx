@@ -372,7 +372,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     <ContentDashboardtWrapper isLeftWrapper={false}>
       <div className="shadow-lg relative w-full rounded-lg border-4 border-white mobile:order-2">
         <Button
-          className="absolute right-5 top-6 z-10"
+          className="absolute right-5 top-6 z-10 mobile:hidden"
           variant="white-button-map"
           onClick={() => {
             ModalMap();

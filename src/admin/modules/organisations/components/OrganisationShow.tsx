@@ -1,6 +1,6 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import {
   ArrayField,
   Datagrid,
@@ -14,6 +14,7 @@ import {
   TabbedShowLayout,
   TextField,
   UrlField,
+  useRecordContext,
   useRefresh
 } from "react-admin";
 
@@ -21,7 +22,7 @@ import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
 import MapField from "@/admin/components/Fields/MapField";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import {
   getFarmersEngagementStrategyOptions,
   getWomenEngagementStrategyOptions,
@@ -38,7 +39,8 @@ import OrganisationPitchesTable from "./OrganisationPitchesTable";
 import { OrganisationShowAside } from "./OrganisationShowAside";
 import OrganisationUserTable from "./OrganisationUserTable";
 
-export const OrganisationShow = () => {
+const OrganisationShowActions: FC = () => {
+  const { uuid, is_test } = useRecordContext();
   const refresh = useRefresh();
   const queryClient = useQueryClient();
   const { mutate: updateOrg } = usePutV2OrganisationsUUID({
@@ -48,17 +50,19 @@ export const OrganisationShow = () => {
     }
   });
 
-  const toggleTestStatus = useCallback(
-    (record: any) => {
-      // @ts-ignore
-      updateOrg({ pathParams: { uuid: record.uuid }, body: { is_test: !record.is_test } });
-    },
-    [updateOrg]
-  );
+  const toggleTestStatus = useCallback(() => {
+    // @ts-ignore
+    updateOrg({ pathParams: { uuid: uuid }, body: { is_test: !is_test } });
+  }, [is_test, updateOrg, uuid]);
 
+  return <ShowActions toggleTestStatus={toggleTestStatus} />;
+};
+
+export const OrganisationShow = () => {
+  const countryChoices = useGadmChoices({ level: 0 });
   return (
     <>
-      <Show actions={<ShowActions toggleTestStatus={toggleTestStatus} />} aside={<OrganisationShowAside />}>
+      <Show actions={<OrganisationShowActions />} aside={<OrganisationShowAside />}>
         <TabbedShowLayout>
           <TabbedShowLayout.Tab label="Organization Details">
             <TextField source="name" label="Legal Name" emptyText="Not Provided" />
@@ -77,7 +81,7 @@ export const OrganisationShow = () => {
             <SelectField
               source="hq_country"
               label="Headquarters address Country"
-              choices={optionToChoices(getCountriesOptions())}
+              choices={countryChoices}
               emptyText="Not Provided"
             />
             <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />

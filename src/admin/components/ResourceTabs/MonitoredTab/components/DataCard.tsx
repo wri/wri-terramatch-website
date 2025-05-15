@@ -109,7 +109,12 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     header: "Plant Start Date",
     cell: (props: any) => {
       const value = props.getValue();
-      return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
+      if (!value || value === "-") return "-";
+      try {
+        return format(new Date(value), "dd/MM/yyyy");
+      } catch (e) {
+        return "-";
+      }
     },
     meta: { style: { width: "13.65%" } }
   }
@@ -484,7 +489,16 @@ const DataCard = ({
     {
       id: "analysis2024",
       header: totalElemIndicator
-        ? `Analysis: ${format(new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!), "MMMM d, yyyy")}`
+        ? (() => {
+            try {
+              return `Analysis: ${format(
+                new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!),
+                "MMMM d, yyyy"
+              )}`;
+            } catch (e) {
+              return "Analysis:";
+            }
+          })()
         : "Analysis:",
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
@@ -740,7 +754,13 @@ const DataCard = ({
   }, [selectPolygonFromMap, setSelectPolygonFromMap]);
 
   const dateRunIndicator = polygonsIndicator?.[polygonsIndicator.length - 1]
-    ? format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy")
+    ? (() => {
+        try {
+          return format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy");
+        } catch (e) {
+          return "";
+        }
+      })()
     : "";
   const sitePolygonsIndicator = getSiteValues(groupedBySiteUuidWithPolygons(polygonsIndicator));
   const sortedTreeCoverSiteValues = getSiteTreeCoverLossSumValues(sitePolygonsIndicator).sort((a, b) => {

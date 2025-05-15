@@ -5,16 +5,13 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2DashboardCountryCountry,
-  GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles
-} from "@/generated/apiComponents";
+import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -67,15 +64,17 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    pathParams: { model: type, uuid: entityModel?.uuid }
+  const [, { associations: modelFilesData }] = useMedias({
+    entity: type as SupportedEntity,
+    uuid: entityModel?.uuid
   });
+
   const {
     data: polygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -168,7 +167,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -189,6 +189,7 @@ const OverviewMapArea = ({
           polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
+          entityUuid={entityModel?.uuid}
         />
       ) : (
         <MapSidePanel
@@ -197,7 +198,8 @@ const OverviewMapArea = ({
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -208,6 +210,7 @@ const OverviewMapArea = ({
           setSortOrder={setSortOrder}
           type={type}
           recallEntityData={refetch}
+          entityUuid={entityModel?.uuid}
         />
       )}
       <MapContainer
@@ -226,7 +229,7 @@ const OverviewMapArea = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
-        modelFilesData={modelFilesData?.data}
+        modelFilesData={modelFilesData}
         pdView={true}
       />
     </>

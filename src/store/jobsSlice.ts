@@ -44,10 +44,6 @@ export default class JobsSlice {
     this._redux = value;
   }
 
-  static get currentState(): JobsDataStore {
-    return this._redux.getState().jobs;
-  }
-
   static setJobsProgress(totalContent: number, processedContent: number, progressMessage: string | null) {
     this._redux.dispatch(jobsSlice.actions.setJobsProgress({ totalContent, processedContent, progressMessage }));
   }
