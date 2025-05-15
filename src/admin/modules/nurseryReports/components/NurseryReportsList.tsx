@@ -23,13 +23,14 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { NurseryReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
+
 const tableMenu = [
   {
     id: "1",
@@ -80,6 +81,18 @@ const NurseryReportDataGrid: FC = () => {
         }
         sortable={false}
       />
+      <FunctionField
+        source="nothingToReport"
+        label="Nothing to Report"
+        render={(record: NurseryReportLightDto) => {
+          return (
+            <div className="flex items-center justify-center">
+              {record.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
+            </div>
+          );
+        }}
+        sortable={false}
+      />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -89,6 +102,7 @@ const NurseryReportDataGrid: FC = () => {
 
 export const NurseryReportsList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -146,7 +160,7 @@ export const NurseryReportsList: FC = () => {
       key="country"
       label="Country"
       source="country"
-      choices={optionToChoices(getCountriesOptions())}
+      choices={countryChoices}
       className="select-page-admin"
     />,
     <SelectInput

@@ -1,9 +1,25 @@
 import { DataProvider } from "react-admin";
 
 import { deleteProjectReport, loadFullProjectReport, loadProjectReportIndex } from "@/connections/Entity";
+import { EntityLightDto } from "@/connections/Entity";
+import { JsonApiResource } from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
-import { entitiesListResult, raConnectionProps } from "../utils/listing";
+import { entitiesListResult, ExtendedGetListResult, raConnectionProps } from "../utils/listing";
+
+export const entitiesListResultWithIncluded = <T extends EntityLightDto>({
+  entities,
+  indexTotal,
+  included
+}: {
+  entities?: T[];
+  indexTotal?: number;
+  included?: JsonApiResource[];
+}) => ({
+  data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
+  total: indexTotal,
+  included
+});
 
 // @ts-ignore
 export const projectReportDataProvider: DataProvider = {
@@ -13,7 +29,18 @@ export const projectReportDataProvider: DataProvider = {
     if (connection.fetchFailure != null) {
       throw v3ErrorForRA("Project report index fetch failed", connection.fetchFailure);
     }
-    return entitiesListResult(connection);
+
+    const included = (connection as any).included;
+
+    if (!included) {
+      return entitiesListResult(connection);
+    } else {
+      return entitiesListResultWithIncluded({
+        entities: connection.entities,
+        indexTotal: connection.indexTotal,
+        included
+      }) as ExtendedGetListResult;
+    }
   },
 
   // @ts-ignore

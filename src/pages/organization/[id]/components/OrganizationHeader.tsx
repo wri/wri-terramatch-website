@@ -8,7 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocial from "@/components/extensive/Icon/IconSocial";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { useModalContext } from "@/context/modal.provider";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
@@ -25,6 +25,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const router = useRouter();
   const { query } = router;
   const { openModal } = useModalContext();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const showEditOrgModal = () => {
     return openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />);
@@ -64,7 +65,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
             <div className="flex items-center gap-1">
               <Icon name={IconNames.MAP_PIN} width={13} height={18} />
               <Text variant="text-body-900">
-                {formatOptionsList(getCountriesOptions(t), organization?.hq_country ?? [])}
+                {formatOptionsList(countryOptions ?? [], organization?.hq_country ?? [])}
               </Text>
             </div>
             <Text variant="text-body-900">

@@ -7,6 +7,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import {
@@ -26,6 +27,7 @@ const CreateOrganisationForm = () => {
   const [, { organisationId }] = useMyOrg();
   const { openModal, closeModal } = useModalContext();
   const queryClient = useQueryClient();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const uuid = (organisationId || router?.query?.uuid) as string;
 
@@ -56,7 +58,7 @@ const CreateOrganisationForm = () => {
     }
   });
 
-  const formSteps = getSteps(t, uuid);
+  const formSteps = getSteps(t, uuid, countryOptions ?? []);
   const defaultValues = useNormalizedFormDefaultValue(orgData?.data, formSteps);
 
   const onBackFirstStep = () => {

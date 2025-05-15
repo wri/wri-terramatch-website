@@ -11,1011 +11,16 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "fieldProps": {
           "hasOtherOptions": undefined,
           "multiSelect": undefined,
-          "options": [
-            {
-              "title": "Afghanistan",
-              "value": "AF",
-            },
-            {
-              "title": "Åland Islands",
-              "value": "AX",
-            },
-            {
-              "title": "Albania",
-              "value": "AL",
-            },
-            {
-              "title": "Algeria",
-              "value": "DZ",
-            },
-            {
-              "title": "American Samoa",
-              "value": "AS",
-            },
-            {
-              "title": "Andorra",
-              "value": "AD",
-            },
-            {
-              "title": "Angola",
-              "value": "AO",
-            },
-            {
-              "title": "Anguilla",
-              "value": "AI",
-            },
-            {
-              "title": "Antarctica",
-              "value": "AQ",
-            },
-            {
-              "title": "Antigua and Barbuda",
-              "value": "AG",
-            },
-            {
-              "title": "Argentina",
-              "value": "AR",
-            },
-            {
-              "title": "Armenia",
-              "value": "AM",
-            },
-            {
-              "title": "Aruba",
-              "value": "AW",
-            },
-            {
-              "title": "Australia",
-              "value": "AU",
-            },
-            {
-              "title": "Austria",
-              "value": "AT",
-            },
-            {
-              "title": "Azerbaijan",
-              "value": "AZ",
-            },
-            {
-              "title": "Bahamas",
-              "value": "BS",
-            },
-            {
-              "title": "Bahrain",
-              "value": "BH",
-            },
-            {
-              "title": "Bangladesh",
-              "value": "BD",
-            },
-            {
-              "title": "Barbados",
-              "value": "BB",
-            },
-            {
-              "title": "Belarus",
-              "value": "BY",
-            },
-            {
-              "title": "Belgium",
-              "value": "BE",
-            },
-            {
-              "title": "Belize",
-              "value": "BZ",
-            },
-            {
-              "title": "Benin",
-              "value": "BJ",
-            },
-            {
-              "title": "Bermuda",
-              "value": "BM",
-            },
-            {
-              "title": "Bhutan",
-              "value": "BT",
-            },
-            {
-              "title": "Bolivia, Plurinational State of",
-              "value": "BO",
-            },
-            {
-              "title": "Bonaire, Sint Eustatius and Saba",
-              "value": "BQ",
-            },
-            {
-              "title": "Bosnia and Herzegovina",
-              "value": "BA",
-            },
-            {
-              "title": "Botswana",
-              "value": "BW",
-            },
-            {
-              "title": "Bouvet Island",
-              "value": "BV",
-            },
-            {
-              "title": "Brazil",
-              "value": "BR",
-            },
-            {
-              "title": "British Indian Ocean Territory",
-              "value": "IO",
-            },
-            {
-              "title": "Brunei Darussalam",
-              "value": "BN",
-            },
-            {
-              "title": "Bulgaria",
-              "value": "BG",
-            },
-            {
-              "title": "Burkina Faso",
-              "value": "BF",
-            },
-            {
-              "title": "Burundi",
-              "value": "BI",
-            },
-            {
-              "title": "Cabo Verde",
-              "value": "CV",
-            },
-            {
-              "title": "Cambodia",
-              "value": "KH",
-            },
-            {
-              "title": "Cameroon",
-              "value": "CM",
-            },
-            {
-              "title": "Canada",
-              "value": "CA",
-            },
-            {
-              "title": "Cayman Islands",
-              "value": "KY",
-            },
-            {
-              "title": "Central African Republic",
-              "value": "CF",
-            },
-            {
-              "title": "Chad",
-              "value": "TD",
-            },
-            {
-              "title": "Chile",
-              "value": "CL",
-            },
-            {
-              "title": "China",
-              "value": "CN",
-            },
-            {
-              "title": "Christmas Island",
-              "value": "CX",
-            },
-            {
-              "title": "Cocos (Keeling) Islands",
-              "value": "CC",
-            },
-            {
-              "title": "Colombia",
-              "value": "CO",
-            },
-            {
-              "title": "Comoros",
-              "value": "KM",
-            },
-            {
-              "title": "Congo",
-              "value": "CG",
-            },
-            {
-              "title": "Congo, Democratic Republic of the",
-              "value": "CD",
-            },
-            {
-              "title": "Cook Islands",
-              "value": "CK",
-            },
-            {
-              "title": "Costa Rica",
-              "value": "CR",
-            },
-            {
-              "title": "Croatia",
-              "value": "HR",
-            },
-            {
-              "title": "Cuba",
-              "value": "CU",
-            },
-            {
-              "title": "Curaçao",
-              "value": "CW",
-            },
-            {
-              "title": "Cyprus",
-              "value": "CY",
-            },
-            {
-              "title": "Czechia",
-              "value": "CZ",
-            },
-            {
-              "title": "Côte d'Ivoire",
-              "value": "CI",
-            },
-            {
-              "title": "Denmark",
-              "value": "DK",
-            },
-            {
-              "title": "Djibouti",
-              "value": "DJ",
-            },
-            {
-              "title": "Dominica",
-              "value": "DM",
-            },
-            {
-              "title": "Dominican Republic",
-              "value": "DO",
-            },
-            {
-              "title": "Ecuador",
-              "value": "EC",
-            },
-            {
-              "title": "Egypt",
-              "value": "EG",
-            },
-            {
-              "title": "El Salvador",
-              "value": "SV",
-            },
-            {
-              "title": "Equatorial Guinea",
-              "value": "GQ",
-            },
-            {
-              "title": "Eritrea",
-              "value": "ER",
-            },
-            {
-              "title": "Estonia",
-              "value": "EE",
-            },
-            {
-              "title": "Eswatini",
-              "value": "SZ",
-            },
-            {
-              "title": "Ethiopia",
-              "value": "ET",
-            },
-            {
-              "title": "Falkland Islands (Malvinas)",
-              "value": "FK",
-            },
-            {
-              "title": "Faroe Islands",
-              "value": "FO",
-            },
-            {
-              "title": "Fiji",
-              "value": "FJ",
-            },
-            {
-              "title": "Finland",
-              "value": "FI",
-            },
-            {
-              "title": "France",
-              "value": "FR",
-            },
-            {
-              "title": "French Guiana",
-              "value": "GF",
-            },
-            {
-              "title": "French Polynesia",
-              "value": "PF",
-            },
-            {
-              "title": "French Southern Territories",
-              "value": "TF",
-            },
-            {
-              "title": "Gabon",
-              "value": "GA",
-            },
-            {
-              "title": "Gambia",
-              "value": "GM",
-            },
-            {
-              "title": "Georgia",
-              "value": "GE",
-            },
-            {
-              "title": "Germany",
-              "value": "DE",
-            },
-            {
-              "title": "Ghana",
-              "value": "GH",
-            },
-            {
-              "title": "Gibraltar",
-              "value": "GI",
-            },
-            {
-              "title": "Greece",
-              "value": "GR",
-            },
-            {
-              "title": "Greenland",
-              "value": "GL",
-            },
-            {
-              "title": "Grenada",
-              "value": "GD",
-            },
-            {
-              "title": "Guadeloupe",
-              "value": "GP",
-            },
-            {
-              "title": "Guam",
-              "value": "GU",
-            },
-            {
-              "title": "Guatemala",
-              "value": "GT",
-            },
-            {
-              "title": "Guernsey",
-              "value": "GG",
-            },
-            {
-              "title": "Guinea",
-              "value": "GN",
-            },
-            {
-              "title": "Guinea-Bissau",
-              "value": "GW",
-            },
-            {
-              "title": "Guyana",
-              "value": "GY",
-            },
-            {
-              "title": "Haiti",
-              "value": "HT",
-            },
-            {
-              "title": "Heard Island and McDonald Islands",
-              "value": "HM",
-            },
-            {
-              "title": "Holy See",
-              "value": "VA",
-            },
-            {
-              "title": "Honduras",
-              "value": "HN",
-            },
-            {
-              "title": "Hong Kong",
-              "value": "HK",
-            },
-            {
-              "title": "Hungary",
-              "value": "HU",
-            },
-            {
-              "title": "Iceland",
-              "value": "IS",
-            },
-            {
-              "title": "India",
-              "value": "IN",
-            },
-            {
-              "title": "Indonesia",
-              "value": "ID",
-            },
-            {
-              "title": "Iran",
-              "value": "IR",
-            },
-            {
-              "title": "Iraq",
-              "value": "IQ",
-            },
-            {
-              "title": "Ireland",
-              "value": "IE",
-            },
-            {
-              "title": "Isle of Man",
-              "value": "IM",
-            },
-            {
-              "title": "Israel",
-              "value": "IL",
-            },
-            {
-              "title": "Italy",
-              "value": "IT",
-            },
-            {
-              "title": "Jamaica",
-              "value": "JM",
-            },
-            {
-              "title": "Japan",
-              "value": "JP",
-            },
-            {
-              "title": "Jersey",
-              "value": "JE",
-            },
-            {
-              "title": "Jordan",
-              "value": "JO",
-            },
-            {
-              "title": "Kazakhstan",
-              "value": "KZ",
-            },
-            {
-              "title": "Kenya",
-              "value": "KE",
-            },
-            {
-              "title": "Kiribati",
-              "value": "KI",
-            },
-            {
-              "title": "Korea, Democratic People's Republic of",
-              "value": "KP",
-            },
-            {
-              "title": "Korea, Republic of",
-              "value": "KR",
-            },
-            {
-              "title": "Kuwait",
-              "value": "KW",
-            },
-            {
-              "title": "Kyrgyzstan",
-              "value": "KG",
-            },
-            {
-              "title": "Lao People's Democratic Republic",
-              "value": "LA",
-            },
-            {
-              "title": "Latvia",
-              "value": "LV",
-            },
-            {
-              "title": "Lebanon",
-              "value": "LB",
-            },
-            {
-              "title": "Lesotho",
-              "value": "LS",
-            },
-            {
-              "title": "Liberia",
-              "value": "LR",
-            },
-            {
-              "title": "Libya",
-              "value": "LY",
-            },
-            {
-              "title": "Liechtenstein",
-              "value": "LI",
-            },
-            {
-              "title": "Lithuania",
-              "value": "LT",
-            },
-            {
-              "title": "Luxembourg",
-              "value": "LU",
-            },
-            {
-              "title": "Macao",
-              "value": "MO",
-            },
-            {
-              "title": "Madagascar",
-              "value": "MG",
-            },
-            {
-              "title": "Malawi",
-              "value": "MW",
-            },
-            {
-              "title": "Malaysia",
-              "value": "MY",
-            },
-            {
-              "title": "Maldives",
-              "value": "MV",
-            },
-            {
-              "title": "Mali",
-              "value": "ML",
-            },
-            {
-              "title": "Malta",
-              "value": "MT",
-            },
-            {
-              "title": "Marshall Islands",
-              "value": "MH",
-            },
-            {
-              "title": "Martinique",
-              "value": "MQ",
-            },
-            {
-              "title": "Mauritania",
-              "value": "MR",
-            },
-            {
-              "title": "Mauritius",
-              "value": "MU",
-            },
-            {
-              "title": "Mayotte",
-              "value": "YT",
-            },
-            {
-              "title": "Mexico",
-              "value": "MX",
-            },
-            {
-              "title": "Micronesia, Federated States of",
-              "value": "FM",
-            },
-            {
-              "title": "Moldova, Republic of",
-              "value": "MD",
-            },
-            {
-              "title": "Monaco",
-              "value": "MC",
-            },
-            {
-              "title": "Mongolia",
-              "value": "MN",
-            },
-            {
-              "title": "Montenegro",
-              "value": "ME",
-            },
-            {
-              "title": "Montserrat",
-              "value": "MS",
-            },
-            {
-              "title": "Morocco",
-              "value": "MA",
-            },
-            {
-              "title": "Mozambique",
-              "value": "MZ",
-            },
-            {
-              "title": "Myanmar",
-              "value": "MM",
-            },
-            {
-              "title": "Namibia",
-              "value": "NA",
-            },
-            {
-              "title": "Nauru",
-              "value": "NR",
-            },
-            {
-              "title": "Nepal",
-              "value": "NP",
-            },
-            {
-              "title": "Netherlands",
-              "value": "NL",
-            },
-            {
-              "title": "New Caledonia",
-              "value": "NC",
-            },
-            {
-              "title": "New Zealand",
-              "value": "NZ",
-            },
-            {
-              "title": "Nicaragua",
-              "value": "NI",
-            },
-            {
-              "title": "Niger",
-              "value": "NE",
-            },
-            {
-              "title": "Nigeria",
-              "value": "NG",
-            },
-            {
-              "title": "Niue",
-              "value": "NU",
-            },
-            {
-              "title": "Norfolk Island",
-              "value": "NF",
-            },
-            {
-              "title": "North Macedonia",
-              "value": "MK",
-            },
-            {
-              "title": "Northern Mariana Islands",
-              "value": "MP",
-            },
-            {
-              "title": "Norway",
-              "value": "NO",
-            },
-            {
-              "title": "Oman",
-              "value": "OM",
-            },
-            {
-              "title": "Pakistan",
-              "value": "PK",
-            },
-            {
-              "title": "Palau",
-              "value": "PW",
-            },
-            {
-              "title": "Palestine, State of",
-              "value": "PS",
-            },
-            {
-              "title": "Panama",
-              "value": "PA",
-            },
-            {
-              "title": "Papua New Guinea",
-              "value": "PG",
-            },
-            {
-              "title": "Paraguay",
-              "value": "PY",
-            },
-            {
-              "title": "Peru",
-              "value": "PE",
-            },
-            {
-              "title": "Philippines",
-              "value": "PH",
-            },
-            {
-              "title": "Pitcairn",
-              "value": "PN",
-            },
-            {
-              "title": "Poland",
-              "value": "PL",
-            },
-            {
-              "title": "Portugal",
-              "value": "PT",
-            },
-            {
-              "title": "Puerto Rico",
-              "value": "PR",
-            },
-            {
-              "title": "Qatar",
-              "value": "QA",
-            },
-            {
-              "title": "Romania",
-              "value": "RO",
-            },
-            {
-              "title": "Russian Federation",
-              "value": "RU",
-            },
-            {
-              "title": "Rwanda",
-              "value": "RW",
-            },
-            {
-              "title": "Réunion",
-              "value": "RE",
-            },
-            {
-              "title": "Saint Barthélemy",
-              "value": "BL",
-            },
-            {
-              "title": "Saint Helena, Ascension and Tristan da Cunha",
-              "value": "SH",
-            },
-            {
-              "title": "Saint Kitts and Nevis",
-              "value": "KN",
-            },
-            {
-              "title": "Saint Lucia",
-              "value": "LC",
-            },
-            {
-              "title": "Saint Martin (French part)",
-              "value": "MF",
-            },
-            {
-              "title": "Saint Pierre and Miquelon",
-              "value": "PM",
-            },
-            {
-              "title": "Saint Vincent and the Grenadines",
-              "value": "VC",
-            },
-            {
-              "title": "Samoa",
-              "value": "WS",
-            },
-            {
-              "title": "San Marino",
-              "value": "SM",
-            },
-            {
-              "title": "Sao Tome and Principe",
-              "value": "ST",
-            },
-            {
-              "title": "Saudi Arabia",
-              "value": "SA",
-            },
-            {
-              "title": "Senegal",
-              "value": "SN",
-            },
-            {
-              "title": "Serbia",
-              "value": "RS",
-            },
-            {
-              "title": "Seychelles",
-              "value": "SC",
-            },
-            {
-              "title": "Sierra Leone",
-              "value": "SL",
-            },
-            {
-              "title": "Singapore",
-              "value": "SG",
-            },
-            {
-              "title": "Sint Maarten (Dutch part)",
-              "value": "SX",
-            },
-            {
-              "title": "Slovakia",
-              "value": "SK",
-            },
-            {
-              "title": "Slovenia",
-              "value": "SI",
-            },
-            {
-              "title": "Solomon Islands",
-              "value": "SB",
-            },
-            {
-              "title": "Somalia",
-              "value": "SO",
-            },
-            {
-              "title": "South Africa",
-              "value": "ZA",
-            },
-            {
-              "title": "South Georgia and the South Sandwich Islands",
-              "value": "GS",
-            },
-            {
-              "title": "South Sudan",
-              "value": "SS",
-            },
-            {
-              "title": "Spain",
-              "value": "ES",
-            },
-            {
-              "title": "Sri Lanka",
-              "value": "LK",
-            },
-            {
-              "title": "Sudan",
-              "value": "SD",
-            },
-            {
-              "title": "Suriname",
-              "value": "SR",
-            },
-            {
-              "title": "Svalbard and Jan Mayen",
-              "value": "SJ",
-            },
-            {
-              "title": "Sweden",
-              "value": "SE",
-            },
-            {
-              "title": "Switzerland",
-              "value": "CH",
-            },
-            {
-              "title": "Syrian Arab Republic",
-              "value": "SY",
-            },
-            {
-              "title": "Taiwan, Province of China",
-              "value": "TW",
-            },
-            {
-              "title": "Tajikistan",
-              "value": "TJ",
-            },
-            {
-              "title": "Tanzania, United Republic of",
-              "value": "TZ",
-            },
-            {
-              "title": "Thailand",
-              "value": "TH",
-            },
-            {
-              "title": "Timor-Leste",
-              "value": "TL",
-            },
-            {
-              "title": "Togo",
-              "value": "TG",
-            },
-            {
-              "title": "Tokelau",
-              "value": "TK",
-            },
-            {
-              "title": "Tonga",
-              "value": "TO",
-            },
-            {
-              "title": "Trinidad and Tobago",
-              "value": "TT",
-            },
-            {
-              "title": "Tunisia",
-              "value": "TN",
-            },
-            {
-              "title": "Turkey",
-              "value": "TR",
-            },
-            {
-              "title": "Turkmenistan",
-              "value": "TM",
-            },
-            {
-              "title": "Turks and Caicos Islands",
-              "value": "TC",
-            },
-            {
-              "title": "Tuvalu",
-              "value": "TV",
-            },
-            {
-              "title": "Uganda",
-              "value": "UG",
-            },
-            {
-              "title": "Ukraine",
-              "value": "UA",
-            },
-            {
-              "title": "United Arab Emirates",
-              "value": "AE",
-            },
-            {
-              "title": "United Kingdom",
-              "value": "GB",
-            },
-            {
-              "title": "United States Minor Outlying Islands",
-              "value": "UM",
-            },
-            {
-              "title": "United States",
-              "value": "US",
-            },
-            {
-              "title": "Uruguay",
-              "value": "UY",
-            },
-            {
-              "title": "Uzbekistan",
-              "value": "UZ",
-            },
-            {
-              "title": "Vanuatu",
-              "value": "VU",
-            },
-            {
-              "title": "Venezuela, Bolivarian Republic of",
-              "value": "VE",
-            },
-            {
-              "title": "Viet Nam",
-              "value": "VN",
-            },
-            {
-              "title": "Virgin Islands, British",
-              "value": "VG",
-            },
-            {
-              "title": "Virgin Islands, U.S.",
-              "value": "VI",
-            },
-            {
-              "title": "Wallis and Futuna",
-              "value": "WF",
-            },
-            {
-              "title": "Western Sahara",
-              "value": "EH",
-            },
-            {
-              "title": "Yemen",
-              "value": "YE",
-            },
-            {
-              "title": "Zambia",
-              "value": "ZM",
-            },
-            {
-              "title": "Zimbabwe",
-              "value": "ZW",
-            },
-          ],
+          "options": [],
           "optionsFilterFieldName": undefined,
           "required": false,
         },
         "is_parent_conditional_default": undefined,
         "label": "Headquarters address Country",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "3e34aab6-f6fe-45f2-9d2c-581a69dbd1bc",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -1056,1011 +61,16 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "fieldProps": {
           "hasOtherOptions": undefined,
           "multiSelect": true,
-          "options": [
-            {
-              "title": "Afghanistan",
-              "value": "AF",
-            },
-            {
-              "title": "Åland Islands",
-              "value": "AX",
-            },
-            {
-              "title": "Albania",
-              "value": "AL",
-            },
-            {
-              "title": "Algeria",
-              "value": "DZ",
-            },
-            {
-              "title": "American Samoa",
-              "value": "AS",
-            },
-            {
-              "title": "Andorra",
-              "value": "AD",
-            },
-            {
-              "title": "Angola",
-              "value": "AO",
-            },
-            {
-              "title": "Anguilla",
-              "value": "AI",
-            },
-            {
-              "title": "Antarctica",
-              "value": "AQ",
-            },
-            {
-              "title": "Antigua and Barbuda",
-              "value": "AG",
-            },
-            {
-              "title": "Argentina",
-              "value": "AR",
-            },
-            {
-              "title": "Armenia",
-              "value": "AM",
-            },
-            {
-              "title": "Aruba",
-              "value": "AW",
-            },
-            {
-              "title": "Australia",
-              "value": "AU",
-            },
-            {
-              "title": "Austria",
-              "value": "AT",
-            },
-            {
-              "title": "Azerbaijan",
-              "value": "AZ",
-            },
-            {
-              "title": "Bahamas",
-              "value": "BS",
-            },
-            {
-              "title": "Bahrain",
-              "value": "BH",
-            },
-            {
-              "title": "Bangladesh",
-              "value": "BD",
-            },
-            {
-              "title": "Barbados",
-              "value": "BB",
-            },
-            {
-              "title": "Belarus",
-              "value": "BY",
-            },
-            {
-              "title": "Belgium",
-              "value": "BE",
-            },
-            {
-              "title": "Belize",
-              "value": "BZ",
-            },
-            {
-              "title": "Benin",
-              "value": "BJ",
-            },
-            {
-              "title": "Bermuda",
-              "value": "BM",
-            },
-            {
-              "title": "Bhutan",
-              "value": "BT",
-            },
-            {
-              "title": "Bolivia, Plurinational State of",
-              "value": "BO",
-            },
-            {
-              "title": "Bonaire, Sint Eustatius and Saba",
-              "value": "BQ",
-            },
-            {
-              "title": "Bosnia and Herzegovina",
-              "value": "BA",
-            },
-            {
-              "title": "Botswana",
-              "value": "BW",
-            },
-            {
-              "title": "Bouvet Island",
-              "value": "BV",
-            },
-            {
-              "title": "Brazil",
-              "value": "BR",
-            },
-            {
-              "title": "British Indian Ocean Territory",
-              "value": "IO",
-            },
-            {
-              "title": "Brunei Darussalam",
-              "value": "BN",
-            },
-            {
-              "title": "Bulgaria",
-              "value": "BG",
-            },
-            {
-              "title": "Burkina Faso",
-              "value": "BF",
-            },
-            {
-              "title": "Burundi",
-              "value": "BI",
-            },
-            {
-              "title": "Cabo Verde",
-              "value": "CV",
-            },
-            {
-              "title": "Cambodia",
-              "value": "KH",
-            },
-            {
-              "title": "Cameroon",
-              "value": "CM",
-            },
-            {
-              "title": "Canada",
-              "value": "CA",
-            },
-            {
-              "title": "Cayman Islands",
-              "value": "KY",
-            },
-            {
-              "title": "Central African Republic",
-              "value": "CF",
-            },
-            {
-              "title": "Chad",
-              "value": "TD",
-            },
-            {
-              "title": "Chile",
-              "value": "CL",
-            },
-            {
-              "title": "China",
-              "value": "CN",
-            },
-            {
-              "title": "Christmas Island",
-              "value": "CX",
-            },
-            {
-              "title": "Cocos (Keeling) Islands",
-              "value": "CC",
-            },
-            {
-              "title": "Colombia",
-              "value": "CO",
-            },
-            {
-              "title": "Comoros",
-              "value": "KM",
-            },
-            {
-              "title": "Congo",
-              "value": "CG",
-            },
-            {
-              "title": "Congo, Democratic Republic of the",
-              "value": "CD",
-            },
-            {
-              "title": "Cook Islands",
-              "value": "CK",
-            },
-            {
-              "title": "Costa Rica",
-              "value": "CR",
-            },
-            {
-              "title": "Croatia",
-              "value": "HR",
-            },
-            {
-              "title": "Cuba",
-              "value": "CU",
-            },
-            {
-              "title": "Curaçao",
-              "value": "CW",
-            },
-            {
-              "title": "Cyprus",
-              "value": "CY",
-            },
-            {
-              "title": "Czechia",
-              "value": "CZ",
-            },
-            {
-              "title": "Côte d'Ivoire",
-              "value": "CI",
-            },
-            {
-              "title": "Denmark",
-              "value": "DK",
-            },
-            {
-              "title": "Djibouti",
-              "value": "DJ",
-            },
-            {
-              "title": "Dominica",
-              "value": "DM",
-            },
-            {
-              "title": "Dominican Republic",
-              "value": "DO",
-            },
-            {
-              "title": "Ecuador",
-              "value": "EC",
-            },
-            {
-              "title": "Egypt",
-              "value": "EG",
-            },
-            {
-              "title": "El Salvador",
-              "value": "SV",
-            },
-            {
-              "title": "Equatorial Guinea",
-              "value": "GQ",
-            },
-            {
-              "title": "Eritrea",
-              "value": "ER",
-            },
-            {
-              "title": "Estonia",
-              "value": "EE",
-            },
-            {
-              "title": "Eswatini",
-              "value": "SZ",
-            },
-            {
-              "title": "Ethiopia",
-              "value": "ET",
-            },
-            {
-              "title": "Falkland Islands (Malvinas)",
-              "value": "FK",
-            },
-            {
-              "title": "Faroe Islands",
-              "value": "FO",
-            },
-            {
-              "title": "Fiji",
-              "value": "FJ",
-            },
-            {
-              "title": "Finland",
-              "value": "FI",
-            },
-            {
-              "title": "France",
-              "value": "FR",
-            },
-            {
-              "title": "French Guiana",
-              "value": "GF",
-            },
-            {
-              "title": "French Polynesia",
-              "value": "PF",
-            },
-            {
-              "title": "French Southern Territories",
-              "value": "TF",
-            },
-            {
-              "title": "Gabon",
-              "value": "GA",
-            },
-            {
-              "title": "Gambia",
-              "value": "GM",
-            },
-            {
-              "title": "Georgia",
-              "value": "GE",
-            },
-            {
-              "title": "Germany",
-              "value": "DE",
-            },
-            {
-              "title": "Ghana",
-              "value": "GH",
-            },
-            {
-              "title": "Gibraltar",
-              "value": "GI",
-            },
-            {
-              "title": "Greece",
-              "value": "GR",
-            },
-            {
-              "title": "Greenland",
-              "value": "GL",
-            },
-            {
-              "title": "Grenada",
-              "value": "GD",
-            },
-            {
-              "title": "Guadeloupe",
-              "value": "GP",
-            },
-            {
-              "title": "Guam",
-              "value": "GU",
-            },
-            {
-              "title": "Guatemala",
-              "value": "GT",
-            },
-            {
-              "title": "Guernsey",
-              "value": "GG",
-            },
-            {
-              "title": "Guinea",
-              "value": "GN",
-            },
-            {
-              "title": "Guinea-Bissau",
-              "value": "GW",
-            },
-            {
-              "title": "Guyana",
-              "value": "GY",
-            },
-            {
-              "title": "Haiti",
-              "value": "HT",
-            },
-            {
-              "title": "Heard Island and McDonald Islands",
-              "value": "HM",
-            },
-            {
-              "title": "Holy See",
-              "value": "VA",
-            },
-            {
-              "title": "Honduras",
-              "value": "HN",
-            },
-            {
-              "title": "Hong Kong",
-              "value": "HK",
-            },
-            {
-              "title": "Hungary",
-              "value": "HU",
-            },
-            {
-              "title": "Iceland",
-              "value": "IS",
-            },
-            {
-              "title": "India",
-              "value": "IN",
-            },
-            {
-              "title": "Indonesia",
-              "value": "ID",
-            },
-            {
-              "title": "Iran",
-              "value": "IR",
-            },
-            {
-              "title": "Iraq",
-              "value": "IQ",
-            },
-            {
-              "title": "Ireland",
-              "value": "IE",
-            },
-            {
-              "title": "Isle of Man",
-              "value": "IM",
-            },
-            {
-              "title": "Israel",
-              "value": "IL",
-            },
-            {
-              "title": "Italy",
-              "value": "IT",
-            },
-            {
-              "title": "Jamaica",
-              "value": "JM",
-            },
-            {
-              "title": "Japan",
-              "value": "JP",
-            },
-            {
-              "title": "Jersey",
-              "value": "JE",
-            },
-            {
-              "title": "Jordan",
-              "value": "JO",
-            },
-            {
-              "title": "Kazakhstan",
-              "value": "KZ",
-            },
-            {
-              "title": "Kenya",
-              "value": "KE",
-            },
-            {
-              "title": "Kiribati",
-              "value": "KI",
-            },
-            {
-              "title": "Korea, Democratic People's Republic of",
-              "value": "KP",
-            },
-            {
-              "title": "Korea, Republic of",
-              "value": "KR",
-            },
-            {
-              "title": "Kuwait",
-              "value": "KW",
-            },
-            {
-              "title": "Kyrgyzstan",
-              "value": "KG",
-            },
-            {
-              "title": "Lao People's Democratic Republic",
-              "value": "LA",
-            },
-            {
-              "title": "Latvia",
-              "value": "LV",
-            },
-            {
-              "title": "Lebanon",
-              "value": "LB",
-            },
-            {
-              "title": "Lesotho",
-              "value": "LS",
-            },
-            {
-              "title": "Liberia",
-              "value": "LR",
-            },
-            {
-              "title": "Libya",
-              "value": "LY",
-            },
-            {
-              "title": "Liechtenstein",
-              "value": "LI",
-            },
-            {
-              "title": "Lithuania",
-              "value": "LT",
-            },
-            {
-              "title": "Luxembourg",
-              "value": "LU",
-            },
-            {
-              "title": "Macao",
-              "value": "MO",
-            },
-            {
-              "title": "Madagascar",
-              "value": "MG",
-            },
-            {
-              "title": "Malawi",
-              "value": "MW",
-            },
-            {
-              "title": "Malaysia",
-              "value": "MY",
-            },
-            {
-              "title": "Maldives",
-              "value": "MV",
-            },
-            {
-              "title": "Mali",
-              "value": "ML",
-            },
-            {
-              "title": "Malta",
-              "value": "MT",
-            },
-            {
-              "title": "Marshall Islands",
-              "value": "MH",
-            },
-            {
-              "title": "Martinique",
-              "value": "MQ",
-            },
-            {
-              "title": "Mauritania",
-              "value": "MR",
-            },
-            {
-              "title": "Mauritius",
-              "value": "MU",
-            },
-            {
-              "title": "Mayotte",
-              "value": "YT",
-            },
-            {
-              "title": "Mexico",
-              "value": "MX",
-            },
-            {
-              "title": "Micronesia, Federated States of",
-              "value": "FM",
-            },
-            {
-              "title": "Moldova, Republic of",
-              "value": "MD",
-            },
-            {
-              "title": "Monaco",
-              "value": "MC",
-            },
-            {
-              "title": "Mongolia",
-              "value": "MN",
-            },
-            {
-              "title": "Montenegro",
-              "value": "ME",
-            },
-            {
-              "title": "Montserrat",
-              "value": "MS",
-            },
-            {
-              "title": "Morocco",
-              "value": "MA",
-            },
-            {
-              "title": "Mozambique",
-              "value": "MZ",
-            },
-            {
-              "title": "Myanmar",
-              "value": "MM",
-            },
-            {
-              "title": "Namibia",
-              "value": "NA",
-            },
-            {
-              "title": "Nauru",
-              "value": "NR",
-            },
-            {
-              "title": "Nepal",
-              "value": "NP",
-            },
-            {
-              "title": "Netherlands",
-              "value": "NL",
-            },
-            {
-              "title": "New Caledonia",
-              "value": "NC",
-            },
-            {
-              "title": "New Zealand",
-              "value": "NZ",
-            },
-            {
-              "title": "Nicaragua",
-              "value": "NI",
-            },
-            {
-              "title": "Niger",
-              "value": "NE",
-            },
-            {
-              "title": "Nigeria",
-              "value": "NG",
-            },
-            {
-              "title": "Niue",
-              "value": "NU",
-            },
-            {
-              "title": "Norfolk Island",
-              "value": "NF",
-            },
-            {
-              "title": "North Macedonia",
-              "value": "MK",
-            },
-            {
-              "title": "Northern Mariana Islands",
-              "value": "MP",
-            },
-            {
-              "title": "Norway",
-              "value": "NO",
-            },
-            {
-              "title": "Oman",
-              "value": "OM",
-            },
-            {
-              "title": "Pakistan",
-              "value": "PK",
-            },
-            {
-              "title": "Palau",
-              "value": "PW",
-            },
-            {
-              "title": "Palestine, State of",
-              "value": "PS",
-            },
-            {
-              "title": "Panama",
-              "value": "PA",
-            },
-            {
-              "title": "Papua New Guinea",
-              "value": "PG",
-            },
-            {
-              "title": "Paraguay",
-              "value": "PY",
-            },
-            {
-              "title": "Peru",
-              "value": "PE",
-            },
-            {
-              "title": "Philippines",
-              "value": "PH",
-            },
-            {
-              "title": "Pitcairn",
-              "value": "PN",
-            },
-            {
-              "title": "Poland",
-              "value": "PL",
-            },
-            {
-              "title": "Portugal",
-              "value": "PT",
-            },
-            {
-              "title": "Puerto Rico",
-              "value": "PR",
-            },
-            {
-              "title": "Qatar",
-              "value": "QA",
-            },
-            {
-              "title": "Romania",
-              "value": "RO",
-            },
-            {
-              "title": "Russian Federation",
-              "value": "RU",
-            },
-            {
-              "title": "Rwanda",
-              "value": "RW",
-            },
-            {
-              "title": "Réunion",
-              "value": "RE",
-            },
-            {
-              "title": "Saint Barthélemy",
-              "value": "BL",
-            },
-            {
-              "title": "Saint Helena, Ascension and Tristan da Cunha",
-              "value": "SH",
-            },
-            {
-              "title": "Saint Kitts and Nevis",
-              "value": "KN",
-            },
-            {
-              "title": "Saint Lucia",
-              "value": "LC",
-            },
-            {
-              "title": "Saint Martin (French part)",
-              "value": "MF",
-            },
-            {
-              "title": "Saint Pierre and Miquelon",
-              "value": "PM",
-            },
-            {
-              "title": "Saint Vincent and the Grenadines",
-              "value": "VC",
-            },
-            {
-              "title": "Samoa",
-              "value": "WS",
-            },
-            {
-              "title": "San Marino",
-              "value": "SM",
-            },
-            {
-              "title": "Sao Tome and Principe",
-              "value": "ST",
-            },
-            {
-              "title": "Saudi Arabia",
-              "value": "SA",
-            },
-            {
-              "title": "Senegal",
-              "value": "SN",
-            },
-            {
-              "title": "Serbia",
-              "value": "RS",
-            },
-            {
-              "title": "Seychelles",
-              "value": "SC",
-            },
-            {
-              "title": "Sierra Leone",
-              "value": "SL",
-            },
-            {
-              "title": "Singapore",
-              "value": "SG",
-            },
-            {
-              "title": "Sint Maarten (Dutch part)",
-              "value": "SX",
-            },
-            {
-              "title": "Slovakia",
-              "value": "SK",
-            },
-            {
-              "title": "Slovenia",
-              "value": "SI",
-            },
-            {
-              "title": "Solomon Islands",
-              "value": "SB",
-            },
-            {
-              "title": "Somalia",
-              "value": "SO",
-            },
-            {
-              "title": "South Africa",
-              "value": "ZA",
-            },
-            {
-              "title": "South Georgia and the South Sandwich Islands",
-              "value": "GS",
-            },
-            {
-              "title": "South Sudan",
-              "value": "SS",
-            },
-            {
-              "title": "Spain",
-              "value": "ES",
-            },
-            {
-              "title": "Sri Lanka",
-              "value": "LK",
-            },
-            {
-              "title": "Sudan",
-              "value": "SD",
-            },
-            {
-              "title": "Suriname",
-              "value": "SR",
-            },
-            {
-              "title": "Svalbard and Jan Mayen",
-              "value": "SJ",
-            },
-            {
-              "title": "Sweden",
-              "value": "SE",
-            },
-            {
-              "title": "Switzerland",
-              "value": "CH",
-            },
-            {
-              "title": "Syrian Arab Republic",
-              "value": "SY",
-            },
-            {
-              "title": "Taiwan, Province of China",
-              "value": "TW",
-            },
-            {
-              "title": "Tajikistan",
-              "value": "TJ",
-            },
-            {
-              "title": "Tanzania, United Republic of",
-              "value": "TZ",
-            },
-            {
-              "title": "Thailand",
-              "value": "TH",
-            },
-            {
-              "title": "Timor-Leste",
-              "value": "TL",
-            },
-            {
-              "title": "Togo",
-              "value": "TG",
-            },
-            {
-              "title": "Tokelau",
-              "value": "TK",
-            },
-            {
-              "title": "Tonga",
-              "value": "TO",
-            },
-            {
-              "title": "Trinidad and Tobago",
-              "value": "TT",
-            },
-            {
-              "title": "Tunisia",
-              "value": "TN",
-            },
-            {
-              "title": "Turkey",
-              "value": "TR",
-            },
-            {
-              "title": "Turkmenistan",
-              "value": "TM",
-            },
-            {
-              "title": "Turks and Caicos Islands",
-              "value": "TC",
-            },
-            {
-              "title": "Tuvalu",
-              "value": "TV",
-            },
-            {
-              "title": "Uganda",
-              "value": "UG",
-            },
-            {
-              "title": "Ukraine",
-              "value": "UA",
-            },
-            {
-              "title": "United Arab Emirates",
-              "value": "AE",
-            },
-            {
-              "title": "United Kingdom",
-              "value": "GB",
-            },
-            {
-              "title": "United States Minor Outlying Islands",
-              "value": "UM",
-            },
-            {
-              "title": "United States",
-              "value": "US",
-            },
-            {
-              "title": "Uruguay",
-              "value": "UY",
-            },
-            {
-              "title": "Uzbekistan",
-              "value": "UZ",
-            },
-            {
-              "title": "Vanuatu",
-              "value": "VU",
-            },
-            {
-              "title": "Venezuela, Bolivarian Republic of",
-              "value": "VE",
-            },
-            {
-              "title": "Viet Nam",
-              "value": "VN",
-            },
-            {
-              "title": "Virgin Islands, British",
-              "value": "VG",
-            },
-            {
-              "title": "Virgin Islands, U.S.",
-              "value": "VI",
-            },
-            {
-              "title": "Wallis and Futuna",
-              "value": "WF",
-            },
-            {
-              "title": "Western Sahara",
-              "value": "EH",
-            },
-            {
-              "title": "Yemen",
-              "value": "YE",
-            },
-            {
-              "title": "Zambia",
-              "value": "ZM",
-            },
-            {
-              "title": "Zimbabwe",
-              "value": "ZW",
-            },
-          ],
+          "options": [],
           "optionsFilterFieldName": undefined,
           "required": false,
         },
         "is_parent_conditional_default": undefined,
         "label": "What Countries is your organisation legally registered in?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "a90630bf-b77f-4b6e-a828-013f4d0ac1fb",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2175,7 +185,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Organization Mission",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "d64877a6-fc33-4bd8-9f75-43e77a5112ab",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2231,7 +243,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "On what date was your organisation founded?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "ced1d792-2f5f-40b0-8686-86e048c98406",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2320,7 +334,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "In what languages can your organisation communicate?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "6827e8c1-632c-47cf-a45b-43b8bfba78f2",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2528,7 +544,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "What interventions do you intend to use to restore land?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "9bfe6b76-2ff1-4658-9763-54bc6242cce6",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2645,7 +663,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Please provide at least two letters of reference",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "6303cc5c-cbd7-4f46-bed6-d339c4c2f00b",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2684,17 +704,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "url",
         },
         "is_parent_conditional_default": undefined,
         "label": "Organization Twitter URL(optional)",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "981edb54-739e-4971-b078-4e2a971d9ffd",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2743,7 +761,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "List the people who have a ownership stake in your company",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "4388ff23-a5e7-486a-9b37-7ad41cce5e77",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2838,7 +858,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with farmers? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "3be9ae6a-c769-44e7-a8e6-46cd9b7d7ff2",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -2996,7 +1018,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with women?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "32873c74-5ec4-4508-90a1-bb05b9139ab2",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3154,7 +1178,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "How does your organization engage with people younger than 35 years old?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "bb1c3fd3-be90-46db-9996-5148ead42376",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3268,17 +1294,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2020?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "2fc2ddcb-65c4-401f-ad8b-2464127995e1",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3335,7 +1359,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2020 income statement and balance sheet.",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "dfc8b46f-a2b5-4c47-9d86-6eaf02f38ff4",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3374,17 +1400,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2021?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "a5ff9d12-249f-4752-8c56-93d6c21ff7b6",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3441,7 +1465,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2021 income statement and balance sheet.",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "4519d674-4110-4523-a745-f999741622cd",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3480,17 +1506,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "What were your organization's revenues in USD in 2022?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "c1537262-4802-4223-b694-9088d76a2d11",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3547,7 +1571,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Please upload your organization's 2022 income statement and balance sheet.",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "eae46eca-8e4e-4cec-a7a0-cd9d93af8054",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3586,17 +1612,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Note that revenues are the total amount of income generated by the sale of goods or services related to your company's primary operations in a given year. Revenues are paid to the company by customers. Revenues do not include grants that paid for any operations. In some countries, revenues are referred to as "turnover." We understand that this information is not yet available for 2023. Please provide your best estimation. ",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "What are your organization's projected revenues in USD for 2023",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "ae621f3b-552c-4f5f-8616-5d7821299959",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3641,17 +1665,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Please indicate how many years your organization has been involved in actively restoring degraded land. If your organization began to restore land significantly later than it was founded, make sure to only include the years after you began to work on restoration.",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many years of restoration experience does your organization have?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "003a59f0-d262-45b1-b4ef-c46c62f79341",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3690,17 +1712,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many hectares of degraded land has your organisation restored since it was founded? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "c8ba24a7-3532-4665-99d0-8d1b10e85f27",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3739,17 +1759,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land  without active planting. Only count land that has benefitted from tree-based restoration techniques in your total. ",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many hectares of degraded land has your organization restored in the past 36 months?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "12e2645b-ab2d-4c69-ab21-379408a1e743",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3788,17 +1806,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they  are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many trees has your organization restored or naturally regenerated since it was founded? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "1817a476-e340-467c-8c6b-8918c200654e",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3837,17 +1853,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk  growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many trees has your organization planted, naturally regenerated or otherwise restored in the past 36 months?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "4c0e0a9f-636a-45b0-ad5c-80f5722c7cfe",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3892,17 +1906,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "text",
         },
         "is_parent_conditional_default": undefined,
         "label": "What is the name of your proposed project?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "2f114af5-a0b9-405d-926b-7689a9fd5a25",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3948,7 +1960,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "What are the objectives of your proposed project?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "917fd2b0-74c2-42c8-b65e-b98144322f6d",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -3989,1011 +2003,16 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "fieldProps": {
           "hasOtherOptions": undefined,
           "multiSelect": undefined,
-          "options": [
-            {
-              "title": "Afghanistan",
-              "value": "AF",
-            },
-            {
-              "title": "Åland Islands",
-              "value": "AX",
-            },
-            {
-              "title": "Albania",
-              "value": "AL",
-            },
-            {
-              "title": "Algeria",
-              "value": "DZ",
-            },
-            {
-              "title": "American Samoa",
-              "value": "AS",
-            },
-            {
-              "title": "Andorra",
-              "value": "AD",
-            },
-            {
-              "title": "Angola",
-              "value": "AO",
-            },
-            {
-              "title": "Anguilla",
-              "value": "AI",
-            },
-            {
-              "title": "Antarctica",
-              "value": "AQ",
-            },
-            {
-              "title": "Antigua and Barbuda",
-              "value": "AG",
-            },
-            {
-              "title": "Argentina",
-              "value": "AR",
-            },
-            {
-              "title": "Armenia",
-              "value": "AM",
-            },
-            {
-              "title": "Aruba",
-              "value": "AW",
-            },
-            {
-              "title": "Australia",
-              "value": "AU",
-            },
-            {
-              "title": "Austria",
-              "value": "AT",
-            },
-            {
-              "title": "Azerbaijan",
-              "value": "AZ",
-            },
-            {
-              "title": "Bahamas",
-              "value": "BS",
-            },
-            {
-              "title": "Bahrain",
-              "value": "BH",
-            },
-            {
-              "title": "Bangladesh",
-              "value": "BD",
-            },
-            {
-              "title": "Barbados",
-              "value": "BB",
-            },
-            {
-              "title": "Belarus",
-              "value": "BY",
-            },
-            {
-              "title": "Belgium",
-              "value": "BE",
-            },
-            {
-              "title": "Belize",
-              "value": "BZ",
-            },
-            {
-              "title": "Benin",
-              "value": "BJ",
-            },
-            {
-              "title": "Bermuda",
-              "value": "BM",
-            },
-            {
-              "title": "Bhutan",
-              "value": "BT",
-            },
-            {
-              "title": "Bolivia, Plurinational State of",
-              "value": "BO",
-            },
-            {
-              "title": "Bonaire, Sint Eustatius and Saba",
-              "value": "BQ",
-            },
-            {
-              "title": "Bosnia and Herzegovina",
-              "value": "BA",
-            },
-            {
-              "title": "Botswana",
-              "value": "BW",
-            },
-            {
-              "title": "Bouvet Island",
-              "value": "BV",
-            },
-            {
-              "title": "Brazil",
-              "value": "BR",
-            },
-            {
-              "title": "British Indian Ocean Territory",
-              "value": "IO",
-            },
-            {
-              "title": "Brunei Darussalam",
-              "value": "BN",
-            },
-            {
-              "title": "Bulgaria",
-              "value": "BG",
-            },
-            {
-              "title": "Burkina Faso",
-              "value": "BF",
-            },
-            {
-              "title": "Burundi",
-              "value": "BI",
-            },
-            {
-              "title": "Cabo Verde",
-              "value": "CV",
-            },
-            {
-              "title": "Cambodia",
-              "value": "KH",
-            },
-            {
-              "title": "Cameroon",
-              "value": "CM",
-            },
-            {
-              "title": "Canada",
-              "value": "CA",
-            },
-            {
-              "title": "Cayman Islands",
-              "value": "KY",
-            },
-            {
-              "title": "Central African Republic",
-              "value": "CF",
-            },
-            {
-              "title": "Chad",
-              "value": "TD",
-            },
-            {
-              "title": "Chile",
-              "value": "CL",
-            },
-            {
-              "title": "China",
-              "value": "CN",
-            },
-            {
-              "title": "Christmas Island",
-              "value": "CX",
-            },
-            {
-              "title": "Cocos (Keeling) Islands",
-              "value": "CC",
-            },
-            {
-              "title": "Colombia",
-              "value": "CO",
-            },
-            {
-              "title": "Comoros",
-              "value": "KM",
-            },
-            {
-              "title": "Congo",
-              "value": "CG",
-            },
-            {
-              "title": "Congo, Democratic Republic of the",
-              "value": "CD",
-            },
-            {
-              "title": "Cook Islands",
-              "value": "CK",
-            },
-            {
-              "title": "Costa Rica",
-              "value": "CR",
-            },
-            {
-              "title": "Croatia",
-              "value": "HR",
-            },
-            {
-              "title": "Cuba",
-              "value": "CU",
-            },
-            {
-              "title": "Curaçao",
-              "value": "CW",
-            },
-            {
-              "title": "Cyprus",
-              "value": "CY",
-            },
-            {
-              "title": "Czechia",
-              "value": "CZ",
-            },
-            {
-              "title": "Côte d'Ivoire",
-              "value": "CI",
-            },
-            {
-              "title": "Denmark",
-              "value": "DK",
-            },
-            {
-              "title": "Djibouti",
-              "value": "DJ",
-            },
-            {
-              "title": "Dominica",
-              "value": "DM",
-            },
-            {
-              "title": "Dominican Republic",
-              "value": "DO",
-            },
-            {
-              "title": "Ecuador",
-              "value": "EC",
-            },
-            {
-              "title": "Egypt",
-              "value": "EG",
-            },
-            {
-              "title": "El Salvador",
-              "value": "SV",
-            },
-            {
-              "title": "Equatorial Guinea",
-              "value": "GQ",
-            },
-            {
-              "title": "Eritrea",
-              "value": "ER",
-            },
-            {
-              "title": "Estonia",
-              "value": "EE",
-            },
-            {
-              "title": "Eswatini",
-              "value": "SZ",
-            },
-            {
-              "title": "Ethiopia",
-              "value": "ET",
-            },
-            {
-              "title": "Falkland Islands (Malvinas)",
-              "value": "FK",
-            },
-            {
-              "title": "Faroe Islands",
-              "value": "FO",
-            },
-            {
-              "title": "Fiji",
-              "value": "FJ",
-            },
-            {
-              "title": "Finland",
-              "value": "FI",
-            },
-            {
-              "title": "France",
-              "value": "FR",
-            },
-            {
-              "title": "French Guiana",
-              "value": "GF",
-            },
-            {
-              "title": "French Polynesia",
-              "value": "PF",
-            },
-            {
-              "title": "French Southern Territories",
-              "value": "TF",
-            },
-            {
-              "title": "Gabon",
-              "value": "GA",
-            },
-            {
-              "title": "Gambia",
-              "value": "GM",
-            },
-            {
-              "title": "Georgia",
-              "value": "GE",
-            },
-            {
-              "title": "Germany",
-              "value": "DE",
-            },
-            {
-              "title": "Ghana",
-              "value": "GH",
-            },
-            {
-              "title": "Gibraltar",
-              "value": "GI",
-            },
-            {
-              "title": "Greece",
-              "value": "GR",
-            },
-            {
-              "title": "Greenland",
-              "value": "GL",
-            },
-            {
-              "title": "Grenada",
-              "value": "GD",
-            },
-            {
-              "title": "Guadeloupe",
-              "value": "GP",
-            },
-            {
-              "title": "Guam",
-              "value": "GU",
-            },
-            {
-              "title": "Guatemala",
-              "value": "GT",
-            },
-            {
-              "title": "Guernsey",
-              "value": "GG",
-            },
-            {
-              "title": "Guinea",
-              "value": "GN",
-            },
-            {
-              "title": "Guinea-Bissau",
-              "value": "GW",
-            },
-            {
-              "title": "Guyana",
-              "value": "GY",
-            },
-            {
-              "title": "Haiti",
-              "value": "HT",
-            },
-            {
-              "title": "Heard Island and McDonald Islands",
-              "value": "HM",
-            },
-            {
-              "title": "Holy See",
-              "value": "VA",
-            },
-            {
-              "title": "Honduras",
-              "value": "HN",
-            },
-            {
-              "title": "Hong Kong",
-              "value": "HK",
-            },
-            {
-              "title": "Hungary",
-              "value": "HU",
-            },
-            {
-              "title": "Iceland",
-              "value": "IS",
-            },
-            {
-              "title": "India",
-              "value": "IN",
-            },
-            {
-              "title": "Indonesia",
-              "value": "ID",
-            },
-            {
-              "title": "Iran",
-              "value": "IR",
-            },
-            {
-              "title": "Iraq",
-              "value": "IQ",
-            },
-            {
-              "title": "Ireland",
-              "value": "IE",
-            },
-            {
-              "title": "Isle of Man",
-              "value": "IM",
-            },
-            {
-              "title": "Israel",
-              "value": "IL",
-            },
-            {
-              "title": "Italy",
-              "value": "IT",
-            },
-            {
-              "title": "Jamaica",
-              "value": "JM",
-            },
-            {
-              "title": "Japan",
-              "value": "JP",
-            },
-            {
-              "title": "Jersey",
-              "value": "JE",
-            },
-            {
-              "title": "Jordan",
-              "value": "JO",
-            },
-            {
-              "title": "Kazakhstan",
-              "value": "KZ",
-            },
-            {
-              "title": "Kenya",
-              "value": "KE",
-            },
-            {
-              "title": "Kiribati",
-              "value": "KI",
-            },
-            {
-              "title": "Korea, Democratic People's Republic of",
-              "value": "KP",
-            },
-            {
-              "title": "Korea, Republic of",
-              "value": "KR",
-            },
-            {
-              "title": "Kuwait",
-              "value": "KW",
-            },
-            {
-              "title": "Kyrgyzstan",
-              "value": "KG",
-            },
-            {
-              "title": "Lao People's Democratic Republic",
-              "value": "LA",
-            },
-            {
-              "title": "Latvia",
-              "value": "LV",
-            },
-            {
-              "title": "Lebanon",
-              "value": "LB",
-            },
-            {
-              "title": "Lesotho",
-              "value": "LS",
-            },
-            {
-              "title": "Liberia",
-              "value": "LR",
-            },
-            {
-              "title": "Libya",
-              "value": "LY",
-            },
-            {
-              "title": "Liechtenstein",
-              "value": "LI",
-            },
-            {
-              "title": "Lithuania",
-              "value": "LT",
-            },
-            {
-              "title": "Luxembourg",
-              "value": "LU",
-            },
-            {
-              "title": "Macao",
-              "value": "MO",
-            },
-            {
-              "title": "Madagascar",
-              "value": "MG",
-            },
-            {
-              "title": "Malawi",
-              "value": "MW",
-            },
-            {
-              "title": "Malaysia",
-              "value": "MY",
-            },
-            {
-              "title": "Maldives",
-              "value": "MV",
-            },
-            {
-              "title": "Mali",
-              "value": "ML",
-            },
-            {
-              "title": "Malta",
-              "value": "MT",
-            },
-            {
-              "title": "Marshall Islands",
-              "value": "MH",
-            },
-            {
-              "title": "Martinique",
-              "value": "MQ",
-            },
-            {
-              "title": "Mauritania",
-              "value": "MR",
-            },
-            {
-              "title": "Mauritius",
-              "value": "MU",
-            },
-            {
-              "title": "Mayotte",
-              "value": "YT",
-            },
-            {
-              "title": "Mexico",
-              "value": "MX",
-            },
-            {
-              "title": "Micronesia, Federated States of",
-              "value": "FM",
-            },
-            {
-              "title": "Moldova, Republic of",
-              "value": "MD",
-            },
-            {
-              "title": "Monaco",
-              "value": "MC",
-            },
-            {
-              "title": "Mongolia",
-              "value": "MN",
-            },
-            {
-              "title": "Montenegro",
-              "value": "ME",
-            },
-            {
-              "title": "Montserrat",
-              "value": "MS",
-            },
-            {
-              "title": "Morocco",
-              "value": "MA",
-            },
-            {
-              "title": "Mozambique",
-              "value": "MZ",
-            },
-            {
-              "title": "Myanmar",
-              "value": "MM",
-            },
-            {
-              "title": "Namibia",
-              "value": "NA",
-            },
-            {
-              "title": "Nauru",
-              "value": "NR",
-            },
-            {
-              "title": "Nepal",
-              "value": "NP",
-            },
-            {
-              "title": "Netherlands",
-              "value": "NL",
-            },
-            {
-              "title": "New Caledonia",
-              "value": "NC",
-            },
-            {
-              "title": "New Zealand",
-              "value": "NZ",
-            },
-            {
-              "title": "Nicaragua",
-              "value": "NI",
-            },
-            {
-              "title": "Niger",
-              "value": "NE",
-            },
-            {
-              "title": "Nigeria",
-              "value": "NG",
-            },
-            {
-              "title": "Niue",
-              "value": "NU",
-            },
-            {
-              "title": "Norfolk Island",
-              "value": "NF",
-            },
-            {
-              "title": "North Macedonia",
-              "value": "MK",
-            },
-            {
-              "title": "Northern Mariana Islands",
-              "value": "MP",
-            },
-            {
-              "title": "Norway",
-              "value": "NO",
-            },
-            {
-              "title": "Oman",
-              "value": "OM",
-            },
-            {
-              "title": "Pakistan",
-              "value": "PK",
-            },
-            {
-              "title": "Palau",
-              "value": "PW",
-            },
-            {
-              "title": "Palestine, State of",
-              "value": "PS",
-            },
-            {
-              "title": "Panama",
-              "value": "PA",
-            },
-            {
-              "title": "Papua New Guinea",
-              "value": "PG",
-            },
-            {
-              "title": "Paraguay",
-              "value": "PY",
-            },
-            {
-              "title": "Peru",
-              "value": "PE",
-            },
-            {
-              "title": "Philippines",
-              "value": "PH",
-            },
-            {
-              "title": "Pitcairn",
-              "value": "PN",
-            },
-            {
-              "title": "Poland",
-              "value": "PL",
-            },
-            {
-              "title": "Portugal",
-              "value": "PT",
-            },
-            {
-              "title": "Puerto Rico",
-              "value": "PR",
-            },
-            {
-              "title": "Qatar",
-              "value": "QA",
-            },
-            {
-              "title": "Romania",
-              "value": "RO",
-            },
-            {
-              "title": "Russian Federation",
-              "value": "RU",
-            },
-            {
-              "title": "Rwanda",
-              "value": "RW",
-            },
-            {
-              "title": "Réunion",
-              "value": "RE",
-            },
-            {
-              "title": "Saint Barthélemy",
-              "value": "BL",
-            },
-            {
-              "title": "Saint Helena, Ascension and Tristan da Cunha",
-              "value": "SH",
-            },
-            {
-              "title": "Saint Kitts and Nevis",
-              "value": "KN",
-            },
-            {
-              "title": "Saint Lucia",
-              "value": "LC",
-            },
-            {
-              "title": "Saint Martin (French part)",
-              "value": "MF",
-            },
-            {
-              "title": "Saint Pierre and Miquelon",
-              "value": "PM",
-            },
-            {
-              "title": "Saint Vincent and the Grenadines",
-              "value": "VC",
-            },
-            {
-              "title": "Samoa",
-              "value": "WS",
-            },
-            {
-              "title": "San Marino",
-              "value": "SM",
-            },
-            {
-              "title": "Sao Tome and Principe",
-              "value": "ST",
-            },
-            {
-              "title": "Saudi Arabia",
-              "value": "SA",
-            },
-            {
-              "title": "Senegal",
-              "value": "SN",
-            },
-            {
-              "title": "Serbia",
-              "value": "RS",
-            },
-            {
-              "title": "Seychelles",
-              "value": "SC",
-            },
-            {
-              "title": "Sierra Leone",
-              "value": "SL",
-            },
-            {
-              "title": "Singapore",
-              "value": "SG",
-            },
-            {
-              "title": "Sint Maarten (Dutch part)",
-              "value": "SX",
-            },
-            {
-              "title": "Slovakia",
-              "value": "SK",
-            },
-            {
-              "title": "Slovenia",
-              "value": "SI",
-            },
-            {
-              "title": "Solomon Islands",
-              "value": "SB",
-            },
-            {
-              "title": "Somalia",
-              "value": "SO",
-            },
-            {
-              "title": "South Africa",
-              "value": "ZA",
-            },
-            {
-              "title": "South Georgia and the South Sandwich Islands",
-              "value": "GS",
-            },
-            {
-              "title": "South Sudan",
-              "value": "SS",
-            },
-            {
-              "title": "Spain",
-              "value": "ES",
-            },
-            {
-              "title": "Sri Lanka",
-              "value": "LK",
-            },
-            {
-              "title": "Sudan",
-              "value": "SD",
-            },
-            {
-              "title": "Suriname",
-              "value": "SR",
-            },
-            {
-              "title": "Svalbard and Jan Mayen",
-              "value": "SJ",
-            },
-            {
-              "title": "Sweden",
-              "value": "SE",
-            },
-            {
-              "title": "Switzerland",
-              "value": "CH",
-            },
-            {
-              "title": "Syrian Arab Republic",
-              "value": "SY",
-            },
-            {
-              "title": "Taiwan, Province of China",
-              "value": "TW",
-            },
-            {
-              "title": "Tajikistan",
-              "value": "TJ",
-            },
-            {
-              "title": "Tanzania, United Republic of",
-              "value": "TZ",
-            },
-            {
-              "title": "Thailand",
-              "value": "TH",
-            },
-            {
-              "title": "Timor-Leste",
-              "value": "TL",
-            },
-            {
-              "title": "Togo",
-              "value": "TG",
-            },
-            {
-              "title": "Tokelau",
-              "value": "TK",
-            },
-            {
-              "title": "Tonga",
-              "value": "TO",
-            },
-            {
-              "title": "Trinidad and Tobago",
-              "value": "TT",
-            },
-            {
-              "title": "Tunisia",
-              "value": "TN",
-            },
-            {
-              "title": "Turkey",
-              "value": "TR",
-            },
-            {
-              "title": "Turkmenistan",
-              "value": "TM",
-            },
-            {
-              "title": "Turks and Caicos Islands",
-              "value": "TC",
-            },
-            {
-              "title": "Tuvalu",
-              "value": "TV",
-            },
-            {
-              "title": "Uganda",
-              "value": "UG",
-            },
-            {
-              "title": "Ukraine",
-              "value": "UA",
-            },
-            {
-              "title": "United Arab Emirates",
-              "value": "AE",
-            },
-            {
-              "title": "United Kingdom",
-              "value": "GB",
-            },
-            {
-              "title": "United States Minor Outlying Islands",
-              "value": "UM",
-            },
-            {
-              "title": "United States",
-              "value": "US",
-            },
-            {
-              "title": "Uruguay",
-              "value": "UY",
-            },
-            {
-              "title": "Uzbekistan",
-              "value": "UZ",
-            },
-            {
-              "title": "Vanuatu",
-              "value": "VU",
-            },
-            {
-              "title": "Venezuela, Bolivarian Republic of",
-              "value": "VE",
-            },
-            {
-              "title": "Viet Nam",
-              "value": "VN",
-            },
-            {
-              "title": "Virgin Islands, British",
-              "value": "VG",
-            },
-            {
-              "title": "Virgin Islands, U.S.",
-              "value": "VI",
-            },
-            {
-              "title": "Wallis and Futuna",
-              "value": "WF",
-            },
-            {
-              "title": "Western Sahara",
-              "value": "EH",
-            },
-            {
-              "title": "Yemen",
-              "value": "YE",
-            },
-            {
-              "title": "Zambia",
-              "value": "ZM",
-            },
-            {
-              "title": "Zimbabwe",
-              "value": "ZW",
-            },
-          ],
+          "options": [],
           "optionsFilterFieldName": undefined,
           "required": false,
         },
         "is_parent_conditional_default": undefined,
         "label": "In what country will your project operate? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "875d923a-f1e4-4516-a77a-96fcdf099f66",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5032,17 +2051,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "Please enter the precise name of the district or sub-counties where your project would operate. This should be an official administrative jurisdiction. Please be as precise as possible.",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "text",
         },
         "is_parent_conditional_default": undefined,
         "label": "In which subnational jurisdictions would you carry out this project? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "59388280-52bd-48f8-97a6-8de30b509494",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5081,17 +2098,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A hectare of land restored is defined as the total land area measured in hectares that has undergone restoration intervention. The land area under restoration includes more than active tree planting. Some land may not be planted while undergoing restoration. Instead, trees could be naturally regenerated on that land could without active planting. Only count land that has benefitted from tree-based restoration techniques in your total.",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many hectares of land do you intend to restore through this project?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "5c2b9303-302d-4140-beba-95d79fb2d060",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5130,17 +2145,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": "A tree is defined as a woody perennial plant, typically having a single stem or trunk growing to 5 meters or higher, bearing lateral branches at some distance from the ground. TerraMatch counts "trees restored," not "planted." Only trees that survive to maturity after they are planted or naturally regenerated should be counted toward this total. Naturally regenerating trees must attain a verifiable age of over 1 year to be counted as "restored."",
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "How many trees do you intend to restore through this project?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "790370ce-a8e4-4185-a6ef-99a64b2e4bc5",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5188,7 +2201,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "What tree species do you intend to grow through this project?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "90acff1b-27f1-4de7-a9a3-caf6be137604",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5425,17 +2440,15 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "description": undefined,
         "feedbackRequired": undefined,
         "fieldProps": {
-          "max": undefined,
-          "maxLength": undefined,
-          "min": undefined,
-          "minLength": undefined,
           "required": false,
           "type": "number",
         },
         "is_parent_conditional_default": undefined,
         "label": "What is your proposed project budget in USD? ",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "09475088-63b9-4634-bb13-d0ad6c9ecf14",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5501,7 +2514,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "Upload any additional documents",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "e55c81f1-e0ba-42a3-9887-d22f853687c2",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5700,7 +2715,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "On which of the following topics would you request technical assistance from a team of experts?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "3d456c52-8e68-45ff-ae88-37a96263130e",
         "parent_id": undefined,
         "placeholder": undefined,
@@ -5968,7 +2985,9 @@ exports[`test useGetCustomFormSteps hook snapShot test 1`] = `
         "is_parent_conditional_default": undefined,
         "label": "How did you hear about this opportunity on TerraMatch?",
         "max_character_limit": undefined,
+        "max_number_limit": undefined,
         "min_character_limit": undefined,
+        "min_number_limit": undefined,
         "name": "6ed56eff-b1c3-4df3-bfcc-98db47e02fb0",
         "parent_id": undefined,
         "placeholder": undefined,

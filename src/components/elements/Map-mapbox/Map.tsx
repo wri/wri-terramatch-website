@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
@@ -26,7 +27,6 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
@@ -34,13 +34,14 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
+import { PopupMobile } from "./components/PopupMobile";
 import { BBox } from "./GeoJSON";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
@@ -116,7 +117,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
+  modelFilesData?: MediaDto[];
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
@@ -192,12 +193,14 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
+  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { updateSingleCriteriaData } = context ?? {};
+  const { updateSingleSitePolygonData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -279,7 +282,8 @@ export const MapContainer = ({
             setFilters,
             dashboardCountries,
             setLoader,
-            selectedCountry
+            selectedCountry,
+            isMobile || isDashboard ? setMobilePopupData : undefined
           );
         }
       };
@@ -294,8 +298,27 @@ export const MapContainer = ({
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [
+    sitePolygonData,
+    polygonsCentroids,
+    polygonsData,
+    showPopups,
+    centroids,
+    styleLoaded,
+    dashboardCountries,
+    draw,
+    editPolygonSelected,
+    isDashboard,
+    isMobile,
+    map,
+    selectedCountry,
+    setChangeStyle,
+    setEditPolygon,
+    setFilters,
+    setLoader,
+    setPolygonFromMap,
+    tooltipType
+  ]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {
@@ -371,22 +394,12 @@ export const MapContainer = ({
       closeModal(ModalId.DELETE_IMAGE);
     };
 
-    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
-      const dataImage = {
-        uuid: data.uuid!,
-        fullImageUrl: data.file_url!,
-        thumbnailImageUrl: data.file_url!,
-        label: data.model_name,
-        isPublic: data.is_public!,
-        isGeotagged: true,
-        isCover: data.is_cover,
-        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
-      };
+    const openModalImageDetail = (data: MediaDto) => {
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
           title="IMAGE DETAILS"
-          data={dataImage}
+          data={data}
           entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
           reloadGalleryImages={() => {
@@ -550,7 +563,7 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleCriteriaData?.(selectedPolygon.uuid, polygonActive);
+                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
@@ -684,7 +697,7 @@ export const MapContainer = ({
           </button>
         </ControlGroup>
         <When condition={!formMap && showViewGallery}>
-          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2">
+          <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
             <When condition={showImagesButton}>
               <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
             </When>
@@ -692,7 +705,7 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
               isDashboard !== "modal" && (
-                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+                <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
               )
             )}
           </ControlGroup>
@@ -703,7 +716,7 @@ export const MapContainer = ({
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel
               className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-              modelFilesData={props?.modelFilesData}
+              modelFilesData={props?.modelFilesData ?? []}
               imageGalleryRef={imageGalleryRef}
             />
           </When>
@@ -724,6 +737,13 @@ export const MapContainer = ({
       </When>
       <When condition={!polygonsExists}>
         <EmptyStateDisplay />
+      </When>
+      <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
+        <PopupMobile
+          event={mobilePopupData}
+          onClose={() => setMobilePopupData(null)}
+          variant={isMobile ? "mobile" : "desktop"}
+        />
       </When>
     </div>
   );

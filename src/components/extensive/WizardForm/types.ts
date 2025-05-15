@@ -21,6 +21,7 @@ import { RHFInputTableProps } from "@/components/elements/Inputs/InputTable/RHFI
 import { RHFMapProps } from "@/components/elements/Inputs/Map/RHFMap";
 import { RHFSelectProps } from "@/components/elements/Inputs/Select/RHFSelect";
 import { RHFSelectImageProps } from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
+import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAreaInput/StrategyAreaInput";
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
@@ -78,6 +79,7 @@ export enum FieldType {
   Conditional = "conditional",
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
+  StrategyAreaInput = "strategyAreaInput",
   FinancialTableInput = "financialTableInput"
 }
 
@@ -86,6 +88,7 @@ export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
 export type FormField =
   | InputFormField
   | FieldTypeBuilder<FieldType.TextArea, TextAreaProps>
+  | FieldTypeBuilder<FieldType.StrategyAreaInput, StrategyAreaInputProps>
   | FieldTypeBuilder<
       FieldType.Dropdown,
       Omit<RHFDropdownProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>

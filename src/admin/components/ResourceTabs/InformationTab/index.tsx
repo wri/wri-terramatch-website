@@ -13,7 +13,7 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
@@ -99,7 +99,7 @@ const InformationTab: FC<IProps> = props => {
       <TabbedShowLayout.Tab label={tabTitle} {...props}>
         <Grid spacing={2} container>
           <Grid xs={8} item>
-            <If condition={record.nothing_to_report}>
+            <If condition={record.nothingToReport}>
               <Then>
                 <Card sx={{ padding: 4 }}>
                   <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>

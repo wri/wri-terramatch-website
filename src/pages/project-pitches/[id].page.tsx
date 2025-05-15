@@ -8,7 +8,7 @@ import BannerCard from "@/components/extensive/Banner/BannerCard";
 import OverviewBanner from "@/components/extensive/Banner/Overview/OverviewBanner";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useGetV2OrganisationsUUID, useGetV2ProjectPitchesUUID } from "@/generated/apiComponents";
 import { ProjectPitchRead, V2OrganisationRead } from "@/generated/apiSchemas";
 import PitchEnvironmentalImpactTab from "@/pages/project-pitches/components/tabs/PitchEnvironmentalImpactTab";
@@ -19,6 +19,7 @@ import { formatOptionsList } from "@/utils/options";
 const ProjectPitchPage = () => {
   const t = useT();
   const pitchId = useRouter().query.id as string;
+  const countryOptions = useGadmOptions({ level: 0 });
 
   // Queries
   const { data: pitch } = useGetV2ProjectPitchesUUID<{ data: ProjectPitchRead }>({
@@ -46,7 +47,7 @@ const ProjectPitchPage = () => {
         iconName={IconNames.MAP_PIN}
         title={pitch?.data.project_name}
         subtitle={`${pitch?.data.project_county_district || ""}, ${formatOptionsList(
-          getCountriesOptions(t),
+          countryOptions ?? [],
           pitch?.data.project_country || []
         )}`}
       >
