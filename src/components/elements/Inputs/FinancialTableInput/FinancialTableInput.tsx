@@ -21,8 +21,6 @@ export interface FinancialTableInputProps extends Omit<InputWrapperProps, "error
   formHook?: UseFormReturn<FieldValues, any>;
   control?: Control<FieldValues, any>;
   onChangeCapture?: (values: any) => void;
-  handleCreate?: (value: any) => void;
-  handleDelete?: (uuid?: string) => void;
   resetTable?: any;
 }
 
@@ -40,7 +38,7 @@ const FinancialTableInput = (props: FinancialTableInputProps) => {
       feedbackRequired={props.feedbackRequired}
       {...props}
     >
-      <Table columns={props.tableColumns} data={props.value} {...props} key={props.resetTable} />
+      <Table columns={props.tableColumns} data={props.value} {...props} key={props.resetTable} {...props} />
     </InputWrapper>
   );
 };

@@ -63,6 +63,7 @@ export interface WizardFormProps {
   initialStepIndex?: number;
   roundedCorners?: boolean;
   className?: string;
+  formSubmissionOrg?: any;
 }
 
 function WizardForm(props: WizardFormProps) {
@@ -194,6 +195,7 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
+          formSubmissionOrg={props?.formSubmissionOrg}
         ></FormStep>
         <FormFooter
           variant="sticky"

@@ -29,9 +29,10 @@ interface FieldMapperProps {
   field: FormField;
   formHook: UseFormReturn<FieldValues, any>;
   onChange: () => void;
+  formSubmissionOrg?: any;
 }
 
-export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => {
+export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
     name: field.name,
@@ -236,8 +237,10 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           {...field.fieldProps}
           {...sharedProps}
           formHook={formHook}
+          error={sharedProps.error}
           control={formHook.control}
           onChangeCapture={onChange}
+          formSubmissionOrg={formSubmissionOrg}
         />
       );
 

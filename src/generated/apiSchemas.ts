@@ -1121,6 +1121,7 @@ export type FundingProgramme = {
       submission_message?: string;
       published?: boolean;
       stage_id?: string;
+      funding_programme_uuid?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -1445,6 +1446,7 @@ export type FormRead = {
   submission_message?: string;
   published?: boolean;
   stage_id?: string;
+  funding_programme_uuid?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -5662,6 +5664,7 @@ export type ProjectFullRead = {
         submission_message?: string;
         published?: boolean;
         stage_id?: string;
+        funding_programme_uuid?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -6297,6 +6300,7 @@ export type ProjectWithSchemaRead = {
     submission_message?: string;
     published?: boolean;
     stage_id?: string;
+    funding_programme_uuid?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -6875,6 +6879,7 @@ export type SiteWithSchemaRead = {
     submission_message?: string;
     published?: boolean;
     stage_id?: string;
+    funding_programme_uuid?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -7220,6 +7225,7 @@ export type FormSubmissionRead = {
     submission_message?: string;
     published?: boolean;
     stage_id?: string;
+    funding_programme_uuid?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -7316,6 +7322,24 @@ export type FormSubmissionRead = {
   updated_at?: string;
 };
 
+export type FormSubmissionLiteRead = {
+  uuid?: string;
+  name?: string;
+  status?: string;
+  readable_status?: string;
+  created_at?: string;
+  updated_at?: string;
+  updated_by_uuid?: string;
+  updated_by_name?: string;
+  project_pitch_uuid?: string;
+  form_uuid?: string;
+  stage?: {
+    uuid?: string;
+    name?: string;
+    order?: string;
+  };
+};
+
 export type FormPaginated = {
   data?: {
     id?: number;
@@ -7333,6 +7357,7 @@ export type FormPaginated = {
     submission_message?: string;
     published?: boolean;
     stage_id?: string;
+    funding_programme_uuid?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -7439,6 +7464,7 @@ export type StagePaginated = {
       submission_message?: string;
       published?: boolean;
       stage_id?: string;
+      funding_programme_uuid?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -7555,6 +7581,7 @@ export type StageRead = {
     submission_message?: string;
     published?: boolean;
     stage_id?: string;
+    funding_programme_uuid?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -7672,241 +7699,24 @@ export type FormSubmissionUpdate = {
 
 export type ApplicationLiteRead = {
   uuid?: string;
-  form_submissions?: {
-    id?: string;
-    uuid?: string;
-    name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    stage?: {
-      uuid?: string;
-      name?: string;
-      status?: string;
-      readable_status?: string;
-    };
-    answers?: string;
-    status?: string;
-    readable_status?: string;
-    audits?: {
-      id?: number;
-      event?: string;
-      user_id?: number;
-      user_uuid?: string;
-      old_values?: Record<string, any>;
-      new_values?: Record<string, any>;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-    project_pitch_uuid?: string;
-    updated_by?: string;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
   current_submission?: {
-    id?: string;
     uuid?: string;
     name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
+    status?: string;
+    readable_status?: string;
+    created_at?: string;
+    updated_at?: string;
+    updated_by_uuid?: string;
+    updated_by_name?: string;
+    project_pitch_uuid?: string;
+    form_uuid?: string;
     stage?: {
       uuid?: string;
       name?: string;
-      status?: string;
-      readable_status?: string;
+      order?: string;
     };
-    answers?: string;
-    status?: string;
-    readable_status?: string;
-    audits?: {
-      id?: number;
-      event?: string;
-      user_id?: number;
-      user_uuid?: string;
-      old_values?: Record<string, any>;
-      new_values?: Record<string, any>;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-    project_pitch_uuid?: string;
-    updated_by?: string;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
   };
   funding_programme_name?: number;
-  funding_programme_uuid?: string;
-  funding_programme_status?: string;
-  organisation_name?: string;
-  organisation_uuid?: string;
   /**
    * @format date-time
    */
@@ -7939,6 +7749,7 @@ export type ApplicationRead = {
       submission_message?: string;
       published?: boolean;
       stage_id?: string;
+      funding_programme_uuid?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -15858,10 +15669,6 @@ export type GeoJSON = {
        * @format date
        */
       plantstart?: string;
-      /**
-       * @format date
-       */
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -16110,10 +15917,6 @@ export type SitePolygon = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16141,6 +15944,7 @@ export type SitePolygon = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 };
 
 export type GeometryString = {
@@ -16162,10 +15966,6 @@ export type SitePolygonsDataResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16193,6 +15993,7 @@ export type SitePolygonsDataResponse = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -16207,10 +16008,6 @@ export type SitePolygonResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16250,7 +16047,6 @@ export type GeoJSONResponse = {
     properties?: {
       poly_name?: string;
       plantstart?: string;
-      plantend?: string;
       practice?: string;
       target_sys?: string;
       distr?: string;
@@ -16538,31 +16334,6 @@ export type DashboardActiveCountriesResponse = {
   }[];
 };
 
-export type DashboardCountriesResponse = {
-  data?: {
-    id?: number;
-    country_slug?: string;
-    data?: {
-      label?: string;
-      icon?: string;
-    };
-  }[];
-};
-
-export type DashboardCountryData = {
-  id?: number;
-  country_slug?: string;
-  data?: {
-    label?: string;
-    icon?: string;
-  };
-};
-
-export type DashboardCountryInfo = {
-  label?: string;
-  icon?: string;
-};
-
 export type DashboardProjectProfileResponse = {
   data?: {
     name?: string;
@@ -16701,10 +16472,6 @@ export type EntityTypeResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -16732,6 +16499,7 @@ export type EntityTypeResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
   /**
    * Bounding box of the entity
@@ -16765,10 +16533,6 @@ export type EntityPolygonResponse = {
      * @format date
      */
     plantstart?: string;
-    /**
-     * @format date
-     */
-    plantend?: string;
     practice?: string;
     target_sys?: string;
     distr?: string;
@@ -16796,6 +16560,7 @@ export type EntityPolygonResponse = {
     country?: string;
     is_active?: boolean;
     version_name?: string;
+    validation_status?: boolean;
   }[];
 };
 
@@ -16844,10 +16609,6 @@ export type PolygonChangeStatus = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16875,6 +16636,7 @@ export type PolygonChangeStatus = {
   country?: string;
   is_active?: boolean;
   version_name?: string;
+  validation_status?: boolean;
 }[];
 
 export type PolygonChangeStatusUpdate = {
@@ -16911,10 +16673,6 @@ export type SitePolygonsLoadedDataResponse = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -16960,10 +16718,6 @@ export type SitePolygonLoaded = {
    * @format date
    */
   plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
   practice?: string;
   target_sys?: string;
   distr?: string;
@@ -17309,10 +17063,6 @@ export type UserCreateComplete = {
   role?: string;
 };
 
-export type V2AdminProjectUpdate = {
-  is_test?: boolean;
-};
-
 export type IndicatorPost = {
   uuids?: string[];
 };
@@ -17414,4 +17164,15 @@ export type V2ImpactStoryCreate = {
 
 export type DashboardGetPolygonCentroidResponse = {
   centroid?: number[];
+};
+
+export type V2FinancialIndicatorsRead = Record<string, any>[];
+
+export type V2FinancialIndicatorsUpdate = {
+  organisation_id?: string;
+  profit_analysis_data?: Record<string, any>[];
+  current_radio_data?: Record<string, any>[];
+  documentation_data?: Record<string, any>[];
+  local_currency?: string;
+  financial_year_start_month?: number;
 };
