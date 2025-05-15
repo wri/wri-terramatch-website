@@ -13,6 +13,7 @@ import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTab
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import { formatFinancialData } from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
@@ -151,6 +152,87 @@ export const getFormEntries = (
         break;
       }
 
+      case FieldType.FinancialTableInput: {
+        const entries = values[f.name];
+        const years = f.fieldProps.years;
+        const columnMaps = {
+          profitAnalysisData: ["year", "revenue", "expenses", "profit"],
+          nonProfitAnalysisData: ["year", "budget"],
+          currentRatioData: ["year", "currentAssets", "currentLiabilities", "currentRatio"],
+          documentationData: ["year", "documentation", "description"]
+        };
+
+        const formatted = formatFinancialData(entries, years, "", "");
+        const sections = [
+          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Non-Profit Analysis"), key: "nonProfitAnalysisData" },
+          { title: t("Current Ratio"), key: "currentRatioData" },
+          { title: t("Documentation"), key: "documentationData" }
+        ];
+
+        const isEmptyValue = (val: any) => {
+          if (val === undefined || val === null) return true;
+          if (typeof val === "string") {
+            return val.trim() === "" || val?.trim() === "-";
+          }
+          return false;
+        };
+
+        const value = sections
+          .map(section => {
+            const data = formatted[section.key as keyof typeof formatted];
+            const columns = columnMaps[section.key as keyof typeof columnMaps];
+            if (!data || data?.length === 0) return "";
+
+            const filteredRows = data?.filter((row: Record<string, any>) => {
+              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+              return valuesToCheck.some(val => !isEmptyValue(val));
+            });
+
+            if (filteredRows.length === 0) return "";
+
+            const rowsHtml = filteredRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  if (col === "documentation") {
+                    if (Array.isArray(row[col]) && row[col].length > 0) {
+                      return row[col]
+                        .map((document: any) => {
+                          if (document.url) {
+                            return `<a href="${
+                              document.url
+                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                              document.file_name ?? ""
+                            }</a>`;
+                          }
+                          return "";
+                        })
+                        .filter(link => link !== "")
+                        .join(", ");
+                    }
+                    return "";
+                  }
+                  return isEmptyValue(row[col]) ? "-" : row[col];
+                });
+                return cellValues.join(", ");
+              })
+              .join("<br/>");
+
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+          })
+          .filter(Boolean)
+          .join("");
+
+        const output = {
+          title: f.label,
+          type: f.type,
+          value: value || t("Answer Not Provided")
+        };
+
+        outputArr.push(output);
+        break;
+      }
+
       case FieldType.InputTable: {
         outputArr.push({
           title: f.label,
@@ -168,7 +250,6 @@ export const getFormEntries = (
       case FieldType.StrataDataTable:
       case FieldType.DisturbanceDataTable:
       case FieldType.InvasiveDataTable:
-      case FieldType.FinancialTableInput:
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 

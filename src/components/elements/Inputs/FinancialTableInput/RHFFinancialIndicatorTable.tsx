@@ -1,6 +1,8 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import exifr from "exifr";
 import { isEmpty } from "lodash";
+import _ from "lodash";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
@@ -8,8 +10,13 @@ import { twMerge } from "tailwind-merge";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
-import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
-import { OptionValue } from "@/types/common";
+import {
+  useDeleteV2FilesUUID,
+  usePatchV2FinancialIndicators,
+  usePostV2FileUploadMODELCOLLECTIONUUID
+} from "@/generated/apiComponents";
+import { OptionValue, UploadedFile } from "@/types/common";
+import Log from "@/utils/log";
 
 import Text from "../../Text/Text";
 import { DataTableProps } from "../DataTable/DataTable";
@@ -90,7 +97,7 @@ const handleChange = (
   });
 };
 
-function formatFinancialData(
+export function formatFinancialData(
   rawData: any,
   years: number[] | undefined,
   selectCurrency: OptionValue | any,
@@ -130,7 +137,8 @@ function formatFinancialData(
     }
   });
 
-  const formatCurrency = (value: number) => `${currencyInput?.[selectCurrency] ?? "$"} ${value.toFixed(2) ?? 0}`;
+  const formatCurrency = (value: number) =>
+    value ? `${currencyInput?.[selectCurrency] ?? ""} ${value?.toFixed(2)}` : undefined;
 
   const finalData = {
     profitAnalysisData: years?.map((year, index) => {
@@ -138,9 +146,9 @@ function formatFinancialData(
       return {
         uuid: row.revenue?.uuid || row.expenses?.uuid || row.profit?.uuid || index,
         year,
-        revenue: row.revenue?.amount ?? 0,
-        expenses: row.expenses?.amount ?? 0,
-        profit: formatCurrency(row.profit?.amount ?? 0),
+        revenue: row.revenue?.amount,
+        expenses: row.expenses?.amount,
+        profit: formatCurrency(row.profit?.amount),
         revenueUuid: row.revenue?.uuid,
         expensesUuid: row.expenses?.uuid,
         profitUuid: row.profit?.uuid
@@ -151,7 +159,7 @@ function formatFinancialData(
       return {
         uuid: row.budget?.uuid || index,
         year,
-        budget: row.budget?.amount ?? 0,
+        budget: row.budget?.amount,
         budgetUuid: row.budget?.uuid
       };
     }),
@@ -160,9 +168,9 @@ function formatFinancialData(
       return {
         uuid: row["current-assets"]?.uuid || row["current-liabilities"]?.uuid || row["current-ratio"]?.uuid || index,
         year,
-        currentAssets: row["current-assets"]?.amount ?? 0,
-        currentLiabilities: row["current-liabilities"]?.amount ?? 0,
-        currentRatio: formatCurrency(row["current-ratio"]?.amount ?? 0),
+        currentAssets: row["current-assets"]?.amount,
+        currentLiabilities: row["current-liabilities"]?.amount,
+        currentRatio: formatCurrency(row["current-ratio"]?.amount),
         currentAssetsUuid: row["current-assets"]?.uuid,
         currentLiabilitiesUuid: row["current-liabilities"]?.uuid,
         currentRatioUuid: row["current-ratio"]?.uuid
@@ -173,7 +181,7 @@ function formatFinancialData(
       return {
         uuid: row?.uuid,
         year,
-        currentAssets: [],
+        documentation: row.documentation,
         description: row.description ?? ""
       };
     })
@@ -185,7 +193,7 @@ function formatFinancialData(
 const forProfitColumnMap = ["year", "revenue", "expenses", "profit"];
 const nonProfitColumnMap = ["year", "budget"];
 const currentColumnMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-const documentationColumnMap = ["year", "currentAssets", "description"];
+const documentationColumnMap = ["year", "documentation", "description"];
 
 const currencyInput = {
   USD: "$",
@@ -204,7 +212,7 @@ const RHFFinancialIndicatorsDataTable = ({
   const t = useT();
   const { field } = useController(props);
   const value = field?.value || [];
-  // const [file, setFile] = useState<File>();
+  const [files, setFiles] = useState<Partial<UploadedFile>[]>();
   const { years, formSubmissionOrg } = props;
   const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency);
   const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>("");
@@ -241,34 +249,7 @@ const RHFFinancialIndicatorsDataTable = ({
   const initialDocumentationData = years?.map((item, index) => ({
     uuid: null,
     year: item,
-    currentAssets: [
-      // {
-      //   uuid: "1",
-      //   file_name: "file.pdf",
-      //   src: "file.pdf",
-      //   size: 100,
-      //   mime_type: "application/pdf",
-      //   extension: "pdf",
-      //   is_public: true,
-      //   is_cover: true,
-      //   status: true,
-      //   lat: 0,
-      //   lng: 0,
-      //   created_at: "2021-01-01",
-      //   collection_name: "financial_report",
-      //   title: "file.pdf",
-      //   type: "application/pdf",
-      //   url: "file.pdf",
-      //   raw_url: "file.pdf",
-      //   uploadState: {
-      //     isSuccess: true,
-      //     isError: false,
-      //     isLoading: false,
-      //     isPending: false,
-      //     isUploading: false
-      //   }
-      // }
-    ],
+    documentation: [],
     description: ""
   })) as any[];
 
@@ -286,36 +267,174 @@ const RHFFinancialIndicatorsDataTable = ({
     !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
   );
 
+  const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
+    onSuccess(data, variables) {
+      //@ts-ignore
+      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+      setResetTable(prev => prev + 1);
+    }
+  });
+
+  const { mutate: deleteFile } = useDeleteV2FilesUUID({
+    onSuccess(data) {
+      setResetTable(prev => prev + 1);
+      //@ts-ignore
+      removeFileFromValue(data.data);
+      onChangeCapture?.();
+    }
+  });
+
   const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
     onSuccess(data: any) {
       // @ts-ignore
       const _tmp = data ?? [];
       field.onChange(_tmp);
     }
-    // onSuccess: async data => {
-    //   const body = new FormData();
-    //   if (file) {
-    //     body.append("upload_file", file);
-    //     upload?.({
-    //       //@ts-ignore
-    //       pathParams: { model: "financial-indicators", collection: "documentation", uuid: data?.data?.uuid },
-    //       file,
-    //       //@ts-ignore swagger issue
-    //       body
-    //     });
-    //   } else {
-    //     const _tmp = [...value];
-    //     //@ts-ignore
-    //     _tmp.push(data.data);
-    //     field.onChange(_tmp);
-    //   }
-    //   onChangeCapture?.();
-    //   formHook?.reset(formHook.getValues());
-    //   clearErrors();
-    // }
   });
 
   const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
+
+  const addFileToValue = (file: Partial<UploadedFile>) => {
+    setFiles(value => {
+      if (Array.isArray(value)) {
+        const tmp = [...value];
+
+        const index = tmp.findIndex(item => {
+          if (!!file.uuid && file.uuid === item.uuid) {
+            return true;
+          } else if (!!file.rawFile && item.rawFile === file.rawFile) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+
+        if (index === -1) {
+          return [...tmp, file];
+        } else {
+          tmp.splice(index, 1, file);
+
+          return tmp;
+        }
+      } else {
+        return [file];
+      }
+    });
+  };
+
+  const onSelectFile = async (file: File, context: any) => {
+    addFileToValue({
+      collection_name: "documentation",
+      size: file.size,
+      file_name: file.name,
+      title: file.name,
+      mime_type: file.type,
+      rawFile: file,
+      uploadState: {
+        isLoading: true
+      }
+    });
+
+    const body = new FormData();
+    body.append("upload_file", file);
+
+    try {
+      const location = await exifr.gps(file);
+
+      if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
+        body.append("lat", location.latitude.toString());
+        body.append("lng", location.longitude.toString());
+      }
+    } catch (e) {
+      Log.error("Failed to append geotagging information", e);
+    }
+
+    upload?.({
+      pathParams: { model: "financial-indicators", collection: "documentation", uuid: context.uuid },
+      file: file,
+      //@ts-ignore
+      body
+    });
+  };
+
+  const removeFileFromValue = (file: Partial<UploadedFile>) => {
+    setFiles(value => {
+      if (Array.isArray(value)) {
+        const tmp = [...value];
+        if (file.uuid) {
+          _.remove(tmp, v => v.uuid === file.uuid);
+        } else {
+          _.remove(tmp, v => v.file_name === file.file_name);
+        }
+        return tmp;
+      } else {
+        return [];
+      }
+    });
+  };
+
+  const onDeleteFile = (file: Partial<UploadedFile>) => {
+    if (file.uuid) {
+      addFileToValue({
+        ...file,
+        uploadState: {
+          isLoading: false,
+          isSuccess: false,
+          isDeleting: true
+        }
+      });
+      deleteFile({ pathParams: { uuid: file.uuid } });
+    } else if (file.file_name) {
+      removeFileFromValue(file);
+    }
+  };
+
+  const handleDeleteFile = (fileToDelete: Partial<UploadedFile>, context: any) => {
+    onDeleteFile(fileToDelete);
+    setDocumentationData((prev: any) => {
+      const updated = [...prev];
+      const row = { ...updated[context.rowIndex] };
+      const prevFiles = row[context.field] ?? [];
+
+      row[context.field] = prevFiles.filter((file: Partial<UploadedFile>) => file.uuid !== fileToDelete.uuid);
+
+      updated[context.rowIndex] = row;
+      return updated;
+    });
+  };
+
+  const onSelectFileWithContext = async (
+    file: File,
+    context: {
+      collection: string;
+      year: string | number;
+      field: string;
+      rowIndex: number;
+    }
+  ) => {
+    const uploaded: Partial<UploadedFile> = {
+      collection_name: context.collection,
+      size: file.size,
+      file_name: file.name,
+      title: file.name,
+      mime_type: file.type,
+      rawFile: file,
+      uploadState: {
+        isLoading: false,
+        isSuccess: true
+      }
+    };
+
+    setDocumentationData((prev: any) => {
+      const updated = [...prev];
+      const row = { ...updated[context.rowIndex] };
+      const prevFiles = row[context.field] ?? [];
+
+      row[context.field] = [...prevFiles, uploaded];
+      updated[context.rowIndex] = row;
+      return updated;
+    });
+  };
 
   const forProfitAnalysisColumns = [
     {
@@ -544,13 +663,42 @@ const RHFFinancialIndicatorsDataTable = ({
     },
     {
       header: "Financial Documents",
-      accessorKey: "currentAssets",
+      accessorKey: "documentation",
       enableSorting: false,
-      cell: ({ row }: { row: any }) => (
-        <div>
-          <FileInput files={row.original.currentAssets} />
-        </div>
-      )
+      cell: ({ cell, row }: { cell: any; row: any }) => {
+        const visibleCells = row.getVisibleCells();
+        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
+        const columnKey = documentationColumnMap[columnOrderIndex];
+        const rowIndex = row.index;
+
+        const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
+        const handleSelectFile = async (file: File) => {
+          await onSelectFile(file, {
+            uuid: row.id
+          });
+          await onSelectFileWithContext(file, {
+            collection: "documentation",
+            year: row.original.year,
+            field: columnKey,
+            rowIndex
+          });
+        };
+
+        return (
+          <FileInput
+            files={files}
+            onDelete={file =>
+              handleDeleteFile(file, {
+                collection: "documentation",
+                year: row.original.year,
+                field: columnKey,
+                rowIndex: row.index
+              })
+            }
+            onChange={newFiles => newFiles.forEach(handleSelectFile)}
+          />
+        );
+      }
     },
     {
       header: "Description",
@@ -584,7 +732,7 @@ const RHFFinancialIndicatorsDataTable = ({
 
   useEffect(() => {
     setResetTable(prev => prev + 1);
-  }, [selectCurrency]);
+  }, [selectCurrency, files]);
 
   const isRequestInProgress = useRef(false);
 
