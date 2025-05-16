@@ -1,6 +1,6 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { Fragment, ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useEffect, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -11,6 +11,7 @@ import {
   minLength,
   NumberInput,
   required,
+  SelectArrayInput,
   TextInput,
   useInput
 } from "react-admin";
@@ -57,10 +58,12 @@ export const QuestionArrayInput = ({
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
   const linkedFieldChoices = linkedFieldsData?.map(item => ({ id: item.uuid, name: item.name } as Choice)) || [];
+  const selectRef = useRef<HTMLDivElement | null>(null);
+
   const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
 
   return (
-    <>
+    <div ref={selectRef}>
       <ArrayInput {...arrayInputProps}>
         <AccordionFormIterator
           accordionSummaryTitle={(index, fields) =>
@@ -94,6 +97,42 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
+
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              const field = getFieldByUUID(scopedFormData.linked_field_key);
+              return field?.input_type == "financialIndicators" ? (
+                <>
+                  <SelectArrayInput
+                    source={getSource("years")}
+                    label="Years multi select"
+                    helperText="Select one or more years"
+                    choices={Array(6)
+                      .fill(0)
+                      .map((_, index) => {
+                        const year = new Date().getFullYear() - 5 + index;
+                        return { id: year, name: year };
+                      })}
+                    fullWidth
+                    validate={required()}
+                    options={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
+
           {!hideDescriptionInput && (
             <RichTextInput
               source="description"
@@ -368,6 +407,6 @@ export const QuestionArrayInput = ({
         linkedFieldData={linkedFieldsData as any[]}
         onClose={() => setPreviewQuestion(undefined)}
       />
-    </>
+    </div>
   );
 };

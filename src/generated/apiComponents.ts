@@ -25182,6 +25182,55 @@ export const useGetV2ImpactStoriesId = <TData = GetV2ImpactStoriesIdResponse>(
   );
 };
 
+export type PatchV2FinancialIndicatorsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2FinancialIndicatorsResponse = Record<string, any>[];
+
+export type PatchV2FinancialIndicatorsRequestBody = {
+  organisation_id?: string;
+  profit_analysis_data?: Record<string, any>[];
+  current_radio_data?: Record<string, any>[];
+  documentation_data?: Record<string, any>[];
+  local_currency?: string;
+  financial_year_start_month?: number;
+};
+
+export type PatchV2FinancialIndicatorsVariables = {
+  body?: PatchV2FinancialIndicatorsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2FinancialIndicators = (variables: PatchV2FinancialIndicatorsVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2FinancialIndicatorsResponse,
+    PatchV2FinancialIndicatorsError,
+    PatchV2FinancialIndicatorsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/financial-indicators", method: "patch", ...variables, signal });
+
+export const usePatchV2FinancialIndicators = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2FinancialIndicatorsResponse,
+      PatchV2FinancialIndicatorsError,
+      PatchV2FinancialIndicatorsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2FinancialIndicatorsResponse,
+    PatchV2FinancialIndicatorsError,
+    PatchV2FinancialIndicatorsVariables
+  >(
+    (variables: PatchV2FinancialIndicatorsVariables) =>
+      fetchPatchV2FinancialIndicators({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";

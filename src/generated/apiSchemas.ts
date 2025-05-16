@@ -12341,3 +12341,14 @@ export type V2ImpactStoryCreate = {
 export type DashboardGetPolygonCentroidResponse = {
   centroid?: number[];
 };
+
+export type V2FinancialIndicatorsRead = Record<string, any>[];
+
+export type V2FinancialIndicatorsUpdate = {
+  organisation_id?: string;
+  profit_analysis_data?: Record<string, any>[];
+  current_radio_data?: Record<string, any>[];
+  documentation_data?: Record<string, any>[];
+  local_currency?: string;
+  financial_year_start_month?: number;
+};
