@@ -202,7 +202,7 @@ export const getFormEntries = (
         try {
           value
             .map(section => {
-              const data = formatted[section.key as keyof typeof formatted];
+              const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
               const columns = columnMaps[section.key as keyof typeof columnMaps];
               if (!Array.isArray(data) || !data || data?.length === 0) return "";
 
