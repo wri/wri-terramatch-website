@@ -106,7 +106,7 @@ export const QuestionArrayInput = ({
                 <>
                   <SelectArrayInput
                     source={getSource("years")}
-                    label="Years multi select"
+                    label="Years multi-select"
                     helperText="Select one or more years"
                     choices={Array(6)
                       .fill(0)
