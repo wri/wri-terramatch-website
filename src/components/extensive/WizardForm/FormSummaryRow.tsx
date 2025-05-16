@@ -198,56 +198,52 @@ export const getFormEntries = (
           }
           return false;
         };
-        let value = sections;
-        try {
-          value
-            .map(section => {
-              const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
-              const columns = columnMaps[section.key as keyof typeof columnMaps];
-              if (!Array.isArray(data) || !data || data?.length === 0) return "";
+        const value = sections
 
-              const filteredRows = data?.filter((row: Record<string, any>) => {
-                if (!columns) return null;
-                const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
-                return valuesToCheck.some(val => !isEmptyValue(val));
-              });
+          .map(section => {
+            const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
+            const columns = columnMaps[section.key as keyof typeof columnMaps];
+            if (!Array.isArray(data) || !data || data?.length === 0) return "";
 
-              if (filteredRows.length === 0) return "";
+            const filteredRows = data?.filter((row: Record<string, any>) => {
+              if (!columns) return null;
+              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+              return valuesToCheck.some(val => !isEmptyValue(val));
+            });
 
-              const rowsHtml = filteredRows
-                .map((row: Record<string, any>) => {
-                  const cellValues = columns.map(col => {
-                    if (col === "documentation") {
-                      if (Array.isArray(row[col]) && row[col].length > 0) {
-                        return row[col]
-                          .map((document: any) => {
-                            if (document.url) {
-                              return `<a href="${
-                                document.url
-                              }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
-                                document.file_name ?? ""
-                              }</a>`;
-                            }
-                            return "";
-                          })
-                          .filter((link: any) => link !== "")
-                          .join(", ");
-                      }
-                      return "";
+            if (filteredRows.length === 0) return "";
+
+            const rowsHtml = filteredRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  if (col === "documentation") {
+                    if (Array.isArray(row[col]) && row[col].length > 0) {
+                      return row[col]
+                        .map((document: any) => {
+                          if (document.url) {
+                            return `<a href="${
+                              document.url
+                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                              document.file_name ?? ""
+                            }</a>`;
+                          }
+                          return "";
+                        })
+                        .filter((link: any) => link !== "")
+                        .join(", ");
                     }
-                    return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
-                  });
-                  return cellValues.join(", ");
-                })
-                .join("<br/>");
+                    return "";
+                  }
+                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                });
+                return cellValues.join(", ");
+              })
+              .join("<br/>");
 
-              return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
-            })
-            .filter(Boolean)
-            .join("");
-        } catch (error) {
-          value = [];
-        }
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+          })
+          .filter(Boolean)
+          .join("");
 
         const output = {
           title: f.label,
