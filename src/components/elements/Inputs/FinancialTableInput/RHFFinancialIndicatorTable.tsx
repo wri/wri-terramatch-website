@@ -856,25 +856,28 @@ const RHFFinancialIndicatorsDataTable = ({
   }, [selectCurrency, files]);
 
   const isRequestInProgress = useRef(false);
+  const lastSentData = useRef<any>(null);
 
   useEffect(() => {
-    const sendRequest = async () => {
-      if (isRequestInProgress.current) return;
+    const payload = {
+      organisation_id: formSubmissionOrg?.uuid,
+      profit_analysis_data: formSubmissionOrg?.type?.includes("for-profit")
+        ? forProfitAnalysisData
+        : nonProfitAnalysisData,
+      current_radio_data: currentRadioData,
+      documentation_data: documentationData,
+      local_currency: selectCurrency as string,
+      financial_year_start_month: selectFinancialMonth as number
+    };
 
+    const isSame = JSON.stringify(payload) === JSON.stringify(lastSentData.current);
+    if (!formSubmissionOrg?.uuid || isSame || isRequestInProgress.current) return;
+
+    const sendRequest = async () => {
       isRequestInProgress.current = true;
       try {
-        await createFinanciaData({
-          body: {
-            organisation_id: formSubmissionOrg?.uuid,
-            profit_analysis_data: formSubmissionOrg?.type?.includes("for-profit")
-              ? forProfitAnalysisData
-              : nonProfitAnalysisData,
-            current_radio_data: currentRadioData,
-            documentation_data: documentationData,
-            local_currency: selectCurrency as string,
-            financial_year_start_month: selectFinancialMonth as number
-          }
-        });
+        await createFinanciaData({ body: payload });
+        lastSentData.current = payload;
       } catch (error) {
         console.error("Error in financial data request", error);
       } finally {
@@ -882,7 +885,7 @@ const RHFFinancialIndicatorsDataTable = ({
       }
     };
 
-    if (!props?.formHook?.formState?.errors?.[props.name]) {
+    if (!props?.formHook?.formState?.errors?.[props.name] && formSubmissionOrg?.uuid) {
       sendRequest();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -897,6 +900,22 @@ const RHFFinancialIndicatorsDataTable = ({
     formSubmissionOrg?.type,
     files
   ]);
+
+  useEffect(() => {
+    const formatted = formatFinancialData(value, years, selectCurrency, currencyInput);
+
+    setForProfitAnalysisData(
+      !isEmpty(formatted.profitAnalysisData) ? formatted.profitAnalysisData : initialForProfitAnalysisData
+    );
+    setNonProfitAnalysisData(
+      !isEmpty(formatted.nonProfitAnalysisData) ? formatted.nonProfitAnalysisData : initialNonProfitAnalysisData
+    );
+    setCurrentRadioData(!isEmpty(formatted.currentRatioData) ? formatted.currentRatioData : initialCurrentRadioData);
+    setDocumentationData(
+      !isEmpty(formatted.documentationData) ? formatted.documentationData : initialDocumentationData
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, years, selectCurrency]);
 
   return (
     <>
