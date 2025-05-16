@@ -311,7 +311,13 @@ const VersionInformation = ({
             {item.version_name ?? item.poly_name}
           </Text>
           <Text variant="text-10" className="text-white">
-            {format(new Date(item.created_at), "MMM dd, yy")}
+            {(() => {
+              try {
+                return format(new Date(item.created_at), "MMM dd, yy");
+              } catch (e) {
+                return "-";
+              }
+            })()}
           </Text>
           <div className="flex justify-between">
             <button

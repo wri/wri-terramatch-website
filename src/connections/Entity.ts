@@ -147,7 +147,7 @@ const entityIsLoaded =
     { entity, entityIsDeleted, fetchFailure }: EntityConnection<T, U>,
     { uuid }: EntityConnectionProps
   ) => {
-    if (uuid == null || entityIsDeleted || fetchFailure != null) return true;
+    if (uuid == null || uuid.trim() === "" || entityIsDeleted || fetchFailure != null) return true;
     if (entity == null) return false;
     return !requireFullEntity || !entity.lightResource;
   };

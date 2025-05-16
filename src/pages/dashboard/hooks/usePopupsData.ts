@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
+import { useFullProject } from "@/connections/Entity";
 import { LAYERS_NAMES } from "@/constants/layers";
 import {
   fetchGetV2DashboardPolygonDataUuid,
-  fetchGetV2DashboardProjectDataUuid,
   fetchGetV2DashboardTotalSectionHeaderCountry
 } from "@/generated/apiComponents";
 import { createQueryParams } from "@/utils/dashboardUtils";
@@ -26,6 +26,36 @@ export function usePopupData(event: any) {
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [projectLoaded, { entity: projectFullDto }] = useFullProject({
+    uuid: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
+  });
+
+  const createProjectDataFromEntity = (projectFullDto: any) => {
+    if (!projectFullDto) return null;
+
+    const data = [
+      {
+        key: "project_name",
+        title: "title",
+        value: projectFullDto.name ?? "Unknown Project"
+      },
+      {
+        key: "organizations",
+        title: "Organization",
+        value: projectFullDto.organisationName ?? "Unknown Organization"
+      }
+    ];
+
+    if (projectFullDto.totalHectaresRestoredSum !== undefined) {
+      data.push({
+        key: "total_hectares_restored",
+        title: "Total Hectares Restored",
+        value: projectFullDto.totalHectaresRestoredSum.toFixed(0)
+      });
+    }
+    return { data };
+  };
+
   useEffect(() => {
     async function fetchCountryData() {
       setIsLoading(true);
@@ -44,22 +74,22 @@ export function usePopupData(event: any) {
             {
               id: "1",
               title: "No. of Projects",
-              value: ((response.total_enterprise_count || 0) + (response.total_non_profit_count || 0)).toLocaleString()
+              value: ((response.total_enterprise_count ?? 0) + (response.total_non_profit_count ?? 0)).toLocaleString()
             },
             {
               id: "2",
               title: "Trees Planted",
-              value: (response.total_trees_restored || 0).toLocaleString()
+              value: (response.total_trees_restored ?? 0).toLocaleString()
             },
             {
               id: "3",
               title: "Restoration Hectares",
-              value: (response.total_hectares_restored || 0).toLocaleString()
+              value: (response.total_hectares_restored ?? 0).toLocaleString()
             },
             {
               id: "4",
               title: "Jobs Created",
-              value: (response.total_entries || 0).toLocaleString()
+              value: (response.total_entries ?? 0).toLocaleString()
             }
           ];
           setItems(parsedItems);
@@ -77,30 +107,34 @@ export function usePopupData(event: any) {
     async function fetchProjectData() {
       setIsLoading(true);
       try {
-        const response: any = await fetchGetV2DashboardProjectDataUuid({ pathParams: { uuid: itemUuid } });
-        if (response) {
-          const label = response.data.find((item: any) => item.key === "project_name")?.value;
-          const organization = response.data.find((item: any) => item.key === "organisation")?.value;
-          const hectares = response.data.find((item: any) => item.key === "hectares_under_restoration")?.value;
+        if (projectFullDto && projectLoaded) {
+          const entityData = createProjectDataFromEntity(projectFullDto);
 
-          setPopupType("project");
-          setPopupData({
-            label,
-            organization,
-            hectares,
-            imageUrl: response.data.find((item: any) => item.key === "cover_image")?.value ?? null
-          });
+          if (entityData) {
+            const label = projectFullDto.name ?? "Unknown Project";
+            const organization = projectFullDto.organisationName;
+            const hectares = projectFullDto.totalHectaresRestoredSum?.toString();
 
-          const filteredItems = response.data
-            .filter((item: any) => item.key !== "project_name" && item.key !== "cover_image")
-            .map((item: any) => ({
-              id: item.key,
-              title: item.title === "No. of Site - Polygons" ? "Number of Site - Polygons" : item.title,
-              value: item.value
-            }));
+            setPopupType("project");
+            setPopupData({
+              label,
+              organization,
+              hectares
+            });
 
-          setLabel(label);
-          setItems(filteredItems);
+            const filteredItems = entityData.data
+              .filter(item => item.key !== "project_name" && item.key !== "cover_image")
+              .map(item => ({
+                id: item.key,
+                title: item.title === "No. of Site - Polygons" ? "Number of Site - Polygons" : item.title,
+                value: item.value?.toString() ?? "-"
+              }));
+
+            setLabel(label);
+            setItems(filteredItems);
+            setIsLoading(false);
+            return;
+          }
         }
       } catch (error) {
         Log.error("Error fetching project data", error);
@@ -141,7 +175,7 @@ export function usePopupData(event: any) {
     } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       fetchPolygonData();
     }
-  }, [isoCountry, layerName, itemUuid]);
+  }, [isoCountry, layerName, itemUuid, projectFullDto, projectLoaded]);
 
   return {
     popupType,
@@ -151,6 +185,8 @@ export function usePopupData(event: any) {
     isLoading,
     isoCountry,
     itemUuid,
-    layerName
+    layerName,
+    projectFullDto,
+    projectLoaded
   };
 }

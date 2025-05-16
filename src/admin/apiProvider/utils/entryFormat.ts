@@ -4,7 +4,11 @@ export const parseDateValues = (value: any) => {
   try {
     const formattedValue = formatEntryValue(value);
     const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
-    return format(new Date(parsedDate), "yyyy-MM-dd");
+    try {
+      return format(new Date(parsedDate), "yyyy-MM-dd");
+    } catch (e) {
+      return value;
+    }
   } catch (e) {
     return value;
   }
@@ -37,5 +41,9 @@ export const convertDateFormat = (value: any) => {
     const formattedDate = `${formattedDay}/${formattedMonth}/${formattedYear} ${formattedHours}:${formattedMinutes}`;
     return formattedDate;
   }
-  return format(new Date(value), "dd/MM/yyyy HH:mm");
+  try {
+    return format(new Date(value), "dd/MM/yyyy HH:mm");
+  } catch (e) {
+    return value;
+  }
 };

@@ -27,7 +27,6 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
@@ -35,11 +34,11 @@ import {
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
 import { PopupMobile } from "./components/PopupMobile";
@@ -118,7 +117,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
+  modelFilesData?: MediaDto[];
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
@@ -395,22 +394,12 @@ export const MapContainer = ({
       closeModal(ModalId.DELETE_IMAGE);
     };
 
-    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
-      const dataImage = {
-        uuid: data.uuid!,
-        fullImageUrl: data.file_url!,
-        thumbnailImageUrl: data.file_url!,
-        label: data.model_name,
-        isPublic: data.is_public!,
-        isGeotagged: true,
-        isCover: data.is_cover,
-        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
-      };
+    const openModalImageDetail = (data: MediaDto) => {
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
           title="IMAGE DETAILS"
-          data={dataImage}
+          data={data}
           entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
           reloadGalleryImages={() => {
@@ -716,7 +705,7 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
               isDashboard !== "modal" && (
-                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+                <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
               )
             )}
           </ControlGroup>
@@ -727,7 +716,7 @@ export const MapContainer = ({
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel
               className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-              modelFilesData={props?.modelFilesData}
+              modelFilesData={props?.modelFilesData ?? []}
               imageGalleryRef={imageGalleryRef}
             />
           </When>

@@ -57,7 +57,7 @@ exports[`Storyshots Components/Elements/Cards/ImageGalleryCard/Previewer Default
         onError={[Function]}
         onLoad={[Function]}
         referrerPolicy="no-referrer"
-        src="https://picsum.photos/seed/1mPXM8RR/640/480"
+        src="/img.jpg"
         style={
           Object {
             "bottom": 0,

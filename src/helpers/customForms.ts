@@ -408,6 +408,20 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "financialIndicators": {
+      return {
+        ...sharedProps,
+        type: FieldType.FinancialTableInput,
+
+        fieldProps: {
+          required,
+          addButtonCaption: question.add_button_text,
+          years: question?.years,
+          model: question?.collection!
+        }
+      };
+    }
+
     case "stratas": {
       return {
         ...sharedProps,
@@ -637,12 +651,12 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
-      if (limitMin)
+      if (limitMin && question.input_type == "long-text")
         validation = validation.min(
           limitMin,
           t(`Your answer does not meet the minimum required characters ${limitMin} for this field.`)
         );
-      if (limitMax)
+      if (limitMax && question.input_type == "long-text")
         validation = validation.max(
           limitMax,
           t(
@@ -692,6 +706,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "checkboxes":
     case "dataTable":
     case "leaderships":
+    case "financialIndicators":
     case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":

@@ -5,9 +5,9 @@ import { useState } from "react";
 
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import ModalProvider from "@/context/modal.provider";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Component from "./ImageGallery";
-import { ImageGalleryItemData } from "./ImageGalleryItem";
 
 const meta: Meta<typeof Component> = {
   title: "Components/Elements/ImageGallery",
@@ -20,8 +20,8 @@ type Story = StoryObj<typeof Component>;
 faker.setDefaultRefDate(new Date("2023-01-01"));
 faker.seed(0);
 
-const mockData: ImageGalleryItemData[] = (() => {
-  const data = [];
+const mockData: MediaDto[] = (() => {
+  const data: MediaDto[] = [];
   for (let i = 1; i <= 20; i++) {
     faker.seed(i);
 
@@ -29,14 +29,23 @@ const mockData: ImageGalleryItemData[] = (() => {
 
     data.push({
       uuid: faker.string.uuid(),
-      thumbnailImageUrl: imageUrl,
-      fullImageUrl: imageUrl,
-      label: faker.lorem.sentence({ min: 4, max: 8 }),
+      thumbUrl: imageUrl,
+      url: imageUrl,
+      name: faker.lorem.sentence({ min: 4, max: 8 }),
       isPublic: faker.datatype.boolean(),
-      isGeotagged: faker.datatype.boolean(),
-      raw: {
-        created_date: new Date("2023-01-01T12:00:00").toISOString()
-      }
+      lng: faker.location.longitude(),
+      lat: faker.location.latitude(),
+      createdAt: new Date("2023-01-01T12:00:00").toISOString(),
+      entityType: "projects",
+      entityUuid: faker.string.uuid(),
+      collectionName: "images",
+      fileName: faker.system.fileName(),
+      mimeType: faker.system.mimeType(),
+      size: faker.number.int({ min: 100, max: 1000 }),
+      isCover: faker.datatype.boolean(),
+      description: faker.lorem.sentence({ min: 4, max: 8 }),
+      photographer: faker.person.fullName(),
+      createdByUserName: faker.person.fullName()
     });
   }
   return data;

@@ -12,8 +12,9 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePatchV2MediaProjectProjectMediaUuid, usePostV2ExportImage } from "@/generated/apiComponents";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { SingularEntityName } from "@/types/common";
+import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
@@ -36,9 +37,9 @@ export type ImageGalleryItemData = {
 };
 
 export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  data: ImageGalleryItemData;
+  data: MediaDto;
   entityData?: any;
-  onClickGalleryItem?: (data: ImageGalleryItemData) => void;
+  onClickGalleryItem?: (data: MediaDto) => void;
   onDelete?: (id: string) => void;
   reloadGalleryImages?: () => void;
 }
@@ -108,7 +109,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = data?.raw?.file_name ? data?.raw?.file_name : "image.jpg";
+      link.download = link.download = data?.fileName ?? "image.jpg";
       document.body.appendChild(link);
       link.click();
 
@@ -174,11 +175,11 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     <div {...rest} className={classNames("relative overflow-hidden rounded-xl bg-background", className)}>
       <ImageWithChildren
         imageSrc={{
-          src: data.thumbnailImageUrl,
+          src: data.thumbUrl,
           height: 211,
           width: 1440
         }}
-        isGeotagged={data.isGeotagged}
+        isGeotagged={data.lat !== null && data.lng !== null}
         isCover={data.isCover}
         className="h-[226px] rounded-t-xl"
       >
@@ -204,7 +205,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           <Text variant="text-14-bold" className="flex items-center gap-1">
             {t("Uploaded via")}:{" "}
             <Text variant="text-14-light" className="capitalize">
-              {getReadableEntityName(data?.raw?.model_name as SingularEntityName, true)}
+              {getReadableEntityName(data?.entityType as EntityName, true)}
             </Text>
           </Text>
           <button
@@ -217,7 +218,13 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         <Text variant="text-14-bold" className="flex items-center gap-1">
           {t("Date uploaded")}:{" "}
           <Text variant="text-14-light" className="capitalize">
-            {format(new Date(Date.parse(data.raw?.created_date)), "dd/MM/Y")}
+            {(() => {
+              try {
+                return format(new Date(Date.parse(data.createdAt)), "dd/MM/Y");
+              } catch (e) {
+                return "-";
+              }
+            })()}
           </Text>
         </Text>
         <Text variant="text-14-bold" className="flex items-center gap-1">

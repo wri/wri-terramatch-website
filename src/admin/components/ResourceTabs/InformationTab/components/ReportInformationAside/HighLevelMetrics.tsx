@@ -113,7 +113,17 @@ const HighLevelMetrics: FC = () => {
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
           <ContextCondition frameworksHide={ALL_TF}>
-            <DemographicsTotalField label="Total Number of Workdays Created" sx={inlineLabelSx} totalsType="workdays" />
+            {record.taskTotalWorkdays == null ? (
+              <DemographicsTotalField
+                label="Total Number of Workdays Created"
+                sx={inlineLabelSx}
+                totalsType="workdays"
+              />
+            ) : (
+              <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
+                <NumberField source="taskTotalWorkdays" />
+              </Labeled>
+            )}
             <DemographicsTotalField
               label={`Total Number of Paid ${workdaysType} Workdays Created`}
               sx={inlineLabelSx}

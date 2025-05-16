@@ -106,7 +106,6 @@ const AttributeInformation = ({
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
-  const [plantEndDate, setPlantEndDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
@@ -130,7 +129,6 @@ const AttributeInformation = ({
     refreshEntity();
     setPolygonName(selectedPolygon?.poly_name ?? "");
     setPlantStartDate(selectedPolygon?.plantstart ?? "");
-    setPlantEndDate(selectedPolygon?.plantend ?? "");
     setTreesPlanted(selectedPolygon?.num_trees ?? 0);
     setCalculatedArea(selectedPolygon?.calc_area ?? 0);
     const restorationPracticeArray = selectedPolygon?.practice
@@ -169,7 +167,6 @@ const AttributeInformation = ({
       const updatedPolygonData = {
         poly_name: polygonName,
         plantstart: plantStartDate,
-        plantend: plantEndDate,
         practice: restorationPracticeToSend,
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
@@ -258,16 +255,6 @@ const AttributeInformation = ({
           placeholder="Input Plant Start Date"
           value={plantStartDate}
           onChange={e => setPlantStartDate(e.target.value)}
-        />
-      </label>
-      <label className="flex flex-col gap-2">
-        <Text variant="text-14-light">Plant End Date</Text>
-        <input
-          type="date"
-          className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
-          placeholder="Input Plant Start Date"
-          value={plantEndDate}
-          onChange={e => setPlantEndDate(e.target.value)}
         />
       </label>
       <When condition={!isLoadingVersions && !isLoadingDropdown}>

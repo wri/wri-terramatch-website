@@ -8,11 +8,6 @@ export type PatchAuthChangeBody = {
   password?: string;
 };
 
-export type V2PostOrganisationsApproveUserBody = {
-  organisation_uuid: string;
-  user_uuid: string;
-};
-
 export type GetV2FundingProgrammeIDBody = {
   id?: number;
   uuid?: string;
@@ -48,6 +43,7 @@ export type GetV2FundingProgrammeIDBody = {
       submission_message?: string;
       published?: boolean;
       stage_id?: string;
+      funding_programme_uuid?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -142,6 +138,11 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
+export type V2PostOrganisationsApproveUserBody = {
+  organisation_uuid: string;
+  user_uuid: string;
+};
+
 export type PatchV2AuthVerifyBody = {
   token?: string;
 };
@@ -149,29 +150,6 @@ export type PatchV2AuthVerifyBody = {
 export type PostAuthResetBody = {
   email_address?: string;
   callback_url?: string;
-};
-
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
 };
 
 export type PostV2FormsEntityFormUuidBody = {
@@ -368,10 +346,6 @@ export type PostV2GeometryValidateBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -398,10 +372,6 @@ export type PutV2GeometryBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -415,6 +385,25 @@ export type PutV2GeometryBody = {
       };
     }[];
   };
+};
+
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
 };
 
 export type PostV2FprojectPipelineBody = {

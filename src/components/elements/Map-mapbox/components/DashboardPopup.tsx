@@ -42,12 +42,7 @@ export const DashboardPopup = (event: any) => {
     <ReduxProvider store={ApiSlice.redux}>
       <QueryClientProvider client={client}>
         {popupType === "project" && layerName === LAYERS_NAMES.CENTROIDS ? (
-          <PopupMapImage
-            label={popupData?.label || "-"}
-            imageUrl={popupData?.imageUrl}
-            items={items}
-            learnMore={learnMoreEvent}
-          />
+          <PopupMapImage label={popupData?.label || "-"} items={items} learnMore={learnMoreEvent} />
         ) : (
           <TooltipGridMap
             label={label}

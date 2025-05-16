@@ -13,6 +13,7 @@ import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import Loader from "@/components/generic/Loading/Loader";
 import { useModalContext } from "@/context/modal.provider";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option } from "@/types/common";
 
@@ -22,7 +23,7 @@ import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from ".
 import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
 
 export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  data: ImageGalleryItemData[];
+  data: MediaDto[];
   pageCount: number;
   onGalleryStateChange: (
     pagination: { page: number; pageSize: number },
@@ -32,9 +33,9 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   filterOptions?: Option[];
   ItemComponent?: FC<ImageGalleryItemProps>;
   onChangeSearch: Dispatch<SetStateAction<string>>;
-  onChangeGeotagged: Dispatch<SetStateAction<number>>;
-  sortOrder: "asc" | "desc";
-  setSortOrder: Dispatch<SetStateAction<"asc" | "desc">>;
+  onChangeGeotagged: Dispatch<SetStateAction<boolean | null>>;
+  sortOrder: "ASC" | "DESC";
+  setSortOrder: Dispatch<SetStateAction<"ASC" | "DESC">>;
   setFilters: Dispatch<SetStateAction<any>>;
   entity: string;
   isAdmin?: boolean;
@@ -73,7 +74,6 @@ const ImageGallery = ({
 
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
-  const [modelName] = useState<string>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [source, setSource] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -104,7 +104,7 @@ const ImageGallery = ({
   }, [privacy, source]);
 
   useValueChanged(sortOrder, () => {
-    setSortLabel(sortOrder === "asc" ? t("Oldest to Newest") : t("Newest to Oldest"));
+    setSortLabel(sortOrder === "ASC" ? t("Oldest to Newest") : t("Newest to Oldest"));
   });
 
   const tabs = [
@@ -228,7 +228,7 @@ const ImageGallery = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("desc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("DESC")}>
           <Icon name={IconNames.IC_Z_TO_A_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Newest to Oldest")}
         </Text>
@@ -237,7 +237,7 @@ const ImageGallery = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("asc")}>
+        <Text variant="text-14" className="flex items-center" onClick={() => setSortOrder("ASC")}>
           <Icon name={IconNames.IC_A_TO_Z_CUSTOM} className="h-4 w-4 lg:h-5 lg:w-5" />
           &nbsp; {t("Oldest to Newest")}
         </Text>
@@ -316,15 +316,12 @@ const ImageGallery = ({
   };
 
   useEffect(() => {
-    onGalleryStateChange(
-      { page: pageIndex + 1, pageSize },
-      modelName && modelName != "-1" ? { key: "model_name", value: modelName } : undefined
-    );
+    onGalleryStateChange({ page: pageIndex + 1, pageSize });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize, modelName]);
+  }, [pageIndex, pageSize]);
 
   useValueChanged(activeIndex, () => {
-    onChangeGeotagged(activeIndex);
+    onChangeGeotagged(activeIndex === 0 ? null : activeIndex === 1);
   });
 
   return (
@@ -337,6 +334,7 @@ const ImageGallery = ({
               onChange={e => {
                 setSearchText(e);
                 onChangeSearch(e);
+                reloadGalleryImages?.();
               }}
               placeholder={t("Search...")}
               className="w-64"
@@ -400,7 +398,7 @@ const ImageGallery = ({
                     key={item.uuid}
                     data={item}
                     entityData={entityData}
-                    onClickGalleryItem={onClickGalleryItem}
+                    onClickGalleryItem={onClickGalleryItem as unknown as (data: MediaDto) => void}
                     onDelete={handleDelete}
                     reloadGalleryImages={reloadGalleryImages}
                   />

@@ -63,7 +63,15 @@ export const normalizeFormCreatePayload = (
   linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[]
 ): any => ({
   ...payload,
-  deadline_at: payload.deadline_at ? format(new Date(Date.parse(payload.deadline_at)), "Y-MM-dd HH:mm:ss") : null,
+  deadline_at: payload.deadline_at
+    ? (() => {
+        try {
+          return format(new Date(Date.parse(payload.deadline_at)), "Y-MM-dd HH:mm:ss");
+        } catch (e) {
+          return null;
+        }
+      })()
+    : null,
   form_sections: setOrderFromIndex(payload.form_sections || [])?.map(section => ({
     ...section,
     form_questions: setOrderFromIndex(section.form_questions || [])?.map((question: any) =>

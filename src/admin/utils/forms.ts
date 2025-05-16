@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-unused-vars
+import c from "case";
 import { get, memoize, uniqBy } from "lodash";
 import { AnyObjectSchema } from "yup";
 
@@ -104,4 +105,19 @@ export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStep
   });
 
   return output;
+};
+
+/**
+ * convert object keys to snake_case
+ * @param obj
+ * @returns obj with snake_case keys
+ */
+export const keysToSnakeCase = (obj: unknown): unknown => {
+  if (Array.isArray(obj)) {
+    return obj.map(v => keysToSnakeCase(v));
+  } else if (obj !== null && typeof obj === "object") {
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [c.snake(key), keysToSnakeCase(value)]));
+  } else {
+    return obj;
+  }
 };

@@ -11,7 +11,6 @@ import { V2OrganisationRead } from "@/generated/apiSchemas";
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationHeader from "./components/OrganizationHeader";
 import OverviewTabContent from "./components/overview/OverviewTabContent";
-import PitchesTabContent from "./components/pitches/PitchesTabContent";
 import ProjectsTabContent from "./components/projects/ProjectsTabContent";
 import TeamTabContent from "./components/team/TeamTabContent";
 
@@ -59,11 +58,6 @@ const OrganizationPage = () => {
           //   title: t("Social Impact and Integration"),
           //   body: <SocialImpactTabContent organization={organizationData?.data} />
           // },
-          {
-            key: "pitches",
-            title: t("Pitches"),
-            body: <PitchesTabContent />
-          },
           {
             key: "projects",
             title: t("Projects"),

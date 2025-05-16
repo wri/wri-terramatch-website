@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image, { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { When } from "react-if";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -20,46 +19,61 @@ type WizardFormIntroProps = {
   ctaProps?: IButtonProps;
 
   deadline?: string;
+
+  variant?: "default" | "small";
+};
+
+const VARIANTS = {
+  default: {
+    containerClass: "space-y-8 p-15",
+    imageClass: "m-auto h-[280px] w-full",
+    footerMarginTop: "mt-15"
+  },
+  small: {
+    containerClass: "space-y-4 p-10",
+    imageClass: "m-auto",
+    footerMarginTop: "mt-5"
+  }
 };
 
 const WizardFormIntro = (props: WizardFormIntroProps) => {
   const { format } = useDate();
   const t = useT();
 
+  const { containerClass, imageClass, footerMarginTop } = VARIANTS[props.variant ?? "default"];
+
   return (
-    <div className="w-full space-y-8 rounded-lg border-2 border-neutral-100 bg-white p-15">
-      <When condition={!!props.imageSrc}>
+    <div className={`w-full rounded-lg border-2 border-neutral-100 bg-white ${containerClass}`}>
+      {props.imageSrc && (
         <Image
           src={props.imageSrc!}
           alt=""
           role="presentation"
-          className="m-auto h-[280px] w-full"
+          className={imageClass}
           height={280}
           width={280}
           style={{ objectFit: "contain" }}
         />
-      </When>
+      )}
       <Text variant="text-bold-headline-1000" className="text-center uppercase">
         {props.title}
       </Text>
-      <When condition={props.description}>
+      {props.description && (
         <Text variant="text-light-body-300" className="text-center" containHtml>
           {props.description}
         </Text>
-      </When>
-      <When condition={props.ctaProps?.href}>
+      )}
+      {props.ctaProps?.href && (
         <Button {...props.ctaProps!} variant="text" className="m-auto text-center underline" target="_blank" />
-      </When>
-      <div className="space-y-3">
-        <When condition={!!props.deadline}>
+      )}
+      {props.deadline && (
+        <div className="space-y-3">
           <InfoItem title={t("Deadline")}>{format(Date.parse(props.deadline!), "do MMMM y")}</InfoItem>
-        </When>
-        <When condition={!!props.deadline}>
           <InfoItem title={t("Time")}>{format(Date.parse(props.deadline!), "HH:mm")}</InfoItem>
-        </When>
-      </div>
+        </div>
+      )}
       <FormFooter
-        className="mt-15"
+        className={footerMarginTop}
         submitButtonProps={props.submitButtonProps}
         backButtonProps={props.backButtonProps}
       />

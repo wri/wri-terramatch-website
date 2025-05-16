@@ -4,12 +4,14 @@ import { createSelector } from "reselect";
 
 import {
   entityAssociationIndex,
-  EntityAssociationIndexPathParams
+  EntityAssociationIndexPathParams,
+  EntityAssociationIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
   DemographicDto,
   DisturbanceDto,
   InvasiveDto,
+  MediaDto,
   SeedingDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -17,26 +19,36 @@ import {
   entityAssociationIndexFetchFailed,
   entityAssociationIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
+import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
-import { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
-export type EntityAssociationDtoType = DemographicDto | TreeSpeciesDto | SeedingDto | DisturbanceDto | InvasiveDto;
+export type EntityAssociationDtoType =
+  | DemographicDto
+  | TreeSpeciesDto
+  | SeedingDto
+  | MediaDto
+  | DisturbanceDto
+  | InvasiveDto;
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
 export type EntityAssociationIndexConnection<T extends EntityAssociationDtoType> = {
   associations?: T[];
+  indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
+  refetch?: () => void;
 };
 
 export type EntityAssociationIndexConnectionProps = {
   entity: SupportedEntity;
   uuid: string;
+  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 const associationSelector =
@@ -44,11 +56,12 @@ const associationSelector =
   (store: ApiDataStore) =>
     store[association] as StoreResourceMap<T>;
 
-const associationGetParams = (
+const associationIndexParams = (
   association: SupportedAssociation,
-  { entity, uuid }: EntityAssociationIndexConnectionProps
+  { entity, uuid, queryParams }: EntityAssociationIndexConnectionProps
 ) => ({
-  pathParams: { entity, uuid, association }
+  pathParams: { entity, uuid, association },
+  queryParams
 });
 
 const indexIsLoaded = <T extends EntityAssociationDtoType>({
@@ -56,23 +69,28 @@ const indexIsLoaded = <T extends EntityAssociationDtoType>({
   fetchFailure
 }: EntityAssociationIndexConnection<T>) => associations != null || fetchFailure != null;
 
+const indexCacheKey = ({ entity, uuid, queryParams }: EntityAssociationIndexConnectionProps) =>
+  `${entity}:${uuid}:${getStableQuery(queryParams)}`;
+
 const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   association: SupportedAssociation
 ): Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps> => ({
   load: (connection, props) => {
-    if (!indexIsLoaded(connection)) entityAssociationIndex(associationGetParams(association, props));
+    if (!props.uuid || props.uuid.trim() === "") return;
+
+    if (!indexIsLoaded(connection)) entityAssociationIndex(associationIndexParams(association, props));
   },
 
   isLoaded: indexIsLoaded,
 
   selector: selectorCache(
-    ({ entity, uuid }) => `${entity}:${uuid}`,
+    props => indexCacheKey(props),
     props =>
       createSelector(
         [
-          entityAssociationIndexIndexMeta(association, associationGetParams(association, props)),
+          entityAssociationIndexIndexMeta(association, associationIndexParams(association, props)),
           associationSelector(association),
-          entityAssociationIndexFetchFailed(associationGetParams(association, props))
+          entityAssociationIndexFetchFailed(associationIndexParams(association, props))
         ],
         (indexMeta, associationsStore, fetchFailure) => {
           if (indexMeta == null) return { fetchFailure };
@@ -85,7 +103,14 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
             associations.push(associationsStore[id].attributes as T);
           }
 
-          return { associations, fetchFailure };
+          return {
+            associations,
+            fetchFailure,
+            indexTotal: indexMeta.total,
+            refetch: () => {
+              if (props.uuid != null) ApiSlice.pruneIndex(association, props.uuid);
+            }
+          };
         }
       )
   )
@@ -134,10 +159,16 @@ const collectionTypeHook =
   };
 
 const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
+const mediaConnection = createAssociationIndexConnection<MediaDto>("media");
+
 /** Returns the one demographic that matches the given type / collection on the given entity */
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+/** Returns the one media that matches the given type / collection on the given entity */
+export const useMedia = collectionTypeHook(mediaConnection);
+/** Returns all media for the given entity */
+export const useMedias = connectionHook(mediaConnection);
 
 const disturbanceConnection = createAssociationIndexConnection<DisturbanceDto>("disturbances");
 export const useDisturbances = connectionHook(disturbanceConnection);

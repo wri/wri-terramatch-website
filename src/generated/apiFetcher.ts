@@ -91,7 +91,7 @@ export async function apiFetch<
           ...(await response.json())
         };
       } catch (e) {
-        Log.error("v1/2 API Fetch error", e);
+        Log.info("v1/2 API Fetch error", e);
         error = {
           statusCode: -1
         };
@@ -110,7 +110,7 @@ export async function apiFetch<
       return (await response.blob()) as unknown as TData;
     }
   } catch (e) {
-    Log.error("v1/2 API Fetch error", e);
+    Log.info("v1/2 API Fetch error", e);
     error = {
       statusCode: response?.status || -1,
       //@ts-ignore

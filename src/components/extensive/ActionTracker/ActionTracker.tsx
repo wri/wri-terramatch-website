@@ -22,7 +22,7 @@ const ActionTracker = () => {
     }
   });
 
-  const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({});
+  const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({}, { retry: false });
 
   const reportActions = useMemo(
     () =>

@@ -22,7 +22,6 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
   const t = useT();
   const { items, label, isoCountry, itemUuid, layerName } = usePopupData(event);
   const { setFilters, dashboardCountries } = event;
-
   if (!items?.length) return null;
 
   const handleLearnMore = () => {

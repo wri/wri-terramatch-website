@@ -1,5 +1,6 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
+  ProjectPitchDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -15,6 +16,7 @@ import {
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
+  MediaDto,
   DisturbanceDto,
   InvasiveDto,
   StrataDto,
@@ -24,6 +26,7 @@ import {
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
+  "projectPitches",
   "projects",
   "sites",
   "nurseries",
@@ -33,6 +36,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "demographics",
   "seedings",
   "treeSpecies",
+  "media",
   "disturbances",
   "invasives",
   "stratas",
@@ -42,6 +46,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 ] as const;
 
 export type EntityServiceApiResources = {
+  projectPitches: StoreResourceMap<ProjectPitchDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
@@ -51,6 +56,7 @@ export type EntityServiceApiResources = {
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
+  media: StoreResourceMap<MediaDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
