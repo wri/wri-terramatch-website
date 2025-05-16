@@ -64,13 +64,13 @@ const handleChange = (
     if (lowerKeys.includes("revenue") && lowerKeys.includes("expenses") && lowerKeys.includes("profit")) {
       const revenue = Number(currentRow.revenue ?? 0);
       const expenses = Number(currentRow.expenses ?? 0);
-      currentRow.profit = `${currencyInput?.[selectCurrency] ?? ""}${(revenue - expenses).toFixed(2)}`;
+      currentRow.profit = `${currencyInput?.[selectCurrency] ?? ""}${(revenue - expenses).toLocaleString()}`;
     }
 
     if (lowerKeys.includes("currentassets") && lowerKeys.includes("currentliabilities")) {
       const assets = Number(currentRow.currentAssets ?? 0);
       const liabilities = Number(currentRow.currentLiabilities ?? 0);
-      const ratio = liabilities !== 0 ? (assets / liabilities).toFixed(2) : "0";
+      const ratio = liabilities !== 0 ? (assets / liabilities).toLocaleString() : "0";
       currentRow.currentRatio = `${currencyInput?.[selectCurrency] ?? ""}${ratio}`;
     }
 
@@ -120,7 +120,7 @@ export function formatFinancialData(
   });
 
   const formatCurrency = (value: number) =>
-    value ? `${currencyInput?.[selectCurrency] ?? ""} ${value?.toFixed(2)}` : undefined;
+    value ? `${currencyInput?.[selectCurrency] ?? ""} ${Number(value).toLocaleString()}` : undefined;
 
   const finalData = {
     profitAnalysisData: years?.map((year, index) => {

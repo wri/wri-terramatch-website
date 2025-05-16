@@ -233,7 +233,7 @@ export const getFormEntries = (
                     }
                     return "";
                   }
-                  return isEmptyValue(row[col]) ? "-" : row[col];
+                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                 });
                 return cellValues.join(", ");
               })
