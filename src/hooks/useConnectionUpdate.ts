@@ -12,5 +12,5 @@ export const useUpdateSuccess = (
   updateFailure?: PendingErrorState | null,
   onSuccess?: () => unknown
 ) => {
-  useUpdateComplete(isUpdating, updateFailure == null ? () => {} : onSuccess);
+  useUpdateComplete(isUpdating, updateFailure == null ? onSuccess : () => {});
 };

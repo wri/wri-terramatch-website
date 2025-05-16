@@ -281,7 +281,7 @@ const ReportingTaskPage = () => {
     projectLoaded && (
       <FrameworkProvider frameworkKey={project?.frameworkKey}>
         <LoadingContainer loading={task == null}>
-          <ReportingTaskHeader {...{ project, task, reports }} />
+          <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
           <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
           <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
             <PageSection>
