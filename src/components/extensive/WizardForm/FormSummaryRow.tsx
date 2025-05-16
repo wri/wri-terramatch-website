@@ -154,6 +154,7 @@ export const getFormEntries = (
 
       case FieldType.FinancialTableInput: {
         const entries = values[f.name];
+        if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
         const years = f.fieldProps.years;
         const columnMaps: Record<string, string[]> = {
           profitAnalysisData: ["year", "revenue", "expenses", "profit"],
