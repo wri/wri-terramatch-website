@@ -34,24 +34,28 @@ const ViewImageCarousel = ({
       {
         id: "1",
         title: t("Non-Geotagged Images"),
-        images: modelFilesNonGeolocalized.map(modelFile => ({
-          id: modelFile.uuid,
-          src: modelFile.url,
-          title: modelFile.fileName,
-          dateCreated: modelFile.createdAt,
-          geoTag: t("Not Geo-Referenced")
-        }))
+        images: modelFilesNonGeolocalized
+          .filter(({ url }) => url != null)
+          .map(modelFile => ({
+            id: modelFile.uuid,
+            src: modelFile.url!,
+            title: modelFile.fileName,
+            dateCreated: modelFile.createdAt,
+            geoTag: t("Not Geo-Referenced")
+          }))
       },
       {
         id: "2",
         title: t("GeoTagged Images"),
-        images: modelFilesGeolocalized.map(modelFile => ({
-          id: modelFile.uuid,
-          src: modelFile.url,
-          title: modelFile.fileName,
-          dateCreated: modelFile.createdAt,
-          geoTag: t("Geo-Referenced")
-        }))
+        images: modelFilesGeolocalized
+          .filter(({ url }) => url != null)
+          .map(modelFile => ({
+            id: modelFile.uuid,
+            src: modelFile.url!,
+            title: modelFile.fileName,
+            dateCreated: modelFile.createdAt,
+            geoTag: t("Geo-Referenced")
+          }))
       }
     ];
   }, [modelFilesData, t]);

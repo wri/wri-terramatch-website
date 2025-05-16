@@ -1,15 +1,16 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useCallback, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ServerSideTable, useEntityIndexQueryParams } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { deleteNursery, EntityIndexConnection, useNurseryIndex } from "@/connections/Entity";
+import { deleteNursery, EntityIndexConnection, indexNurseryConnection } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -33,53 +34,39 @@ const NurseriesTable = ({
 }: NurseriesTableProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
-  const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
 
   const { format } = useDate();
 
-  const nurseryIndexQueryParams = { filter: { projectUuid: project.uuid }, ...queryParams };
-  const [isLoaded, nurseryIndex] = useNurseryIndex(nurseryIndexQueryParams);
+  const handleDeleteNursery = useCallback(
+    (uuid: string) => {
+      openModal(
+        ModalId.CONFIRM_NURSERY_DELETION,
+        <Modal
+          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
+          title={t("Confirm Nursery Deletion")}
+          content={t(
+            "All data and content will be irreversibly removed and this action cannot be undone. Are you sure you want to permanently delete this Nursery?"
+          )}
+          primaryButtonProps={{
+            children: t("Yes"),
+            onClick: async () => {
+              await deleteNursery(uuid);
+              closeModal(ModalId.CONFIRM_NURSERY_DELETION);
+            }
+          }}
+          secondaryButtonProps={{
+            children: t("No"),
+            onClick: () => closeModal(ModalId.CONFIRM_NURSERY_DELETION)
+          }}
+        />
+      );
+    },
+    [closeModal, openModal, t]
+  );
 
-  useEffect(() => {
-    onFetch?.(nurseryIndex as EntityIndexConnection<NurseryLightDto>);
-  }, [nurseryIndex, onFetch]);
-
-  const handleDeleteNursery = (uuid: string) => {
-    openModal(
-      ModalId.CONFIRM_NURSERY_DELETION,
-      <Modal
-        iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={t("Confirm Nursery Deletion")}
-        content={t(
-          "All data and content will be irreversibly removed and this action cannot be undone. Are you sure you want to permanently delete this Nursery?"
-        )}
-        primaryButtonProps={{
-          children: t("Yes"),
-          onClick: async () => {
-            await deleteNursery(uuid);
-            closeModal(ModalId.CONFIRM_NURSERY_DELETION);
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("No"),
-          onClick: () => closeModal(ModalId.CONFIRM_NURSERY_DELETION)
-        }}
-      />
-    );
-  };
-
-  return (
-    <ServerSideTable
-      meta={{
-        last_page:
-          nurseryIndex?.indexTotal && queryParams.pageSize
-            ? Math.ceil(nurseryIndex?.indexTotal / queryParams.pageSize)
-            : 1
-      }}
-      data={nurseryIndex.entities ?? []}
-      isLoading={!isLoaded}
-      onQueryParamChange={onQueryParamChange}
-      columns={[
+  const columns = useMemo(
+    () =>
+      [
         {
           accessorKey: "name",
           header: t("Name")
@@ -138,7 +125,18 @@ const NurseriesTable = ({
             );
           }
         }
-      ]}
+      ] as ColumnDef<NurseryLightDto>[],
+    [format, handleDeleteNursery, t]
+  );
+
+  return (
+    <ConnectionTable
+      connection={indexNurseryConnection}
+      connectionProps={{ filter: { projectUuid: project.uuid } }}
+      dataProp="entities"
+      totalProp="indexTotal"
+      onFetch={onFetch}
+      columns={columns}
       columnFilters={[
         { type: "search", accessorKey: "query", placeholder: t("Search") },
         {
@@ -164,7 +162,7 @@ const NurseriesTable = ({
           {t("Add Nursery")}
         </Button>
       )}
-    </ServerSideTable>
+    </ConnectionTable>
   );
 };
 

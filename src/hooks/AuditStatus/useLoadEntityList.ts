@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { loadNurseryIndex, loadSiteIndex } from "@/connections/Entity";
-import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
 import {
-  fetchGetV2ProjectsUUIDSitePolygonsAll,
-  fetchGetV2SitesSitePolygon,
-  fetchGetV2TasksUUIDReports
-} from "@/generated/apiComponents";
+  loadLightNurseryReportList,
+  loadLightProjectReport,
+  loadLightSiteReportList,
+  loadNurseryIndex,
+  loadSiteIndex
+} from "@/connections/Entity";
+import { loadTask } from "@/connections/Task";
+import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
+import { fetchGetV2ProjectsUUIDSitePolygonsAll, fetchGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 export interface SelectedItem {
   title?: string | undefined;
@@ -39,6 +42,47 @@ export interface EntityListItem {
   parent_name?: string | undefined;
   report_title?: string | undefined;
   title?: string | undefined;
+}
+
+// Munging the v3 task report data into a shape that works for this very complicated component.
+async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string } }) {
+  const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ uuid: pathParams.uuid });
+
+  // These data should all be cached from the task load above
+  const { entity: projectReport } = await loadLightProjectReport({ uuid: projectReportUuid });
+  const { entities: siteReports } = await loadLightSiteReportList({ uuids: siteReportUuids });
+  const { entities: nurseryReports } = await loadLightNurseryReportList({ uuids: nurseryReportUuids });
+  const listItems: EntityListItem[] = [];
+  if (projectReport != null) {
+    const { projectName, title, status, uuid } = projectReport;
+    listItems.push({
+      type: "project-report",
+      parent_name: projectName ?? "",
+      report_title: title ?? "",
+      status,
+      uuid
+    });
+  }
+  listItems.push(
+    ...(siteReports ?? []).map(({ siteName, reportTitle, status, uuid }) => ({
+      type: "site-report",
+      parent_name: siteName ?? "",
+      report_title: reportTitle ?? "",
+      status,
+      uuid
+    }))
+  );
+  listItems.push(
+    ...(nurseryReports ?? []).map(({ nurseryName, reportTitle, status, uuid }) => ({
+      type: "nursery-report",
+      parent_name: nurseryName ?? "",
+      report_title: reportTitle ?? "",
+      status,
+      uuid
+    }))
+  );
+
+  return { data: listItems };
 }
 
 const useLoadEntityList = ({
@@ -97,7 +141,7 @@ const useLoadEntityList = ({
     const fetchAction = isSiteProjectLevel
       ? fetchToProject
       : isProjectReport
-      ? fetchGetV2TasksUUIDReports
+      ? loadReportsForTask
       : fetchGetV2SitesSitePolygon;
     const params = isSiteProjectLevel
       ? entityType == SITE

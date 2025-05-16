@@ -62,40 +62,46 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const downloadButtons: JSX.Element[] = [];
   if (framework === Framework.PPC) {
     project.file.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Files")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-          style={{ marginBottom: "10px" }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Files")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+            style={{ marginBottom: "10px" }}
+          />
+        );
+      }
     });
     project.otherAdditionalDocuments.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Other Documents")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-          style={{ marginBottom: "10px" }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Other Documents")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+            style={{ marginBottom: "10px" }}
+          />
+        );
+      }
     });
   } else if (framework === Framework.TF_LANDSCAPES) {
     project.proofOfLandTenureMou.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Land Tenure MOU")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Land Tenure MOU")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+          />
+        );
+      }
     });
   }
 

@@ -1,43 +1,29 @@
 import { DataProvider } from "react-admin";
 
-import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "@/admin/apiProvider/utils/listing";
-import {
-  fetchGetV2AdminTasks,
-  fetchGetV2TasksUUID,
-  GetV2AdminTasksError,
-  GetV2TasksUUIDError
-} from "@/generated/apiComponents";
+import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
+import { raConnectionProps } from "@/admin/apiProvider/utils/listing";
+import { loadTask, loadTasks } from "@/connections/Task";
 
-const taskSortableList = ["project_name", "organisation_name", "due_at", "updated_at"];
-
-// @ts-ignore
 export const taskDataProvider: DataProvider = {
+  // @ts-expect-error until the types for this provider can be sorted out
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminTasks({
-        queryParams: raListParamsToQueryParams(params, taskSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminTasksError);
+    const { tasks, indexTotal, fetchFailure } = await loadTasks(raConnectionProps(params));
+    if (fetchFailure != null) {
+      throw v3ErrorForRA("Task index fetch failed", fetchFailure);
     }
+
+    return { data: tasks?.map(task => ({ ...task, id: task.uuid })) ?? [], total: indexTotal ?? 0 };
   },
 
-  // @ts-ignore
+  // @ts-expect-error until the types for this provider can be sorted out
   async getOne(_, params) {
-    try {
-      const response = await fetchGetV2TasksUUID({
-        pathParams: {
-          uuid: params.id
-        }
-      });
-
-      // @ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2TasksUUIDError);
+    const { task, projectReportUuid, siteReportUuids, nurseryReportUuids, fetchFailure } = await loadTask({
+      uuid: params.id
+    });
+    if (fetchFailure != null) {
+      throw v3ErrorForRA("Task get fetch failed", fetchFailure);
     }
+
+    return { data: { ...task, projectReportUuid, siteReportUuids, nurseryReportUuids, id: task!.uuid } };
   }
 };

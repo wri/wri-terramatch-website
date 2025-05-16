@@ -1,17 +1,19 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
+  TaskLightDto,
+  TaskFullDto,
+  ProjectReportLightDto,
+  ProjectReportFullDto,
+  SiteReportLightDto,
+  SiteReportFullDto,
+  NurseryReportLightDto,
+  NurseryReportFullDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
   SiteFullDto,
   NurseryLightDto,
   NurseryFullDto,
-  ProjectReportLightDto,
-  ProjectReportFullDto,
-  NurseryReportLightDto,
-  NurseryReportFullDto,
-  SiteReportLightDto,
-  SiteReportFullDto,
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
@@ -25,12 +27,13 @@ import {
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
+  "tasks",
+  "projectReports",
+  "siteReports",
+  "nurseryReports",
   "projects",
   "sites",
   "nurseries",
-  "projectReports",
-  "nurseryReports",
-  "siteReports",
   "demographics",
   "seedings",
   "treeSpecies",
@@ -44,12 +47,13 @@ export const ENTITY_SERVICE_RESOURCES = [
 ] as const;
 
 export type EntityServiceApiResources = {
+  tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
+  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
+  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
+  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
-  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
-  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
-  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;

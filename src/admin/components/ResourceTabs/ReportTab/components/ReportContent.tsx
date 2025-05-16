@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { PlantDto } from "@/connections/EntityAssociation";
 
 import ReportTabHeader from "../ReportTabHeader";
 import { BeneficiaryData, ReportData, Site } from "../types";
@@ -15,7 +15,7 @@ interface ReportContentProps {
   beneficiaryData: BeneficiaryData;
   reportData: ReportData;
   sites: Site[];
-  plants: TreeSpeciesDto[];
+  plants: PlantDto[];
 }
 
 const ReportContent: FC<ReportContentProps> = ({ beneficiaryData, reportData, sites, plants }) => {

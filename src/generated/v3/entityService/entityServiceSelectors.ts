@@ -1,6 +1,12 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
+  TaskIndexQueryParams,
+  TaskIndexVariables,
+  TaskGetPathParams,
+  TaskGetVariables,
+  TaskUpdatePathParams,
+  TaskUpdateVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -20,6 +26,27 @@ import {
   TreeReportCountsFindPathParams,
   TreeReportCountsFindVariables
 } from "./entityServiceComponents";
+
+export const taskIndexIsFetching = (variables: Omit<TaskIndexVariables, "body">) =>
+  isFetchingSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
+
+export const taskIndexFetchFailed = (variables: Omit<TaskIndexVariables, "body">) =>
+  fetchFailedSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
+
+export const taskIndexIndexMeta = (resource: ResourceType, variables: Omit<TaskIndexVariables, "body">) =>
+  indexMetaSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", resource, ...variables });
+
+export const taskGetIsFetching = (variables: Omit<TaskGetVariables, "body">) =>
+  isFetchingSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+
+export const taskGetFetchFailed = (variables: Omit<TaskGetVariables, "body">) =>
+  fetchFailedSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+
+export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body">) =>
+  isFetchingSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
+
+export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
+  fetchFailedSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({

@@ -304,7 +304,7 @@ export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
 
-export type GetV2AdminTasksBody = {
+export type GetV2AdminFormsBody = {
   /**
    * search term to use on the collection
    */
