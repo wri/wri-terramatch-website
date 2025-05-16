@@ -5,7 +5,6 @@ import _ from "lodash";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
-import { twMerge } from "tailwind-merge";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -919,72 +918,63 @@ const RHFFinancialIndicatorsDataTable = ({
 
   return (
     <>
-      <div className={twMerge("flex-1 bg-white px-16 pt-8 pb-11")}>
-        <div className="flex items-center justify-between">
-          <Text variant="text-heading-700">Financial Collection</Text>
-        </div>
-        <Text variant="text-body-600" className="mt-8" containHtml>
-          The settings below will affect how your financial data is organized and displayed throughout the dashboard.
-        </Text>
-        <div className="my-8 h-[2px] w-full bg-neutral-200" />
-        <div className="mb-10 space-y-6">
-          <Dropdown
-            options={getCurrencyOptions(t)}
-            label="Local Currency"
-            placeholder="USD - US Dollar"
-            value={[selectCurrency]}
-            defaultValue={formSubmissionOrg?.currency ? [formSubmissionOrg?.currency] : [selectCurrency]}
-            onChange={e => setSelectCurrency(e?.[0])}
-          />
-          <Dropdown
-            options={getMonthOptions(t)}
-            label="Financial Year Start Month"
-            placeholder="Select Month"
-            value={[selectFinancialMonth]}
-            defaultValue={formSubmissionOrg?.start_month ? [formSubmissionOrg?.start_month] : [selectFinancialMonth]}
-            onChange={e => setSelectFinancialMonth(e?.[0])}
-          />
-        </div>
-        <When condition={formSubmissionOrg?.type?.includes("for-profit")}>
-          <div className="mb-10">
-            <FinancialTableInput
-              resetTable={resetTable}
-              label="Profit Analysis"
-              description="Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes."
-              tableColumns={forProfitAnalysisColumns}
-              value={forProfitAnalysisData ?? []}
-            />
-          </div>
-        </When>
-        <When condition={formSubmissionOrg?.type?.includes("non-profit")}>
-          <div className="mb-10">
-            <FinancialTableInput
-              resetTable={resetTable}
-              label="Budget Analysis"
-              description="The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs."
-              tableColumns={nonProfitAnalysisColumns}
-              value={nonProfitAnalysisData ?? []}
-            />
-          </div>
-        </When>
+      <div className="mb-10 space-y-6">
+        <Dropdown
+          options={getCurrencyOptions(t)}
+          label="Local Currency"
+          placeholder="USD - US Dollar"
+          value={[selectCurrency]}
+          defaultValue={formSubmissionOrg?.currency ? [formSubmissionOrg?.currency] : [selectCurrency]}
+          onChange={e => setSelectCurrency(e?.[0])}
+        />
+        <Dropdown
+          options={getMonthOptions(t)}
+          label="Financial Year Start Month"
+          placeholder="Select Month"
+          value={[selectFinancialMonth]}
+          defaultValue={formSubmissionOrg?.start_month ? [formSubmissionOrg?.start_month] : [selectFinancialMonth]}
+          onChange={e => setSelectFinancialMonth(e?.[0])}
+        />
+      </div>
+      <When condition={formSubmissionOrg?.type?.includes("for-profit")}>
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}
-            label="Current Ratio"
-            description="Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
-            tableColumns={currentRadioColumns}
-            value={currentRadioData ?? []}
+            label="Profit Analysis"
+            description="Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes."
+            tableColumns={forProfitAnalysisColumns}
+            value={forProfitAnalysisData ?? []}
           />
         </div>
+      </When>
+      <When condition={formSubmissionOrg?.type?.includes("non-profit")}>
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}
-            label="Documentation"
-            description="Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
-            tableColumns={documentationColumns}
-            value={documentationData ?? []}
+            label="Budget Analysis"
+            description="The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs."
+            tableColumns={nonProfitAnalysisColumns}
+            value={nonProfitAnalysisData ?? []}
           />
         </div>
+      </When>
+      <div className="mb-10">
+        <FinancialTableInput
+          resetTable={resetTable}
+          label="Current Ratio"
+          description="Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
+          tableColumns={currentRadioColumns}
+          value={currentRadioData ?? []}
+        />
+      </div>
+      <div className="mb-10">
+        <FinancialTableInput
+          resetTable={resetTable}
+          label="Documentation"
+          description="Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
+          tableColumns={documentationColumns}
+          value={documentationData ?? []}
+        />
       </div>
     </>
   );
