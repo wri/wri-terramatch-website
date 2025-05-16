@@ -126,6 +126,35 @@ export const QuestionArrayInput = ({
                       }
                     }}
                   />
+                  <SelectArrayInput
+                    source={getSource("collection")}
+                    label="Select Collections"
+                    helperText="Select one or more collections"
+                    choices={[
+                      { id: "profit", name: "Net Profit" },
+                      { id: "budget", name: "Budget" },
+                      { id: "current-radio", name: "Ratio" }
+                    ]}
+                    fullWidth
+                    validate={required()}
+                    options={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
+                          }
+                        }
+                      }
+                    }}
+                    parse={(value: string[] | undefined) => (value ? JSON.stringify(value) : "[]")}
+                    format={(value: string | undefined) => {
+                      try {
+                        return value ? JSON.parse(value) : [];
+                      } catch {
+                        return [];
+                      }
+                    }}
+                  />
                 </>
               ) : (
                 <></>

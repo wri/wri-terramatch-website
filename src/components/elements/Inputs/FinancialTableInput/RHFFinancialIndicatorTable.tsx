@@ -33,6 +33,7 @@ export interface RHFFinancialIndicatorsDataTableProps
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   years?: Array<number>;
+  model?: string;
   formSubmissionOrg?: any;
 }
 
@@ -194,7 +195,7 @@ const RHFFinancialIndicatorsDataTable = ({
   const { field } = useController(props);
   const value = field?.value || [];
   const [files, setFiles] = useState<Partial<UploadedFile>[]>();
-  const { years, formSubmissionOrg } = props;
+  const { years, formSubmissionOrg, model } = props;
   const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency);
   const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month);
   const [resetTable, setResetTable] = useState(0);
@@ -860,9 +861,8 @@ const RHFFinancialIndicatorsDataTable = ({
   useEffect(() => {
     const payload = {
       organisation_id: formSubmissionOrg?.uuid,
-      profit_analysis_data: formSubmissionOrg?.type?.includes("for-profit")
-        ? forProfitAnalysisData
-        : nonProfitAnalysisData,
+      profit_analysis_data: forProfitAnalysisData,
+      non_profit_analysis_data: nonProfitAnalysisData,
       current_radio_data: currentRadioData,
       documentation_data: documentationData,
       local_currency: selectCurrency as string,
@@ -936,7 +936,7 @@ const RHFFinancialIndicatorsDataTable = ({
           onChange={e => setSelectFinancialMonth(e?.[0])}
         />
       </div>
-      <When condition={formSubmissionOrg?.type?.includes("for-profit")}>
+      <When condition={model?.includes("profit")}>
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}
@@ -947,7 +947,7 @@ const RHFFinancialIndicatorsDataTable = ({
           />
         </div>
       </When>
-      <When condition={formSubmissionOrg?.type?.includes("non-profit")}>
+      <When condition={model?.includes("budget")}>
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}
@@ -958,15 +958,17 @@ const RHFFinancialIndicatorsDataTable = ({
           />
         </div>
       </When>
-      <div className="mb-10">
-        <FinancialTableInput
-          resetTable={resetTable}
-          label="Current Ratio"
-          description="Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
-          tableColumns={currentRadioColumns}
-          value={currentRadioData ?? []}
-        />
-      </div>
+      <When condition={model?.includes("current-radio")}>
+        <div className="mb-10">
+          <FinancialTableInput
+            resetTable={resetTable}
+            label="Current Ratio"
+            description="Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
+            tableColumns={currentRadioColumns}
+            value={currentRadioData ?? []}
+          />
+        </div>
+      </When>
       <div className="mb-10">
         <FinancialTableInput
           resetTable={resetTable}

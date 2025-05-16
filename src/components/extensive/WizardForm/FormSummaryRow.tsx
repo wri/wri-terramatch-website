@@ -156,6 +156,7 @@ export const getFormEntries = (
         const entries = values[f.name];
         if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
         const years = f.fieldProps.years;
+        const collections = f.fieldProps.model;
         const columnMaps: Record<string, string[]> = {
           profitAnalysisData: ["year", "revenue", "expenses", "profit"],
           nonProfitAnalysisData: ["year", "budget"],
@@ -168,25 +169,27 @@ export const getFormEntries = (
         const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
 
         const presentCollections = new Set(entries?.map((entry: any) => entry.collection));
+        const selectedCollections = new Set(JSON.parse(collections || "[]"));
 
         const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
+        const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
 
-        if (!isGroupPresent(profitCollections)) {
+        if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
           delete columnMaps.profitAnalysisData;
         }
 
-        if (!isGroupPresent(nonProfitCollections)) {
+        if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
           delete columnMaps.nonProfitAnalysisData;
         }
 
-        if (!isGroupPresent(ratioCollections)) {
+        if (!isGroupPresent(ratioCollections) || !isCollectionPresent(ratioCollections)) {
           delete columnMaps.currentRatioData;
         }
 
         const formatted = formatFinancialData(entries, years, "", "");
         const sections = [
           { title: t("Profit Analysis"), key: "profitAnalysisData" },
-          { title: t("Non-Profit Analysis"), key: "nonProfitAnalysisData" },
+          { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
           { title: t("Current Ratio"), key: "currentRatioData" },
           { title: t("Documentation"), key: "documentationData" }
         ];
