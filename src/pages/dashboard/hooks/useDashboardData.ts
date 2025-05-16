@@ -26,6 +26,7 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
+import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -85,6 +86,9 @@ export const useDashboardData = (filters: any) => {
     }
   );
 
+  const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
+    useDashboardEmploymentData(filters.uuid);
+
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -98,10 +102,10 @@ export const useDashboardData = (filters: any) => {
     data: totalSectionHeader,
     refetch: refetchTotalSectionHeader,
     isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters });
+  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters && !filters.uuid });
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
-    { enabled: !!filters }
+    { enabled: !!filters && !filters.uuid }
   );
   const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
@@ -164,6 +168,14 @@ export const useDashboardData = (filters: any) => {
       enabled: !!filters.uuid
     }
   );
+
+  const combinedJobsData = useMemo(() => {
+    if (filters.uuid && projectEmploymentData) {
+      return projectEmploymentData;
+    }
+    return jobsCreatedData;
+  }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
+
   useEffect(() => {
     if (topData?.top_projects_most_planted_trees) {
       const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
@@ -177,12 +189,44 @@ export const useDashboardData = (filters: any) => {
   }, [topData]);
 
   useEffect(() => {
-    if (isLoading) showLoader();
-    else hideLoader();
-  }, [isLoading, showLoader, hideLoader]);
+    if (filters.uuid) {
+      if (!projectLoaded) {
+        showLoader();
+      } else {
+        hideLoader();
+      }
+    } else {
+      if (isLoading) {
+        showLoader();
+      } else {
+        hideLoader();
+      }
+    }
+  }, [isLoading, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
-    if (totalSectionHeader) {
+    if (filters.uuid && projectFullDto) {
+      setDashboardHeader(prev => [
+        {
+          ...prev[0],
+          value: projectFullDto.treesPlantedCount ? projectFullDto.treesPlantedCount.toLocaleString() : "-"
+        },
+        {
+          ...prev[1],
+          value: projectFullDto.totalHectaresRestoredSum
+            ? `${projectFullDto.totalHectaresRestoredSum.toFixed(0).toLocaleString()} ha`
+            : "-"
+        },
+        {
+          ...prev[2],
+          value: projectFullDto.totalJobsCreated ? projectFullDto.totalJobsCreated.toLocaleString() : "-"
+        }
+      ]);
+      setNumberTreesPlanted({
+        value: projectFullDto.treesPlantedCount ?? 0,
+        totalValue: projectFullDto.treesGrownGoal ?? 0
+      });
+    } else if (totalSectionHeader) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
@@ -206,7 +250,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: totalSectionHeader.total_trees_restored_goal
       });
     }
-  }, [totalSectionHeader]);
+  }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
@@ -261,12 +305,12 @@ export const useDashboardData = (filters: any) => {
   return {
     dashboardHeader,
     dashboardRestorationGoalData,
-    jobsCreatedData,
+    jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader,
     hectaresUnderRestoration,
-    isLoadingJobsCreated,
+    isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,

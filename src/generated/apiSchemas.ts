@@ -16280,31 +16280,6 @@ export type DashboardActiveCountriesResponse = {
   }[];
 };
 
-export type DashboardCountriesResponse = {
-  data?: {
-    id?: number;
-    country_slug?: string;
-    data?: {
-      label?: string;
-      icon?: string;
-    };
-  }[];
-};
-
-export type DashboardCountryData = {
-  id?: number;
-  country_slug?: string;
-  data?: {
-    label?: string;
-    icon?: string;
-  };
-};
-
-export type DashboardCountryInfo = {
-  label?: string;
-  icon?: string;
-};
-
 export type DashboardProjectProfileResponse = {
   data?: {
     name?: string;

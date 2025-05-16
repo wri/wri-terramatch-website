@@ -28,13 +28,21 @@ export const useReportingWindow = (dueDate?: string) => {
     if (period === Period.QUARTERLY) {
       // Calculate start and end months for quarterly
       const startMonth = (date.getMonth() - 3 + 12) % 12; // Adjusting for negative values
-      start = format(new Date(date.getFullYear(), startMonth, 1), "MMMM");
+      try {
+        start = format(new Date(date.getFullYear(), startMonth, 1), "MMMM");
+      } catch (e) {
+        start = "";
+      }
       end = format(subMonths(date, 1), "MMMM");
       year = format(subMonths(date, 1), "yyyy");
     } else {
       // Calculate start and end months for bi-annually
       const startMonth = (date.getMonth() - 6 + 12) % 12; // Adjusting for negative values
-      start = format(new Date(date.getFullYear(), startMonth, 1), "MMMM");
+      try {
+        start = format(new Date(date.getFullYear(), startMonth, 1), "MMMM");
+      } catch (e) {
+        start = "";
+      }
       end = format(subMonths(date, 1), "MMMM");
       year = format(subMonths(date, 1), "yyyy");
     }
