@@ -198,52 +198,56 @@ export const getFormEntries = (
           }
           return false;
         };
+        let value = sections;
+        try {
+          value
+            .map(section => {
+              const data = formatted[section.key as keyof typeof formatted];
+              const columns = columnMaps[section.key as keyof typeof columnMaps];
+              if (!Array.isArray(data) || !data || data?.length === 0) return "";
 
-        const value = sections
-          .map(section => {
-            const data = formatted[section.key as keyof typeof formatted];
-            const columns = columnMaps[section.key as keyof typeof columnMaps];
-            if (!Array.isArray(data) || !data || data?.length === 0) return "";
+              const filteredRows = data?.filter((row: Record<string, any>) => {
+                if (!columns) return null;
+                const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+                return valuesToCheck.some(val => !isEmptyValue(val));
+              });
 
-            const filteredRows = data?.filter((row: Record<string, any>) => {
-              if (!columns) return null;
-              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
-              return valuesToCheck.some(val => !isEmptyValue(val));
-            });
+              if (filteredRows.length === 0) return "";
 
-            if (filteredRows.length === 0) return "";
-
-            const rowsHtml = filteredRows
-              .map((row: Record<string, any>) => {
-                const cellValues = columns.map(col => {
-                  if (col === "documentation") {
-                    if (Array.isArray(row[col]) && row[col].length > 0) {
-                      return row[col]
-                        .map((document: any) => {
-                          if (document.url) {
-                            return `<a href="${
-                              document.url
-                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
-                              document.file_name ?? ""
-                            }</a>`;
-                          }
-                          return "";
-                        })
-                        .filter(link => link !== "")
-                        .join(", ");
+              const rowsHtml = filteredRows
+                .map((row: Record<string, any>) => {
+                  const cellValues = columns.map(col => {
+                    if (col === "documentation") {
+                      if (Array.isArray(row[col]) && row[col].length > 0) {
+                        return row[col]
+                          .map((document: any) => {
+                            if (document.url) {
+                              return `<a href="${
+                                document.url
+                              }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                                document.file_name ?? ""
+                              }</a>`;
+                            }
+                            return "";
+                          })
+                          .filter(link => link !== "")
+                          .join(", ");
+                      }
+                      return "";
                     }
-                    return "";
-                  }
-                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
-                });
-                return cellValues.join(", ");
-              })
-              .join("<br/>");
+                    return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                  });
+                  return cellValues.join(", ");
+                })
+                .join("<br/>");
 
-            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
-          })
-          .filter(Boolean)
-          .join("");
+              return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+            })
+            .filter(Boolean)
+            .join("");
+        } catch (error) {
+          value = [];
+        }
 
         const output = {
           title: f.label,
