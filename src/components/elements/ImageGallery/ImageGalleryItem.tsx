@@ -173,32 +173,36 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
 
   return (
     <div {...rest} className={classNames("relative overflow-hidden rounded-xl bg-background", className)}>
-      <ImageWithChildren
-        imageSrc={{
-          src: data.thumbUrl,
-          height: 211,
-          width: 1440
-        }}
-        isGeotagged={data.lat !== null && data.lng !== null}
-        isCover={data.isCover}
-        className="h-[226px] rounded-t-xl"
-      >
-        <div className="flex justify-between p-3">
-          {/* Left */}
-          {!data.isPublic && <Icon name={IconNames.LOCK_CIRCLE} height={32} width={32} className="fill-neutral-700" />}
+      {data.thumbUrl && (
+        <ImageWithChildren
+          imageSrc={{
+            src: data.thumbUrl,
+            height: 211,
+            width: 1440
+          }}
+          isGeotagged={data.lat !== null && data.lng !== null}
+          isCover={data.isCover}
+          className="h-[226px] rounded-t-xl"
+        >
+          <div className="flex justify-between p-3">
+            {/* Left */}
+            {!data.isPublic && (
+              <Icon name={IconNames.LOCK_CIRCLE} height={32} width={32} className="fill-neutral-700" />
+            )}
 
-          {/* Right */}
+            {/* Right */}
 
-          <div className="ml-auto flex items-center">
-            <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
-              <Icon
-                name={IconNames.ELIPSES}
-                className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
-              ></Icon>
-            </Menu>
+            <div className="ml-auto flex items-center">
+              <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
+                <Icon
+                  name={IconNames.ELIPSES}
+                  className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"
+                ></Icon>
+              </Menu>
+            </div>
           </div>
-        </div>
-      </ImageWithChildren>
+        </ImageWithChildren>
+      )}
 
       <div className="p-4 text-darkCustom">
         <div className="flex items-center justify-between gap-1">

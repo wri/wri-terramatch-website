@@ -50,27 +50,33 @@ export type ProjectReportLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  frameworkKey: Record<string, any>;
+  frameworkKey: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
-  projectName: Record<string, any> | null;
-  projectUuid: Record<string, any> | null;
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
   status: string;
-  completion: Record<string, any> | null;
-  submittedAt: Record<string, any> | null;
+  completion: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
   /**
    * The associated task uuid
    */
-  taskUuid: Record<string, any> | null;
-  title: Record<string, any> | null;
+  taskUuid: string | null;
+  title: string | null;
   updateRequestStatus: string;
-  dueAt: Record<string, any>;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -79,7 +85,7 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
-  pctSurvivalToDate: Record<string, any> | null;
+  pctSurvivalToDate: number | null;
 };
 
 export type SiteReportLightDto = {
@@ -91,44 +97,50 @@ export type SiteReportLightDto = {
   /**
    * The associated site name
    */
-  siteName: Record<string, any> | null;
+  siteName: string | null;
   /**
    * The associated site uuid
    */
-  siteUuid: Record<string, any> | null;
-  frameworkKey: Record<string, any>;
+  siteUuid: string | null;
+  frameworkKey: string | null;
   status: string;
   updateRequestStatus: string;
-  completion: Record<string, any> | null;
+  completion: number | null;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project uuid
    */
-  projectUuid: Record<string, any> | null;
+  projectUuid: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
   updatedAt: string;
-  submittedAt: Record<string, any> | null;
-  taskUuid: Record<string, any> | null;
-  dueAt: Record<string, any>;
-  reportTitle: Record<string, any> | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
   createdAt: string;
-  nothingToReport: Record<string, any> | null;
+  nothingToReport: boolean | null;
 };
 
 export type NurseryReportLightDto = {
@@ -140,45 +152,51 @@ export type NurseryReportLightDto = {
   /**
    * The associated nursery name
    */
-  nurseryName: Record<string, any> | null;
+  nurseryName: string | null;
   /**
    * The associated nursery uuid
    */
-  nurseryUuid: Record<string, any> | null;
-  frameworkKey: Record<string, any>;
+  nurseryUuid: string | null;
+  frameworkKey: string | null;
   status: string;
-  completion: Record<string, any> | null;
+  completion: number | null;
   updateRequestStatus: string;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project uuid
    */
-  projectUuid: Record<string, any> | null;
+  projectUuid: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
   updatedAt: string;
-  submittedAt: Record<string, any> | null;
-  taskUuid: Record<string, any> | null;
-  dueAt: Record<string, any>;
-  title: Record<string, any> | null;
-  reportTitle: Record<string, any> | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  title: string | null;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
   createdAt: string;
-  nothingToReport: Record<string, any> | null;
+  nothingToReport: boolean | null;
 };
 
 export type TaskUpdateAttributes = {
@@ -211,8 +229,8 @@ export type ANRDto = {
 
 export type ProjectApplicationDto = {
   uuid: string;
-  fundingProgrammeName: Record<string, any> | null;
-  projectPitchUuid: Record<string, any> | null;
+  fundingProgrammeName: string | null;
+  projectPitchUuid: string | null;
 };
 
 export type MediaDto = {
@@ -226,23 +244,23 @@ export type MediaDto = {
   entityUuid: string;
   uuid: string;
   collectionName: string;
-  url: Record<string, any> | null;
-  thumbUrl: Record<string, any> | null;
+  url: string | null;
+  thumbUrl: string | null;
   name: string;
   fileName: string;
-  mimeType: Record<string, any> | null;
+  mimeType: string | null;
   size: number;
-  lat: Record<string, any> | null;
-  lng: Record<string, any> | null;
+  lat: number | null;
+  lng: number | null;
   isPublic: boolean;
   isCover: boolean;
   /**
    * @format date-time
    */
   createdAt: string;
-  description: Record<string, any> | null;
-  photographer: Record<string, any> | null;
-  createdByUserName: Record<string, any> | null;
+  description: string | null;
+  photographer: string | null;
+  createdByUserName: string | null;
 };
 
 export type EntitySideload = {
@@ -293,11 +311,11 @@ export type ProjectLightDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * Entity status for this project
    */
@@ -306,9 +324,12 @@ export type ProjectLightDto = {
    * Update request status for this project
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
-  name: Record<string, any> | null;
-  plantingStartDate: Record<string, any> | null;
-  country: Record<string, any> | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  country: string | null;
   totalHectaresRestoredSum: number;
   /**
    * @format date-time
@@ -329,7 +350,7 @@ export type SiteLightDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Entity status for this site
    */
@@ -338,11 +359,11 @@ export type SiteLightDto = {
    * Update request status for this site
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
-  name: Record<string, any> | null;
+  name: string | null;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
@@ -362,11 +383,11 @@ export type NurseryLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  name: Record<string, any> | null;
+  name: string | null;
   /**
    * Framework key for this nursery
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Entity status for this nursery
    */
@@ -378,14 +399,20 @@ export type NurseryLightDto = {
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project organisation name
    */
-  organisationName: Record<string, any> | null;
-  startDate: Record<string, any> | null;
-  endDate: Record<string, any> | null;
-  seedlingsGrownCount: Record<string, any> | null;
+  organisationName: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -405,11 +432,11 @@ export type ProjectFullDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * Entity status for this project
    */
@@ -418,9 +445,12 @@ export type ProjectFullDto = {
    * Update request status for this project
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
-  name: Record<string, any> | null;
-  plantingStartDate: Record<string, any> | null;
-  country: Record<string, any> | null;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  country: string | null;
   totalHectaresRestoredSum: number;
   /**
    * @format date-time
@@ -434,28 +464,31 @@ export type ProjectFullDto = {
    * True for projects that are test data and do not represent actual planting on the ground.
    */
   isTest: boolean;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  cohort: Record<string, any> | null;
-  continent: Record<string, any> | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  cohort: string | null;
+  continent: string | null;
   /**
    * The associated organisation type
    */
-  organisationType: Record<string, any> | null;
-  states: Record<string, any> | null;
-  projectCountyDistrict: Record<string, any> | null;
-  plantingEndDate: Record<string, any> | null;
-  budget: Record<string, any> | null;
-  history: Record<string, any> | null;
-  objectives: Record<string, any> | null;
-  environmentalGoals: Record<string, any> | null;
-  socioeconomicGoals: Record<string, any> | null;
-  sdgsImpacted: Record<string, any> | null;
-  totalHectaresRestoredGoal: Record<string, any> | null;
-  treesGrownGoal: Record<string, any> | null;
-  survivalRate: Record<string, any> | null;
-  landUseTypes: Record<string, any> | null;
-  restorationStrategy: Record<string, any> | null;
+  organisationType: string | null;
+  states: string[] | null;
+  projectCountyDistrict: string | null;
+  /**
+   * @format date-time
+   */
+  plantingEndDate: string | null;
+  budget: number | null;
+  history: string | null;
+  objectives: string | null;
+  environmentalGoals: string | null;
+  socioeconomicGoals: string | null;
+  sdgsImpacted: string | null;
+  totalHectaresRestoredGoal: number | null;
+  treesGrownGoal: number | null;
+  survivalRate: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
   treesPlantedCount: number;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
@@ -467,25 +500,25 @@ export type ProjectFullDto = {
   totalNurseries: number;
   totalProjectReports: number;
   totalOverdueReports: number;
-  descriptionOfProjectTimeline: Record<string, any> | null;
-  sitingStrategyDescription: Record<string, any> | null;
-  sitingStrategy: Record<string, any> | null;
-  landholderCommEngage: Record<string, any> | null;
-  projPartnerInfo: Record<string, any> | null;
-  seedlingsSource: Record<string, any> | null;
-  landTenureProjectArea: Record<string, any> | null;
-  projImpactBiodiv: Record<string, any> | null;
-  projImpactFoodsec: Record<string, any> | null;
-  proposedGovPartners: Record<string, any> | null;
+  descriptionOfProjectTimeline: string | null;
+  sitingStrategyDescription: string | null;
+  sitingStrategy: string | null;
+  landholderCommEngage: string | null;
+  projPartnerInfo: string | null;
+  seedlingsSource: string | null;
+  landTenureProjectArea: string[] | null;
+  projImpactBiodiv: string | null;
+  projImpactFoodsec: string | null;
+  proposedGovPartners: string | null;
   treesRestoredPpc: number;
-  detailedInterventionTypes: Record<string, any> | null;
+  detailedInterventionTypes: string[] | null;
   /**
    * The list of tree counts regenerating naturally by site name
    */
   assistedNaturalRegenerationList: ANRDto[];
-  goalTreesRestoredAnr: Record<string, any> | null;
-  directSeedingSurvivalRate: Record<string, any> | null;
-  application: Record<string, any> | null;
+  goalTreesRestoredAnr: number | null;
+  directSeedingSurvivalRate: number | null;
+  application: ProjectApplicationDto;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -493,7 +526,7 @@ export type ProjectFullDto = {
   photos: MediaDto[];
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
-  detailedProjectBudget: Record<string, any> | null;
+  detailedProjectBudget: MediaDto;
   proofOfLandTenureMou: MediaDto[];
 };
 
@@ -506,7 +539,7 @@ export type SiteFullDto = {
   /**
    * Framework key for this project
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Entity status for this site
    */
@@ -515,11 +548,11 @@ export type SiteFullDto = {
    * Update request status for this site
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
-  name: Record<string, any> | null;
+  name: string | null;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
@@ -538,30 +571,36 @@ export type SiteFullDto = {
   regeneratedTreesCount: number;
   combinedWorkdayCount: number;
   workdayCount: number;
-  ppcExternalId: Record<string, any> | null;
+  ppcExternalId: number | null;
   sitingStrategy: string | null;
-  descriptionSitingStrategy: Record<string, any> | null;
-  description: Record<string, any> | null;
-  controlSite: Record<string, any> | null;
-  history: Record<string, any> | null;
-  startDate: Record<string, any> | null;
-  endDate: Record<string, any> | null;
-  landTenures: Record<string, any> | null;
-  survivalRatePlanted: Record<string, any> | null;
-  directSeedingSurvivalRate: Record<string, any> | null;
-  aNatRegenerationTreesPerHectare: Record<string, any> | null;
-  aNatRegeneration: Record<string, any> | null;
-  landscapeCommunityContribution: Record<string, any> | null;
-  technicalNarrative: Record<string, any> | null;
-  plantingPattern: Record<string, any> | null;
-  soilCondition: Record<string, any> | null;
-  aimYearFiveCrownCover: Record<string, any> | null;
-  aimNumberOfMatureTrees: Record<string, any> | null;
-  landUseTypes: Record<string, any> | null;
-  restorationStrategy: Record<string, any> | null;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  detailedInterventionTypes: Record<string, any> | null;
+  descriptionSitingStrategy: string | null;
+  description: string | null;
+  controlSite: boolean | null;
+  history: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  landTenures: string[] | null;
+  survivalRatePlanted: number | null;
+  directSeedingSurvivalRate: number | null;
+  aNatRegenerationTreesPerHectare: number | null;
+  aNatRegeneration: number | null;
+  landscapeCommunityContribution: string | null;
+  technicalNarrative: string | null;
+  plantingPattern: string | null;
+  soilCondition: string | null;
+  aimYearFiveCrownCover: number | null;
+  aimNumberOfMatureTrees: number | null;
+  landUseTypes: string[] | null;
+  restorationStrategy: string[] | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  detailedInterventionTypes: string[] | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -590,11 +629,11 @@ export type NurseryFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  name: Record<string, any> | null;
+  name: string | null;
   /**
    * Framework key for this nursery
    */
-  frameworkKey: Record<string, any> | null;
+  frameworkKey: string | null;
   /**
    * Entity status for this nursery
    */
@@ -606,14 +645,20 @@ export type NurseryFullDto = {
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project organisation name
    */
-  organisationName: Record<string, any> | null;
-  startDate: Record<string, any> | null;
-  endDate: Record<string, any> | null;
-  seedlingsGrownCount: Record<string, any> | null;
+  organisationName: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -622,15 +667,15 @@ export type NurseryFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  type: Record<string, any> | null;
-  seedlingGrown: Record<string, any> | null;
-  plantingContribution: Record<string, any> | null;
-  oldModel: Record<string, any> | null;
-  nurseryReportsTotal: Record<string, any> | null;
-  overdueNurseryReportsTotal: Record<string, any> | null;
-  projectUuid: Record<string, any> | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  type: string | null;
+  seedlingGrown: number | null;
+  plantingContribution: string | null;
+  oldModel: string | null;
+  nurseryReportsTotal: number | null;
+  overdueNurseryReportsTotal: number | null;
+  projectUuid: string | null;
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   photos: MediaDto[];
@@ -642,27 +687,33 @@ export type ProjectReportFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  frameworkKey: Record<string, any>;
+  frameworkKey: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
-  projectName: Record<string, any> | null;
-  projectUuid: Record<string, any> | null;
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
   status: string;
-  completion: Record<string, any> | null;
-  submittedAt: Record<string, any> | null;
+  completion: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
   /**
    * The associated task uuid
    */
-  taskUuid: Record<string, any> | null;
-  title: Record<string, any> | null;
+  taskUuid: string | null;
+  title: string | null;
   updateRequestStatus: string;
-  dueAt: Record<string, any>;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -671,67 +722,68 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  pctSurvivalToDate: Record<string, any> | null;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  localEngagementDescription: Record<string, any> | null;
-  equitableOpportunities: Record<string, any> | null;
-  resilienceProgress: Record<string, any> | null;
-  localGovernance: Record<string, any> | null;
-  adaptiveManagement: Record<string, any> | null;
-  scalabilityReplicability: Record<string, any> | null;
-  convergenceJobsDescription: Record<string, any> | null;
-  convergenceSchemes: Record<string, any> | null;
-  convergenceAmount: Record<string, any> | null;
-  beneficiariesScstobc: Record<string, any> | null;
-  beneficiariesScstobcFarmers: Record<string, any> | null;
-  communityPartnersAssetsDescription: Record<string, any> | null;
-  peopleKnowledgeSkillsIncreased: Record<string, any> | null;
-  technicalNarrative: Record<string, any> | null;
-  publicNarrative: Record<string, any> | null;
-  totalUniqueRestorationPartners: Record<string, any> | null;
-  businessMilestones: Record<string, any> | null;
-  landscapeCommunityContribution: Record<string, any> | null;
-  reportTitle: Record<string, any> | null;
-  seedsPlantedCount: Record<string, any> | null;
-  treesPlantedCount: Record<string, any> | null;
+  pctSurvivalToDate: number | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  localEngagementDescription: string | null;
+  equitableOpportunities: string | null;
+  resilienceProgress: string | null;
+  localGovernance: string | null;
+  adaptiveManagement: string | null;
+  scalabilityReplicability: string | null;
+  convergenceJobsDescription: string | null;
+  convergenceSchemes: string | null;
+  convergenceAmount: number | null;
+  beneficiariesScstobc: number | null;
+  beneficiariesScstobcFarmers: number | null;
+  communityPartnersAssetsDescription: string | null;
+  peopleKnowledgeSkillsIncreased: number | null;
+  technicalNarrative: string | null;
+  publicNarrative: string | null;
+  totalUniqueRestorationPartners: number | null;
+  businessMilestones: string | null;
+  landscapeCommunityContribution: string | null;
+  reportTitle: string | null;
+  seedsPlantedCount: number | null;
+  treesPlantedCount: number | null;
   regeneratedTreesCount: number;
-  topThreeSuccesses: Record<string, any> | null;
-  challengesFaced: Record<string, any> | null;
-  lessonsLearned: Record<string, any> | null;
-  maintenanceAndMonitoringActivities: Record<string, any> | null;
-  significantChange: Record<string, any> | null;
-  survivalCalculation: Record<string, any> | null;
-  survivalComparison: Record<string, any> | null;
-  ftSmallholderFarmers: Record<string, any> | null;
-  ptSmallholderFarmers: Record<string, any> | null;
-  seasonalMen: Record<string, any> | null;
-  seasonalWomen: Record<string, any> | null;
-  seasonalYouth: Record<string, any> | null;
-  seasonalSmallholderFarmers: Record<string, any> | null;
-  seasonalTotal: Record<string, any> | null;
-  volunteerSmallholderFarmers: Record<string, any> | null;
+  topThreeSuccesses: string | null;
+  challengesFaced: string | null;
+  lessonsLearned: string | null;
+  maintenanceAndMonitoringActivities: string | null;
+  significantChange: string | null;
+  survivalCalculation: string | null;
+  survivalComparison: string | null;
+  ftSmallholderFarmers: number | null;
+  ptSmallholderFarmers: number | null;
+  seasonalMen: number | null;
+  seasonalWomen: number | null;
+  seasonalYouth: number | null;
+  seasonalSmallholderFarmers: number | null;
+  seasonalTotal: number | null;
+  volunteerSmallholderFarmers: number | null;
   taskTotalWorkdays: number;
-  plantedTrees: Record<string, any> | null;
-  sharedDriveLink: Record<string, any> | null;
-  beneficiariesDescription: Record<string, any> | null;
-  beneficiariesIncomeIncrease: Record<string, any> | null;
-  beneficiariesIncomeIncreaseDescription: Record<string, any> | null;
-  beneficiariesSkillsKnowledgeIncreaseDescription: Record<string, any> | null;
-  indirectBeneficiaries: Record<string, any> | null;
-  indirectBeneficiariesDescription: Record<string, any> | null;
-  newJobsDescription: Record<string, any> | null;
-  volunteersWorkDescription: Record<string, any> | null;
-  siteReportsCount: Record<string, any> | null;
-  nurseryReportsCount: Record<string, any> | null;
+  plantedTrees: number | null;
+  sharedDriveLink: string | null;
+  beneficiariesDescription: string | null;
+  beneficiariesIncomeIncrease: number | null;
+  beneficiariesIncomeIncreaseDescription: string | null;
+  beneficiariesSkillsKnowledgeIncreaseDescription: string | null;
+  indirectBeneficiaries: number | null;
+  indirectBeneficiariesDescription: string | null;
+  newJobsDescription: string | null;
+  volunteersWorkDescription: string | null;
+  siteReportsCount: number | null;
+  nurseryReportsCount: number | null;
   seedlingsGrown: number;
-  communityProgress: Record<string, any> | null;
-  localEngagement: Record<string, any> | null;
+  communityProgress: string | null;
+  localEngagement: string | null;
   siteAddition: boolean;
-  paidOtherActivityDescription: Record<string, any> | null;
-  nonTreeTotal: Record<string, any> | null;
-  createdBy: Record<string, any> | null;
-  createdByUser: Record<string, any> | null;
+  paidOtherActivityDescription: string | null;
+  nonTreeTotal: number | null;
+  createdBy: number | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -764,59 +816,65 @@ export type NurseryReportFullDto = {
   /**
    * The associated nursery name
    */
-  nurseryName: Record<string, any> | null;
+  nurseryName: string | null;
   /**
    * The associated nursery uuid
    */
-  nurseryUuid: Record<string, any> | null;
-  frameworkKey: Record<string, any>;
+  nurseryUuid: string | null;
+  frameworkKey: string | null;
   status: string;
-  completion: Record<string, any> | null;
+  completion: number | null;
   updateRequestStatus: string;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project uuid
    */
-  projectUuid: Record<string, any> | null;
+  projectUuid: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
   updatedAt: string;
-  submittedAt: Record<string, any> | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
   /**
    * The associated task uuid
    */
-  taskUuid: Record<string, any> | null;
-  dueAt: Record<string, any>;
-  title: Record<string, any> | null;
-  reportTitle: Record<string, any> | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  title: string | null;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
   createdAt: string;
-  nothingToReport: Record<string, any> | null;
-  projectReportTitle: Record<string, any> | null;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  seedlingsYoungTrees: Record<string, any> | null;
-  interestingFacts: Record<string, any> | null;
-  sitePrep: Record<string, any> | null;
-  sharedDriveLink: Record<string, any> | null;
-  createdByFirstName: Record<string, any> | null;
-  createdByLastName: Record<string, any> | null;
-  approvedByFirstName: Record<string, any> | null;
-  approvedByLastName: Record<string, any> | null;
+  nothingToReport: boolean | null;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  seedlingsYoungTrees: number | null;
+  interestingFacts: string | null;
+  sitePrep: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   treeSeedlingContributions: MediaDto[];
@@ -832,77 +890,83 @@ export type SiteReportFullDto = {
   /**
    * The associated site name
    */
-  siteName: Record<string, any> | null;
+  siteName: string | null;
   /**
    * The associated site uuid
    */
-  siteUuid: Record<string, any> | null;
-  frameworkKey: Record<string, any>;
+  siteUuid: string | null;
+  frameworkKey: string | null;
   status: string;
   updateRequestStatus: string;
-  completion: Record<string, any> | null;
+  completion: number | null;
   /**
    * The associated project name
    */
-  projectName: Record<string, any> | null;
+  projectName: string | null;
   /**
    * The associated project uuid
    */
-  projectUuid: Record<string, any> | null;
+  projectUuid: string | null;
   /**
    * The associated organisation name
    */
-  organisationName: Record<string, any> | null;
+  organisationName: string | null;
   /**
    * The associated organisation uuid
    */
-  organisationUuid: Record<string, any> | null;
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
   updatedAt: string;
-  submittedAt: Record<string, any> | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
   /**
    * The associated task uuid
    */
-  taskUuid: Record<string, any> | null;
-  dueAt: Record<string, any>;
-  reportTitle: Record<string, any> | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  reportTitle: string | null;
   /**
    * @format date-time
    */
   createdAt: string;
-  nothingToReport: Record<string, any> | null;
-  projectReportTitle: Record<string, any> | null;
-  feedback: Record<string, any> | null;
-  feedbackFields: Record<string, any> | null;
-  title: Record<string, any> | null;
-  sharedDriveLink: Record<string, any> | null;
-  createdByFirstName: Record<string, any> | null;
-  createdByLastName: Record<string, any> | null;
-  approvedByFirstName: Record<string, any> | null;
-  approvedByLastName: Record<string, any> | null;
-  numTreesRegenerating: Record<string, any> | null;
-  regenerationDescription: Record<string, any> | null;
-  invasiveSpeciesRemoved: Record<string, any> | null;
-  invasiveSpeciesManagement: Record<string, any> | null;
-  siteCommunityPartnersDescription: Record<string, any> | null;
-  siteCommunityPartnersIncomeIncreaseDescription: Record<string, any> | null;
-  soilWaterRestorationDescription: Record<string, any> | null;
-  waterStructures: Record<string, any> | null;
-  disturbanceDetails: Record<string, any> | null;
-  paidOtherActivityDescription: Record<string, any> | null;
-  polygonStatus: Record<string, any> | null;
-  totalNonTreeSpeciesPlantedCount: Record<string, any>;
-  totalTreeReplantingCount: Record<string, any>;
-  totalTreesPlantedCount: Record<string, any>;
-  totalSeedsPlantedCount: Record<string, any>;
-  survivalCalculation: Record<string, any>;
-  survivalDescription: Record<string, any>;
-  maintenanceActivities: Record<string, any>;
-  technicalNarrative: Record<string, any>;
-  publicNarrative: Record<string, any>;
-  pctSurvivalToDate: Record<string, any>;
+  nothingToReport: boolean | null;
+  projectReportTitle: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  title: string | null;
+  sharedDriveLink: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  approvedByFirstName: string | null;
+  approvedByLastName: string | null;
+  numTreesRegenerating: number | null;
+  regenerationDescription: string | null;
+  invasiveSpeciesRemoved: string | null;
+  invasiveSpeciesManagement: string | null;
+  siteCommunityPartnersDescription: string | null;
+  siteCommunityPartnersIncomeIncreaseDescription: string | null;
+  soilWaterRestorationDescription: string | null;
+  waterStructures: string | null;
+  disturbanceDetails: string | null;
+  paidOtherActivityDescription: string | null;
+  polygonStatus: string | null;
+  totalNonTreeSpeciesPlantedCount: number | null;
+  totalTreeReplantingCount: number | null;
+  totalTreesPlantedCount: number | null;
+  totalSeedsPlantedCount: number | null;
+  survivalCalculation: string | null;
+  survivalDescription: string | null;
+  maintenanceActivities: string | null;
+  technicalNarrative: string | null;
+  publicNarrative: string | null;
+  pctSurvivalToDate: number | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
@@ -925,7 +989,7 @@ export type ProjectUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
-  feedback: Record<string, any> | null;
+  feedback: string | null;
   /**
    * The fields in the entity form that need attention from the PD
    */
@@ -953,7 +1017,7 @@ export type SiteUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
-  feedback: Record<string, any> | null;
+  feedback: string | null;
   /**
    * The fields in the entity form that need attention from the PD
    */
@@ -977,7 +1041,7 @@ export type EntityUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
-  feedback: Record<string, any> | null;
+  feedback: string | null;
   /**
    * The fields in the entity form that need attention from the PD
    */
@@ -1001,7 +1065,7 @@ export type ReportUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
-  feedback: Record<string, any> | null;
+  feedback: string | null;
   /**
    * The fields in the entity form that need attention from the PD
    */
@@ -1180,11 +1244,11 @@ export type SeedingDto = {
    */
   entityUuid: string;
   uuid: string;
-  name?: Record<string, any>;
-  amount?: Record<string, any>;
-  taxonId?: Record<string, any>;
-  weightOfSample?: Record<string, any>;
-  seedsInSample?: Record<string, any>;
+  name: string | null;
+  amount: number | null;
+  taxonId: string | null;
+  weightOfSample: number | null;
+  seedsInSample: number | null;
 };
 
 export type TreeSpeciesDto = {
@@ -1197,10 +1261,10 @@ export type TreeSpeciesDto = {
    */
   entityUuid: string;
   uuid: string;
-  name?: Record<string, any>;
-  amount?: Record<string, any>;
-  taxonId?: Record<string, any>;
-  collection?: Record<string, any>;
+  name: string | null;
+  amount: number | null;
+  taxonId: string | null;
+  collection: string | null;
 };
 
 export type DisturbanceDto = {
@@ -1212,11 +1276,11 @@ export type DisturbanceDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
-  collection: Record<string, any> | null;
-  type: Record<string, any> | null;
-  intensity: Record<string, any> | null;
-  extent: Record<string, any> | null;
-  description: Record<string, any> | null;
+  collection: string | null;
+  type: string | null;
+  intensity: string | null;
+  extent: string | null;
+  description: string | null;
 };
 
 export type InvasiveDto = {
@@ -1228,8 +1292,8 @@ export type InvasiveDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
-  type: Record<string, any> | null;
-  name: Record<string, any> | null;
+  type: string | null;
+  name: string | null;
 };
 
 export type StrataDto = {
@@ -1241,6 +1305,14 @@ export type StrataDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
+  /**
+   * The associated nursery name
+   */
+  description: string | null;
+  /**
+   * The associated nursery name
+   */
+  extent: number | null;
 };
 
 export type PlantingCountDto = {

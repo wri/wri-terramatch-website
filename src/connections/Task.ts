@@ -133,7 +133,7 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
         ],
         (tasks, fetchFailure, taskIsUpdating, taskUpdateFailure) => {
           const taskResponse = tasks[props.uuid ?? ""];
-          if (taskResponse == null) return { fetchFailure };
+          if (taskResponse == null) return { fetchFailure, taskIsUpdating: false };
 
           const projectReportUuid = taskResponse?.relationships?.["projectReport"]?.[0]?.id;
           const siteReportUuids = (taskResponse?.relationships?.["siteReports"] ?? []).map(({ id }) => id!);
