@@ -230,7 +230,7 @@ export const getFormEntries = (
                             }
                             return "";
                           })
-                          .filter(link => link !== "")
+                          .filter((link: any) => link !== "")
                           .join(", ");
                       }
                       return "";
