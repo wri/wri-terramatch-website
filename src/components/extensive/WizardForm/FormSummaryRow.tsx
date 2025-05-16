@@ -202,7 +202,7 @@ export const getFormEntries = (
           .map(section => {
             const data = formatted[section.key as keyof typeof formatted];
             const columns = columnMaps[section.key as keyof typeof columnMaps];
-            if (!data || data?.length === 0) return "";
+            if (!Array.isArray(data) || !data || data?.length === 0) return "";
 
             const filteredRows = data?.filter((row: Record<string, any>) => {
               if (!columns) return null;
