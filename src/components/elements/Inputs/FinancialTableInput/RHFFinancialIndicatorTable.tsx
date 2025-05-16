@@ -1,4 +1,3 @@
-import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import exifr from "exifr";
 import { isEmpty } from "lodash";
@@ -10,12 +9,14 @@ import { twMerge } from "tailwind-merge";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { useNotificationContext } from "@/context/notification.provider";
 import {
   useDeleteV2FilesUUID,
   usePatchV2FinancialIndicators,
   usePostV2FileUploadMODELCOLLECTIONUUID
 } from "@/generated/apiComponents";
 import { OptionValue, UploadedFile } from "@/types/common";
+import { getErrorMessages } from "@/utils/errors";
 import Log from "@/utils/log";
 
 import Text from "../../Text/Text";
@@ -23,6 +24,7 @@ import { DataTableProps } from "../DataTable/DataTable";
 import Dropdown from "../Dropdown/Dropdown";
 import FileInput from "../FileInput/FileInput";
 import Input from "../Input/Input";
+import InputWrapper from "../InputElements/InputWrapper";
 import TextArea from "../textArea/TextArea";
 import FinancialTableInput from "./FinancialTableInput";
 
@@ -34,26 +36,6 @@ export interface RHFFinancialIndicatorsDataTableProps
   years?: Array<number>;
   formSubmissionOrg?: any;
 }
-
-export const getFinancialIndicatorsColumns = (
-  t: typeof useT | Function = (t: string) => t
-): AccessorKeyColumnDef<any>[] => [
-  { accessorKey: "amount", header: t("Amount") },
-  { accessorKey: "year", header: t("Year") },
-  {
-    accessorKey: "documentation",
-    header: t("Document"),
-    cell: props => {
-      const doc = props.getValue() as { file_name: string; full_url: string };
-      return (
-        <a href={doc?.full_url} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-          {doc?.file_name}
-        </a>
-      );
-    }
-  },
-  { accessorKey: "description", header: t("Description") }
-];
 
 type HandleChangePayload = {
   value: string | number | null | File[];
@@ -120,7 +102,7 @@ export function formatFinancialData(
     documentationData: {}
   };
 
-  rawData.forEach((item: any) => {
+  rawData?.forEach((item: any) => {
     const { year, collection } = item;
 
     if (profitCollections.includes(collection)) {
@@ -144,11 +126,11 @@ export function formatFinancialData(
     profitAnalysisData: years?.map((year, index) => {
       const row = groupedData.profitAnalysisData[year] ?? {};
       return {
-        uuid: row.revenue?.uuid || row.expenses?.uuid || row.profit?.uuid || index,
+        uuid: row.revenue?.uuid ?? row.expenses?.uuid ?? row.profit?.uuid ?? index,
         year,
-        revenue: row.revenue?.amount,
-        expenses: row.expenses?.amount,
-        profit: formatCurrency(row.profit?.amount),
+        revenue: row.revenue?.amount ?? 0,
+        expenses: row.expenses?.amount ?? 0,
+        profit: formatCurrency(row.profit?.amount) ?? 0,
         revenueUuid: row.revenue?.uuid,
         expensesUuid: row.expenses?.uuid,
         profitUuid: row.profit?.uuid
@@ -157,20 +139,20 @@ export function formatFinancialData(
     nonProfitAnalysisData: years?.map((year, index) => {
       const row = groupedData.nonProfitAnalysisData[year] ?? {};
       return {
-        uuid: row.budget?.uuid || index,
+        uuid: row.budget?.uuid ?? index,
         year,
-        budget: row.budget?.amount,
+        budget: row.budget?.amount ?? 0,
         budgetUuid: row.budget?.uuid
       };
     }),
     currentRatioData: years?.map((year, index) => {
       const row = groupedData.currentRatioData[year] ?? {};
       return {
-        uuid: row["current-assets"]?.uuid || row["current-liabilities"]?.uuid || row["current-ratio"]?.uuid || index,
+        uuid: row["current-assets"]?.uuid ?? row["current-liabilities"]?.uuid ?? row["current-ratio"]?.uuid ?? index,
         year,
-        currentAssets: row["current-assets"]?.amount,
-        currentLiabilities: row["current-liabilities"]?.amount,
-        currentRatio: formatCurrency(row["current-ratio"]?.amount),
+        currentAssets: row["current-assets"]?.amount ?? 0,
+        currentLiabilities: row["current-liabilities"]?.amount ?? 0,
+        currentRatio: formatCurrency(row["current-ratio"]?.amount) ?? 0,
         currentAssetsUuid: row["current-assets"]?.uuid,
         currentLiabilitiesUuid: row["current-liabilities"]?.uuid,
         currentRatioUuid: row["current-ratio"]?.uuid
@@ -179,7 +161,7 @@ export function formatFinancialData(
     documentationData: years?.map((year, index) => {
       const row = groupedData.documentationData[year] ?? {};
       return {
-        uuid: row?.uuid,
+        uuid: row?.uuid ?? index,
         year,
         documentation: row.documentation,
         description: row.description ?? ""
@@ -215,8 +197,10 @@ const RHFFinancialIndicatorsDataTable = ({
   const [files, setFiles] = useState<Partial<UploadedFile>[]>();
   const { years, formSubmissionOrg } = props;
   const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency);
-  const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>("");
+  const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month);
   const [resetTable, setResetTable] = useState(0);
+  const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
+  const { openNotification } = useNotificationContext();
   const initialForProfitAnalysisData = years?.map((item, index) => ({
     uuid: null,
     year: item,
@@ -271,7 +255,33 @@ const RHFFinancialIndicatorsDataTable = ({
     onSuccess(data, variables) {
       //@ts-ignore
       addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-      setResetTable(prev => prev + 1);
+    },
+    onError(err, variables: any) {
+      const file = variables.file;
+      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
+
+      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+        const error = err?.errors[0];
+        const formError = getErrorMessages(t, error.code, { ...error.variables, label: "Financial Indicator files" });
+        errorMessage = formError.message;
+      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
+        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+      }
+      openNotification("error", t("Error uploading file"), t(errorMessage));
+
+      addFileToValue({
+        collection_name: variables.pathParams.collection,
+        size: file?.size,
+        file_name: file?.name,
+        title: file?.name,
+        mime_type: file?.type,
+        rawFile: file,
+        uploadState: {
+          isLoading: false,
+          isSuccess: false,
+          error: errorMessage
+        }
+      });
     }
   });
 
@@ -291,8 +301,6 @@ const RHFFinancialIndicatorsDataTable = ({
       field.onChange(_tmp);
     }
   });
-
-  const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
 
   const addFileToValue = (file: Partial<UploadedFile>) => {
     setFiles(value => {
@@ -453,29 +461,51 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = forProfitColumnMap[columnOrderIndex];
+        const [tempValue, setTempValue] = useState(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [forProfitAnalysisData?.[row.index]?.[columnKey]]);
         return (
-          <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
-            <div className="flex items-center gap-2">
-              {currencyInputValue}
-              <Input
-                type="number"
-                variant="secondary"
-                className="border-none !p-0"
-                name={`row-${row.index}-${columnKey}`}
-                value={forProfitAnalysisData?.[row.index]?.[columnKey]}
-                onChange={e => {
-                  handleChange(
-                    { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setForProfitAnalysisData,
-                    forProfitColumnMap,
-                    currencyInput,
-                    selectCurrency
-                  );
-                }}
-              />
+          <InputWrapper
+            error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+          >
+            <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
+              <div className="flex items-center gap-2">
+                {currencyInputValue}
+                <Input
+                  type="number"
+                  variant="secondary"
+                  className="border-none !p-0"
+                  name={`row-${row.index}-${columnKey}`}
+                  value={tempValue}
+                  onChange={e => {
+                    setTempValue(e.target.value);
+                    if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                      props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                      return;
+                    }
+                    props.formHook?.clearErrors(props.name);
+                  }}
+                  onBlur={() => {
+                    handleChange(
+                      {
+                        value: Number(tempValue),
+                        row: row.index,
+                        cell: columnOrderIndex
+                      },
+                      setForProfitAnalysisData,
+                      forProfitColumnMap,
+                      currencyInput,
+                      selectCurrency
+                    );
+                  }}
+                />
+              </div>
+              <span className="text-13">{selectCurrency}</span>
             </div>
-            <span className="text-13">{selectCurrency}</span>
-          </div>
+          </InputWrapper>
         );
       }
     },
@@ -487,29 +517,50 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = forProfitColumnMap[columnOrderIndex];
+
+        const [tempValue, setTempValue] = useState(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [forProfitAnalysisData?.[row.index]?.[columnKey]]);
+
         return (
-          <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
-            <div className="flex items-center gap-2">
-              {currencyInputValue}
-              <Input
-                type="number"
-                variant="secondary"
-                className="border-none !p-0"
-                name={`row-${row.index}-${columnKey}`}
-                value={forProfitAnalysisData?.[row.index]?.[columnKey]}
-                onChange={e => {
-                  handleChange(
-                    { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setForProfitAnalysisData,
-                    forProfitColumnMap,
-                    currencyInput,
-                    selectCurrency
-                  );
-                }}
-              />
+          <InputWrapper
+            error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+          >
+            <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
+              <div className="flex items-center gap-2">
+                {currencyInputValue}
+                <Input
+                  type="number"
+                  variant="secondary"
+                  required
+                  className="border-none !p-0"
+                  name={`row-${row.index}-${columnKey}`}
+                  value={tempValue}
+                  onChange={e => {
+                    setTempValue(e.target.value);
+                    if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                      props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                      return;
+                    }
+                    props.formHook?.clearErrors(props.name);
+                  }}
+                  onBlur={() => {
+                    handleChange(
+                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
+                      setForProfitAnalysisData,
+                      forProfitColumnMap,
+                      currencyInput,
+                      selectCurrency
+                    );
+                  }}
+                />
+              </div>
+              <span className="text-13">{selectCurrency}</span>
             </div>
-            <span className="text-13">{selectCurrency}</span>
-          </div>
+          </InputWrapper>
         );
       }
     },
@@ -523,6 +574,7 @@ const RHFFinancialIndicatorsDataTable = ({
       cell: ({ row }: { row: any }) => <Text variant="text-14-semibold">{row.original.profit}</Text>
     }
   ];
+
   const nonProfitAnalysisColumns = [
     {
       header: "Year",
@@ -540,33 +592,54 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = nonProfitColumnMap[columnOrderIndex];
+
+        const [tempValue, setTempValue] = useState(nonProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(nonProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [nonProfitAnalysisData?.[row.index]?.[columnKey]]);
+
         return (
-          <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
-            <div className="flex items-center gap-2">
-              {currencyInputValue}
-              <Input
-                type="number"
-                variant="secondary"
-                className="border-none !p-0"
-                name={`row-${row.index}-${columnKey}`}
-                value={nonProfitAnalysisData?.[row.index]?.[columnKey]}
-                onChange={e => {
-                  handleChange(
-                    { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setNonProfitAnalysisData,
-                    nonProfitColumnMap,
-                    currencyInput,
-                    selectCurrency
-                  );
-                }}
-              />
+          <InputWrapper
+            error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+          >
+            <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
+              <div className="flex items-center gap-2">
+                {currencyInputValue}
+                <Input
+                  type="number"
+                  variant="secondary"
+                  className="border-none !p-0"
+                  name={`row-${row.index}-${columnKey}`}
+                  value={tempValue}
+                  onChange={e => {
+                    setTempValue(e.target.value);
+                    if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                      props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                      return;
+                    }
+                    props.formHook?.clearErrors(props.name);
+                  }}
+                  onBlur={() => {
+                    handleChange(
+                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
+                      setNonProfitAnalysisData,
+                      nonProfitColumnMap,
+                      currencyInput,
+                      selectCurrency
+                    );
+                  }}
+                />
+              </div>
+              <span className="text-13">{selectCurrency}</span>
             </div>
-            <span className="text-13">{selectCurrency}</span>
-          </div>
+          </InputWrapper>
         );
       }
     }
   ];
+
   const currentRadioColumns = [
     {
       header: "Year",
@@ -584,29 +657,49 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = currentColumnMap[columnOrderIndex];
+
+        const [tempValue, setTempValue] = useState(currentRadioData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(currentRadioData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [currentRadioData?.[row.index]?.[columnKey]]);
+
         return (
-          <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
-            <div className="flex items-center gap-2">
-              {currencyInputValue}
-              <Input
-                type="number"
-                variant="secondary"
-                className="border-none !p-0"
-                name={`row-${row.index}-${columnKey}`}
-                value={currentRadioData?.[row.index]?.[columnKey]}
-                onChange={e => {
-                  handleChange(
-                    { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setCurrentRadioData,
-                    currentColumnMap,
-                    currencyInput,
-                    selectCurrency
-                  );
-                }}
-              />
+          <InputWrapper
+            error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+          >
+            <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
+              <div className="flex items-center gap-2">
+                {currencyInputValue}
+                <Input
+                  type="number"
+                  variant="secondary"
+                  className="border-none !p-0"
+                  name={`row-${row.index}-${columnKey}`}
+                  value={tempValue}
+                  onChange={e => {
+                    setTempValue(e.target.value);
+                    if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                      props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                      return;
+                    }
+                    props.formHook?.clearErrors(props.name);
+                  }}
+                  onBlur={() => {
+                    handleChange(
+                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
+                      setCurrentRadioData,
+                      currentColumnMap,
+                      currencyInput,
+                      selectCurrency
+                    );
+                  }}
+                />
+              </div>
+              <span className="text-13">{selectCurrency}</span>
             </div>
-            <span className="text-13">{selectCurrency}</span>
-          </div>
+          </InputWrapper>
         );
       }
     },
@@ -618,29 +711,50 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = currentColumnMap[columnOrderIndex];
+
+        const [tempValue, setTempValue] = useState(currentRadioData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(currentRadioData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [currentRadioData?.[row.index]?.[columnKey]]);
+
         return (
-          <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
-            <div className="flex items-center gap-2">
-              {currencyInputValue}
-              <Input
-                type="number"
-                variant="secondary"
-                className="border-none !p-0"
-                name={`row-${row.index}-${columnKey}`}
-                value={currentRadioData?.[row.index]?.[columnKey]}
-                onChange={e => {
-                  handleChange(
-                    { value: Number(e.target.value), row: row.index, cell: columnOrderIndex },
-                    setCurrentRadioData,
-                    currentColumnMap,
-                    currencyInput,
-                    selectCurrency
-                  );
-                }}
-              />
+          <InputWrapper
+            error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+          >
+            <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
+              <div className="flex items-center gap-2">
+                {currencyInputValue}
+                <Input
+                  required
+                  type="number"
+                  variant="secondary"
+                  className="border-none !p-0"
+                  name={`row-${row.index}-${columnKey}`}
+                  value={tempValue}
+                  onChange={e => {
+                    setTempValue(e.target.value);
+                    if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                      props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                      return;
+                    }
+                    props.formHook?.clearErrors(props.name);
+                  }}
+                  onBlur={() => {
+                    handleChange(
+                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
+                      setCurrentRadioData,
+                      currentColumnMap,
+                      currencyInput,
+                      selectCurrency
+                    );
+                  }}
+                />
+              </div>
+              <span className="text-13">{selectCurrency}</span>
             </div>
-            <span className="text-13">{selectCurrency}</span>
-          </div>
+          </InputWrapper>
         );
       }
     },
@@ -686,6 +800,7 @@ const RHFFinancialIndicatorsDataTable = ({
 
         return (
           <FileInput
+            key={rowIndex}
             files={files}
             onDelete={file =>
               handleDeleteFile(file, {
@@ -708,20 +823,26 @@ const RHFFinancialIndicatorsDataTable = ({
         const visibleCells = row.getVisibleCells();
         const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
         const columnKey = documentationColumnMap[columnOrderIndex];
+
+        const [tempValue, setTempValue] = useState(documentationData?.[row.index]?.[columnKey] ?? "");
+
+        useEffect(() => {
+          setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [documentationData?.[row.index]?.[columnKey]]);
         return (
           <TextArea
             name={`row-${row.index}-${columnKey}`}
             className="h-fit min-h-min hover:border-primary hover:shadow-input"
             placeholder="Add description here"
             rows={2}
-            value={documentationData?.[row.index]?.[columnKey]}
-            onChange={e => {
+            value={tempValue}
+            onChange={e => setTempValue(e.target.value)}
+            onBlur={() => {
               handleChange(
-                { value: e.target.value, row: row.index, cell: columnOrderIndex },
+                { value: tempValue, row: row.index, cell: columnOrderIndex },
                 setDocumentationData,
-                documentationColumnMap,
-                currencyInput,
-                selectCurrency
+                documentationColumnMap
               );
             }}
           />
@@ -761,7 +882,9 @@ const RHFFinancialIndicatorsDataTable = ({
       }
     };
 
-    sendRequest();
+    if (!props?.formHook?.formState?.errors?.[props.name]) {
+      sendRequest();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     forProfitAnalysisData,
@@ -771,7 +894,8 @@ const RHFFinancialIndicatorsDataTable = ({
     selectCurrency,
     selectFinancialMonth,
     formSubmissionOrg?.uuid,
-    formSubmissionOrg?.type
+    formSubmissionOrg?.type,
+    files
   ]);
 
   return (
@@ -789,14 +913,16 @@ const RHFFinancialIndicatorsDataTable = ({
             options={getCurrencyOptions(t)}
             label="Local Currency"
             placeholder="USD - US Dollar"
-            value={formSubmissionOrg?.currency ? [formSubmissionOrg?.currency] : [selectCurrency]}
+            value={[selectCurrency]}
+            defaultValue={formSubmissionOrg?.currency ? [formSubmissionOrg?.currency] : [selectCurrency]}
             onChange={e => setSelectCurrency(e?.[0])}
           />
           <Dropdown
             options={getMonthOptions(t)}
             label="Financial Year Start Month"
             placeholder="Select Month"
-            value={formSubmissionOrg?.start_month ? [formSubmissionOrg?.start_month] : [selectFinancialMonth]}
+            value={[selectFinancialMonth]}
+            defaultValue={formSubmissionOrg?.start_month ? [formSubmissionOrg?.start_month] : [selectFinancialMonth]}
             onChange={e => setSelectFinancialMonth(e?.[0])}
           />
         </div>

@@ -155,12 +155,32 @@ export const getFormEntries = (
       case FieldType.FinancialTableInput: {
         const entries = values[f.name];
         const years = f.fieldProps.years;
-        const columnMaps = {
+        const columnMaps: Record<string, string[]> = {
           profitAnalysisData: ["year", "revenue", "expenses", "profit"],
           nonProfitAnalysisData: ["year", "budget"],
           currentRatioData: ["year", "currentAssets", "currentLiabilities", "currentRatio"],
           documentationData: ["year", "documentation", "description"]
         };
+
+        const profitCollections = ["revenue", "expenses", "profit"];
+        const nonProfitCollections = ["budget"];
+        const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
+
+        const presentCollections = new Set(entries?.map((entry: any) => entry.collection));
+
+        const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
+
+        if (!isGroupPresent(profitCollections)) {
+          delete columnMaps.profitAnalysisData;
+        }
+
+        if (!isGroupPresent(nonProfitCollections)) {
+          delete columnMaps.nonProfitAnalysisData;
+        }
+
+        if (!isGroupPresent(ratioCollections)) {
+          delete columnMaps.currentRatioData;
+        }
 
         const formatted = formatFinancialData(entries, years, "", "");
         const sections = [
@@ -185,6 +205,7 @@ export const getFormEntries = (
             if (!data || data?.length === 0) return "";
 
             const filteredRows = data?.filter((row: Record<string, any>) => {
+              if (!columns) return null;
               const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
               return valuesToCheck.some(val => !isEmptyValue(val));
             });
