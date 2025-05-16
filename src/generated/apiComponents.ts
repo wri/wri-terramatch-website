@@ -12503,37 +12503,6 @@ export const useGetV2ProjectsUUIDNurseries = <TData = GetV2ProjectsUUIDNurseries
   );
 };
 
-export type PutV2TasksUUIDSubmitPathParams = {
-  uuid: string;
-};
-
-export type PutV2TasksUUIDSubmitError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2TasksUUIDSubmitVariables = {
-  pathParams: PutV2TasksUUIDSubmitPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2TasksUUIDSubmit = (variables: PutV2TasksUUIDSubmitVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PutV2TasksUUIDSubmitError, undefined, {}, {}, PutV2TasksUUIDSubmitPathParams>({
-    url: "/v2/tasks/{uuid}/submit",
-    method: "put",
-    ...variables,
-    signal
-  });
-
-export const usePutV2TasksUUIDSubmit = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PutV2TasksUUIDSubmitError, PutV2TasksUUIDSubmitVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PutV2TasksUUIDSubmitError, PutV2TasksUUIDSubmitVariables>(
-    (variables: PutV2TasksUUIDSubmitVariables) => fetchPutV2TasksUUIDSubmit({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2ENTITYUUIDPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
