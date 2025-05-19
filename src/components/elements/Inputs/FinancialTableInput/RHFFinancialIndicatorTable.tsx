@@ -1,3 +1,4 @@
+import { Cell, Row } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import exifr from "exifr";
 import { isEmpty } from "lodash";
@@ -26,6 +27,20 @@ import Input from "../Input/Input";
 import InputWrapper from "../InputElements/InputWrapper";
 import TextArea from "../textArea/TextArea";
 import FinancialTableInput from "./FinancialTableInput";
+import {
+  currentRatioColumnsMap,
+  CurrentRatioData,
+  documentationColumnsMap,
+  FinancialRow,
+  formatFinancialData,
+  ForProfitAnalysisData,
+  HandleChangePayload,
+  nonProfitAnalysisColumnsMap,
+  NonProfitAnalysisData,
+  orgSubmission,
+  profitAnalysisColumnsMap,
+  useDebouncedChange
+} from "./types";
 
 export interface RHFFinancialIndicatorsDataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
@@ -34,14 +49,8 @@ export interface RHFFinancialIndicatorsDataTableProps
   formHook?: UseFormReturn;
   years?: Array<number>;
   model?: string;
-  formSubmissionOrg?: any;
+  formSubmissionOrg?: orgSubmission;
 }
-
-type HandleChangePayload = {
-  value: string | number | null | File[];
-  row: number;
-  cell: number;
-};
 
 const handleChange = (
   payload: HandleChangePayload,
@@ -79,104 +88,6 @@ const handleChange = (
   });
 };
 
-export function formatFinancialData(
-  rawData: any,
-  years: number[] | undefined,
-  selectCurrency: OptionValue | any,
-  currencyInput: string
-) {
-  const profitCollections = ["revenue", "expenses", "profit"];
-  const nonProfitCollections = ["budget"];
-  const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
-  const documentationCollections = ["description-documents"];
-
-  const groupedData: {
-    profitAnalysisData: Record<number, any>;
-    nonProfitAnalysisData: Record<number, any>;
-    currentRatioData: Record<number, any>;
-    documentationData: Record<number, any>;
-  } = {
-    profitAnalysisData: {},
-    nonProfitAnalysisData: {},
-    currentRatioData: {},
-    documentationData: {}
-  };
-
-  rawData?.forEach((item: any) => {
-    const { year, collection } = item;
-
-    if (profitCollections.includes(collection)) {
-      if (!groupedData.profitAnalysisData[year]) groupedData.profitAnalysisData[year] = {};
-      groupedData.profitAnalysisData[year][collection] = item;
-    } else if (nonProfitCollections.includes(collection)) {
-      if (!groupedData.nonProfitAnalysisData[year]) groupedData.nonProfitAnalysisData[year] = {};
-      groupedData.nonProfitAnalysisData[year][collection] = item;
-    } else if (ratioCollections.includes(collection)) {
-      if (!groupedData.currentRatioData[year]) groupedData.currentRatioData[year] = {};
-      groupedData.currentRatioData[year][collection] = item;
-    } else if (documentationCollections.includes(collection)) {
-      groupedData.documentationData[year] = { ...item };
-    }
-  });
-
-  const formatCurrency = (value: number) =>
-    value ? `${currencyInput?.[selectCurrency] ?? ""} ${Number(value).toLocaleString()}` : undefined;
-
-  const finalData = {
-    profitAnalysisData: years?.map((year, index) => {
-      const row = groupedData.profitAnalysisData[year] ?? {};
-      return {
-        uuid: row.revenue?.uuid ?? row.expenses?.uuid ?? row.profit?.uuid ?? index,
-        year,
-        revenue: row.revenue?.amount ?? 0,
-        expenses: row.expenses?.amount ?? 0,
-        profit: formatCurrency(row.profit?.amount) ?? 0,
-        revenueUuid: row.revenue?.uuid,
-        expensesUuid: row.expenses?.uuid,
-        profitUuid: row.profit?.uuid
-      };
-    }),
-    nonProfitAnalysisData: years?.map((year, index) => {
-      const row = groupedData.nonProfitAnalysisData[year] ?? {};
-      return {
-        uuid: row.budget?.uuid ?? index,
-        year,
-        budget: row.budget?.amount ?? 0,
-        budgetUuid: row.budget?.uuid
-      };
-    }),
-    currentRatioData: years?.map((year, index) => {
-      const row = groupedData.currentRatioData[year] ?? {};
-      return {
-        uuid: row["current-assets"]?.uuid ?? row["current-liabilities"]?.uuid ?? row["current-ratio"]?.uuid ?? index,
-        year,
-        currentAssets: row["current-assets"]?.amount ?? 0,
-        currentLiabilities: row["current-liabilities"]?.amount ?? 0,
-        currentRatio: formatCurrency(row["current-ratio"]?.amount) ?? 0,
-        currentAssetsUuid: row["current-assets"]?.uuid,
-        currentLiabilitiesUuid: row["current-liabilities"]?.uuid,
-        currentRatioUuid: row["current-ratio"]?.uuid
-      };
-    }),
-    documentationData: years?.map((year, index) => {
-      const row = groupedData.documentationData[year] ?? {};
-      return {
-        uuid: row?.uuid ?? index,
-        year,
-        documentation: row.documentation,
-        description: row.description ?? ""
-      };
-    })
-  };
-
-  return finalData;
-}
-
-const forProfitColumnMap = ["year", "revenue", "expenses", "profit"];
-const nonProfitColumnMap = ["year", "budget"];
-const currentColumnMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-const documentationColumnMap = ["year", "documentation", "description"];
-
 const currencyInput = {
   USD: "$",
   EUR: "€",
@@ -196,8 +107,8 @@ const RHFFinancialIndicatorsDataTable = ({
   const value = field?.value || [];
   const [files, setFiles] = useState<Partial<UploadedFile>[]>();
   const { years, formSubmissionOrg, model } = props;
-  const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency);
-  const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month);
+  const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency ?? "");
+  const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month ?? "");
   const [resetTable, setResetTable] = useState(0);
   const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
   const { openNotification } = useNotificationContext();
@@ -210,14 +121,14 @@ const RHFFinancialIndicatorsDataTable = ({
     revenueUuid: null,
     expensesUuid: null,
     profitUuid: null
-  })) as any[];
+  })) as ForProfitAnalysisData[];
 
   const initialNonProfitAnalysisData = years?.map((item, index) => ({
     uuid: null,
     year: item,
     budget: 0,
     budgetUuid: null
-  })) as any[];
+  })) as NonProfitAnalysisData[];
 
   const initialCurrentRadioData = years?.map((item, index) => ({
     uuid: null,
@@ -228,7 +139,7 @@ const RHFFinancialIndicatorsDataTable = ({
     currentAssetsUuid: null,
     currentLiabilitiesUuid: null,
     currentRatioUuid: null
-  })) as any[];
+  })) as CurrentRatioData[];
 
   const initialDocumentationData = years?.map((item, index) => ({
     uuid: null,
@@ -255,6 +166,7 @@ const RHFFinancialIndicatorsDataTable = ({
     onSuccess(data, variables) {
       //@ts-ignore
       addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+      onChangeCapture?.();
     },
     onError(err, variables: any) {
       const file = variables.file;
@@ -295,7 +207,7 @@ const RHFFinancialIndicatorsDataTable = ({
   });
 
   const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
-    onSuccess(data: any) {
+    onSuccess(data) {
       // @ts-ignore
       const _tmp = data ?? [];
       field.onChange(_tmp);
@@ -457,16 +369,29 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Revenue",
       accessorKey: "revenue",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = forProfitColumnMap[columnOrderIndex];
-        const [tempValue, setTempValue] = useState(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = profitAnalysisColumnsMap[columnOrderIndex];
+        const [tempValue, setTempValue] = useState(
+          (forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? ""
+        );
 
-        useEffect(() => {
-          setTempValue(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [forProfitAnalysisData?.[row.index]?.[columnKey]]);
+        useDebouncedChange({
+          value: tempValue,
+          onDebouncedChange: value => {
+            handleChange(
+              { value: Number(value), row: row.index, cell: columnOrderIndex },
+              setForProfitAnalysisData,
+              profitAnalysisColumnsMap,
+              currencyInput,
+              selectCurrency
+            );
+          }
+        });
+
         return (
           <InputWrapper
             error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
@@ -488,19 +413,6 @@ const RHFFinancialIndicatorsDataTable = ({
                     }
                     props.formHook?.clearErrors(props.name);
                   }}
-                  onBlur={() => {
-                    handleChange(
-                      {
-                        value: Number(tempValue),
-                        row: row.index,
-                        cell: columnOrderIndex
-                      },
-                      setForProfitAnalysisData,
-                      forProfitColumnMap,
-                      currencyInput,
-                      selectCurrency
-                    );
-                  }}
                 />
               </div>
               <span className="text-13">{selectCurrency}</span>
@@ -513,17 +425,29 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Expenses",
       accessorKey: "expenses",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = forProfitColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = profitAnalysisColumnsMap[columnOrderIndex];
 
-        const [tempValue, setTempValue] = useState(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+        const [tempValue, setTempValue] = useState(
+          (forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? ""
+        );
 
-        useEffect(() => {
-          setTempValue(forProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [forProfitAnalysisData?.[row.index]?.[columnKey]]);
+        useDebouncedChange({
+          value: tempValue,
+          onDebouncedChange: value => {
+            handleChange(
+              { value: Number(value), row: row.index, cell: columnOrderIndex },
+              setForProfitAnalysisData,
+              profitAnalysisColumnsMap,
+              currencyInput,
+              selectCurrency
+            );
+          }
+        });
 
         return (
           <InputWrapper
@@ -547,15 +471,6 @@ const RHFFinancialIndicatorsDataTable = ({
                     }
                     props.formHook?.clearErrors(props.name);
                   }}
-                  onBlur={() => {
-                    handleChange(
-                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
-                      setForProfitAnalysisData,
-                      forProfitColumnMap,
-                      currencyInput,
-                      selectCurrency
-                    );
-                  }}
                 />
               </div>
               <span className="text-13">{selectCurrency}</span>
@@ -571,7 +486,9 @@ const RHFFinancialIndicatorsDataTable = ({
       meta: {
         width: "22.5%"
       },
-      cell: ({ row }: { row: any }) => <Text variant="text-14-semibold">{row.original.profit}</Text>
+      cell: ({ row }: { row: { original: { profit: string | number } } }) => (
+        <Text variant="text-14-semibold">{row.original.profit}</Text>
+      )
     }
   ];
 
@@ -588,17 +505,29 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Budget",
       accessorKey: "budget",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = nonProfitColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = nonProfitAnalysisColumnsMap[columnOrderIndex];
 
-        const [tempValue, setTempValue] = useState(nonProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
+        const [tempValue, setTempValue] = useState(
+          (nonProfitAnalysisData?.[row.index] as NonProfitAnalysisData)?.[columnKey] ?? ""
+        );
 
-        useEffect(() => {
-          setTempValue(nonProfitAnalysisData?.[row.index]?.[columnKey] ?? "");
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [nonProfitAnalysisData?.[row.index]?.[columnKey]]);
+        useDebouncedChange({
+          value: tempValue,
+          onDebouncedChange: value => {
+            handleChange(
+              { value: Number(value), row: row.index, cell: columnOrderIndex },
+              setNonProfitAnalysisData,
+              nonProfitAnalysisColumnsMap,
+              currencyInput,
+              selectCurrency
+            );
+          }
+        });
 
         return (
           <InputWrapper
@@ -620,15 +549,6 @@ const RHFFinancialIndicatorsDataTable = ({
                       return;
                     }
                     props.formHook?.clearErrors(props.name);
-                  }}
-                  onBlur={() => {
-                    handleChange(
-                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
-                      setNonProfitAnalysisData,
-                      nonProfitColumnMap,
-                      currencyInput,
-                      selectCurrency
-                    );
                   }}
                 />
               </div>
@@ -653,17 +573,29 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Assets",
       accessorKey: "currentAssets",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = currentColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = currentRatioColumnsMap[columnOrderIndex];
 
-        const [tempValue, setTempValue] = useState(currentRadioData?.[row.index]?.[columnKey] ?? "");
+        const [tempValue, setTempValue] = useState(
+          (currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? ""
+        );
 
-        useEffect(() => {
-          setTempValue(currentRadioData?.[row.index]?.[columnKey] ?? "");
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [currentRadioData?.[row.index]?.[columnKey]]);
+        useDebouncedChange({
+          value: tempValue,
+          onDebouncedChange: value => {
+            handleChange(
+              { value: Number(value), row: row.index, cell: columnOrderIndex },
+              setCurrentRadioData,
+              currentRatioColumnsMap,
+              currencyInput,
+              selectCurrency
+            );
+          }
+        });
 
         return (
           <InputWrapper
@@ -686,15 +618,6 @@ const RHFFinancialIndicatorsDataTable = ({
                     }
                     props.formHook?.clearErrors(props.name);
                   }}
-                  onBlur={() => {
-                    handleChange(
-                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
-                      setCurrentRadioData,
-                      currentColumnMap,
-                      currencyInput,
-                      selectCurrency
-                    );
-                  }}
                 />
               </div>
               <span className="text-13">{selectCurrency}</span>
@@ -707,17 +630,29 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Liabilities",
       accessorKey: "currentLiabilities",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = currentColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = currentRatioColumnsMap[columnOrderIndex];
 
-        const [tempValue, setTempValue] = useState(currentRadioData?.[row.index]?.[columnKey] ?? "");
+        const [tempValue, setTempValue] = useState(
+          (currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? ""
+        );
 
-        useEffect(() => {
-          setTempValue(currentRadioData?.[row.index]?.[columnKey] ?? "");
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [currentRadioData?.[row.index]?.[columnKey]]);
+        useDebouncedChange({
+          value: tempValue,
+          onDebouncedChange: value => {
+            handleChange(
+              { value: Number(value), row: row.index, cell: columnOrderIndex },
+              setCurrentRadioData,
+              currentRatioColumnsMap,
+              currencyInput,
+              selectCurrency
+            );
+          }
+        });
 
         return (
           <InputWrapper
@@ -741,15 +676,6 @@ const RHFFinancialIndicatorsDataTable = ({
                     }
                     props.formHook?.clearErrors(props.name);
                   }}
-                  onBlur={() => {
-                    handleChange(
-                      { value: Number(tempValue), row: row.index, cell: columnOrderIndex },
-                      setCurrentRadioData,
-                      currentColumnMap,
-                      currencyInput,
-                      selectCurrency
-                    );
-                  }}
                 />
               </div>
               <span className="text-13">{selectCurrency}</span>
@@ -765,7 +691,9 @@ const RHFFinancialIndicatorsDataTable = ({
       meta: {
         width: "22.5%"
       },
-      cell: ({ row }: { row: any }) => <Text variant="text-14-semibold">{row.original.currentRatio}</Text>
+      cell: ({ row }: { row: { original: { currentRatio: string | number } } }) => (
+        <Text variant="text-14-semibold">{row.original.currentRatio}</Text>
+      )
     }
   ];
 
@@ -779,13 +707,16 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Financial Documents",
       accessorKey: "documentation",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = documentationColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = documentationColumnsMap[columnOrderIndex];
         const rowIndex = row.index;
 
         const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
+
         const handleSelectFile = async (file: File) => {
           await onSelectFile(file, {
             uuid: row.id
@@ -801,7 +732,7 @@ const RHFFinancialIndicatorsDataTable = ({
         return (
           <FileInput
             key={rowIndex}
-            files={files}
+            files={files as Partial<UploadedFile>[]}
             onDelete={file =>
               handleDeleteFile(file, {
                 collection: "documentation",
@@ -819,17 +750,42 @@ const RHFFinancialIndicatorsDataTable = ({
       header: "Description",
       accessorKey: "description",
       enableSorting: false,
-      cell: ({ cell, row }: { cell: any; row: any }) => {
+      cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
         const visibleCells = row.getVisibleCells();
-        const columnOrderIndex = visibleCells.findIndex((c: any) => c.column.id === cell.column.id);
-        const columnKey = documentationColumnMap[columnOrderIndex];
+        const columnOrderIndex = visibleCells.findIndex(
+          (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
+        );
+        const columnKey = documentationColumnsMap[columnOrderIndex];
 
         const [tempValue, setTempValue] = useState(documentationData?.[row.index]?.[columnKey] ?? "");
 
+        const hasFocus = useRef(false);
+
         useEffect(() => {
-          setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
+          if (!hasFocus.current) {
+            setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
+          }
           // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [documentationData?.[row.index]?.[columnKey]]);
+        }, [documentationData, row.index, columnKey]);
+
+        const handleFocus = () => {
+          hasFocus.current = true;
+        };
+
+        const handleBlur = () => {
+          hasFocus.current = false;
+          const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
+          if (tempValue !== previousValue) {
+            handleChange(
+              { value: tempValue, row: row.index, cell: columnOrderIndex },
+              setDocumentationData,
+              documentationColumnsMap
+            );
+            props.formHook?.reset(props.formHook?.getValues());
+            onChangeCapture?.();
+          }
+        };
+
         return (
           <TextArea
             name={`row-${row.index}-${columnKey}`}
@@ -837,14 +793,9 @@ const RHFFinancialIndicatorsDataTable = ({
             placeholder="Add description here"
             rows={2}
             value={tempValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={e => setTempValue(e.target.value)}
-            onBlur={() => {
-              handleChange(
-                { value: tempValue, row: row.index, cell: columnOrderIndex },
-                setDocumentationData,
-                documentationColumnMap
-              );
-            }}
           />
         );
       }
@@ -853,7 +804,7 @@ const RHFFinancialIndicatorsDataTable = ({
 
   useEffect(() => {
     setResetTable(prev => prev + 1);
-  }, [selectCurrency, files]);
+  }, [selectCurrency]);
 
   const isRequestInProgress = useRef(false);
   const lastSentData = useRef<any>(null);
@@ -886,6 +837,12 @@ const RHFFinancialIndicatorsDataTable = ({
 
     if (!props?.formHook?.formState?.errors?.[props.name] && formSubmissionOrg?.uuid) {
       sendRequest();
+      if (selectCurrency === formSubmissionOrg?.currency) {
+        setSelectCurrency(formSubmissionOrg?.currency ?? "");
+      }
+      if (selectFinancialMonth === formSubmissionOrg?.start_month) {
+        setSelectFinancialMonth(formSubmissionOrg?.start_month as number);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -900,21 +857,19 @@ const RHFFinancialIndicatorsDataTable = ({
     files
   ]);
 
-  useEffect(() => {
-    const formatted = formatFinancialData(value, years, selectCurrency, currencyInput);
+  const initialized = useRef(false);
 
-    setForProfitAnalysisData(
-      !isEmpty(formatted.profitAnalysisData) ? formatted.profitAnalysisData : initialForProfitAnalysisData
-    );
-    setNonProfitAnalysisData(
-      !isEmpty(formatted.nonProfitAnalysisData) ? formatted.nonProfitAnalysisData : initialNonProfitAnalysisData
-    );
-    setCurrentRadioData(!isEmpty(formatted.currentRatioData) ? formatted.currentRatioData : initialCurrentRadioData);
-    setDocumentationData(
-      !isEmpty(formatted.documentationData) ? formatted.documentationData : initialDocumentationData
-    );
+  useEffect(() => {
+    if (!initialized.current && !isEmpty(value)) {
+      const formatted = formatFinancialData(value, years, selectCurrency, currencyInput);
+      setForProfitAnalysisData(formatted.profitAnalysisData ?? initialForProfitAnalysisData);
+      setNonProfitAnalysisData(formatted.nonProfitAnalysisData ?? initialNonProfitAnalysisData);
+      setCurrentRadioData(formatted.currentRatioData ?? initialCurrentRadioData);
+      setDocumentationData(formatted.documentationData ?? initialDocumentationData);
+      initialized.current = true;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, years, selectCurrency]);
+  }, [value]);
 
   return (
     <>
@@ -962,7 +917,7 @@ const RHFFinancialIndicatorsDataTable = ({
           />
         </div>
       </When>
-      <When condition={model?.includes("current-radio")}>
+      <When condition={model?.includes("current-ratio")}>
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}

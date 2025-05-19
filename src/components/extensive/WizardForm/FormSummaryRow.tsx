@@ -13,7 +13,13 @@ import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTab
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
-import { formatFinancialData } from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
+import {
+  currentRatioColumnsMap,
+  documentationColumnsMap,
+  formatFinancialData,
+  nonProfitAnalysisColumnsMap,
+  profitAnalysisColumnsMap
+} from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
@@ -158,10 +164,10 @@ export const getFormEntries = (
         const years = f.fieldProps.years;
         const collections = f.fieldProps.model;
         const columnMaps: Record<string, string[]> = {
-          profitAnalysisData: ["year", "revenue", "expenses", "profit"],
-          nonProfitAnalysisData: ["year", "budget"],
-          currentRatioData: ["year", "currentAssets", "currentLiabilities", "currentRatio"],
-          documentationData: ["year", "documentation", "description"]
+          profitAnalysisData: profitAnalysisColumnsMap,
+          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
+          currentRatioData: currentRatioColumnsMap,
+          documentationData: documentationColumnsMap
         };
 
         const profitCollections = ["revenue", "expenses", "profit"];
@@ -202,7 +208,6 @@ export const getFormEntries = (
           return false;
         };
         const value = sections
-
           .map(section => {
             const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
             const columns = columnMaps[section.key as keyof typeof columnMaps];
