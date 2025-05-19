@@ -83,6 +83,8 @@ const RequestMoreInformationPage = () => {
           }}
           title={submission?.form?.title}
           roundedCorners
+          //@ts-ignore
+          formSubmissionOrg={submission?.organisation_attributes}
         />
       </LoadingContainer>
     </BackgroundLayout>

@@ -65,7 +65,7 @@ export const nonProfitAnalysisColumnsMap = ["year", "budget"];
 export const currentRatioColumnsMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
 export const documentationColumnsMap = ["year", "documentation", "description"];
 
-export function useDebouncedChange<T>({ value, delay = 300, onDebouncedChange }: UseDebouncedChangeProps<T>) {
+export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }: UseDebouncedChangeProps<T>) {
   const debouncedFn = useMemo(() => debounce(onDebouncedChange, delay), [onDebouncedChange, delay]);
 
   useEffect(() => {

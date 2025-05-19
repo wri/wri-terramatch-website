@@ -166,6 +166,7 @@ const RHFFinancialIndicatorsDataTable = ({
     onSuccess(data, variables) {
       //@ts-ignore
       addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+      onChangeCapture?.();
     },
     onError(err, variables: any) {
       const file = variables.file;
@@ -758,16 +759,32 @@ const RHFFinancialIndicatorsDataTable = ({
 
         const [tempValue, setTempValue] = useState(documentationData?.[row.index]?.[columnKey] ?? "");
 
-        useDebouncedChange({
-          value: tempValue,
-          onDebouncedChange: value => {
+        const hasFocus = useRef(false);
+
+        useEffect(() => {
+          if (!hasFocus.current) {
+            setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
+          }
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [documentationData, row.index, columnKey]);
+
+        const handleFocus = () => {
+          hasFocus.current = true;
+        };
+
+        const handleBlur = () => {
+          hasFocus.current = false;
+          const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
+          if (tempValue !== previousValue) {
             handleChange(
-              { value: value, row: row.index, cell: columnOrderIndex },
+              { value: tempValue, row: row.index, cell: columnOrderIndex },
               setDocumentationData,
               documentationColumnsMap
             );
+            props.formHook?.reset(props.formHook?.getValues());
+            onChangeCapture?.();
           }
-        });
+        };
 
         return (
           <TextArea
@@ -776,6 +793,8 @@ const RHFFinancialIndicatorsDataTable = ({
             placeholder="Add description here"
             rows={2}
             value={tempValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={e => setTempValue(e.target.value)}
           />
         );
@@ -785,7 +804,7 @@ const RHFFinancialIndicatorsDataTable = ({
 
   useEffect(() => {
     setResetTable(prev => prev + 1);
-  }, [selectCurrency, files]);
+  }, [selectCurrency]);
 
   const isRequestInProgress = useRef(false);
   const lastSentData = useRef<any>(null);
