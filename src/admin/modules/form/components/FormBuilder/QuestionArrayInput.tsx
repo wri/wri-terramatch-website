@@ -133,7 +133,7 @@ export const QuestionArrayInput = ({
                     choices={[
                       { id: "profit", name: "Net Profit" },
                       { id: "budget", name: "Budget" },
-                      { id: "current-radio", name: "Ratio" }
+                      { id: "current-ratio", name: "Ratio" }
                     ]}
                     fullWidth
                     validate={required()}
