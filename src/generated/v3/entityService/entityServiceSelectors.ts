@@ -1,6 +1,10 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
+  ProjectPitchIndexQueryParams,
+  ProjectPitchIndexVariables,
+  ProjectPitchGetPathParams,
+  ProjectPitchGetVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -11,6 +15,7 @@ import {
   EntityUpdatePathParams,
   EntityUpdateVariables,
   EntityAssociationIndexPathParams,
+  EntityAssociationIndexQueryParams,
   EntityAssociationIndexVariables,
   TreeScientificNamesSearchQueryParams,
   TreeScientificNamesSearchVariables,
@@ -19,6 +24,40 @@ import {
   TreeReportCountsFindPathParams,
   TreeReportCountsFindVariables
 } from "./entityServiceComponents";
+
+export const projectPitchIndexIsFetching = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
+  isFetchingSelector<ProjectPitchIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches",
+    method: "get",
+    ...variables
+  });
+
+export const projectPitchIndexFetchFailed = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
+  fetchFailedSelector<ProjectPitchIndexQueryParams, {}>({
+    url: "/entities/v3/projectPitches",
+    method: "get",
+    ...variables
+  });
+
+export const projectPitchIndexIndexMeta = (
+  resource: ResourceType,
+  variables: Omit<ProjectPitchIndexVariables, "body">
+) =>
+  indexMetaSelector<ProjectPitchIndexQueryParams, {}>({ url: "/entities/v3/projectPitches", resource, ...variables });
+
+export const projectPitchGetIsFetching = (variables: Omit<ProjectPitchGetVariables, "body">) =>
+  isFetchingSelector<{}, ProjectPitchGetPathParams>({
+    url: "/entities/v3/projectPitches/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariables, "body">) =>
+  fetchFailedSelector<{}, ProjectPitchGetPathParams>({
+    url: "/entities/v3/projectPitches/{uuid}",
+    method: "get",
+    ...variables
+  });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({
@@ -76,14 +115,14 @@ export const entityUpdateFetchFailed = (variables: Omit<EntityUpdateVariables, "
   });
 
 export const entityAssociationIndexIsFetching = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  isFetchingSelector<{}, EntityAssociationIndexPathParams>({
+  isFetchingSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
   });
 
 export const entityAssociationIndexFetchFailed = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
-  fetchFailedSelector<{}, EntityAssociationIndexPathParams>({
+  fetchFailedSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     method: "get",
     ...variables
@@ -93,7 +132,7 @@ export const entityAssociationIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<EntityAssociationIndexVariables, "body">
 ) =>
-  indexMetaSelector<{}, EntityAssociationIndexPathParams>({
+  indexMetaSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
     url: "/entities/v3/{entity}/{uuid}/{association}",
     resource,
     ...variables

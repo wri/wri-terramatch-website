@@ -3,6 +3,102 @@
  *
  * @version 1.0
  */
+export type ProjectPitchDto = {
+  uuid: string;
+  capacityBuildingNeeds?: string[];
+  totalTrees?: number;
+  totalHectares?: number;
+  restorationInterventionTypes?: string[];
+  landUseTypes?: string[];
+  restorationStrategy?: string[];
+  projectCountyDistrict?: string;
+  projectCountry?: string;
+  projectObjectives?: string;
+  projectName?: string;
+  organisationId?: string;
+  fundingProgrammeId?: string;
+  projectBudget?: number;
+  howDiscovered?: string[];
+  status: string;
+  /**
+   * @format date-time
+   */
+  expectedActiveRestorationStartDate?: string;
+  /**
+   * @format date-time
+   */
+  expectedActiveRestorationEndDate?: string;
+  descriptionOfProjectTimeline?: string;
+  projPartnerInfo?: string;
+  landTenureProjArea?: string[];
+  landholderCommEngage?: string;
+  projSuccessRisks?: string;
+  monitorEvalPlan?: string;
+  projBoundary?: string;
+  sustainableDevGoals?: string[];
+  projAreaDescription?: string;
+  environmentalGoals?: string;
+  proposedNumSites?: number;
+  proposedNumNurseries?: number;
+  currLandDegradation?: string;
+  mainDegradationCauses?: string;
+  seedlingsSource?: string;
+  projImpactSocieconom?: string;
+  projImpactFoodsec?: string;
+  projImpactWatersec?: string;
+  projImpactJobtypes?: string;
+  numJobsCreated?: number;
+  pctEmployeesMen?: number;
+  pctEmployeesWomen?: number;
+  pctEmployees18To35?: number;
+  pctEmployeesOlder35?: number;
+  projBeneficiaries?: number;
+  pctBeneficiariesWomen?: number;
+  pctBeneficiariesSmall?: number;
+  pctBeneficiariesLarge?: number;
+  pctBeneficiariesYouth?: number;
+  mainCausesOfDegradation?: string;
+  states?: string[];
+  hectaresFirstYr?: number;
+  totalTreesFirstYr?: number;
+  pctBeneficiariesBackwardClass?: number;
+  landSystems?: string[];
+  treeRestorationPractices?: string[];
+  detailedInterventionTypes?: string[];
+  monitoringEvaluationPlan?: string;
+  pctBeneficiariesScheduledClasses?: number;
+  pctBeneficiariesScheduledTribes?: number;
+  theoryOfChange?: string;
+  proposedGovPartners?: string;
+  pctSchTribe?: string;
+  sustainabilityPlan?: string;
+  replicationPlan?: string;
+  replicationChallenges?: string;
+  solutionMarketSize?: string;
+  affordabilityOfSolution?: string;
+  growthTrendsBusiness?: string;
+  limitationsOnScope?: string;
+  businessModelReplicationPlan?: string;
+  biodiversityImpact?: string;
+  waterSource?: string;
+  climateResilience?: string;
+  soilHealth?: string;
+  pctEmployeesMarginalised?: number;
+  pctBeneficiariesMarginalised?: number;
+  pctBeneficiariesMen?: number;
+  baselineBiodiversity?: string;
+  goalTreesRestoredPlanting?: number;
+  goalTreesRestoredAnr?: number;
+  goalTreesRestoredDirectSeeding?: number;
+  directSeedingSurvivalRate?: number;
+  /**
+   * @format date-time
+   */
+  createdAt?: string;
+};
+
+export type FilterItem = {};
+
 export type ANRDto = {
   /**
    * Site name
@@ -18,6 +114,14 @@ export type ProjectApplicationDto = {
 };
 
 export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
   uuid: string;
   collectionName: string;
   url: string;
@@ -36,6 +140,7 @@ export type MediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  createdByUserName: string | null;
 };
 
 export type EntitySideload = {
@@ -52,6 +157,7 @@ export type EntitySideload = {
     | "demographics"
     | "seedings"
     | "treeSpecies"
+    | "media"
     | "disturbances"
     | "invasives"
     | "stratas";
@@ -229,7 +335,6 @@ export type ProjectReportLightDto = {
    * @format date-time
    */
   dueAt: string;
-  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -395,7 +500,12 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
+  cohort: string | null;
   continent: string | null;
+  /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**
@@ -639,7 +749,6 @@ export type ProjectReportFullDto = {
    * @format date-time
    */
   dueAt: string;
-  workdaysPaid: number;
   /**
    * @format date-time
    */
@@ -689,6 +798,7 @@ export type ProjectReportFullDto = {
   seasonalSmallholderFarmers: number | null;
   seasonalTotal: number | null;
   volunteerSmallholderFarmers: number | null;
+  taskTotalWorkdays: number;
   plantedTrees: number | null;
   sharedDriveLink: string | null;
   beneficiariesDescription: string | null;
@@ -707,7 +817,6 @@ export type ProjectReportFullDto = {
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
-  readableCompletionStatus: string;
   createdBy: number | null;
   createdByUser: Record<string, any> | null;
   media: MediaDto[];

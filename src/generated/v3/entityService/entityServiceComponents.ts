@@ -7,6 +7,186 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
+export type ProjectPitchIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  filter?: Schemas.FilterItem;
+};
+
+export type ProjectPitchIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectPitchIndexResponse = {
+  meta?: {
+    /**
+     * @example projectPitches
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example projectPitches
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPitchDto;
+  }[];
+};
+
+export type ProjectPitchIndexVariables = {
+  queryParams?: ProjectPitchIndexQueryParams;
+};
+
+export const projectPitchIndex = (variables: ProjectPitchIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProjectPitchIndexResponse,
+    ProjectPitchIndexError,
+    undefined,
+    {},
+    ProjectPitchIndexQueryParams,
+    {}
+  >({ url: "/entities/v3/projectPitches", method: "get", ...variables, signal });
+
+export type ProjectPitchGetPathParams = {
+  /**
+   * Entity UUID for association
+   */
+  uuid: string;
+};
+
+export type ProjectPitchGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ProjectPitchGetResponse = {
+  meta?: {
+    /**
+     * @example projectPitches
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPitches
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPitchDto;
+  };
+};
+
+export type ProjectPitchGetVariables = {
+  pathParams: ProjectPitchGetPathParams;
+};
+
+export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<ProjectPitchGetResponse, ProjectPitchGetError, undefined, {}, {}, ProjectPitchGetPathParams>({
+    url: "/entities/v3/projectPitches/{uuid}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -662,7 +842,61 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "disturbances" | "invasives" | "stratas";
+  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
+};
+
+export type EntityAssociationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
+  country?: string;
+  status?: string;
+  updateRequestStatus?: string;
+  projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
+  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
+  modelType?: string;
+  /**
+   * @default false
+   */
+  isGeotagged?: boolean;
+  fileType?: string;
+  /**
+   * @default false
+   */
+  isPublic?: boolean;
+  /**
+   * @default false
+   */
+  isPrivate?: boolean;
+  /**
+   * @default false
+   */
+  isCover?: boolean;
 };
 
 export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
@@ -696,6 +930,7 @@ export type EntityAssociationIndexError = Fetcher.ErrorWrapper<
 
 export type EntityAssociationIndexVariables = {
   pathParams: EntityAssociationIndexPathParams;
+  queryParams?: EntityAssociationIndexQueryParams;
 };
 
 export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
@@ -760,6 +995,25 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
     | {
         meta?: {
           /**
+           * @example media
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example media
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.MediaDto;
+        }[];
+      }
+    | {
+        meta?: {
+          /**
            * @example disturbances
            */
           resourceType?: string;
@@ -817,7 +1071,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
     EntityAssociationIndexError,
     undefined,
     {},
-    {},
+    EntityAssociationIndexQueryParams,
     EntityAssociationIndexPathParams
   >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
 
@@ -1004,6 +1258,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
+  projectPitches: { projectPitchIndex, projectPitchGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }

@@ -104,6 +104,12 @@ export const EntityEdit = () => {
               }}
               roundedCorners
               hideSaveAndCloseButton
+              formSubmissionOrg={{
+                uuid: entityValue?.data?.organisation?.uuid,
+                type: entityValue?.data?.organisation?.type,
+                currency: entityValue?.data?.organisation?.currency,
+                start_month: entityValue?.data?.organisation?.fin_start_month
+              }}
             />
           </EntityProvider>
         </FrameworkProvider>

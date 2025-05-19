@@ -13,6 +13,13 @@ import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTab
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import {
+  currentRatioColumnsMap,
+  documentationColumnsMap,
+  formatFinancialData,
+  nonProfitAnalysisColumnsMap,
+  profitAnalysisColumnsMap
+} from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
@@ -148,6 +155,115 @@ export const getFormEntries = (
             />
           )
         });
+        break;
+      }
+
+      case FieldType.FinancialTableInput: {
+        const entries = values[f.name];
+        if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
+        const years = f.fieldProps.years;
+        const collections = f.fieldProps.model;
+        const columnMaps: Record<string, string[]> = {
+          profitAnalysisData: profitAnalysisColumnsMap,
+          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
+          currentRatioData: currentRatioColumnsMap,
+          documentationData: documentationColumnsMap
+        };
+
+        const profitCollections = ["revenue", "expenses", "profit"];
+        const nonProfitCollections = ["budget"];
+        const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
+
+        const presentCollections = new Set(entries?.map((entry: any) => entry.collection));
+        const selectedCollections = new Set(JSON.parse(collections || "[]"));
+
+        const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
+        const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
+
+        if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
+          delete columnMaps.profitAnalysisData;
+        }
+
+        if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
+          delete columnMaps.nonProfitAnalysisData;
+        }
+
+        if (!isGroupPresent(ratioCollections) || !isCollectionPresent(ratioCollections)) {
+          delete columnMaps.currentRatioData;
+        }
+
+        const formatted = formatFinancialData(entries, years, "", "");
+        const sections = [
+          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
+          { title: t("Current Ratio"), key: "currentRatioData" },
+          { title: t("Documentation"), key: "documentationData" }
+        ];
+
+        const isEmptyValue = (val: any) => {
+          if (val === undefined || val === null) return true;
+          if (typeof val === "string") {
+            return val.trim() === "" || val?.trim() === "-";
+          }
+          return false;
+        };
+        const value = sections
+          .map(section => {
+            const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
+            const columns = columnMaps[section.key as keyof typeof columnMaps];
+            if (!Array.isArray(data) || !data || data?.length === 0) return "";
+
+            const filteredRows = data?.filter((row: Record<string, any>) => {
+              if (!columns) return null;
+              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+              return valuesToCheck.some(val => !isEmptyValue(val));
+            });
+
+            if (filteredRows.length === 0) return "";
+
+            const rowsHtml = filteredRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  if (col === "documentation") {
+                    if (Array.isArray(row[col]) && row[col].length > 0) {
+                      return row[col]
+                        .map((document: any) => {
+                          if (document.url) {
+                            return `<a href="${
+                              document.url
+                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                              document.file_name ?? ""
+                            }</a>`;
+                          }
+                          return "";
+                        })
+                        .filter((link: any) => link !== "")
+                        .join(", ");
+                    }
+                    return "";
+                  }
+
+                  if (col === "year") {
+                    return isEmptyValue(row[col]) ? "-" : String(row[col]);
+                  }
+                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                });
+                return cellValues.join(", ");
+              })
+              .join("<br/>");
+
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+          })
+          .filter(Boolean)
+          .join("");
+
+        const output = {
+          title: f.label,
+          type: f.type,
+          value: value || t("Answer Not Provided")
+        };
+
+        outputArr.push(output);
         break;
       }
 
