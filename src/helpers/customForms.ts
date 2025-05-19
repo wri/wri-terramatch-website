@@ -408,6 +408,20 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "financialIndicators": {
+      return {
+        ...sharedProps,
+        type: FieldType.FinancialTableInput,
+
+        fieldProps: {
+          required,
+          addButtonCaption: question.add_button_text,
+          years: question?.years,
+          model: question?.collection!
+        }
+      };
+    }
+
     case "stratas": {
       return {
         ...sharedProps,
@@ -692,6 +706,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "checkboxes":
     case "dataTable":
     case "leaderships":
+    case "financialIndicators":
     case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":

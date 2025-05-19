@@ -32,25 +32,25 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h3">
           Objectives
         </Typography>
-        <TextField source="project_objectives" label="Objectives" emptyText="Not Provided" />
-        <SelectField source="project_country" label="Country" choices={countryChoices} emptyText="Not Provided" />
-        <TextField source="project_county_district" label="County/District" emptyText="Not Provided" />
-        <NumberField source="project_budget" label="Project Budget (USD)" emptyText="Not Provided" />
+        <TextField source="projectObjectives" label="Objectives" emptyText="Not Provided" />
+        <SelectField source="projectCountry" label="Country" choices={countryChoices} emptyText="Not Provided" />
+        <TextField source="projectCountyDistrict" label="County/District" emptyText="Not Provided" />
+        <NumberField source="projectBudget" label="Project Budget (USD)" emptyText="Not Provided" />
         <FileField
-          source="detailed_project_budget.url"
-          title="detailed_project_budget.file_name"
+          source="detailedProjectBudget.url"
+          title="detailedProjectBudget.fileName"
           label="Detailed Project Budget"
           target="_blank"
           download
           emptyText="Not Provided"
         />
         <NumberField
-          source="total_hectares"
+          source="totalHectares"
           label="Proposed number of hectares to be restored (ha)"
           emptyText="Not Provided"
         />
-        <NumberField source="total_trees" label="Proposed number of trees to be grown" emptyText="Not Provided" />
-        <NumberField source="num_jobs_created" label="Total expected new jobs" emptyText="Not Provided" />
+        <NumberField source="totalTrees" label="Proposed number of trees to be grown" emptyText="Not Provided" />
+        <NumberField source="numJobsCreated" label="Total expected new jobs" emptyText="Not Provided" />
       </SimpleShowLayout>
       <Divider />
 
@@ -58,8 +58,8 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h3">
           Proposed Project Area
         </Typography>
-        <MapField source="proj_boundary" />
-        <TextField source="proj_area_description" label="Description of Project Area" emptyText="Not Provided" />
+        <MapField source="projBoundary" />
+        <TextField source="projAreaDescription" label="Description of Project Area" emptyText="Not Provided" />
       </SimpleShowLayout>
       <Divider />
 
@@ -68,19 +68,19 @@ export const PitchShow = () => {
           Timeline
         </Typography>
         <DateField
-          source="expected_active_restoration_start_date"
+          source="expectedActiveRestorationStartDate"
           label="Start Date"
           emptyText="Not Provided"
           locales="en-GB"
         />
         <DateField
-          source="expected_active_restoration_end_date"
+          source="expectedActiveRestorationEndDate"
           label="End Date"
           emptyText="Not Provided"
           locales="en-GB"
         />
         <TextField
-          source="description_of_project_timeline"
+          source="descriptionOfProjectTimeline"
           label="Key stages of this project’s implementation"
           emptyText="Not Provided"
         />
@@ -93,13 +93,13 @@ export const PitchShow = () => {
         </Typography>
         <SimpleChipFieldArray
           label="Land Tenure"
-          source="land_tenure_proj_area"
+          source="landTenureProjArea"
           choices={optionToChoices(getLandTenureOptions())}
         />
-        <FileArrayField source="proof_of_land_tenure_mou" label="Documentation on project area’s land tenure." />
+        <FileArrayField source="proofOfLandTenureMou" label="Documentation on project area’s land tenure." />
 
         <TextField
-          source="landholder_comm_engage"
+          source="landholderCommEngage"
           label="Landholder & Community Engagement Strategy"
           emptyText="Not Provided"
         />
@@ -110,12 +110,12 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h3">
           More Information
         </Typography>
-        <TextField source="proj_partner_info" label="Proposed project partner information" emptyText="Not Provided" />
-        <TextField source="proj_success_risks" label="Risk + Mitigate strategy" emptyText="Not Provided" />
-        <TextField source="monitor_eval_plan" label="Report, Monitor, Verification Strategy" emptyText="Not Provided" />
+        <TextField source="projPartnerInfo" label="Proposed project partner information" emptyText="Not Provided" />
+        <TextField source="projSuccessRisks" label="Risk + Mitigate strategy" emptyText="Not Provided" />
+        <TextField source="monitorEvalPlan" label="Report, Monitor, Verification Strategy" emptyText="Not Provided" />
         <SimpleChipFieldArray
           label="Sustainable Development Goals"
-          source="sustainable_dev_goals"
+          source="sustainableDevGoals"
           choices={optionToChoices(sustainableDevelopmentGoalsOptions())}
           emptyText="Not Provided"
         />
@@ -124,7 +124,7 @@ export const PitchShow = () => {
 
         <SimpleChipFieldArray
           label="Capacity Building Needs"
-          source="capacity_building_needs"
+          source="capacityBuildingNeeds"
           choices={optionToChoices(getCapacityBuildingNeedOptions())}
           emptyText="Not Provided"
         />
@@ -137,25 +137,25 @@ export const PitchShow = () => {
         </Typography>
         <SimpleChipFieldArray
           label="Proposed Restoration Intervention Methods"
-          source="restoration_intervention_types"
+          source="restorationInterventionTypes"
           choices={optionToChoices(getRestorationInterventionTypeOptions())}
           emptyText="Not Provided"
         />
         <NumberField
-          source="total_hectares"
+          source="totalHectares"
           label="Proposed number of hectares to be restored"
           emptyText="Not Provided"
         />
-        <NumberField source="total_trees" label="Proposed number of trees to be grown" emptyText="Not Provided" />
-        <ArrayField source="tree_species" label="Proposed Tree Species" emptyText="Not Provided">
+        <NumberField source="totalTrees" label="Proposed number of trees to be grown" emptyText="Not Provided" />
+        <ArrayField source="treeSpecies" label="Proposed Tree Species" emptyText="Not Provided">
           <Datagrid bulkActionButtons={false}>
             <TextField label="Tree Species" source="name" />
             <NumberField label="Total" source="amount" />
           </Datagrid>
         </ArrayField>
-        <NumberField source="proposed_num_sites" label="Proposed number of sites" emptyText="Not Provided" />
+        <NumberField source="proposedNumSites" label="Proposed number of sites" emptyText="Not Provided" />
         <NumberField
-          source="proposed_num_nurseries"
+          source="proposedNumNurseries"
           label="Proposed number of nurseries expanded or created"
           emptyText="Not Provided"
         />
@@ -168,10 +168,10 @@ export const PitchShow = () => {
         </Typography>
         <TextField
           label="Main causes of degradation in the project area"
-          source="main_causes_of_degradation"
+          source="mainCausesOfDegradation"
           emptyText="Not Provided"
         />
-        <TextField label="Ecological benefits of the project" source="environmental_goals" emptyText="Not Provided" />
+        <TextField label="Ecological benefits of the project" source="environmentalGoals" emptyText="Not Provided" />
       </SimpleShowLayout>
       <Divider />
 
@@ -179,7 +179,7 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h3">
           Sources of tree seedlings for the project
         </Typography>
-        <TextField label="" source="seedlings_source" emptyText="Not Provided" />
+        <TextField label="" source="seedlingsSource" emptyText="Not Provided" />
       </SimpleShowLayout>
       <Divider />
 
@@ -190,44 +190,40 @@ export const PitchShow = () => {
         <Typography variant="h6" component="h4">
           New jobs breakdown
         </Typography>
-        <NumberField source="num_jobs_created" label="Total expected new jobs" emptyText="Not Provided" />
+        <NumberField source="numJobsCreated" label="Total expected new jobs" emptyText="Not Provided" />
+        <NumberField source="pctEmployeesMen" label="% of total employees that would be men" emptyText="Not Provided" />
         <NumberField
-          source="pct_employees_men"
-          label="% of total employees that would be men"
-          emptyText="Not Provided"
-        />
-        <NumberField
-          source="pct_employees_women"
+          source="pctEmployeesWomen"
           label="% of total employees that would be women"
           emptyText="Not Provided"
         />
         <NumberField
-          source="pct_employees_18to35"
+          source="pctEmployees18to35"
           label="% of total employees that would be between the ages of 18 and 35?"
           emptyText="Not Provided"
         />
         <NumberField
-          source="pct_employees_older35"
+          source="pctEmployeesOlder35"
           label="% of total employees that would be older than 35 years of age?"
           emptyText="Not Provided"
         />
         <Typography variant="h6" component="h4">
           Project beneficiaries breakdown
         </Typography>
-        <NumberField source="proj_beneficiaries" label="Project beneficiaries Total" emptyText="Not Provided" />
-        <NumberField source="pct_beneficiaries_women" label="% of female beneficiaries" emptyText="Not Provided" />
+        <NumberField source="projBeneficiaries" label="Project beneficiaries Total" emptyText="Not Provided" />
+        <NumberField source="pctBeneficiariesWomen" label="% of female beneficiaries" emptyText="Not Provided" />
         <NumberField
-          source="pct_beneficiaries_small"
+          source="pctBeneficiariesSmall"
           label="% of smallholder farmers beneficiaries"
           emptyText="Not Provided"
         />
         <NumberField
-          source="pct_beneficiaries_large"
+          source="pctBeneficiariesLarge"
           label="% of large-scale farmers beneficiaries"
           emptyText="Not Provided"
         />
         <NumberField
-          source="pct_beneficiaries_youth"
+          source="pctBeneficiariesYouth"
           label="% of beneficiaries younger than 36"
           emptyText="Not Provided"
         />
@@ -240,22 +236,22 @@ export const PitchShow = () => {
         </Typography>
         <TextField
           label="Land degradation impact on the livelihoods of the communities living in the project area"
-          source="curr_land_degradation"
+          source="currLandDegradation"
           emptyText="Not Provided"
         />
         <TextField
           label="How would the project impact local food security?"
-          source="proj_impact_foodsec"
+          source="projImpactFoodsec"
           emptyText="Not Provided"
         />
         <TextField
           label="How would the project impact local water security?"
-          source="proj_impact_watersec"
+          source="projImpactWatersec"
           emptyText="Not Provided"
         />
         <TextField
           label="What kind of new jobs would this project create?"
-          source="proj_impact_jobtypes"
+          source="projImpactJobtypes"
           emptyText="Not Provided"
         />
       </SimpleShowLayout>
