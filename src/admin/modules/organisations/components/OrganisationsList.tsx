@@ -16,7 +16,6 @@ import {
 
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import FundingProgrammesArrayField from "@/admin/components/Fields/FundingProgrammesArrayField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -99,7 +98,6 @@ const ApplicationDataGrid = () => {
         <TextField source="name" label="Organisation Name" />
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
         <TextField source="readable_status" label="Organisation Status" />
-        <FundingProgrammesArrayField label="Funding Programmes" />
         <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
           <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
         </Menu>

@@ -7,7 +7,7 @@ import type * as Fetcher from "./entityServiceFetcher";
 import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
-export type TaskIndexQueryParams = {
+export type ProjectPitchIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
    * @default ASC
@@ -25,29 +25,46 @@ export type TaskIndexQueryParams = {
    * The page number to return. If page[number] is not provided, the first page is returned.
    */
   ["page[number]"]?: number;
-  status?: string;
-  frameworkKey?: string;
-  projectUuid?: string;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  filter?: Schemas.FilterItem;
 };
 
-export type TaskIndexError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
+export type ProjectPitchIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
 
-export type TaskIndexResponse = {
+export type ProjectPitchIndexResponse = {
   meta?: {
     /**
-     * @example tasks
+     * @example projectPitches
      */
     resourceType?: string;
     indices?: {
@@ -77,46 +94,48 @@ export type TaskIndexResponse = {
   };
   data?: {
     /**
-     * @example tasks
+     * @example projectPitches
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.TaskLightDto;
+    attributes?: Schemas.ProjectPitchDto;
   }[];
 };
 
-export type TaskIndexVariables = {
-  queryParams?: TaskIndexQueryParams;
+export type ProjectPitchIndexVariables = {
+  queryParams?: ProjectPitchIndexQueryParams;
 };
 
-export const taskIndex = (variables: TaskIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskIndexResponse, TaskIndexError, undefined, {}, TaskIndexQueryParams, {}>({
-    url: "/entities/v3/tasks",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const projectPitchIndex = (variables: ProjectPitchIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProjectPitchIndexResponse,
+    ProjectPitchIndexError,
+    undefined,
+    {},
+    ProjectPitchIndexQueryParams,
+    {}
+  >({ url: "/entities/v3/projectPitches", method: "get", ...variables, signal });
 
-export type TaskGetPathParams = {
+export type ProjectPitchGetPathParams = {
   /**
-   * Task UUID for task to retrieve
+   * Entity UUID for association
    */
   uuid: string;
 };
 
-export type TaskGetError = Fetcher.ErrorWrapper<
+export type ProjectPitchGetError = Fetcher.ErrorWrapper<
   | {
-      status: 401;
+      status: 400;
       payload: {
         /**
-         * @example 401
+         * @example 400
          */
         statusCode: number;
         /**
-         * @example Unauthorized
+         * @example Bad Request
          */
         message: string;
       };
@@ -136,237 +155,34 @@ export type TaskGetError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type TaskGetResponse = {
+export type ProjectPitchGetResponse = {
   meta?: {
     /**
-     * @example tasks
+     * @example projectPitches
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example tasks
+     * @example projectPitches
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.TaskFullDto;
-    relationships?: {
-      projectReport?: {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      };
-      siteReports?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-      nurseryReports?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-    };
+    attributes?: Schemas.ProjectPitchDto;
   };
-  included?: (
-    | {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.ProjectReportLightDto;
-      }
-    | {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.SiteReportLightDto;
-      }
-    | {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.NurseryReportLightDto;
-      }
-  )[];
 };
 
-export type TaskGetVariables = {
-  pathParams: TaskGetPathParams;
+export type ProjectPitchGetVariables = {
+  pathParams: ProjectPitchGetPathParams;
 };
 
-export const taskGet = (variables: TaskGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskGetResponse, TaskGetError, undefined, {}, {}, TaskGetPathParams>({
-    url: "/entities/v3/tasks/{uuid}",
+export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<ProjectPitchGetResponse, ProjectPitchGetError, undefined, {}, {}, ProjectPitchGetPathParams>({
+    url: "/entities/v3/projectPitches/{uuid}",
     method: "get",
-    ...variables,
-    signal
-  });
-
-export type TaskUpdatePathParams = {
-  /**
-   * Task UUID for task to retrieve
-   */
-  uuid: string;
-};
-
-export type TaskUpdateError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type TaskUpdateResponse = {
-  meta?: {
-    /**
-     * @example tasks
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example tasks
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.TaskFullDto;
-    relationships?: {
-      projectReport?: {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      };
-      siteReports?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-      nurseryReports?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-    };
-  };
-  included?: (
-    | {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.ProjectReportLightDto;
-      }
-    | {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.SiteReportLightDto;
-      }
-    | {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.NurseryReportLightDto;
-      }
-  )[];
-};
-
-export type TaskUpdateVariables = {
-  body: Schemas.TaskUpdateBody;
-  pathParams: TaskUpdatePathParams;
-};
-
-export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskUpdateResponse, TaskUpdateError, Schemas.TaskUpdateBody, {}, {}, TaskUpdatePathParams>({
-    url: "/entities/v3/tasks/{uuid}",
-    method: "patch",
     ...variables,
     signal
   });
@@ -1442,7 +1258,7 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
 export const operationsByTag = {
-  tasks: { taskIndex, taskGet, taskUpdate },
+  projectPitches: { projectPitchIndex, projectPitchGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
