@@ -804,7 +804,7 @@ const RHFFinancialIndicatorsDataTable = ({
 
   useEffect(() => {
     setResetTable(prev => prev + 1);
-  }, [selectCurrency]);
+  }, [selectCurrency, files]);
 
   const isRequestInProgress = useRef(false);
   const lastSentData = useRef<any>(null);
