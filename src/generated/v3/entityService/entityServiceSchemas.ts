@@ -74,7 +74,7 @@ export type ProjectPitchDto = {
   sustainabilityPlan?: string;
   replicationPlan?: string;
   replicationChallenges?: string;
-  solutionMarketSite?: string;
+  solutionMarketSize?: string;
   affordabilityOfSolution?: string;
   growthTrendsBusiness?: string;
   limitationsOnScope?: string;
