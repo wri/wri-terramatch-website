@@ -242,6 +242,10 @@ export const getFormEntries = (
                     }
                     return "";
                   }
+
+                  if (col === "year") {
+                    return isEmptyValue(row[col]) ? "-" : String(row[col]);
+                  }
                   return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                 });
                 return cellValues.join(", ");
