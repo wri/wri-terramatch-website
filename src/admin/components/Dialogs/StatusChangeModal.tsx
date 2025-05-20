@@ -11,7 +11,7 @@ import {
 import { useT } from "@transifex/react";
 import { kebabCase } from "lodash";
 import { useMemo, useState } from "react";
-import { AutocompleteArrayInput, Form, usePrevious, useShowContext } from "react-admin";
+import { AutocompleteArrayInput, Form, useShowContext } from "react-admin";
 import { When } from "react-if";
 import * as yup from "yup";
 
@@ -26,6 +26,7 @@ import {
 } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
+import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -57,12 +58,9 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   );
   const [, { entityIsUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
-  const previousIsUpdating = usePrevious(entityIsUpdating);
-  if (previousIsUpdating && !entityIsUpdating) {
-    // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
-    // This will be a quick cache get in that case, instead of another server round trip.
-    refetch();
-  }
+  // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
+  // This will be a quick cache get in that case, instead of another server round trip.
+  useUpdateComplete(entityIsUpdating, refetch);
 
   const dialogTitle = (() => {
     let name;
