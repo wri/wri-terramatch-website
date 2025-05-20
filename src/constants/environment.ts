@@ -3,7 +3,14 @@ import Log from "@/utils/log";
 const ENVIRONMENT_NAMES = ["local", "dev", "test", "staging", "prod"] as const;
 type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 
-const SERVICES = ["apiBaseUrl", "userServiceUrl", "jobServiceUrl", "entityServiceUrl", "researchServiceUrl"] as const;
+const SERVICES = [
+  "apiBaseUrl",
+  "userServiceUrl",
+  "jobServiceUrl",
+  "entityServiceUrl",
+  "researchServiceUrl",
+  "dashboardServiceUrl"
+] as const;
 type Service = (typeof SERVICES)[number];
 
 type ServicesDefinition = {
@@ -41,7 +48,7 @@ const LOCAL_SERVICE_URLS = {
   jobServiceUrl: "http://localhost:4020",
   researchServiceUrl: "http://localhost:4030",
   entityServiceUrl: "http://localhost:4050",
-  dashboardServiceUrl: "http://localhost:4050"
+  dashboardServiceUrl: "http://localhost:4060"
 };
 
 const defaultServiceUrl = (env: EnvironmentName, service: Service) =>

@@ -7,7 +7,13 @@ import ApiSlice, {
   ResourceType
 } from "@/store/apiSlice";
 import Log from "@/utils/log";
-import { entityServiceUrl, jobServiceUrl, researchServiceUrl, userServiceUrl } from "@/constants/environment";
+import {
+  dashboardServiceUrl,
+  entityServiceUrl,
+  jobServiceUrl,
+  researchServiceUrl,
+  userServiceUrl
+} from "@/constants/environment";
 import { Dictionary } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { removeAccessToken } from "@/admin/apiProvider/utils/token";
@@ -27,7 +33,8 @@ const V3_NAMESPACES: Record<string, string> = {
   jobs: jobServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
-  users: userServiceUrl
+  users: userServiceUrl,
+  dashboard: dashboardServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
