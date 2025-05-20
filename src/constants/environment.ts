@@ -12,6 +12,7 @@ type ServicesDefinition = {
   jobServiceUrl: string;
   researchServiceUrl: string;
   entityServiceUrl: string;
+  dashboardServiceUrl: string;
 };
 
 type Environment = ServicesDefinition & {
@@ -39,7 +40,8 @@ const LOCAL_SERVICE_URLS = {
   userServiceUrl: "http://localhost:4010",
   jobServiceUrl: "http://localhost:4020",
   researchServiceUrl: "http://localhost:4030",
-  entityServiceUrl: "http://localhost:4050"
+  entityServiceUrl: "http://localhost:4050",
+  dashboardServiceUrl: "http://localhost:4050"
 };
 
 const defaultServiceUrl = (env: EnvironmentName, service: Service) =>
@@ -80,6 +82,7 @@ export const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAUL
 export const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
 export const researchServiceUrl = process.env.NEXT_PUBLIC_RESEARCH_SERVICE_URL ?? DEFAULTS.researchServiceUrl;
 export const entityServiceUrl = process.env.NEXT_PUBLIC_ENTITY_SERVICE_URL ?? DEFAULTS.entityServiceUrl;
+export const dashboardServiceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE_URL ?? DEFAULTS.dashboardServiceUrl;
 export const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? DEFAULTS.mapboxToken;
 export const geoserverUrl = process.env.NEXT_PUBLIC_GEOSERVER_URL ?? DEFAULTS.geoserverUrl;
 export const geoserverWorkspace = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE ?? DEFAULTS.geoserverWorkspace;
