@@ -22,7 +22,8 @@ import {
   StrataDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
-  TreeReportCountsDto
+  TreeReportCountsDto,
+  BoundingBoxDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -42,7 +43,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "stratas",
   "treeSpeciesScientificNames",
   "establishmentTrees",
-  "treeReportCounts"
+  "treeReportCounts",
+  "boundingBoxes"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -63,6 +65,7 @@ export type EntityServiceApiResources = {
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
 };
 
 export const SupportedEntities = {

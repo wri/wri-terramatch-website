@@ -1257,9 +1257,71 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
     TreeReportCountsFindPathParams
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type BoundingBoxGetQueryParams = {
+  /**
+   * UUID of a polygon to get its bounding box
+   */
+  polygonUuid?: string;
+  /**
+   * UUID of a site to get the bounding box of all its polygons
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get the bounding box of all its site polygons
+   */
+  projectUuid?: string;
+  /**
+   * Array of project UUIDs to get the combined bounding box of their centroids
+   */
+  projectUuids?: string[];
+  /**
+   * Array of landscape slugs for combined bounding box (used with country)
+   */
+  landscapes?: string[];
+  /**
+   * Country code (3-letter ISO) to get its bounding box
+   */
+  country?: string;
+};
+
+export type BoundingBoxGetError = Fetcher.ErrorWrapper<undefined>;
+
+export type BoundingBoxGetResponse = {
+  meta?: {
+    /**
+     * @example boundingBoxes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example boundingBoxes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.BoundingBoxDto;
+  };
+};
+
+export type BoundingBoxGetVariables = {
+  queryParams?: BoundingBoxGetQueryParams;
+};
+
+export const boundingBoxGet = (variables: BoundingBoxGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<BoundingBoxGetResponse, BoundingBoxGetError, undefined, {}, BoundingBoxGetQueryParams, {}>({
+    url: "/v3/boundingBoxes",
+    method: "get",
+    ...variables,
+    signal
+  });
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
-  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind }
+  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
+  boundingBoxes: { boundingBoxGet }
 };
