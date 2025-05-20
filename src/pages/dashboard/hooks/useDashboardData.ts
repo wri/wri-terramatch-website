@@ -27,6 +27,7 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
+// import { useTotalSectionHeader } from "@/connections/Dashboard";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -103,6 +104,12 @@ export const useDashboardData = (filters: any) => {
     refetch: refetchTotalSectionHeader,
     isLoading
   } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters && !filters.uuid });
+
+  // const [isLoaded, connection] = useTotalSectionHeader({ queryParams });
+
+  // console.log("1isLoaded:", isLoaded);
+  // console.log("1dataNow:", connection.data);
+
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
