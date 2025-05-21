@@ -206,7 +206,7 @@ export const SiteReportsList: FC = () => {
     <>
       <Stack gap={1} className="pb-6">
         <Text variant="text-36-bold" className="leading-none">
-          Site Reports--
+          Site Reports
         </Text>
       </Stack>
 
