@@ -41,9 +41,7 @@ const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, Tot
     props =>
       createSelector(
         [
-          (store: ApiDataStore) => {
-            return store.totalSectionHeaders?.[indexCacheKey(props)]?.attributes;
-          },
+          (store: ApiDataStore) => store.totalSectionHeaders?.[indexCacheKey(props)]?.attributes,
           totalSectionHeaderControllerGetTotalSectionHeaderFetchFailed({ queryParams: props })
         ],
         (indexMeta, fetchFailure) => {

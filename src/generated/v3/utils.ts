@@ -16,8 +16,10 @@ import {
 } from "@/constants/environment";
 import { Dictionary } from "lodash";
 import qs, { ParsedQs } from "qs";
-import { removeAccessToken } from "@/admin/apiProvider/utils/token";
-
+import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
+import { DelayedJobDto } from "./jobService/jobServiceSchemas";
+import JobsSlice from "@/store/jobsSlice";
+import { resolveUrl as resolveV3Url } from "./utils";
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 type SelectorOptions<TQueryParams, TPathParams> = {
@@ -172,6 +174,7 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
       ApiSlice.fetchFailed({ ...actionPayload, error: responsePayload });
     } else {
       ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
+      return responsePayload;
     }
   } catch (e) {
     Log.error("Unexpected API fetch failure", e);
@@ -190,7 +193,7 @@ export type ServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = 
   signal?: AbortSignal;
 };
 
-export function serviceFetch<
+export async function serviceFetch<
   TData,
   TError,
   TBody extends {} | FormData | undefined | null,
@@ -242,10 +245,98 @@ export function serviceFetch<
 
   // The promise is ignored on purpose. Further progress of the request is tracked through
   // redux.
-  dispatchRequest<TData, TError>(fullUrl, {
+  const response = await dispatchRequest<TData, TError>(fullUrl, {
     signal,
     method,
     body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
     headers: requestHeaders
   });
+
+  if (response?.data?.type === "delayedJobs" && response?.data?.attributes?.uuid) {
+    return await processDelayedJob<TData>(signal, response?.data?.attributes?.uuid);
+  }
+}
+
+// These methods were copied from `apiFetcher.ts`
+
+const JOB_POLL_TIMEOUT = 500; // in ms
+
+type JobResult = { data: { attributes: DelayedJobDto } };
+
+async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries = 3): Promise<JobResult> {
+  let response, error;
+  try {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    const accessToken = typeof window !== "undefined" && getAccessToken();
+    if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
+
+    const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
+    response = await fetch(url, { signal, headers });
+
+    // Retry logic for handling 502 Bad Gateway errors
+    // When requesting the job status from the server, a 502 Bad Gateway error may occur. This error should be temporary,
+    // retrying the request after a short delay might return the correct response.
+    // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
+    if (response.status === 502 && retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+      return loadJob(signal, delayedJobId, retries - 1); // Retry
+    }
+
+    if (!response.ok) {
+      try {
+        error = {
+          statusCode: response.status,
+          ...(await response.json())
+        };
+      } catch (e) {
+        error = { statusCode: -1 };
+      }
+
+      throw error;
+    }
+
+    return await response.json();
+  } catch (e: unknown) {
+    Log.error("Delayed Job Fetch error", e);
+
+    if (typeof e === "object" && e !== null) {
+      const errorMessage = (e as { message?: string }).message ?? "";
+      const statusCode = (e as { statusCode?: number }).statusCode ?? -1;
+
+      const isNetworkError = errorMessage.includes("network changed") || errorMessage.includes("Failed to fetch");
+
+      if ((isNetworkError || statusCode === -1) && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
+        return loadJob(signal, delayedJobId, retries - 1);
+      }
+    }
+
+    throw error;
+  }
+}
+
+async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayedJobId: string): Promise<TData> {
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+  const accessToken = typeof window !== "undefined" && getAccessToken();
+  if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
+
+  let jobResult;
+  for (
+    jobResult = await loadJob(signal, delayedJobId);
+    jobResult.data?.attributes?.status === "pending";
+    jobResult = await loadJob(signal, delayedJobId)
+  ) {
+    const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
+    const effectiveTotalContent =
+      jobResult.data?.attributes?.status === "pending" && totalContent === null ? 1 : totalContent ?? 0;
+    JobsSlice.setJobsProgress(effectiveTotalContent, processedContent ?? 0, progressMessage);
+
+    if (signal?.aborted) throw new Error("Aborted");
+    await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
+  }
+
+  const { status, statusCode, payload } = jobResult.data!.attributes;
+  if (status === "failed") throw { statusCode, ...payload };
+
+  return payload as TData;
 }
