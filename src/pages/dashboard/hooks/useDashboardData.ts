@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useFullProject } from "@/connections/Entity";
+import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -11,7 +11,6 @@ import {
   useGetV2DashboardBboxCountryLandscape,
   useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
-  useGetV2DashboardGetProjects,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
@@ -119,11 +118,7 @@ export const useDashboardData = (filters: any) => {
     { queryParams: activeProjectsQueryParams },
     { enabled: !!searchTerm || !!filters }
   );
-  const shouldSendQueryParamsForCentroids = !(filters.uuid && user?.primaryRole === "government");
 
-  const { data: centroidsDataProjects } = useGetV2DashboardGetProjects<any>({
-    queryParams: shouldSendQueryParamsForCentroids ? queryParams : undefined
-  });
   const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
     {
       queryParams: queryParams
@@ -160,6 +155,125 @@ export const useDashboardData = (filters: any) => {
     uuid: filters?.uuid ?? null,
     queryParams: { isCover: true }
   });
+
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 100;
+  const [allProjects, setAllProjects] = useState<any[]>([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
+  const [hasMoreProjects, setHasMoreProjects] = useState(true);
+  const [totalProjects, setTotalProjects] = useState(0);
+
+  const filterParams = useMemo(() => {
+    const params: any = {
+      status: "approved"
+    };
+
+    if (filters?.country?.country_slug.trim() !== "") {
+      params.country = filters.country.country_slug;
+    }
+
+    if (filters?.landscapes?.length > 0) {
+      params.landscape = filters.landscapes;
+    }
+
+    if (filters?.cohort?.length > 0) {
+      if (Array.isArray(filters.cohort)) {
+        params.cohort = filters.cohort;
+      } else {
+        params.cohort = [filters.cohort];
+      }
+    } else {
+      params.cohort = ["terrafund", "terrafund-landscapes"];
+    }
+
+    if (filters?.organizations?.length === 1) {
+      params.organisationType = filters.organizations;
+    } else {
+      params.organisationType = ["non-profit-organization", "for-profit-organization"];
+    }
+
+    if (filters?.frameworks?.length > 0) {
+      params.frameworkKey = filters.frameworks;
+    } else {
+      params.frameworkKey = ["terrafund", "terrafund-landscapes", "enterprises"];
+    }
+
+    return params;
+  }, [filters]);
+
+  useEffect(() => {
+    setPage(1);
+    setAllProjects([]);
+    setHasMoreProjects(true);
+    setTotalProjects(0);
+  }, [
+    filters?.country?.country_slug,
+    filters?.landscapes,
+    filters?.cohort,
+    filters?.organizations,
+    filters?.frameworks
+  ]);
+
+  const [, { entities: projects, indexTotal }] = useProjectIndex({
+    pageSize: PAGE_SIZE,
+    pageNumber: page,
+    filter: filterParams
+  });
+
+  useEffect(() => {
+    if (indexTotal !== undefined) {
+      setTotalProjects(indexTotal);
+    }
+  }, [indexTotal]);
+
+  useEffect(() => {
+    if (projects !== undefined) {
+      setAllProjects(prevProjects => {
+        if (page === 1) {
+          setHasMoreProjects(projects.length < totalProjects && projects.length === PAGE_SIZE);
+          return [...projects];
+        }
+
+        const newProjects = projects.filter(
+          newProject => !prevProjects.some(prevProject => prevProject.uuid === newProject.uuid)
+        );
+
+        const updatedProjects = [...prevProjects, ...newProjects];
+        setHasMoreProjects(updatedProjects.length < totalProjects && newProjects.length > 0);
+        return updatedProjects;
+      });
+
+      setIsLoadingProjects(false);
+    }
+  }, [projects, totalProjects, page]);
+
+  const loadMoreProjects = useCallback(() => {
+    if (hasMoreProjects && !isLoadingProjects) {
+      setIsLoadingProjects(true);
+      setPage(prev => prev + 1);
+    }
+  }, [hasMoreProjects, isLoadingProjects]);
+
+  useEffect(() => {
+    if (
+      hasMoreProjects &&
+      !isLoadingProjects &&
+      allProjects.length > 0 &&
+      allProjects.length < totalProjects &&
+      allProjects.length % PAGE_SIZE === 0
+    ) {
+      loadMoreProjects();
+    }
+    console.log("allProjects", allProjects);
+  }, [allProjects, totalProjects, hasMoreProjects, isLoadingProjects, loadMoreProjects]);
+
+  const combinedJobsData = useMemo(() => {
+    if (filters.uuid && projectEmploymentData) {
+      return projectEmploymentData;
+    }
+    return jobsCreatedData;
+  }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
+
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -169,12 +283,58 @@ export const useDashboardData = (filters: any) => {
     }
   );
 
-  const combinedJobsData = useMemo(() => {
-    if (filters.uuid && projectEmploymentData) {
-      return projectEmploymentData;
+  // Transformar allProjects para que tenga la misma estructura que centroidsDataProjects
+  const centroidsDataProjects = useMemo(() => {
+    if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
+
+    // Mapear los proyectos al formato requerido, con validación robusta
+    const transformedData = allProjects
+      .filter(
+        project =>
+          project &&
+          typeof project.long !== "undefined" &&
+          project.long !== null &&
+          typeof project.lat !== "undefined" &&
+          project.lat !== null
+      )
+      .map(project => ({
+        uuid: project.uuid || "",
+        long: typeof project.long === "number" || typeof project.long === "string" ? project.long.toString() : "0",
+        lat: typeof project.lat === "number" || typeof project.lat === "string" ? project.lat.toString() : "0",
+        name: project.name || "",
+        type: project.organisationType || "",
+        organisation: project.organisationName || null
+      }));
+
+    // Si no hay datos válidos después del filtrado, retornar un objeto vacío
+    if (!transformedData.length) {
+      return { data: [], bbox: [] };
     }
-    return jobsCreatedData;
-  }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
+
+    // Calcular el bbox a partir de las coordenadas
+    try {
+      const longitudes = transformedData.map(p => parseFloat(p.long)).filter(value => !isNaN(value));
+      const latitudes = transformedData.map(p => parseFloat(p.lat)).filter(value => !isNaN(value));
+
+      // Verificar que hay coordenadas válidas
+      if (longitudes.length === 0 || latitudes.length === 0) {
+        return { data: transformedData, bbox: [] };
+      }
+
+      const minLong = Math.min(...longitudes).toString();
+      const minLat = Math.min(...latitudes).toString();
+      const maxLong = Math.max(...longitudes).toString();
+      const maxLat = Math.max(...latitudes).toString();
+
+      return {
+        data: transformedData,
+        bbox: [minLong, minLat, maxLong, maxLat]
+      };
+    } catch (error) {
+      console.error("Error al calcular bbox:", error);
+      return { data: transformedData, bbox: [] };
+    }
+  }, [allProjects]);
 
   useEffect(() => {
     if (topData?.top_projects_most_planted_trees) {
@@ -253,14 +413,15 @@ export const useDashboardData = (filters: any) => {
   }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
+    console.log("centroidsDataProjects", centroidsDataProjects);
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
       setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
-    } else if (centroidsDataProjects?.bbox) {
-      setGeneralBboxParsed(centroidsDataProjects?.bbox);
+      // } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
+      //   setGeneralBboxParsed(centroidsDataProjects.bbox as unknown as BBox);
     } else {
       setGeneralBboxParsed(undefined);
     }
-  }, [generalBbox, centroidsDataProjects?.bbox]);
+  }, [generalBbox, centroidsDataProjects]);
   const queryString = useMemo(() => {
     const finalFilters = {
       status: ["published"],
