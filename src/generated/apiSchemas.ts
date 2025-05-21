@@ -5907,7 +5907,10 @@ export type ApplicationLiteRead = {
       order?: string;
     };
   };
-  funding_programme_name?: number;
+  funding_programme_name?: string;
+  funding_programme_uuid?: string;
+  organisation_name?: string;
+  organisation_uuid?: string;
   /**
    * @format date-time
    */
