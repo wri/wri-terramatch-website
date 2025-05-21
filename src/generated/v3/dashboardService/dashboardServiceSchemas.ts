@@ -4,13 +4,13 @@
  * @version 1.0
  */
 export type TotalSectionHeaderDto = {
-  totalNonProfitCount: Record<string, any>;
-  totalEnterpriseCount: Record<string, any>;
-  totalEntries: Record<string, any>;
-  totalHectaresRestored: Record<string, any>;
-  totalHectaresRestoredGoal: Record<string, any>;
-  totalTreesRestored: Record<string, any>;
-  totalTreesRestoredGoal: Record<string, any>;
+  totalNonProfitCount: number;
+  totalEnterpriseCount: number;
+  totalEntries: number;
+  totalHectaresRestored: number;
+  totalHectaresRestoredGoal: number;
+  totalTreesRestored: number;
+  totalTreesRestoredGoal: number;
   lastUpdatedAt: Record<string, any>;
 };
 
