@@ -172,10 +172,15 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     const responsePayload = await response.json();
     if (responsePayload.statusCode != null && responsePayload.message != null) {
       ApiSlice.fetchFailed({ ...actionPayload, error: responsePayload });
-    } else {
-      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
-      return responsePayload;
     }
+
+    if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
+      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
+      return await processDelayedJob<TData>(requestInit?.signal!, responsePayload?.data?.attributes?.uuid);
+    }
+
+    ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
+    return responsePayload;
   } catch (e) {
     Log.error("Unexpected API fetch failure", e);
     const message = e instanceof Error ? `Network error (${e.message})` : "Network error";
@@ -193,7 +198,7 @@ export type ServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = 
   signal?: AbortSignal;
 };
 
-export async function serviceFetch<
+export function serviceFetch<
   TData,
   TError,
   TBody extends {} | FormData | undefined | null,
@@ -245,16 +250,12 @@ export async function serviceFetch<
 
   // The promise is ignored on purpose. Further progress of the request is tracked through
   // redux.
-  const response = await dispatchRequest<TData, TError>(fullUrl, {
+  dispatchRequest<TData, TError>(fullUrl, {
     signal,
     method,
     body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
     headers: requestHeaders
   });
-
-  if (response?.data?.type === "delayedJobs" && response?.data?.attributes?.uuid) {
-    return await processDelayedJob<TData>(signal, response?.data?.attributes?.uuid);
-  }
 }
 
 // These methods were copied from `apiFetcher.ts`
