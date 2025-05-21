@@ -1,4 +1,3 @@
-// totalSectionHeaderConnection.ts
 import { createSelector } from "reselect";
 
 import {
