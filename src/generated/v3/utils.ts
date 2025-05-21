@@ -175,8 +175,7 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     }
 
     if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
-      ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
-      return await processDelayedJob<TData>(requestInit?.signal!, responsePayload?.data?.attributes?.uuid);
+      return processDelayedJob<TData>(requestInit?.signal!, responsePayload?.data?.attributes?.uuid, actionPayload);
     }
 
     ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
@@ -264,7 +263,12 @@ const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = { data: { attributes: DelayedJobDto } };
 
-async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, retries = 3): Promise<JobResult> {
+async function loadJob(
+  signal: AbortSignal | undefined,
+  delayedJobId: string,
+  retries = 3,
+  actionPayload: { url: string; method: Method }
+): Promise<JobResult> {
   let response, error;
   try {
     const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -280,7 +284,7 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
     if (response.status === 502 && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
-      return loadJob(signal, delayedJobId, retries - 1); // Retry
+      return loadJob(signal, delayedJobId, retries - 1, actionPayload); // Retry
     }
 
     if (!response.ok) {
@@ -296,7 +300,9 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
       throw error;
     }
 
-    return await response.json();
+    const jsonResponse = await response.json();
+    ApiSlice.fetchSucceeded({ ...actionPayload, response: jsonResponse });
+    return jsonResponse;
   } catch (e: unknown) {
     Log.error("Delayed Job Fetch error", e);
 
@@ -308,7 +314,7 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
 
       if ((isNetworkError || statusCode === -1) && retries > 0) {
         await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
-        return loadJob(signal, delayedJobId, retries - 1);
+        return loadJob(signal, delayedJobId, retries - 1, actionPayload);
       }
     }
 
@@ -316,16 +322,20 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
   }
 }
 
-async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayedJobId: string): Promise<TData> {
+async function processDelayedJob<TData>(
+  signal: AbortSignal | undefined,
+  delayedJobId: string,
+  actionPayload: { url: string; method: Method }
+): Promise<TData> {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
   let jobResult;
   for (
-    jobResult = await loadJob(signal, delayedJobId);
+    jobResult = await loadJob(signal, delayedJobId, 3, actionPayload);
     jobResult.data?.attributes?.status === "pending";
-    jobResult = await loadJob(signal, delayedJobId)
+    jobResult = await loadJob(signal, delayedJobId, 3, actionPayload)
   ) {
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
     const effectiveTotalContent =
