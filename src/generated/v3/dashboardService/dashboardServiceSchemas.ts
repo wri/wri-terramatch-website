@@ -3,6 +3,17 @@
  *
  * @version 1.0
  */
+export type TotalSectionHeaderDto = {
+  totalNonProfitCount: Record<string, any>;
+  totalEnterpriseCount: Record<string, any>;
+  totalEntries: Record<string, any>;
+  totalHectaresRestored: Record<string, any>;
+  totalHectaresRestoredGoal: Record<string, any>;
+  totalTreesRestored: Record<string, any>;
+  totalTreesRestoredGoal: Record<string, any>;
+  lastUpdatedAt: Record<string, any>;
+};
+
 export type DelayedJobDto = {
   /**
    * The unique identifier for the delayed job.
@@ -15,7 +26,7 @@ export type DelayedJobDto = {
   /**
    * If the job is out of pending state, this is the HTTP status code for the completed process
    */
-  statusCode: number | null;
+  statusCode: Record<string, any> | null;
   /**
    * If the job is out of pending state, this is the JSON payload for the completed process
    */
@@ -23,35 +34,25 @@ export type DelayedJobDto = {
   /**
    * If the job is in progress, this is the total content to process
    */
-  totalContent: number | null;
+  totalContent: Record<string, any> | null;
   /**
    * If the job is in progress, this is the total content processed
    */
-  processedContent: number | null;
+  processedContent: Record<string, any> | null;
   /**
    * If the job is in progress, this is the progress message
    */
-  progressMessage: string | null;
+  progressMessage: Record<string, any> | null;
   /**
    * Indicates whether the jobs have been acknowledged (cleared)
    */
-  isAcknowledged: boolean | null;
+  isAcknowledged: Record<string, any> | null;
   /**
    * The name of the delayedJob
    */
-  name: string | null;
+  name: Record<string, any> | null;
   /**
    * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
-  entityName?: string | null;
-};
-
-export type TotalSectionHeaderDto = {
-  totalNonProfitCount: number;
-  totalEnterpriseCount: number;
-  totalEntries: number;
-  totalHectaresRestored: number;
-  totalHectaresRestoredGoal: number;
-  totalTreesRestored: number;
-  totalTreesRestoredGoal: number;
+  entityName?: Record<string, any> | null;
 };

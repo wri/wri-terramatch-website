@@ -8,23 +8,6 @@ import { dashboardServiceFetch } from "./dashboardServiceFetcher";
 import type * as Schemas from "./dashboardServiceSchemas";
 
 export type TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
   search?: string;
   country?: string;
   programmes?: string[];
@@ -36,26 +19,6 @@ export type TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams = {
 
 export type TotalSectionHeaderControllerGetTotalSectionHeaderError = Fetcher.ErrorWrapper<undefined>;
 
-export type TotalSectionHeaderControllerGetTotalSectionHeaderResponse = {
-  meta?: {
-    /**
-     * @example totalSectionHeaders
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example totalSectionHeaders
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.TotalSectionHeaderDto;
-  };
-};
-
 export type TotalSectionHeaderControllerGetTotalSectionHeaderVariables = {
   queryParams?: TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams;
 };
@@ -65,7 +28,44 @@ export const totalSectionHeaderControllerGetTotalSectionHeader = (
   signal?: AbortSignal
 ) =>
   dashboardServiceFetch<
-    TotalSectionHeaderControllerGetTotalSectionHeaderResponse,
+    | {
+        meta?: {
+          /**
+           * @example totalSectionHeaders
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example totalSectionHeaders
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.TotalSectionHeaderDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example delayedJobs
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example delayedJobs
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DelayedJobDto;
+        };
+      },
     TotalSectionHeaderControllerGetTotalSectionHeaderError,
     undefined,
     {},

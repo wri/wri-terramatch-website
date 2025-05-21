@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
@@ -15,7 +16,6 @@ import {
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
-  useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
@@ -27,7 +27,6 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
-// import { useTotalSectionHeader } from "@/connections/Dashboard";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -99,16 +98,15 @@ export const useDashboardData = (filters: any) => {
   }, [updateFilters]);
 
   const { showLoader, hideLoader } = useLoading();
-  const {
-    data: totalSectionHeader,
-    refetch: refetchTotalSectionHeader,
-    isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters && !filters.uuid });
 
-  // const [isLoaded, connection] = useTotalSectionHeader({ queryParams });
-
-  // console.log("1isLoaded:", isLoaded);
-  // console.log("1dataNow:", connection.data);
+  const [isLoaded, totalSectionHeaderData] = useTotalSectionHeader({
+    programmes: filters.programmes,
+    country: filters.country.country_slug,
+    organisationType: filters.organizations,
+    landscapes: filters.landscapes,
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
+  });
 
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
@@ -203,13 +201,13 @@ export const useDashboardData = (filters: any) => {
         hideLoader();
       }
     } else {
-      if (isLoading) {
+      if (!isLoaded) {
         showLoader();
       } else {
         hideLoader();
       }
     }
-  }, [isLoading, projectLoaded, filters.uuid, showLoader, hideLoader]);
+  }, [isLoaded, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
     if (filters.uuid && projectFullDto) {
@@ -233,31 +231,33 @@ export const useDashboardData = (filters: any) => {
         value: projectFullDto.treesPlantedCount ?? 0,
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
-    } else if (totalSectionHeader) {
+    } else if (totalSectionHeaderData?.data) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: totalSectionHeader.total_trees_restored
-            ? totalSectionHeader.total_trees_restored.toLocaleString()
+          value: totalSectionHeaderData?.data?.totalTreesRestored
+            ? totalSectionHeaderData?.data?.totalTreesRestored.toLocaleString()
             : "-"
         },
         {
           ...prev[1],
-          value: totalSectionHeader.total_hectares_restored
-            ? `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+          value: totalSectionHeaderData?.data?.totalHectaresRestored
+            ? `${totalSectionHeaderData?.data?.totalHectaresRestored.toLocaleString()} ha`
             : "-"
         },
         {
           ...prev[2],
-          value: totalSectionHeader.total_entries ? totalSectionHeader.total_entries.toLocaleString() : "-"
+          value: totalSectionHeaderData?.data?.totalEntries
+            ? totalSectionHeaderData?.data?.totalEntries.toLocaleString()
+            : "-"
         }
       ]);
       setNumberTreesPlanted({
-        value: totalSectionHeader.total_trees_restored,
-        totalValue: totalSectionHeader.total_trees_restored_goal
+        value: Number(totalSectionHeaderData?.data?.totalTreesRestored),
+        totalValue: Number(totalSectionHeaderData?.data?.totalTreesRestoredGoal)
       });
     }
-  }, [totalSectionHeader, filters.uuid, projectFullDto]);
+  }, [totalSectionHeaderData?.data, filters.uuid, projectFullDto]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
@@ -315,7 +315,7 @@ export const useDashboardData = (filters: any) => {
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
-    totalSectionHeader,
+    totalSectionHeader: totalSectionHeaderData?.data,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal,
@@ -325,7 +325,7 @@ export const useDashboardData = (filters: any) => {
     projectLoaded,
     coverImage,
     topProject,
-    refetchTotalSectionHeader,
+    refetchTotalSectionHeader: totalSectionHeaderData?.refetch ?? (() => {}),
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,

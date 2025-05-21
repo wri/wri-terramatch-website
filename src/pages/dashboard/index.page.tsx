@@ -195,7 +195,7 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
+    setLastUpdatedAt?.(String(totalSectionHeader?.lastUpdatedAt));
   }, [setLastUpdatedAt, totalSectionHeader]);
 
   useValueChanged(generalBbox, () => {
@@ -386,8 +386,8 @@ const Dashboard = () => {
 
   const projectCounts = useMemo(
     () => ({
-      total_enterprise_count: totalSectionHeader?.total_enterprise_count,
-      total_non_profit_count: totalSectionHeader?.total_non_profit_count
+      totalEnterpriseCount: Number(totalSectionHeader?.totalEnterpriseCount),
+      totalNonProfitCount: Number(totalSectionHeader?.totalNonProfitCount)
     }),
     [totalSectionHeader]
   );
@@ -713,7 +713,9 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.total_hectares_restored ?? 0,
+          projectFullDto
+            ? projectFullDto.totalHectaresRestoredSum
+            : Number(totalSectionHeader?.totalHectaresRestored) ?? 0,
           projectFullDto ? projectFullDto.totalSites : dashboardVolunteersSurvivalRate?.number_of_sites ?? 0,
           hectaresUnderRestoration
         )}
