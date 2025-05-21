@@ -24,7 +24,11 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
-import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import {
+  getChangeRequestStatusOptions,
+  getNothingReportOptions,
+  getReportStatusOptions
+} from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -183,6 +187,13 @@ export const SiteReportsList: FC = () => {
       source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
+    />,
+    <SelectInput
+      key="nothingToReport"
+      label="Nothing to Report"
+      source="nothingToReport"
+      choices={optionToChoices(getNothingReportOptions())}
+      className="select-page-admin"
     />
   ];
 
@@ -195,7 +206,7 @@ export const SiteReportsList: FC = () => {
     <>
       <Stack gap={1} className="pb-6">
         <Text variant="text-36-bold" className="leading-none">
-          Site Reports
+          Site Reports--
         </Text>
       </Stack>
 
