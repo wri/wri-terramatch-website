@@ -11296,34 +11296,6 @@ export type DashboardTreesUnderRestorationActual = {
   treeSpeciesPercentage?: number;
 };
 
-export type DashboardGetProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type DashboardGetProjectsData = {
-  uuid?: string;
-  name?: string;
-  /**
-   * @format double
-   */
-  lat?: number;
-  /**
-   * @format double
-   */
-  long?: number;
-};
-
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
   /**
