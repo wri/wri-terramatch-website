@@ -199,13 +199,6 @@ export const useDashboardData = (filters: any) => {
     }
 
     return params;
-  }, [filters]);
-
-  useEffect(() => {
-    setPage(1);
-    setAllProjects([]);
-    setHasMoreProjects(true);
-    setTotalProjects(0);
   }, [
     filters?.country?.country_slug,
     filters?.landscapes,
@@ -214,7 +207,14 @@ export const useDashboardData = (filters: any) => {
     filters?.frameworks
   ]);
 
-  const [, { entities: projects, indexTotal }] = useProjectIndex({
+  useEffect(() => {
+    setPage(1);
+    setAllProjects([]);
+    setHasMoreProjects(true);
+    setTotalProjects(0);
+  }, [filterParams]);
+
+  const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
     pageSize: PAGE_SIZE,
     pageNumber: page,
     filter: filterParams
@@ -227,25 +227,27 @@ export const useDashboardData = (filters: any) => {
   }, [indexTotal]);
 
   useEffect(() => {
-    if (projects !== undefined) {
+    if (projectsLoaded && currentPageProjects) {
       setAllProjects(prevProjects => {
         if (page === 1) {
-          setHasMoreProjects(projects.length < totalProjects && projects.length === PAGE_SIZE);
-          return [...projects];
+          setHasMoreProjects(currentPageProjects.length < totalProjects);
+          return [...currentPageProjects];
         }
 
-        const newProjects = projects.filter(
-          newProject => !prevProjects.some(prevProject => prevProject.uuid === newProject.uuid)
-        );
+        const existingProjectsMap = new Map(prevProjects.map(p => [p.uuid, p]));
 
-        const updatedProjects = [...prevProjects, ...newProjects];
-        setHasMoreProjects(updatedProjects.length < totalProjects && newProjects.length > 0);
-        return updatedProjects;
+        const newUniqueProjects = currentPageProjects.filter(p => !existingProjectsMap.has(p.uuid));
+
+        const mergedProjects = [...prevProjects, ...newUniqueProjects];
+
+        setHasMoreProjects(mergedProjects.length < totalProjects && newUniqueProjects.length > 0);
+
+        return mergedProjects;
       });
 
       setIsLoadingProjects(false);
     }
-  }, [projects, totalProjects, page]);
+  }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -260,12 +262,11 @@ export const useDashboardData = (filters: any) => {
       !isLoadingProjects &&
       allProjects.length > 0 &&
       allProjects.length < totalProjects &&
-      allProjects.length % PAGE_SIZE === 0
+      projectsLoaded
     ) {
       loadMoreProjects();
     }
-    console.log("allProjects", allProjects);
-  }, [allProjects, totalProjects, hasMoreProjects, isLoadingProjects, loadMoreProjects]);
+  }, [allProjects.length, hasMoreProjects, isLoadingProjects, loadMoreProjects, projectsLoaded, totalProjects]);
 
   const combinedJobsData = useMemo(() => {
     if (filters.uuid && projectEmploymentData) {
@@ -283,11 +284,9 @@ export const useDashboardData = (filters: any) => {
     }
   );
 
-  // Transformar allProjects para que tenga la misma estructura que centroidsDataProjects
   const centroidsDataProjects = useMemo(() => {
     if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
 
-    // Mapear los proyectos al formato requerido, con validación robusta
     const transformedData = allProjects
       .filter(
         project =>
@@ -306,17 +305,14 @@ export const useDashboardData = (filters: any) => {
         organisation: project.organisationName || null
       }));
 
-    // Si no hay datos válidos después del filtrado, retornar un objeto vacío
     if (!transformedData.length) {
       return { data: [], bbox: [] };
     }
 
-    // Calcular el bbox a partir de las coordenadas
     try {
       const longitudes = transformedData.map(p => parseFloat(p.long)).filter(value => !isNaN(value));
       const latitudes = transformedData.map(p => parseFloat(p.lat)).filter(value => !isNaN(value));
 
-      // Verificar que hay coordenadas válidas
       if (longitudes.length === 0 || latitudes.length === 0) {
         return { data: transformedData, bbox: [] };
       }
@@ -416,8 +412,8 @@ export const useDashboardData = (filters: any) => {
     console.log("centroidsDataProjects", centroidsDataProjects);
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
       setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
-      // } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
-      //   setGeneralBboxParsed(centroidsDataProjects.bbox as unknown as BBox);
+    } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
+      setGeneralBboxParsed(centroidsDataProjects.bbox as unknown as BBox);
     } else {
       setGeneralBboxParsed(undefined);
     }
