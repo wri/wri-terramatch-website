@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -30,7 +31,7 @@ const ResetPasswordPage = () => {
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });
 
-  const { data: authMailData } = useGetAuthMail(
+  const { isLoading: gettingEmail, data: authMailData } = useGetAuthMail(
     {
       queryParams: {
         token: router.query.token as string
@@ -40,6 +41,14 @@ const ResetPasswordPage = () => {
       enabled: !!router.query.token
     }
   );
+
+  useEffect(() => {
+    const locale = authMailData?.data?.locale;
+    // Make sure we're displaying in the user's selected locale
+    if (locale != null && locale !== router.locale) {
+      router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale });
+    }
+  }, [authMailData, router]);
 
   const handleSave = async (data: ResetPasswordData) => {
     try {
@@ -69,6 +78,8 @@ const ResetPasswordPage = () => {
       }
     }
   };
+
+  if (gettingEmail) return null;
 
   return (
     <BackgroundLayout>
