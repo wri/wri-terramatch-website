@@ -62,9 +62,11 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
                     <Typography variant="h6" component="h4" className="!mb-2 !text-sm uppercase">
                       Document
                     </Typography>
-                    <a href={entry.url} target="_blank" rel="noreferrer noopenner">
-                      {entry.fileName}
-                    </a>
+                    {entry.url == null ? null : (
+                      <a href={entry.url} target="_blank" rel="noreferrer noopenner">
+                        {entry.fileName}
+                      </a>
+                    )}
                     <Typography variant="body2">Date uploaded: {format(entry.createdAt)}</Typography>
                     <Typography variant="body2">Visibility: {entry.isPublic ? "Public" : "Private"}</Typography>
                   </div>
