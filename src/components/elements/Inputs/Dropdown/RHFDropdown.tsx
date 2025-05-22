@@ -128,8 +128,9 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
     (value: OptionValue[]) => {
       onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
       onChangeCapture?.();
+      props.formHook?.trigger();
     },
-    [onChange, onChangeCapture, props.multiSelect]
+    [onChange, onChangeCapture, props.formHook, props.multiSelect]
   );
 
   const valueArray = useMemo(() => toArray(value), [value]);
