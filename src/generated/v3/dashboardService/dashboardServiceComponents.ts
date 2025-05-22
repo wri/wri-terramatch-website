@@ -7,25 +7,31 @@ import type * as Fetcher from "./dashboardServiceFetcher";
 import { dashboardServiceFetch } from "./dashboardServiceFetcher";
 import type * as Schemas from "./dashboardServiceSchemas";
 
-export type TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams = {
+export type GetTotalSectionHeadersQueryParams = {
   country?: string;
+  /**
+   * Filter results by programmes
+   */
   programmes?: string[];
   cohort?: string;
+  /**
+   * Filter results by landscapes
+   */
   landscapes?: string[];
+  /**
+   * Filter results by organisationType
+   */
   organisationType?: string[];
   projectUuid?: string;
 };
 
-export type TotalSectionHeaderControllerGetTotalSectionHeaderError = Fetcher.ErrorWrapper<undefined>;
+export type GetTotalSectionHeadersError = Fetcher.ErrorWrapper<undefined>;
 
-export type TotalSectionHeaderControllerGetTotalSectionHeaderVariables = {
-  queryParams?: TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams;
+export type GetTotalSectionHeadersVariables = {
+  queryParams?: GetTotalSectionHeadersQueryParams;
 };
 
-export const totalSectionHeaderControllerGetTotalSectionHeader = (
-  variables: TotalSectionHeaderControllerGetTotalSectionHeaderVariables,
-  signal?: AbortSignal
-) =>
+export const getTotalSectionHeaders = (variables: GetTotalSectionHeadersVariables, signal?: AbortSignal) =>
   dashboardServiceFetch<
     | {
         meta?: {
@@ -65,11 +71,11 @@ export const totalSectionHeaderControllerGetTotalSectionHeader = (
           attributes?: Schemas.DelayedJobDto;
         };
       },
-    TotalSectionHeaderControllerGetTotalSectionHeaderError,
+    GetTotalSectionHeadersError,
     undefined,
     {},
-    TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams,
+    GetTotalSectionHeadersQueryParams,
     {}
   >({ url: "/dashboard/v3/totalSectionHeaders", method: "get", ...variables, signal });
 
-export const operationsByTag = { totalSectionHeader: { totalSectionHeaderControllerGetTotalSectionHeader } };
+export const operationsByTag = { totalSectionHeader: { getTotalSectionHeaders } };

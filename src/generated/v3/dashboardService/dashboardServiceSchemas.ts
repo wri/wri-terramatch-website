@@ -11,7 +11,7 @@ export type TotalSectionHeaderDto = {
   totalHectaresRestoredGoal: number;
   totalTreesRestored: number;
   totalTreesRestoredGoal: number;
-  lastUpdatedAt: Record<string, any>;
+  lastUpdatedAt: string | null;
 };
 
 export type DelayedJobDto = {

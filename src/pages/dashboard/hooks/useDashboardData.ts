@@ -99,7 +99,7 @@ export const useDashboardData = (filters: any) => {
 
   const { showLoader, hideLoader } = useLoading();
 
-  const [isLoaded, totalSectionHeaderData] = useTotalSectionHeader({
+  const [isLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
     programmes: filters.programmes,
     country: filters.country.country_slug,
     organisationType: filters.organizations,
@@ -231,33 +231,29 @@ export const useDashboardData = (filters: any) => {
         value: projectFullDto.treesPlantedCount ?? 0,
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
-    } else if (totalSectionHeaderData?.data) {
+    } else if (totalSectionHeader) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: totalSectionHeaderData?.data?.totalTreesRestored
-            ? totalSectionHeaderData?.data?.totalTreesRestored.toLocaleString()
-            : "-"
+          value: totalSectionHeader?.totalTreesRestored ? totalSectionHeader?.totalTreesRestored.toLocaleString() : "-"
         },
         {
           ...prev[1],
-          value: totalSectionHeaderData?.data?.totalHectaresRestored
-            ? `${totalSectionHeaderData?.data?.totalHectaresRestored.toLocaleString()} ha`
+          value: totalSectionHeader?.totalHectaresRestored
+            ? `${totalSectionHeader?.totalHectaresRestored.toLocaleString()} ha`
             : "-"
         },
         {
           ...prev[2],
-          value: totalSectionHeaderData?.data?.totalEntries
-            ? totalSectionHeaderData?.data?.totalEntries.toLocaleString()
-            : "-"
+          value: totalSectionHeader?.totalEntries ? totalSectionHeader?.totalEntries.toLocaleString() : "-"
         }
       ]);
       setNumberTreesPlanted({
-        value: Number(totalSectionHeaderData?.data?.totalTreesRestored),
-        totalValue: Number(totalSectionHeaderData?.data?.totalTreesRestoredGoal)
+        value: Number(totalSectionHeader?.totalTreesRestored),
+        totalValue: Number(totalSectionHeader?.totalTreesRestoredGoal)
       });
     }
-  }, [totalSectionHeaderData?.data, filters.uuid, projectFullDto]);
+  }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
@@ -315,7 +311,7 @@ export const useDashboardData = (filters: any) => {
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
-    totalSectionHeader: totalSectionHeaderData?.data,
+    totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal,
@@ -325,7 +321,6 @@ export const useDashboardData = (filters: any) => {
     projectLoaded,
     coverImage,
     topProject,
-    refetchTotalSectionHeader: totalSectionHeaderData?.refetch ?? (() => {}),
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,

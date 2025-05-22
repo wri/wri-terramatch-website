@@ -275,8 +275,6 @@ export function serviceFetch<
   });
 }
 
-// These methods were copied from `apiFetcher.ts`
-
 const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = { data: { attributes: DelayedJobDto } };

@@ -1,22 +1,15 @@
 import { isFetchingSelector, fetchFailedSelector } from "../utils";
-import {
-  TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams,
-  TotalSectionHeaderControllerGetTotalSectionHeaderVariables
-} from "./dashboardServiceComponents";
+import { GetTotalSectionHeadersQueryParams, GetTotalSectionHeadersVariables } from "./dashboardServiceComponents";
 
-export const totalSectionHeaderControllerGetTotalSectionHeaderIsFetching = (
-  variables: Omit<TotalSectionHeaderControllerGetTotalSectionHeaderVariables, "body">
-) =>
-  isFetchingSelector<TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams, {}>({
+export const getTotalSectionHeadersIsFetching = (variables: Omit<GetTotalSectionHeadersVariables, "body">) =>
+  isFetchingSelector<GetTotalSectionHeadersQueryParams, {}>({
     url: "/dashboard/v3/totalSectionHeaders",
     method: "get",
     ...variables
   });
 
-export const totalSectionHeaderControllerGetTotalSectionHeaderFetchFailed = (
-  variables: Omit<TotalSectionHeaderControllerGetTotalSectionHeaderVariables, "body">
-) =>
-  fetchFailedSelector<TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams, {}>({
+export const getTotalSectionHeadersFetchFailed = (variables: Omit<GetTotalSectionHeadersVariables, "body">) =>
+  fetchFailedSelector<GetTotalSectionHeadersQueryParams, {}>({
     url: "/dashboard/v3/totalSectionHeaders",
     method: "get",
     ...variables
