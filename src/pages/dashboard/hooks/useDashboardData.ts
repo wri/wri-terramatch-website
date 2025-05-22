@@ -327,7 +327,7 @@ export const useDashboardData = (filters: any) => {
         bbox: [minLong, minLat, maxLong, maxLat]
       };
     } catch (error) {
-      console.error("Error al calcular bbox:", error);
+      console.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
   }, [allProjects]);
@@ -409,7 +409,6 @@ export const useDashboardData = (filters: any) => {
   }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
-    console.log("centroidsDataProjects", centroidsDataProjects);
     if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
       setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
     } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
