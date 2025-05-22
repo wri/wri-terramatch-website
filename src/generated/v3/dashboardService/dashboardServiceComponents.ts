@@ -8,7 +8,6 @@ import { dashboardServiceFetch } from "./dashboardServiceFetcher";
 import type * as Schemas from "./dashboardServiceSchemas";
 
 export type TotalSectionHeaderControllerGetTotalSectionHeaderQueryParams = {
-  search?: string;
   country?: string;
   programmes?: string[];
   cohort?: string;
