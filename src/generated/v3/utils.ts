@@ -75,6 +75,24 @@ export const getStableQuery = (queryParams?: FetchParams) => {
   return query.length === 0 ? "" : `?${query}`;
 };
 
+export const buildFixedOrderedQueryString = (params: Record<string, any>, keysOrder: string[]): string => {
+  const pairs = keysOrder.map(key => {
+    const value = params[key];
+    if (value == null) {
+      return `${encodeURIComponent(key)}=`;
+    }
+    if (Array.isArray(value)) {
+      const sorted = value.map(String).sort((a, b) => a.localeCompare(b));
+      const joined = sorted.join("+");
+      return `${encodeURIComponent(key)}=${encodeURIComponent(joined)}`;
+    }
+    return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
+  });
+
+  const queryString = pairs.join("&");
+  return queryString.length === 0 ? "" : `?${queryString}`;
+};
+
 const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) => {
   const query = getStableQuery(queryParams);
   return `${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)] as string)}${query}`;
