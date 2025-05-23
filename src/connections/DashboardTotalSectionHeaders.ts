@@ -5,7 +5,7 @@ import {
   GetTotalSectionHeadersQueryParams
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import { getTotalSectionHeadersFetchFailed } from "@/generated/v3/dashboardService/dashboardServiceSelectors";
-import { buildFixedOrderedQueryString } from "@/generated/v3/utils";
+import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
@@ -24,9 +24,8 @@ export type TotalSectionHeaderConnection = {
 const totalSectionHeaderIsLoaded = (connection: TotalSectionHeaderConnection) =>
   connection.data != null || connection.fetchFailure != null;
 
-const keyParams = ["country", "programmes", "cohort", "landscapes", "organisationType", "projectUuid"];
 const indexCacheKey = (props: TotalSectionHeaderConnectionProps) =>
-  buildFixedOrderedQueryString(props as GetTotalSectionHeadersQueryParams, keyParams);
+  getStableQuery(props as GetTotalSectionHeadersQueryParams);
 
 const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, TotalSectionHeaderConnectionProps> = {
   load: (connection, props) => {

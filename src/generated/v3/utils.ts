@@ -14,7 +14,7 @@ import {
   researchServiceUrl,
   userServiceUrl
 } from "@/constants/environment";
-import { Dictionary } from "lodash";
+import { cloneDeep, Dictionary } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { DelayedJobDto } from "./jobService/jobServiceSchemas";
@@ -54,43 +54,16 @@ export type FetchParamValue = number | string | boolean | null | undefined | Fet
 export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams[]>;
 
 export const getStableQuery = (queryParams?: FetchParams) => {
-  if (queryParams == null) return "";
+  const normalizedQuery = cloneDeep(queryParams) as { page?: { number?: number }; sideloads?: object[] };
+  if (normalizedQuery.page?.number != null) delete normalizedQuery.page.number;
+  if (normalizedQuery.sideloads != null) delete normalizedQuery.sideloads;
 
-  const keys = Object.keys(queryParams);
-  if (keys.length === 0) return "";
-
-  // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
-  // For our implementation, we never want to send the empty key to the server in the query, so
-  // delete any keys that have such a value.
-  for (const key of keys) {
-    if (queryParams[key] == null) delete queryParams[key];
+  // guarantee order of array query params.
+  for (const value of Object.values(normalizedQuery)) {
+    if (Array.isArray(value)) value.sort();
   }
-  // Have `qs` handle the initial stringify because it's smarter about embedded objects and arrays.
-  const searchParams = new URLSearchParams(qs.stringify(queryParams));
-  // Make sure the output string always ends up in the same order because we need the URL string
-  // that is generated from a set of query / path params to be consistent even if the order of the
-  // params in the source object changes.
-  searchParams.sort();
-  const query = searchParams.toString();
-  return query.length === 0 ? "" : `?${query}`;
-};
-
-export const buildFixedOrderedQueryString = (params: Record<string, any>, keysOrder: string[]): string => {
-  const pairs = keysOrder.map(key => {
-    const value = params[key];
-    if (value == null) {
-      return `${encodeURIComponent(key)}=`;
-    }
-    if (Array.isArray(value)) {
-      const sorted = value.map(String).sort((a, b) => a.localeCompare(b));
-      const joined = sorted.join("+");
-      return `${encodeURIComponent(key)}=${encodeURIComponent(joined)}`;
-    }
-    return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
-  });
-
-  const queryString = pairs.join("&");
-  return queryString.length === 0 ? "" : `?${queryString}`;
+  const query = qs.stringify(normalizedQuery, { arrayFormat: "repeat", sort: (a, b) => a.localeCompare(b) });
+  return query.length === 0 ? query : `?${query}`;
 };
 
 const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) => {

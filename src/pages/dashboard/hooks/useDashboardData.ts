@@ -231,11 +231,11 @@ export const useDashboardData = (filters: any) => {
         value: projectFullDto.treesPlantedCount ?? 0,
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
-    } else if (totalSectionHeader) {
+    } else if (totalSectionHeader != null) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: totalSectionHeader?.totalTreesRestored ? totalSectionHeader?.totalTreesRestored.toLocaleString() : "-"
+          value: totalSectionHeader.totalTreesRestored?.toLocaleString() ?? "-"
         },
         {
           ...prev[1],
@@ -245,7 +245,7 @@ export const useDashboardData = (filters: any) => {
         },
         {
           ...prev[2],
-          value: totalSectionHeader?.totalEntries ? totalSectionHeader?.totalEntries.toLocaleString() : "-"
+          value: totalSectionHeader?.totalEntries.toLocaleString() ?? "-"
         }
       ]);
       setNumberTreesPlanted({

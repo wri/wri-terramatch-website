@@ -26,7 +26,7 @@ export type DelayedJobDto = {
   /**
    * If the job is out of pending state, this is the HTTP status code for the completed process
    */
-  statusCode: Record<string, any> | null;
+  statusCode: number | null;
   /**
    * If the job is out of pending state, this is the JSON payload for the completed process
    */
@@ -34,25 +34,25 @@ export type DelayedJobDto = {
   /**
    * If the job is in progress, this is the total content to process
    */
-  totalContent: Record<string, any> | null;
+  totalContent: number | null;
   /**
    * If the job is in progress, this is the total content processed
    */
-  processedContent: Record<string, any> | null;
+  processedContent: number | null;
   /**
    * If the job is in progress, this is the progress message
    */
-  progressMessage: Record<string, any> | null;
+  progressMessage: string | null;
   /**
    * Indicates whether the jobs have been acknowledged (cleared)
    */
-  isAcknowledged: Record<string, any> | null;
+  isAcknowledged: boolean | null;
   /**
    * The name of the delayedJob
    */
-  name: Record<string, any> | null;
+  name: string | null;
   /**
    * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
-  entityName?: Record<string, any> | null;
+  entityName?: string | null;
 };
