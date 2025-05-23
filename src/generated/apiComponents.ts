@@ -16465,6 +16465,12 @@ export type GetAuthMailResponse = {
      * @example false
      */
     token_used?: boolean;
+    /**
+     * The locale to use for this user.
+     *
+     * @example es-MX
+     */
+    locale?: string;
   };
 };
 
