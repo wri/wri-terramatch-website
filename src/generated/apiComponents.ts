@@ -20915,68 +20915,6 @@ export const useGetV2DashboardProjectListExport = <TData = undefined>(
   );
 };
 
-export type GetV2DashboardGetPolygonsQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardGetPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetPolygonsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type GetV2DashboardGetPolygonsVariables = {
-  queryParams?: GetV2DashboardGetPolygonsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const fetchGetV2DashboardGetPolygons = (variables: GetV2DashboardGetPolygonsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardGetPolygonsResponse,
-    GetV2DashboardGetPolygonsError,
-    undefined,
-    {},
-    GetV2DashboardGetPolygonsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-polygons", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsResponse>(
-  variables: GetV2DashboardGetPolygonsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetPolygonsResponse, GetV2DashboardGetPolygonsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetPolygonsResponse, GetV2DashboardGetPolygonsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-polygons", operationId: "getV2DashboardGetPolygons", variables }),
-    ({ signal }) => fetchGetV2DashboardGetPolygons({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
   /**
    * The uuid of the polygon
@@ -21853,72 +21791,6 @@ export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCou
   return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
     queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
     ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardGetProjectsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardGetProjectsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type GetV2DashboardGetProjectsVariables = {
-  queryParams?: GetV2DashboardGetProjectsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all project location.
- */
-export const fetchGetV2DashboardGetProjects = (variables: GetV2DashboardGetProjectsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardGetProjectsResponse,
-    GetV2DashboardGetProjectsError,
-    undefined,
-    {},
-    GetV2DashboardGetProjectsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-projects", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all project location.
- */
-export const useGetV2DashboardGetProjects = <TData = GetV2DashboardGetProjectsResponse>(
-  variables: GetV2DashboardGetProjectsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-projects", operationId: "getV2DashboardGetProjects", variables }),
-    ({ signal }) => fetchGetV2DashboardGetProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -25311,11 +25183,6 @@ export type QueryOperation =
       variables: GetV2DashboardProjectListExportVariables;
     }
   | {
-      path: "/v2/dashboard/get-polygons";
-      operationId: "getV2DashboardGetPolygons";
-      variables: GetV2DashboardGetPolygonsVariables;
-    }
-  | {
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
       operationId: "getV2DashboardPolygonsPolyUuidCentroid";
       variables: GetV2DashboardPolygonsPolyUuidCentroidVariables;
@@ -25379,11 +25246,6 @@ export type QueryOperation =
       path: "/v2/dashboard/active-countries";
       operationId: "getV2DashboardActiveCountries";
       variables: GetV2DashboardActiveCountriesVariables;
-    }
-  | {
-      path: "/v2/dashboard/get-projects";
-      operationId: "getV2DashboardGetProjects";
-      variables: GetV2DashboardGetProjectsVariables;
     }
   | {
       path: "/v2/dashboard/frameworks";

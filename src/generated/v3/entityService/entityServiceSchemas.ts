@@ -413,6 +413,10 @@ export type ProjectLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
+  /**
    * Entity status for this project
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
@@ -426,6 +430,14 @@ export type ProjectLightDto = {
    */
   plantingStartDate: string | null;
   country: string | null;
+  /**
+   * Latitude coordinate
+   */
+  lat: number | null;
+  /**
+   * Longitude coordinate
+   */
+  long: number | null;
   totalHectaresRestoredSum: number;
   /**
    * @format date-time
@@ -534,6 +546,10 @@ export type ProjectFullDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
+  /**
    * Entity status for this project
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
@@ -547,6 +563,14 @@ export type ProjectFullDto = {
    */
   plantingStartDate: string | null;
   country: string | null;
+  /**
+   * Latitude coordinate
+   */
+  lat: number | null;
+  /**
+   * Longitude coordinate
+   */
+  long: number | null;
   totalHectaresRestoredSum: number;
   /**
    * @format date-time
@@ -564,10 +588,6 @@ export type ProjectFullDto = {
   feedbackFields: string[] | null;
   cohort: string | null;
   continent: string | null;
-  /**
-   * The associated organisation type
-   */
-  organisationType: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
   /**
