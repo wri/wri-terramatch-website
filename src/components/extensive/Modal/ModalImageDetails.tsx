@@ -286,13 +286,15 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             disabledIndexes={isGeotagged ? [] : [1]}
           />
           {activeIndex === 0 ? (
-            <Image
-              src={thumbUrl}
-              alt={t("Image")}
-              height={400}
-              width={300}
-              className="h-[202px] w-full rounded-xl lg:h-[220px]"
-            />
+            thumbUrl && (
+              <Image
+                src={thumbUrl}
+                alt={t("Image")}
+                height={400}
+                width={300}
+                className="h-[202px] w-full rounded-xl lg:h-[220px]"
+              />
+            )
           ) : (
             <MapContainer
               className="h-[240px] flex-1"

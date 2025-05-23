@@ -99,7 +99,7 @@ export const getSteps = (t: typeof useT, uuid: string, countryOptions: Option[])
           ),
           placeholder: t("Select Country"),
           type: FieldType.Dropdown,
-          validation: yup.array().required(),
+          validation: yup.array(yup.string().required()).min(1).required(),
           fieldProps: { options: countryOptions, multiSelect: true, required: true }
         },
         {

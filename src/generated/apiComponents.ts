@@ -1771,60 +1771,6 @@ export const useGetV2ENTITYUUIDReports = <TData = GetV2ENTITYUUIDReportsResponse
   );
 };
 
-export type GetV2AdminTasksError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminTasksResponse = {
-  data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2AdminTasksVariables = {
-  body?: RequestBodies.GetV2AdminTasksBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminTasks = (variables: GetV2AdminTasksVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2AdminTasksResponse, GetV2AdminTasksError, RequestBodies.GetV2AdminTasksBody, {}, {}, {}>({
-    url: "/v2/admin/tasks",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminTasks = <TData = GetV2AdminTasksResponse>(
-  variables: GetV2AdminTasksVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminTasksResponse, GetV2AdminTasksError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminTasksResponse, GetV2AdminTasksError, TData>(
-    queryKeyFn({ path: "/v2/admin/tasks", operationId: "getV2AdminTasks", variables }),
-    ({ signal }) => fetchGetV2AdminTasks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2AdminFormsError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2AdminFormsResponse = {
@@ -2070,11 +2016,11 @@ export type GetV2AdminFormsResponse = {
 };
 
 export type GetV2AdminFormsVariables = {
-  body?: RequestBodies.GetV2AdminTasksBody;
+  body?: RequestBodies.GetV2AdminFormsBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AdminForms = (variables: GetV2AdminFormsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2AdminFormsResponse, GetV2AdminFormsError, RequestBodies.GetV2AdminTasksBody, {}, {}, {}>({
+  apiFetch<GetV2AdminFormsResponse, GetV2AdminFormsError, RequestBodies.GetV2AdminFormsBody, {}, {}, {}>({
     url: "/v2/admin/forms",
     method: "get",
     ...variables,
@@ -2838,11 +2784,13 @@ export type GetV2ProjectsUUIDSitePolygonsError = Fetcher.ErrorWrapper<undefined>
 
 export type GetV2ProjectsUUIDSitePolygonsResponse = {
   data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
+    uuid?: number;
+    name?: Record<string, any>;
+    geojson?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
   }[];
   links?: {
     first?: string;
@@ -2926,14 +2874,14 @@ export type GetV2AdminUpdateRequestsResponse = {
 };
 
 export type GetV2AdminUpdateRequestsVariables = {
-  body?: RequestBodies.GetV2AdminTasksBody;
+  body?: RequestBodies.GetV2AdminFormsBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AdminUpdateRequests = (variables: GetV2AdminUpdateRequestsVariables, signal?: AbortSignal) =>
   apiFetch<
     GetV2AdminUpdateRequestsResponse,
     GetV2AdminUpdateRequestsError,
-    RequestBodies.GetV2AdminTasksBody,
+    RequestBodies.GetV2AdminFormsBody,
     {},
     {},
     {}
@@ -3366,11 +3314,11 @@ export type GetV2FormsResponse = {
 };
 
 export type GetV2FormsVariables = {
-  body?: RequestBodies.GetV2AdminTasksBody;
+  body?: RequestBodies.GetV2AdminFormsBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2Forms = (variables: GetV2FormsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2FormsResponse, GetV2FormsError, RequestBodies.GetV2AdminTasksBody, {}, {}, {}>({
+  apiFetch<GetV2FormsResponse, GetV2FormsError, RequestBodies.GetV2AdminFormsBody, {}, {}, {}>({
     url: "/v2/forms",
     method: "get",
     ...variables,
@@ -9669,333 +9617,6 @@ export const useGetV2ProjectsUUIDNurseries = <TData = GetV2ProjectsUUIDNurseries
   );
 };
 
-export type GetV2ProjectsUUIDTasksPathParams = {
-  uuid: string;
-};
-
-export type GetV2ProjectsUUIDTasksQueryParams = {
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2ProjectsUUIDTasksError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ProjectsUUIDTasksResponse = {
-  data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2ProjectsUUIDTasksVariables = {
-  pathParams: GetV2ProjectsUUIDTasksPathParams;
-  queryParams?: GetV2ProjectsUUIDTasksQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const fetchGetV2ProjectsUUIDTasks = (variables: GetV2ProjectsUUIDTasksVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2ProjectsUUIDTasksResponse,
-    GetV2ProjectsUUIDTasksError,
-    undefined,
-    {},
-    GetV2ProjectsUUIDTasksQueryParams,
-    GetV2ProjectsUUIDTasksPathParams
-  >({ url: "/v2/projects/{uuid}/tasks", method: "get", ...variables, signal });
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const useGetV2ProjectsUUIDTasks = <TData = GetV2ProjectsUUIDTasksResponse>(
-  variables: GetV2ProjectsUUIDTasksVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ProjectsUUIDTasksResponse, GetV2ProjectsUUIDTasksError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ProjectsUUIDTasksResponse, GetV2ProjectsUUIDTasksError, TData>(
-    queryKeyFn({ path: "/v2/projects/{UUID}/tasks", operationId: "getV2ProjectsUUIDTasks", variables }),
-    ({ signal }) => fetchGetV2ProjectsUUIDTasks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2OrganisationsUUIDTasksPathParams = {
-  uuid: string;
-};
-
-export type GetV2OrganisationsUUIDTasksQueryParams = {
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2OrganisationsUUIDTasksError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2OrganisationsUUIDTasksResponse = {
-  data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2OrganisationsUUIDTasksVariables = {
-  pathParams: GetV2OrganisationsUUIDTasksPathParams;
-  queryParams?: GetV2OrganisationsUUIDTasksQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const fetchGetV2OrganisationsUUIDTasks = (
-  variables: GetV2OrganisationsUUIDTasksVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2OrganisationsUUIDTasksResponse,
-    GetV2OrganisationsUUIDTasksError,
-    undefined,
-    {},
-    GetV2OrganisationsUUIDTasksQueryParams,
-    GetV2OrganisationsUUIDTasksPathParams
-  >({ url: "/v2/organisations/{uuid}/tasks", method: "get", ...variables, signal });
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const useGetV2OrganisationsUUIDTasks = <TData = GetV2OrganisationsUUIDTasksResponse>(
-  variables: GetV2OrganisationsUUIDTasksVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2OrganisationsUUIDTasksResponse, GetV2OrganisationsUUIDTasksError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2OrganisationsUUIDTasksResponse, GetV2OrganisationsUUIDTasksError, TData>(
-    queryKeyFn({ path: "/v2/organisations/{UUID}/tasks", operationId: "getV2OrganisationsUUIDTasks", variables }),
-    ({ signal }) => fetchGetV2OrganisationsUUIDTasks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2TasksUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2TasksUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TasksUUIDResponse = {
-  data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-};
-
-export type GetV2TasksUUIDVariables = {
-  pathParams: GetV2TasksUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TasksUUID = (variables: GetV2TasksUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2TasksUUIDResponse, GetV2TasksUUIDError, undefined, {}, {}, GetV2TasksUUIDPathParams>({
-    url: "/v2/tasks/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2TasksUUID = <TData = GetV2TasksUUIDResponse>(
-  variables: GetV2TasksUUIDVariables,
-  options?: Omit<reactQuery.UseQueryOptions<GetV2TasksUUIDResponse, GetV2TasksUUIDError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TasksUUIDResponse, GetV2TasksUUIDError, TData>(
-    queryKeyFn({ path: "/v2/tasks/{UUID}", operationId: "getV2TasksUUID", variables }),
-    ({ signal }) => fetchGetV2TasksUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2TasksUUIDReportsPathParams = {
-  uuid: string;
-};
-
-export type GetV2TasksUUIDReportsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TasksUUIDReportsResponse = {
-  data?: {
-    uuid?: string;
-    /**
-     * @format date-time
-     */
-    due_at?: string;
-    /**
-     * @format date-time
-     */
-    submitted_at?: string;
-    report_title?: string;
-    /**
-     * @format date-time
-     */
-    updated_at?: string;
-    status?: string;
-    update_request_status?: string;
-    nothing_to_report?: boolean;
-    title?: string;
-    type?: string;
-    parent_name?: string;
-    completion?: number;
-  }[];
-};
-
-export type GetV2TasksUUIDReportsVariables = {
-  pathParams: GetV2TasksUUIDReportsPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const fetchGetV2TasksUUIDReports = (variables: GetV2TasksUUIDReportsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2TasksUUIDReportsResponse,
-    GetV2TasksUUIDReportsError,
-    undefined,
-    {},
-    {},
-    GetV2TasksUUIDReportsPathParams
-  >({ url: "/v2/tasks/{uuid}/reports", method: "get", ...variables, signal });
-
-/**
- * Available Sort : period_key (year-month) and status
- */
-export const useGetV2TasksUUIDReports = <TData = GetV2TasksUUIDReportsResponse>(
-  variables: GetV2TasksUUIDReportsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TasksUUIDReportsResponse, GetV2TasksUUIDReportsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TasksUUIDReportsResponse, GetV2TasksUUIDReportsError, TData>(
-    queryKeyFn({ path: "/v2/tasks/{UUID}/reports", operationId: "getV2TasksUUIDReports", variables }),
-    ({ signal }) => fetchGetV2TasksUUIDReports({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type PutV2TasksUUIDSubmitPathParams = {
-  uuid: string;
-};
-
-export type PutV2TasksUUIDSubmitError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2TasksUUIDSubmitVariables = {
-  pathParams: PutV2TasksUUIDSubmitPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2TasksUUIDSubmit = (variables: PutV2TasksUUIDSubmitVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PutV2TasksUUIDSubmitError, undefined, {}, {}, PutV2TasksUUIDSubmitPathParams>({
-    url: "/v2/tasks/{uuid}/submit",
-    method: "put",
-    ...variables,
-    signal
-  });
-
-export const usePutV2TasksUUIDSubmit = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PutV2TasksUUIDSubmitError, PutV2TasksUUIDSubmitVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PutV2TasksUUIDSubmitError, PutV2TasksUUIDSubmitVariables>(
-    (variables: PutV2TasksUUIDSubmitVariables) => fetchPutV2TasksUUIDSubmit({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2ENTITYUUIDPathParams = {
   /**
    * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
@@ -14734,7 +14355,10 @@ export type GetV2AdminFormsApplicationsResponse = {
         order?: string;
       };
     };
-    funding_programme_name?: number;
+    funding_programme_name?: string;
+    funding_programme_uuid?: string;
+    organisation_name?: string;
+    organisation_uuid?: string;
     /**
      * @format date-time
      */
@@ -15402,7 +15026,10 @@ export type GetV2MyApplicationsResponse = {
         order?: string;
       };
     };
-    funding_programme_name?: number;
+    funding_programme_name?: string;
+    funding_programme_uuid?: string;
+    organisation_name?: string;
+    organisation_uuid?: string;
     /**
      * @format date-time
      */
@@ -16838,6 +16465,12 @@ export type GetAuthMailResponse = {
      * @example false
      */
     token_used?: boolean;
+    /**
+     * The locale to use for this user.
+     *
+     * @example es-MX
+     */
+    locale?: string;
   };
 };
 
@@ -21282,68 +20915,6 @@ export const useGetV2DashboardProjectListExport = <TData = undefined>(
   );
 };
 
-export type GetV2DashboardGetPolygonsQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardGetPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetPolygonsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type GetV2DashboardGetPolygonsVariables = {
-  queryParams?: GetV2DashboardGetPolygonsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const fetchGetV2DashboardGetPolygons = (variables: GetV2DashboardGetPolygonsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardGetPolygonsResponse,
-    GetV2DashboardGetPolygonsError,
-    undefined,
-    {},
-    GetV2DashboardGetPolygonsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-polygons", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const useGetV2DashboardGetPolygons = <TData = GetV2DashboardGetPolygonsResponse>(
-  variables: GetV2DashboardGetPolygonsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetPolygonsResponse, GetV2DashboardGetPolygonsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetPolygonsResponse, GetV2DashboardGetPolygonsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-polygons", operationId: "getV2DashboardGetPolygons", variables }),
-    ({ signal }) => fetchGetV2DashboardGetPolygons({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
   /**
    * The uuid of the polygon
@@ -22220,72 +21791,6 @@ export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCou
   return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
     queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
     ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardGetProjectsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardGetProjectsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type GetV2DashboardGetProjectsVariables = {
-  queryParams?: GetV2DashboardGetProjectsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all project location.
- */
-export const fetchGetV2DashboardGetProjects = (variables: GetV2DashboardGetProjectsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardGetProjectsResponse,
-    GetV2DashboardGetProjectsError,
-    undefined,
-    {},
-    GetV2DashboardGetProjectsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-projects", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all project location.
- */
-export const useGetV2DashboardGetProjects = <TData = GetV2DashboardGetProjectsResponse>(
-  variables: GetV2DashboardGetProjectsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetProjectsResponse, GetV2DashboardGetProjectsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-projects", operationId: "getV2DashboardGetProjects", variables }),
-    ({ signal }) => fetchGetV2DashboardGetProjects({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -25268,11 +24773,6 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDReportsVariables;
     }
   | {
-      path: "/v2/admin/tasks";
-      operationId: "getV2AdminTasks";
-      variables: GetV2AdminTasksVariables;
-    }
-  | {
       path: "/v2/admin/forms";
       operationId: "getV2AdminForms";
       variables: GetV2AdminFormsVariables;
@@ -25416,26 +24916,6 @@ export type QueryOperation =
       path: "/v2/projects/{UUID}/nurseries";
       operationId: "getV2ProjectsUUIDNurseries";
       variables: GetV2ProjectsUUIDNurseriesVariables;
-    }
-  | {
-      path: "/v2/projects/{UUID}/tasks";
-      operationId: "getV2ProjectsUUIDTasks";
-      variables: GetV2ProjectsUUIDTasksVariables;
-    }
-  | {
-      path: "/v2/organisations/{UUID}/tasks";
-      operationId: "getV2OrganisationsUUIDTasks";
-      variables: GetV2OrganisationsUUIDTasksVariables;
-    }
-  | {
-      path: "/v2/tasks/{UUID}";
-      operationId: "getV2TasksUUID";
-      variables: GetV2TasksUUIDVariables;
-    }
-  | {
-      path: "/v2/tasks/{UUID}/reports";
-      operationId: "getV2TasksUUIDReports";
-      variables: GetV2TasksUUIDReportsVariables;
     }
   | {
       path: "/v2/{ENTITY}/{UUID}";
@@ -25703,11 +25183,6 @@ export type QueryOperation =
       variables: GetV2DashboardProjectListExportVariables;
     }
   | {
-      path: "/v2/dashboard/get-polygons";
-      operationId: "getV2DashboardGetPolygons";
-      variables: GetV2DashboardGetPolygonsVariables;
-    }
-  | {
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
       operationId: "getV2DashboardPolygonsPolyUuidCentroid";
       variables: GetV2DashboardPolygonsPolyUuidCentroidVariables;
@@ -25771,11 +25246,6 @@ export type QueryOperation =
       path: "/v2/dashboard/active-countries";
       operationId: "getV2DashboardActiveCountries";
       variables: GetV2DashboardActiveCountriesVariables;
-    }
-  | {
-      path: "/v2/dashboard/get-projects";
-      operationId: "getV2DashboardGetProjects";
-      variables: GetV2DashboardGetProjectsVariables;
     }
   | {
       path: "/v2/dashboard/frameworks";
