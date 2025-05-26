@@ -10,14 +10,11 @@ import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2DashboardGetBboxProject,
-  fetchGetV2SitesSiteBbox,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  useGetV2SitesSiteBbox,
-  useGetV2TerrafundPolygonBboxUuid
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid
 } from "@/generated/apiComponents";
 import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -968,11 +965,13 @@ export const formatFileName = (inputString: string) => {
 export async function callEntityBbox(type: string, entityModel: any): Promise<BBox | null> {
   try {
     if (type === "sites") {
-      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
+      // const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
 
-      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
-        return siteBbox.bbox as BBox;
-      }
+      // if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
+      //   return siteBbox.bbox as BBox;
+      // }
+      // TODO: DEPRECATE
+      return null;
     } else if (type === "projects") {
       const projectBbox = await fetchGetV2DashboardGetBboxProject({
         queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
@@ -1102,26 +1101,15 @@ const getPolygonColor = (polygonStatus: string) => {
   }
 };
 
-export const getPolygonBbox = (polygon_uuid: any) => {
-  const { data } = useGetV2TerrafundPolygonBboxUuid(
-    {
-      pathParams: { uuid: polygon_uuid }
-    },
-    {
-      enabled: !!polygon_uuid
-    }
-  );
-  const bbox = data?.bbox;
-  return bbox;
+export const getSiteBbox = (record: any) => {
+  // const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
+  //   { pathParams: { site: record?.uuid } },
+  //   { enabled: record?.uuid != null }
+  // );
+  // TODO: DEPRECATE
+  return null;
 };
 
-export const getSiteBbox = (record: any) => {
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
-    { pathParams: { site: record?.uuid } },
-    { enabled: record?.uuid != null }
-  );
-  return sitePolygonBbox?.bbox;
-};
 export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }) => {
   if (map) {
     const { lng, lat } = location;
