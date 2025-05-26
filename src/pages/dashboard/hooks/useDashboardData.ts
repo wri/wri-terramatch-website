@@ -65,6 +65,7 @@ export const useDashboardData = (filters: any) => {
   );
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
+    console.log("filters", JSON.stringify(filters));
     const parsedFilters = {
       programmes: filters.programmes,
       country: filters.country.country_slug,
@@ -168,7 +169,7 @@ export const useDashboardData = (filters: any) => {
       status: "approved"
     };
 
-    if (filters?.country?.country_slug.trim() !== "") {
+    if (filters?.country?.country_slug?.trim() !== "") {
       params.country = filters.country.country_slug;
     }
 
@@ -176,7 +177,7 @@ export const useDashboardData = (filters: any) => {
       params.landscape = filters.landscapes;
     }
 
-    if (filters?.cohort?.length > 0) {
+    if (filters?.cohort) {
       if (Array.isArray(filters.cohort)) {
         params.cohort = filters.cohort;
       } else {
