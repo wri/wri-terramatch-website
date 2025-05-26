@@ -65,7 +65,6 @@ export const useDashboardData = (filters: any) => {
   );
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
-    console.log("filters", JSON.stringify(filters));
     const parsedFilters = {
       programmes: filters.programmes,
       country: filters.country.country_slug,
