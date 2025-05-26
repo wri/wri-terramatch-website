@@ -4,17 +4,18 @@ import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 
 
 import Text from "@/components/elements/Text/Text";
 import { useTableData } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { PlantDto } from "@/connections/EntityAssociation";
 
 import { GrdTitleTreeSpecies, GridsContentReport, GridsTitleReport } from "./GridsReportContent";
 import HeaderSecReportGemeration from "./HeaderSecReportGemeration";
 import { Site } from "./types";
+
 interface TreeSpecies {
   name: string;
   speciesTypes: string[];
   totalCount: number;
   siteCounts: Record<string, number>;
-  goalCount?: number;
+  goalCount?: number | null;
 }
 
 interface TreeSpeciesTableRowData {
@@ -134,7 +135,7 @@ const TreeSpeciesTableGroup: FC<{
 
 const AggregatedTreeSpeciesTable: FC<{
   sites: Site[];
-  goalPlants?: TreeSpeciesDto[];
+  goalPlants?: PlantDto[];
 }> = ({ sites, goalPlants = [] }) => {
   const [siteDataMap, setSiteDataMap] = useState<Record<string, TreeSpeciesTableRowData[]>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -213,9 +214,7 @@ const AggregatedTreeSpeciesTable: FC<{
       }
     });
 
-    const sortedArray = orderBy(Array.from(speciesMap.values()), ["totalCount"], ["desc"]);
-
-    return sortedArray;
+    return orderBy(Array.from(speciesMap.values()), ["totalCount"], ["desc"]);
   }, [siteDataMap, goalCountMap, goalPlants]);
 
   const siteTotals = useMemo(() => {

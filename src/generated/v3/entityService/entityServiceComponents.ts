@@ -588,6 +588,18 @@ export type EntityIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
+   * Filter by landscape names
+   */
+  landscape?: string[];
+  /**
+   * Filter by organisation types
+   */
+  organisationType?: string[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
    * If the base entity supports it, this will load the first page of associated entities
    */
   sideloads?: Schemas.EntitySideload[];
@@ -1238,6 +1250,18 @@ export type EntityAssociationIndexQueryParams = {
   projectUuid?: string;
   nurseryUuid?: string;
   siteUuid?: string;
+  /**
+   * Filter by landscape names
+   */
+  landscape?: string[];
+  /**
+   * Filter by organisation types
+   */
+  organisationType?: string[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
   /**
    * If the base entity supports it, this will load the first page of associated entities
    */

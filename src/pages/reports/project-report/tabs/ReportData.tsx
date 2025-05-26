@@ -18,7 +18,6 @@ import { DemographicCollections } from "@/generated/v3/entityService/entityServi
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { getFullName } from "@/utils/user";
 
 interface ReportOverviewTabProps {
   report: ProjectReportFullDto;
@@ -243,7 +242,10 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
           </PageCard>
           <PageCard title={t("Project Report Details")}>
             <TextField frameworksHide={[Framework.HBF]} label={t("Project Report name")} value={report.title ?? ""} />
-            <TextField label={t("Created by")} value={getFullName(report.createdByUser ?? "")} />
+            <TextField
+              label={t("Created by")}
+              value={(report?.createdByFirstName ?? "") + " " + (report?.createdByLastName ?? "")}
+            />
             <TextField label={t("Updated")} value={format(report.updatedAt)} />
             <TextField label={t("Due date")} value={format(dueAt)} />
             <TextField label={t("Submitted Date")} value={format(report.submittedAt)} />

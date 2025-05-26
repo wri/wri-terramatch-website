@@ -17,8 +17,8 @@ export const Default: Story = {
           name: "Approved submission",
           status: "approved"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "active",
         organisation_name: "Milad's organisation"
       },
@@ -27,8 +27,8 @@ export const Default: Story = {
           name: "Started submission",
           status: "started"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "active",
         organisation_name: "Milad's organisation"
       },
@@ -37,8 +37,8 @@ export const Default: Story = {
           name: "Started submission",
           status: "started"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "disabled",
         organisation_name: "Milad's organisation"
       },
@@ -47,8 +47,8 @@ export const Default: Story = {
           name: "Rejected submission",
           status: "rejected"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "active",
         organisation_name: "Milad's organisation"
       },
@@ -57,8 +57,8 @@ export const Default: Story = {
           name: "More information requested",
           status: "requires-more-information"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "active",
         organisation_name: "Milad's organisation"
       },
@@ -67,8 +67,8 @@ export const Default: Story = {
           name: "Awaiting Approval",
           status: "awaiting-approval"
         },
-        //@ts-expect-error
         funding_programme_name: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
+        //@ts-expect-error
         funding_programme_status: "active",
         organisation_name: "Milad's organisation"
       }
