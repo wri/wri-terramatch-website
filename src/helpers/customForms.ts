@@ -873,6 +873,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
     case "tableInput":
     case "mapInput": {
+      if (question.linked_field_key == "pro-pit-proj-boundary") return;
+
       validation = yup.object();
       if (required) validation = validation.required();
 
