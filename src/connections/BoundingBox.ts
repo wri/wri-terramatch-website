@@ -22,7 +22,6 @@ type BoundingBoxProps = {
   country?: string;
 };
 
-// Create a unique key for caching based on the query parameters
 const getBoundingBoxKey = (props: BoundingBoxProps): string => {
   const { polygonUuid, siteUuid, projectUuid, projectUuids, landscapes, country } = props;
 
@@ -41,7 +40,6 @@ const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore)
   return boundingBoxGetFetchFailed({ queryParams: getQueryParams(props) })(store) != null;
 };
 
-// Check if at least one valid parameter is provided
 const hasValidParams = (props: BoundingBoxProps): boolean => {
   return !!(
     props.polygonUuid ||
@@ -53,7 +51,6 @@ const hasValidParams = (props: BoundingBoxProps): boolean => {
   );
 };
 
-// Convert props to query parameters for the API call
 const getQueryParams = (props: BoundingBoxProps) => {
   const { polygonUuid, siteUuid, projectUuid, projectUuids, landscapes, country } = props;
 
