@@ -10,7 +10,6 @@ import { Else, If, Then } from "react-if";
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
@@ -217,7 +216,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   //   }
   // });
   // TODO: DEPRECATE
-  const siteBbox: BBox = [0, 0, 0, 0];
+  const siteBbox = undefined;
 
   const parseText = (text: string) => {
     return text
