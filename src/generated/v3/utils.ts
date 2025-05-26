@@ -54,10 +54,17 @@ export type FetchParamValue = number | string | boolean | null | undefined | Fet
 export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams[]>;
 
 export const getStableQuery = (queryParams?: FetchParams) => {
+  if (queryParams == null) return "";
+
+  const keys = Object.keys(queryParams);
+  if (keys.length === 0) return "";
   const normalizedQuery = cloneDeep(queryParams) as { page?: { number?: number }; sideloads?: object[] };
   if (normalizedQuery.page?.number != null) delete normalizedQuery.page.number;
   if (normalizedQuery.sideloads != null) delete normalizedQuery.sideloads;
 
+  for (const key of keys) {
+    if (queryParams[key] == null) delete queryParams[key];
+  }
   // guarantee order of array query params.
   for (const value of Object.values(normalizedQuery)) {
     if (Array.isArray(value)) value.sort();
@@ -166,7 +173,11 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     }
 
     if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
-      return processDelayedJob<TData>(requestInit?.signal!, responsePayload?.data?.attributes?.uuid, actionPayload);
+      return await processDelayedJob<TData>(
+        requestInit?.signal!,
+        responsePayload?.data?.attributes?.uuid,
+        actionPayload
+      );
     }
 
     ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
@@ -301,7 +312,7 @@ async function loadJob(
 
       const isNetworkError = errorMessage.includes("network changed") || errorMessage.includes("Failed to fetch");
 
-      if ((isNetworkError || statusCode === -1) && retries > 0) {
+      if ((isNetworkError || statusCode === -1 || statusCode === 401) && retries > 0) {
         await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
         return loadJob(signal, delayedJobId, retries - 1, actionPayload);
       }
