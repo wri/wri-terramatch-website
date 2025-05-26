@@ -21,6 +21,9 @@ export type TotalSectionHeaderConnection = {
   refetch: () => void;
 };
 
+const retryAttempts = new Map<string, number>();
+const MAX_RETRIES = 3;
+
 const totalSectionHeaderIsLoaded = (connection: TotalSectionHeaderConnection) =>
   connection.data != null || connection.fetchFailure != null;
 
@@ -31,6 +34,16 @@ const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, Tot
   load: (connection, props) => {
     if (!totalSectionHeaderIsLoaded(connection)) {
       getTotalSectionHeaders({ queryParams: props });
+    }
+
+    const queryKey = indexCacheKey(props);
+    if (connection.fetchFailure?.statusCode === -1) {
+      const attempts = retryAttempts.get(queryKey) ?? 0;
+      if (attempts < MAX_RETRIES) {
+        retryAttempts.set(queryKey, attempts + 1);
+        ApiSlice.clearPendingByUrls(["totalSectionHeaders" + queryKey]);
+        connection.refetch();
+      }
     }
   },
 
