@@ -57,10 +57,6 @@ export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams
 export const getStableQuery = (queryParams?: FetchParams) => {
   if (queryParams == null) return "";
 
-  const normalizedQuery = cloneDeep(queryParams) as { page?: { number?: number }; sideloads?: object[] };
-  if (normalizedQuery.page?.number != null) delete normalizedQuery.page.number;
-  if (normalizedQuery.sideloads != null) delete normalizedQuery.sideloads;
-
   const keys = Object.keys(queryParams);
   if (keys.length === 0) return "";
 
@@ -71,10 +67,11 @@ export const getStableQuery = (queryParams?: FetchParams) => {
     if (queryParams[key] == null) delete queryParams[key];
   }
   // guarantee order of array query params.
-  for (const value of Object.values(normalizedQuery)) {
+  for (const value of Object.values(queryParams)) {
     if (Array.isArray(value)) value.sort();
   }
-  const query = qs.stringify(normalizedQuery, { arrayFormat: "repeat", sort: (a, b) => a.localeCompare(b) });
+
+  const query = qs.stringify(queryParams, { arrayFormat: "repeat", sort: (a, b) => a.localeCompare(b) });
   return query.length === 0 ? query : `?${query}`;
 };
 
