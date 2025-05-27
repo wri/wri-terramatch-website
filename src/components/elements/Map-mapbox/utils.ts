@@ -21,6 +21,7 @@ import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
+import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
@@ -589,7 +590,7 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   }
 };
 export const addGeojsonSourceToLayer = (
-  centroids: { uuid: string; long: number; lat: number }[] | undefined,
+  centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
   layer: LayerType,
   zoomFilterValue: number | undefined,

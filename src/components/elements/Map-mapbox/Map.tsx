@@ -33,7 +33,7 @@ import {
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
-import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -85,6 +85,13 @@ interface LegendItem {
   text: string;
   uuid: string;
 }
+
+export type DashboardGetProjectsData = {
+  uuid?: string;
+  name?: string;
+  lat?: number;
+  long?: number;
+};
 
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
