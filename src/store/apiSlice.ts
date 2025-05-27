@@ -220,17 +220,11 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
     state.meta.pending[method] = {};
   }
 
-  delete state.meta.meUserId;
-};
-
-const clearPendingByUrls = (state: WritableDraft<ApiDataStore>, action: PayloadAction<string[]>) => {
-  const resourceUrls = action.payload;
-
-  for (const url of Object.keys(state.meta.pending.GET)) {
-    if (resourceUrls.some(resourceUrl => url.includes(resourceUrl))) {
-      delete state.meta.pending.GET[url];
-    }
+  for (const resource of RESOURCES) {
+    state.meta.indices[resource] = {};
   }
+
+  delete state.meta.meUserId;
 };
 
 const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<PruneCacheProps>) => {
@@ -361,9 +355,7 @@ export const apiSlice = createSlice({
 
     pruneCache,
 
-    clearApiCache,
-
-    clearPendingByUrls
+    clearApiCache
   },
 
   extraReducers: builder => {
@@ -440,9 +432,5 @@ export default class ApiSlice {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
     this._queryClient?.getQueryCache()?.clear();
     this._queryClient?.clear();
-  }
-
-  static clearPendingByUrls(resourceUrls: string[]) {
-    this.redux.dispatch(apiSlice.actions.clearPendingByUrls(resourceUrls));
   }
 }
