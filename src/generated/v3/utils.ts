@@ -57,12 +57,16 @@ export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams
 export const getStableQuery = (queryParams?: FetchParams) => {
   if (queryParams == null) return "";
 
-  const keys = Object.keys(queryParams);
-  if (keys.length === 0) return "";
   const normalizedQuery = cloneDeep(queryParams) as { page?: { number?: number }; sideloads?: object[] };
   if (normalizedQuery.page?.number != null) delete normalizedQuery.page.number;
   if (normalizedQuery.sideloads != null) delete normalizedQuery.sideloads;
 
+  const keys = Object.keys(queryParams);
+  if (keys.length === 0) return "";
+
+  // qs will gleefully stringify null and undefined values as `key=` if you leave the key in place.
+  // For our implementation, we never want to send the empty key to the server in the query, so
+  // delete any keys that have such a value.
   for (const key of keys) {
     if (queryParams[key] == null) delete queryParams[key];
   }
