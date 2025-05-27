@@ -23,7 +23,7 @@ import {
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
@@ -63,7 +63,8 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const entityPolygonData = getEntityPolygonData(record, type, entity);
   let bbox: any;
   if (type === "sites") {
-    bbox = getSiteBbox(record);
+    const [, { bbox: siteBbox }] = useBoundingBox({ siteUuid: record?.uuid });
+    bbox = siteBbox;
   } else {
     bbox = entityPolygonData?.bbox;
   }

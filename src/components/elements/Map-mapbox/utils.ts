@@ -1101,15 +1101,6 @@ const getPolygonColor = (polygonStatus: string) => {
   }
 };
 
-export const getSiteBbox = (record: any) => {
-  // const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
-  //   { pathParams: { site: record?.uuid } },
-  //   { enabled: record?.uuid != null }
-  // );
-  // TODO: DEPRECATE
-  return null;
-};
-
 export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }) => {
   if (map) {
     const { lng, lat } = location;
