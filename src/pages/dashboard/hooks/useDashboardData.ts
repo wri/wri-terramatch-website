@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
@@ -9,7 +10,6 @@ import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
   useGetV2DashboardBboxCountryLandscape,
-  useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
@@ -275,14 +275,7 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
-  const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters.uuid
-    }
-  );
+  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : undefined);
 
   const centroidsDataProjects = useMemo(() => {
     if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
@@ -480,7 +473,7 @@ export const useDashboardData = (filters: any) => {
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData ?? {},
     isUserAllowed,
-    projectBbox: projectBbox?.bbox,
+    projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
     isLoadingImpactStories
