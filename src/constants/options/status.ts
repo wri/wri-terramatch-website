@@ -93,11 +93,11 @@ export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: st
 export const getNothingReportOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
-      value: "0",
+      value: "false",
       title: t("Reported Info")
     },
     {
-      value: "1",
+      value: "true",
       title: t("Nothing to Report")
     }
   ] as Option[];
