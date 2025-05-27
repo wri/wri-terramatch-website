@@ -20967,99 +20967,6 @@ export const useGetV2DashboardGetPolygonsStatuses = <TData = GetV2DashboardGetPo
   );
 };
 
-export type GetV2DashboardGetBboxProjectQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter: string;
-};
-
-export type GetV2DashboardGetBboxProjectError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetBboxProjectResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardGetBboxProjectVariables = {
-  queryParams: GetV2DashboardGetBboxProjectQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardGetBboxProject = (
-  variables: GetV2DashboardGetBboxProjectVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardGetBboxProjectResponse,
-    GetV2DashboardGetBboxProjectError,
-    undefined,
-    {},
-    GetV2DashboardGetBboxProjectQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-bbox-project", method: "get", ...variables, signal });
-
-export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxProjectResponse>(
-  variables: GetV2DashboardGetBboxProjectVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-bbox-project", operationId: "getV2DashboardGetBboxProject", variables }),
-    ({ signal }) => fetchGetV2DashboardGetBboxProject({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardBboxProjectQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter: string;
-};
-
-export type GetV2DashboardBboxProjectError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardBboxProjectResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardBboxProjectVariables = {
-  queryParams: GetV2DashboardBboxProjectQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardBboxProject = (variables: GetV2DashboardBboxProjectVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardBboxProjectResponse,
-    GetV2DashboardBboxProjectError,
-    undefined,
-    {},
-    GetV2DashboardBboxProjectQueryParams,
-    {}
-  >({ url: "/v2/dashboard/bbox/project", method: "get", ...variables, signal });
-
-export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectResponse>(
-  variables: GetV2DashboardBboxProjectVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/bbox/project", operationId: "getV2DashboardBboxProject", variables }),
-    ({ signal }) => fetchGetV2DashboardBboxProject({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardBboxLandscapeQueryParams = {
   /**
    * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
@@ -25090,16 +24997,6 @@ export type QueryOperation =
       path: "/v2/dashboard/get-polygons/statuses";
       operationId: "getV2DashboardGetPolygonsStatuses";
       variables: GetV2DashboardGetPolygonsStatusesVariables;
-    }
-  | {
-      path: "/v2/dashboard/get-bbox-project";
-      operationId: "getV2DashboardGetBboxProject";
-      variables: GetV2DashboardGetBboxProjectVariables;
-    }
-  | {
-      path: "/v2/dashboard/bbox/project";
-      operationId: "getV2DashboardBboxProject";
-      variables: GetV2DashboardBboxProjectVariables;
     }
   | {
       path: "/v2/dashboard/bbox/landscape";

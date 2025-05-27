@@ -5,6 +5,7 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -16,7 +17,7 @@ import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { callEntityBbox, parsePolygonData, storePolygon } from "../utils";
+import { parsePolygonData, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -76,6 +77,10 @@ const OverviewMapArea = ({
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
+  const [, { bbox: modelBbox }] = useBoundingBox(
+    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+  );
+
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
@@ -83,11 +88,9 @@ const OverviewMapArea = ({
       return;
     }
     if (polygonsData.length > 0) {
-      callEntityBbox(type, entityModel).then(bbox => {
-        if (bbox) {
-          setEntityBbox(bbox);
-        }
-      });
+      if (modelBbox) {
+        setEntityBbox(modelBbox as BBox);
+      }
     } else {
       callCountryBBox();
     }
