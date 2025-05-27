@@ -12,16 +12,16 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by programmes
    */
-  programmes?: string[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
   cohort?: string;
   /**
    * Filter results by landscapes
    */
-  landscapes?: string[];
+  ["landscapesType[]"]?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
   /**
    * Filter results by organisationType
    */
-  organisationType?: string[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
 };
 

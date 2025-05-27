@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
@@ -98,10 +99,10 @@ export const useDashboardData = (filters: any) => {
   const { showLoader, hideLoader } = useLoading();
 
   const [isLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
-    programmes: filters.programmes,
+    "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
-    organisationType: filters.organizations,
-    landscapes: filters.landscapes,
+    "organisationType[]": filters.organizations,
+    "landscapesType[]": filters.landscapes,
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
