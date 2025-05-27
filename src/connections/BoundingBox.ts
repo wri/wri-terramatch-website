@@ -17,22 +17,19 @@ type BoundingBoxProps = {
   polygonUuid?: string;
   siteUuid?: string;
   projectUuid?: string;
-  projectUuids?: string[];
   landscapes?: string[];
   country?: string;
 };
 
 const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, projectUuids, landscapes, country } = props;
+  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
 
-  return [polygonUuid, siteUuid, projectUuid, projectUuids?.join(","), landscapes?.join(","), country]
-    .filter(Boolean)
-    .join("|");
+  return [polygonUuid, siteUuid, projectUuid, landscapes?.join(","), country].filter(Boolean).join("|");
 };
 
 const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
   const key = getBoundingBoxKey(props);
-  return key ? store.boundingBoxes?.[key] : undefined;
+  return key == null ? undefined : store.boundingBoxes?.[key];
 };
 
 const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore) => {
@@ -40,25 +37,16 @@ const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore)
   return boundingBoxGetFetchFailed({ queryParams: getQueryParams(props) })(store) != null;
 };
 
-const hasValidParams = (props: BoundingBoxProps): boolean => {
-  return !!(
-    props.polygonUuid ||
-    props.siteUuid ||
-    props.projectUuid ||
-    (props.projectUuids && props.projectUuids.length > 0) ||
-    (props.landscapes && props.landscapes.length > 0) ||
-    props.country
-  );
-};
+const hasValidParams = ({ polygonUuid, siteUuid, projectUuid, landscapes, country }: BoundingBoxProps): boolean =>
+  polygonUuid != null || siteUuid != null || projectUuid != null || (landscapes?.length ?? 0) > 0 || country != null;
 
 const getQueryParams = (props: BoundingBoxProps) => {
-  const { polygonUuid, siteUuid, projectUuid, projectUuids, landscapes, country } = props;
+  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
 
   return {
     polygonUuid,
     siteUuid,
     projectUuid,
-    projectUuids,
     landscapes,
     country
   };

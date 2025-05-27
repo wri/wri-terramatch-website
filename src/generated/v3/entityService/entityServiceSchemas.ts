@@ -91,6 +91,9 @@ export type ProjectPitchDto = {
   goalTreesRestoredAnr: number | null;
   goalTreesRestoredDirectSeeding: number | null;
   directSeedingSurvivalRate: number | null;
+  forestFragmentsDistance: number | null;
+  anrPracticesProposed: string[] | null;
+  informationAuthorization: boolean;
   /**
    * @format date-time
    */
