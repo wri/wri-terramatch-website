@@ -8,7 +8,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -27,7 +27,6 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
-import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 

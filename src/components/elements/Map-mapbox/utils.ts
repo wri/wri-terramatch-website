@@ -19,13 +19,14 @@ import {
   useGetV2SitesSiteBbox,
   useGetV2TerrafundPolygonBboxUuid
 } from "@/generated/apiComponents";
-import { DashboardGetProjectsData, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
+import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
@@ -593,7 +594,7 @@ export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
   }
 };
 export const addGeojsonSourceToLayer = (
-  centroids: DashboardGetProjectsData[] | { uuid: string; long: number; lat: number }[] | undefined,
+  centroids: DashboardGetProjectsData[] | undefined,
   map: mapboxgl.Map,
   layer: LayerType,
   zoomFilterValue: number | undefined,

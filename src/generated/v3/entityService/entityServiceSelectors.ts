@@ -28,7 +28,9 @@ import {
   EstablishmentTreesFindPathParams,
   EstablishmentTreesFindVariables,
   TreeReportCountsFindPathParams,
-  TreeReportCountsFindVariables
+  TreeReportCountsFindVariables,
+  BoundingBoxGetQueryParams,
+  BoundingBoxGetVariables
 } from "./entityServiceComponents";
 
 export const projectPitchIndexIsFetching = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
@@ -216,3 +218,9 @@ export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCounts
     method: "get",
     ...variables
   });
+
+export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3", method: "get", ...variables });
+
+export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3", method: "get", ...variables });
