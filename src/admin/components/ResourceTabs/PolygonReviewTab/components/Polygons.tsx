@@ -15,13 +15,13 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonComplete,
-  fetchGetV2TerrafundPolygonBboxUuid,
   useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
 import { OptionValue } from "@/types/common";
@@ -86,6 +86,8 @@ const Polygons = (props: IPolygonProps) => {
     setIsFetchingValidationData
   } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
+  const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
+  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid });
 
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
@@ -123,6 +125,17 @@ const Polygons = (props: IPolygonProps) => {
     }
   }, [polygonFromMap, polygonMenu]);
 
+  // If bbox is loaded, use it to fit the map
+  useEffect(() => {
+    if (bbox && map.current) {
+      map.current.fitBounds(bbox, {
+        padding: 100,
+        linear: false
+      });
+      setCurrentPolygonUuid(undefined);
+    }
+  }, [bbox, map]);
+
   const handleExpandCollapseToggle = useCallback(() => {
     if (
       !openCollapseAll &&
@@ -155,16 +168,8 @@ const Polygons = (props: IPolygonProps) => {
     URL.revokeObjectURL(url);
   };
 
-  const flyToPolygonBounds = async (polygon: IPolygonItem) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygon.uuid } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
-      return;
-    }
-    map.current.fitBounds(bounds, {
-      padding: 100,
-      linear: false
-    });
+  const flyToPolygonBounds = (polygon: IPolygonItem) => {
+    setCurrentPolygonUuid(polygon.uuid);
   };
 
   const deletePolygon = async (polygon: IPolygonItem) => {
