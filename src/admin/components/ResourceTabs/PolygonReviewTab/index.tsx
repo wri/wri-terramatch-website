@@ -2,7 +2,6 @@ import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
-import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
@@ -162,8 +161,17 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { openNotification } = useNotificationContext();
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid });
-
+  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid || undefined, siteUuid: record?.uuid });
+  const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
+    Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
+  const activeBbox = isValidBbox(bbox) ? bbox : undefined;
+  const {
+    data: sitePolygonData,
+    refetch,
+    loading,
+    total,
+    updateSingleSitePolygonData
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -180,43 +188,14 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
 
-  useEffect(() => {
-    if (bbox && mapFunctions.map?.current) {
-      const bounds: LngLatBoundsLike = [
-        [bbox[0], bbox[1]],
-        [bbox[2], bbox[3]]
-      ];
-      mapFunctions.map.current.fitBounds(bounds, {
-        padding: 100,
-        linear: false
-      });
-      setCurrentPolygonUuid(undefined);
-    }
-  }, [bbox, mapFunctions.map]);
-
-  const {
-    data: sitePolygonData,
-    refetch,
-    loading,
-    total,
-    updateSingleSitePolygonData
-  } = useLoadSitePolygonsData(record.uuid, "sites", undefined, undefined, validFilter);
-
   const [, { associations: modelFilesData }] = useMedias({
     entity: "sites",
-    uuid: record.uuid
+    uuid: record?.uuid ?? ""
   });
 
   useValueChanged(validFilter, () => {
     refetch();
   });
-  // const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
-  //   pathParams: {
-  //     site: record.uuid
-  //   }
-  // });
-  // TODO: DEPRECATE
-  const siteBbox = undefined;
 
   const parseText = (text: string) => {
     return text
@@ -317,7 +296,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     closeModal(ModalId.ADD_POLYGON);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
-      const site_uuid = record.uuid;
+      const site_uuid = record?.uuid;
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
@@ -389,7 +368,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       ModalId.ADD_POLYGON,
       <ModalAdd
         title="Add Polygons"
-        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record.name}.`}
+        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record?.name ?? ""}.`}
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -442,7 +421,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${record.name}.`}
+        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${
+          record?.name ?? ""
+        }.`}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -499,7 +480,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         btnDownload={true}
         btnDownloadProps={{
           onClick: () => {
-            downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
+            downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
           }
         }}
       />
@@ -520,7 +501,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: (polygons: unknown) => {
             closeModal(ModalId.APPROVE_POLYGONS);
-            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record.name);
+            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record?.name ?? "");
           }
         }}
         secondaryButtonText="Cancel"
@@ -691,7 +672,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       }}
                       onClick={() => {
                         setSelectedPolygonsInCheckbox([]);
-                        downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
+                        downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
                       }}
                     >
                       Download
@@ -713,7 +694,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               <MapContainer
                 record={record}
                 polygonsData={polygonDataMap}
-                bbox={siteBbox}
+                bbox={activeBbox}
                 className="rounded-lg"
                 status={true}
                 setPolygonFromMap={setPolygonFromMap}
@@ -812,7 +793,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
-              siteUuid={record.uuid}
+              siteUuid={record?.uuid ?? ""}
             />
           </Grid>
         </Grid>
