@@ -28,6 +28,7 @@ export interface InputProps
   suffixLabelView?: boolean;
   classNameContainerInput?: string;
   classNameError?: string;
+  allowNegative?: boolean;
 }
 
 export type HtmlInputType =
@@ -64,6 +65,7 @@ const Input = forwardRef(
       suffixLabelView,
       classNameContainerInput,
       classNameError,
+      allowNegative,
       ...inputWrapperProps
     }: InputProps,
     ref?: Ref<HTMLInputElement>
@@ -154,7 +156,7 @@ const Input = forwardRef(
     const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) => {
       const disallowed = ["e", "E", "+"];
       const min = inputProps.min;
-      const shouldBlockMinus = !min || Number(min) >= 0;
+      const shouldBlockMinus = !allowNegative && (!min || Number(min) >= 0);
 
       if (shouldBlockMinus) disallowed.push("-");
 

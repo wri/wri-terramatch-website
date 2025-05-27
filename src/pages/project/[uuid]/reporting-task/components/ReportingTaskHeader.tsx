@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -8,49 +9,53 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import { useTask } from "@/connections/Task";
 import { useModalContext } from "@/context/modal.provider";
-import { usePutV2TasksUUIDSubmit } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useUpdateSuccess } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 
+import { TaskReports } from "../[reportingTaskUUID].page";
+
 interface ReportingTaskHeaderProps {
-  project: any;
-  reportingTask: any;
-  reports: any;
+  project?: ProjectFullDto;
+  taskUuid?: string;
+  reports?: TaskReports;
 }
 
-const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskHeaderProps) => {
+const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeaderProps) => {
   const t = useT();
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const router = useRouter();
+  const [, { task, submitForApproval, taskUpdateFailure, taskIsUpdating }] = useTask({ uuid: taskUuid });
 
-  const { mutate: submitReportingTask } = usePutV2TasksUUIDSubmit({
-    onSuccess() {
-      openModal(
-        ModalId.REPORTS_SUBMITTED,
-        <Modal
-          title={t("Reports submitted")}
-          content={t(
-            "Your reports have been submitted. You can view them in the ‘completed’ reports sections in your project page"
-          )}
-          iconProps={{
-            height: 60,
-            width: 60,
-            className: "fill-secondary",
-            name: IconNames.EXCLAMATION_CIRCLE
-          }}
-          primaryButtonProps={{
-            children: "Close",
-            onClick: () => {
-              closeModal(ModalId.REPORTS_SUBMITTED);
-              router.replace(`/project/${project.uuid}?tab=reporting-tasks`);
-            }
-          }}
-        />
-      );
-    }
-  });
+  const onSuccess = useCallback(() => {
+    openModal(
+      ModalId.REPORTS_SUBMITTED,
+      <Modal
+        title={t("Reports submitted")}
+        content={t(
+          "Your reports have been submitted. You can view them in the ‘completed’ reports sections in your project page"
+        )}
+        iconProps={{
+          height: 60,
+          width: 60,
+          className: "fill-secondary",
+          name: IconNames.EXCLAMATION_CIRCLE
+        }}
+        primaryButtonProps={{
+          children: "Close",
+          onClick: () => {
+            closeModal(ModalId.REPORTS_SUBMITTED);
+            router.replace(`/project/${project?.uuid}?tab=reporting-tasks`);
+          }
+        }}
+      />
+    );
+  }, [closeModal, openModal, project?.uuid, router, t]);
+  useUpdateSuccess(taskIsUpdating, taskUpdateFailure, onSuccess);
 
   const ModalsMapping = {
     ready_to_submit: {
@@ -59,7 +64,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
+          submitForApproval?.();
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -82,13 +87,13 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
 
     has_outstanding_tasks: {
       title: t("Are you sure you want to submit these reports? You currently have {count} outstanding reports", {
-        count: reports.outstandingAdditionalCount
+        count: reports?.outstandingAdditionalCount
       }),
       content: t("Sending these reports will forward all the information to WRI for review."),
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitReportingTask({ pathParams: { uuid: reportingTask.uuid } });
+          submitForApproval?.();
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -101,9 +106,9 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
 
   const submitReportingTaskHandler = () => {
     let modalProps: any = ModalsMapping.ready_to_submit;
-    if (reports.outstandingMandatoryCount > 0) {
+    if (reports?.outstandingMandatoryCount ?? 0 > 0) {
       modalProps = ModalsMapping.has_mandatory;
-    } else if (reports.outstandingAdditionalCount > 0) {
+    } else if (reports?.outstandingAdditionalCount ?? 0 > 0) {
       modalProps = ModalsMapping.has_outstanding_tasks;
     }
 
@@ -113,7 +118,7 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
     );
   };
 
-  const window = useReportingWindow(reportingTask?.due_at);
+  const window = useReportingWindow(task?.dueAt);
   const title = t("Reporting Task {window}", { window });
 
   return (
@@ -124,14 +129,14 @@ const ReportingTaskHeader = ({ project, reportingTask, reports }: ReportingTaskH
       <PageBreadcrumbs
         links={[
           { title: t("My Projects"), path: "/my-projects" },
-          { title: project.name, path: `/project/${project.uuid}` },
+          { title: project?.name, path: `/project/${project?.uuid}` },
           { title }
         ]}
       />
       <PageHeader
         className="h-[203px]"
         title={title}
-        subtitles={[t("Due by {due_at}", { due_at: format(reportingTask?.due_at, "d MMMM, yyyy, HH:mm") })]}
+        subtitles={[t("Due by {due_at}", { due_at: format(task?.dueAt, "d MMMM, yyyy, HH:mm") })]}
         hasBackButton={false}
       >
         <Button id="submit-button" onClick={submitReportingTaskHandler}>

@@ -5907,7 +5907,10 @@ export type ApplicationLiteRead = {
       order?: string;
     };
   };
-  funding_programme_name?: number;
+  funding_programme_name?: string;
+  funding_programme_uuid?: string;
+  organisation_name?: string;
+  organisation_uuid?: string;
   /**
    * @format date-time
    */
@@ -11291,34 +11294,6 @@ export type DashboardTreesUnderRestorationActual = {
   dueDate?: string;
   treeSpeciesAmount?: number;
   treeSpeciesPercentage?: number;
-};
-
-export type DashboardGetProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type DashboardGetProjectsData = {
-  uuid?: string;
-  name?: string;
-  /**
-   * @format double
-   */
-  lat?: number;
-  /**
-   * @format double
-   */
-  long?: number;
 };
 
 export type DashboardGetPolygonStatusResponse = {

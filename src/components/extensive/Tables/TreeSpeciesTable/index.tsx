@@ -9,9 +9,9 @@ import Log from "@/utils/log";
 import { TreeSpeciesTableRowData, useTableData, useTableType, useTreeTableColumns } from "./hooks";
 
 export type PlantData = {
-  name?: string;
-  amount?: number;
-  taxonId?: string;
+  name?: string | null;
+  amount?: number | null;
+  taxonId?: string | null;
 };
 
 type TreeSpeciesTableViewProps = {

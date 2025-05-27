@@ -27,9 +27,9 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
-import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -52,8 +52,7 @@ const SiteReportDetailPage = () => {
   const [isLoaded, { entity: siteReport }] = useFullSiteReport({ uuid: siteReportUUID });
 
   const [, { entity: site }] = useFullSite({ uuid: siteReport?.siteUuid! });
-
-  const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport?.taskUuid! } });
+  const [, { task }] = useTask({ uuid: siteReport?.taskUuid });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";
@@ -73,7 +72,7 @@ const SiteReportDetailPage = () => {
     collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
   });
 
-  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const window = useReportingWindow(task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   const totalFiles = useMemo(
