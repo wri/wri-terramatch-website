@@ -71,7 +71,7 @@ export const getStableQuery = (queryParams?: FetchParams) => {
     if (Array.isArray(value)) value.sort();
   }
 
-  const query = qs.stringify(queryParams, { arrayFormat: "repeat", sort: (a, b) => a.localeCompare(b) });
+  const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
   return query.length === 0 ? query : `?${query}`;
 };
 
