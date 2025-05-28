@@ -67,8 +67,8 @@ interface ContentOverviewProps<TData> {
   isUserAllowed?: boolean;
   isLoadingHectaresUnderRestoration?: boolean;
   projectCounts?: {
-    total_enterprise_count: number;
-    total_non_profit_count: number;
+    totalEnterpriseCount: number;
+    totalNonProfitCount: number;
   };
   transformedStories: any;
   isLoading: boolean;
@@ -241,13 +241,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               <div className="flex gap-2">
                 <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
                 <Text variant="text-12" className="text-darkCustom">
-                  {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
+                  {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
                 </Text>
               </div>
               <div className="flex items-center gap-2">
                 <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
                 <Text variant="text-12" className="text-darkCustom">
-                  {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
+                  {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
                 </Text>
               </div>
             </div>
@@ -408,13 +408,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
               </Text>
             </div>
           </div>

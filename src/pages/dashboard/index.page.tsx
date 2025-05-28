@@ -164,7 +164,6 @@ const Dashboard = () => {
     projectFullDto,
     coverImage,
     topProject,
-    refetchTotalSectionHeader,
     centroidsDataProjects,
     activeCountries,
     activeProjects,
@@ -195,7 +194,7 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
+    setLastUpdatedAt?.(totalSectionHeader?.lastUpdatedAt ?? "");
   }, [setLastUpdatedAt, totalSectionHeader]);
 
   useValueChanged(generalBbox, () => {
@@ -203,8 +202,6 @@ const Dashboard = () => {
       setCurrentBbox(generalBbox);
     }
   });
-
-  useValueChanged(filters, refetchTotalSectionHeader);
 
   const COLUMN_ACTIVE_PROGRAMME = useMemo(
     () => [
@@ -386,8 +383,8 @@ const Dashboard = () => {
 
   const projectCounts = useMemo(
     () => ({
-      total_enterprise_count: totalSectionHeader?.total_enterprise_count,
-      total_non_profit_count: totalSectionHeader?.total_non_profit_count
+      totalEnterpriseCount: totalSectionHeader?.totalEnterpriseCount ?? 0,
+      totalNonProfitCount: totalSectionHeader?.totalNonProfitCount ?? 0
     }),
     [totalSectionHeader]
   );
@@ -713,7 +710,7 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.total_hectares_restored ?? 0,
+          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.totalHectaresRestored ?? 0,
           projectFullDto ? projectFullDto.totalSites : dashboardVolunteersSurvivalRate?.number_of_sites ?? 0,
           hectaresUnderRestoration
         )}

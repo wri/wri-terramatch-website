@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
@@ -14,7 +15,6 @@ import {
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
-  useGetV2DashboardTotalSectionHeader,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
@@ -97,11 +97,16 @@ export const useDashboardData = (filters: any) => {
   }, [updateFilters]);
 
   const { showLoader, hideLoader } = useLoading();
-  const {
-    data: totalSectionHeader,
-    refetch: refetchTotalSectionHeader,
-    isLoading
-  } = useGetV2DashboardTotalSectionHeader<any>({ queryParams: queryParams }, { enabled: !!filters && !filters.uuid });
+
+  const [isLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    "landscapesType[]": filters.landscapes,
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
+  });
+
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
@@ -352,13 +357,13 @@ export const useDashboardData = (filters: any) => {
         hideLoader();
       }
     } else {
-      if (isLoading) {
+      if (!isLoaded) {
         showLoader();
       } else {
         hideLoader();
       }
     }
-  }, [isLoading, projectLoaded, filters.uuid, showLoader, hideLoader]);
+  }, [isLoaded, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
     if (filters.uuid && projectFullDto) {
@@ -382,28 +387,26 @@ export const useDashboardData = (filters: any) => {
         value: projectFullDto.treesPlantedCount ?? 0,
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
-    } else if (totalSectionHeader) {
+    } else if (totalSectionHeader != null) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: totalSectionHeader.total_trees_restored
-            ? totalSectionHeader.total_trees_restored.toLocaleString()
-            : "-"
+          value: totalSectionHeader.totalTreesRestored?.toLocaleString() ?? "-"
         },
         {
           ...prev[1],
-          value: totalSectionHeader.total_hectares_restored
-            ? `${totalSectionHeader.total_hectares_restored.toLocaleString()} ha`
+          value: totalSectionHeader?.totalHectaresRestored
+            ? `${totalSectionHeader?.totalHectaresRestored.toLocaleString()} ha`
             : "-"
         },
         {
           ...prev[2],
-          value: totalSectionHeader.total_entries ? totalSectionHeader.total_entries.toLocaleString() : "-"
+          value: totalSectionHeader?.totalEntries.toLocaleString() ?? "-"
         }
       ]);
       setNumberTreesPlanted({
-        value: totalSectionHeader.total_trees_restored,
-        totalValue: totalSectionHeader.total_trees_restored_goal
+        value: Number(totalSectionHeader?.totalTreesRestored),
+        totalValue: Number(totalSectionHeader?.totalTreesRestoredGoal)
       });
     }
   }, [totalSectionHeader, filters.uuid, projectFullDto]);
@@ -464,7 +467,7 @@ export const useDashboardData = (filters: any) => {
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
-    totalSectionHeader,
+    totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal,
@@ -474,7 +477,6 @@ export const useDashboardData = (filters: any) => {
     projectLoaded,
     coverImage,
     topProject,
-    refetchTotalSectionHeader,
     activeCountries,
     activeProjects: filteredProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
