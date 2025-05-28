@@ -102,7 +102,7 @@ export const useDashboardData = (filters: any) => {
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
-    "landscapesType[]": filters.landscapes,
+    "landscapes[]": filters.landscapes,
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
