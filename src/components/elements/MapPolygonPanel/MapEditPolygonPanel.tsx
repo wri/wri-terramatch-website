@@ -57,7 +57,6 @@ const MapEditPolygonPanel = ({
     setOpenModalConfirmation(false);
     setSelectedPolyVersion({});
     setPreviewVersion(false);
-    refreshEntity?.();
     onCancel(polygonData);
     recallEntityData?.();
   };
