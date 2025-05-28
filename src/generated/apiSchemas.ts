@@ -11315,18 +11315,6 @@ export type DashboardGetPolygonStatusResponse = {
   }[];
 };
 
-export type DashboardBBOXProject = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXLandscape = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXCountry = {
-  bbox?: number[];
-};
-
 export type DashboardPolygonData = {
   data?: {
     /**

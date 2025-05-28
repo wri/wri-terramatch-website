@@ -10,7 +10,6 @@ import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
@@ -81,6 +80,10 @@ const OverviewMapArea = ({
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
+  const [, { bbox: countryBbox }] = useBoundingBox(
+    type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
+  );
+
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
@@ -91,33 +94,14 @@ const OverviewMapArea = ({
       if (modelBbox) {
         setEntityBbox(modelBbox as BBox);
       }
-    } else {
-      callCountryBBox();
+    } else if (countryBbox) {
+      setEntityBbox(countryBbox as BBox);
     }
   });
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedValues, sortOrder]);
-
-  const callCountryBBox = async () => {
-    let currentCountry = entityModel?.country;
-    if (type === "sites") {
-      currentCountry = entityModel?.projectCountry;
-    }
-    const countryBbox = await fetchGetV2DashboardCountryCountry({
-      pathParams: { country: currentCountry }
-    });
-    if (Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
-      const bboxFormat = countryBbox.bbox[1] as unknown as BBox;
-      setEntityBbox(bboxFormat);
-    }
-  };
-  useEffect(() => {
-    if (entityBbox !== null) {
-      setShouldRefetchPolygonData(false);
-    }
-  }, [entityBbox, polygonsData, setShouldRefetchPolygonData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
