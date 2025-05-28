@@ -137,11 +137,16 @@ const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
     for (const [key, value] of Object.entries(props.filter)) {
       if (key === "polygonStatus") {
         queryParams.polygonStatus = value as PolygonStatus;
+      } else if (key === "nothingToReport") {
+        queryParams.nothingToReport = value === "true";
       } else if (["landscape", "organisationType", "cohort"].includes(key)) {
         queryParams[key as "landscape" | "organisationType" | "cohort"] = Array.isArray(value) ? value : [value];
       } else {
         queryParams[
-          key as Exclude<EntityIndexFilterKey, "polygonStatus" | "landscape" | "organisationType" | "cohort">
+          key as Exclude<
+            EntityIndexFilterKey,
+            "polygonStatus" | "landscape" | "organisationType" | "cohort" | "nothingToReport"
+          >
         ] = value;
       }
     }
