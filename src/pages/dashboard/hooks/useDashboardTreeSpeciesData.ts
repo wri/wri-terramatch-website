@@ -31,7 +31,8 @@ const DEFAULT_TREE_SPECIES_DATA: TreeSpeciesResponse = {
 
 export const useDashboardTreeSpeciesData = (
   projectUuid: string | undefined,
-  treesGrownGoal: number | null | undefined
+  treesGrownGoal: number | null | undefined,
+  organisationType: string | null | undefined
 ) => {
   const [connectionLoaded, { fetchFailure, entities, included }] = useSiteReportIndex({
     pageNumber: 1,
@@ -56,9 +57,7 @@ export const useDashboardTreeSpeciesData = (
     const reportsByUuid = new Map();
     entities.forEach(({ uuid, dueAt }) => {
       reportsByUuid.set(uuid, {
-        dueAt: dueAt,
-        // TODO: Now that this is correctly typed, we can see that organisationType is not on this DTO yet.
-        organisationType: "non-profit-organization"
+        dueAt: dueAt
       });
     });
 
@@ -106,7 +105,7 @@ export const useDashboardTreeSpeciesData = (
         const periodData = treesByPeriod.get(periodKey)!;
         periodData.total += speciesAmount;
 
-        if (reportData.organisationType === "for-profit-organization") {
+        if (organisationType === "for-profit-organization") {
           periodData.forProfit += speciesAmount;
         } else {
           periodData.nonProfit += speciesAmount;
@@ -159,7 +158,7 @@ export const useDashboardTreeSpeciesData = (
       treesUnderRestorationActualForProfit: treesUnderRestorationActualForProfit,
       treesUnderRestorationActualNonProfit: treesUnderRestorationActualNonProfit
     };
-  }, [entities, included, treesGrownGoal]);
+  }, [entities, included, treesGrownGoal, organisationType]);
 
   return {
     treeSpeciesData,

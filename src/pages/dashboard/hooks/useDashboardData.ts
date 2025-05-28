@@ -287,7 +287,7 @@ export const useDashboardData = (filters: any) => {
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
   const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
-    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal);
+    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
 
   const combinedHectaresData = useMemo(() => {
     if (filters.uuid && projectTreeSpeciesData) {
