@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { isEmpty } from "lodash";
+import { useMemo } from "react";
 
-import { loadSiteReportIndex } from "@/connections/Entity";
-import { EntityIndexConnectionProps } from "@/connections/Entity";
+import { useSiteReportIndex } from "@/connections/Entity";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import Log from "@/utils/log";
 
 type TreeSpeciesDataByPeriod = {
   dueDate: string;
@@ -31,77 +33,38 @@ export const useDashboardTreeSpeciesData = (
   projectUuid: string | undefined,
   treesGrownGoal: number | null | undefined
 ) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [siteReportsData, setSiteReportsData] = useState<any[]>([]);
-  const [treeSpeciesData, setTreeSpeciesData] = useState<any[]>([]);
+  const [connectionLoaded, { fetchFailure, entities, included }] = useSiteReportIndex({
+    pageNumber: 1,
+    sortField: "dueAt",
+    sortDirection: "ASC",
+    filter: { status: "approved", projectUuid },
+    sideloads: [{ entity: "treeSpecies", pageSize: 100 }],
+    enabled: !isEmpty(projectUuid)
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!projectUuid) return;
+  useValueChanged(fetchFailure, () => {
+    if (fetchFailure != null) {
+      Log.error("Error fetching site reports with tree species:", fetchFailure);
+    }
+  });
 
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const connectionProps: EntityIndexConnectionProps = {
-          pageSize: 100,
-          pageNumber: 1,
-          sortField: "dueAt",
-          sortDirection: "ASC",
-          filter: {
-            status: "approved",
-            projectUuid: projectUuid
-          },
-          sideloads: [{ entity: "treeSpecies", pageSize: 100 }]
-        };
-
-        const connection = await loadSiteReportIndex(connectionProps);
-
-        if (connection.fetchFailure != null) {
-          throw new Error(`Failed to fetch site reports: ${connection.fetchFailure}`);
-        }
-
-        setSiteReportsData(connection.entities || []);
-
-        if (connection.included && Array.isArray(connection.included)) {
-          const treeSpeciesItems = connection?.included?.filter(
-            item => item?.type === "treeSpecies" && item?.attributes?.collection === "tree-planted"
-          );
-          setTreeSpeciesData(treeSpeciesItems);
-        } else {
-          setTreeSpeciesData([]);
-        }
-      } catch (err) {
-        console.error("Error fetching site reports with tree species:", err);
-        setError(err instanceof Error ? err : new Error("Unknown error occurred"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [projectUuid]);
-
-  const formattedTreeSpeciesData = useMemo(() => {
-    if (!projectUuid || siteReportsData.length === 0) {
+  const treeSpeciesData = useMemo(() => {
+    if (entities == null || entities.length === 0) {
       return DEFAULT_TREE_SPECIES_DATA;
     }
 
     const reportsByUuid = new Map();
-    siteReportsData.forEach(report => {
-      if (report.uuid) {
-        reportsByUuid.set(report.uuid, {
-          dueAt: report.dueAt || report.attributes?.dueAt,
-          organisationType: report.organisationType || report.attributes?.organisationType || "non-profit-organization"
-        });
-      }
+    entities.forEach(({ uuid, dueAt }) => {
+      reportsByUuid.set(uuid, {
+        dueAt: dueAt,
+        // TODO: Now that this is correctly typed, we can see that organisationType is not on this DTO yet.
+        organisationType: "non-profit-organization"
+      });
     });
 
     const allDueDates = new Set<string>();
-    siteReportsData.forEach(report => {
-      const dueAt = report.dueAt || report.attributes?.dueAt;
-      if (dueAt) {
+    entities.forEach(({ dueAt }) => {
+      if (dueAt != null) {
         const dueDate = new Date(dueAt);
         const periodKey = dueDate.toISOString().split("T")[0];
         allDueDates.add(periodKey);
@@ -121,32 +84,34 @@ export const useDashboardTreeSpeciesData = (
       treesByPeriod.set(date, { total: 0, forProfit: 0, nonProfit: 0 });
     });
 
-    treeSpeciesData.forEach(species => {
-      const speciesAmount = Number(species.attributes?.amount || 0);
-      if (speciesAmount <= 0) return;
+    included
+      ?.filter(({ type, attributes: { collection } }) => type === "treeSpecies" && collection === "tree-planted")
+      .forEach(species => {
+        const speciesAmount = Number(species.attributes?.amount || 0);
+        if (speciesAmount <= 0) return;
 
-      const entityUuid = species.attributes?.entityUuid;
-      if (!entityUuid) {
-        return;
-      }
+        const entityUuid = species.attributes?.entityUuid;
+        if (!entityUuid) {
+          return;
+        }
 
-      const reportData = reportsByUuid.get(entityUuid);
-      if (!reportData || !reportData.dueAt) {
-        return;
-      }
+        const reportData = reportsByUuid.get(entityUuid);
+        if (!reportData || !reportData.dueAt) {
+          return;
+        }
 
-      const dueDate = new Date(reportData.dueAt);
-      const periodKey = dueDate.toISOString().split("T")[0];
+        const dueDate = new Date(reportData.dueAt);
+        const periodKey = dueDate.toISOString().split("T")[0];
 
-      const periodData = treesByPeriod.get(periodKey)!;
-      periodData.total += speciesAmount;
+        const periodData = treesByPeriod.get(periodKey)!;
+        periodData.total += speciesAmount;
 
-      if (reportData.organisationType === "for-profit-organization") {
-        periodData.forProfit += speciesAmount;
-      } else {
-        periodData.nonProfit += speciesAmount;
-      }
-    });
+        if (reportData.organisationType === "for-profit-organization") {
+          periodData.forProfit += speciesAmount;
+        } else {
+          periodData.nonProfit += speciesAmount;
+        }
+      });
 
     const sortedPeriods = Array.from(treesByPeriod.entries()).sort((a, b) => a[0].localeCompare(b[0]));
 
@@ -186,7 +151,7 @@ export const useDashboardTreeSpeciesData = (
       });
     });
 
-    const result = {
+    return {
       forProfitTreeCount: totalForProfit,
       nonProfitTreeCount: totalNonProfit,
       totalTreesGrownGoal: treesGrownGoal || 0,
@@ -194,13 +159,11 @@ export const useDashboardTreeSpeciesData = (
       treesUnderRestorationActualForProfit: treesUnderRestorationActualForProfit,
       treesUnderRestorationActualNonProfit: treesUnderRestorationActualNonProfit
     };
-
-    return result;
-  }, [siteReportsData, treeSpeciesData, projectUuid, treesGrownGoal]);
+  }, [entities, included, treesGrownGoal]);
 
   return {
-    treeSpeciesData: formattedTreeSpeciesData,
-    isLoading: isLoading && !!projectUuid,
-    error
+    treeSpeciesData,
+    isLoading: !connectionLoaded,
+    error: fetchFailure
   };
 };
