@@ -26,6 +26,7 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
+import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -140,9 +141,14 @@ export const useDashboardData = (filters: any) => {
   );
 
   const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
-      queryParams: queryParams
-    });
+    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
@@ -279,6 +285,17 @@ export const useDashboardData = (filters: any) => {
     }
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
+
+  const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
+    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal);
+
+  const combinedHectaresData = useMemo(() => {
+    if (filters.uuid && projectTreeSpeciesData) {
+      return projectTreeSpeciesData;
+    } else {
+      return dashboardRestorationGoalData;
+    }
+  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
 
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
@@ -463,14 +480,14 @@ export const useDashboardData = (filters: any) => {
 
   return {
     dashboardHeader,
-    dashboardRestorationGoalData,
+    dashboardRestorationGoalData: combinedHectaresData,
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal,
+    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
     projectFullDto,
