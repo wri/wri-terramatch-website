@@ -57,6 +57,6 @@ export const useDashboardEmploymentData = (projectUuid: string | undefined) => {
     rawEmploymentData,
     formattedJobsData,
     isLoading: !connectionLoaded,
-    error: fetchFailure
+    error: fetchFailure == null ? undefined : new Error(`Failed to fetch project reports: ${fetchFailure.message}`)
   };
 };

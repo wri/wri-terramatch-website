@@ -164,6 +164,6 @@ export const useDashboardTreeSpeciesData = (
   return {
     treeSpeciesData,
     isLoading: !connectionLoaded,
-    error: fetchFailure
+    error: fetchFailure == null ? undefined : new Error(`Failed to fetch site reports: ${fetchFailure.message}`)
   };
 };
