@@ -57,8 +57,7 @@ export const useDashboardTreeSpeciesData = (
     const reportsByUuid = new Map();
     entities.forEach(({ uuid, dueAt }) => {
       reportsByUuid.set(uuid, {
-        dueAt: dueAt,
-        organisationType: organisationType
+        dueAt: dueAt
       });
     });
 
@@ -106,7 +105,7 @@ export const useDashboardTreeSpeciesData = (
         const periodData = treesByPeriod.get(periodKey)!;
         periodData.total += speciesAmount;
 
-        if (reportData.organisationType === "for-profit-organization") {
+        if (organisationType === "for-profit-organization") {
           periodData.forProfit += speciesAmount;
         } else {
           periodData.nonProfit += speciesAmount;
