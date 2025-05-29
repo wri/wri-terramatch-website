@@ -1,10 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { fetchPostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -45,7 +46,8 @@ const MapEditPolygonPanel = ({
     setOpenModalConfirmation,
     setPreviewVersion,
     validationData,
-    setHasOverlaps
+    setHasOverlaps,
+    shouldRefetchValidation
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;
   useOnMount(() => {
@@ -57,11 +59,12 @@ const MapEditPolygonPanel = ({
     setOpenModalConfirmation(false);
     setSelectedPolyVersion({});
     setPreviewVersion(false);
+    refreshEntity?.();
     onCancel(polygonData);
     recallEntityData?.();
   };
 
-  const [criteriaData, setCriteriaData] = useState<any>(null);
+  const [criteriaData, setCriteriaData] = useState<V2TerrafundCriteriaData | null>(null);
   const hasOverlaps = (polygonValidation: any) => {
     if (polygonValidation.nonValidCriteria) {
       for (const criteria of polygonValidation.nonValidCriteria) {
@@ -72,6 +75,32 @@ const MapEditPolygonPanel = ({
     }
     return false;
   };
+
+  useEffect(() => {
+    const fetchValidationData = async () => {
+      if (editPolygon?.uuid) {
+        try {
+          const response = await fetchPostV2TerrafundValidationPolygon({
+            queryParams: { uuid: editPolygon.uuid }
+          });
+
+          if (response) {
+            const transformedData: V2TerrafundCriteriaData = {
+              polygon_id: response.polygon_id,
+              criteria_list: response.criteria_list || []
+            };
+            setCriteriaData(transformedData);
+          }
+        } catch (error) {
+          console.error("Error fetching validation data:", error);
+        }
+      }
+    };
+
+    if (shouldRefetchValidation) {
+      fetchValidationData();
+    }
+  }, [shouldRefetchValidation, editPolygon?.uuid]);
 
   useValueChanged(validationData, () => {
     const siteDataPolygon = validationData[siteData?.uuid ?? ""] ?? [];
