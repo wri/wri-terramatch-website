@@ -17,7 +17,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by landscapes
    */
-  ["landscapes[]"]?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
   /**
    * Filter results by organisationType
    */
