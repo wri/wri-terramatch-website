@@ -22244,10 +22244,6 @@ export type GetV2TypeEntityResponse = {
     version_name?: string;
     validation_status?: boolean;
   }[];
-  /**
-   * Bounding box of the entity
-   */
-  bbox?: number[];
 };
 
 export type GetV2TypeEntityVariables = {
