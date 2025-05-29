@@ -307,33 +307,59 @@ export const useDashboardData = (filters: any) => {
   );
 
   const centroidsDataProjects = useMemo(() => {
-    if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
+    if (!allProjects?.length) return { data: [], bbox: [] };
 
-    const transformedData = allProjects
-      .filter(
-        project =>
-          project &&
-          typeof project.long !== "undefined" &&
-          project.long !== null &&
-          typeof project.lat !== "undefined" &&
-          project.lat !== null
-      )
-      .map(project => ({
-        uuid: project.uuid || "",
-        long: typeof project.long === "number" || typeof project.long === "string" ? project.long.toString() : "0",
-        lat: typeof project.lat === "number" || typeof project.lat === "string" ? project.lat.toString() : "0",
-        name: project.name || "",
-        type: project.organisationType || "",
-        organisation: project.organisationName || null
-      }));
+    const projectsToUse =
+      allProjects.length < (activeProjects?.data?.length ?? 0) ? activeProjects?.data ?? [] : allProjects;
 
-    if (!transformedData.length) {
+    interface ProjectData {
+      uuid?: string;
+      long?: string | number | null;
+      lat?: string | number | null;
+      name?: string;
+      organisationType?: string;
+      programme?: string;
+      organisationName?: string;
+      organisation?: string;
+    }
+
+    const projectsWithCoordinates = projectsToUse.filter((project: ProjectData) => {
+      if (!project) return false;
+
+      const long = project.long;
+      const lat = project.lat;
+
+      if (long === null || long === undefined || long === "" || lat === null || lat === undefined || lat === "") {
+        return false;
+      }
+
+      const longNum = Number(long);
+      const latNum = Number(lat);
+
+      return !isNaN(longNum) && !isNaN(latNum) && !(longNum === 0 && latNum === 0);
+    });
+
+    if (!projectsWithCoordinates.length) {
       return { data: [], bbox: [] };
     }
 
+    const transformedData = projectsWithCoordinates.map((project: ProjectData) => ({
+      uuid: project.uuid ?? "",
+      long: project.long?.toString() ?? "0",
+      lat: project.lat?.toString() ?? "0",
+      name: project.name ?? "",
+      type: project.organisationType ?? "",
+      organisation: project.organisationName ?? project.organisation ?? null
+    }));
+
     try {
-      const longitudes = transformedData.map(p => parseFloat(p.long)).filter(value => !isNaN(value));
-      const latitudes = transformedData.map(p => parseFloat(p.lat)).filter(value => !isNaN(value));
+      const longitudes = transformedData
+        .map((p: { long: string }) => parseFloat(p.long))
+        .filter((value: number) => !isNaN(value));
+
+      const latitudes = transformedData
+        .map((p: { lat: string }) => parseFloat(p.lat))
+        .filter((value: number) => !isNaN(value));
 
       if (longitudes.length === 0 || latitudes.length === 0) {
         return { data: transformedData, bbox: [] };
@@ -352,7 +378,7 @@ export const useDashboardData = (filters: any) => {
       console.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
-  }, [allProjects]);
+  }, [allProjects, activeProjects]);
 
   useEffect(() => {
     if (topData?.top_projects_most_planted_trees) {
