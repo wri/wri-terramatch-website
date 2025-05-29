@@ -307,10 +307,9 @@ export const useDashboardData = (filters: any) => {
   );
 
   const centroidsDataProjects = useMemo(() => {
-    if (!allProjects?.length) return { data: [], bbox: [] };
+    const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
 
-    const projectsToUse =
-      allProjects.length < (activeProjects?.data?.length ?? 0) ? activeProjects?.data ?? [] : allProjects;
+    if (!projectsToUse?.length) return { data: [], bbox: [] };
 
     interface ProjectData {
       uuid?: string;
