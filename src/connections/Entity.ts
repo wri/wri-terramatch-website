@@ -107,6 +107,8 @@ type EntityIndexFilterKey = keyof Omit<
 export type EntityIndexConnectionProps = PaginatedConnectionProps & {
   filter?: Partial<Record<EntityIndexFilterKey, string>>;
   sideloads?: EntityIndexQueryParams["sideloads"];
+  // Defaults to true if not included.
+  enabled?: boolean;
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
@@ -137,11 +139,16 @@ const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
     for (const [key, value] of Object.entries(props.filter)) {
       if (key === "polygonStatus") {
         queryParams.polygonStatus = value as PolygonStatus;
+      } else if (key === "nothingToReport") {
+        queryParams.nothingToReport = value === "true";
       } else if (["landscape", "organisationType", "cohort"].includes(key)) {
         queryParams[key as "landscape" | "organisationType" | "cohort"] = Array.isArray(value) ? value : [value];
       } else {
         queryParams[
-          key as Exclude<EntityIndexFilterKey, "polygonStatus" | "landscape" | "organisationType" | "cohort">
+          key as Exclude<
+            EntityIndexFilterKey,
+            "polygonStatus" | "landscape" | "organisationType" | "cohort" | "nothingToReport"
+          >
         ] = value;
       }
     }
@@ -201,8 +208,10 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
   )
 });
 
-const indexIsLoaded = <T extends EntityDtoType>({ entities, fetchFailure }: EntityIndexConnection<T>) =>
-  entities != null || fetchFailure != null;
+const indexIsLoaded = <T extends EntityDtoType>(
+  { entities, fetchFailure }: EntityIndexConnection<T>,
+  { enabled }: EntityIndexConnectionProps
+) => enabled === false || entities != null || fetchFailure != null;
 
 const indexCacheKey = (props: EntityIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
 
@@ -210,7 +219,7 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
   entityName: SupportedEntity
 ): Connection<EntityIndexConnection<T>, EntityIndexConnectionProps> => ({
   load: (connection, props) => {
-    if (!indexIsLoaded(connection)) entityIndex(entityIndexParams(entityName, props));
+    if (!indexIsLoaded(connection, props)) entityIndex(entityIndexParams(entityName, props));
   },
 
   isLoaded: indexIsLoaded,
@@ -320,6 +329,7 @@ export const useNurseryIndex = connectionHook(indexNurseryConnection);
 // Project Reports
 const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
 export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
+export const useProjectReportIndex = connectionHook(indexProjectReportConnection);
 const fullProjectReportConnection = createGetEntityConnection<ProjectReportFullDto, ProjectReportUpdateData>(
   "projectReports"
 );
