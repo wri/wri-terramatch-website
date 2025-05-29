@@ -30,7 +30,28 @@ const indexCacheKey = (props: TotalSectionHeaderConnectionProps) =>
 const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, TotalSectionHeaderConnectionProps> = {
   load: (connection, props) => {
     if (!totalSectionHeaderIsLoaded(connection)) {
-      getTotalSectionHeaders({ queryParams: props });
+      try {
+        const result = getTotalSectionHeaders({ queryParams: props });
+        if (result === undefined) {
+          return {
+            ...connection,
+            fetchFailure: {
+              statusCode: 404,
+              message: "No data available for this combination of filters",
+              severity: "error"
+            }
+          };
+        }
+      } catch (error) {
+        return {
+          ...connection,
+          fetchFailure: {
+            statusCode: 500,
+            message: error instanceof Error ? error.message : "Unknown error",
+            severity: "error"
+          }
+        };
+      }
     }
   },
 
@@ -47,7 +68,17 @@ const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, Tot
         ],
         (indexMeta, fetchFailure) => {
           const refetch = () => ApiSlice.pruneIndex("totalSectionHeaders", "");
-          if (indexMeta == null) return { refetch, fetchFailure };
+
+          if (indexMeta == null) {
+            return {
+              refetch,
+              fetchFailure: fetchFailure || {
+                statusCode: 404,
+                message: "No data available for this combination of filters",
+                severity: "error"
+              }
+            };
+          }
 
           return {
             data: indexMeta as TotalSectionHeaderDto,
