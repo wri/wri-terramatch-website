@@ -69,7 +69,6 @@ const MapPolygonPanel = ({
             setTabEditPolygon={setTabEditPolygon}
             polygonVersionData={polygonVersionData}
             refetchPolygonVersions={refetchPolygonVersions}
-            refreshEntity={refreshEntity}
             mapFunctions={mapFunctions}
             polygonData={polygonsData}
             recallEntityData={recallEntityData}
