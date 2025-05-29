@@ -21,7 +21,6 @@ export interface MapEditPolygonPanelProps {
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   polygonVersionData?: SitePolygonsDataResponse;
   refetchPolygonVersions?: () => void;
-  refreshEntity?: () => void;
   mapFunctions?: any;
   polygonData?: Record<string, string[]>;
   recallEntityData?: () => void;
@@ -32,7 +31,6 @@ const MapEditPolygonPanel = ({
   setTabEditPolygon,
   polygonVersionData,
   refetchPolygonVersions,
-  refreshEntity,
   mapFunctions,
   polygonData,
   recallEntityData
@@ -59,7 +57,6 @@ const MapEditPolygonPanel = ({
     setOpenModalConfirmation(false);
     setSelectedPolyVersion({});
     setPreviewVersion(false);
-    refreshEntity?.();
     onCancel(polygonData);
     recallEntityData?.();
   };
