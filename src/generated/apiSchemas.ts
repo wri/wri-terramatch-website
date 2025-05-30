@@ -5907,7 +5907,10 @@ export type ApplicationLiteRead = {
       order?: string;
     };
   };
-  funding_programme_name?: number;
+  funding_programme_name?: string;
+  funding_programme_uuid?: string;
+  organisation_name?: string;
+  organisation_uuid?: string;
   /**
    * @format date-time
    */
@@ -6348,28 +6351,6 @@ export type ApplicationRead = {
    * @format date-time
    */
   updated_at?: string;
-};
-
-export type TaskPaginated = {
-  data?: {
-    uuid?: string;
-    project?: Record<string, any>;
-    period_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
 };
 
 export type NurseryPaginated = {
@@ -10768,38 +10749,6 @@ export type ActionRead = {
   updated_at?: string;
 };
 
-export type V2TaskRead = {
-  uuid?: string;
-  project?: Record<string, any>;
-  period_key?: string;
-  status?: string;
-  readable_status?: string;
-};
-
-export type V2TaskActionRead = {
-  uuid?: string;
-  /**
-   * @format date-time
-   */
-  due_at?: string;
-  /**
-   * @format date-time
-   */
-  submitted_at?: string;
-  report_title?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  status?: string;
-  update_request_status?: string;
-  nothing_to_report?: boolean;
-  title?: string;
-  type?: string;
-  parent_name?: string;
-  completion?: number;
-};
-
 export type StatusUpdate = {
   feedback?: string;
   feedback_fields?: string[];
@@ -11345,34 +11294,6 @@ export type DashboardTreesUnderRestorationActual = {
   dueDate?: string;
   treeSpeciesAmount?: number;
   treeSpeciesPercentage?: number;
-};
-
-export type DashboardGetProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    /**
-     * @format double
-     */
-    lat?: number;
-    /**
-     * @format double
-     */
-    long?: number;
-  }[];
-};
-
-export type DashboardGetProjectsData = {
-  uuid?: string;
-  name?: string;
-  /**
-   * @format double
-   */
-  lat?: number;
-  /**
-   * @format double
-   */
-  long?: number;
 };
 
 export type DashboardGetPolygonStatusResponse = {

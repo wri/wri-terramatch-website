@@ -8,6 +8,10 @@ import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import {
+  DASHBOARD_SERVICE_RESOURCES,
+  DashboardServiceApiResources
+} from "@/generated/v3/dashboardService/dashboardServiceConstants";
+import {
   ENTITY_SERVICE_RESOURCES,
   EntityServiceApiResources
 } from "@/generated/v3/entityService/entityServiceConstants";
@@ -86,13 +90,15 @@ export const RESOURCES = [
   ...ENTITY_SERVICE_RESOURCES,
   ...JOB_SERVICE_RESOURCES,
   ...USER_SERVICE_RESOURCES,
-  ...RESEARCH_SERVICE_RESOURCES
+  ...RESEARCH_SERVICE_RESOURCES,
+  ...DASHBOARD_SERVICE_RESOURCES
 ] as const;
 
 type ApiResources = EntityServiceApiResources &
   JobServiceApiResources &
   UserServiceApiResources &
-  ResearchServiceApiResources;
+  ResearchServiceApiResources &
+  DashboardServiceApiResources;
 
 export type ResourceType = (typeof RESOURCES)[number];
 
@@ -212,6 +218,10 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
 
   for (const method of METHODS) {
     state.meta.pending[method] = {};
+  }
+
+  for (const resource of RESOURCES) {
+    state.meta.indices[resource] = {};
   }
 
   delete state.meta.meUserId;

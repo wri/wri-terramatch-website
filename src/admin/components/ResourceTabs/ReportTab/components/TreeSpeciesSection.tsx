@@ -1,13 +1,13 @@
 import { FC } from "react";
 
-import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { PlantDto } from "@/connections/EntityAssociation";
 
 import AggregatedTreeSpeciesTable from "../AggregatedTreeSpeciesTable";
 import { Site } from "../types";
 
 interface TreeSpeciesSectionProps {
   sites: Site[];
-  plants: TreeSpeciesDto[];
+  plants: PlantDto[];
 }
 
 const TreeSpeciesSection: FC<TreeSpeciesSectionProps> = ({ sites, plants }) => {

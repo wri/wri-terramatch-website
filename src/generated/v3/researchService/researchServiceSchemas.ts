@@ -37,17 +37,17 @@ export type IndicatorTreeCountDto = {
    * @example 2024
    */
   yearOfAnalysis: number;
-  surveyType: string;
-  surveyId: number;
-  treeCount: number;
+  surveyType: string | null;
+  surveyId: number | null;
+  treeCount: number | null;
   /**
    * @example types TBD
    */
-  uncertaintyType: string;
-  imagerySource: string;
-  imageryId: string;
-  projectPhase: string;
-  confidence: number;
+  uncertaintyType: string | null;
+  imagerySource: string | null;
+  imageryId: string | null;
+  projectPhase: string | null;
+  confidence: number | null;
 };
 
 export type IndicatorTreeCoverDto = {
@@ -59,9 +59,9 @@ export type IndicatorTreeCoverDto = {
   /**
    * @example 2024
    */
-  projectPhase: string;
-  percentCover: number;
-  plusMinusPercent: number;
+  projectPhase: string | null;
+  percentCover: number | null;
+  plusMinusPercent: number | null;
 };
 
 export type IndicatorFieldMonitoringDto = {
@@ -70,10 +70,10 @@ export type IndicatorFieldMonitoringDto = {
    * @example 2024
    */
   yearOfAnalysis: number;
-  treeCount: number;
-  projectPhase: string;
-  species: string;
-  survivalRate: number;
+  treeCount: number | null;
+  projectPhase: string | null;
+  species: string | null;
+  survivalRate: number | null;
 };
 
 export type IndicatorMsuCarbonDto = {
@@ -82,9 +82,9 @@ export type IndicatorMsuCarbonDto = {
    * @example 2024
    */
   yearOfAnalysis: number;
-  carbonOutput: number;
-  projectPhase: string;
-  confidence: number;
+  carbonOutput: number | null;
+  projectPhase: number | null;
+  confidence: number | null;
 };
 
 export type TreeSpeciesDto = {
@@ -102,11 +102,11 @@ export type ReportingPeriodDto = {
   /**
    * @format date-time
    */
-  dueAt: string;
+  dueAt: string | null;
   /**
    * @format date-time
    */
-  submittedAt: string;
+  submittedAt: string | null;
   /**
    * The tree species reported as planted during this reporting period
    */
@@ -118,13 +118,13 @@ export type SitePolygonFullDto = {
    * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
-  name: string;
+  name: string | null;
   status: "draft" | "submitted" | "needs-more-information" | "approved";
   /**
    * If this ID points to a deleted site, the indicators will be empty.
    */
-  siteId: string;
-  projectId: string;
+  siteId: string | null;
+  projectId: string | null;
   /**
    * @format date-time
    */
@@ -144,8 +144,8 @@ export type SitePolygonFullDto = {
   /**
    * The name of the associated Site.
    */
-  siteName: string;
-  geometry: Record<string, any>;
+  siteName: string | null;
+  geometry: Record<string, any> | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
@@ -165,13 +165,13 @@ export type SitePolygonLightDto = {
    * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
-  name: string;
+  name: string | null;
   status: "draft" | "submitted" | "needs-more-information" | "approved";
   /**
    * If this ID points to a deleted site, the indicators will be empty.
    */
-  siteId: string;
-  projectId: string;
+  siteId: string | null;
+  projectId: string | null;
   /**
    * @format date-time
    */
@@ -191,7 +191,7 @@ export type SitePolygonLightDto = {
   /**
    * The name of the associated Site.
    */
-  siteName: string;
+  siteName: string | null;
 };
 
 export type SitePolygonUpdateAttributes = {

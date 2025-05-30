@@ -227,7 +227,8 @@ export const apiFormQuestionToFormField = (
             required,
             max: question.max_number_limit,
             min: question.min_number_limit,
-            type: question.input_type
+            type: question.input_type,
+            allowNegative: true
           }
         };
       } else {
@@ -682,11 +683,40 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
           .transform((value, originalValue) => {
             return originalValue === "" || originalValue == null ? undefined : value;
           })
-          .min(limitMinNumber)
-          .max(limitMaxNumber)
-          .test("decimal-places", "Max 2 decimal places allowed", val => {
-            if (val <= 0 || val === undefined || val === null || val === "") return true;
-            return /^-?\d+(\.\d{1,2})?$/.test(Number(val));
+          .test("coordinates-validation", function (value) {
+            if (value === undefined || value === null || value === "") return true;
+
+            if (limitMinNumber !== undefined && value < limitMinNumber) {
+              return this.createError({
+                message: `Must be greater than or equal to ${limitMinNumber}`
+              });
+            }
+
+            if (limitMaxNumber !== undefined && value > limitMaxNumber) {
+              return this.createError({
+                message: `Must be less than or equal to ${limitMaxNumber}`
+              });
+            }
+
+            if (question.linked_field_key === "pro-pit-lat-proposed" && (value < -90 || value > 90)) {
+              return this.createError({
+                message: "Latitude must be between -90 and 90 degrees"
+              });
+            }
+
+            if (question.linked_field_key === "pro-pit-long-proposed" && (value < -180 || value > 180)) {
+              return this.createError({
+                message: "Longitude must be between -180 and 180 degrees"
+              });
+            }
+
+            if (!/^-?\d+(\.\d{1,2})?$/.test(Number(value).toString())) {
+              return this.createError({
+                message: "Maximum 2 decimal places are allowed"
+              });
+            }
+
+            return true;
           });
       }
 
@@ -843,6 +873,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
     case "tableInput":
     case "mapInput": {
+      if (question.linked_field_key == "pro-pit-proj-boundary") return;
+
       validation = yup.object();
       if (required) validation = validation.required();
 

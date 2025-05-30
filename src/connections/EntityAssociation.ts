@@ -179,7 +179,8 @@ export const useInvasives = connectionHook(invasiveConnection);
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
 
-type PlantDto = TreeSpeciesDto | SeedingDto;
+export type PlantDto = TreeSpeciesDto | SeedingDto;
+
 /**
  * A single connection for fetching a type of plant data. If the collection is "seeds", the data comes from Seedings,
  * otherwise from TreeSpecies. Since these have become so similar in UI and data, it's likely that in a future

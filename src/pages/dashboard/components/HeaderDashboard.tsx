@@ -317,6 +317,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     return <T _str="TerraMatch Dashboards" _tags="dash" />;
   };
 
+  const isValidDate = (value: string | undefined): boolean => {
+    return value != null && !isNaN(new Date(value).getTime());
+  };
+
   return (
     <header
       className={classNames("flex max-w-full justify-between gap-3 bg-dashboardHeader bg-cover", {
@@ -349,7 +353,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         <If condition={!isHomepage}>
           <Text variant="text-16" className="absolute top-3 right-3 text-white">
             {t("Last Updated on {date}", {
-              date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
+              date: isValidDate(lastUpdatedAt) ? new Date(String(lastUpdatedAt))?.toISOString().split("T")[0] : ""
             })}
           </Text>
         </If>

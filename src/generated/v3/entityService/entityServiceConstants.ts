@@ -1,18 +1,20 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
   ProjectPitchDto,
+  TaskLightDto,
+  TaskFullDto,
+  ProjectReportLightDto,
+  ProjectReportFullDto,
+  SiteReportLightDto,
+  SiteReportFullDto,
+  NurseryReportLightDto,
+  NurseryReportFullDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
   SiteFullDto,
   NurseryLightDto,
   NurseryFullDto,
-  ProjectReportLightDto,
-  ProjectReportFullDto,
-  NurseryReportLightDto,
-  NurseryReportFullDto,
-  SiteReportLightDto,
-  SiteReportFullDto,
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
@@ -22,17 +24,19 @@ import {
   StrataDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
-  TreeReportCountsDto
+  TreeReportCountsDto,
+  BoundingBoxDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
+  "tasks",
+  "projectReports",
+  "siteReports",
+  "nurseryReports",
   "projects",
   "sites",
   "nurseries",
-  "projectReports",
-  "nurseryReports",
-  "siteReports",
   "demographics",
   "seedings",
   "treeSpecies",
@@ -42,17 +46,19 @@ export const ENTITY_SERVICE_RESOURCES = [
   "stratas",
   "treeSpeciesScientificNames",
   "establishmentTrees",
-  "treeReportCounts"
+  "treeReportCounts",
+  "boundingBoxes"
 ] as const;
 
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
+  tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
+  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
+  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
+  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
-  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
-  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
-  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
@@ -63,6 +69,7 @@ export type EntityServiceApiResources = {
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
 };
 
 export const SupportedEntities = {
