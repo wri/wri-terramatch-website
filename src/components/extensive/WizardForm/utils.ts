@@ -166,6 +166,8 @@ export const getAnswer = (field: FormField, values: any): Answer => {
 
       return value;
     }
+    case FieldType.Boolean:
+      return value;
 
     default:
       return undefined;
