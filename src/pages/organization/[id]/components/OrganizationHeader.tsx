@@ -71,7 +71,6 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
             <Text variant="text-body-900">
               {formatOptionsList(getOrganisationTypeOptions(t), organization?.type!) ?? ""}
             </Text>
-            <Text variant="text-body-400">{organization?.description}</Text>
           </div>
         </div>
         <div className="flex translate-y-[-30px] transform gap-6">
