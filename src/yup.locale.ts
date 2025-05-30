@@ -10,7 +10,7 @@ export default function (t: typeof useT = (t: string) => t) {
       notType(params) {
         switch (params.type) {
           case "date": {
-            return t("Please use correct format for the date entered above. It should be MM/DD/YYYY");
+            return t("Please use correct format for the date entered above. It should be DD/MM/YYYY");
           }
           case "number": {
             return t("Please enter a number");

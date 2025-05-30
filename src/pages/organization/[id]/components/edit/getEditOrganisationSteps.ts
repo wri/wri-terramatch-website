@@ -159,7 +159,8 @@ export const getSteps = (t: typeof useT, uuid: string, countryOptions: Option[])
           label: t("Date Organization Founded"),
           validation: yup.date().optional(),
           fieldProps: {
-            type: "date"
+            type: "date",
+            lang: "en-GB"
           }
         },
         {
