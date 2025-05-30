@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { isEmpty } from "lodash";
+import { useMemo } from "react";
 
 import { IncludedDemographic } from "@/admin/components/ResourceTabs/ReportTab/types";
 import { processDemographicData } from "@/admin/components/ResourceTabs/ReportTab/utils/demographicsProcessor";
-import { loadProjectReportIndex } from "@/connections/Entity";
-import { EntityIndexConnectionProps } from "@/connections/Entity";
-import { JsonApiResource } from "@/store/apiSlice";
+import { useProjectReportIndex } from "@/connections/Entity";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import Log from "@/utils/log";
 
 const DEFAULT_DEMOGRAPHIC_DATA = {
   fullTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
@@ -13,84 +14,49 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
 };
 
 export const useDashboardEmploymentData = (projectUuid: string | undefined) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [demographicsData, setDemographicsData] = useState<JsonApiResource[]>([]);
+  const [connectionLoaded, { fetchFailure, included }] = useProjectReportIndex({
+    pageNumber: 1,
+    sortField: "createdAt",
+    sortDirection: "DESC",
+    filter: { status: "approved", projectUuid },
+    sideloads: [{ entity: "demographics", pageSize: 100 }],
+    enabled: !isEmpty(projectUuid)
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!projectUuid) return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const connectionProps: EntityIndexConnectionProps = {
-          pageSize: 100,
-          pageNumber: 1,
-          sortField: "createdAt",
-          sortDirection: "DESC",
-          filter: {
-            status: "approved",
-            projectUuid: projectUuid
-          },
-          sideloads: [{ entity: "demographics", pageSize: 100 }]
-        };
-
-        const connection = await loadProjectReportIndex(connectionProps);
-
-        if (connection.fetchFailure != null) {
-          throw new Error(`Failed to fetch project reports: ${connection.fetchFailure}`);
-        }
-        console.log("Project Reports IDs:", connection);
-        if (connection.included && Array.isArray(connection.included)) {
-          const demographicsItems = connection.included.filter(item => item.type === "demographics");
-          setDemographicsData(demographicsItems);
-        } else {
-          setDemographicsData([]);
-        }
-      } catch (err) {
-        console.error("Error fetching project reports with demographics:", err);
-        setError(err instanceof Error ? err : new Error("Unknown error occurred"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [projectUuid]);
-
-  const employmentData = useMemo(() => {
-    if (!projectUuid || demographicsData.length === 0) {
-      return DEFAULT_DEMOGRAPHIC_DATA;
+  useValueChanged(fetchFailure, () => {
+    if (fetchFailure != null) {
+      Log.error("Error fetching project reports with demographics:", fetchFailure);
     }
+  });
 
-    const typedDemographicsData = demographicsData as unknown as IncludedDemographic[];
-    return processDemographicData(typedDemographicsData);
-  }, [demographicsData, projectUuid]);
+  const { rawEmploymentData, formattedJobsData } = useMemo(() => {
+    const demographicsData = included?.filter(({ type }) => type === "demographics");
+    const rawEmploymentData =
+      demographicsData == null || demographicsData.length === 0
+        ? DEFAULT_DEMOGRAPHIC_DATA
+        : processDemographicData(demographicsData as unknown as IncludedDemographic[]);
 
-  const formattedJobsData = useMemo(() => {
-    if (!projectUuid) return null;
-    console.log("employmentData", employmentData);
-    return {
-      total_ft: employmentData.fullTimeJobs.total,
-      total_pt: employmentData.partTimeJobs.total,
-      total_ft_women: employmentData.fullTimeJobs.female,
-      total_ft_men: employmentData.fullTimeJobs.male,
-      total_ft_youth: employmentData.fullTimeJobs.youth,
-      total_ft_non_youth: employmentData.fullTimeJobs.nonYouth,
-      total_pt_women: employmentData.partTimeJobs.female,
-      total_pt_men: employmentData.partTimeJobs.male,
-      total_pt_youth: employmentData.partTimeJobs.youth,
-      total_pt_non_youth: employmentData.partTimeJobs.nonYouth,
-      totalJobsCreated: employmentData.fullTimeJobs.total + employmentData.partTimeJobs.total
+    const formattedJobsData = {
+      total_ft: rawEmploymentData.fullTimeJobs.total,
+      total_pt: rawEmploymentData.partTimeJobs.total,
+      total_ft_women: rawEmploymentData.fullTimeJobs.female,
+      total_ft_men: rawEmploymentData.fullTimeJobs.male,
+      total_ft_youth: rawEmploymentData.fullTimeJobs.youth,
+      total_ft_non_youth: rawEmploymentData.fullTimeJobs.nonYouth,
+      total_pt_women: rawEmploymentData.partTimeJobs.female,
+      total_pt_men: rawEmploymentData.partTimeJobs.male,
+      total_pt_youth: rawEmploymentData.partTimeJobs.youth,
+      total_pt_non_youth: rawEmploymentData.partTimeJobs.nonYouth,
+      totalJobsCreated: rawEmploymentData.fullTimeJobs.total + rawEmploymentData.partTimeJobs.total
     };
-  }, [employmentData, projectUuid]);
+
+    return { rawEmploymentData, formattedJobsData };
+  }, [included]);
 
   return {
-    rawEmploymentData: employmentData,
+    rawEmploymentData,
     formattedJobsData,
-    isLoading: isLoading && !!projectUuid,
-    error
+    isLoading: !connectionLoaded,
+    error: fetchFailure == null ? undefined : new Error(`Failed to fetch project reports: ${fetchFailure.message}`)
   };
 };

@@ -26,6 +26,7 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
+import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -102,7 +103,7 @@ export const useDashboardData = (filters: any) => {
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
-    "landscapesType[]": filters.landscapes,
+    landscapes: filters.landscapes,
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
@@ -140,9 +141,14 @@ export const useDashboardData = (filters: any) => {
   );
 
   const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
-      queryParams: queryParams
-    });
+    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
@@ -280,6 +286,17 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
+  const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
+    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
+
+  const combinedHectaresData = useMemo(() => {
+    if (filters.uuid && projectTreeSpeciesData) {
+      return projectTreeSpeciesData;
+    } else {
+      return dashboardRestorationGoalData;
+    }
+  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+
   const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
     {
       queryParams: queryParams
@@ -290,33 +307,58 @@ export const useDashboardData = (filters: any) => {
   );
 
   const centroidsDataProjects = useMemo(() => {
-    if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
+    const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
 
-    const transformedData = allProjects
-      .filter(
-        project =>
-          project &&
-          typeof project.long !== "undefined" &&
-          project.long !== null &&
-          typeof project.lat !== "undefined" &&
-          project.lat !== null
-      )
-      .map(project => ({
-        uuid: project.uuid || "",
-        long: typeof project.long === "number" || typeof project.long === "string" ? project.long.toString() : "0",
-        lat: typeof project.lat === "number" || typeof project.lat === "string" ? project.lat.toString() : "0",
-        name: project.name || "",
-        type: project.organisationType || "",
-        organisation: project.organisationName || null
-      }));
+    if (!projectsToUse?.length) return { data: [], bbox: [] };
 
-    if (!transformedData.length) {
+    interface ProjectData {
+      uuid?: string;
+      long?: string | number | null;
+      lat?: string | number | null;
+      name?: string;
+      organisationType?: string;
+      programme?: string;
+      organisationName?: string;
+      organisation?: string;
+    }
+
+    const projectsWithCoordinates = projectsToUse.filter((project: ProjectData) => {
+      if (!project) return false;
+
+      const long = project.long;
+      const lat = project.lat;
+
+      if (long === null || long === undefined || long === "" || lat === null || lat === undefined || lat === "") {
+        return false;
+      }
+
+      const longNum = Number(long);
+      const latNum = Number(lat);
+
+      return !isNaN(longNum) && !isNaN(latNum) && !(longNum === 0 && latNum === 0);
+    });
+
+    if (!projectsWithCoordinates.length) {
       return { data: [], bbox: [] };
     }
 
+    const transformedData = projectsWithCoordinates.map((project: ProjectData) => ({
+      uuid: project.uuid ?? "",
+      long: project.long?.toString() ?? "0",
+      lat: project.lat?.toString() ?? "0",
+      name: project.name ?? "",
+      type: project.organisationType ?? "",
+      organisation: project.organisationName ?? project.organisation ?? null
+    }));
+
     try {
-      const longitudes = transformedData.map(p => parseFloat(p.long)).filter(value => !isNaN(value));
-      const latitudes = transformedData.map(p => parseFloat(p.lat)).filter(value => !isNaN(value));
+      const longitudes = transformedData
+        .map((p: { long: string }) => parseFloat(p.long))
+        .filter((value: number) => !isNaN(value));
+
+      const latitudes = transformedData
+        .map((p: { lat: string }) => parseFloat(p.lat))
+        .filter((value: number) => !isNaN(value));
 
       if (longitudes.length === 0 || latitudes.length === 0) {
         return { data: transformedData, bbox: [] };
@@ -335,7 +377,7 @@ export const useDashboardData = (filters: any) => {
       console.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
-  }, [allProjects]);
+  }, [allProjects, activeProjects]);
 
   useEffect(() => {
     if (topData?.top_projects_most_planted_trees) {
@@ -463,14 +505,14 @@ export const useDashboardData = (filters: any) => {
 
   return {
     dashboardHeader,
-    dashboardRestorationGoalData,
+    dashboardRestorationGoalData: combinedHectaresData,
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal,
+    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
     projectFullDto,
