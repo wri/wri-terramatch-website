@@ -9,19 +9,14 @@ import { createRoot } from "react-dom/client";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
-  fetchGetV2DashboardGetBboxProject,
-  fetchGetV2SitesSiteBbox,
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon,
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid,
-  useGetV2SitesSiteBbox,
-  useGetV2TerrafundPolygonBboxUuid
+  fetchPostV2TerrafundSitePolygonUuidSiteUuid
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { createQueryParams } from "@/utils/dashboardUtils";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -30,6 +25,7 @@ import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
+
 type DataPolygonOverview = {
   status: string;
   count: number;
@@ -966,31 +962,6 @@ export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
 
-export async function callEntityBbox(type: string, entityModel: any): Promise<BBox | null> {
-  try {
-    if (type === "sites") {
-      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
-
-      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
-        return siteBbox.bbox as BBox;
-      }
-    } else if (type === "projects") {
-      const projectBbox = await fetchGetV2DashboardGetBboxProject({
-        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
-      });
-
-      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
-        return projectBbox.bbox as BBox;
-      }
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error fetching entity BBox:", error);
-    return null;
-  }
-}
-
 export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
   const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
     queryParams: { uuid: siteUuid }
@@ -1103,26 +1074,6 @@ const getPolygonColor = (polygonStatus: string) => {
   }
 };
 
-export const getPolygonBbox = (polygon_uuid: any) => {
-  const { data } = useGetV2TerrafundPolygonBboxUuid(
-    {
-      pathParams: { uuid: polygon_uuid }
-    },
-    {
-      enabled: !!polygon_uuid
-    }
-  );
-  const bbox = data?.bbox;
-  return bbox;
-};
-
-export const getSiteBbox = (record: any) => {
-  const { data: sitePolygonBbox } = useGetV2SitesSiteBbox(
-    { pathParams: { site: record?.uuid } },
-    { enabled: record?.uuid != null }
-  );
-  return sitePolygonBbox?.bbox;
-};
 export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }) => {
   if (map) {
     const { lng, lat } = location;

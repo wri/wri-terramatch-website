@@ -6,13 +6,10 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import {
-  fetchDeleteV2TerrafundPolygonUuid,
-  fetchGetV2TerrafundGeojsonComplete,
-  fetchGetV2TerrafundPolygonBboxUuid
-} from "@/generated/apiComponents";
+import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -60,13 +57,16 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
-  const flyToPolygonBounds = async (polygonUuid: string) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
+
+  const [, { bbox: selectedPolygonBbox }] = useBoundingBox(
+    selected?.poly_id ? { polygonUuid: selected.poly_id } : undefined
+  );
+
+  const flyToPolygonBounds = async () => {
+    if (!map.current || !selectedPolygonBbox) {
       return;
     }
-    map.current.fitBounds(bounds, {
+    map.current.fitBounds(selectedPolygonBbox, {
       padding: 100,
       linear: false
     });
@@ -99,7 +99,7 @@ const MapSidePanel = ({
       window.open(siteUrl, "_blank");
       setClickedButton("");
     } else if (clickedButton === "zoomTo") {
-      flyToPolygonBounds(selected?.poly_id ?? "");
+      flyToPolygonBounds();
       setClickedButton("");
     } else if (clickedButton === "download") {
       downloadGeoJsonPolygon(
@@ -113,12 +113,12 @@ const MapSidePanel = ({
     } else if (clickedButton === "editPolygon") {
       setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.primary_uuid ?? "" });
       if (selected?.poly_id) {
-        flyToPolygonBounds(selected.poly_id);
+        flyToPolygonBounds();
       }
       setClickedButton("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clickedButton, selected]);
+  }, [clickedButton, selected, selectedPolygonBbox]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

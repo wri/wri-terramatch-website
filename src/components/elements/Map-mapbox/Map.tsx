@@ -15,6 +15,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -25,7 +26,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
@@ -235,6 +235,8 @@ export const MapContainer = ({
   }
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
+  const [, { bbox: polygonBbox }] = useBoundingBox({ polygonUuid: polygonFromMap?.uuid });
+
   useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
@@ -339,11 +341,12 @@ export const MapContainer = ({
     }
   });
 
-  useValueChanged(bbox, () => {
-    if (bbox && map.current && map && shouldBboxZoom) {
+  useEffect(() => {
+    if (bbox && map.current && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  });
+  }, [bbox, map, hasControls, shouldBboxZoom]);
+
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
     const setupBorders = () => {
@@ -534,18 +537,6 @@ export const MapContainer = ({
     }
   };
 
-  const flyToPolygonBounds = async (poly_id: string) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: poly_id } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
-      return;
-    }
-    map.current.fitBounds(bounds, {
-      padding: 100,
-      linear: false
-    });
-  };
-
   const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
   const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
@@ -574,7 +565,6 @@ export const MapContainer = ({
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
-              flyToPolygonBounds(polygonActive?.poly_id as string);
             } else {
               await updateGeometry({
                 body: { geometry: JSON.stringify(feature) },
@@ -621,6 +611,12 @@ export const MapContainer = ({
       addGeometryVersion();
     }
   });
+
+  useEffect(() => {
+    if (polygonFromMap?.isOpen && polygonFromMap?.uuid && polygonBbox && map.current) {
+      zoomToBbox(polygonBbox as BBox, map.current, true);
+    }
+  }, [polygonFromMap, polygonBbox, map]);
 
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">

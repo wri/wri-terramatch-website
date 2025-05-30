@@ -22,9 +22,8 @@ type BoundingBoxProps = {
 };
 
 const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
-
-  return [polygonUuid, siteUuid, projectUuid, landscapes?.join(","), country].filter(Boolean).join("|");
+  const { polygonUuid, siteUuid, projectUuid, country, landscapes } = props;
+  return [polygonUuid, siteUuid, projectUuid, country, landscapes?.join(",")].filter(Boolean).join(",");
 };
 
 const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
