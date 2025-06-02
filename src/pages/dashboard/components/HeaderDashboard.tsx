@@ -72,7 +72,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country_slug))].filter(
       Boolean
     ) as string[];
-
     const countries = uniqueCountrySlugs
       .map(slug => {
         const gadmCountry = gadmCountries.find(country => {

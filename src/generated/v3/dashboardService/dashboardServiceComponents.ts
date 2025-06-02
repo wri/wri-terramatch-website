@@ -78,4 +78,61 @@ export const getTotalSectionHeaders = (variables: GetTotalSectionHeadersVariable
     {}
   >({ url: "/dashboard/v3/totalSectionHeaders", method: "get", ...variables, signal });
 
-export const operationsByTag = { totalSectionHeader: { getTotalSectionHeaders } };
+export type GetTreeRestorationGoalQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  cohort?: string;
+  /**
+   * Filter results by landscapes
+   */
+  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type GetTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetTreeRestorationGoalResponse = {
+  meta?: {
+    /**
+     * @example treeRestorationGoals
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeRestorationGoals
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TreeRestorationGoalDto;
+  };
+};
+
+export type GetTreeRestorationGoalVariables = {
+  queryParams?: GetTreeRestorationGoalQueryParams;
+};
+
+export const getTreeRestorationGoal = (variables: GetTreeRestorationGoalVariables, signal?: AbortSignal) =>
+  dashboardServiceFetch<
+    GetTreeRestorationGoalResponse,
+    GetTreeRestorationGoalError,
+    undefined,
+    {},
+    GetTreeRestorationGoalQueryParams,
+    {}
+  >({ url: "/dashboard/v3/treeRestorationGoal", method: "get", ...variables, signal });
+
+export const operationsByTag = {
+  totalSectionHeader: { getTotalSectionHeaders },
+  treeRestorationGoal: { getTreeRestorationGoal }
+};

@@ -56,3 +56,31 @@ export type DelayedJobDto = {
    */
   entityName?: string | null;
 };
+
+export type TreeRestorationGoalDto = {
+  /**
+   * Total number of trees grown goal for for-profit organizations
+   */
+  forProfitTreeCount: number;
+  /**
+   * Total number of trees grown goal for non-profit organizations
+   */
+  nonProfitTreeCount: number;
+  /**
+   * Total trees grown goal across all organizations
+   */
+  totalTreesGrownGoal: number;
+  /**
+   * Total number of trees under restoration across all organizations
+   */
+  treesUnderRestorationActualTotal: number;
+  /**
+   * Total number of trees under restoration for for-profit organizations
+   */
+  treesUnderRestorationActualForProfit: number;
+  /**
+   * Total number of trees under restoration for non-profit organizations
+   */
+  treesUnderRestorationActualNonProfit: number;
+  lastUpdatedAt: string | null;
+};
