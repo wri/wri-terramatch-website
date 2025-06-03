@@ -7,12 +7,14 @@ import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2TerrafundPolygonBboxUuid, fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -42,8 +44,11 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [polygonData, setPolygonData] = useState<any>();
   const [initialPolygonData, setInitialPolygonData] = useState<any>();
-  const [polygonBbox, setPolygonBbox] = useState<any>();
   const t = useT();
+
+  const [, { bbox: polygonBbox }] = useBoundingBox({
+    polygonUuid: polygonSelected
+  });
 
   useEffect(() => {
     const getPolygonData = async () => {
@@ -52,8 +57,6 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
           pathParams: { uuid: polygonSelected }
         });
         setInitialPolygonData(polygonGeojson);
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonSelected } });
-        setPolygonBbox(bbox?.bbox);
       }
     };
     getPolygonData();
@@ -148,7 +151,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
             hasControls={false}
             polygonChecks
             polygonsData={polygonData}
-            bbox={polygonBbox}
+            bbox={polygonBbox as BBox}
           />
           <button onClick={onClose} className="drop-shadow-md absolute right-1 top-1 z-10 rounded bg-grey-750 p-1">
             <Icon name={IconNames.CLEAR} className="h-4 w-4 text-darkCustom-100" />

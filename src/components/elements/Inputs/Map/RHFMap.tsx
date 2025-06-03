@@ -4,11 +4,12 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { Entity } from "@/types/common";
 
@@ -73,31 +74,25 @@ const RHFMap = ({
     }
   );
 
-  useEffect(() => {
-    const setBbboxAndZoom = async () => {
-      if (projectPolygon?.project_polygon?.poly_uuid) {
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
-        });
-        const bounds: any = bbox.bbox;
-        setPolygonBbox(bounds);
-      }
-    };
+  const [, { bbox }] = useBoundingBox({
+    polygonUuid: projectPolygon?.project_polygon?.poly_uuid
+  });
 
+  useEffect(() => {
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setBbboxAndZoom();
+        setPolygonBbox(bbox);
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
         setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
       }
     };
 
     getDataProjectPolygon();
-  }, [projectPolygon, isRefetching, setSelectPolygonFromMap]);
+  }, [projectPolygon, isRefetching, setSelectPolygonFromMap, bbox]);
 
   useEffect(() => {
     if (entity) {
