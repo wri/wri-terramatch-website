@@ -5,18 +5,18 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2DashboardCountryCountry } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { callEntityBbox, parsePolygonData, storePolygon } from "../utils";
+import { parsePolygonData, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -76,6 +76,14 @@ const OverviewMapArea = ({
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
+  const [, { bbox: modelBbox }] = useBoundingBox(
+    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+  );
+
+  const [, { bbox: countryBbox }] = useBoundingBox(
+    type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
+  );
+
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
@@ -83,38 +91,17 @@ const OverviewMapArea = ({
       return;
     }
     if (polygonsData.length > 0) {
-      callEntityBbox(type, entityModel).then(bbox => {
-        if (bbox) {
-          setEntityBbox(bbox);
-        }
-      });
-    } else {
-      callCountryBBox();
+      if (modelBbox) {
+        setEntityBbox(modelBbox as BBox);
+      }
+    } else if (countryBbox) {
+      setEntityBbox(countryBbox as BBox);
     }
   });
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedValues, sortOrder]);
-
-  const callCountryBBox = async () => {
-    let currentCountry = entityModel?.country;
-    if (type === "sites") {
-      currentCountry = entityModel?.projectCountry;
-    }
-    const countryBbox = await fetchGetV2DashboardCountryCountry({
-      pathParams: { country: currentCountry }
-    });
-    if (Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
-      const bboxFormat = countryBbox.bbox[1] as unknown as BBox;
-      setEntityBbox(bboxFormat);
-    }
-  };
-  useEffect(() => {
-    if (entityBbox !== null) {
-      setShouldRefetchPolygonData(false);
-    }
-  }, [entityBbox, polygonsData, setShouldRefetchPolygonData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;

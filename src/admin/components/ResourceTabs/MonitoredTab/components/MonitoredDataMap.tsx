@@ -6,6 +6,7 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { getPolygonsData, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { OptionValue } from "@/types/common";
 
 import NoDataMap from "./NoDataMap";
@@ -21,19 +22,21 @@ const MonitoredDataMap = ({
 }) => {
   const mapFunctions = useMap();
   const [polygonsData, setPolygonsData] = useState<any>(null);
-  const [entityBbox, setEntityBbox] = useState<BBox | any>(null);
   const [loading, setLoading] = useState(false);
+
+  const [, { bbox: entityBbox }] = useBoundingBox(
+    entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid }
+  );
+
   useEffect(() => {
     setLoading(true);
     getPolygonsData(entityUuid, undefined, "created_at", entityName, (data: any) => {
       const parsedData = parsePolygonData(data.polygonsData);
       setPolygonsData(parsedData);
-      if (data.bbox) {
-        setEntityBbox(data.bbox);
-      }
       setLoading(false);
     });
   }, [entityName, entityUuid]);
+
   return (
     <div className="relative h-[calc(100vh-295px)] w-full">
       <LoadingContainerOpacity loading={loading}>
@@ -46,7 +49,7 @@ const MonitoredDataMap = ({
           legendPosition="bottom-right"
           showViewGallery={false}
           polygonsData={polygonsData}
-          bbox={entityBbox}
+          bbox={entityBbox as BBox}
           setLoader={setLoading}
         />
       </LoadingContainerOpacity>
