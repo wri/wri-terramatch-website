@@ -2808,6 +2808,15 @@ export type V2LeadershipsCreate = {
   nationality?: string;
 };
 
+export type V2LeadershipsUpdate = {
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+};
+
 export type V2LeadershipsRead = {
   uuid?: string;
   organisation_id?: string;
@@ -2836,9 +2845,11 @@ export type V2OwnershipStakeRead = {
 };
 
 export type V2OwnershipStakeUpdate = {
-  position?: string;
+  first_name?: string;
+  last_name?: string;
+  title?: string;
   gender?: string;
-  age?: number;
+  year_of_birth?: number;
   percent_ownership?: number;
 };
 

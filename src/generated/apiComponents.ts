@@ -8846,6 +8846,67 @@ export const useDeleteV2LeadershipsUUID = (
   );
 };
 
+export type PatchV2LeadershipsUUIDPathParams = {
+  uuid: string;
+};
+
+export type PatchV2LeadershipsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2LeadershipsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+  collection?: string;
+};
+
+export type PatchV2LeadershipsUUIDRequestBody = {
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+};
+
+export type PatchV2LeadershipsUUIDVariables = {
+  body?: PatchV2LeadershipsUUIDRequestBody;
+  pathParams: PatchV2LeadershipsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2LeadershipsUUID = (variables: PatchV2LeadershipsUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2LeadershipsUUIDResponse,
+    PatchV2LeadershipsUUIDError,
+    PatchV2LeadershipsUUIDRequestBody,
+    {},
+    {},
+    PatchV2LeadershipsUUIDPathParams
+  >({ url: "/v2/leaderships/{uuid}", method: "patch", ...variables, signal });
+
+export const usePatchV2LeadershipsUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2LeadershipsUUIDResponse,
+      PatchV2LeadershipsUUIDError,
+      PatchV2LeadershipsUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2LeadershipsUUIDResponse,
+    PatchV2LeadershipsUUIDError,
+    PatchV2LeadershipsUUIDVariables
+  >(
+    (variables: PatchV2LeadershipsUUIDVariables) => fetchPatchV2LeadershipsUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2OwnershipStakeResponse = {
@@ -8910,9 +8971,11 @@ export type PatchV2OwnershipStakeUUIDResponse = {
 };
 
 export type PatchV2OwnershipStakeUUIDRequestBody = {
-  position?: string;
+  first_name?: string;
+  last_name?: string;
+  title?: string;
   gender?: string;
-  age?: number;
+  year_of_birth?: number;
   percent_ownership?: number;
 };
 

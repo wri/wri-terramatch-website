@@ -18,15 +18,17 @@ export interface FormModalProps {
   title?: string;
   fields: FormField[];
   onSubmit: (data: any) => void;
+  defaultValues?: Record<string, any>;
 }
 
-const FormModal = ({ title, fields, onSubmit }: FormModalProps) => {
+const FormModal = ({ title, fields, onSubmit, defaultValues }: FormModalProps) => {
   const t = useT();
   const { closeModal } = useModalContext();
 
   const formHook = useForm({
     resolver: yupResolver(getSchema(fields)),
-    mode: "onSubmit"
+    mode: "onSubmit",
+    defaultValues
   });
 
   return (
