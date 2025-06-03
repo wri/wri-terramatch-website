@@ -20,6 +20,7 @@ import {
   useGetV2ImpactStories
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -92,6 +93,8 @@ export const useDashboardData = (filters: any) => {
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
 
+  const { data: projectHectaresData, isLoading: isLoadingProjectHectares } = useSitePolygonsHectares(filters.uuid);
+
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -158,10 +161,15 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     });
 
-  const { data: hectaresUnderRestoration, isLoading: isLoadingHectaresUnderRestoration } =
-    useGetV2DashboardIndicatorHectaresRestoration<any>({
-      queryParams: queryParams
-    });
+  const { data: generalHectaresUnderRestoration, isLoading: isLoadingGeneralHectaresUnderRestoration } =
+    useGetV2DashboardIndicatorHectaresRestoration<any>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
   const [, { association: coverImage }] = useMedia({
@@ -300,6 +308,20 @@ export const useDashboardData = (filters: any) => {
       return dashboardRestorationGoalData;
     }
   }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+
+  const finalHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid && projectHectaresData) {
+      return projectHectaresData;
+    }
+    return generalHectaresUnderRestoration;
+  }, [filters.uuid, projectHectaresData, generalHectaresUnderRestoration]);
+
+  const finalIsLoadingHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid) {
+      return isLoadingProjectHectares;
+    }
+    return isLoadingGeneralHectaresUnderRestoration;
+  }, [filters.uuid, isLoadingProjectHectares, isLoadingGeneralHectaresUnderRestoration]);
 
   const centroidsDataProjects = useMemo(() => {
     const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
@@ -505,11 +527,11 @@ export const useDashboardData = (filters: any) => {
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
-    hectaresUnderRestoration,
+    hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
-    isLoadingHectaresUnderRestoration,
+    isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,
     coverImage,
