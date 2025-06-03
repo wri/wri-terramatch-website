@@ -11315,18 +11315,6 @@ export type DashboardGetPolygonStatusResponse = {
   }[];
 };
 
-export type DashboardBBOXProject = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXLandscape = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXCountry = {
-  bbox?: number[];
-};
-
 export type DashboardPolygonData = {
   data?: {
     /**
@@ -11598,10 +11586,6 @@ export type EntityTypeResponse = {
     version_name?: string;
     validation_status?: boolean;
   }[];
-  /**
-   * Bounding box of the entity
-   */
-  bbox?: number[];
 };
 
 export type EntityPolygonResponse = {
