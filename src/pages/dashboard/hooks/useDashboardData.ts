@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
@@ -9,8 +10,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardBboxCountryLandscape,
-  useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
@@ -27,6 +26,17 @@ import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
+
+const LANDSCAPE_SLUGS = {
+  "Ghana Cocoa Belt": "gcb",
+  "Greater Rift Valley of Kenya": "grv",
+  "Lake Kivu & Rusizi River Basin": "ikr"
+} as const;
+
+//TODO: remove this once we have the correct landscape slugs for all filters
+const getLandscapeSlugs = (landscapes: string[]) => {
+  return landscapes.map(landscape => LANDSCAPE_SLUGS[landscape as keyof typeof LANDSCAPE_SLUGS] ?? landscape);
+};
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -53,17 +63,10 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const { data: generalBbox } = useGetV2DashboardBboxCountryLandscape(
-    {
-      queryParams: {
-        landscapes: filters.landscapes?.join(","),
-        country: filters.country.country_slug
-      }
-    },
-    {
-      enabled: !!filters.landscapes?.length || !!filters.country.country_slug
-    }
-  );
+  const [, { bbox: generalBbox }] = useBoundingBox({
+    landscapes: getLandscapeSlugs(filters.landscapes),
+    country: filters.country.country_slug
+  });
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
@@ -286,6 +289,7 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
+  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : undefined);
   const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
     useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
 
@@ -296,15 +300,6 @@ export const useDashboardData = (filters: any) => {
       return dashboardRestorationGoalData;
     }
   }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
-
-  const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters.uuid
-    }
-  );
 
   const centroidsDataProjects = useMemo(() => {
     const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
@@ -364,10 +359,10 @@ export const useDashboardData = (filters: any) => {
         return { data: transformedData, bbox: [] };
       }
 
-      const minLong = Math.min(...longitudes).toString();
-      const minLat = Math.min(...latitudes).toString();
-      const maxLong = Math.max(...longitudes).toString();
-      const maxLat = Math.max(...latitudes).toString();
+      const minLong = Math.min(...longitudes);
+      const minLat = Math.min(...latitudes);
+      const maxLong = Math.max(...longitudes);
+      const maxLat = Math.max(...latitudes);
 
       return {
         data: transformedData,
@@ -454,10 +449,10 @@ export const useDashboardData = (filters: any) => {
   }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
-    if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
-      setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
+    if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
+      setGeneralBboxParsed(generalBbox as BBox);
     } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
-      setGeneralBboxParsed(centroidsDataProjects.bbox as unknown as BBox);
+      setGeneralBboxParsed(centroidsDataProjects.bbox as BBox);
     } else {
       setGeneralBboxParsed(undefined);
     }
@@ -524,7 +519,7 @@ export const useDashboardData = (filters: any) => {
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData ?? {},
     isUserAllowed,
-    projectBbox: projectBbox?.bbox,
+    projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
     isLoadingImpactStories

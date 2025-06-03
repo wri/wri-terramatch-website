@@ -13,6 +13,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -112,7 +113,11 @@ const EntityMapAndGalleryCard = ({
     }
   });
 
-  const mapBbox = sitePolygonData?.bbox as BBox;
+  const [, { bbox: bboxArray }] = useBoundingBox(
+    modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID }
+  );
+
+  const mapBbox = bboxArray?.length === 4 ? (bboxArray as BBox) : undefined;
 
   const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
