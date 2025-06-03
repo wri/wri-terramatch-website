@@ -27,7 +27,6 @@ import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
-// Add landscape mapping
 const LANDSCAPE_SLUGS = {
   "Ghana Cocoa Belt": "gcb",
   "Greater Rift Valley of Kenya": "grv",
