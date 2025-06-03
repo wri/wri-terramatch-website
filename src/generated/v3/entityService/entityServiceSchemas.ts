@@ -318,6 +318,101 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type PlantingCountDto = {
+  /**
+   * Taxonomic ID for this tree species row
+   */
+  taxonId: string | null;
+  /**
+   * Number of trees of this type that have been planted in all previous reports on this entity.
+   */
+  amount: number;
+};
+
+/**
+ * CONSTANTS
+ */
+export type TreeEntityTypes = {
+  /**
+   * @example sites
+   * @example nurseries
+   * @example projectReports
+   * @example siteReports
+   * @example nurseryReports
+   */
+  ESTABLISHMENT_ENTITIES: string[];
+  /**
+   * @example projects
+   * @example projectReports
+   * @example sites
+   * @example nurseries
+   */
+  REPORT_COUNT_ENTITIES: string[];
+};
+
+export type ScientificNameDto = {
+  /**
+   * The scientific name for this tree species
+   *
+   * @example Abelia uniflora
+   */
+  scientificName: string;
+};
+
+export type EstablishmentsTreesDto = {
+  /**
+   * The species that were specified at the establishment of the parent entity keyed by collection. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
+   *
+   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
+   */
+  establishmentTrees: {
+    [key: string]: string[];
+  };
+  /**
+   * If the entity in this request is a report, the sum totals of previous planting by species by collection. Note that for site reports, the seeds planted under previous site reports are included under the collection name "seeds"
+   *
+   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
+   */
+  previousPlantingCounts: {
+    [key: string]: {
+      [key: string]: PlantingCountDto;
+    };
+  } | null;
+};
+
+export type TreeReportCountsDto = {
+  /**
+   * The species that were specified at the establishment of the parent entity grouped by collection. This will be null for projects because projects don't have a parent entity. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
+   *
+   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
+   */
+  establishmentTrees: {
+    [key: string]: string[];
+  } | null;
+  /**
+   * Returns the planting counts of all species on reports associated with this entity, grouped by collection.If the entity is a project or site, it returns data for all site reports under that Project or Site. If the entity is a project report, it returns data for all site reports within the same reporting task. Note that seeding data is returned on this same endpoint under the collection name "seeds"
+   *
+   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
+   */
+  reportCounts: {
+    [key: string]: {
+      [key: string]: PlantingCountDto;
+    };
+  } | null;
+};
+
+export type BoundingBoxDto = {
+  /**
+   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
+   *
+   * @example -13.17273163
+   * @example -21.3169788
+   * @example 48.8126753
+   * @example 13.47775425
+   */
+  bbox: number[];
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -1432,99 +1527,4 @@ export type StrataDto = {
    * The associated nursery name
    */
   extent: number | null;
-};
-
-export type PlantingCountDto = {
-  /**
-   * Taxonomic ID for this tree species row
-   */
-  taxonId: string | null;
-  /**
-   * Number of trees of this type that have been planted in all previous reports on this entity.
-   */
-  amount: number;
-};
-
-/**
- * CONSTANTS
- */
-export type TreeEntityTypes = {
-  /**
-   * @example sites
-   * @example nurseries
-   * @example projectReports
-   * @example siteReports
-   * @example nurseryReports
-   */
-  ESTABLISHMENT_ENTITIES: string[];
-  /**
-   * @example projects
-   * @example projectReports
-   * @example sites
-   * @example nurseries
-   */
-  REPORT_COUNT_ENTITIES: string[];
-};
-
-export type ScientificNameDto = {
-  /**
-   * The scientific name for this tree species
-   *
-   * @example Abelia uniflora
-   */
-  scientificName: string;
-};
-
-export type EstablishmentsTreesDto = {
-  /**
-   * The species that were specified at the establishment of the parent entity keyed by collection. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
-   *
-   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
-   */
-  establishmentTrees: {
-    [key: string]: string[];
-  };
-  /**
-   * If the entity in this request is a report, the sum totals of previous planting by species by collection. Note that for site reports, the seeds planted under previous site reports are included under the collection name "seeds"
-   *
-   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
-   */
-  previousPlantingCounts: {
-    [key: string]: {
-      [key: string]: PlantingCountDto;
-    };
-  } | null;
-};
-
-export type TreeReportCountsDto = {
-  /**
-   * The species that were specified at the establishment of the parent entity grouped by collection. This will be null for projects because projects don't have a parent entity. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
-   *
-   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
-   */
-  establishmentTrees: {
-    [key: string]: string[];
-  } | null;
-  /**
-   * Returns the planting counts of all species on reports associated with this entity, grouped by collection.If the entity is a project or site, it returns data for all site reports under that Project or Site. If the entity is a project report, it returns data for all site reports within the same reporting task. Note that seeding data is returned on this same endpoint under the collection name "seeds"
-   *
-   * @example {"tree-planted":{"Aster persaliens":{"amount":256},"Cirsium carniolicum":{"taxonId":"wfo-0000130112","amount":1024}},"non-tree":{"Coffee":{"amount":2048}}}
-   */
-  reportCounts: {
-    [key: string]: {
-      [key: string]: PlantingCountDto;
-    };
-  } | null;
-};
-
-export type BoundingBoxDto = {
-  /**
-   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
-   *
-   * @example -13.17273163
-   * @example -21.3169788
-   * @example 48.8126753
-   * @example 13.47775425
-   */
-  bbox: number[];
 };
