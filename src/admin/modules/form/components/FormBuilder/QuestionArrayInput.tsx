@@ -8,7 +8,9 @@ import {
   BooleanInput,
   FormDataConsumer,
   FormDataConsumerRenderParams,
+  maxValue,
   minLength,
+  minValue,
   NumberInput,
   required,
   SelectArrayInput,
@@ -184,12 +186,14 @@ export const QuestionArrayInput = ({
                   <NumberInput
                     source={getSource("min_character_limit")}
                     label="Minimum Character Limit"
-                    defaultValue={90000}
+                    defaultValue={0}
+                    validate={[minValue(0)]}
                   />
                   <NumberInput
                     source={getSource("max_character_limit")}
                     label="Maximum Character Limit"
                     defaultValue={90000}
+                    validate={[maxValue(90000)]}
                   />
                 </>
               ) : (
