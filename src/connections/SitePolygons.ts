@@ -78,7 +78,7 @@ const sitePolygonsConnection: Connection<
   SitePolygonIndexConnectionProps
 > = {
   load: (connection, props) => {
-    if (!indexIsLoaded(connection)) sitePolygonsIndex(sitePolygonQueryParams(props));
+    if (!indexIsLoaded(connection) && props.entityUuid) sitePolygonsIndex(sitePolygonQueryParams(props));
   },
 
   isLoaded: indexIsLoaded,

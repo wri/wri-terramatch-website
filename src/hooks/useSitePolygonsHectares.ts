@@ -25,7 +25,7 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
 
   const [isLoaded, { sitePolygons, total }] = useSitePolygons({
     entityName: "projects",
-    entityUuid: projectUuid || "",
+    entityUuid: projectUuid ?? "",
     pageSize: PAGE_SIZE,
     pageNumber: currentPage
   });
