@@ -11,11 +11,9 @@ export interface UseSitePolygonsHectaresResult {
   data: HectaresData | null;
   isLoading: boolean;
   error: string | null;
-  allPolygonsCount: number;
 }
 
 export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePolygonsHectaresResult => {
-  console.log("projectUuid", projectUuid);
   const [allPolygonsData, setAllPolygonsData] = useState<any[]>([]);
   const [isLoadingBatch, setIsLoadingBatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +41,7 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
             const numericValue = Number(hectares);
             if (!isNaN(numericValue) && numericValue > 0) {
               restoration_strategies_represented[strategy] =
-                (restoration_strategies_represented[strategy] || 0) + numericValue;
+                (restoration_strategies_represented[strategy] ?? 0) + numericValue;
             }
           });
         }
@@ -53,7 +51,7 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
             const numericValue = Number(hectares);
             if (!isNaN(numericValue) && numericValue > 0) {
               target_land_use_types_represented[landUse] =
-                (target_land_use_types_represented[landUse] || 0) + numericValue;
+                (target_land_use_types_represented[landUse] ?? 0) + numericValue;
             }
           });
         }
@@ -137,7 +135,6 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
   return {
     data: hectaresData,
     isLoading: isLoadingBatch || !isLoaded,
-    error,
-    allPolygonsCount: allPolygonsData.length
+    error
   };
 };
