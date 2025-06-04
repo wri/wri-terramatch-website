@@ -120,6 +120,7 @@ export type TaskLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  nothingToReport: boolean;
 };
 
 export type TaskFullDto = {
