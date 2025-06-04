@@ -8,6 +8,7 @@ import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useMyUser } from "@/connections/User";
+import ApiSlice from "@/store/apiSlice";
 
 import Text from "../../Text/Text";
 import { MyAccountDropdownVariant, VARIANT_MY_ACCOUNT_DROPDOWN } from "./MyAccountDropdownVariant";
@@ -52,26 +53,51 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
         ];
   }, [props.isLoggedIn, isOnDashboard, isAdmin]);
 
+  const getCurrentPath = () => {
+    if (typeof window !== "undefined") {
+      return `${window.location.pathname}${window.location.search}`;
+    }
+    return "";
+  };
+
   const onChange = (item: any) => {
     if (item.value === "Go To Login") {
-      router.push("/auth/login");
+      if (isOnDashboard) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("dashboardReturnUrl", "/dashboard/learn-more");
+          localStorage.setItem("dashboardReturnUrlTimestamp", new Date().toISOString());
+        }
+        router.push("/auth/login");
+      } else {
+        const currentPath = getCurrentPath();
+        const returnUrl = encodeURIComponent(currentPath);
+        router.push(`/auth/login?returnUrl=${returnUrl}`);
+      }
     } else if (item.value === "Logout") {
       removeAccessToken();
-      router.push("/auth/login");
+      router.push("/auth/login").then(() => {
+        ApiSlice.clearApiCache();
+      });
     } else {
       if (!loaded) return;
       if (isOnDashboard) {
         if (isAdmin) {
           router.push("/admin");
+        } else {
+          router.push("/home");
         }
-        router.push("/home");
       } else {
-        router.push("/dashboard");
+        if (isAdmin) {
+          router.push("/dashboard");
+        } else {
+          router.push("/dashboard/learn-more");
+        }
       }
+
+      setTimeout(() => {
+        router.reload();
+      }, 1000);
     }
-    setTimeout(() => {
-      router.reload();
-    }, 1000);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

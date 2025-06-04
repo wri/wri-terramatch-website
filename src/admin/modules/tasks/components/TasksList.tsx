@@ -14,6 +14,7 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
@@ -21,6 +22,7 @@ import Text from "@/components/elements/Text/Text";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -30,20 +32,28 @@ const TaskDataGrid: FC = () => {
 
   return (
     <Datagrid rowClick="show" bulkActionButtons={false}>
-      <TextField source="project.name" label="Project Name" />
-      <TextField source="readable_status" label="Status" sortable={false} />
-      <TextField source="organisation.name" label="Organization" />
+      <TextField source="projectName" label="Project Name" />
       <FunctionField
-        source="project.framework_key"
+        source="status"
+        label="Status"
+        sortable={false}
+        render={({ status }: TaskLightDto) => {
+          const { title } = getTaskStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
+      <TextField source="organisationName" label="Organization" />
+      <FunctionField
+        source="frameworkKey"
         label="Framework"
-        render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.project?.framework_key)?.name ||
-          record?.project?.framework_key
+        render={(record: TaskLightDto) =>
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
+          record?.frameworkKey
         }
         sortable={false}
       />
-      <DateField source="due_at" label="Due Date" locales="en-GB" />
-      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
+      <DateField source="dueAt" label="Due Date" locales="en-GB" />
+      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
     </Datagrid>
   );
 };
@@ -54,7 +64,7 @@ export const TasksList: FC = () => {
   const filters = [
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{
@@ -65,7 +75,7 @@ export const TasksList: FC = () => {
       <AutocompleteInput optionText="name" label="Project" />
     </ReferenceInput>,
     <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getTaskStatusOptions())} />,
-    <SelectInput key="framework_key" label="Framework" source="framework_key" choices={frameworkChoices} />
+    <SelectInput key="frameworkKey" label="Framework" source="frameworkKey" choices={frameworkChoices} />
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("tasks", frameworkChoices);

@@ -64,7 +64,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
     [formData?.answers, formData?.update_request?.content]
   );
-  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps, entity.migrated);
+  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
   const formTitle =
@@ -99,6 +99,12 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   return (
     <EntityProvider entityUuid={entityUUID} entityName={entityName}>
       <WizardForm
+        formSubmissionOrg={{
+          uuid: entity?.organisation?.uuid,
+          type: entity?.organisation?.type,
+          currency: entity?.organisation?.currency,
+          start_month: entity?.organisation?.fin_start_month
+        }}
         steps={formSteps!}
         errors={error}
         onBackFirstStep={router.back}

@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -27,14 +27,21 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
-import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import SiteReportHeader from "@/pages/reports/site-report/components/SiteReportHeader";
+
+type MediaFieldKey = "treePlantingUpload" | "anrPhotos" | "soilWaterConservationUpload" | "soilWaterConservationPhotos";
+
+const sections: { name: string; property: MediaFieldKey }[] = [
+  { name: "Tree Planting Upload", property: "treePlantingUpload" },
+  { name: "Soil or Water Conservation Upload", property: "soilWaterConservationUpload" }
+];
 
 const SiteReportDetailPage = () => {
   const t = useT();
@@ -45,8 +52,7 @@ const SiteReportDetailPage = () => {
   const [isLoaded, { entity: siteReport }] = useFullSiteReport({ uuid: siteReportUUID });
 
   const [, { entity: site }] = useFullSite({ uuid: siteReport?.siteUuid! });
-
-  const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: siteReport?.taskUuid! } });
+  const [, { task }] = useTask({ uuid: siteReport?.taskUuid });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";
@@ -66,8 +72,13 @@ const SiteReportDetailPage = () => {
     collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
   });
 
-  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const window = useReportingWindow(task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
+
+  const totalFiles = useMemo(
+    () => sections.reduce((total, section) => total + (siteReport?.[section.property]?.length ?? 0), 0),
+    [siteReport]
+  );
 
   return (
     <FrameworkProvider frameworkKey={siteReport?.frameworkKey!}>
@@ -127,6 +138,38 @@ const SiteReportDetailPage = () => {
                   </When>
                 </PageColumn>
               </PageRow>
+              <ContextCondition frameworksShow={[Framework.HBF]}>
+                <PageRow>
+                  <PageCard title={t("Site Report Files")} gap={8}>
+                    <If condition={totalFiles === 0}>
+                      <Then>
+                        <h3>{t("Files not found")}</h3>
+                      </Then>
+                      <Else>
+                        {sections.map((section, index) => (
+                          <Then key={index}>
+                            {siteReport?.[section?.property].map((file: any) => (
+                              <Paper key={file.uuid}>
+                                <ButtonField
+                                  key={file.uuid}
+                                  label={t(section.name)}
+                                  subtitle={t(file.file_name)}
+                                  buttonProps={{
+                                    as: Link,
+                                    children: t("Download"),
+                                    href: file.url,
+                                    download: true
+                                  }}
+                                />
+                              </Paper>
+                            ))}
+                          </Then>
+                        ))}
+                      </Else>
+                    </If>
+                  </PageCard>
+                </PageRow>
+              </ContextCondition>
               <PageRow>
                 <PageColumn>
                   <PageCard title={t("Reported Data")} gap={8}>
@@ -311,7 +354,7 @@ const SiteReportDetailPage = () => {
                     </div>
                     <div>
                       <Text variant="text-20-bold">{t("Disturbances")}</Text>
-                      <DisturbancesTablePD modelName="site-report" modelUUID={siteReportUUID} />
+                      <DisturbancesTablePD modelName="siteReports" modelUUID={siteReportUUID} />
                     </div>
                   </PageCard>
                 </PageColumn>

@@ -1,4 +1,3 @@
-import { getCountriesOptions } from "@/constants/options/countries";
 import { Framework } from "@/context/framework.provider";
 
 export const frameworkAdminPrimaryRoleChoices = [
@@ -50,11 +49,6 @@ export const userPrimaryRoleChoices = [
     name: "Government"
   }
 ];
-
-export const countriesChoices = getCountriesOptions().map(item => ({
-  id: item.value,
-  name: item.title
-}));
 
 export const frameworkChoices = [
   {

@@ -14,7 +14,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { getLandTenureOptions } from "@/constants/options/landTenure";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { ContextCondition } from "@/context/ContextCondition";
@@ -36,6 +36,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const { format } = useDate();
   const { openModal } = useModalContext();
   const { framework } = useFrameworkContext();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   const restorationOptions = getRestorationStrategyOptions(t);
 
@@ -61,40 +62,46 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const downloadButtons: JSX.Element[] = [];
   if (framework === Framework.PPC) {
     project.file.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Files")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-          style={{ marginBottom: "10px" }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Files")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+            style={{ marginBottom: "10px" }}
+          />
+        );
+      }
     });
     project.otherAdditionalDocuments.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Other Documents")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-          style={{ marginBottom: "10px" }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Other Documents")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+            style={{ marginBottom: "10px" }}
+          />
+        );
+      }
     });
   } else if (framework === Framework.TF_LANDSCAPES) {
     project.proofOfLandTenureMou.forEach(({ url, fileName }) => {
-      downloadButtons.push(
-        <ButtonField
-          key={url}
-          label={t("Land Tenure MOU")}
-          subtitle={fileName}
-          subtitleClassName="break-words whitespace-normal max-w-[450px]"
-          buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-        />
-      );
+      if (url != null) {
+        downloadButtons.push(
+          <ButtonField
+            key={url}
+            label={t("Land Tenure MOU")}
+            subtitle={fileName}
+            subtitleClassName="break-words whitespace-normal max-w-[450px]"
+            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
+          />
+        );
+      }
     });
   }
 
@@ -153,7 +160,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           <PageCard title={t("Project Details")}>
             <TextField label={t("Project Name")} value={project.name ?? ""} />
             <TextField frameworksShow={[Framework.PPC]} label={t("Continent")} value={project.continent ?? ""} />
-            <TextField label={t("Country")} value={formatOptionsList(getCountriesOptions(t), project.country ?? [])} />
+            <TextField label={t("Country")} value={formatOptionsList(countryOptions ?? [], project.country ?? [])} />
             <TextField frameworksShow={[Framework.HBF]} label={t("State")} value={(project.states ?? []).join(", ")} />
             <TextField
               frameworksHide={[Framework.PPC]}

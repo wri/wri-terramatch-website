@@ -10,9 +10,10 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
@@ -105,10 +106,10 @@ const getOrganizationByUuid = (activeProjects: any[], uuid: string) => {
 const parseJobCreatedByType = (data: any, type: string) => {
   if (!data) return { type, chartData: [] };
 
-  const ptWomen = data.total_pt_women || 0;
-  const ptMen = data.total_pt_men || 0;
-  const ptYouth = data.total_pt_youth || 0;
-  const ptNonYouth = data.total_pt_non_youth || 0;
+  const ptWomen = data.total_pt_women ?? 0;
+  const ptMen = data.total_pt_men ?? 0;
+  const ptYouth = data.total_pt_youth ?? 0;
+  const ptNonYouth = data.total_pt_non_youth ?? 0;
   const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
   const chartData = [
     {
@@ -145,6 +146,7 @@ const Dashboard = () => {
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
   const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
     dashboardHeader,
@@ -158,10 +160,10 @@ const Dashboard = () => {
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
     isLoadingVolunteers,
-    dashboardProjectDetails,
-    isLoadingProjectDetails = false,
+    projectLoaded,
+    projectFullDto,
+    coverImage,
     topProject,
-    refetchTotalSectionHeader,
     centroidsDataProjects,
     activeCountries,
     activeProjects,
@@ -173,7 +175,7 @@ const Dashboard = () => {
     isLoadingImpactStories
   } = useDashboardData(filters);
 
-  const cohortName = useMemo(() => dashboardProjectDetails?.data?.cohort, [dashboardProjectDetails?.data?.cohort]);
+  const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
 
   const dataToggle = useMemo(
     () => [
@@ -192,7 +194,7 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
+    setLastUpdatedAt?.(totalSectionHeader?.lastUpdatedAt ?? "");
   }, [setLastUpdatedAt, totalSectionHeader]);
 
   useValueChanged(generalBbox, () => {
@@ -200,8 +202,6 @@ const Dashboard = () => {
       setCurrentBbox(generalBbox);
     }
   });
-
-  useValueChanged(filters, refetchTotalSectionHeader);
 
   const COLUMN_ACTIVE_PROGRAMME = useMemo(
     () => [
@@ -383,8 +383,8 @@ const Dashboard = () => {
 
   const projectCounts = useMemo(
     () => ({
-      total_enterprise_count: totalSectionHeader?.total_enterprise_count,
-      total_non_profit_count: totalSectionHeader?.total_non_profit_count
+      totalEnterpriseCount: totalSectionHeader?.totalEnterpriseCount ?? 0,
+      totalNonProfitCount: totalSectionHeader?.totalNonProfitCount ?? 0
     }),
     [totalSectionHeader]
   );
@@ -400,6 +400,27 @@ const Dashboard = () => {
     return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
   }, [t, filters.country.id, DATA_ACTIVE_COUNTRY, transformedStories]);
 
+  const countryData = useMemo(() => {
+    if (!projectFullDto?.country || !countryChoices?.length) return undefined;
+
+    const gadmCountry = countryChoices.find(country => country.id === projectFullDto?.country);
+    if (!gadmCountry) return undefined;
+
+    const countrySlug = gadmCountry.id;
+    return {
+      country_slug: countrySlug,
+      data: {
+        label: gadmCountry.name,
+        icon: `/flags/${String(countrySlug).toLowerCase()}.svg`
+      },
+      id: gadmCountry.id
+    };
+  }, [projectFullDto?.country, countryChoices]);
+
+  const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
+    return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
+  };
+
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
@@ -412,7 +433,10 @@ const Dashboard = () => {
             <When condition={filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid}>
               <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <Text variant="text-24-semibold" className="text-black">
-                {t(filters.country?.data.label)}
+                {t(
+                  countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
+                    filters.country?.data.label
+                )}
               </Text>
             </When>
 
@@ -438,8 +462,8 @@ const Dashboard = () => {
           <div>
             <DashboardBreadcrumbs
               cohort={cohortName}
-              countryData={dashboardProjectDetails?.data?.countryData}
-              projectName={dashboardProjectDetails?.data?.name}
+              countryData={countryData as CountriesProps}
+              projectName={projectFullDto?.name}
               className="pt-0"
               textVariant="text-14"
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -484,7 +508,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <PageCard className="border-0 px-4 py-6" gap={8}>
             <div className="flex items-center">
-              <If condition={isLoadingProjectDetails}>
+              <If condition={!projectLoaded}>
                 <Then>
                   <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
                     <Text variant="text-20-bold">{t("Loading...")}</Text>
@@ -492,27 +516,23 @@ const Dashboard = () => {
                 </Then>
                 <Else>
                   <img
-                    src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
-                    alt="tree"
+                    src={coverImage?.thumbUrl ?? "/images/_AJL2963.jpg"}
+                    alt="project cover"
                     className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
                   />
                 </Else>
               </If>
               <div>
-                <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
+                <Text variant="text-20-bold">{t(projectFullDto?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
-                  {t(`Operations: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Registration: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Type: ${
-                      ORGANIZATIONS_TYPES[
-                        dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
-                      ]
-                    }`
+                    `Type: ${ORGANIZATIONS_TYPES[projectFullDto?.organisationType as keyof typeof ORGANIZATIONS_TYPES]}`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Cohort: ${cohortName}`)}
@@ -523,7 +543,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(dashboardProjectDetails?.data)}
+              data={parseDataToObjetive(projectFullDto)}
               variantTitle="text-18-semibold"
             />
           </PageCard>
@@ -694,15 +714,15 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          totalSectionHeader,
-          dashboardVolunteersSurvivalRate,
+          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.totalHectaresRestored ?? 0,
+          projectFullDto ? projectFullDto.totalSites : dashboardVolunteersSurvivalRate?.number_of_sites ?? 0,
           hectaresUnderRestoration
         )}
         textTooltipTable={tooltipText}
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
-        bbox={filters.uuid ? projectBbox : currentBbox}
+        bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
         projectCounts={projectCounts}
         transformedStories={transformedStories}
         isLoading={isLoadingImpactStories}

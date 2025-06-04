@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import UserRoleCard from "@/components/elements/Cards/UserRoleCard/UserRoleCard";
 import Text from "@/components/elements/Text/Text";
-import { useGetV2DashboardCountries } from "@/generated/apiComponents";
 
 import LoginLayout from "../layout";
 import SignUpPage from "../signup/index.page";
@@ -17,14 +16,12 @@ const Page = () => {
   const [selectedOption, setSelectedOption] = useState<string>();
   const [selectedTitleOption, setSelectedTitleOption] = useState<string>();
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
-  const { data: dashboardCountries } = useGetV2DashboardCountries<any>({
-    queryParams: {}
-  });
+
   const refContentCard = React.useRef<HTMLDivElement>(null);
 
   const updatedUserRoleInfo = UserRoleInfo.map((user, index) => {
-    if (index === 1 && dashboardCountries?.data) {
-      return { ...user, menu: dashboardCountries.data };
+    if (index === 1) {
+      return { ...user, menu: [] };
     } else {
       return user;
     }
@@ -82,7 +79,6 @@ const Page = () => {
                   selected={selected == item.id && selectedTitleOption == item.titleOption}
                   title={item.title}
                   description={item.description}
-                  options={item?.menu}
                   titleOptions={item.titleOption}
                   setSelectedOption={setSelectedOption}
                   selectedOption={selectedOption}

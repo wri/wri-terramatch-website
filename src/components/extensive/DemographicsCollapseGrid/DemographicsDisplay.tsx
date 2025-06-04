@@ -10,7 +10,7 @@ import {
   DemographicGridVariantProps,
   DemographicType
 } from "@/components/extensive/DemographicsCollapseGrid/types";
-import { useDemographic } from "@/connections/EntityAssocation";
+import { useDemographic } from "@/connections/EntityAssociation";
 
 type DemographicsDisplayProps = {
   entity: DemographicEntity;

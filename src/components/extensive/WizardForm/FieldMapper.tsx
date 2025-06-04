@@ -10,9 +10,11 @@ import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFL
 import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import Input from "@/components/elements/Inputs/Input/Input";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
@@ -24,14 +26,14 @@ import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/R
 import { MapAreaProvider } from "@/context/mapArea.provider";
 
 import { FieldType, FormField } from "./types";
-
 interface FieldMapperProps {
   field: FormField;
   formHook: UseFormReturn<FieldValues, any>;
   onChange: () => void;
+  formSubmissionOrg?: any;
 }
 
-export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => {
+export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
     name: field.name,
@@ -134,6 +136,18 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
         />
       );
 
+    case FieldType.StrategyAreaInput:
+      return (
+        <RHFStrategyAreaDataTable
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error as any}
+          control={formHook.control}
+          onChangeCapture={onChange}
+        />
+      );
+
     case FieldType.StrataDataTable:
       return (
         <RHFStrataTable {...field.fieldProps} {...sharedProps} control={formHook.control} onChangeCapture={onChange} />
@@ -227,6 +241,19 @@ export const FieldMapper = ({ field, formHook, onChange }: FieldMapperProps) => 
           {...sharedProps}
           control={formHook.control}
           onChangeCapture={onChange}
+        />
+      );
+
+    case FieldType.FinancialTableInput:
+      return (
+        <RHFFinancialIndicatorsDataTable
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          error={sharedProps.error}
+          control={formHook.control}
+          onChangeCapture={onChange}
+          formSubmissionOrg={formSubmissionOrg}
         />
       );
 

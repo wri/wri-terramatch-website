@@ -7,6 +7,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useGadmChoices } from "@/connections/Gadm";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { getFrameworkName } from "@/utils/dashboardUtils";
 
@@ -127,6 +128,7 @@ const ProjectList = () => {
   const router = useRouter();
   const { filters, setFilters, dashboardCountries, frameworks } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const DATA_TABLE_PROJECT_LIST = activeProjects
     ? activeProjects
@@ -148,7 +150,7 @@ const ProjectList = () => {
             programme: getFrameworkName(frameworks, item?.programme),
             country: {
               country_slug: item?.country_slug,
-              label: item?.project_country,
+              label: countryChoices.find(country => country.id === item?.country_slug)?.name,
               image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
             },
             treesPlanted: item.trees_under_restoration.toLocaleString(),

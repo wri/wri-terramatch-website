@@ -1,14 +1,15 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getGenderOptions } from "@/constants/options/gender";
-import { useDeleteV2LeadershipsUUID, usePostV2Leaderships } from "@/generated/apiComponents";
+import { useDeleteV2LeadershipsUUID, usePatchV2LeadershipsUUID, usePostV2Leaderships } from "@/generated/apiComponents";
+import { V2LeadershipsRead } from "@/generated/apiSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -51,8 +52,14 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
   const { field } = useController(props);
   const { formHook, collection } = props;
   const value = field?.value || [];
+  const countryOptions = useGadmOptions({ level: 0 });
+  const [tableKey, setTableKey] = useState(0);
 
   const [, { organisationId }] = useMyOrg();
+
+  const refreshTable = () => {
+    setTableKey(prev => prev + 1);
+  };
 
   const { mutate: createMember } = usePostV2Leaderships({
     onSuccess(data) {
@@ -73,13 +80,47 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     }
   });
 
+  const { mutate: updateTeamMember } = usePatchV2LeadershipsUUID({
+    onSuccess(data, variables) {
+      const _tmp = [...value];
+      //@ts-ignore
+      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
+
+      if (index !== -1) {
+        //@ts-ignore
+        _tmp[index] = data.data;
+        field.onChange(_tmp);
+        onChangeCapture?.();
+        formHook?.reset(formHook.getValues());
+        clearErrors();
+        refreshTable();
+      }
+    }
+  });
+
   const clearErrors = useCallback(() => {
     formHook?.clearErrors(props.name);
   }, [formHook, props.name]);
 
+  const conditionalFunctions =
+    collection === "leadership-team"
+      ? {
+          handleUpdate: (data: V2LeadershipsRead) => {
+            if (data.uuid) {
+              updateTeamMember({
+                pathParams: { uuid: data.uuid },
+                body: { ...data }
+              });
+            }
+          }
+        }
+      : {};
+
   return (
     <DataTable
+      key={tableKey}
       {...props}
+      {...conditionalFunctions}
       value={value}
       handleCreate={data => {
         createMember({
@@ -96,6 +137,7 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
         }
       }}
       addButtonCaption={t("Add team member")}
+      modalEditTitle={t("Update team member")}
       tableColumns={getLeadershipsTableColumns(t)}
       fields={[
         {
@@ -154,7 +196,7 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
           type: FieldType.Dropdown,
           validation: yup.string().required(),
           fieldProps: {
-            options: getCountriesOptions(t),
+            options: countryOptions ?? [],
             required: true
           }
         }

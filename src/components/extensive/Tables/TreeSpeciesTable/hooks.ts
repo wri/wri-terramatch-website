@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index";
-import { SupportedEntity, usePlants } from "@/connections/EntityAssocation";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
 
@@ -98,7 +98,7 @@ export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: Aggrega
 export type TreeSpeciesTableRowData = {
   name: [string, string[]];
   uuid: string; // required by Table, but in this case it's not a real UUID.
-  treeCount?: string | number;
+  treeCount?: string | number | null;
   treeCountGoal?: [number, number];
 };
 
@@ -122,7 +122,7 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
     if (!loaded) return undefined;
 
     const reportCountEntries = Object.entries(reportCounts ?? {});
-    const getReportAmount = (name?: string) =>
+    const getReportAmount = (name?: string | null) =>
       reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
 
     const entityPlants: TreeSpeciesTableRowData[] = (plants ?? []).map(({ name, taxonId, amount }) => {

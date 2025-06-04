@@ -8,6 +8,10 @@ import { Store } from "redux";
 
 import { getAccessToken, setAccessToken } from "@/admin/apiProvider/utils/token";
 import {
+  DASHBOARD_SERVICE_RESOURCES,
+  DashboardServiceApiResources
+} from "@/generated/v3/dashboardService/dashboardServiceConstants";
+import {
   ENTITY_SERVICE_RESOURCES,
   EntityServiceApiResources
 } from "@/generated/v3/entityService/entityServiceConstants";
@@ -18,7 +22,7 @@ import {
 } from "@/generated/v3/researchService/researchServiceConstants";
 import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
-import { __TEST_HYDRATE__ } from "@/store/store";
+import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 
 export type PendingErrorState = {
   statusCode: number;
@@ -46,6 +50,7 @@ export type ApiPendingStore = {
 export type ApiFilteredIndexCache = {
   ids: string[];
   total?: number;
+  included?: any[];
 };
 
 // This one is a map of resource -> queryString -> page number -> list of ids from that page.
@@ -85,13 +90,15 @@ export const RESOURCES = [
   ...ENTITY_SERVICE_RESOURCES,
   ...JOB_SERVICE_RESOURCES,
   ...USER_SERVICE_RESOURCES,
-  ...RESEARCH_SERVICE_RESOURCES
+  ...RESEARCH_SERVICE_RESOURCES,
+  ...DASHBOARD_SERVICE_RESOURCES
 ] as const;
 
 type ApiResources = EntityServiceApiResources &
   JobServiceApiResources &
   UserServiceApiResources &
-  ResearchServiceApiResources;
+  ResearchServiceApiResources &
+  DashboardServiceApiResources;
 
 export type ResourceType = (typeof RESOURCES)[number];
 
@@ -109,6 +116,7 @@ export type IndexData = {
   total?: number;
   cursor?: string;
   pageNumber?: number;
+  included?: any[];
 };
 
 export type ResponseMeta = {
@@ -212,6 +220,10 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
     state.meta.pending[method] = {};
   }
 
+  for (const resource of RESOURCES) {
+    state.meta.indices[resource] = {};
+  }
+
   delete state.meta.meUserId;
 };
 
@@ -286,7 +298,11 @@ export const apiSlice = createSlice({
           let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
           if (cache == null) cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath] = {};
 
-          cache[indexMeta.pageNumber ?? 1] = { ids: indexMeta.ids, total: indexMeta.total };
+          cache[indexMeta.pageNumber ?? 1] = {
+            ids: indexMeta.ids,
+            total: indexMeta.total,
+            included: response.included
+          };
         }
       }
 
@@ -384,8 +400,12 @@ export default class ApiSlice {
     this._queryClient = value;
   }
 
-  static get currentState(): ApiDataStore {
-    return this.redux.getState().api;
+  static get currentState() {
+    return ApiSlice.getState(this.redux.getState());
+  }
+
+  static getState({ api }: AppStore) {
+    return api;
   }
 
   static fetchStarting(props: ApiFetchStartingProps) {

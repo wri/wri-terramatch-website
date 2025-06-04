@@ -1,10 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { fetchPostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -20,7 +21,6 @@ export interface MapEditPolygonPanelProps {
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
   polygonVersionData?: SitePolygonsDataResponse;
   refetchPolygonVersions?: () => void;
-  refreshEntity?: () => void;
   mapFunctions?: any;
   polygonData?: Record<string, string[]>;
   recallEntityData?: () => void;
@@ -31,7 +31,6 @@ const MapEditPolygonPanel = ({
   setTabEditPolygon,
   polygonVersionData,
   refetchPolygonVersions,
-  refreshEntity,
   mapFunctions,
   polygonData,
   recallEntityData
@@ -44,8 +43,9 @@ const MapEditPolygonPanel = ({
     setSelectedPolyVersion,
     setOpenModalConfirmation,
     setPreviewVersion,
-    polygonCriteriaMap: polygonMap,
-    setHasOverlaps
+    validationData,
+    setHasOverlaps,
+    shouldRefetchValidation
   } = useMapAreaContext();
   const { onCancel } = mapFunctions;
   useOnMount(() => {
@@ -57,15 +57,14 @@ const MapEditPolygonPanel = ({
     setOpenModalConfirmation(false);
     setSelectedPolyVersion({});
     setPreviewVersion(false);
-    refreshEntity?.();
     onCancel(polygonData);
     recallEntityData?.();
   };
 
-  const [criteriaData, setCriteriaData] = useState<any>(null);
-  const hasOverlaps = (polygonValidation: V2TerrafundCriteriaData) => {
-    if (polygonValidation.criteria_list) {
-      for (const criteria of polygonValidation.criteria_list) {
+  const [criteriaData, setCriteriaData] = useState<V2TerrafundCriteriaData | null>(null);
+  const hasOverlaps = (polygonValidation: any) => {
+    if (polygonValidation.nonValidCriteria) {
+      for (const criteria of polygonValidation.nonValidCriteria) {
         if (criteria.criteria_id === 3 && criteria.valid === 0) {
           return true;
         }
@@ -74,14 +73,52 @@ const MapEditPolygonPanel = ({
     return false;
   };
 
-  useValueChanged(polygonMap, () => {
-    const criteriaDataPolygon = polygonMap[editPolygon?.uuid ?? ""];
+  useEffect(() => {
+    const fetchValidationData = async () => {
+      if (editPolygon?.uuid) {
+        try {
+          const response = await fetchPostV2TerrafundValidationPolygon({
+            queryParams: { uuid: editPolygon.uuid }
+          });
+
+          if (response) {
+            const transformedData: V2TerrafundCriteriaData = {
+              polygon_id: response.polygon_id,
+              criteria_list: response.criteria_list || []
+            };
+            setCriteriaData(transformedData);
+          }
+        } catch (error) {
+          console.error("Error fetching validation data:", error);
+        }
+      }
+    };
+
+    if (shouldRefetchValidation) {
+      fetchValidationData();
+    }
+  }, [shouldRefetchValidation, editPolygon?.uuid]);
+
+  useValueChanged(validationData, () => {
+    const siteDataPolygon = validationData[siteData?.uuid ?? ""] ?? [];
+    const criteriaDataPolygon = siteDataPolygon.find((polygon: any) => polygon.uuid === editPolygon?.uuid);
     if (criteriaDataPolygon) {
       setHasOverlaps(hasOverlaps(criteriaDataPolygon));
-      setCriteriaData(criteriaDataPolygon);
+
+      const transformedData: V2TerrafundCriteriaData = {
+        polygon_id: criteriaDataPolygon.uuid,
+        criteria_list:
+          criteriaDataPolygon.nonValidCriteria?.map((criteria: any) => ({
+            criteria_id: criteria.criteria_id,
+            valid: criteria.valid,
+            latest_created_at: criteria.latest_created_at,
+            extra_info: criteria.extra_info
+          })) || []
+      };
+
+      setCriteriaData(transformedData);
     }
   });
-
   return (
     <>
       <div className="flex items-start justify-between gap-4">

@@ -15,6 +15,7 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -25,21 +26,19 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  fetchGetV2TerrafundPolygonBboxUuid,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  GetV2MODELUUIDFilesResponse,
   useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
   usePutV2TerrafundPolygonUuid
 } from "@/generated/apiComponents";
-import { DashboardGetProjectsData, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-import { ImageGalleryItemData } from "../ImageGallery/ImageGalleryItem";
 import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
 import { PopupMobile } from "./components/PopupMobile";
@@ -87,6 +86,13 @@ interface LegendItem {
   uuid: string;
 }
 
+export type DashboardGetProjectsData = {
+  uuid?: string;
+  name?: string;
+  lat?: number;
+  long?: number;
+};
+
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
   imageLayerGeojson?: any;
@@ -118,7 +124,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: GetV2MODELUUIDFilesResponse["data"];
+  modelFilesData?: MediaDto[];
   formMap?: boolean;
   pdView?: boolean;
   location?: LngLat;
@@ -229,6 +235,8 @@ export const MapContainer = ({
   }
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
+  const [, { bbox: polygonBbox }] = useBoundingBox({ polygonUuid: polygonFromMap?.uuid });
+
   useOnMount(() => {
     initMap(!!isDashboard);
     return () => {
@@ -284,7 +292,7 @@ export const MapContainer = ({
             dashboardCountries,
             setLoader,
             selectedCountry,
-            isMobile ? setMobilePopupData : undefined
+            isMobile || isDashboard ? setMobilePopupData : undefined
           );
         }
       };
@@ -299,8 +307,27 @@ export const MapContainer = ({
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sitePolygonData, polygonsCentroids, polygonsData, showPopups, centroids, styleLoaded]);
+  }, [
+    sitePolygonData,
+    polygonsCentroids,
+    polygonsData,
+    showPopups,
+    centroids,
+    styleLoaded,
+    dashboardCountries,
+    draw,
+    editPolygonSelected,
+    isDashboard,
+    isMobile,
+    map,
+    selectedCountry,
+    setChangeStyle,
+    setEditPolygon,
+    setFilters,
+    setLoader,
+    setPolygonFromMap,
+    tooltipType
+  ]);
 
   useValueChanged(currentStyle, () => {
     if (currentStyle) {
@@ -314,11 +341,12 @@ export const MapContainer = ({
     }
   });
 
-  useValueChanged(bbox, () => {
-    if (bbox && map.current && map && shouldBboxZoom) {
+  useEffect(() => {
+    if (bbox && map.current && shouldBboxZoom) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  });
+  }, [bbox, map, hasControls, shouldBboxZoom]);
+
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
     const setupBorders = () => {
@@ -376,22 +404,12 @@ export const MapContainer = ({
       closeModal(ModalId.DELETE_IMAGE);
     };
 
-    const openModalImageDetail = (data: ImageGalleryItemData | any) => {
-      const dataImage = {
-        uuid: data.uuid!,
-        fullImageUrl: data.file_url!,
-        thumbnailImageUrl: data.file_url!,
-        label: data.model_name,
-        isPublic: data.is_public!,
-        isGeotagged: true,
-        isCover: data.is_cover,
-        raw: { ...data, location: JSON.parse(data.location), created_date: data.created_date }
-      };
+    const openModalImageDetail = (data: MediaDto) => {
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
           title="IMAGE DETAILS"
-          data={dataImage}
+          data={data}
           entityData={entityData}
           onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
           reloadGalleryImages={() => {
@@ -519,18 +537,6 @@ export const MapContainer = ({
     }
   };
 
-  const flyToPolygonBounds = async (poly_id: string) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: poly_id } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
-      return;
-    }
-    map.current.fitBounds(bounds, {
-      padding: 100,
-      linear: false
-    });
-  };
-
   const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
   const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
@@ -559,7 +565,6 @@ export const MapContainer = ({
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
-              flyToPolygonBounds(polygonActive?.poly_id as string);
             } else {
               await updateGeometry({
                 body: { geometry: JSON.stringify(feature) },
@@ -606,6 +611,12 @@ export const MapContainer = ({
       addGeometryVersion();
     }
   });
+
+  useEffect(() => {
+    if (polygonFromMap?.isOpen && polygonFromMap?.uuid && polygonBbox && map.current) {
+      zoomToBbox(polygonBbox as BBox, map.current, true);
+    }
+  }, [polygonFromMap, polygonBbox, map]);
 
   return (
     <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
@@ -697,7 +708,7 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
             ) : (
               isDashboard !== "modal" && (
-                <ViewImageCarousel modelFilesData={props?.modelFilesData} imageGalleryRef={imageGalleryRef} />
+                <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
               )
             )}
           </ControlGroup>
@@ -708,7 +719,7 @@ export const MapContainer = ({
           <When condition={isDashboard !== "dashboard"}>
             <ViewImageCarousel
               className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-              modelFilesData={props?.modelFilesData}
+              modelFilesData={props?.modelFilesData ?? []}
               imageGalleryRef={imageGalleryRef}
             />
           </When>
@@ -730,8 +741,12 @@ export const MapContainer = ({
       <When condition={!polygonsExists}>
         <EmptyStateDisplay />
       </When>
-      <When condition={isMobile && mobilePopupData !== null}>
-        <PopupMobile event={mobilePopupData} onClose={() => setMobilePopupData(null)} />
+      <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
+        <PopupMobile
+          event={mobilePopupData}
+          onClose={() => setMobilePopupData(null)}
+          variant={isMobile ? "mobile" : "desktop"}
+        />
       </When>
     </div>
   );

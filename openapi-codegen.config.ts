@@ -30,6 +30,7 @@ type Environment = {
   jobServiceUrl: string;
   researchServiceUrl: string;
   entityServiceUrl: string;
+  dashboardServiceUrl: string;
 };
 
 const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
@@ -38,35 +39,40 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     userServiceUrl: "http://localhost:4010",
     jobServiceUrl: "http://localhost:4020",
     researchServiceUrl: "http://localhost:4030",
-    entityServiceUrl: "http://localhost:4050"
+    entityServiceUrl: "http://localhost:4050",
+    dashboardServiceUrl: "http://localhost:4060"
   },
   dev: {
     apiBaseUrl: "https://api-dev.terramatch.org",
     userServiceUrl: "https://api-dev.terramatch.org",
     jobServiceUrl: "https://api-dev.terramatch.org",
     researchServiceUrl: "https://api-dev.terramatch.org",
-    entityServiceUrl: "https://api-dev.terramatch.org"
+    entityServiceUrl: "https://api-dev.terramatch.org",
+    dashboardServiceUrl: "https://api-dev.terramatch.org"
   },
   test: {
     apiBaseUrl: "https://api-test.terramatch.org",
     userServiceUrl: "https://api-test.terramatch.org",
     jobServiceUrl: "https://api-test.terramatch.org",
     researchServiceUrl: "https://api-test.terramatch.org",
-    entityServiceUrl: "https://api-test.terramatch.org"
+    entityServiceUrl: "https://api-test.terramatch.org",
+    dashboardServiceUrl: "https://api-test.terramatch.org"
   },
   staging: {
     apiBaseUrl: "https://api-staging.terramatch.org",
     userServiceUrl: "https://api-staging.terramatch.org",
     jobServiceUrl: "https://api-staging.terramatch.org",
     researchServiceUrl: "https://api-staging.terramatch.org",
-    entityServiceUrl: "https://api-staging.terramatch.org"
+    entityServiceUrl: "https://api-staging.terramatch.org",
+    dashboardServiceUrl: "https://api-staging.terramatch.org"
   },
   prod: {
     apiBaseUrl: "https://api.terramatch.org",
     userServiceUrl: "https://api.terramatch.org",
     jobServiceUrl: "https://api.terramatch.org",
     researchServiceUrl: "https://api.terramatch.org",
-    entityServiceUrl: "https://api.terramatch.org"
+    entityServiceUrl: "https://api.terramatch.org",
+    dashboardServiceUrl: "https://api.terramatch.org"
   }
 };
 
@@ -81,6 +87,7 @@ const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.user
 const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
 const researchServiceUrl = process.env.NEXT_PUBLIC_RESEARCH_SERVICE_URL ?? DEFAULTS.researchServiceUrl;
 const entityServiceUrl = process.env.NEXT_PUBLIC_ENTITY_SERVICE_URL ?? DEFAULTS.entityServiceUrl;
+const dashboardServiceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE_URL ?? DEFAULTS.dashboardServiceUrl;
 
 // The services defined in the v3 Node BE codebase. Although the URL path for APIs in the v3 space
 // are namespaced by feature set rather than service (a service may contain multiple namespaces), we
@@ -90,7 +97,8 @@ const SERVICES = {
   "user-service": userServiceUrl,
   "job-service": jobServiceUrl,
   "research-service": researchServiceUrl,
-  "entity-service": entityServiceUrl
+  "entity-service": entityServiceUrl,
+  "dashboard-service": dashboardServiceUrl
 };
 
 const config: Record<string, Config> = {

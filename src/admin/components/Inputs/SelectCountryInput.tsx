@@ -1,8 +1,7 @@
 import { SelectInput, SelectInputProps } from "react-admin";
 
-import { getCountriesOptions } from "@/constants/options/countries";
-import { optionToChoices } from "@/utils/options";
+import { useGadmChoices } from "@/connections/Gadm";
 
-export const SelectCountryInput = (props: SelectInputProps) => {
-  return <SelectInput {...props} choices={optionToChoices(getCountriesOptions())} />;
-};
+export const SelectCountryInput = (props: SelectInputProps) => (
+  <SelectInput {...props} choices={useGadmChoices({ level: 0 })} />
+);
