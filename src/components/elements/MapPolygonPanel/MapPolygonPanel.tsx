@@ -29,6 +29,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   refetchPolygonVersions?: () => void;
   refreshEntity?: () => void;
   polygonsData?: Record<string, string[]>;
+  entityUuid?: string;
 }
 
 const MapPolygonPanel = ({
@@ -52,6 +53,7 @@ const MapPolygonPanel = ({
   refetchPolygonVersions,
   refreshEntity,
   polygonsData,
+  entityUuid,
   ...props
 }: MapPolygonPanelProps) => {
   const { editPolygon } = useMapAreaContext();
@@ -67,7 +69,6 @@ const MapPolygonPanel = ({
             setTabEditPolygon={setTabEditPolygon}
             polygonVersionData={polygonVersionData}
             refetchPolygonVersions={refetchPolygonVersions}
-            refreshEntity={refreshEntity}
             mapFunctions={mapFunctions}
             polygonData={polygonsData}
             recallEntityData={recallEntityData}
@@ -85,6 +86,7 @@ const MapPolygonPanel = ({
             setSortOrder={setSortOrder}
             type={type}
             recallEntityData={recallEntityData}
+            entityUuid={entityUuid}
           />
         </Else>
       </If>

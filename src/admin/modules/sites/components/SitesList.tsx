@@ -25,7 +25,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -113,6 +113,7 @@ const SiteDataGrid: FC = () => {
 
 export const SitesList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -120,7 +121,7 @@ export const SitesList: FC = () => {
       key="country"
       label="Country"
       source="country"
-      choices={optionToChoices(getCountriesOptions())}
+      choices={countryChoices}
       className="select-page-admin"
     />,
     <ReferenceInput

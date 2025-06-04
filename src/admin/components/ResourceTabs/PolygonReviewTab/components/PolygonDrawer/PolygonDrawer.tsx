@@ -15,11 +15,13 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
+  fetchGetV2TerrafundPolygonUuid,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
+  useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
@@ -54,6 +56,7 @@ export const ESTIMATED_AREA_CRITERIA_ID = 12;
 export const COMPLETED_DATA_CRITERIA_ID = 14;
 export const OVERLAPPING_CRITERIA_ID = 3;
 export const WITHIN_COUNTRY_CRITERIA_ID = 7;
+export const PLANT_START_DATE_CRITERIA_ID = 15;
 
 const PolygonDrawer = ({
   polygonSelected,
@@ -90,27 +93,64 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const updateSingleCriteriaData = context?.updateSingleCriteriaData;
+  const updateSingleSitePolygonData = context?.updateSingleSitePolygonData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
-  const {
-    statusSelectedPolygon,
-    setStatusSelectedPolygon,
-    setShouldRefetchValidation,
-    polygonCriteriaMap: polygonMap,
-    setPolygonCriteriaMap
-  } = contextMapArea;
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, setPolygonCriteriaMap } =
+    contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
+  const {
+    data: validationCriteriaData,
+    isLoading: isLoadingValidationCriteria,
+    refetch: refetchValidationCriteria
+  } = useGetV2TerrafundValidationCriteriaData(
+    {
+      queryParams: { uuid: polygonSelected }
+    },
+    {
+      enabled: !!polygonSelected,
+      onSuccess: data => {
+        if (data?.polygon_id) {
+          setPolygonCriteriaMap((oldPolygonMap: Record<string, unknown>) => ({
+            ...oldPolygonMap,
+            [data.polygon_id?.toString() ?? ""]: data
+          }));
+        }
+      }
+    }
+  );
+
+  const updatePolygonData = async (polygonId: string) => {
+    try {
+      const updatedPolygonData = await fetchGetV2TerrafundPolygonUuid({
+        pathParams: { uuid: polygonId }
+      });
+
+      if (updatedPolygonData?.site_polygon?.uuid) {
+        updateSingleSitePolygonData?.(updatedPolygonData.site_polygon.uuid, updatedPolygonData.site_polygon);
+      }
+    } catch (error) {
+      Log.error("Error fetching updated polygon data:", error);
+      openNotification("warning", t("Warning"), t("Updated polygon data could not be retrieved."));
+    }
+  };
+
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       setCheckPolygonValidation(false);
       setPolygonCriteriaMap((oldPolygonMap: any) => ({
         ...oldPolygonMap,
         [data.polygon_id]: data
       }));
+
+      if (data.polygon_id) {
+        await updatePolygonData(data.polygon_id);
+      }
+
+      refetchValidationCriteria();
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -186,14 +226,13 @@ const PolygonDrawer = ({
     setButtonToogle(!isPolygonStatusOpen);
   });
   useEffect(() => {
-    const criteriaData = polygonMap[polygonSelected];
-    if (criteriaData?.criteria_list && criteriaData?.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaData));
+    if (validationCriteriaData?.criteria_list && validationCriteriaData?.criteria_list.length > 0) {
+      setPolygonValidationData(parseValidationData(validationCriteriaData));
       setValidationStatus(true);
     } else {
       setValidationStatus(false);
     }
-  }, [polygonMap, polygonSelected]);
+  }, [validationCriteriaData]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -219,7 +258,6 @@ const PolygonDrawer = ({
     return criteriaData.criteria_list.some(
       (criteria: any) =>
         criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-        criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
         criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
         criteria.valid !== 1
     );
@@ -360,19 +398,25 @@ const PolygonDrawer = ({
         <Else>
           <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
-              <PolygonValidation
-                menu={polygonValidationData ?? []}
-                clickedValidation={setCheckPolygonValidation}
-                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
-                status={validationStatus}
-              />
+              {isLoadingValidationCriteria ? (
+                <div className="flex justify-center py-4">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
+                </div>
+              ) : (
+                <PolygonValidation
+                  menu={polygonValidationData ?? []}
+                  clickedValidation={setCheckPolygonValidation}
+                  clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
+                  status={validationStatus}
+                />
+              )}
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  updateSingleCriteriaData={updateSingleCriteriaData ?? (() => {})}
+                  updateSingleSitePolygonData={updateSingleSitePolygonData ?? (() => {})}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
@@ -386,26 +430,32 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-              {selectedPolygonData && (
-                <VersionHistory
-                  wrapperRef={wrapperRef}
-                  setPolygonFromMap={setPolygonFromMap}
-                  polygonFromMap={polygonFromMap}
-                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
-                  setSelectPolygonVersion={setSelectPolygonVersion}
-                  selectPolygonVersion={selectPolygonVersion}
-                  refreshPolygonList={refresh}
-                  refreshSiteData={sitePolygonRefresh}
-                  setSelectedPolygonData={setSelectedPolygonData}
-                  setStatusSelectedPolygon={setStatusSelectedPolygon}
-                  data={polygonVersions ?? []}
-                  isLoadingVersions={isLoadingVersions}
-                  refetch={refetchPolygonVersions}
-                  isLoadingDropdown={isLoadingDropdown}
-                  setIsLoadingDropdown={setIsLoadingDropdown}
-                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
-                  selectedPolygonIndex={selectedPolygonIndex}
-                />
+              {isLoadingVersions ? (
+                <div className="flex justify-center py-4">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
+                </div>
+              ) : (
+                selectedPolygonData && (
+                  <VersionHistory
+                    wrapperRef={wrapperRef}
+                    setPolygonFromMap={setPolygonFromMap}
+                    polygonFromMap={polygonFromMap}
+                    selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                    setSelectPolygonVersion={setSelectPolygonVersion}
+                    selectPolygonVersion={selectPolygonVersion}
+                    refreshPolygonList={refresh}
+                    refreshSiteData={sitePolygonRefresh}
+                    setSelectedPolygonData={setSelectedPolygonData}
+                    setStatusSelectedPolygon={setStatusSelectedPolygon}
+                    data={polygonVersions ?? []}
+                    isLoadingVersions={isLoadingVersions}
+                    refetch={refetchPolygonVersions}
+                    isLoadingDropdown={isLoadingDropdown}
+                    setIsLoadingDropdown={setIsLoadingDropdown}
+                    setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                    selectedPolygonIndex={selectedPolygonIndex}
+                  />
+                )
               )}
             </Accordion>
             <Divider />

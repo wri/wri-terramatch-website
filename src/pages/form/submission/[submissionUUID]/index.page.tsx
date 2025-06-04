@@ -77,6 +77,8 @@ const SubmissionPage = () => {
             downloadButtonText: t("Download Application")
           }}
           roundedCorners
+          //@ts-ignore
+          formSubmissionOrg={formData?.data?.organisation_attributes}
         />
       </LoadingContainer>
     </BackgroundLayout>

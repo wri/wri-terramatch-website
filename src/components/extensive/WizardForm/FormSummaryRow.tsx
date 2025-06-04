@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -13,16 +13,24 @@ import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTab
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import {
+  currentRatioColumnsMap,
+  documentationColumnsMap,
+  formatFinancialData,
+  nonProfitAnalysisColumnsMap,
+  profitAnalysisColumnsMap
+} from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { SupportedEntity } from "@/connections/EntityAssocation";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
@@ -30,7 +38,7 @@ import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
-import { getAnswer, getFormattedAnswer } from "./utils";
+import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -55,15 +63,22 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const entityPolygonData = getEntityPolygonData(record, type, entity);
   let bbox: any;
   if (type === "sites") {
-    bbox = getSiteBbox(record);
+    const [, { bbox: siteBbox }] = useBoundingBox({ siteUuid: record?.uuid });
+    bbox = siteBbox;
   } else {
-    bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
+    bbox = entityPolygonData?.bbox;
   }
   const mapFunctions = useMap();
-  return useMemo<any[]>(
-    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+
+  const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
+  useEffect(() => {
+    loadExternalAnswerSources(props.step.fields, props.values).finally(() => setExternalSourcesLoaded(true));
+  }, [props.step.fields, props.values]);
+
+  return useMemo(
+    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props, t, entityPolygonData, bbox]
+    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
 };
 
@@ -142,6 +157,115 @@ export const getFormEntries = (
             />
           )
         });
+        break;
+      }
+
+      case FieldType.FinancialTableInput: {
+        const entries = values[f.name];
+        if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
+        const years = f.fieldProps.years;
+        const collections = f.fieldProps.model;
+        const columnMaps: Record<string, string[]> = {
+          profitAnalysisData: profitAnalysisColumnsMap,
+          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
+          currentRatioData: currentRatioColumnsMap,
+          documentationData: documentationColumnsMap
+        };
+
+        const profitCollections = ["revenue", "expenses", "profit"];
+        const nonProfitCollections = ["budget"];
+        const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
+
+        const presentCollections = new Set(entries?.map((entry: any) => entry.collection));
+        const selectedCollections = new Set(JSON.parse(collections || "[]"));
+
+        const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
+        const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
+
+        if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
+          delete columnMaps.profitAnalysisData;
+        }
+
+        if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
+          delete columnMaps.nonProfitAnalysisData;
+        }
+
+        if (!isGroupPresent(ratioCollections) || !isCollectionPresent(ratioCollections)) {
+          delete columnMaps.currentRatioData;
+        }
+
+        const formatted = formatFinancialData(entries, years, "", "");
+        const sections = [
+          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
+          { title: t("Current Ratio"), key: "currentRatioData" },
+          { title: t("Documentation"), key: "documentationData" }
+        ];
+
+        const isEmptyValue = (val: any) => {
+          if (val === undefined || val === null) return true;
+          if (typeof val === "string") {
+            return val.trim() === "" || val?.trim() === "-";
+          }
+          return false;
+        };
+        const value = sections
+          .map(section => {
+            const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
+            const columns = columnMaps[section.key as keyof typeof columnMaps];
+            if (!Array.isArray(data) || !data || data?.length === 0) return "";
+
+            const filteredRows = data?.filter((row: Record<string, any>) => {
+              if (!columns) return null;
+              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+              return valuesToCheck.some(val => !isEmptyValue(val));
+            });
+
+            if (filteredRows.length === 0) return "";
+
+            const rowsHtml = filteredRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  if (col === "documentation") {
+                    if (Array.isArray(row[col]) && row[col].length > 0) {
+                      return row[col]
+                        .map((document: any) => {
+                          if (document.url) {
+                            return `<a href="${
+                              document.url
+                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                              document.file_name ?? ""
+                            }</a>`;
+                          }
+                          return "";
+                        })
+                        .filter((link: any) => link !== "")
+                        .join(", ");
+                    }
+                    return "";
+                  }
+
+                  if (col === "year") {
+                    return isEmptyValue(row[col]) ? "-" : String(row[col]);
+                  }
+                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                });
+                return cellValues.join(", ");
+              })
+              .join("<br/>");
+
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+          })
+          .filter(Boolean)
+          .join("");
+
+        const output = {
+          title: f.label,
+          type: f.type,
+          value: value || t("Answer Not Provided")
+        };
+
+        outputArr.push(output);
         break;
       }
 
@@ -248,7 +372,9 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
         uuid: uuid ?? ""
       }
     });
-    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
+    const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
+    const [, { bbox }] = useBoundingBox({ polygonUuid });
+    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid], bbox } : null;
   }
 
   return null;

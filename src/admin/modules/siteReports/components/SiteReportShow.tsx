@@ -14,8 +14,8 @@ const SiteReportShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout>
         <InformationTab type="site-reports" />
-        <GalleryTab label="Site Report Gallery" entity="site-reports" />
-        <DocumentTab label="Site Report Documents" entity="site-reports" />
+        <GalleryTab label="Site Report Gallery" entity="siteReports" />
+        <DocumentTab label="Site Report Documents" entity="siteReports" />
         <ChangeRequestsTab entity="site-reports" singularEntity="site-report" />
         <AuditLogTab entity={AuditLogButtonStates.SITE_REPORT} />
       </TabbedShowLayout>

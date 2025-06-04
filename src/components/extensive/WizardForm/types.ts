@@ -15,11 +15,13 @@ import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFS
 import { RHFDemographicsTableProps } from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import { RHFDropdownProps } from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { RHFFileInputProps } from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import { RHFFinancialIndicatorsDataTableProps } from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import { RHFInputTableProps } from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { RHFMapProps } from "@/components/elements/Inputs/Map/RHFMap";
 import { RHFSelectProps } from "@/components/elements/Inputs/Select/RHFSelect";
 import { RHFSelectImageProps } from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
+import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAreaInput/StrategyAreaInput";
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
@@ -76,7 +78,9 @@ export enum FieldType {
   Map = "map",
   Conditional = "conditional",
   Boolean = "boolean",
-  OwnershipStakeDataTable = "OwnershipStakeDataTable"
+  OwnershipStakeDataTable = "OwnershipStakeDataTable",
+  StrategyAreaInput = "strategyAreaInput",
+  FinancialTableInput = "financialTableInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -84,6 +88,7 @@ export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
 export type FormField =
   | InputFormField
   | FieldTypeBuilder<FieldType.TextArea, TextAreaProps>
+  | FieldTypeBuilder<FieldType.StrategyAreaInput, StrategyAreaInputProps>
   | FieldTypeBuilder<
       FieldType.Dropdown,
       Omit<RHFDropdownProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
@@ -160,4 +165,8 @@ export type FormField =
     >
   | FieldTypeBuilder<FieldType.Map, Omit<RHFMapProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<FieldType.Conditional, Omit<ConditionalInputProps, "formHook" | "onChangeCapture">>
-  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>;
+  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>
+  | FieldTypeBuilder<
+      FieldType.FinancialTableInput,
+      Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+    >;

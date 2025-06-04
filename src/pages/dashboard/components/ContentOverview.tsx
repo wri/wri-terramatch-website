@@ -8,7 +8,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -27,7 +27,6 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
-import { DashboardGetProjectsData } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -68,8 +67,8 @@ interface ContentOverviewProps<TData> {
   isUserAllowed?: boolean;
   isLoadingHectaresUnderRestoration?: boolean;
   projectCounts?: {
-    total_enterprise_count: number;
-    total_non_profit_count: number;
+    totalEnterpriseCount: number;
+    totalNonProfitCount: number;
   };
   transformedStories: any;
   isLoading: boolean;
@@ -242,13 +241,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               <div className="flex gap-2">
                 <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
                 <Text variant="text-12" className="text-darkCustom">
-                  {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
+                  {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
                 </Text>
               </div>
               <div className="flex items-center gap-2">
                 <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
                 <Text variant="text-12" className="text-darkCustom">
-                  {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
+                  {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
                 </Text>
               </div>
             </div>
@@ -372,7 +371,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     <ContentDashboardtWrapper isLeftWrapper={false}>
       <div className="shadow-lg relative w-full rounded-lg border-4 border-white mobile:order-2">
         <Button
-          className="absolute right-5 top-6 z-10"
+          className="absolute right-5 top-6 z-10 mobile:hidden"
           variant="white-button-map"
           onClick={() => {
             ModalMap();
@@ -409,13 +408,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
               </Text>
             </div>
             <div className="flex items-center gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
               <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
+                {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
               </Text>
             </div>
           </div>

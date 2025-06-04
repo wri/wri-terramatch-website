@@ -22,6 +22,6 @@ export const useGetCustomFormSteps = (
   );
 };
 
-export function useNormalizedFormDefaultValue<T = any>(values: T, schema?: FormStepSchema[], isMigrated?: boolean): T {
-  return useMemo(() => normalizedFormDefaultValue<T>(values, schema, isMigrated), [values, schema, isMigrated]);
+export function useNormalizedFormDefaultValue<T = any>(values: T, schema?: FormStepSchema[]): T {
+  return useMemo(() => normalizedFormDefaultValue<T>(values, schema), [values, schema]);
 }

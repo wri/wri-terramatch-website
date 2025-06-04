@@ -1,9 +1,11 @@
 import { Box, LinearProgress } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { useT } from "@transifex/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
+import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { formatFileName } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
@@ -13,14 +15,16 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
   fetchGetV2TerrafundGeojsonComplete,
-  fetchGetV2TerrafundPolygonBboxUuid
+  useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
+import { OptionValue } from "@/types/common";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 import PolygonItem from "./PolygonItem";
@@ -30,12 +34,14 @@ export interface IPolygonItem {
   status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
+  validationStatus?: string;
 }
 
 export interface IpolygonFromMap {
   isOpen: boolean;
   uuid: string;
 }
+
 export interface IPolygonProps {
   menu: IPolygonItem[];
   polygonFromMap?: IpolygonFromMap;
@@ -43,6 +49,7 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
+  siteUuid?: string;
 }
 
 export const polygonData = [
@@ -54,9 +61,10 @@ export const polygonData = [
 ];
 
 const Polygons = (props: IPolygonProps) => {
+  const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
   const [polygonMenu, setPolygonMenu] = useState<IPolygonItem[]>(props.menu);
-  const { polygonFromMap, setPolygonFromMap, mapFunctions } = props;
+  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid } = props;
   const { map } = mapFunctions;
   const containerRef = useRef<HTMLDivElement>(null);
   const { openModal, closeModal } = useModalContext();
@@ -66,8 +74,42 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
   const sitePolygonData = context?.sitePolygonData;
-  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox } = contextMapArea;
+  const {
+    setSelectedPolygonsInCheckbox,
+    selectedPolygonsInCheckbox,
+    setValidFilter,
+    validationData,
+    setValidationData,
+    validationDataTimestamp,
+    setValidationDataTimestamp,
+    isFetchingValidationData,
+    setIsFetchingValidationData
+  } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
+  const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
+  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid });
+
+  const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
+    {
+      queryParams: {
+        uuid: siteUuid ?? ""
+      }
+    },
+    {
+      enabled: false, // Don't fetch on mount, only when explicitly called
+      staleTime: 5 * 60 * 1000,
+      onSuccess: data => {
+        if (data && siteUuid) {
+          setValidationData((prev: any) => ({
+            ...prev,
+            [siteUuid]: data
+          }));
+          setValidationDataTimestamp(Date.now());
+        }
+        setIsFetchingValidationData(false);
+      }
+    }
+  );
 
   useEffect(() => {
     setPolygonMenu(props.menu);
@@ -83,6 +125,36 @@ const Polygons = (props: IPolygonProps) => {
     }
   }, [polygonFromMap, polygonMenu]);
 
+  // If bbox is loaded, use it to fit the map
+  useEffect(() => {
+    if (bbox && map.current) {
+      map.current.fitBounds(bbox, {
+        padding: 100,
+        linear: false
+      });
+      setCurrentPolygonUuid(undefined);
+    }
+  }, [bbox, map]);
+
+  const handleExpandCollapseToggle = useCallback(() => {
+    if (
+      !openCollapseAll &&
+      siteUuid &&
+      (!validationData[siteUuid] || Date.now() - validationDataTimestamp > 5 * 60 * 1000)
+    ) {
+      setIsFetchingValidationData(true);
+      fetchValidationData();
+    }
+    setOpenCollapseAll(!openCollapseAll);
+  }, [
+    openCollapseAll,
+    siteUuid,
+    validationData,
+    validationDataTimestamp,
+    setIsFetchingValidationData,
+    fetchValidationData
+  ]);
+
   const downloadGeoJsonPolygon = async (polygon: IPolygonItem) => {
     const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
       queryParams: { uuid: polygon.uuid }
@@ -96,16 +168,8 @@ const Polygons = (props: IPolygonProps) => {
     URL.revokeObjectURL(url);
   };
 
-  const flyToPolygonBounds = async (polygon: IPolygonItem) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygon.uuid } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
-      return;
-    }
-    map.current.fitBounds(bounds, {
-      padding: 100,
-      linear: false
-    });
+  const flyToPolygonBounds = (polygon: IPolygonItem) => {
+    setCurrentPolygonUuid(polygon.uuid);
   };
 
   const deletePolygon = async (polygon: IPolygonItem) => {
@@ -238,39 +302,63 @@ const Polygons = (props: IPolygonProps) => {
           />
         )}
       </Drawer>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between gap-0.5">
         <Text variant="text-16-bold" className="text-darkCustom">
           Polygons
         </Text>
-        <div className="flex items-center justify-start">
-          <Button
-            variant="white-border"
-            onClick={() => setOpenCollapseAll(!openCollapseAll)}
-            className="flex gap-1.5 !rounded-lg !capitalize"
-          >
-            {openCollapseAll ? (
-              <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem]" />
-            ) : (
-              <Icon name={IconNames.IC_EXPAND} className="mr-1 h-[0.8rem] w-[0.8rem]" />
-            )}
-            {openCollapseAll ? "Shrink  " : "Expand"}
-          </Button>
+        <div className="flex items-center justify-start gap-2">
+          <div className="flex flex-col gap-1">
+            <When condition={props.totalPolygons ?? 0 > 0}>
+              <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
+                <span className="font-bold">{polygonSitePolygonCount}</span> of{" "}
+                <span className="font-bold">{props.totalPolygons}</span> polygons loaded
+              </Text>
+              <Box sx={{ width: "100%" }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={(polygonSitePolygonCount / (props.totalPolygons ?? 1)) * 100}
+                  sx={{ borderRadius: 5 }}
+                />
+              </Box>
+            </When>
+          </div>
         </div>
       </div>
-      <div className="mb-4 flex flex-col gap-1">
-        <When condition={props.totalPolygons ?? 0 > 0}>
-          <Text variant="text-14" className="text-darkCustom">
-            <span className="font-bold">{polygonSitePolygonCount}</span> of{" "}
-            <span className="font-bold">{props.totalPolygons}</span> polygons loaded
-          </Text>
-          <Box sx={{ width: "100%" }}>
-            <LinearProgress
-              variant="determinate"
-              value={(polygonSitePolygonCount / (props.totalPolygons ?? 1)) * 100}
-              sx={{ borderRadius: 5 }}
-            />
-          </Box>
-        </When>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <Dropdown
+          options={[
+            { title: t("All validation statuses"), value: "all" },
+            { title: t("Not checked"), value: "not_checked" },
+            { title: t("Failed"), value: "failed" },
+            { title: t("Partial Passed"), value: "partial" },
+            { title: t("Passed"), value: "passed" }
+          ]}
+          defaultValue={["all"]}
+          value={["all"]}
+          onChange={(value: OptionValue[]) => {
+            setValidFilter(value[0] as string);
+          }}
+          titleClassname="leading-[normal] !text-darkCustom"
+          inputVariant={window.innerWidth > 1900 ? "text-14-semibold" : "text-12-semibold"}
+          className="h-9 min-w-[120px] px-2 py-1 lg:px-3"
+        />
+        <Button
+          variant="white-border"
+          onClick={handleExpandCollapseToggle}
+          className="flex h-9 gap-1.5 !rounded-lg px-2 !capitalize !text-darkCustom lg:px-3"
+          disabled={isFetchingValidationData}
+        >
+          {openCollapseAll ? (
+            <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem] !text-darkCustom" />
+          ) : (
+            <Icon name={IconNames.IC_EXPAND} className="mr-1 h-[0.8rem] w-[0.8rem] !text-darkCustom" />
+          )}
+          <span
+            className={window.innerWidth > 1900 ? "text-14-bold !text-darkCustom" : "text-12-bold !text-darkCustom"}
+          >
+            {isFetchingValidationData ? "Loading..." : openCollapseAll ? "Shrink  " : "Expand"}
+          </span>
+        </Button>
       </div>
       <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
         {polygonMenu.map(item => (
@@ -279,6 +367,7 @@ const Polygons = (props: IPolygonProps) => {
               uuid={item.uuid}
               title={item.label}
               status={item.status}
+              validationStatus={item.validationStatus}
               isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
               onCheckboxChange={handleCheckboxChange}
               menu={
@@ -292,6 +381,7 @@ const Polygons = (props: IPolygonProps) => {
                 </Menu>
               }
               isCollapsed={openCollapseAll}
+              siteId={siteUuid}
             />
           </div>
         ))}

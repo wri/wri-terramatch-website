@@ -20,7 +20,7 @@ const PageSection = ({
     <div
       {...props}
       className={classNames(
-        "m-auto",
+        "m-auto mobile:min-w-[95%]",
         hasCarousel ? "w-[calc( 82vw + 158px )]" : hasFull ? "max-w-full" : "max-w-[82vw]",
         className
       )}

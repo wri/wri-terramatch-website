@@ -1,10 +1,11 @@
 import { Card, Typography } from "@mui/material";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
 import List from "@/components/extensive/List/List";
-import { useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useDate } from "@/hooks/useDate";
 import { EntityName } from "@/types/common";
@@ -20,27 +21,25 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { getReadableEntityName } = useGetReadableEntityName();
   const { format } = useDate();
 
-  const queryParams: any = {
-    page: 1,
-    per_page: 1000,
-    "filter[file_type]": "documents"
-  };
-
-  const { data } = useGetV2MODELUUIDFiles(
-    {
-      // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
-      pathParams: { model: resource, uuid: ctx?.record?.uuid },
-      queryParams
-    },
-    {
-      enabled: !!ctx?.record?.uuid
-    }
+  const queryParams = useMemo(
+    () => ({
+      "page[number]": 1,
+      "page[size]": 100,
+      fileType: "documents"
+    }),
+    []
   );
+
+  const [, { associations: mediaList }] = useMedias({
+    entity: resource as SupportedEntity,
+    uuid: ctx?.record?.uuid,
+    queryParams
+  });
 
   return (
     <When condition={!ctx.isLoading}>
       <TabbedShowLayout.Tab label={label ?? "Documents"} {...rest}>
-        {data?.data?.length === 0 ? (
+        {mediaList?.length === 0 ? (
           <Card sx={{ padding: 4 }}>
             <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
               No Documents
@@ -56,18 +55,20 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
             </Typography>
             <List
               className="my-4 flex flex-col gap-4"
-              items={data?.data || []}
-              render={(entry: any) => {
+              items={mediaList ?? []}
+              render={(entry: MediaDto) => {
                 return (
                   <div>
                     <Typography variant="h6" component="h4" className="!mb-2 !text-sm uppercase">
                       Document
                     </Typography>
-                    <a href={entry.file_url} target="_blank" rel="noreferrer noopenner">
-                      {entry.file_name}
-                    </a>
-                    <Typography variant="body2">Date uploaded: {format(entry.created_date)}</Typography>
-                    <Typography variant="body2">Visibility: {entry.is_public ? "Public" : "Private"}</Typography>
+                    {entry.url == null ? null : (
+                      <a href={entry.url} target="_blank" rel="noreferrer noopenner">
+                        {entry.fileName}
+                      </a>
+                    )}
+                    <Typography variant="body2">Date uploaded: {format(entry.createdAt)}</Typography>
+                    <Typography variant="body2">Visibility: {entry.isPublic ? "Public" : "Private"}</Typography>
                   </div>
                 );
               }}

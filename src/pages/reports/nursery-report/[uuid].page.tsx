@@ -18,8 +18,8 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import FrameworkProvider from "@/context/framework.provider";
-import { useGetV2TasksUUIDReports } from "@/generated/apiComponents";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -34,13 +34,12 @@ const NurseryReportDetailPage = () => {
   const [isLoaded, { entity: nurseryReport }] = useFullNurseryReport({ uuid: nurseryReportUUID });
 
   const [, { entity: nursery }] = useFullNursery({ uuid: nurseryReport?.nurseryUuid! });
-
-  const { data: taskReportsData } = useGetV2TasksUUIDReports({ pathParams: { uuid: nurseryReport?.taskUuid! } });
+  const [, { task }] = useTask({ uuid: nurseryReport?.taskUuid });
 
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";
 
-  const window = useReportingWindow((taskReportsData?.data?.[0] as any)?.due_at);
+  const window = useReportingWindow(task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   return (

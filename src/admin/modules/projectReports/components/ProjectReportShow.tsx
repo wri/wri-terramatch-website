@@ -14,8 +14,8 @@ const ProjectReportShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout>
         <InformationTab type="project-reports" />
-        <GalleryTab label="Project Report Gallery" entity="project-reports" />
-        <DocumentTab label="Project Report Documents" entity="project-reports" />
+        <GalleryTab label="Project Report Gallery" entity="projectReports" />
+        <DocumentTab label="Project Report Documents" entity="projectReports" />
         <ChangeRequestsTab entity="project-reports" singularEntity="project-report" />
         <AuditLogTab entity={AuditLogButtonStates.PROJECT_REPORT} />
       </TabbedShowLayout>

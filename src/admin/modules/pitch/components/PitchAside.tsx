@@ -15,19 +15,19 @@ export const PitchAside = (props: PitchAsideProps) => {
       <Grid container spacing={2} marginY={2}>
         <Grid item xs={6}>
           <Labeled label="Name">
-            <TextField source="project_name" />
+            <TextField source="projectName" />
           </Labeled>
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Name">
-            <ReferenceField source="organisation_id" reference={modules.organisation.ResourceName} link="show">
+            <ReferenceField source="organisationId" reference={modules.organisation.ResourceName} link="show">
               <TextField source="name" />
             </ReferenceField>
           </Labeled>
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source="readable_status" />
+            <TextField source="readableStatus" />
           </Labeled>
         </Grid>
       </Grid>

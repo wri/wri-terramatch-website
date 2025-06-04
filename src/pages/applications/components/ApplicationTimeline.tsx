@@ -59,6 +59,52 @@ const ApplicationTimeline = ({ application }: ApplicationTimelineProps) => {
     return sortBy(auditData, item => new Date(item.created_at || 0)).reverse();
   }, [application?.form_submissions]);
 
+  const isDraft = application?.form_submissions?.some(
+    submission => submission.status === "draft" || submission.status === "started"
+  );
+
+  const filteredAudits = useMemo<AuditWithStageName[]>(() => {
+    const result: AuditWithStageName[] = [];
+    const usedUpdateIds = new Set<number>();
+
+    const audits = [...allAudits].sort(
+      (a, b) => new Date(a.created_at as string).getTime() - new Date(b.created_at as string).getTime()
+    );
+
+    if (isDraft) {
+      const started = audits.find(a => a.new_values?.status === "started");
+      const lastUpdated = audits.filter(a => a.event === "updated" && !a.new_values?.status).at(-1);
+      return [started, lastUpdated].filter((a): a is AuditWithStageName => a !== undefined);
+    }
+
+    const auditsWithStatus = audits.filter(a => a.new_values?.status);
+
+    for (let i = 0; i < auditsWithStatus.length; i++) {
+      const currentStatusAudit = auditsWithStatus[i];
+      result.push(currentStatusAudit);
+
+      const nextStatusAudit = auditsWithStatus[i + 1];
+
+      const updatedInBetween = audits
+        .filter(
+          a =>
+            a.event === "updated" &&
+            !a.new_values?.status &&
+            !usedUpdateIds.has(a.id ?? 0) &&
+            new Date(a.created_at as string) > new Date(currentStatusAudit.created_at as string) &&
+            (!nextStatusAudit || new Date(a.created_at as string) < new Date(nextStatusAudit.created_at as string))
+        )
+        .at(-1);
+
+      if (updatedInBetween) {
+        result.push(updatedInBetween);
+        usedUpdateIds.add(updatedInBetween.id ?? 0);
+      }
+    }
+
+    return sortBy(result, item => new Date(item.created_at || 0)).reverse();
+  }, [allAudits, isDraft]);
+
   return (
     <section>
       <Text variant="text-bold-headline-1000">{t("Application Timeline")}</Text>
@@ -102,7 +148,7 @@ const ApplicationTimeline = ({ application }: ApplicationTimelineProps) => {
               cell: props => <ReadMoreText variant="text-light-body-300">{props.getValue() as string}</ReadMoreText>
             }
           ]}
-          data={allAudits}
+          data={filteredAudits}
           variant={VARIANT_TABLE_SECONDARY}
         />
       </div>

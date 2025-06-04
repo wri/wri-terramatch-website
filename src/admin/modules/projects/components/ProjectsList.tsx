@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-import { useT } from "@transifex/react";
 import { FC } from "react";
 import {
   AutocompleteInput,
@@ -26,7 +25,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices, useGadmOptions } from "@/connections/Gadm";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -55,7 +54,7 @@ const tableMenu = [
 
 const ProjectDataGrid = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
-  const t = useT();
+  const countryOptions = useGadmOptions({ level: 0 });
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Project Name" />
@@ -100,7 +99,7 @@ const ProjectDataGrid = () => {
                   alt="flas"
                   className="h-6 w-10 min-w-[40px] object-cover"
                 />
-                <Text variant="text-14-light">{formatOptionsList(getCountriesOptions(t), props?.country ?? [])}</Text>
+                <Text variant="text-14-light">{formatOptionsList(countryOptions ?? [], props?.country ?? [])}</Text>
               </div>
             )
           );
@@ -116,6 +115,7 @@ const ProjectDataGrid = () => {
 
 export const ProjectsList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -124,7 +124,7 @@ export const ProjectsList: FC = () => {
       label="Country"
       source="country"
       className="select-page-admin"
-      choices={optionToChoices(getCountriesOptions())}
+      choices={countryChoices}
     />,
     <ReferenceInput
       key="organisation"

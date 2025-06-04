@@ -61,7 +61,7 @@ export type UserUpdateAttributes = {
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
 };
 
-export type UserUpdate = {
+export type UserData = {
   type: "users";
   /**
    * @format uuid
@@ -70,8 +70,8 @@ export type UserUpdate = {
   attributes: UserUpdateAttributes;
 };
 
-export type UserUpdateBodyDto = {
-  data: UserUpdate;
+export type UserUpdateBody = {
+  data: UserData;
 };
 
 export type UserNewRequest = {

@@ -21,7 +21,8 @@ export const validationLabels: any = {
   8: "No Spike",
   10: "Polygon Type",
   12: "Within Total Area Expected",
-  14: "Data Completed"
+  14: "Data Completed",
+  15: "Plant Start Date"
 };
 function useRenderCounter() {
   const ref = useRef(0);
@@ -37,13 +38,32 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
 
   useEffect(() => {
     if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => ({
-        id: criteria.criteria_id,
-        date: criteria.latest_created_at,
-        status: criteria.valid === 1,
-        label: validationLabels[criteria.criteria_id],
-        extra_info: criteria.extra_info
-      }));
+      const existingValidations = new Map(
+        criteriaData.criteria_list.map((criteria: any) => [
+          criteria.criteria_id,
+          {
+            id: criteria.criteria_id,
+            date: criteria.latest_created_at,
+            status: criteria.valid === 1,
+            label: validationLabels[criteria.criteria_id],
+            extra_info: criteria.extra_info
+          }
+        ])
+      );
+
+      const transformedData: ICriteriaCheckItem[] = Object.entries(validationLabels).map(([id, label]) => {
+        const existingValidation = existingValidations.get(Number(id));
+        return (
+          existingValidation || {
+            id: Number(id),
+            date: null,
+            status: true,
+            label: label,
+            extra_info: null
+          }
+        );
+      });
+
       setPolygonValidationData(transformedData);
       setValidationStatus(true);
     } else {

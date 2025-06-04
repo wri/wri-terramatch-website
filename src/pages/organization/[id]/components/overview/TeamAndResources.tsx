@@ -5,7 +5,7 @@ import { When } from "react-if";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { formatOptionsList } from "@/utils/options";
 
@@ -15,6 +15,7 @@ type TeamAndResourcesProps = {
 
 const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
   const t = useT();
+  const countryOptions = useGadmOptions({ level: 0 });
 
   return (
     <section className="my-10 rounded-lg bg-neutral-150 p-8">
@@ -63,7 +64,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               age: member.age,
               role: member.position,
               gender: member.gender,
-              nationality: formatOptionsList(getCountriesOptions(t), member.nationality as string)
+              nationality: formatOptionsList(countryOptions ?? [], member.nationality as string)
             }))}
             variant={VARIANT_TABLE_BORDER_ALL}
             alwaysShowPagination

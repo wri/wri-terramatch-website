@@ -99,8 +99,8 @@ const AuditLog = ({
       <PageRow>
         <PageColumn>
           <PageCard>
-            <div className="flex max-h-[200vh] gap-6 overflow-auto">
-              <div className="grid w-[64%] gap-6">
+            <div className="flex max-h-[200vh] gap-6 overflow-auto mobile:flex-col">
+              <div className="grid w-[64%] gap-6 mobile:w-full">
                 <AuditLogSiteTabSelection
                   buttonToggle={buttonToggle}
                   setButtonToggle={setButtonToggle}
@@ -124,7 +124,7 @@ const AuditLog = ({
                   />
                 </When>
               </div>
-              <div className="w-[32%] pl-8">
+              <div className="w-[32%] pl-8 mobile:w-full">
                 <SiteAuditLogEntityStatusSide
                   getValueForStatus={valuesForStatus}
                   progressBarLabels={statusLabels}

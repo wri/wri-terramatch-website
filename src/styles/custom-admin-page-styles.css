@@ -1,3 +1,7 @@
+.RaLayout-contentWithSidebar {
+  @apply mobile:!overflow-auto mobile:!h-16;
+}
+
 .search-page-admin>div:first-of-type {
   @apply flex flex-row-reverse bg-white rounded-lg;
 }
@@ -98,11 +102,11 @@
 }
 
 .RaLayout-content {
-  @apply !bg-neutral-100 !p-8;
+  @apply !bg-neutral-100 !pt-8 !px-8 !pb-4;
 }
 
 .RaList-main > span {
-  @apply mt-4;
+  @apply mt-[74px];
 }
 
 .RaList-main div {
@@ -417,7 +421,6 @@
 .grid-user-show .MuiTypography-body1{
   @apply !font-primary !font-medium !text-darkCustom/60 !text-sm lg:!text-base wide:!text-md;
 }
-
 
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{

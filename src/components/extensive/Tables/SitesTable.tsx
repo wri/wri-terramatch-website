@@ -1,15 +1,16 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useCallback, useMemo } from "react";
 
-import { ServerSideTable, useEntityIndexQueryParams } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { deleteSite, EntityIndexConnection, useSiteIndex } from "@/connections/Entity";
+import { deleteSite, EntityIndexConnection, indexSiteConnection } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -28,51 +29,38 @@ interface SitesTableProps {
 const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPagination = false }: SitesTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const { queryParams, onQueryParamChange } = useEntityIndexQueryParams();
   const { openModal, closeModal } = useModalContext();
 
-  const siteIndexQueryParams = { filter: { projectUuid: project.uuid }, ...queryParams };
-  const [isLoaded, siteIndex] = useSiteIndex(siteIndexQueryParams);
+  const handleDeleteSite = useCallback(
+    (uuid: string) => {
+      openModal(
+        ModalId.CONFIRM_SITE_DELETION,
+        <Modal
+          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
+          title={t("Confirm Site Deletion")}
+          content={t(
+            "All data and content will be irreversibly removed and this action cannot be undone. Are you sure you want to permanently delete this site?"
+          )}
+          primaryButtonProps={{
+            children: t("Yes"),
+            onClick: async () => {
+              await deleteSite(uuid);
+              closeModal(ModalId.CONFIRM_SITE_DELETION);
+            }
+          }}
+          secondaryButtonProps={{
+            children: t("No"),
+            onClick: () => closeModal(ModalId.CONFIRM_SITE_DELETION)
+          }}
+        />
+      );
+    },
+    [closeModal, openModal, t]
+  );
 
-  useEffect(() => {
-    onFetch?.(siteIndex as EntityIndexConnection<SiteLightDto>);
-  }, [siteIndex, onFetch]);
-
-  const handleDeleteSite = (uuid: string) => {
-    openModal(
-      ModalId.CONFIRM_SITE_DELETION,
-      <Modal
-        iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={t("Confirm Site Deletion")}
-        content={t(
-          "All data and content will be irreversibly removed and this action cannot be undone. Are you sure you want to permanently delete this site?"
-        )}
-        primaryButtonProps={{
-          children: t("Yes"),
-          onClick: async () => {
-            await deleteSite(uuid);
-            closeModal(ModalId.CONFIRM_SITE_DELETION);
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("No"),
-          onClick: () => closeModal(ModalId.CONFIRM_SITE_DELETION)
-        }}
-      />
-    );
-  };
-
-  return (
-    <ServerSideTable
-      meta={{
-        last_page:
-          siteIndex?.indexTotal && queryParams.pageSize ? Math.ceil(siteIndex?.indexTotal / queryParams.pageSize) : 1
-      }}
-      data={siteIndex.entities ?? []}
-      isLoading={!isLoaded}
-      onQueryParamChange={onQueryParamChange}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      columns={[
+  const columns = useMemo(
+    () =>
+      [
         {
           accessorKey: "name",
           header: t("Name")
@@ -137,7 +125,19 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
             );
           }
         }
-      ]}
+      ] as ColumnDef<SiteLightDto>[],
+    [format, handleDeleteSite, t]
+  );
+
+  return (
+    <ConnectionTable
+      connection={indexSiteConnection}
+      connectionProps={{ filter: { projectUuid: project.uuid } }}
+      dataProp="entities"
+      totalProp="indexTotal"
+      onFetch={onFetch}
+      variant={VARIANT_TABLE_BORDER_ALL}
+      columns={columns}
       columnFilters={[
         { type: "search", accessorKey: "query", placeholder: t("Search") },
         {
@@ -162,7 +162,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
         }
       ]}
       alwaysShowPagination={alwaysShowPagination}
-    ></ServerSideTable>
+    />
   );
 };
 

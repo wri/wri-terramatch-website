@@ -1,7 +1,6 @@
-import { ApiDataStore } from "@/store/apiSlice";
 import { Selector } from "@/types/connection";
 
-type PureSelector<S> = (store: ApiDataStore) => S;
+type PureSelector<S, State> = (state: State) => S;
 
 /**
  * A factory and cache pattern for creating pure selectors from the ApiDataStore. This allows
@@ -12,18 +11,18 @@ type PureSelector<S> = (store: ApiDataStore) => S;
  * @param keyFactory A method that returns a string representation of the hooks props
  * @param selectorFactory A method that returns a pure (store-only) selector.
  */
-export function selectorCache<S, P extends Record<string, unknown>>(
+export function selectorCache<S, P extends Record<string, unknown>, State>(
   keyFactory: (props: P) => string,
-  selectorFactory: (props: P) => PureSelector<S>
-): Selector<S, P> {
-  const selectors = new Map<string, PureSelector<S>>();
+  selectorFactory: (props: P) => PureSelector<S, State>
+): Selector<State, S, P> {
+  const selectors = new Map<string, PureSelector<S, State>>();
 
-  return (store: ApiDataStore, props: P) => {
+  return (state: State, props: P) => {
     const key = keyFactory(props);
     let selector = selectors.get(key);
     if (selector == null) {
       selectors.set(key, (selector = selectorFactory(props)));
     }
-    return selector(store);
+    return selector(state);
   };
 }
