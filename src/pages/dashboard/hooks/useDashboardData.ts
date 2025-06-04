@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
+import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useMyUser } from "@/connections/User";
@@ -14,12 +15,10 @@ import {
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTopTreesPlanted,
-  useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
   useGetV2ImpactStories
 } from "@/generated/apiComponents";
-import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -143,15 +142,14 @@ export const useDashboardData = (filters: any) => {
       project?.organisation?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
-  const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
-      {
-        queryParams: queryParams
-      },
-      {
-        enabled: !!filters && !filters.uuid
-      }
-    );
+  const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    landscapes: filters.landscapes,
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
+  });
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
@@ -507,7 +505,7 @@ export const useDashboardData = (filters: any) => {
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
+    isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration,
     projectFullDto,

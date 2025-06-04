@@ -3,7 +3,7 @@ import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { If, When } from "react-if";
+import { When } from "react-if";
 
 import { Choice } from "@/admin/types/common";
 import Button from "@/components/elements/Button/Button";
@@ -72,7 +72,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country_slug))].filter(
       Boolean
     ) as string[];
-
     const countries = uniqueCountrySlugs
       .map(slug => {
         const gadmCountry = gadmCountries.find(country => {
@@ -350,13 +349,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
-        <If condition={!isHomepage}>
+        <When condition={!isHomepage}>
           <Text variant="text-16" className="absolute top-3 right-3 text-white">
             {t("Last Updated on {date}", {
               date: isValidDate(lastUpdatedAt) ? new Date(String(lastUpdatedAt))?.toISOString().split("T")[0] : ""
             })}
           </Text>
-        </If>
+        </When>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="hidden w-full items-center gap-2 mobile:flex">
             <When condition={router.pathname !== "/dashboard"}>
