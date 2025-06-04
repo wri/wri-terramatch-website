@@ -14,6 +14,7 @@ import {
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
@@ -21,9 +22,12 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { useModalContext } from "@/context/modal.provider";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
@@ -76,6 +80,7 @@ const TaskDataGrid: FC = () => {
 
 export const TasksList: FC = () => {
   const frameworkChoices = useFrameworkChoices();
+  const { openModal, closeModal } = useModalContext();
 
   const filters = [
     <ReferenceInput
@@ -95,6 +100,116 @@ export const TasksList: FC = () => {
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("tasks", frameworkChoices);
+
+  const openModalHandlerBulkApprove = () => {
+    openModal(
+      ModalId.APPROVE_POLYGONS,
+      <ModalBulkApprove
+        title="Bulk Approve - Nothing to Report"
+        data={[
+          {
+            id: "1",
+            name: "GBM PPC Nursery",
+            type: "Nursery",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "2",
+            name: "GBM PPC Nursery",
+            type: "Nursery",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "3",
+            name: "GBM PPC Site",
+            type: "Site",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "4",
+            name: "GBM PPC Nursery",
+            type: "Nursery",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "5",
+            name: "GBM PPC Nursery",
+            type: "Nursery",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "6",
+            name: "GBM PPC Nursery",
+            type: "Nursery",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "7",
+            name: "GBM PPC Site",
+            type: "Site",
+            dateSubmitted: "06/08/2021"
+          },
+          {
+            id: "8",
+            name: "GBM PPC Site",
+            type: "Site",
+            dateSubmitted: "06/08/2021"
+          }
+        ]}
+        onClose={() => closeModal(ModalId.APPROVE_POLYGONS)}
+        content={`This project has indicated there is nothing to report for the following reports that were due [task due date]. Press "select all" to bulk approve these reports (you can manually adjust your selection before final approval if needed).`}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => openModalHandlerBulkConfirm()
+        }}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
+        }}
+        primaryButtonText="Next"
+        secondaryButtonText="Cancel"
+      />
+    );
+  };
+
+  const openModalHandlerBulkConfirm = () => {
+    openModal(
+      ModalId.CONFIRM_POLYGON_APPROVAL,
+      <ModalConfirm
+        title={"Confirm Bulk Approval"}
+        content={
+          <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
+            <li className="text-12-light">Report - Entity - Task Due Dates</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Report - Entity - Task Due Dates</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Report - Entity - Task Due Dates</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+          </div>
+        }
+        commentArea
+        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_APPROVAL)}
+        onConfirm={() => {}}
+      />
+    );
+  };
 
   return (
     <>
@@ -127,7 +242,9 @@ export const TasksList: FC = () => {
               0
             </Text>
           </div>
-          <Button variant="primary">Bulk Approve &quot;Nothing to Report&quot;</Button>
+          <Button onClick={() => openModalHandlerBulkApprove()} variant="primary">
+            Bulk Approve &quot;Nothing to Report&quot;
+          </Button>
         </div>
         <div className="m-6 overflow-hidden rounded-2xl border border-neutral-300">
           <TaskDataGrid />
