@@ -22,22 +22,12 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
-import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
+import { getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-const monitoringDataChoices = [
-  {
-    id: "0",
-    name: "No"
-  },
-  {
-    id: "1",
-    name: "Yes"
-  }
-];
 const tableMenu = [
   {
     id: "1",
@@ -76,7 +66,7 @@ const ImpactStoriesDataGrid: FC = () => {
             : "No country"
         }
       />
-      <DateField source="created_at" label="Date Created" locales="en-GB" />
+      <DateField source="createdAt" label="Date Created" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -99,7 +89,7 @@ export const ImpactStoriesList: FC = () => {
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       sort={{
@@ -111,7 +101,7 @@ export const ImpactStoriesList: FC = () => {
     </ReferenceInput>,
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{
@@ -124,7 +114,7 @@ export const ImpactStoriesList: FC = () => {
     <SelectInput
       key="framework_key"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />,
@@ -133,27 +123,6 @@ export const ImpactStoriesList: FC = () => {
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
-      className="select-page-admin"
-    />,
-    <SelectInput
-      key="update_request_status"
-      label="Change Request"
-      source="update_request_status"
-      choices={optionToChoices(getChangeRequestStatusOptions())}
-      className="select-page-admin"
-    />,
-    <SelectInput
-      key="monitoring_data"
-      label="Monitored Data"
-      source="monitoring_data"
-      choices={monitoringDataChoices}
-      className="select-page-admin"
-    />,
-    <SelectInput
-      key="polygon"
-      label="Polygon"
-      source="polygon"
-      choices={optionToChoices(getPolygonOptions())}
       className="select-page-admin"
     />
   ];

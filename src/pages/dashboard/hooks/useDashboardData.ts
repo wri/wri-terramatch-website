@@ -4,6 +4,7 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
+import { useImpactStory } from "@/connections/ImpactStory";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -492,6 +493,21 @@ export const useDashboardData = (filters: any) => {
   const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
     queryParams: queryString as any
   });
+
+  const [, { data: impactStories }] = useImpactStory({
+    country: filters.country.country_slug
+  });
+  // {
+  //   "programmesType[]": filters.programmes,
+  //   country: filters.country.country_slug,
+  //   "organisationType[]": filters.organizations,
+  //   landscapes: filters.landscapes,
+  //   cohort: filters.cohort,
+  //   projectUuid: filters.uuid
+  // }
+  console.log(impactStories);
+
+  console.log(queryParams);
 
   const transformedStories = useMemo(
     () =>
