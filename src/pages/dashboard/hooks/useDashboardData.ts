@@ -13,7 +13,6 @@ import {
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
@@ -118,7 +117,6 @@ export const useDashboardData = (filters: any) => {
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
   );
-  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
   const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
     { queryParams: queryParams },
@@ -181,7 +179,7 @@ export const useDashboardData = (filters: any) => {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 100;
   const [allProjects, setAllProjects] = useState<any[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const [hasMoreProjects, setHasMoreProjects] = useState(true);
   const [totalProjects, setTotalProjects] = useState(0);
 
@@ -270,6 +268,30 @@ export const useDashboardData = (filters: any) => {
       setIsLoadingProjects(false);
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
+
+  const topprojects = useMemo(() => {
+    if (!allProjects?.length || isLoadingProjects) {
+      return [];
+    }
+
+    const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
+
+    const sortedProjects = filteredProjects
+      .sort((a, b) => (b.treesPlantedCount || 0) - (a.treesPlantedCount || 0))
+      .slice(0, 5)
+      .map(project => ({
+        organization: project.organisationName || "",
+        project: project.name || "",
+        trees_planted: project.treesPlantedCount || 0,
+        uuid: project.uuid || ""
+      }));
+
+    return sortedProjects;
+  }, [allProjects, isLoadingProjects]);
+
+  useEffect(() => {
+    console.log("topprojects:", topprojects);
+  }, [topprojects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -397,8 +419,8 @@ export const useDashboardData = (filters: any) => {
   }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (topData?.top_projects_most_planted_trees) {
-      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+    if (topprojects) {
+      const projects = topprojects.slice(0, 5);
       const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
@@ -406,7 +428,7 @@ export const useDashboardData = (filters: any) => {
       }));
       setTopProjects({ tableData, maxValue: Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6) });
     }
-  }, [topData]);
+  }, [topprojects]);
 
   useEffect(() => {
     if (filters.uuid) {
