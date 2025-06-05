@@ -11468,21 +11468,6 @@ export type DashboardProjectProfileData = {
   };
 };
 
-export type DashboardTopProjectsResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
-  };
-};
-
 export type DashboardTopPlantedTree = {
   organization?: string;
   project?: string;
