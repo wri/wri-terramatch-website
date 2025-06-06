@@ -201,6 +201,7 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
         </Text>
         <input
           type="date"
+          lang="en-GB"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
           placeholder={t("Input Plant Start Date")}
           value={plantStartDate}

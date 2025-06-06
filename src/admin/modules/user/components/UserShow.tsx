@@ -71,7 +71,7 @@ export const UserShow = () => (
         <ReferenceField label="Organisation" source="organisation.uuid" reference={modules.organisation.ResourceName}>
           <FunctionField render={(record: V2AdminOrganisationRead) => record.name || "No Organisation Name"} />
         </ReferenceField>
-        <DateField label="Last date active" source="last_logged_in_at" />
+        <DateField label="Last date active" source="last_logged_in_at" locales="en-GB" />
         <FunctionField
           label="All Frameworks (includes frameworks through role and project associations)"
           render={renderFrameworks("all_frameworks")}
