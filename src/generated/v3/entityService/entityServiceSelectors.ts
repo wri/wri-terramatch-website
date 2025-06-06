@@ -5,6 +5,8 @@ import {
   ProjectPitchIndexVariables,
   ProjectPitchGetPathParams,
   ProjectPitchGetVariables,
+  ProcessProjectTasksPathParams,
+  ProcessProjectTasksVariables,
   TaskIndexQueryParams,
   TaskIndexVariables,
   TaskGetPathParams,
@@ -66,6 +68,30 @@ export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariab
     method: "get",
     ...variables
   });
+
+export const processProjectTasksIsFetching = (variables: Omit<ProcessProjectTasksVariables, "body">) =>
+  isFetchingSelector<{}, ProcessProjectTasksPathParams>({
+    url: "/entities/v3/projectTaskProcessing/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const processProjectTasksFetchFailed = (variables: Omit<ProcessProjectTasksVariables, "body">) =>
+  fetchFailedSelector<{}, ProcessProjectTasksPathParams>({
+    url: "/entities/v3/projectTaskProcessing/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const approveReportsIsFetching = isFetchingSelector<{}, {}>({
+  url: "/entities/v3/projectTaskProcessing/approveReports",
+  method: "patch"
+});
+
+export const approveReportsFetchFailed = fetchFailedSelector<{}, {}>({
+  url: "/entities/v3/projectTaskProcessing/approveReports",
+  method: "patch"
+});
 
 export const taskIndexIsFetching = (variables: Omit<TaskIndexVariables, "body">) =>
   isFetchingSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
