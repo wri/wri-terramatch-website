@@ -3,10 +3,12 @@ import Text from "@/components/elements/Text/Text";
 
 interface CollapsibleRowBulkProps {
   item: any;
+  selected: boolean;
+  onSelect: (id: string, selected: boolean) => void;
 }
 
 const CollapsibleRowBulk = (props: CollapsibleRowBulkProps) => {
-  const { item } = props;
+  const { item, selected, onSelect } = props;
   return (
     <div className="flex flex-col border-b border-grey-750 px-4 py-2 last:border-0">
       <div className="flex items-center ">
@@ -21,7 +23,7 @@ const CollapsibleRowBulk = (props: CollapsibleRowBulkProps) => {
           {item.dateSubmitted}
         </Text>
         <div className="flex flex-1 items-center justify-center">
-          <Checkbox name="" />
+          <Checkbox name="" checked={selected} onClick={() => onSelect(item.id, !selected)} />
         </div>
       </div>
     </div>

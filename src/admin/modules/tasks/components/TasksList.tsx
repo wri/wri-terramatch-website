@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -8,7 +8,8 @@ import {
   List,
   ReferenceInput,
   SelectInput,
-  TextField
+  TextField,
+  useListContext
 } from "react-admin";
 
 import ListActions from "@/admin/components/Actions/ListActions";
@@ -24,6 +25,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useApproveReports, useProjectTaskProcessing } from "@/connections/ProjectTaskProcessing";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -33,8 +35,13 @@ import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-const TaskDataGrid: FC = () => {
+const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void }> = ({ onProjectUuidChange }) => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const { filterValues } = useListContext();
+
+  useEffect(() => {
+    onProjectUuidChange(filterValues.projectUuid);
+  }, [filterValues, onProjectUuidChange]);
 
   return (
     <Datagrid rowClick="show" bulkActionButtons={false}>
@@ -81,6 +88,15 @@ const TaskDataGrid: FC = () => {
 export const TasksList: FC = () => {
   const frameworkChoices = useFrameworkChoices();
   const { openModal, closeModal } = useModalContext();
+  const [currentProjectUuid, setCurrentProjectUuid] = useState<string | undefined>();
+  const [selectedReports, setSelectedReports] = useState<string[]>([]);
+  const [approvalComment, setApprovalComment] = useState<string | undefined>();
+  console.log(selectedReports, approvalComment);
+  const [, { data: projectTaskData }] = useProjectTaskProcessing(
+    currentProjectUuid ? { uuid: currentProjectUuid } : undefined
+  );
+
+  const [, { approveReports }] = useApproveReports(currentProjectUuid ? { uuid: currentProjectUuid } : undefined);
 
   const filters = [
     <ReferenceInput
@@ -101,112 +117,92 @@ export const TasksList: FC = () => {
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("tasks", frameworkChoices);
 
-  const openModalHandlerBulkApprove = () => {
+  const openModalHandlerBulkApprove = (
+    data: Array<{ id: string; name: string; type: string; dateSubmitted: string }>,
+    currentProjectUuid?: string
+  ) => {
+    let currentSelectedReports: string[] = [];
+
     openModal(
       ModalId.APPROVE_POLYGONS,
       <ModalBulkApprove
         title="Bulk Approve - Nothing to Report"
-        data={[
-          {
-            id: "1",
-            name: "GBM PPC Nursery",
-            type: "Nursery",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "2",
-            name: "GBM PPC Nursery",
-            type: "Nursery",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "3",
-            name: "GBM PPC Site",
-            type: "Site",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "4",
-            name: "GBM PPC Nursery",
-            type: "Nursery",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "5",
-            name: "GBM PPC Nursery",
-            type: "Nursery",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "6",
-            name: "GBM PPC Nursery",
-            type: "Nursery",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "7",
-            name: "GBM PPC Site",
-            type: "Site",
-            dateSubmitted: "06/08/2021"
-          },
-          {
-            id: "8",
-            name: "GBM PPC Site",
-            type: "Site",
-            dateSubmitted: "06/08/2021"
-          }
-        ]}
-        onClose={() => closeModal(ModalId.APPROVE_POLYGONS)}
+        data={data}
+        onClose={() => {
+          closeModal(ModalId.APPROVE_POLYGONS);
+        }}
         content={`This project has indicated there is nothing to report for the following reports that were due [task due date]. Press "select all" to bulk approve these reports (you can manually adjust your selection before final approval if needed).`}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
-          onClick: () => openModalHandlerBulkConfirm()
+          onClick: () => {
+            const selectedData = data.filter(report => currentSelectedReports.includes(report.id));
+            openModalHandlerBulkConfirm(selectedData, currentSelectedReports, currentProjectUuid);
+          }
         }}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",
-          onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
+          onClick: () => {
+            closeModal(ModalId.APPROVE_POLYGONS);
+          }
         }}
         primaryButtonText="Next"
         secondaryButtonText="Cancel"
+        onSelectionChange={selectedIds => {
+          currentSelectedReports = selectedIds;
+        }}
       />
     );
   };
 
-  const openModalHandlerBulkConfirm = () => {
+  const openModalHandlerBulkConfirm = (
+    selectedData: Array<{ id: string; name: string; type: string; dateSubmitted: string }>,
+    selectedUuids: string[],
+    currentProjectUuid?: string
+  ) => {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
         title={"Confirm Bulk Approval"}
         content={
           <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
-            <li className="text-12-light">Report - Entity - Task Due Dates</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Report - Entity - Task Due Dates</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Report - Entity - Task Due Dates</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
-            <li className="text-12-light">Project Report - GBM PPC Project - 08/08/2021</li>
+            {selectedData.length > 0 ? (
+              selectedData.map(report => (
+                <li key={report.id} className="text-12-light">
+                  {report.type} Report - {report.name} - {report.dateSubmitted}
+                </li>
+              ))
+            ) : (
+              <li className="text-12-light">No reports selected</li>
+            )}
           </div>
         }
         commentArea
-        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_APPROVAL)}
-        onConfirm={() => {}}
+        onClose={() => {
+          closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+          setSelectedReports([]);
+          setApprovalComment(undefined);
+        }}
+        onConfirm={async (text: any, opt) => {
+          try {
+            // Store the comment in state
+            setApprovalComment(text);
+
+            // Approve the reports with the comment
+            if (!currentProjectUuid) {
+              console.error("No project UUID available for approval");
+              return;
+            }
+
+            approveReports(selectedUuids, text);
+            closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+            setSelectedReports([]);
+          } catch (error) {
+            console.error("Error approving reports:", error);
+            // TODO: Show error notification
+          }
+        }}
       />
     );
   };
@@ -242,12 +238,25 @@ export const TasksList: FC = () => {
               0
             </Text>
           </div>
-          <Button onClick={() => openModalHandlerBulkApprove()} variant="primary">
+          <Button
+            onClick={() => {
+              if (projectTaskData?.reports) {
+                const reportsData = projectTaskData.reports.map(report => ({
+                  id: report.uuid,
+                  name: report.name,
+                  type: report.type === "nurseryReport" ? "Nursery" : "Site",
+                  dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
+                }));
+                openModalHandlerBulkApprove(reportsData, currentProjectUuid);
+              }
+            }}
+            variant="primary"
+          >
             Bulk Approve &quot;Nothing to Report&quot;
           </Button>
         </div>
         <div className="m-6 overflow-hidden rounded-2xl border border-neutral-300">
-          <TaskDataGrid />
+          <TaskDataGrid onProjectUuidChange={setCurrentProjectUuid} />
         </div>
       </List>
 

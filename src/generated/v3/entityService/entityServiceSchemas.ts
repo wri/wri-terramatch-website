@@ -102,6 +102,84 @@ export type ProjectPitchDto = {
 
 export type FilterItem = {};
 
+export type ReportDto = {
+  /**
+   * Unique identifier of the report
+   */
+  uuid: string;
+  /**
+   * Name of the report or related entity
+   */
+  name: string;
+  /**
+   * Type of the report
+   */
+  type: "siteReport" | "nurseryReport";
+  /**
+   * When the report was submitted
+   *
+   * @format date-time
+   */
+  submittedAt: string;
+  /**
+   * UUID of the task this report belongs to
+   */
+  taskUuid: string;
+  /**
+   * Whether the report has nothing to report
+   */
+  nothingToReport: boolean;
+};
+
+export type ProjectTaskProcessingResponseDto = {
+  /**
+   * UUID of the project
+   */
+  projectUuid: string;
+  /**
+   * Name of the project
+   */
+  projectName: string;
+  /**
+   * Array of reports associated with the project's tasks
+   */
+  reports: ReportDto[];
+};
+
+export type ApproveReportsResponseDto = {
+  /**
+   * Number of reports that were approved
+   *
+   * @example 5
+   */
+  approvedCount: number;
+  /**
+   * Success message
+   *
+   * @example Successfully approved 5 reports
+   */
+  message: string;
+};
+
+export type ApproveReportsDto = {
+  /**
+   * Array of report UUIDs to be approved
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  reportUuids: string[];
+  /**
+   * Optional feedback for the report approval
+   *
+   * @example Reports look good, approved with no changes needed
+   */
+  feedback?: string;
+  /**
+   * uuid from project
+   */
+  uuid: string;
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -120,7 +198,6 @@ export type TaskLightDto = {
    * @format date-time
    */
   updatedAt: string;
-  nothingToReport: boolean;
 };
 
 export type TaskFullDto = {
@@ -524,6 +601,7 @@ export type ProjectLightDto = {
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  shortName: string | null;
   /**
    * @format date-time
    */
@@ -657,6 +735,7 @@ export type ProjectFullDto = {
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  shortName: string | null;
   /**
    * @format date-time
    */

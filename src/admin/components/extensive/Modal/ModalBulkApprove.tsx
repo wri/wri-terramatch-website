@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -14,7 +14,8 @@ export interface ModalBulkApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
-  data: any;
+  data: any[];
+  onSelectionChange?: (selectedIds: string[]) => void;
 }
 
 export interface DisplayedPolygonType {
@@ -37,8 +38,28 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
   children,
   data,
   onClose,
+  onSelectionChange,
   ...rest
 }) => {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const handleSelect = (id: string, selected: boolean) => {
+    const newSelectedIds = selected ? [...selectedIds, id] : selectedIds.filter(selectedId => selectedId !== id);
+    setSelectedIds(newSelectedIds);
+    onSelectionChange?.(newSelectedIds);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === data.length) {
+      setSelectedIds([]);
+      onSelectionChange?.([]);
+    } else {
+      const allIds = data.map(item => item.id);
+      setSelectedIds(allIds);
+      onSelectionChange?.(allIds);
+    }
+  };
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -55,8 +76,8 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
         </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
-          <Button variant="white-page-admin" className="text-14-semibold text-black">
-            Select All
+          <Button variant="white-page-admin" className="text-14-semibold text-black" onClick={handleSelectAll}>
+            {selectedIds.length === data.length ? "Deselect All" : "Select All"}
           </Button>
         </div>
         <div className="my-2 flex items-center">
@@ -82,8 +103,13 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
               {"Bulk Approve"}
             </Text>
           </header>
-          {data?.map((item: any, index: number) => (
-            <CollapsibleRowBulk key={item.id} item={item} />
+          {data?.map((item: any) => (
+            <CollapsibleRowBulk
+              key={item.id}
+              item={item}
+              selected={selectedIds.includes(item.id)}
+              onSelect={handleSelect}
+            />
           ))}
         </div>
       </div>
