@@ -764,8 +764,10 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "restorationPartners":
     case "jobs":
     case "volunteers":
+    case "employees":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries": {
       validation = yup
         .array()
         .min(0)
