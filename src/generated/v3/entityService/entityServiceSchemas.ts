@@ -523,6 +523,7 @@ export type ProjectLightDto = {
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  shortName: string | null;
   /**
    * @format date-time
    */
@@ -656,6 +657,7 @@ export type ProjectFullDto = {
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
+  shortName: string | null;
   /**
    * @format date-time
    */
