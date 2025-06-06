@@ -884,6 +884,7 @@ export type EntityIndexQueryParams = {
   sideloads?: Schemas.EntitySideload[];
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
+  shortName?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -1548,6 +1549,7 @@ export type EntityAssociationIndexQueryParams = {
   sideloads?: Schemas.EntitySideload[];
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
+  shortName?: string;
   modelType?: string;
   /**
    * @default false
