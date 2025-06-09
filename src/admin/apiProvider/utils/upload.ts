@@ -1,9 +1,6 @@
 import { CreateParams, UpdateParams } from "react-admin";
 
-import {
-  uploadFile,
-  UploadFilePathParams
-} from "@/generated/v3/entityService/entityServiceComponents";
+import { uploadFile, UploadFilePathParams } from "@/generated/v3/entityService/entityServiceComponents";
 
 export const upload = (file: File, pathParams: UploadFilePathParams) => {
   const body = new FormData();

@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import exifr from "exifr";
-import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
@@ -13,9 +13,9 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { MediaOwnerType, useFileUpload } from "@/connections/FileUpload";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
-import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
-import { FileType, MediaOwnerType, UploadedFile } from "@/types/common";
+import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -79,10 +79,111 @@ const ModalAddImages: FC<ModalAddProps> = ({
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
+  // Use the file upload connection - it returns [isLoaded, connection]
+  const [fileUploadLoaded, fileUploadConnection] = useFileUpload({
+    entity: model as MediaOwnerType,
+    uuid: entityData.uuid,
+    collection
+  });
+
+  // Track previous state to detect changes for onSuccess/onError callbacks
+  const prevStateRef = useRef({
+    isFetching: false,
+    loadFailed: false,
+    fileUpload: null as any
+  });
+
+  const addFileToValue = useCallback(
+    (file: Partial<UploadedFile>) => {
+      setFiles(value => {
+        if (Array.isArray(value) && allowMultiple) {
+          const tmp = [...value];
+          const index = tmp.findIndex(item => {
+            if (!!file.uuid && file.uuid === item.uuid) {
+              return true;
+            } else if (!!file.rawFile && item.rawFile === file.rawFile) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+
+          if (index === -1) {
+            return [...tmp, file as UploadedFile];
+          } else {
+            tmp.splice(index, 1, file as UploadedFile);
+            return tmp;
+          }
+        } else {
+          return [file as UploadedFile];
+        }
+      });
+    },
+    [allowMultiple]
+  );
+
+  // Map MediaDto to UploadedFile format
+  const mapMediaDtoToUploadedFile = useCallback((mediaDto: any): Partial<UploadedFile> => {
+    return {
+      uuid: mediaDto.uuid,
+      url: mediaDto.url || "",
+      size: mediaDto.size,
+      file_name: mediaDto.fileName,
+      mime_type: mediaDto.mimeType,
+      title: mediaDto.name,
+      created_at: mediaDto.createdAt,
+      collection_name: mediaDto.collectionName,
+      is_public: mediaDto.isPublic,
+      is_cover: mediaDto.isCover,
+      lat: mediaDto.lat,
+      lng: mediaDto.lng
+    };
+  }, []);
+
+  // Handle onSuccess and onError by watching state changes
+  useEffect(() => {
+    if (!fileUploadLoaded) return;
+
+    const prevState = prevStateRef.current;
+    const currentState = {
+      isFetching: fileUploadConnection.fileUploadIsFetching,
+      loadFailed: fileUploadConnection.fileUploadLoadFailed,
+      fileUpload: fileUploadConnection.fileUpload
+    };
+
+    // onSuccess: Upload was in progress, now completed successfully with data
+    if (prevState.isFetching && !currentState.isFetching && !currentState.loadFailed && currentState.fileUpload) {
+      // This is equivalent to the onSuccess callback in the TODO comment
+      const mappedFile = mapMediaDtoToUploadedFile(currentState.fileUpload.attributes);
+      addFileToValue({
+        ...mappedFile,
+        uploadState: { isSuccess: true, isLoading: false }
+      });
+    }
+
+    // onError: Upload was in progress, now completed with error
+    if (prevState.isFetching && !currentState.isFetching && currentState.loadFailed) {
+      // This is equivalent to the onError callback in the TODO comment
+      // You can access the current file being uploaded through a ref if needed
+      setErrorMessage?.("Error uploading file");
+    }
+
+    prevStateRef.current = currentState;
+  }, [
+    fileUploadLoaded,
+    fileUploadConnection.fileUploadIsFetching,
+    fileUploadConnection.fileUploadLoadFailed,
+    fileUploadConnection.fileUpload,
+    setErrorMessage,
+    addFileToValue,
+    mapMediaDtoToUploadedFile
+  ]);
+
   // TODO use onSuccess and onError once it is implemented
+  // The above useEffect now implements the onSuccess and onError logic:
   // onSuccess(data, variables) {
   //   //@ts-ignore swagger issue
-  //   addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+  //   addFileToValue({ ...data.data, uploadState: { isSuccess: true, isLoading: false } });
   // },
   // onError(err, variables: any) {
   //   if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
@@ -120,32 +221,6 @@ const ModalAddImages: FC<ModalAddProps> = ({
       setFile(files);
     }
   }, [files, setFile]);
-
-  const addFileToValue = (file: Partial<UploadedFile>) => {
-    setFiles(value => {
-      if (Array.isArray(value) && allowMultiple) {
-        const tmp = [...value];
-        const index = tmp.findIndex(item => {
-          if (!!file.uuid && file.uuid === item.uuid) {
-            return true;
-          } else if (!!file.rawFile && item.rawFile === file.rawFile) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-
-        if (index === -1) {
-          return [...tmp, file as UploadedFile];
-        } else {
-          tmp.splice(index, 1, file as UploadedFile);
-          return tmp;
-        }
-      } else {
-        return [file as UploadedFile];
-      }
-    });
-  };
 
   const removeFileFromValue = (file: Partial<UploadedFile>) => {
     setFiles(value => {
@@ -215,12 +290,10 @@ const ModalAddImages: FC<ModalAddProps> = ({
         Log.error(e);
       }
 
-      uploadFile?.({
-        pathParams: { entity: model as MediaOwnerType, collection, uuid: entityData.uuid },
-        //@ts-ignore swagger issue
-        file: file,
-        body
-      });
+      // Use the connection's uploadFile method
+      if (fileUploadLoaded) {
+        fileUploadConnection.uploadFile(file, body);
+      }
     }
   };
 
