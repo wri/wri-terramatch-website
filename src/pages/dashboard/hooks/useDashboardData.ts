@@ -14,7 +14,6 @@ import {
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
   useGetV2ImpactStories
@@ -117,7 +116,6 @@ export const useDashboardData = (filters: any) => {
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
   );
-  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
   const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
     { queryParams: queryParams },
@@ -258,6 +256,7 @@ export const useDashboardData = (filters: any) => {
     setAllProjects([]);
     setHasMoreProjects(true);
     setTotalProjects(0);
+    setIsLoadingProjects(false);
   }, [filterParams]);
 
   const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
@@ -292,8 +291,34 @@ export const useDashboardData = (filters: any) => {
       });
 
       setIsLoadingProjects(false);
+    } else if (!projectsLoaded) {
+      setIsLoadingProjects(true);
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
+
+  const topProjects = useMemo(() => {
+    if (allProjects?.length ?? isLoadingProjects) {
+      return [];
+    }
+
+    const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
+
+    const sortedProjects = filteredProjects
+      .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
+      .slice(0, 5)
+      .map(project => ({
+        organization: project.organisationName ?? "",
+        project: project.name ?? "",
+        trees_planted: project.treesPlantedCount ?? 0,
+        uuid: project.uuid ?? ""
+      }));
+
+    return sortedProjects;
+  }, [allProjects, isLoadingProjects]);
+
+  useEffect(() => {
+    console.log("topprojects:", topProjects);
+  }, [topProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -421,8 +446,8 @@ export const useDashboardData = (filters: any) => {
   }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (topData?.top_projects_most_planted_trees) {
-      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+    if (topProjects) {
+      const projects = topProjects.slice(0, 5);
       const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
@@ -430,7 +455,7 @@ export const useDashboardData = (filters: any) => {
       }));
       setTopProjects({ tableData, maxValue: Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6) });
     }
-  }, [topData]);
+  }, [topProjects]);
 
   useEffect(() => {
     if (filters.uuid) {
