@@ -21573,75 +21573,6 @@ export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResp
   );
 };
 
-export type GetV2DashboardTopTreesPlantedQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTopTreesPlantedResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
-  };
-};
-
-export type GetV2DashboardTopTreesPlantedVariables = {
-  queryParams?: GetV2DashboardTopTreesPlantedQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const fetchGetV2DashboardTopTreesPlanted = (
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTopTreesPlantedResponse,
-    GetV2DashboardTopTreesPlantedError,
-    undefined,
-    {},
-    GetV2DashboardTopTreesPlantedQueryParams,
-    {}
-  >({ url: "/v2/dashboard/top-trees-planted", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesPlantedResponse>(
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
-    ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardIndicatorHectaresRestorationQueryParams = {
   /**
    * search term to use on the collection
@@ -24931,11 +24862,6 @@ export type QueryOperation =
       path: "/v2/dashboard/frameworks";
       operationId: "getV2DashboardFrameworks";
       variables: GetV2DashboardFrameworksVariables;
-    }
-  | {
-      path: "/v2/dashboard/top-trees-planted";
-      operationId: "getV2DashboardTopTreesPlanted";
-      variables: GetV2DashboardTopTreesPlantedVariables;
     }
   | {
       path: "/v2/dashboard/indicator/hectares-restoration";
