@@ -179,7 +179,7 @@ export const useDashboardData = (filters: any) => {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 100;
   const [allProjects, setAllProjects] = useState<any[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [hasMoreProjects, setHasMoreProjects] = useState(true);
   const [totalProjects, setTotalProjects] = useState(0);
 
@@ -232,6 +232,7 @@ export const useDashboardData = (filters: any) => {
     setAllProjects([]);
     setHasMoreProjects(true);
     setTotalProjects(0);
+    setIsLoadingProjects(false);
   }, [filterParams]);
 
   const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
@@ -266,6 +267,8 @@ export const useDashboardData = (filters: any) => {
       });
 
       setIsLoadingProjects(false);
+    } else if (!projectsLoaded) {
+      setIsLoadingProjects(true);
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
