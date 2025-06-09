@@ -269,29 +269,29 @@ export const useDashboardData = (filters: any) => {
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
-  const topprojects = useMemo(() => {
-    if (!allProjects?.length || isLoadingProjects) {
+  const topProjects = useMemo(() => {
+    if (allProjects?.length ?? isLoadingProjects) {
       return [];
     }
 
     const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
 
     const sortedProjects = filteredProjects
-      .sort((a, b) => (b.treesPlantedCount || 0) - (a.treesPlantedCount || 0))
+      .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
       .slice(0, 5)
       .map(project => ({
-        organization: project.organisationName || "",
-        project: project.name || "",
-        trees_planted: project.treesPlantedCount || 0,
-        uuid: project.uuid || ""
+        organization: project.organisationName ?? "",
+        project: project.name ?? "",
+        trees_planted: project.treesPlantedCount ?? 0,
+        uuid: project.uuid ?? ""
       }));
 
     return sortedProjects;
   }, [allProjects, isLoadingProjects]);
 
   useEffect(() => {
-    console.log("topprojects:", topprojects);
-  }, [topprojects]);
+    console.log("topprojects:", topProjects);
+  }, [topProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -419,8 +419,8 @@ export const useDashboardData = (filters: any) => {
   }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (topprojects) {
-      const projects = topprojects.slice(0, 5);
+    if (topProjects) {
+      const projects = topProjects.slice(0, 5);
       const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
@@ -428,7 +428,7 @@ export const useDashboardData = (filters: any) => {
       }));
       setTopProjects({ tableData, maxValue: Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6) });
     }
-  }, [topprojects]);
+  }, [topProjects]);
 
   useEffect(() => {
     if (filters.uuid) {
