@@ -5,7 +5,7 @@ import {
   impactStoryIndex,
   ImpactStoryIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ImpactStoryFullDto, ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   impactStoryGetFetchFailed,
   impactStoryGetIsFetching,
@@ -23,22 +23,24 @@ const impactStoriesSelector = ({ impactStories }: ApiDataStore) => impactStories
 type ImpactStoryConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  impactStory: ImpactStoryLightDto | null;
+  impactStory: ImpactStoryFullDto | null;
 };
 
 type ImpactStoryConnectionProps = {
   uuid: string;
 };
 
-const impactStoryIsLoaded = ({ requestFailed, impactStory }: ImpactStoryConnection) =>
-  requestFailed != null || impactStory != null;
+const impactStoryIsLoaded =
+  (requireFull: boolean) =>
+  ({ requestFailed, impactStory }: ImpactStoryConnection) =>
+    requestFailed != null || (impactStory != null && (!requireFull || !impactStory.lightResource));
 
 const impactStoryConnection: Connection<ImpactStoryConnection, ImpactStoryConnectionProps> = {
   load: (connection, { uuid }) => {
-    if (!impactStoryIsLoaded(connection)) impactStoryGet({ pathParams: { uuid } });
+    if (!impactStoryIsLoaded(true)(connection)) impactStoryGet({ pathParams: { uuid } });
   },
 
-  isLoaded: impactStoryIsLoaded,
+  isLoaded: impactStoryIsLoaded(true),
   selector: selectorCache(
     ({ uuid }: ImpactStoryConnectionProps) => uuid,
     ({ uuid }: ImpactStoryConnectionProps) =>
@@ -51,7 +53,31 @@ const impactStoryConnection: Connection<ImpactStoryConnection, ImpactStoryConnec
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          impactStory: selector[uuid]?.attributes ?? null
+          impactStory: selector[uuid]?.attributes as ImpactStoryFullDto | null
+        })
+      )
+  )
+};
+
+const lightImpactStoryConnection: Connection<ImpactStoryConnection, ImpactStoryConnectionProps> = {
+  load: (connection, { uuid }) => {
+    if (!impactStoryIsLoaded(false)(connection)) impactStoryGet({ pathParams: { uuid } });
+  },
+
+  isLoaded: impactStoryIsLoaded(false),
+  selector: selectorCache(
+    ({ uuid }: ImpactStoryConnectionProps) => uuid,
+    ({ uuid }: ImpactStoryConnectionProps) =>
+      createSelector(
+        [
+          impactStoryGetIsFetching({ pathParams: { uuid } }),
+          impactStoryGetFetchFailed({ pathParams: { uuid } }),
+          impactStoriesSelector
+        ],
+        (isLoading, requestFailed, selector) => ({
+          isLoading,
+          requestFailed,
+          impactStory: selector[uuid]?.attributes as ImpactStoryFullDto | null
         })
       )
   )
@@ -65,7 +91,16 @@ export type ImpactStoriesConnection = {
 
 type ImpactStoryIndexFilterKey = keyof Omit<
   ImpactStoryIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
+  | "page[size]"
+  | "page[number]"
+  | "sort[field]"
+  | "sort[direction]"
+  | "country"
+  | "programmesType[]"
+  | "cohort"
+  | "landscapes"
+  | "organisationType[]"
+  | "projectUuid"
 >;
 
 export type ImpactStoryIndexConnectionProps = {
@@ -75,6 +110,10 @@ export type ImpactStoryIndexConnectionProps = {
   sortDirection?: "ASC" | "DESC";
   filter?: Partial<Record<ImpactStoryIndexFilterKey, string>>;
   country?: string;
+  status?: string;
+  organizationType?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  category?: string;
 };
 
 const impactStoryIndexQuery = (props?: ImpactStoryIndexConnectionProps) => {
@@ -93,6 +132,15 @@ const impactStoryIndexQuery = (props?: ImpactStoryIndexConnectionProps) => {
   }
   if (props?.country != null) {
     queryParams["country"] = props.country;
+  }
+  if (props?.organizationType) {
+    queryParams["organisationType"] = props.organizationType;
+  }
+  if (props?.projectUuid != null) {
+    queryParams["projectUuid"] = props.projectUuid;
+  }
+  if (props?.category != null) {
+    queryParams["category"] = props.category as any;
   }
   return queryParams;
 };
@@ -133,6 +181,10 @@ const impactStoriesConnection: Connection<ImpactStoriesConnection, ImpactStoryIn
   )
 };
 
-export const loadImpactStories = connectionLoader(impactStoriesConnection);
+export const useImpactStory = connectionHook(impactStoryConnection);
+export const useLightImpactStory = connectionHook(lightImpactStoryConnection);
+export const useImpactStories = connectionHook(impactStoriesConnection);
+
 export const loadImpactStory = connectionLoader(impactStoryConnection);
-export const useImpactStory = connectionHook(impactStoriesConnection);
+export const loadLightImpactStory = connectionLoader(lightImpactStoryConnection);
+export const loadImpactStories = connectionLoader(impactStoriesConnection);

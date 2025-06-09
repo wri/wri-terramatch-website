@@ -109,7 +109,12 @@ export const ImpactStoriesList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        className="select-page-admin"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>,
     <SelectInput
       key="framework_key"

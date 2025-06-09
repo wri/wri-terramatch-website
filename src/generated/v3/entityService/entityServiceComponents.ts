@@ -206,25 +206,13 @@ export type ImpactStoryIndexQueryParams = {
    */
   ["page[number]"]?: number;
   search?: string;
-  /**
-   * Search query used for filtering selectable options in autocomplete fields.
-   */
-  filter?: Schemas.FilterItem;
   country?: string;
-  /**
-   * Filter results by programmes
-   */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
-  /**
-   * Filter results by landscapes
-   */
-  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  organisationType?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  category?: string;
 };
 
 export type ImpactStoryIndexError = Fetcher.ErrorWrapper<
