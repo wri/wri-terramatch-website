@@ -9,7 +9,8 @@ import {
   ReferenceInput,
   SelectInput,
   TextField,
-  useListContext
+  useListContext,
+  useReference
 } from "react-admin";
 
 import ListActions from "@/admin/components/Actions/ListActions";
@@ -18,7 +19,6 @@ import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components
 import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -30,6 +30,7 @@ import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
@@ -89,14 +90,14 @@ export const TasksList: FC = () => {
   const frameworkChoices = useFrameworkChoices();
   const { openModal, closeModal } = useModalContext();
   const [currentProjectUuid, setCurrentProjectUuid] = useState<string | undefined>();
-  const [selectedReports, setSelectedReports] = useState<string[]>([]);
-  const [approvalComment, setApprovalComment] = useState<string | undefined>();
-  console.log(selectedReports, approvalComment);
-  const [, { data: projectTaskData }] = useProjectTaskProcessing(
-    currentProjectUuid ? { uuid: currentProjectUuid } : undefined
-  );
+  const { openNotification } = useNotificationContext();
+  const { referenceRecord: selectedProject } = useReference({
+    reference: modules.project.ResourceName,
+    id: currentProjectUuid as string
+  });
+  const [, { data: projectTaskData }] = useProjectTaskProcessing({ uuid: currentProjectUuid as string });
 
-  const [, { approveReports }] = useApproveReports(currentProjectUuid ? { uuid: currentProjectUuid } : undefined);
+  const [, { approveReports }] = useApproveReports({ uuid: currentProjectUuid as string });
 
   const filters = [
     <ReferenceInput
@@ -109,7 +110,11 @@ export const TasksList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>,
     <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getTaskStatusOptions())} />,
     <SelectInput key="frameworkKey" label="Framework" source="frameworkKey" choices={frameworkChoices} />
@@ -181,26 +186,24 @@ export const TasksList: FC = () => {
         commentArea
         onClose={() => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-          setSelectedReports([]);
-          setApprovalComment(undefined);
         }}
-        onConfirm={async (text: any, opt) => {
+        onConfirm={(text: string) => {
+          if (!currentProjectUuid) {
+            console.error("No project UUID available for approval");
+            return;
+          }
+
           try {
-            // Store the comment in state
-            setApprovalComment(text);
-
-            // Approve the reports with the comment
-            if (!currentProjectUuid) {
-              console.error("No project UUID available for approval");
-              return;
-            }
-
             approveReports(selectedUuids, text);
+            openNotification("success", "Reports approved successfully", "");
             closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-            setSelectedReports([]);
+            closeModal(ModalId.APPROVE_POLYGONS);
           } catch (error) {
-            console.error("Error approving reports:", error);
-            // TODO: Show error notification
+            openNotification(
+              "error",
+              "Failed to approve reports",
+              error instanceof Error ? error.message : "An error occurred"
+            );
           }
         }}
       />
@@ -216,45 +219,41 @@ export const TasksList: FC = () => {
       </Stack>
 
       <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
-        <div className="m-6 flex items-center justify-between gap-6 rounded-2xl border border-neutral-300 px-6 py-4">
-          <Text variant="text-20-bold" className="w-full leading-none">
-            GBM PPC Project
-          </Text>
-          <div className="grid shrink-0 grid-cols-3 items-center gap-x-6 gap-y-2">
-            <Text variant="text-12-light" className="leading-none">
-              Status
+        {selectedProject && (
+          <div className="m-6 flex items-center justify-between gap-6 rounded-2xl border border-neutral-300 px-6 py-4">
+            <Text variant="text-20-bold" className="w-full leading-none">
+              {selectedProject?.name ?? "N/A"}
             </Text>
-            <Text variant="text-12-light" className="leading-none">
-              Due Time
-            </Text>
-            <Text variant="text-12-light" className="whitespace-nowrap leading-none">
-              Trees Planted
-            </Text>
-            <Status status={StatusEnum.NEEDS_MORE_INFORMATION} variant="small" />
-            <Text variant="text-14-bold" className="leading-none">
-              06/08/2021
-            </Text>
-            <Text variant="text-14-bold" className="leading-none">
-              0
-            </Text>
+            <div className="grid shrink-0 grid-cols-2 items-center gap-x-6 gap-y-2">
+              <Text variant="text-12-light" className="leading-none">
+                Status
+              </Text>
+              <Text variant="text-12-light" className="whitespace-nowrap leading-none">
+                Trees Planted
+              </Text>
+              <Status status={selectedProject?.status} variant="small" />
+              <Text variant="text-14-bold" className="leading-none">
+                {selectedProject?.trees_planted_count?.toLocaleString() ?? 0}
+              </Text>
+            </div>
+            <Button
+              onClick={() => {
+                if (projectTaskData?.reports) {
+                  const reportsData = projectTaskData.reports.map(report => ({
+                    id: report.uuid,
+                    name: report.name,
+                    type: report.type === "nurseryReport" ? "Nursery" : "Site",
+                    dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
+                  }));
+                  openModalHandlerBulkApprove(reportsData, currentProjectUuid);
+                }
+              }}
+              variant="primary"
+            >
+              Bulk Approve &quot;Nothing to Report&quot;
+            </Button>
           </div>
-          <Button
-            onClick={() => {
-              if (projectTaskData?.reports) {
-                const reportsData = projectTaskData.reports.map(report => ({
-                  id: report.uuid,
-                  name: report.name,
-                  type: report.type === "nurseryReport" ? "Nursery" : "Site",
-                  dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
-                }));
-                openModalHandlerBulkApprove(reportsData, currentProjectUuid);
-              }
-            }}
-            variant="primary"
-          >
-            Bulk Approve &quot;Nothing to Report&quot;
-          </Button>
-        </div>
+        )}
         <div className="m-6 overflow-hidden rounded-2xl border border-neutral-300">
           <TaskDataGrid onProjectUuidChange={setCurrentProjectUuid} />
         </div>

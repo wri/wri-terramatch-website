@@ -76,9 +76,11 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
         </When>
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
-          <Button variant="white-page-admin" className="text-14-semibold text-black" onClick={handleSelectAll}>
-            {selectedIds.length === data.length ? "Deselect All" : "Select All"}
-          </Button>
+          {data?.length > 0 && (
+            <Button variant="white-page-admin" className="text-14-semibold text-black" onClick={handleSelectAll}>
+              {selectedIds.length === data.length ? "Deselect All" : "Select All"}
+            </Button>
+          )}
         </div>
         <div className="my-2 flex items-center">
           <When condition={!!content}>
@@ -103,14 +105,22 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
               {"Bulk Approve"}
             </Text>
           </header>
-          {data?.map((item: any) => (
-            <CollapsibleRowBulk
-              key={item.id}
-              item={item}
-              selected={selectedIds.includes(item.id)}
-              onSelect={handleSelect}
-            />
-          ))}
+          {data?.length > 0 ? (
+            data.map((item: any) => (
+              <CollapsibleRowBulk
+                key={item.id}
+                item={item}
+                selected={selectedIds.includes(item.id)}
+                onSelect={handleSelect}
+              />
+            ))
+          ) : (
+            <div className="flex items-center justify-center py-8">
+              <Text variant="text-14-light" className="text-neutral-500">
+                No reports available for bulk approval
+              </Text>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
@@ -121,11 +131,13 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
-          <Text variant="text-14-bold" className="capitalize text-white">
-            {primaryButtonText}
-          </Text>
-        </Button>
+        <When condition={data?.length > 0}>
+          <Button {...primaryButtonProps}>
+            <Text variant="text-14-bold" className="capitalize text-white">
+              {primaryButtonText}
+            </Text>
+          </Button>
+        </When>
       </div>
     </ModalBaseSubmit>
   );
