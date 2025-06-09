@@ -318,6 +318,36 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+  createdByUserName: string | null;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -425,36 +455,6 @@ export type ProjectApplicationDto = {
   uuid: string;
   fundingProgrammeName: string | null;
   projectPitchUuid: string | null;
-};
-
-export type MediaDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  collectionName: string;
-  url: string | null;
-  thumbUrl: string | null;
-  name: string;
-  fileName: string;
-  mimeType: string | null;
-  size: number;
-  lat: number | null;
-  lng: number | null;
-  isPublic: boolean;
-  isCover: boolean;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  description: string | null;
-  photographer: string | null;
-  createdByUserName: string | null;
 };
 
 export type EntitySideload = {

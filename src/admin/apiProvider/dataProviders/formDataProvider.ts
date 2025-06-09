@@ -49,7 +49,7 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
           uploadPromises.push(
             upload(payloadOption.image.rawFile, {
               collection: "image",
-              model: "form-question-option",
+              entity: "formQuestionOptions",
               uuid: option.id
             })
           );
@@ -77,7 +77,7 @@ export const formDataProvider: FormDataProvider = {
       await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
 
       await handleUploads(params, uploadKeys, {
-        model: "form",
+        entity: "forms",
         //@ts-expect-error
         uuid: response.data.uuid
       });

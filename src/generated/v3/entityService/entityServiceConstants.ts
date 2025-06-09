@@ -47,7 +47,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "media",
   "disturbances",
   "invasives",
-  "stratas"
+  "stratas",
+  "uploadFile"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -58,6 +59,7 @@ export type EntityServiceApiResources = {
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
+  uploadFile: StoreResourceMap<MediaDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;

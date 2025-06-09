@@ -10,11 +10,11 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
-  fetchPostV2FileUploadMODELCOLLECTIONUUID,
   PostV2AuditStatusENTITYUUIDRequestBody,
   usePostV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
 export interface CommentaryBoxProps {
   name: string;
@@ -28,17 +28,22 @@ export interface CommentaryBoxProps {
 
 const processUploadFile = (file: File, auditStatusUUID: string) => {
   const bodyFiles = new FormData();
-  bodyFiles.append("upload_file", file);
-  return fetchPostV2FileUploadMODELCOLLECTIONUUID({
+  bodyFiles.append("uploadFile", file);
+  console.log("uploadFile", uploadFile);
+  return uploadFile({
     //@ts-ignore swagger issue
     body: bodyFiles,
-    pathParams: { model: "audit-status", collection: "attachments", uuid: auditStatusUUID }
+    pathParams: { entity: "auditStatuses", collection: "attachments", uuid: auditStatusUUID },
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
   });
 };
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
+  const [files, setFiles] = useState<File[]>([]);
 
   const onSuccess = async (res: AuditStatusResponse) => {
     const resAuditlog = res as { data: { uuid: string } };
@@ -55,7 +60,6 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
     onSuccess
   });
 
-  const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
   const [error, setError] = useState<string>("");
   const { openNotification } = useNotificationContext();

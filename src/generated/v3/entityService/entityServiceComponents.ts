@@ -551,6 +551,101 @@ export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal)
     signal
   });
 
+export type UploadFilePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+  /**
+   * Media collection to retrieve
+   */
+  collection: string;
+};
+
+export type UploadFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example 500
+         */
+        statusCode: number;
+        /**
+         * @example Internal Server Error
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadFileVariables = {
+  pathParams: UploadFilePathParams;
+};
+
+/**
+ * Upload a file to a media collection
+ */
+export const uploadFile = (variables: UploadFileVariables, signal?: AbortSignal) =>
+  entityServiceFetch<undefined, UploadFileError, undefined, {}, {}, UploadFilePathParams>({
+    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
+    method: "post",
+    ...variables,
+    signal
+  });
+
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
 };
@@ -1749,6 +1844,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   tasks: { taskIndex, taskGet, taskUpdate },
+  fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },

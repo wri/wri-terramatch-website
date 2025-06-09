@@ -109,7 +109,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
     const body = lo.omit(params.data, uploadKeys);
     await handleUploads(params, uploadKeys, {
       uuid,
-      model: "organisation"
+      entity: "organisations"
     });
     try {
       const resp = await fetchPutV2AdminOrganisationsUUID({ pathParams: { uuid }, body });
