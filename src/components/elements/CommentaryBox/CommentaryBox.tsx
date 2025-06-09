@@ -9,10 +9,7 @@ import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  PostV2AuditStatusENTITYUUIDRequestBody,
-  usePostV2AuditStatusENTITYUUID
-} from "@/generated/apiComponents";
+import { PostV2AuditStatusENTITYUUIDRequestBody, usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
@@ -29,7 +26,6 @@ export interface CommentaryBoxProps {
 const processUploadFile = (file: File, auditStatusUUID: string) => {
   const bodyFiles = new FormData();
   bodyFiles.append("uploadFile", file);
-  console.log("uploadFile", uploadFile);
   return uploadFile({
     //@ts-ignore swagger issue
     body: bodyFiles,

@@ -279,3 +279,18 @@ export type OptionInputType = {
   id: OptionValue;
   name: string;
 };
+
+export type MediaOwnerType =
+  | "projects"
+  | "sites"
+  | "nurseries"
+  | "projectReports"
+  | "siteReports"
+  | "nurseryReports"
+  | "organisations"
+  | "auditStatuses"
+  | "forms"
+  | "formQuestionOptions"
+  | "fundingProgrammes"
+  | "impactStories"
+  | "financialIndicators";
