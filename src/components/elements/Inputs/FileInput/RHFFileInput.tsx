@@ -6,7 +6,6 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import {
   useDeleteV2FilesUUID,
-  usePostV2FileUploadMODELCOLLECTIONUUID,
   usePutV2FilesUUID
 } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
@@ -16,6 +15,7 @@ import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
@@ -49,40 +49,40 @@ const RHFFileInput = ({
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));
-  const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore swagger issue
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-    },
-    onError(err, variables: any) {
-      const file = variables.file;
-      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
 
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const error = err?.errors[0];
-        const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
-        formHook?.setError(fileInputProps.name, formError);
-        errorMessage = formError.message;
-      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
-        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
-        formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
-      }
+  //TODO: use onSuccess and onError are implemented
+    // onSuccess(data, variables) {
+    //   //@ts-ignore swagger issue
+    //   addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+    // },
+    // onError(err, variables: any) {
+    //   const file = variables.file;
+    //   let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
 
-      addFileToValue({
-        collection_name: variables.pathParams.collection,
-        size: file?.size,
-        file_name: file?.name,
-        title: file?.name,
-        mime_type: file?.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          error: errorMessage
-        }
-      });
-    }
-  });
+    //   if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+    //     const error = err?.errors[0];
+    //     const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
+    //     formHook?.setError(fileInputProps.name, formError);
+    //     errorMessage = formError.message;
+    //   } else if (err?.statusCode === 413 || err?.statusCode === -1) {
+    //     errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+    //     formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
+    //   }
+
+    //   addFileToValue({
+    //     collection_name: variables.pathParams.collection,
+    //     size: file?.size,
+    //     file_name: file?.name,
+    //     title: file?.name,
+    //     mime_type: file?.type,
+    //     rawFile: file,
+    //     uploadState: {
+    //       isLoading: false,
+    //       isSuccess: false,
+    //       error: errorMessage
+    //     }
+    //   });
+    // }
 
   const { mutate: update } = usePutV2FilesUUID();
 
@@ -187,11 +187,15 @@ const RHFFileInput = ({
       Log.error("Failed to append geotagging information", e);
     }
 
-    upload?.({
-      pathParams: { model, collection, uuid },
-      file: file,
+    uploadFile?.({
+      //TODO: fix this
+      pathParams: { entity: model as any, uuid, collection },
       //@ts-ignore swagger issue
-      body
+      body: {
+        data: {
+          type: "uploadFile",
+        }
+      }
     });
     formHook?.clearErrors(fileInputProps.name);
   };

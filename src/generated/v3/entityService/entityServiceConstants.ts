@@ -9,6 +9,7 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  MediaDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
@@ -22,7 +23,6 @@ import {
   DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
-  MediaDto,
   DisturbanceDto,
   InvasiveDto,
   StrataDto
@@ -34,6 +34,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "media",
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
@@ -44,11 +45,9 @@ export const ENTITY_SERVICE_RESOURCES = [
   "demographics",
   "seedings",
   "treeSpecies",
-  "media",
   "disturbances",
   "invasives",
-  "stratas",
-  "uploadFile"
+  "stratas"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -57,9 +56,9 @@ export type EntityServiceApiResources = {
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  media: StoreResourceMap<MediaDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
-  uploadFile: StoreResourceMap<MediaDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
@@ -68,7 +67,6 @@ export type EntityServiceApiResources = {
   demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  media: StoreResourceMap<MediaDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;

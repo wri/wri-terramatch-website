@@ -9,7 +9,7 @@ import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 const fileUploadSelector = (entity: MediaOwnerType, uuid: string, collection: string) => (store: ApiDataStore) =>
-    entity == null || uuid == null ? undefined : store.uploadFile?.[`${entity}|${uuid}|${collection}`];
+    entity == null || uuid == null ? undefined : store.media?.[`${entity}|${uuid}|${collection}`];
 
 type MediaOwnerType = "projects"
     | "sites"

@@ -57,7 +57,7 @@ export const impactStoriesDataProvider: DataProvider = {
       const uuid = response.data.uuid as string;
       await handleUploads(params, uploadKeys, {
         uuid,
-        model: "impact-story"
+        entity: "impactStories"
       });
       // @ts-expect-error
       return { data: { ...response.data, id: response.id } };
@@ -74,7 +74,7 @@ export const impactStoriesDataProvider: DataProvider = {
     try {
       await handleUploads(params, uploadKeys, {
         uuid,
-        model: "impact-story"
+        entity: "impactStories"
       });
 
       const response = await fetchPutV2AdminImpactStoriesId({

@@ -565,7 +565,10 @@ export type UploadFilePathParams = {
     | "organisations"
     | "auditStatuses"
     | "forms"
-    | "formQuestionOptions";
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -631,6 +634,26 @@ export type UploadFileError = Fetcher.ErrorWrapper<
     }
 >;
 
+export type UploadFileResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
 export type UploadFileVariables = {
   pathParams: UploadFilePathParams;
 };
@@ -639,7 +662,7 @@ export type UploadFileVariables = {
  * Upload a file to a media collection
  */
 export const uploadFile = (variables: UploadFileVariables, signal?: AbortSignal) =>
-  entityServiceFetch<undefined, UploadFileError, undefined, {}, {}, UploadFilePathParams>({
+  entityServiceFetch<UploadFileResponse, UploadFileError, undefined, {}, {}, UploadFilePathParams>({
     url: "/entities/v3/files/{entity}/{uuid}/{collection}",
     method: "post",
     ...variables,

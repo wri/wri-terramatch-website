@@ -13,13 +13,14 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
+import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalAddBase } from "./ModalsBases";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
 export interface ModalAddProps extends ModalProps {
   primaryButtonText?: string;
@@ -78,32 +79,32 @@ const ModalAddImages: FC<ModalAddProps> = ({
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
-  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore swagger issue
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-    },
-    onError(err, variables: any) {
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const file = variables.file;
 
-        addFileToValue({
-          collection_name: variables.pathParams.collection,
-          size: file?.size,
-          file_name: file?.name,
-          title: file?.name,
-          mime_type: file?.type,
-          is_cover: false,
-          is_public: true,
-          rawFile: file,
-          uploadState: {
-            isLoading: false,
-            isSuccess: false
-          }
-        });
-      }
-    }
-  });
+  // TODO use onSuccess and onError once it is implemented
+    // onSuccess(data, variables) {
+    //   //@ts-ignore swagger issue
+    //   addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+    // },
+    // onError(err, variables: any) {
+    //   if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+    //     const file = variables.file;
+
+    //     addFileToValue({
+    //       collection_name: variables.pathParams.collection,
+    //       size: file?.size,
+    //       file_name: file?.name,
+    //       title: file?.name,
+    //       mime_type: file?.type,
+    //       is_cover: false,
+    //       is_public: true,
+    //       rawFile: file,
+    //       uploadState: {
+    //         isLoading: false,
+    //         isSuccess: false
+    //       }
+    //     });
+    //   }
+    // }
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess(data) {
@@ -216,9 +217,9 @@ const ModalAddImages: FC<ModalAddProps> = ({
       }
 
       uploadFile?.({
-        pathParams: { model, collection, uuid: entityData.uuid },
-        file: file,
+        pathParams: { entity: model as any, collection, uuid: entityData.uuid },
         //@ts-ignore swagger issue
+        file: file,
         body
       });
     }

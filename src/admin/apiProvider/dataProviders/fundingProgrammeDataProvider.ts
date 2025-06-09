@@ -93,7 +93,7 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
 
       await handleUploads(params, uploadKeys, {
         uuid,
-        model: "funding-programme"
+        entity: "fundingProgrammes"
       });
 
       // TODO: For each stage - update
@@ -155,7 +155,7 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
       await handleUploads(params, uploadKeys, {
         //@ts-ignore
         uuid: resp.data.uuid,
-        model: "funding-programme"
+        entity: "fundingProgrammes"
       });
 
       // TODO: For each stage - create

@@ -9,14 +9,12 @@ import { When } from "react-if";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
-import { useNotificationContext } from "@/context/notification.provider";
+// import { useNotificationContext } from "@/context/notification.provider";
 import {
   useDeleteV2FilesUUID,
-  usePatchV2FinancialIndicators,
-  usePostV2FileUploadMODELCOLLECTIONUUID
+  usePatchV2FinancialIndicators
 } from "@/generated/apiComponents";
 import { OptionValue, UploadedFile } from "@/types/common";
-import { getErrorMessages } from "@/utils/errors";
 import Log from "@/utils/log";
 
 import Text from "../../Text/Text";
@@ -41,6 +39,7 @@ import {
   profitAnalysisColumnsMap,
   useDebouncedChange
 } from "./types";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
 export interface RHFFinancialIndicatorsDataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
@@ -111,7 +110,7 @@ const RHFFinancialIndicatorsDataTable = ({
   const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month ?? "");
   const [resetTable, setResetTable] = useState(0);
   const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
-  const { openNotification } = useNotificationContext();
+  // const { openNotification } = useNotificationContext();
   const initialForProfitAnalysisData = years?.map((item, index) => ({
     uuid: null,
     year: item,
@@ -162,40 +161,39 @@ const RHFFinancialIndicatorsDataTable = ({
     !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
   );
 
-  const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-      onChangeCapture?.();
-    },
-    onError(err, variables: any) {
-      const file = variables.file;
-      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
+  //TODO: use onSuccess and onError once it is implemented
+    // onSuccess(data, variables) {
+    //   //@ts-ignore
+    //   addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+    //   onChangeCapture?.();
+    // },
+    // onError(err, variables: any) {
+    //   const file = variables.file;
+    //   let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
 
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const error = err?.errors[0];
-        const formError = getErrorMessages(t, error.code, { ...error.variables, label: "Financial Indicator files" });
-        errorMessage = formError.message;
-      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
-        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
-      }
-      openNotification("error", t("Error uploading file"), t(errorMessage));
+    //   if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+    //     const error = err?.errors[0];
+    //     const formError = getErrorMessages(t, error.code, { ...error.variables, label: "Financial Indicator files" });
+    //     errorMessage = formError.message;
+    //   } else if (err?.statusCode === 413 || err?.statusCode === -1) {
+    //     errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+    //   }
+    //   openNotification("error", t("Error uploading file"), t(errorMessage));
 
-      addFileToValue({
-        collection_name: variables.pathParams.collection,
-        size: file?.size,
-        file_name: file?.name,
-        title: file?.name,
-        mime_type: file?.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          error: errorMessage
-        }
-      });
-    }
-  });
+    //   addFileToValue({
+    //     collection_name: variables.pathParams.collection,
+    //     size: file?.size,
+    //     file_name: file?.name,
+    //     title: file?.name,
+    //     mime_type: file?.type,
+    //     rawFile: file,
+    //     uploadState: {
+    //       isLoading: false,
+    //       isSuccess: false,
+    //       error: errorMessage
+    //     }
+    //   });
+    // }
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess(data) {
@@ -269,10 +267,10 @@ const RHFFinancialIndicatorsDataTable = ({
       Log.error("Failed to append geotagging information", e);
     }
 
-    upload?.({
-      pathParams: { model: "financial-indicators", collection: "documentation", uuid: context.uuid },
-      file: file,
+    uploadFile?.({
+      pathParams: { entity: "financialIndicators", collection: "documentation", uuid: context.uuid },
       //@ts-ignore
+      file,
       body
     });
   };
