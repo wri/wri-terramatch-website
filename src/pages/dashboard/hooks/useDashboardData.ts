@@ -152,7 +152,6 @@ export const useDashboardData = (filters: any) => {
     projectUuid: filters.uuid
   });
 
-  // Transform tree restoration goal data to calculate percentages from goals
   const transformedTreeRestorationGoalData = useMemo(() => {
     if (!dashboardRestorationGoalData) return null;
 
@@ -167,13 +166,13 @@ export const useDashboardData = (filters: any) => {
     return {
       ...dashboardRestorationGoalData,
       treesUnderRestorationActualTotal: transformTreeRestorationArray(
-        dashboardRestorationGoalData.treesUnderRestorationActualTotal || []
+        dashboardRestorationGoalData.treesUnderRestorationActualTotal ?? []
       ),
       treesUnderRestorationActualForProfit: transformTreeRestorationArray(
-        dashboardRestorationGoalData.treesUnderRestorationActualForProfit || []
+        dashboardRestorationGoalData.treesUnderRestorationActualForProfit ?? []
       ),
       treesUnderRestorationActualNonProfit: transformTreeRestorationArray(
-        dashboardRestorationGoalData.treesUnderRestorationActualNonProfit || []
+        dashboardRestorationGoalData.treesUnderRestorationActualNonProfit ?? []
       )
     };
   }, [dashboardRestorationGoalData]);
@@ -315,10 +314,6 @@ export const useDashboardData = (filters: any) => {
 
     return sortedProjects;
   }, [allProjects, isLoadingProjects]);
-
-  useEffect(() => {
-    console.log("topprojects:", topProjects);
-  }, [topProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
