@@ -161,6 +161,7 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
     case FieldType.TrainingBeneficiariesTable:
     case FieldType.IndirectBeneficiariesTable:
     case FieldType.EmployeesTable:
+    case FieldType.AssociatesTable:
       return (
         <RHFDemographicsTable
           {...field.fieldProps}
