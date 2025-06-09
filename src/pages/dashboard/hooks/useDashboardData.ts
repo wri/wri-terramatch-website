@@ -19,6 +19,7 @@ import {
   useGetV2DashboardVolunteersSurvivalRate,
   useGetV2ImpactStories
 } from "@/generated/apiComponents";
+import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -91,6 +92,8 @@ export const useDashboardData = (filters: any) => {
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
 
+  const { data: projectHectaresData, isLoading: isLoadingProjectHectares } = useSitePolygonsHectares(filters.uuid);
+
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -151,15 +154,46 @@ export const useDashboardData = (filters: any) => {
     projectUuid: filters.uuid
   });
 
+  // Transform tree restoration goal data to calculate percentages from goals
+  const transformedTreeRestorationGoalData = useMemo(() => {
+    if (!dashboardRestorationGoalData) return null;
+
+    const transformTreeRestorationArray = (data: any[]) => {
+      return data.map(item => ({
+        ...item,
+        treeSpeciesPercentage:
+          item.treeSpeciesGoal > 0 ? parseFloat(((item.treeSpeciesAmount / item.treeSpeciesGoal) * 100).toFixed(3)) : 0
+      }));
+    };
+
+    return {
+      ...dashboardRestorationGoalData,
+      treesUnderRestorationActualTotal: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualTotal || []
+      ),
+      treesUnderRestorationActualForProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualForProfit || []
+      ),
+      treesUnderRestorationActualNonProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualNonProfit || []
+      )
+    };
+  }, [dashboardRestorationGoalData]);
+
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
       queryParams: queryParams
     });
 
-  const { data: hectaresUnderRestoration, isLoading: isLoadingHectaresUnderRestoration } =
-    useGetV2DashboardIndicatorHectaresRestoration<any>({
-      queryParams: queryParams
-    });
+  const { data: generalHectaresUnderRestoration, isLoading: isLoadingGeneralHectaresUnderRestoration } =
+    useGetV2DashboardIndicatorHectaresRestoration<any>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
   const [, { association: coverImage }] = useMedia({
@@ -295,9 +329,23 @@ export const useDashboardData = (filters: any) => {
     if (filters.uuid && projectTreeSpeciesData) {
       return projectTreeSpeciesData;
     } else {
-      return dashboardRestorationGoalData;
+      return transformedTreeRestorationGoalData;
     }
-  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+  }, [filters.uuid, projectTreeSpeciesData, transformedTreeRestorationGoalData]);
+
+  const finalHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid && projectHectaresData) {
+      return projectHectaresData;
+    }
+    return generalHectaresUnderRestoration;
+  }, [filters.uuid, projectHectaresData, generalHectaresUnderRestoration]);
+
+  const finalIsLoadingHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid) {
+      return isLoadingProjectHectares;
+    }
+    return isLoadingGeneralHectaresUnderRestoration;
+  }, [filters.uuid, isLoadingProjectHectares, isLoadingGeneralHectaresUnderRestoration]);
 
   const centroidsDataProjects = useMemo(() => {
     const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
@@ -503,11 +551,11 @@ export const useDashboardData = (filters: any) => {
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
-    hectaresUnderRestoration,
+    hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
-    isLoadingHectaresUnderRestoration,
+    isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,
     coverImage,

@@ -61,7 +61,7 @@ export type TreeRestorationData = {
   /**
    * Due date for this restoration data
    *
-   * @example 2024-01-01T00:00:00.000000Z
+   * @format date-time
    */
   dueDate: string;
   /**
@@ -69,9 +69,9 @@ export type TreeRestorationData = {
    */
   treeSpeciesAmount: number;
   /**
-   * Percentage of tree species for this period
+   * Tree species goal for calculating percentage
    */
-  treeSpeciesPercentage: number;
+  treeSpeciesGoal: number;
 };
 
 export type TreeRestorationGoalDto = {
@@ -99,4 +99,8 @@ export type TreeRestorationGoalDto = {
    * Trees under restoration data for non-profit organizations by due date
    */
   treesUnderRestorationActualNonProfit: TreeRestorationData[];
+  /**
+   * Timestamp when the data was last updated
+   */
+  lastUpdatedAt: string | null;
 };
