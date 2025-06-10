@@ -320,17 +320,8 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-const FF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
-  "traditional-community": {
-    title: "Traditional Community",
-    typeMap: TRADITIONAL_COMMUNITIES,
-    balanced: true
-  }
-};
-
 const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  ...BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP,
+  ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
   "traditional-community": {
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
@@ -354,7 +345,7 @@ export const getTypeMap = (type: DemographicType, framework: Framework) => {
         case Framework.HBF:
           return HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
         case Framework.FF:
-          return FF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+          return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
           return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
       }
