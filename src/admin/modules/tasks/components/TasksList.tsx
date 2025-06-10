@@ -21,8 +21,6 @@ import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useApproveReports, useProjectTaskProcessing } from "@/connections/ProjectTaskProcessing";
@@ -67,20 +65,6 @@ const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void
         sortable={false}
       />
       <DateField source="dueAt" label="Due Date" locales="en-GB" />
-      <FunctionField
-        source="nothingToReport"
-        label="Nothing to Report"
-        sortable={false}
-        render={({ nothingToReport }: TaskLightDto) => {
-          return nothingToReport ? (
-            <div className="flex items-center justify-center">
-              <Icon name={IconNames.CLEAR} className="h-3 w-3" />
-            </div>
-          ) : (
-            <></>
-          );
-        }}
-      />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
     </Datagrid>
   );
