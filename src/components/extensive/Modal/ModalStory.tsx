@@ -74,9 +74,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
               className="modal-impact-story-content mt-6 leading-[normal] text-darkCustom"
               containHtml
             >
-              {data?.content?.startsWith('"') && data?.content?.endsWith('"')
-                ? JSON.parse(data.content)
-                : data?.content}
+              {data?.content}
             </Text>
           </div>
         </div>

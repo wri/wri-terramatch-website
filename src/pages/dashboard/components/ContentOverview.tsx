@@ -338,25 +338,25 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       const fullStory = impactStory as unknown as ImpactStoryFullDto;
 
       const parsedData = {
-        uuid: fullStory.uuid ?? storyData.uuid,
-        title: fullStory.title ?? storyData.title,
-        date: fullStory.date ?? storyData.date,
-        content: fullStory.content ? JSON.parse(fullStory.content ?? "{}") : storyData.content,
-        category: fullStory.category ?? storyData.category ?? [],
-        thumbnail: fullStory.thumbnail?.[0]?.url ?? storyData.thumbnail ?? "",
+        uuid: fullStory.uuid ?? "",
+        title: fullStory.title ?? "",
+        date: fullStory.date ?? "",
+        content: fullStory.content ?? "",
+        category: fullStory.category ?? [],
+        thumbnail: fullStory.thumbnail?.[0]?.url ?? "",
         organization: {
-          name: fullStory.organization?.name ?? storyData.organization?.name ?? "",
+          name: fullStory.organization?.name ?? "",
           category: fullStory.category ?? storyData.category ?? [],
           country:
-            fullStory.organization && fullStory.organization.countries?.length > 0
+            fullStory.organization?.countries && fullStory.organization.countries.length > 0
               ? fullStory.organization.countries.map((c: any) => c.label).join(", ")
-              : storyData.organization?.country ?? "No country",
+              : "No country",
           facebook_url: fullStory.organization?.facebook_url ?? storyData.organization?.facebook_url ?? "",
           instagram_url: fullStory.organization?.instagram_url ?? storyData.organization?.instagram_url ?? "",
           linkedin_url: fullStory.organization?.linkedin_url ?? storyData.organization?.linkedin_url ?? "",
           twitter_url: fullStory.organization?.twitter_url ?? storyData.organization?.twitter_url ?? ""
         },
-        status: fullStory.status ?? storyData.status
+        status: fullStory.status ?? ""
       };
       hideLoader();
       openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);

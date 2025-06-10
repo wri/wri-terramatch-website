@@ -210,39 +210,24 @@ export type ImpactStoryIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  organisationType?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
   category?: string;
 };
 
-export type ImpactStoryIndexError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
+export type ImpactStoryIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
 
 export type ImpactStoryIndexResponse = {
   meta?: {
@@ -302,7 +287,7 @@ export const impactStoryIndex = (variables: ImpactStoryIndexVariables, signal?: 
 
 export type ImpactStoryGetPathParams = {
   /**
-   * Entity UUID for association
+   * Impact Story UUID
    */
   uuid: string;
 };

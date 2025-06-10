@@ -205,14 +205,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <Text variant="text-14-bold" className="mb-2">
             Content
           </Text>
-          <QuillEditor
-            value={
-              initialValues?.content?.startsWith('"') && initialValues?.content?.endsWith('"')
-                ? JSON.parse(initialValues.content)
-                : initialValues.content
-            }
-            onChange={handlers.handleContentChange}
-          />
+          <QuillEditor value={initialValues?.content} onChange={handlers.handleContentChange} />
         </div>
 
         <div className="flex justify-between">

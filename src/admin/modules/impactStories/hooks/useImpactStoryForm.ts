@@ -13,7 +13,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
 
   const initialValues = useMemo(
     () => ({
-      content: currentData?.content ? JSON.parse(currentData.content) : "",
+      content: currentData?.content ?? "",
       title: currentData?.title || "",
       date: currentData?.date || "",
       thumbnail: currentData?.thumbnail,

@@ -138,9 +138,11 @@ export type ImpactStoryLightDto = {
    */
   lightResource: boolean;
   uuid: string | null;
-  id: number | null;
   title: string | null;
   status: string | null;
+  /**
+   * @format date-time
+   */
   date: string | null;
   category: string[] | null;
   thumbnail: MediaDto[];
@@ -155,9 +157,11 @@ export type ImpactStoryFullDto = {
    */
   lightResource: boolean;
   uuid: string | null;
-  id: number | null;
   title: string | null;
   status: string | null;
+  /**
+   * @format date-time
+   */
   date: string | null;
   category: string[] | null;
   thumbnail: MediaDto[];
