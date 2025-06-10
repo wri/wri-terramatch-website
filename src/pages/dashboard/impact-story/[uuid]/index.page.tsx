@@ -38,7 +38,7 @@ const ImpactStoryLanding = () => {
     uuid: impactStory.uuid ?? "",
     title: impactStory.title ?? "",
     date: impactStory.date ?? "",
-    content: impactStory.content ? JSON.parse(impactStory.content[0] ?? "{}") : [],
+    content: impactStory.content ? JSON.parse(impactStory.content ?? "{}") : [],
     category: impactStory.category ?? [],
     thumbnail:
       impactStory?.thumbnail instanceof File
@@ -91,7 +91,9 @@ const ImpactStoryLanding = () => {
               {transformedData.date}
             </Text>
             <Text variant="text-16" className="modal-impact-story-content mt-6 leading-8 text-darkCustom" containHtml>
-              {transformedData.content}
+              {transformedData?.content?.startsWith('"') && transformedData?.content?.endsWith('"')
+                ? JSON.parse(transformedData?.content)
+                : transformedData?.content}
             </Text>
           </div>
         </div>

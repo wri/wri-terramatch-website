@@ -164,7 +164,7 @@ export type ImpactStoryFullDto = {
   createdAt: string | null;
   organization: Record<string, any> | null;
   updatedAt: string | null;
-  content: string[] | null;
+  content: string | null;
 };
 
 export type TaskLightDto = {
