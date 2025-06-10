@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
+import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
@@ -14,11 +15,9 @@ import {
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
-import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
@@ -144,15 +143,39 @@ export const useDashboardData = (filters: any) => {
       project?.organisation?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
-  const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
-      {
-        queryParams: queryParams
-      },
-      {
-        enabled: !!filters && !filters.uuid
-      }
-    );
+  const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    landscapes: filters.landscapes,
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
+  });
+
+  const transformedTreeRestorationGoalData = useMemo(() => {
+    if (!dashboardRestorationGoalData) return null;
+
+    const transformTreeRestorationArray = (data: any[]) => {
+      return data.map(item => ({
+        ...item,
+        treeSpeciesPercentage:
+          item.treeSpeciesGoal > 0 ? parseFloat(((item.treeSpeciesAmount / item.treeSpeciesGoal) * 100).toFixed(3)) : 0
+      }));
+    };
+
+    return {
+      ...dashboardRestorationGoalData,
+      treesUnderRestorationActualTotal: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualTotal ?? []
+      ),
+      treesUnderRestorationActualForProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualForProfit ?? []
+      ),
+      treesUnderRestorationActualNonProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualNonProfit ?? []
+      )
+    };
+  }, [dashboardRestorationGoalData]);
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
@@ -325,9 +348,9 @@ export const useDashboardData = (filters: any) => {
     if (filters.uuid && projectTreeSpeciesData) {
       return projectTreeSpeciesData;
     } else {
-      return dashboardRestorationGoalData;
+      return transformedTreeRestorationGoalData;
     }
-  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+  }, [filters.uuid, projectTreeSpeciesData, transformedTreeRestorationGoalData]);
 
   const finalHectaresUnderRestoration = useMemo(() => {
     if (filters.uuid && projectHectaresData) {
@@ -543,7 +566,7 @@ export const useDashboardData = (filters: any) => {
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
+    isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
