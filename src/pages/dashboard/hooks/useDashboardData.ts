@@ -15,7 +15,6 @@ import {
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate,
   useGetV2ImpactStories
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
@@ -153,11 +152,6 @@ export const useDashboardData = (filters: any) => {
         enabled: !!filters && !filters.uuid
       }
     );
-
-  const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
-    useGetV2DashboardVolunteersSurvivalRate<any>({
-      queryParams: queryParams
-    });
 
   const { data: generalHectaresUnderRestoration, isLoading: isLoadingGeneralHectaresUnderRestoration } =
     useGetV2DashboardIndicatorHectaresRestoration<any>(
@@ -549,13 +543,11 @@ export const useDashboardData = (filters: any) => {
     dashboardHeader,
     dashboardRestorationGoalData: combinedHectaresData,
     jobsCreatedData: combinedJobsData,
-    dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
-    isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,
