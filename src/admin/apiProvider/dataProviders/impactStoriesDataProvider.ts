@@ -1,49 +1,49 @@
 import lo from "lodash";
 import { DataProvider } from "react-admin";
 
+import { ImpactStoriesConnection, loadImpactStories, loadImpactStory } from "@/connections/ImpactStory";
 import {
   DeleteV2AdminImpactStoriesIdError,
   fetchDeleteV2AdminImpactStoriesId,
-  fetchGetV2AdminImpactStories,
-  fetchGetV2AdminImpactStoriesId,
   fetchPostV2AdminImpactStories,
   fetchPostV2AdminImpactStoriesBulkDelete,
   fetchPutV2AdminImpactStoriesId,
-  GetV2AdminImpactStoriesError,
-  GetV2AdminImpactStoriesIdError,
   PostV2AdminImpactStoriesBulkDeleteError,
   PostV2AdminImpactStoriesError,
   PutV2AdminImpactStoriesIdError
 } from "@/generated/apiComponents";
+import { ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
+export interface ImpactStoriesDataProvider extends DataProvider {
+  export: (resource: string) => Promise<void>;
+}
+
+const impactStoriesListResult = ({ data, indexTotal }: ImpactStoriesConnection) => ({
+  data: data?.map((impactStory: ImpactStoryLightDto) => ({ ...impactStory, id: impactStory.uuid })),
+  total: indexTotal ?? 0
+});
 // @ts-ignore
 export const impactStoriesDataProvider: DataProvider = {
+  //@ts-ignore
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminImpactStories({
-        queryParams: raListParamsToQueryParams(params, [])
-      });
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminImpactStoriesError);
+    const connection = await loadImpactStories(raConnectionProps(params));
+    if (connection.fetchFailure != null) {
+      throw v3ErrorForRA("Site report index fetch failed", connection.fetchFailure);
     }
+    return impactStoriesListResult(connection);
   },
   // @ts-ignore
   async getOne(_, params) {
-    try {
-      const list = await fetchGetV2AdminImpactStoriesId({
-        pathParams: { id: params.id }
-      });
-      const response = { data: list };
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.id } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminImpactStoriesIdError);
+    const { requestFailed, impactStory } = await loadImpactStory({ uuid: params.id });
+    if (requestFailed != null) {
+      throw v3ErrorForRA("Project Pitch get fetch failed", requestFailed);
     }
+
+    return { data: { ...impactStory, id: impactStory?.uuid } };
   },
   //@ts-ignore
   async create(__, params) {

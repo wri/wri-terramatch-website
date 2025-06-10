@@ -4,6 +4,7 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
+import { useImpactStories } from "@/connections/ImpactStory";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -15,8 +16,7 @@ import {
   useGetV2DashboardJobsCreated,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate,
-  useGetV2ImpactStories
+  useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
@@ -499,27 +499,21 @@ export const useDashboardData = (filters: any) => {
       setGeneralBboxParsed(undefined);
     }
   }, [generalBbox, centroidsDataProjects]);
-  const queryString = useMemo(() => {
-    const finalFilters = {
-      status: ["published"],
-      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organizationType: filters.organizations ? filters.organizations : [],
-      uuid: filters.uuid
-    };
-    return createQueryParams(finalFilters);
-  }, [filters.country?.country_slug, filters.organizations, filters.uuid]);
 
-  const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
-    queryParams: queryString as any
+  const [, { data: impactStories, fetchFailure }] = useImpactStories({
+    status: "published",
+    country: filters.country?.country_slug,
+    organizationType: filters.organizations ? filters.organizations : [],
+    projectUuid: filters.uuid
   });
 
   const transformedStories = useMemo(
     () =>
-      impactStoriesResponse?.data?.map((story: any) => ({
+      impactStories?.map((story: any) => ({
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: story?.content ? JSON.parse(story.content) : "",
+        content: story?.content ?? "",
         category: story.category,
         thumbnail: story.thumbnail?.url ?? "",
         organization: {
@@ -537,7 +531,7 @@ export const useDashboardData = (filters: any) => {
         },
         status: story.status
       })) || [],
-    [impactStoriesResponse?.data]
+    [impactStories]
   );
 
   return {
@@ -564,6 +558,6 @@ export const useDashboardData = (filters: any) => {
     projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories: !impactStories && !fetchFailure
   };
 };

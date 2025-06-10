@@ -22,11 +22,12 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
+import { loadImpactStory } from "@/connections/ImpactStory";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
+import { ImpactStoryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -329,31 +330,33 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalStoryOpen = async (storyData: any) => {
     try {
       showLoader();
-      const response: any = await fetchGetV2ImpactStoriesId({
-        pathParams: {
-          id: storyData.uuid
-        }
-      });
+      const { requestFailed, impactStory } = await loadImpactStory({ uuid: storyData.uuid });
+      if (requestFailed || !impactStory) {
+        throw new Error("Failed to fetch story details");
+      }
+
+      const fullStory = impactStory as unknown as ImpactStoryFullDto;
+
       const parsedData = {
-        uuid: response.data.uuid,
-        title: response.data.title,
-        date: response.data.date,
-        content: JSON.parse(response.data.content),
-        category: response.data.category,
-        thumbnail: response.data.thumbnail || "",
+        uuid: fullStory.uuid ?? "",
+        title: fullStory.title ?? "",
+        date: fullStory.date ?? "",
+        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        category: fullStory.category ?? [],
+        thumbnail: fullStory.thumbnail?.[0]?.url ?? "",
         organization: {
-          name: response.data.organization?.name ?? "",
-          category: response.data.category,
+          name: fullStory.organization?.name ?? "",
+          category: fullStory.category ?? storyData.category ?? [],
           country:
-            response.data.organization?.countries?.length > 0
-              ? response.data.organization.countries.map((c: any) => c.label).join(", ")
+            fullStory.organization?.countries && fullStory.organization.countries.length > 0
+              ? fullStory.organization.countries.map((c: any) => c.label).join(", ")
               : "No country",
-          facebook_url: response.data.organization?.facebook_url ?? "",
-          instagram_url: response.data.organization?.instagram_url ?? "",
-          linkedin_url: response.data.organization?.linkedin_url ?? "",
-          twitter_url: response.data.organization?.twitter_url ?? ""
+          facebook_url: fullStory.organization?.facebook_url ?? storyData.organization?.facebook_url ?? "",
+          instagram_url: fullStory.organization?.instagram_url ?? storyData.organization?.instagram_url ?? "",
+          linkedin_url: fullStory.organization?.linkedin_url ?? storyData.organization?.linkedin_url ?? "",
+          twitter_url: fullStory.organization?.twitter_url ?? storyData.organization?.twitter_url ?? ""
         },
-        status: response.data.status
+        status: fullStory.status ?? ""
       };
       hideLoader();
       openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);

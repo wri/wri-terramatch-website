@@ -4,9 +4,7 @@ import { useState } from "react";
 import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_IMPACT_STORY } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
-import { useGetV2ImpactStories } from "@/generated/apiComponents";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import { createQueryParams } from "@/utils/dashboardUtils";
+import { useImpactStories } from "@/connections/ImpactStory";
 
 import CardImpactStory from "./CardImpactStory";
 
@@ -18,26 +16,20 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<number>(0);
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
-  const [queryString, setQueryString] = useState("");
 
-  const updateQueryString = () => {
-    const finalFilters = {
-      status: ["published"],
-      category: currentCategory ? [currentCategory] : "",
-      search: searchTerm
-    };
-
-    setQueryString(createQueryParams(finalFilters));
-  };
-
-  useValueChanged(currentCategory, updateQueryString);
-  useValueChanged(searchTerm, updateQueryString);
-
-  const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
-    queryParams: queryString as any
+  const [, { data: impactStories, fetchFailure }] = useImpactStories({
+    filter: {
+      ...(searchTerm ? { search: searchTerm } : {}),
+      ...(currentCategory ? { category: currentCategory, status: "published" } : {})
+    }
   });
+
+  const filteredStories = currentCategory
+    ? impactStories?.filter((story: any) => story.category && story.category.includes(currentCategory))
+    : impactStories;
+
   const transformedStories =
-    impactStoriesResponse?.data?.map((story: any) => ({
+    filteredStories?.map((story: any) => ({
       uuid: story.uuid,
       title: story.title,
       country:
@@ -60,6 +52,8 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       linkedin_url: story.organization?.linkedin_url,
       twitter_url: story.organization?.twitter_url
     })) || [];
+
+  const isLoading = !impactStories && !fetchFailure;
 
   const tabItems = [
     {

@@ -102,6 +102,75 @@ export type ProjectPitchDto = {
 
 export type FilterItem = {};
 
+export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+  createdByUserName: string | null;
+};
+
+export type ImpactStoryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string | null;
+  title: string | null;
+  status: string | null;
+  /**
+   * @format date-time
+   */
+  date: string | null;
+  category: string[] | null;
+  thumbnail: MediaDto[];
+  createdAt: string | null;
+  organization: Record<string, any> | null;
+  updatedAt: string | null;
+};
+
+export type ImpactStoryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string | null;
+  title: string | null;
+  status: string | null;
+  /**
+   * @format date-time
+   */
+  date: string | null;
+  category: string[] | null;
+  thumbnail: MediaDto[];
+  createdAt: string | null;
+  organization: Record<string, any> | null;
+  updatedAt: string | null;
+  content: string | null;
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -425,36 +494,6 @@ export type ProjectApplicationDto = {
   uuid: string;
   fundingProgrammeName: string | null;
   projectPitchUuid: string | null;
-};
-
-export type MediaDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  collectionName: string;
-  url: string | null;
-  thumbUrl: string | null;
-  name: string;
-  fileName: string;
-  mimeType: string | null;
-  size: number;
-  lat: number | null;
-  lng: number | null;
-  isPublic: boolean;
-  isCover: boolean;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  description: string | null;
-  photographer: string | null;
-  createdByUserName: string | null;
 };
 
 export type EntitySideload = {

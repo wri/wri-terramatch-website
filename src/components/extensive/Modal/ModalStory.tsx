@@ -29,6 +29,18 @@ export interface ModalStoryProps extends ModalProps {
   preview?: boolean;
 }
 
+function parseSerializedValue(value: string): any {
+  try {
+    const onceParsed = JSON.parse(value);
+    if (typeof onceParsed === "string") {
+      return JSON.parse(onceParsed);
+    }
+    return onceParsed;
+  } catch {
+    return value;
+  }
+}
+
 const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
   const { closeModal } = useModalContext();
   const handleClose = () => {
@@ -74,7 +86,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
               className="modal-impact-story-content mt-6 leading-[normal] text-darkCustom"
               containHtml
             >
-              {data?.content}
+              {parseSerializedValue(data.content)}
             </Text>
           </div>
         </div>

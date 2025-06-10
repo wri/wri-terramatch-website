@@ -187,6 +187,172 @@ export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: Ab
     signal
   });
 
+export type ImpactStoryIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  country?: string;
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  category?: string;
+};
+
+export type ImpactStoryIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ImpactStoryIndexResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryLightDto;
+  }[];
+};
+
+export type ImpactStoryIndexVariables = {
+  queryParams?: ImpactStoryIndexQueryParams;
+};
+
+export const impactStoryIndex = (variables: ImpactStoryIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<ImpactStoryIndexResponse, ImpactStoryIndexError, undefined, {}, ImpactStoryIndexQueryParams, {}>({
+    url: "/entities/v3/impactStories",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export type ImpactStoryGetPathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryGetResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryGetVariables = {
+  pathParams: ImpactStoryGetPathParams;
+};
+
+export const impactStoryGet = (variables: ImpactStoryGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<ImpactStoryGetResponse, ImpactStoryGetError, undefined, {}, {}, ImpactStoryGetPathParams>({
+    url: "/entities/v3/impactStories/{uuid}",
+    method: "get",
+    ...variables,
+    signal
+  });
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -1748,6 +1914,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
+  impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },
