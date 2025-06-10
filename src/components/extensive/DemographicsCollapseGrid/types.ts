@@ -87,7 +87,7 @@ const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties }
     rowLabelPlural: "Beneficiaries"
   },
   associates: {
-    sectionLabel: "Total Associates",
+    sectionLabel: "Total",
     rowLabelSingular: "Associate",
     rowLabelPlural: "Associates"
   }
