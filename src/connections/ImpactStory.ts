@@ -134,7 +134,7 @@ const impactStoryIndexQuery = (props?: ImpactStoryIndexConnectionProps) => {
     queryParams["country"] = props.country;
   }
   if (props?.organizationType) {
-    queryParams["organisationType"] = props.organizationType;
+    queryParams["organisationType[]"] = props.organizationType;
   }
   if (props?.projectUuid != null) {
     queryParams["projectUuid"] = props.projectUuid;
