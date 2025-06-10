@@ -273,7 +273,7 @@ export const useDashboardData = (filters: any) => {
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
   const topProjects = useMemo(() => {
-    if (!allProjects?.length || isLoadingProjects) {
+    if (allProjects?.length == 0 || isLoadingProjects) {
       return [];
     }
 
