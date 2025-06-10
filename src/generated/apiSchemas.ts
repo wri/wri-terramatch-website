@@ -11268,45 +11268,6 @@ export type DashboardRestorationStrategyResponse = {
   };
 };
 
-export type DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type DashboardTreesUnderRestorationActual = {
-  /**
-   * @format date
-   */
-  dueDate?: string;
-  treeSpeciesAmount?: number;
-  treeSpeciesPercentage?: number;
-};
-
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
   /**

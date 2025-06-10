@@ -20764,92 +20764,6 @@ export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardResto
   );
 };
 
-export type GetV2DashboardTreeRestorationGoalQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type GetV2DashboardTreeRestorationGoalVariables = {
-  queryParams?: GetV2DashboardTreeRestorationGoalQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardTreeRestorationGoal = (
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTreeRestorationGoalResponse,
-    GetV2DashboardTreeRestorationGoalError,
-    undefined,
-    {},
-    GetV2DashboardTreeRestorationGoalQueryParams,
-    {}
-  >({ url: "/v2/dashboard/tree-restoration-goal", method: "get", ...variables, signal });
-
-export const useGetV2DashboardTreeRestorationGoal = <TData = GetV2DashboardTreeRestorationGoalResponse>(
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardTreeRestorationGoalResponse,
-      GetV2DashboardTreeRestorationGoalError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTreeRestorationGoalResponse, GetV2DashboardTreeRestorationGoalError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/tree-restoration-goal",
-      operationId: "getV2DashboardTreeRestorationGoal",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardTreeRestorationGoal({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
@@ -24807,11 +24721,6 @@ export type QueryOperation =
       path: "/v2/dashboard/restoration-strategy";
       operationId: "getV2DashboardRestorationStrategy";
       variables: GetV2DashboardRestorationStrategyVariables;
-    }
-  | {
-      path: "/v2/dashboard/tree-restoration-goal";
-      operationId: "getV2DashboardTreeRestorationGoal";
-      variables: GetV2DashboardTreeRestorationGoalVariables;
     }
   | {
       path: "/v2/dashboard/project-list-export";
