@@ -8,6 +8,7 @@ export enum Framework {
   ENTERPRISES = "enterprises",
   HBF = "hbf",
   EPA_GHANA_PILOT = "epa-ghana-pilot",
+  FF = "fundo-flora",
 
   UNDEFINED = "undefined"
 }
