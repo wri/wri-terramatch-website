@@ -24,9 +24,6 @@ export type TreeRestorationGoalConnection = {
 const treeRestorationGoalIsLoaded = (connection: TreeRestorationGoalConnection) =>
   connection.data != null || connection.fetchFailure != null;
 
-const indexCacheKey = (props: TreeRestorationGoalConnectionProps) =>
-  getStableQuery(props as GetTreeRestorationGoalQueryParams);
-
 const treeRestorationGoalConnection: Connection<TreeRestorationGoalConnection, TreeRestorationGoalConnectionProps> = {
   load: (connection, props) => {
     if (!treeRestorationGoalIsLoaded(connection)) {
@@ -37,12 +34,14 @@ const treeRestorationGoalConnection: Connection<TreeRestorationGoalConnection, T
   isLoaded: treeRestorationGoalIsLoaded,
 
   selector: selectorCache(
-    props => indexCacheKey(props)?.replace(/%5B%5D/g, ""),
+    props => getStableQuery(props as GetTreeRestorationGoalQueryParams)?.replace(/%5B%5D/g, ""),
     props =>
       createSelector(
         [
           (store: ApiDataStore) =>
-            store.treeRestorationGoals?.[indexCacheKey(props)?.replace(/%5B%5D/g, "")]?.attributes,
+            store.treeRestorationGoals?.[
+              getStableQuery(props as GetTreeRestorationGoalQueryParams)?.replace(/%5B%5D/g, "")
+            ]?.attributes,
           getTreeRestorationGoalFetchFailed({ queryParams: props })
         ],
         (treeRestorationGoalData, fetchFailure) => {
