@@ -154,6 +154,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             label="Date"
             name="date"
             type="date"
+            lang="en-GB"
             value={date}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"

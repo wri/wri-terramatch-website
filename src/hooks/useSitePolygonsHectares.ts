@@ -25,7 +25,8 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
     entityName: "projects",
     entityUuid: projectUuid ?? "",
     pageSize: PAGE_SIZE,
-    pageNumber: currentPage
+    pageNumber: currentPage,
+    enabled: !!projectUuid
   });
 
   const transformPolygonsToHectaresData = useCallback((polygons: any[]): HectaresData => {

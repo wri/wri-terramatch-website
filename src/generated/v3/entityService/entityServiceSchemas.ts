@@ -1448,8 +1448,11 @@ export type DemographicCollections = {
    */
   RESTORATION_PARTNERS_PROJECT_OTHER: string;
   /**
+   * @example all
    * @example full-time
+   * @example full-time-clt
    * @example part-time
+   * @example part-time-clt
    */
   JOBS_PROJECT: string[];
   /**
@@ -1484,7 +1487,8 @@ export type DemographicDto = {
     | "volunteers"
     | "all-beneficiaries"
     | "training-beneficiaries"
-    | "indirect-beneficiaries";
+    | "indirect-beneficiaries"
+    | "associates";
   collection: string;
   entries: DemographicEntryDto[];
 };
