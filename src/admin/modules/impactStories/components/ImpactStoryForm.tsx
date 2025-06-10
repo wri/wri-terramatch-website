@@ -43,6 +43,18 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
   { title: "Technical capacity", value: "technical-capacity" }
 ];
 
+function parseSerializedValue(value: string): any {
+  try {
+    const onceParsed = JSON.parse(value);
+    if (typeof onceParsed === "string") {
+      return JSON.parse(onceParsed);
+    }
+    return onceParsed;
+  } catch {
+    return value;
+  }
+}
+
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
   const { openModal } = useModalContext();
@@ -77,7 +89,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
       uuid: formValues.uuid ? formValues.uuid : formValues?.data?.uuid,
       title: formValues.title ? formValues.title : formValues?.data?.title,
       date: formValues.date ? formValues.date : formValues?.data?.date,
-      content: formValues.content ? JSON.parse(formValues.content) : JSON.parse(formValues.data?.content),
+      content: parseSerializedValue(formValues.content ? formValues.content : formValues.data?.content),
       category: formValues.category ? formValues.category : formValues.data?.category,
       thumbnail:
         formValues.thumbnail instanceof File ? URL.createObjectURL(formValues.thumbnail) : formValues.thumbnail || "",
@@ -205,7 +217,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <Text variant="text-14-bold" className="mb-2">
             Content
           </Text>
-          <QuillEditor value={initialValues?.content} onChange={handlers.handleContentChange} />
+          <QuillEditor value={parseSerializedValue(initialValues.content)} onChange={handlers.handleContentChange} />
         </div>
 
         <div className="flex justify-between">

@@ -10,6 +10,18 @@ import { useImpactStory } from "@/connections/ImpactStory";
 
 import SectionShare from "../components/SectionShare";
 
+function parseSerializedValue(value: string): any {
+  try {
+    const onceParsed = JSON.parse(value);
+    if (typeof onceParsed === "string") {
+      return JSON.parse(onceParsed);
+    }
+    return onceParsed;
+  } catch {
+    return value;
+  }
+}
+
 const ImpactStoryLanding = () => {
   const router = useRouter();
   const t = useT();
@@ -38,7 +50,7 @@ const ImpactStoryLanding = () => {
     uuid: impactStory.uuid ?? "",
     title: impactStory.title ?? "",
     date: impactStory.date ?? "",
-    content: impactStory.content ?? [],
+    content: impactStory.content ? parseSerializedValue(impactStory.content) : [],
     category: impactStory.category ?? [],
     thumbnail:
       impactStory?.thumbnail instanceof File

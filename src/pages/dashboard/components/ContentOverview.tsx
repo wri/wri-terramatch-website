@@ -341,7 +341,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         uuid: fullStory.uuid ?? "",
         title: fullStory.title ?? "",
         date: fullStory.date ?? "",
-        content: fullStory.content ?? "",
+        content: fullStory.content ? JSON.parse(fullStory.content) : "",
         category: fullStory.category ?? [],
         thumbnail: fullStory.thumbnail?.[0]?.url ?? "",
         organization: {
