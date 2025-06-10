@@ -17,7 +17,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
       title: currentData?.title || "",
       date: currentData?.date || "",
       thumbnail: currentData?.thumbnail,
-      categories: currentData?.category ? currentData.category : "",
+      categories: currentData?.category ? currentData.category : [],
       orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
     }),
     [
