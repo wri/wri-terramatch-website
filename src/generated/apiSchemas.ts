@@ -720,6 +720,7 @@ export type FundingProgramme = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -1045,6 +1046,7 @@ export type FormRead = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -4269,6 +4271,7 @@ export type ProjectFullRead = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -4704,6 +4707,7 @@ export type ProjectWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5082,6 +5086,7 @@ export type SiteWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5428,6 +5433,7 @@ export type FormSubmissionRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5560,6 +5566,7 @@ export type FormPaginated = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5667,6 +5674,7 @@ export type StagePaginated = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -5784,6 +5792,7 @@ export type StageRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5955,6 +5964,7 @@ export type ApplicationRead = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
