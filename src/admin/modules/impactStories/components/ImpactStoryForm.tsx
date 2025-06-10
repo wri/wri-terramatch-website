@@ -15,6 +15,7 @@ import ModalStory from "@/components/extensive/Modal/ModalStory";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useOnMount } from "@/hooks/useOnMount";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import modules from "../..";
 import { useImpactStoryForm } from "../hooks/useImpactStoryForm";
@@ -42,18 +43,6 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
   { title: "Institutional capacity", value: "institutional-capacity" },
   { title: "Technical capacity", value: "technical-capacity" }
 ];
-
-function parseSerializedValue(value: string): any {
-  try {
-    const onceParsed = JSON.parse(value);
-    if (typeof onceParsed === "string") {
-      return JSON.parse(onceParsed);
-    }
-    return onceParsed;
-  } catch {
-    return value;
-  }
-}
 
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
@@ -89,7 +78,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
       uuid: formValues.uuid ? formValues.uuid : formValues?.data?.uuid,
       title: formValues.title ? formValues.title : formValues?.data?.title,
       date: formValues.date ? formValues.date : formValues?.data?.date,
-      content: parseSerializedValue(formValues.content ? formValues.content : formValues.data?.content),
+      content: parseImpactStoryContent(formValues.content ? formValues.content : formValues.data?.content),
       category: formValues.category ? formValues.category : formValues.data?.category,
       thumbnail:
         formValues.thumbnail instanceof File ? URL.createObjectURL(formValues.thumbnail) : formValues.thumbnail || "",
@@ -218,7 +207,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <Text variant="text-14-bold" className="mb-2">
             Content
           </Text>
-          <QuillEditor value={parseSerializedValue(initialValues.content)} onChange={handlers.handleContentChange} />
+          <QuillEditor value={parseImpactStoryContent(initialValues.content)} onChange={handlers.handleContentChange} />
         </div>
 
         <div className="flex justify-between">
