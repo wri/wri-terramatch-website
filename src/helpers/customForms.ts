@@ -511,7 +511,8 @@ export const apiFormQuestionToFormField = (
     case "volunteers":
     case "allBeneficiaries":
     case "trainingBeneficiaries":
-    case "indirectBeneficiaries": {
+    case "indirectBeneficiaries":
+    case "associates": {
       return {
         ...sharedProps,
         type: question.input_type,
@@ -764,8 +765,11 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "restorationPartners":
     case "jobs":
     case "volunteers":
+    case "employees":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries":
+    case "associates": {
       validation = yup
         .array()
         .min(0)
