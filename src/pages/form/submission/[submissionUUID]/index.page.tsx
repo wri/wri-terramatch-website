@@ -47,7 +47,7 @@ const SubmissionPage = () => {
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
-        <FrameworkProvider frameworkKey={formData?.data?.form?.funding_programme_framework_key}>
+        <FrameworkProvider frameworkKey={formData?.data?.form?.framework_key}>
           <WizardForm
             steps={formSteps!}
             errors={error}
