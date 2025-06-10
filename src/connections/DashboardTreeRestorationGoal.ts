@@ -6,7 +6,7 @@ import {
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import { getTreeRestorationGoalFetchFailed } from "@/generated/v3/dashboardService/dashboardServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
@@ -18,7 +18,6 @@ export type TreeRestorationGoalConnectionProps = Partial<GetTreeRestorationGoalQ
 export type TreeRestorationGoalConnection = {
   data?: TreeRestorationGoalDto;
   fetchFailure?: PendingErrorState | null;
-  refetch: () => void;
 };
 
 const treeRestorationGoalIsLoaded = (connection: TreeRestorationGoalConnection) =>
@@ -45,13 +44,11 @@ const treeRestorationGoalConnection: Connection<TreeRestorationGoalConnection, T
           getTreeRestorationGoalFetchFailed({ queryParams: props })
         ],
         (treeRestorationGoalData, fetchFailure) => {
-          const refetch = () => ApiSlice.pruneIndex("treeRestorationGoals", "");
-          if (treeRestorationGoalData == null) return { refetch, fetchFailure };
+          if (treeRestorationGoalData == null) return { fetchFailure };
 
           return {
             data: treeRestorationGoalData as TreeRestorationGoalDto,
-            fetchFailure,
-            refetch
+            fetchFailure
           };
         }
       )
