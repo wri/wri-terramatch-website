@@ -164,14 +164,11 @@ export const createQueryParams = (filters: any) => {
   return queryParams.toString();
 };
 
-export const getRestorationGoalResumeData = (data: TreeRestorationGoalDto) => {
-  const result = [
-    { name: "Total", value: data?.totalTreesGrownGoal, color: "#13487A" },
-    { name: "Enterprise", value: data?.forProfitTreeCount, color: "#7BBD31" },
-    { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
-  ];
-  return result;
-};
+export const getRestorationGoalResumeData = (data: TreeRestorationGoalDto) => [
+  { name: "Total", value: data?.totalTreesGrownGoal, color: "#13487A" },
+  { name: "Enterprise", value: data?.forProfitTreeCount, color: "#7BBD31" },
+  { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
+];
 
 export const getRestorationGoalDataForChart = (
   data: RestorationData,
