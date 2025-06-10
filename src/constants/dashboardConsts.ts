@@ -71,37 +71,37 @@ export const DUMMY_DATA_FOR_CHART_MULTI_LINE_CHART = [
   {
     name: "Total",
     values: [
-      { time: "2022-09-01T00:00:00.000Z", value: 3800000, name: "Total" },
-      { time: "2022-10-01T00:00:00.000Z", value: 3850000, name: "Total" },
-      { time: "2022-12-01T00:00:00.000Z", value: 3900000, name: "Total" },
-      { time: "2023-01-01T00:00:00.000Z", value: 6700000, name: "Total" },
-      { time: "2023-07-01T00:00:00.000Z", value: 11200000, name: "Total" },
-      { time: "2024-02-01T00:00:00.000Z", value: 17100000, name: "Total" },
-      { time: "2024-07-01T00:00:00.000Z", value: 22400000, name: "Total" }
+      { time: "2022-09-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2022-10-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2022-12-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2023-01-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2023-07-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2024-02-01T00:00:00.000Z", value: 0, name: "Total" },
+      { time: "2024-07-01T00:00:00.000Z", value: 0, name: "Total" }
     ]
   },
   {
     name: "Enterprise",
     values: [
-      { time: "2022-09-01T00:00:00.000Z", value: 620000, name: "Enterprise" },
-      { time: "2022-10-01T00:00:00.000Z", value: 625000, name: "Enterprise" },
-      { time: "2022-12-01T00:00:00.000Z", value: 630000, name: "Enterprise" },
-      { time: "2023-01-01T00:00:00.000Z", value: 800000, name: "Enterprise" },
-      { time: "2023-07-01T00:00:00.000Z", value: 1100000, name: "Enterprise" },
-      { time: "2024-02-01T00:00:00.000Z", value: 1600000, name: "Enterprise" },
-      { time: "2024-07-01T00:00:00.000Z", value: 2100000, name: "Enterprise" }
+      { time: "2022-09-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2022-10-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2022-12-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2023-01-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2023-07-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2024-02-01T00:00:00.000Z", value: 0, name: "Enterprise" },
+      { time: "2024-07-01T00:00:00.000Z", value: 0, name: "Enterprise" }
     ]
   },
   {
     name: "Non Profit",
     values: [
-      { time: "2022-09-01T00:00:00.000Z", value: 3180000, name: "Non Profit" },
-      { time: "2022-10-01T00:00:00.000Z", value: 3225000, name: "Non Profit" },
-      { time: "2022-12-01T00:00:00.000Z", value: 3270000, name: "Non Profit" },
-      { time: "2023-01-01T00:00:00.000Z", value: 5900000, name: "Non Profit" },
-      { time: "2023-07-01T00:00:00.000Z", value: 10100000, name: "Non Profit" },
-      { time: "2024-02-01T00:00:00.000Z", value: 15500000, name: "Non Profit" },
-      { time: "2024-07-01T00:00:00.000Z", value: 20300000, name: "Non Profit" }
+      { time: "2022-09-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2022-10-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2022-12-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2023-01-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2023-07-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2024-02-01T00:00:00.000Z", value: 0, name: "Non Profit" },
+      { time: "2024-07-01T00:00:00.000Z", value: 0, name: "Non Profit" }
     ]
   }
 ];
