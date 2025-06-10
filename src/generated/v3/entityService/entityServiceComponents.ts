@@ -551,6 +551,285 @@ export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal)
     signal
   });
 
+export type TreeScientificNamesSearchQueryParams = {
+  search: string;
+};
+
+export type TreeScientificNamesSearchError = Fetcher.ErrorWrapper<undefined>;
+
+export type TreeScientificNamesSearchResponse = {
+  meta?: {
+    /**
+     * @example treeSpeciesScientificNames
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeSpeciesScientificNames
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.ScientificNameDto;
+  }[];
+};
+
+export type TreeScientificNamesSearchVariables = {
+  queryParams: TreeScientificNamesSearchQueryParams;
+};
+
+/**
+ * Search scientific names of tree species. Returns up to 10 entries.
+ */
+export const treeScientificNamesSearch = (variables: TreeScientificNamesSearchVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    TreeScientificNamesSearchResponse,
+    TreeScientificNamesSearchError,
+    undefined,
+    {},
+    TreeScientificNamesSearchQueryParams,
+    {}
+  >({ url: "/trees/v3/scientificNames", method: "get", ...variables, signal });
+
+export type EstablishmentTreesFindPathParams = {
+  /**
+   * Entity type for which to retrieve the establishment tree data.
+   */
+  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * Entity UUID for which to retrieve the establishment tree data.
+   */
+  uuid: string;
+};
+
+export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EstablishmentTreesFindResponse = {
+  meta?: {
+    /**
+     * @example establishmentTrees
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example establishmentTrees
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.EstablishmentsTreesDto;
+  };
+};
+
+export type EstablishmentTreesFindVariables = {
+  pathParams: EstablishmentTreesFindPathParams;
+};
+
+export const establishmentTreesFind = (variables: EstablishmentTreesFindVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    EstablishmentTreesFindResponse,
+    EstablishmentTreesFindError,
+    undefined,
+    {},
+    {},
+    EstablishmentTreesFindPathParams
+  >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export type TreeReportCountsFindPathParams = {
+  /**
+   * Entity type for which to retrieve the associated report count data.
+   */
+  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  /**
+   * Entity UUID for which to retrieve the associated report count data.
+   */
+  uuid: string;
+};
+
+export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeReportCountsFindResponse = {
+  meta?: {
+    /**
+     * @example treeReportCounts
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeReportCounts
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.TreeReportCountsDto;
+  };
+};
+
+export type TreeReportCountsFindVariables = {
+  pathParams: TreeReportCountsFindPathParams;
+};
+
+export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    TreeReportCountsFindResponse,
+    TreeReportCountsFindError,
+    undefined,
+    {},
+    {},
+    TreeReportCountsFindPathParams
+  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
+
+export type BoundingBoxGetQueryParams = {
+  /**
+   * UUID of a polygon to get its bounding box
+   */
+  polygonUuid?: string;
+  /**
+   * UUID of a site to get the bounding box of all its polygons
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get the bounding box of all its site polygons
+   */
+  projectUuid?: string;
+  /**
+   * Array of landscape slugs for combined bounding box (used with country)
+   */
+  landscapes?: string[];
+  /**
+   * Country code (3-letter ISO) to get its bounding box
+   */
+  country?: string;
+};
+
+export type BoundingBoxGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BoundingBoxGetResponse = {
+  meta?: {
+    /**
+     * @example boundingBoxes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example boundingBoxes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.BoundingBoxDto;
+  };
+};
+
+export type BoundingBoxGetVariables = {
+  queryParams?: BoundingBoxGetQueryParams;
+};
+
+export const boundingBoxGet = (variables: BoundingBoxGetVariables, signal?: AbortSignal) =>
+  entityServiceFetch<BoundingBoxGetResponse, BoundingBoxGetError, undefined, {}, BoundingBoxGetQueryParams, {}>({
+    url: "/boundingBoxes/v3/get",
+    method: "get",
+    ...variables,
+    signal
+  });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -605,6 +884,7 @@ export type EntityIndexQueryParams = {
   sideloads?: Schemas.EntitySideload[];
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
+  shortName?: string;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -1269,6 +1549,7 @@ export type EntityAssociationIndexQueryParams = {
   sideloads?: Schemas.EntitySideload[];
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
+  shortName?: string;
   modelType?: string;
   /**
    * @default false
@@ -1465,290 +1746,11 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
     EntityAssociationIndexPathParams
   >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
 
-export type TreeScientificNamesSearchQueryParams = {
-  search: string;
-};
-
-export type TreeScientificNamesSearchError = Fetcher.ErrorWrapper<undefined>;
-
-export type TreeScientificNamesSearchResponse = {
-  meta?: {
-    /**
-     * @example treeSpeciesScientificNames
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example treeSpeciesScientificNames
-     */
-    type?: string;
-    id?: string;
-    attributes?: Schemas.ScientificNameDto;
-  }[];
-};
-
-export type TreeScientificNamesSearchVariables = {
-  queryParams: TreeScientificNamesSearchQueryParams;
-};
-
-/**
- * Search scientific names of tree species. Returns up to 10 entries.
- */
-export const treeScientificNamesSearch = (variables: TreeScientificNamesSearchVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    TreeScientificNamesSearchResponse,
-    TreeScientificNamesSearchError,
-    undefined,
-    {},
-    TreeScientificNamesSearchQueryParams,
-    {}
-  >({ url: "/trees/v3/scientificNames", method: "get", ...variables, signal });
-
-export type EstablishmentTreesFindPathParams = {
-  /**
-   * Entity type for which to retrieve the establishment tree data.
-   */
-  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * Entity UUID for which to retrieve the establishment tree data.
-   */
-  uuid: string;
-};
-
-export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
->;
-
-export type EstablishmentTreesFindResponse = {
-  meta?: {
-    /**
-     * @example establishmentTrees
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example establishmentTrees
-     */
-    type?: string;
-    id?: string;
-    attributes?: Schemas.EstablishmentsTreesDto;
-  };
-};
-
-export type EstablishmentTreesFindVariables = {
-  pathParams: EstablishmentTreesFindPathParams;
-};
-
-export const establishmentTreesFind = (variables: EstablishmentTreesFindVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    EstablishmentTreesFindResponse,
-    EstablishmentTreesFindError,
-    undefined,
-    {},
-    {},
-    EstablishmentTreesFindPathParams
-  >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export type TreeReportCountsFindPathParams = {
-  /**
-   * Entity type for which to retrieve the associated report count data.
-   */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * Entity UUID for which to retrieve the associated report count data.
-   */
-  uuid: string;
-};
-
-export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
->;
-
-export type TreeReportCountsFindResponse = {
-  meta?: {
-    /**
-     * @example treeReportCounts
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example treeReportCounts
-     */
-    type?: string;
-    id?: string;
-    attributes?: Schemas.TreeReportCountsDto;
-  };
-};
-
-export type TreeReportCountsFindVariables = {
-  pathParams: TreeReportCountsFindPathParams;
-};
-
-export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    TreeReportCountsFindResponse,
-    TreeReportCountsFindError,
-    undefined,
-    {},
-    {},
-    TreeReportCountsFindPathParams
-  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export type BoundingBoxGetQueryParams = {
-  /**
-   * UUID of a polygon to get its bounding box
-   */
-  polygonUuid?: string;
-  /**
-   * UUID of a site to get the bounding box of all its polygons
-   */
-  siteUuid?: string;
-  /**
-   * UUID of a project to get the bounding box of all its site polygons
-   */
-  projectUuid?: string;
-  /**
-   * Array of landscape slugs for combined bounding box (used with country)
-   */
-  landscapes?: string[];
-  /**
-   * Country code (3-letter ISO) to get its bounding box
-   */
-  country?: string;
-};
-
-export type BoundingBoxGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type BoundingBoxGetResponse = {
-  meta?: {
-    /**
-     * @example boundingBoxes
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example boundingBoxes
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.BoundingBoxDto;
-  };
-};
-
-export type BoundingBoxGetVariables = {
-  queryParams?: BoundingBoxGetQueryParams;
-};
-
-export const boundingBoxGet = (variables: BoundingBoxGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<BoundingBoxGetResponse, BoundingBoxGetError, undefined, {}, BoundingBoxGetQueryParams, {}>({
-    url: "/boundingBoxes/v3",
-    method: "get",
-    ...variables,
-    signal
-  });
-
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   tasks: { taskIndex, taskGet, taskUpdate },
-  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
-  entityAssociations: { entityAssociationIndex },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
-  boundingBoxes: { boundingBoxGet }
+  boundingBoxes: { boundingBoxGet },
+  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
+  entityAssociations: { entityAssociationIndex }
 };

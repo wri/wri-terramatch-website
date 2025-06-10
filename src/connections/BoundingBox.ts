@@ -22,9 +22,8 @@ type BoundingBoxProps = {
 };
 
 const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
-
-  return [polygonUuid, siteUuid, projectUuid, landscapes?.join(","), country].filter(Boolean).join("|");
+  const { polygonUuid, siteUuid, projectUuid, country, landscapes } = props;
+  return [polygonUuid, siteUuid, projectUuid, country, landscapes?.join(",")].filter(Boolean).join(",");
 };
 
 const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
@@ -38,7 +37,11 @@ const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore)
 };
 
 const hasValidParams = ({ polygonUuid, siteUuid, projectUuid, landscapes, country }: BoundingBoxProps): boolean =>
-  polygonUuid != null || siteUuid != null || projectUuid != null || (landscapes?.length ?? 0) > 0 || country != null;
+  (polygonUuid != null && polygonUuid !== "") ||
+  (siteUuid != null && siteUuid !== "") ||
+  (projectUuid != null && projectUuid !== "") ||
+  (landscapes?.length ?? 0) > 0 ||
+  (country != null && country !== "");
 
 const getQueryParams = (props: BoundingBoxProps) => {
   const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;

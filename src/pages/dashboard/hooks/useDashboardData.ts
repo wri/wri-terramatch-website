@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
@@ -9,23 +10,33 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardBboxCountryLandscape,
-  useGetV2DashboardGetBboxProject,
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardTopTreesPlanted,
   useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate,
   useGetV2ImpactStories
 } from "@/generated/apiComponents";
 import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
+import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
+
+const LANDSCAPE_SLUGS = {
+  "Ghana Cocoa Belt": "gcb",
+  "Greater Rift Valley of Kenya": "grv",
+  "Lake Kivu & Rusizi River Basin": "ikr"
+} as const;
+
+//TODO: remove this once we have the correct landscape slugs for all filters
+const getLandscapeSlugs = (landscapes: string[]) => {
+  return landscapes.map(landscape => LANDSCAPE_SLUGS[landscape as keyof typeof LANDSCAPE_SLUGS] ?? landscape);
+};
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -52,17 +63,10 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const { data: generalBbox } = useGetV2DashboardBboxCountryLandscape(
-    {
-      queryParams: {
-        landscapes: filters.landscapes?.join(","),
-        country: filters.country.country_slug
-      }
-    },
-    {
-      enabled: !!filters.landscapes?.length || !!filters.country.country_slug
-    }
-  );
+  const [, { bbox: generalBbox }] = useBoundingBox({
+    landscapes: getLandscapeSlugs(filters.landscapes),
+    country: filters.country.country_slug
+  });
   const [updateFilters, setUpdateFilters] = useState<any>({});
   useEffect(() => {
     const parsedFilters = {
@@ -88,6 +92,8 @@ export const useDashboardData = (filters: any) => {
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
 
+  const { data: projectHectaresData, isLoading: isLoadingProjectHectares } = useSitePolygonsHectares(filters.uuid);
+
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
       ...updateFilters,
@@ -102,7 +108,7 @@ export const useDashboardData = (filters: any) => {
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
-    "landscapesType[]": filters.landscapes,
+    landscapes: filters.landscapes,
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
@@ -111,7 +117,6 @@ export const useDashboardData = (filters: any) => {
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
   );
-  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
   const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
     { queryParams: queryParams },
@@ -140,19 +145,29 @@ export const useDashboardData = (filters: any) => {
   );
 
   const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>({
-      queryParams: queryParams
-    });
+    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
       queryParams: queryParams
     });
 
-  const { data: hectaresUnderRestoration, isLoading: isLoadingHectaresUnderRestoration } =
-    useGetV2DashboardIndicatorHectaresRestoration<any>({
-      queryParams: queryParams
-    });
+  const { data: generalHectaresUnderRestoration, isLoading: isLoadingGeneralHectaresUnderRestoration } =
+    useGetV2DashboardIndicatorHectaresRestoration<any>(
+      {
+        queryParams: queryParams
+      },
+      {
+        enabled: !!filters && !filters.uuid
+      }
+    );
 
   const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
   const [, { association: coverImage }] = useMedia({
@@ -217,6 +232,7 @@ export const useDashboardData = (filters: any) => {
     setAllProjects([]);
     setHasMoreProjects(true);
     setTotalProjects(0);
+    setIsLoadingProjects(false);
   }, [filterParams]);
 
   const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
@@ -251,8 +267,34 @@ export const useDashboardData = (filters: any) => {
       });
 
       setIsLoadingProjects(false);
+    } else if (!projectsLoaded) {
+      setIsLoadingProjects(true);
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
+
+  const topProjects = useMemo(() => {
+    if (allProjects?.length ?? isLoadingProjects) {
+      return [];
+    }
+
+    const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
+
+    const sortedProjects = filteredProjects
+      .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
+      .slice(0, 5)
+      .map(project => ({
+        organization: project.organisationName ?? "",
+        project: project.name ?? "",
+        trees_planted: project.treesPlantedCount ?? 0,
+        uuid: project.uuid ?? ""
+      }));
+
+    return sortedProjects;
+  }, [allProjects, isLoadingProjects]);
+
+  useEffect(() => {
+    console.log("topprojects:", topProjects);
+  }, [topProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -280,52 +322,94 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
-  const { data: projectBbox } = useGetV2DashboardGetBboxProject<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters.uuid
+  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : undefined);
+  const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
+    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
+
+  const combinedHectaresData = useMemo(() => {
+    if (filters.uuid && projectTreeSpeciesData) {
+      return projectTreeSpeciesData;
+    } else {
+      return dashboardRestorationGoalData;
     }
-  );
+  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+
+  const finalHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid && projectHectaresData) {
+      return projectHectaresData;
+    }
+    return generalHectaresUnderRestoration;
+  }, [filters.uuid, projectHectaresData, generalHectaresUnderRestoration]);
+
+  const finalIsLoadingHectaresUnderRestoration = useMemo(() => {
+    if (filters.uuid) {
+      return isLoadingProjectHectares;
+    }
+    return isLoadingGeneralHectaresUnderRestoration;
+  }, [filters.uuid, isLoadingProjectHectares, isLoadingGeneralHectaresUnderRestoration]);
 
   const centroidsDataProjects = useMemo(() => {
-    if (!allProjects || !allProjects.length) return { data: [], bbox: [] };
+    const projectsToUse = allProjects?.length > 0 ? allProjects : activeProjects?.data ?? [];
 
-    const transformedData = allProjects
-      .filter(
-        project =>
-          project &&
-          typeof project.long !== "undefined" &&
-          project.long !== null &&
-          typeof project.lat !== "undefined" &&
-          project.lat !== null
-      )
-      .map(project => ({
-        uuid: project.uuid || "",
-        long: typeof project.long === "number" || typeof project.long === "string" ? project.long.toString() : "0",
-        lat: typeof project.lat === "number" || typeof project.lat === "string" ? project.lat.toString() : "0",
-        name: project.name || "",
-        type: project.organisationType || "",
-        organisation: project.organisationName || null
-      }));
+    if (!projectsToUse?.length) return { data: [], bbox: [] };
 
-    if (!transformedData.length) {
+    interface ProjectData {
+      uuid?: string;
+      long?: string | number | null;
+      lat?: string | number | null;
+      name?: string;
+      organisationType?: string;
+      programme?: string;
+      organisationName?: string;
+      organisation?: string;
+    }
+
+    const projectsWithCoordinates = projectsToUse.filter((project: ProjectData) => {
+      if (!project) return false;
+
+      const long = project.long;
+      const lat = project.lat;
+
+      if (long === null || long === undefined || long === "" || lat === null || lat === undefined || lat === "") {
+        return false;
+      }
+
+      const longNum = Number(long);
+      const latNum = Number(lat);
+
+      return !isNaN(longNum) && !isNaN(latNum) && !(longNum === 0 && latNum === 0);
+    });
+
+    if (!projectsWithCoordinates.length) {
       return { data: [], bbox: [] };
     }
 
+    const transformedData = projectsWithCoordinates.map((project: ProjectData) => ({
+      uuid: project.uuid ?? "",
+      long: project.long?.toString() ?? "0",
+      lat: project.lat?.toString() ?? "0",
+      name: project.name ?? "",
+      type: project.organisationType ?? "",
+      organisation: project.organisationName ?? project.organisation ?? null
+    }));
+
     try {
-      const longitudes = transformedData.map(p => parseFloat(p.long)).filter(value => !isNaN(value));
-      const latitudes = transformedData.map(p => parseFloat(p.lat)).filter(value => !isNaN(value));
+      const longitudes = transformedData
+        .map((p: { long: string }) => parseFloat(p.long))
+        .filter((value: number) => !isNaN(value));
+
+      const latitudes = transformedData
+        .map((p: { lat: string }) => parseFloat(p.lat))
+        .filter((value: number) => !isNaN(value));
 
       if (longitudes.length === 0 || latitudes.length === 0) {
         return { data: transformedData, bbox: [] };
       }
 
-      const minLong = Math.min(...longitudes).toString();
-      const minLat = Math.min(...latitudes).toString();
-      const maxLong = Math.max(...longitudes).toString();
-      const maxLat = Math.max(...latitudes).toString();
+      const minLong = Math.min(...longitudes);
+      const minLat = Math.min(...latitudes);
+      const maxLong = Math.max(...longitudes);
+      const maxLat = Math.max(...latitudes);
 
       return {
         data: transformedData,
@@ -335,11 +419,11 @@ export const useDashboardData = (filters: any) => {
       console.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
-  }, [allProjects]);
+  }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (topData?.top_projects_most_planted_trees) {
-      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+    if (topProjects) {
+      const projects = topProjects.slice(0, 5);
       const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
@@ -347,7 +431,7 @@ export const useDashboardData = (filters: any) => {
       }));
       setTopProjects({ tableData, maxValue: Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6) });
     }
-  }, [topData]);
+  }, [topProjects]);
 
   useEffect(() => {
     if (filters.uuid) {
@@ -412,10 +496,10 @@ export const useDashboardData = (filters: any) => {
   }, [totalSectionHeader, filters.uuid, projectFullDto]);
 
   useEffect(() => {
-    if (generalBbox && Array.isArray(generalBbox.bbox) && generalBbox.bbox.length > 1) {
-      setGeneralBboxParsed(generalBbox.bbox as unknown as BBox);
+    if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
+      setGeneralBboxParsed(generalBbox as BBox);
     } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
-      setGeneralBboxParsed(centroidsDataProjects.bbox as unknown as BBox);
+      setGeneralBboxParsed(centroidsDataProjects.bbox as BBox);
     } else {
       setGeneralBboxParsed(undefined);
     }
@@ -463,16 +547,16 @@ export const useDashboardData = (filters: any) => {
 
   return {
     dashboardHeader,
-    dashboardRestorationGoalData,
+    dashboardRestorationGoalData: combinedHectaresData,
     jobsCreatedData: combinedJobsData,
     dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
     totalSectionHeader: totalSectionHeader,
-    hectaresUnderRestoration,
+    hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal,
+    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
-    isLoadingHectaresUnderRestoration,
+    isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,
     coverImage,
@@ -482,7 +566,7 @@ export const useDashboardData = (filters: any) => {
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData ?? {},
     isUserAllowed,
-    projectBbox: projectBbox?.bbox,
+    projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
     isLoadingImpactStories
