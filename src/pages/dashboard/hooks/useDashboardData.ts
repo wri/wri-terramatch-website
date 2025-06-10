@@ -273,12 +273,11 @@ export const useDashboardData = (filters: any) => {
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
   const topProjects = useMemo(() => {
-    if (allProjects?.length ?? isLoadingProjects) {
+    if (allProjects?.length == 0 || isLoadingProjects) {
       return [];
     }
 
     const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
-
     const sortedProjects = filteredProjects
       .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
       .slice(0, 5)
@@ -291,10 +290,6 @@ export const useDashboardData = (filters: any) => {
 
     return sortedProjects;
   }, [allProjects, isLoadingProjects]);
-
-  useEffect(() => {
-    console.log("topprojects:", topProjects);
-  }, [topProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
