@@ -2,7 +2,6 @@ import { StoreResourceMap } from "@/store/apiSlice";
 import {
   ProjectPitchDto,
   ProjectTaskProcessingResponseDto,
-  ApproveReportsResponseDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -33,7 +32,6 @@ import {
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "processProjectTasks",
-  "approveReportsResponse",
   "tasks",
   "projectReports",
   "siteReports",
@@ -57,7 +55,6 @@ export const ENTITY_SERVICE_RESOURCES = [
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   processProjectTasks: StoreResourceMap<ProjectTaskProcessingResponseDto>;
-  approveReportsResponse: StoreResourceMap<ApproveReportsResponseDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;

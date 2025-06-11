@@ -227,40 +227,6 @@ export const processProjectTasks = (variables: ProcessProjectTasksVariables, sig
     ProcessProjectTasksPathParams
   >({ url: "/entities/v3/projectTaskProcessing/{uuid}", method: "get", ...variables, signal });
 
-export type ApproveReportsError = Fetcher.ErrorWrapper<undefined>;
-
-export type ApproveReportsResponse = {
-  meta?: {
-    /**
-     * @example approveReportsResponse
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example approveReportsResponse
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ApproveReportsResponseDto;
-  };
-};
-
-export type ApproveReportsVariables = {
-  body: Schemas.ApproveReportsDto;
-};
-
-export const approveReports = (variables: ApproveReportsVariables, signal?: AbortSignal) =>
-  entityServiceFetch<ApproveReportsResponse, ApproveReportsError, Schemas.ApproveReportsDto, {}, {}, {}>({
-    url: "/entities/v3/projectTaskProcessing/approveReports",
-    method: "patch",
-    ...variables,
-    signal
-  });
-
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -1822,7 +1788,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
-  projectTaskProcessing: { processProjectTasks, approveReports },
+  projectTaskProcessing: { processProjectTasks },
   tasks: { taskIndex, taskGet, taskUpdate },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },

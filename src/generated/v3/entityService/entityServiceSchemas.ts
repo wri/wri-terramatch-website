@@ -146,40 +146,6 @@ export type ProjectTaskProcessingResponseDto = {
   reports: ReportDto[];
 };
 
-export type ApproveReportsResponseDto = {
-  /**
-   * Number of reports that were approved
-   *
-   * @example 5
-   */
-  approvedCount: number;
-  /**
-   * Success message
-   *
-   * @example Successfully approved 5 reports
-   */
-  message: string;
-};
-
-export type ApproveReportsDto = {
-  /**
-   * Array of report UUIDs to be approved
-   *
-   * @example 123e4567-e89b-12d3-a456-426614174000
-   */
-  reportUuids: string[];
-  /**
-   * Optional feedback for the report approval
-   *
-   * @example Reports look good, approved with no changes needed
-   */
-  feedback?: string;
-  /**
-   * UUID of the project these reports belong to
-   */
-  uuid: string;
-};
-
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
