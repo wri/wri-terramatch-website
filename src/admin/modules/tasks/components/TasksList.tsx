@@ -197,7 +197,7 @@ export const TasksList: FC = () => {
             await updateProject({
               siteReportNothingToReportStatus: siteReportUuids.length > 0 ? siteReportUuids : null,
               nurseryReportNothingToReportStatus: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
-              feedback: text || null
+              feedback: text ?? ""
             });
 
             ApiSlice.pruneCache("processProjectTasks", [currentProjectUuid]);
