@@ -31,6 +31,7 @@ import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoic
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -198,6 +199,8 @@ export const TasksList: FC = () => {
               nurseryReportNothingToReportStatus: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
               feedback: text || null
             });
+
+            ApiSlice.pruneCache("processProjectTasks", [currentProjectUuid]);
           } catch (error) {
             openNotification(
               "error",
