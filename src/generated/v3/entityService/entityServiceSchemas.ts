@@ -175,7 +175,7 @@ export type ApproveReportsDto = {
    */
   feedback?: string;
   /**
-   * uuid from project
+   * UUID of the project these reports belong to
    */
   uuid: string;
 };
@@ -1289,6 +1289,14 @@ export type ProjectUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
+   * Virtual property to update the status of specific site reports by their UUIDs
+   */
+  siteReportNothingToReportStatus: string[] | null;
+  /**
+   * Virtual property to update the status of specific nursery reports by their UUIDs
+   */
+  nurseryReportNothingToReportStatus: string[] | null;
+  /**
    * Update the isTest flag.
    */
   isTest: boolean | null;
@@ -1316,6 +1324,14 @@ export type SiteUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * Virtual property to update the status of specific site reports by their UUIDs
+   */
+  siteReportNothingToReportStatus: string[] | null;
+  /**
+   * Virtual property to update the status of specific nursery reports by their UUIDs
+   */
+  nurseryReportNothingToReportStatus: string[] | null;
 };
 
 export type SiteUpdateData = {
@@ -1340,6 +1356,14 @@ export type EntityUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * Virtual property to update the status of specific site reports by their UUIDs
+   */
+  siteReportNothingToReportStatus: string[] | null;
+  /**
+   * Virtual property to update the status of specific nursery reports by their UUIDs
+   */
+  nurseryReportNothingToReportStatus: string[] | null;
 };
 
 export type NurseryUpdateData = {
@@ -1364,6 +1388,14 @@ export type ReportUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * Virtual property to update the status of specific site reports by their UUIDs
+   */
+  siteReportNothingToReportStatus: string[] | null;
+  /**
+   * Virtual property to update the status of specific nursery reports by their UUIDs
+   */
+  nurseryReportNothingToReportStatus: string[] | null;
   /**
    * Update the nothingToReport flag.
    */

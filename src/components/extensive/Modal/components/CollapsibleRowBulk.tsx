@@ -4,7 +4,7 @@ import Text from "@/components/elements/Text/Text";
 interface CollapsibleRowBulkProps {
   item: any;
   selected: boolean;
-  onSelect: (id: string, selected: boolean) => void;
+  onSelect: (id: string, selected: boolean, type: string, dateSubmitted: string, name: string) => void;
 }
 
 const CollapsibleRowBulk = (props: CollapsibleRowBulkProps) => {
@@ -23,7 +23,11 @@ const CollapsibleRowBulk = (props: CollapsibleRowBulkProps) => {
           {item.dateSubmitted}
         </Text>
         <div className="flex flex-1 items-center justify-center">
-          <Checkbox name="" checked={selected} onClick={() => onSelect(item.id, !selected)} />
+          <Checkbox
+            name=""
+            checked={selected}
+            onClick={() => onSelect(item.id, !selected, item.type, item.dateSubmitted, item.name)}
+          />
         </div>
       </div>
     </div>

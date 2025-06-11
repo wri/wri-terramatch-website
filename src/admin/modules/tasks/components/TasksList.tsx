@@ -23,7 +23,8 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useApproveReports, useProjectTaskProcessing } from "@/connections/ProjectTaskProcessing";
+import { useFullProject } from "@/connections/Entity";
+import { useProjectTaskProcessing } from "@/connections/ProjectTaskProcessing";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -33,6 +34,13 @@ import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas"
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
+
+type SelectedItem = {
+  id: string;
+  name: string;
+  type: string;
+  dateSubmitted: string;
+};
 
 const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void }> = ({ onProjectUuidChange }) => {
   const frameworkInputChoices = useUserFrameworkChoices();
@@ -49,8 +57,8 @@ const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: TaskLightDto) => {
-          const { title } = getTaskStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: TaskLightDto) => {
+          const { title } = getTaskStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -58,7 +66,7 @@ const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record: TaskLightDto) =>
+        render={(record?: TaskLightDto) =>
           frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
           record?.frameworkKey
         }
@@ -80,8 +88,16 @@ export const TasksList: FC = () => {
     id: currentProjectUuid as string
   });
   const [, { data: projectTaskData }] = useProjectTaskProcessing({ uuid: currentProjectUuid as string });
+  const [, { update: updateProject, entityIsUpdating }] = useFullProject({ uuid: currentProjectUuid as string });
 
-  const [, { approveReports }] = useApproveReports({ uuid: currentProjectUuid as string });
+  useEffect(() => {
+    if (entityIsUpdating) {
+      openNotification("success", "Reports approved successfully", "");
+      closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+      closeModal(ModalId.APPROVE_POLYGONS);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityIsUpdating]);
 
   const filters = [
     <ReferenceInput
@@ -106,11 +122,8 @@ export const TasksList: FC = () => {
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("tasks", frameworkChoices);
 
-  const openModalHandlerBulkApprove = (
-    data: Array<{ id: string; name: string; type: string; dateSubmitted: string }>,
-    currentProjectUuid?: string
-  ) => {
-    let currentSelectedReports: string[] = [];
+  const openModalHandlerBulkApprove = (data: Array<SelectedItem>, currentProjectUuid?: string) => {
+    let currentSelectedReports: Array<SelectedItem> = [];
 
     openModal(
       ModalId.APPROVE_POLYGONS,
@@ -125,8 +138,7 @@ export const TasksList: FC = () => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            const selectedData = data.filter(report => currentSelectedReports.includes(report.id));
-            openModalHandlerBulkConfirm(selectedData, currentSelectedReports, currentProjectUuid);
+            openModalHandlerBulkConfirm(currentSelectedReports, currentProjectUuid);
           }
         }}
         secondaryButtonProps={{
@@ -145,19 +157,15 @@ export const TasksList: FC = () => {
     );
   };
 
-  const openModalHandlerBulkConfirm = (
-    selectedData: Array<{ id: string; name: string; type: string; dateSubmitted: string }>,
-    selectedUuids: string[],
-    currentProjectUuid?: string
-  ) => {
+  const openModalHandlerBulkConfirm = (currentSelectedReports: Array<SelectedItem>, currentProjectUuid?: string) => {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
         title={"Confirm Bulk Approval"}
         content={
           <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
-            {selectedData.length > 0 ? (
-              selectedData.map(report => (
+            {currentSelectedReports.length > 0 ? (
+              currentSelectedReports.map(report => (
                 <li key={report.id} className="text-12-light">
                   {report.type} Report - {report.name} - {report.dateSubmitted}
                 </li>
@@ -171,17 +179,25 @@ export const TasksList: FC = () => {
         onClose={() => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
         }}
-        onConfirm={(text: string) => {
-          if (!currentProjectUuid) {
-            console.error("No project UUID available for approval");
+        onConfirm={async (text: string) => {
+          if (!currentProjectUuid || !updateProject) {
+            console.error("No project UUID available for approval or update function not available");
             return;
           }
 
           try {
-            approveReports(selectedUuids, text);
-            openNotification("success", "Reports approved successfully", "");
-            closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-            closeModal(ModalId.APPROVE_POLYGONS);
+            const siteReportUuids = currentSelectedReports
+              .filter(report => report.type === "Site")
+              .map(report => report.id);
+            const nurseryReportUuids = currentSelectedReports
+              .filter(report => report.type === "Nursery")
+              .map(report => report.id);
+
+            await updateProject({
+              siteReportNothingToReportStatus: siteReportUuids.length > 0 ? siteReportUuids : null,
+              nurseryReportNothingToReportStatus: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
+              feedback: text || null
+            });
           } catch (error) {
             openNotification(
               "error",

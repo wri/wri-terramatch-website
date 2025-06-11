@@ -15,7 +15,7 @@ export interface ModalBulkApproveProps extends ModalProps {
   secondaryButtonText?: string;
   onClose?: () => void;
   data: any[];
-  onSelectionChange?: (selectedIds: string[]) => void;
+  onSelectionChange?: (selectedIds: { id: string; name: string; type: string; dateSubmitted: string }[]) => void;
 }
 
 export interface DisplayedPolygonType {
@@ -41,10 +41,14 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
   onSelectionChange,
   ...rest
 }) => {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<{ id: string; name: string; type: string; dateSubmitted: string }[]>(
+    []
+  );
 
-  const handleSelect = (id: string, selected: boolean) => {
-    const newSelectedIds = selected ? [...selectedIds, id] : selectedIds.filter(selectedId => selectedId !== id);
+  const handleSelect = (id: string, selected: boolean, type: string, dateSubmitted: string, name: string) => {
+    const newSelectedIds = selected
+      ? [...selectedIds, { id, type, dateSubmitted, name }]
+      : selectedIds.filter(selectedId => selectedId.id !== id);
     setSelectedIds(newSelectedIds);
     onSelectionChange?.(newSelectedIds);
   };
@@ -54,7 +58,7 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
       setSelectedIds([]);
       onSelectionChange?.([]);
     } else {
-      const allIds = data.map(item => item.id);
+      const allIds = data.map(item => item);
       setSelectedIds(allIds);
       onSelectionChange?.(allIds);
     }
@@ -110,7 +114,7 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
               <CollapsibleRowBulk
                 key={item.id}
                 item={item}
-                selected={selectedIds.includes(item.id)}
+                selected={selectedIds.some(selected => selected.id === item.id && selected.type === item.type)}
                 onSelect={handleSelect}
               />
             ))
