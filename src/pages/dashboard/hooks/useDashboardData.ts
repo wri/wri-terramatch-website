@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
+import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
+import { useImpactStories } from "@/connections/ImpactStory";
 import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -13,13 +15,9 @@ import {
   useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardTopTreesPlanted,
-  useGetV2DashboardTreeRestorationGoal,
   useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate,
-  useGetV2ImpactStories
+  useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
-import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
 
@@ -118,7 +116,6 @@ export const useDashboardData = (filters: any) => {
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
   );
-  const { data: topData } = useGetV2DashboardTopTreesPlanted<any>({ queryParams: queryParams });
 
   const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
     { queryParams: queryParams },
@@ -146,15 +143,39 @@ export const useDashboardData = (filters: any) => {
       project?.organisation?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
-  const { data: dashboardRestorationGoalData, isLoading: isLoadingTreeRestorationGoal } =
-    useGetV2DashboardTreeRestorationGoal<DashboardTreeRestorationGoalResponse>(
-      {
-        queryParams: queryParams
-      },
-      {
-        enabled: !!filters && !filters.uuid
-      }
-    );
+  const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    landscapes: filters.landscapes,
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
+  });
+
+  const transformedTreeRestorationGoalData = useMemo(() => {
+    if (!dashboardRestorationGoalData) return null;
+
+    const transformTreeRestorationArray = (data: any[]) => {
+      return data.map(item => ({
+        ...item,
+        treeSpeciesPercentage:
+          item.treeSpeciesGoal > 0 ? parseFloat(((item.treeSpeciesAmount / item.treeSpeciesGoal) * 100).toFixed(3)) : 0
+      }));
+    };
+
+    return {
+      ...dashboardRestorationGoalData,
+      treesUnderRestorationActualTotal: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualTotal ?? []
+      ),
+      treesUnderRestorationActualForProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualForProfit ?? []
+      ),
+      treesUnderRestorationActualNonProfit: transformTreeRestorationArray(
+        dashboardRestorationGoalData.treesUnderRestorationActualNonProfit ?? []
+      )
+    };
+  }, [dashboardRestorationGoalData]);
 
   const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
     useGetV2DashboardVolunteersSurvivalRate<any>({
@@ -234,6 +255,7 @@ export const useDashboardData = (filters: any) => {
     setAllProjects([]);
     setHasMoreProjects(true);
     setTotalProjects(0);
+    setIsLoadingProjects(false);
   }, [filterParams]);
 
   const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
@@ -268,8 +290,29 @@ export const useDashboardData = (filters: any) => {
       });
 
       setIsLoadingProjects(false);
+    } else if (!projectsLoaded) {
+      setIsLoadingProjects(true);
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
+
+  const topProjects = useMemo(() => {
+    if (allProjects?.length == 0 || isLoadingProjects) {
+      return [];
+    }
+
+    const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
+    const sortedProjects = filteredProjects
+      .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
+      .slice(0, 5)
+      .map(project => ({
+        organization: project.organisationName ?? "",
+        project: project.name ?? "",
+        trees_planted: project.treesPlantedCount ?? 0,
+        uuid: project.uuid ?? ""
+      }));
+
+    return sortedProjects;
+  }, [allProjects, isLoadingProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -305,9 +348,9 @@ export const useDashboardData = (filters: any) => {
     if (filters.uuid && projectTreeSpeciesData) {
       return projectTreeSpeciesData;
     } else {
-      return dashboardRestorationGoalData;
+      return transformedTreeRestorationGoalData;
     }
-  }, [filters.uuid, projectTreeSpeciesData, dashboardRestorationGoalData]);
+  }, [filters.uuid, projectTreeSpeciesData, transformedTreeRestorationGoalData]);
 
   const finalHectaresUnderRestoration = useMemo(() => {
     if (filters.uuid && projectHectaresData) {
@@ -397,8 +440,8 @@ export const useDashboardData = (filters: any) => {
   }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (topData?.top_projects_most_planted_trees) {
-      const projects = topData?.top_projects_most_planted_trees?.slice(0, 5);
+    if (topProjects) {
+      const projects = topProjects.slice(0, 5);
       const tableData = projects?.map((project: { organization: string; project: string; trees_planted: number }) => ({
         label: project.organization,
         valueText: project.trees_planted.toLocaleString("en-US"),
@@ -406,7 +449,7 @@ export const useDashboardData = (filters: any) => {
       }));
       setTopProjects({ tableData, maxValue: Math.max(...projects.map((p: any) => p.trees_planted)) * (7 / 6) });
     }
-  }, [topData]);
+  }, [topProjects]);
 
   useEffect(() => {
     if (filters.uuid) {
@@ -479,27 +522,21 @@ export const useDashboardData = (filters: any) => {
       setGeneralBboxParsed(undefined);
     }
   }, [generalBbox, centroidsDataProjects]);
-  const queryString = useMemo(() => {
-    const finalFilters = {
-      status: ["published"],
-      country: filters.country?.country_slug ? [filters.country.country_slug] : [],
-      organizationType: filters.organizations ? filters.organizations : [],
-      uuid: filters.uuid
-    };
-    return createQueryParams(finalFilters);
-  }, [filters.country?.country_slug, filters.organizations, filters.uuid]);
 
-  const { data: impactStoriesResponse, isLoading: isLoadingImpactStories } = useGetV2ImpactStories({
-    queryParams: queryString as any
+  const [, { data: impactStories, fetchFailure }] = useImpactStories({
+    status: "published",
+    country: filters.country?.country_slug,
+    organizationType: filters.organizations ? filters.organizations : [],
+    projectUuid: filters.uuid
   });
 
   const transformedStories = useMemo(
     () =>
-      impactStoriesResponse?.data?.map((story: any) => ({
+      impactStories?.map((story: any) => ({
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: story?.content ? JSON.parse(story.content) : "",
+        content: story?.content ?? "",
         category: story.category,
         thumbnail: story.thumbnail?.url ?? "",
         organization: {
@@ -517,7 +554,7 @@ export const useDashboardData = (filters: any) => {
         },
         status: story.status
       })) || [],
-    [impactStoriesResponse?.data]
+    [impactStories]
   );
 
   return {
@@ -529,7 +566,7 @@ export const useDashboardData = (filters: any) => {
     totalSectionHeader: totalSectionHeader,
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal: isLoadingTreeRestorationGoal ?? (filters.uuid && isLoadingProjectTreeSpecies),
+    isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
@@ -544,6 +581,6 @@ export const useDashboardData = (filters: any) => {
     projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories: !impactStories && !fetchFailure
   };
 };

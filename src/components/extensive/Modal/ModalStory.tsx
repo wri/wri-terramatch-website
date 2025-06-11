@@ -5,6 +5,7 @@ import { twMerge as tw } from "tailwind-merge";
 import Text from "@/components/elements/Text/Text";
 import { useModalContext } from "@/context/modal.provider";
 import SectionShare from "@/pages/dashboard/impact-story/components/SectionShare";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBase, ModalProps } from "./Modal";
@@ -74,7 +75,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
               className="modal-impact-story-content mt-6 leading-[normal] text-darkCustom"
               containHtml
             >
-              {data?.content}
+              {parseImpactStoryContent(data.content)}
             </Text>
           </div>
         </div>

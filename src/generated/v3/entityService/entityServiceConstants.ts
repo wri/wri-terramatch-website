@@ -1,6 +1,8 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
   ProjectPitchDto,
+  ImpactStoryLightDto,
+  ImpactStoryFullDto,
   ProjectTaskProcessingResponseDto,
   TaskLightDto,
   TaskFullDto,
@@ -31,6 +33,7 @@ import {
 
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
+  "impactStories",
   "processProjectTasks",
   "tasks",
   "projectReports",
@@ -54,6 +57,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
+  impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
   processProjectTasks: StoreResourceMap<ProjectTaskProcessingResponseDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
@@ -140,7 +144,7 @@ export const DemographicCollections = {
     "indirect-other"
   ] as const,
   RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
-  JOBS_PROJECT: ["full-time", "part-time"] as const,
+  JOBS_PROJECT: ["all", "full-time", "full-time-clt", "part-time", "part-time-clt"] as const,
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const

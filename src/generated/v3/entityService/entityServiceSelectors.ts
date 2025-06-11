@@ -5,6 +5,10 @@ import {
   ProjectPitchIndexVariables,
   ProjectPitchGetPathParams,
   ProjectPitchGetVariables,
+  ImpactStoryIndexQueryParams,
+  ImpactStoryIndexVariables,
+  ImpactStoryGetPathParams,
+  ImpactStoryGetVariables,
   ProcessProjectTasksPathParams,
   ProcessProjectTasksVariables,
   TaskIndexQueryParams,
@@ -65,6 +69,37 @@ export const projectPitchGetIsFetching = (variables: Omit<ProjectPitchGetVariabl
 export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariables, "body">) =>
   fetchFailedSelector<{}, ProjectPitchGetPathParams>({
     url: "/entities/v3/projectPitches/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryIndexIsFetching = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  isFetchingSelector<ImpactStoryIndexQueryParams, {}>({
+    url: "/entities/v3/impactStories",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryIndexFetchFailed = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  fetchFailedSelector<ImpactStoryIndexQueryParams, {}>({
+    url: "/entities/v3/impactStories",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryIndexIndexMeta = (resource: ResourceType, variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  indexMetaSelector<ImpactStoryIndexQueryParams, {}>({ url: "/entities/v3/impactStories", resource, ...variables });
+
+export const impactStoryGetIsFetching = (variables: Omit<ImpactStoryGetVariables, "body">) =>
+  isFetchingSelector<{}, ImpactStoryGetPathParams>({
+    url: "/entities/v3/impactStories/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryGetFetchFailed = (variables: Omit<ImpactStoryGetVariables, "body">) =>
+  fetchFailedSelector<{}, ImpactStoryGetPathParams>({
+    url: "/entities/v3/impactStories/{uuid}",
     method: "get",
     ...variables
   });

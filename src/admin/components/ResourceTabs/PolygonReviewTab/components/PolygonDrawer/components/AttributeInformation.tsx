@@ -251,6 +251,7 @@ const AttributeInformation = ({
         <Text variant="text-14-light">Plant Start Date</Text>
         <input
           type="date"
+          lang="en-GB"
           className="rounded-lg border-neutral-200 focus:border-primary focus:shadow-none focus:ring-transparent"
           placeholder="Input Plant Start Date"
           value={plantStartDate}

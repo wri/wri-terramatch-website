@@ -79,13 +79,16 @@ const MultiLineChart: React.FC<ChartProps> = ({ data = [], isAbsoluteData = fals
     const dataPoint: DataPoint = { time: timePoint };
 
     if (dataMap.has("Total")) {
-      dataPoint.Total = dataMap.get("Total")?.values[index].value;
+      const totalValues = dataMap.get("Total")?.values;
+      dataPoint.Total = totalValues?.[index]?.value;
     }
     if (dataMap.has("Enterprise")) {
-      dataPoint.Enterprise = dataMap.get("Enterprise")?.values[index].value;
+      const enterpriseValues = dataMap.get("Enterprise")?.values;
+      dataPoint.Enterprise = enterpriseValues?.[index]?.value;
     }
     if (dataMap.has("Non Profit")) {
-      dataPoint["Non Profit"] = dataMap.get("Non Profit")?.values[index].value;
+      const nonProfitValues = dataMap.get("Non Profit")?.values;
+      dataPoint["Non Profit"] = nonProfitValues?.[index]?.value;
     }
 
     return dataPoint;
