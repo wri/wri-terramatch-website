@@ -1,6 +1,8 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
   ProjectPitchDto,
+  ImpactStoryLightDto,
+  ImpactStoryFullDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -9,6 +11,10 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  ScientificNameDto,
+  EstablishmentsTreesDto,
+  TreeReportCountsDto,
+  BoundingBoxDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -21,19 +27,20 @@ import {
   MediaDto,
   DisturbanceDto,
   InvasiveDto,
-  StrataDto,
-  ScientificNameDto,
-  EstablishmentsTreesDto,
-  TreeReportCountsDto,
-  BoundingBoxDto
+  StrataDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
+  "impactStories",
   "tasks",
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "treeSpeciesScientificNames",
+  "establishmentTrees",
+  "treeReportCounts",
+  "boundingBoxes",
   "projects",
   "sites",
   "nurseries",
@@ -43,19 +50,20 @@ export const ENTITY_SERVICE_RESOURCES = [
   "media",
   "disturbances",
   "invasives",
-  "stratas",
-  "treeSpeciesScientificNames",
-  "establishmentTrees",
-  "treeReportCounts",
-  "boundingBoxes"
+  "stratas"
 ] as const;
 
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
+  impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
+  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
@@ -66,11 +74,12 @@ export type EntityServiceApiResources = {
   disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
-  treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
-  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
-  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
 };
+
+export const TreeEntityTypes = {
+  ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
+  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
+} as const;
 
 export const SupportedEntities = {
   ENTITY_TYPES: ["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const
@@ -132,13 +141,8 @@ export const DemographicCollections = {
     "indirect-other"
   ] as const,
   RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
-  JOBS_PROJECT: ["full-time", "part-time"] as const,
+  JOBS_PROJECT: ["all", "full-time", "full-time-clt", "part-time", "part-time-clt"] as const,
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
-} as const;
-
-export const TreeEntityTypes = {
-  ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
-  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;

@@ -1935,6 +1935,7 @@ export type GetV2AdminFormsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -3233,6 +3234,7 @@ export type GetV2FormsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -3359,6 +3361,7 @@ export type PatchV2AdminFormsUUIDPublishResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -3984,6 +3987,7 @@ export type PatchV2AdminFormsUUIDResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -8846,6 +8850,67 @@ export const useDeleteV2LeadershipsUUID = (
   );
 };
 
+export type PatchV2LeadershipsUUIDPathParams = {
+  uuid: string;
+};
+
+export type PatchV2LeadershipsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type PatchV2LeadershipsUUIDResponse = {
+  uuid?: string;
+  organisation_id?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+  collection?: string;
+};
+
+export type PatchV2LeadershipsUUIDRequestBody = {
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+};
+
+export type PatchV2LeadershipsUUIDVariables = {
+  body?: PatchV2LeadershipsUUIDRequestBody;
+  pathParams: PatchV2LeadershipsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPatchV2LeadershipsUUID = (variables: PatchV2LeadershipsUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PatchV2LeadershipsUUIDResponse,
+    PatchV2LeadershipsUUIDError,
+    PatchV2LeadershipsUUIDRequestBody,
+    {},
+    {},
+    PatchV2LeadershipsUUIDPathParams
+  >({ url: "/v2/leaderships/{uuid}", method: "patch", ...variables, signal });
+
+export const usePatchV2LeadershipsUUID = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PatchV2LeadershipsUUIDResponse,
+      PatchV2LeadershipsUUIDError,
+      PatchV2LeadershipsUUIDVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PatchV2LeadershipsUUIDResponse,
+    PatchV2LeadershipsUUIDError,
+    PatchV2LeadershipsUUIDVariables
+  >(
+    (variables: PatchV2LeadershipsUUIDVariables) => fetchPatchV2LeadershipsUUID({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostV2OwnershipStakeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2OwnershipStakeResponse = {
@@ -8910,9 +8975,11 @@ export type PatchV2OwnershipStakeUUIDResponse = {
 };
 
 export type PatchV2OwnershipStakeUUIDRequestBody = {
-  position?: string;
+  first_name?: string;
+  last_name?: string;
+  title?: string;
   gender?: string;
-  age?: number;
+  year_of_birth?: number;
   percent_ownership?: number;
 };
 
@@ -9689,6 +9756,7 @@ export type GetV2FormsSitesUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10233,6 +10301,7 @@ export type GetV2AdminFormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -10505,6 +10574,7 @@ export type GetV2AdminFormsSubmissionsResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10689,6 +10759,7 @@ export type GetV2FormsMySubmissionsResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10861,6 +10932,7 @@ export type GetV2FormsUUIDResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -10983,6 +11055,7 @@ export type PostV2AdminFundingProgrammeStageResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11121,6 +11194,7 @@ export type DeleteV2AdminFundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11257,6 +11331,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11413,6 +11488,7 @@ export type GetV2FundingProgrammeResponse = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -11610,6 +11686,7 @@ export type GetV2AdminFundingProgrammeResponse = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -11795,6 +11872,7 @@ export type PostV2AdminFundingProgrammeResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -11966,6 +12044,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12134,6 +12213,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12310,6 +12390,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12584,6 +12665,7 @@ export type GetV2FundingProgrammeStageResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12728,6 +12810,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDStatusResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -12868,6 +12951,7 @@ export type GetV2FundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13001,6 +13085,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13164,6 +13249,7 @@ export type PostV2FormsSubmissionsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13325,6 +13411,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13480,6 +13567,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13687,6 +13775,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13849,6 +13938,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -14460,6 +14550,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -15118,6 +15209,7 @@ export type GetV2ApplicationsUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -19122,49 +19214,6 @@ export const useGetV2SitesSitePolygon = <TData = GetV2SitesSitePolygonResponse>(
   );
 };
 
-export type GetV2SitesSiteBboxPathParams = {
-  /**
-   * The ID of the site
-   */
-  site: string;
-};
-
-export type GetV2SitesSiteBboxError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2SitesSiteBboxResponse = {
-  bbox?: number[];
-};
-
-export type GetV2SitesSiteBboxVariables = {
-  pathParams: GetV2SitesSiteBboxPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2SitesSiteBbox = (variables: GetV2SitesSiteBboxVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2SitesSiteBboxResponse, GetV2SitesSiteBboxError, undefined, {}, {}, GetV2SitesSiteBboxPathParams>({
-    url: "/v2/sites/{site}/bbox",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2SitesSiteBbox = <TData = GetV2SitesSiteBboxResponse>(
-  variables: GetV2SitesSiteBboxVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2SitesSiteBboxResponse, GetV2SitesSiteBboxError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2SitesSiteBboxResponse, GetV2SitesSiteBboxError, TData>(
-    queryKeyFn({ path: "/v2/sites/{site}/bbox", operationId: "getV2SitesSiteBbox", variables }),
-    ({ signal }) => fetchGetV2SitesSiteBbox({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2TerrafundSitePolygonUuidSiteUuidPathParams = {
   /**
    * The UUID of the polygon related
@@ -19232,54 +19281,6 @@ export const usePostV2TerrafundSitePolygonUuidSiteUuid = (
     (variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables) =>
       fetchPostV2TerrafundSitePolygonUuidSiteUuid({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2TerrafundPolygonBboxUuidPathParams = {
-  /**
-   * The UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2TerrafundPolygonBboxUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TerrafundPolygonBboxUuidResponse = {
-  bbox?: number[];
-};
-
-export type GetV2TerrafundPolygonBboxUuidVariables = {
-  pathParams: GetV2TerrafundPolygonBboxUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TerrafundPolygonBboxUuid = (
-  variables: GetV2TerrafundPolygonBboxUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TerrafundPolygonBboxUuidResponse,
-    GetV2TerrafundPolygonBboxUuidError,
-    undefined,
-    {},
-    {},
-    GetV2TerrafundPolygonBboxUuidPathParams
-  >({ url: "/v2/terrafund/polygon/bbox/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2TerrafundPolygonBboxUuid = <TData = GetV2TerrafundPolygonBboxUuidResponse>(
-  variables: GetV2TerrafundPolygonBboxUuidVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TerrafundPolygonBboxUuidResponse, GetV2TerrafundPolygonBboxUuidError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TerrafundPolygonBboxUuidResponse, GetV2TerrafundPolygonBboxUuidError, TData>(
-    queryKeyFn({ path: "/v2/terrafund/polygon/bbox/{uuid}", operationId: "getV2TerrafundPolygonBboxUuid", variables }),
-    ({ signal }) => fetchGetV2TerrafundPolygonBboxUuid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -20792,92 +20793,6 @@ export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardResto
   );
 };
 
-export type GetV2DashboardTreeRestorationGoalQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type GetV2DashboardTreeRestorationGoalVariables = {
-  queryParams?: GetV2DashboardTreeRestorationGoalQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardTreeRestorationGoal = (
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTreeRestorationGoalResponse,
-    GetV2DashboardTreeRestorationGoalError,
-    undefined,
-    {},
-    GetV2DashboardTreeRestorationGoalQueryParams,
-    {}
-  >({ url: "/v2/dashboard/tree-restoration-goal", method: "get", ...variables, signal });
-
-export const useGetV2DashboardTreeRestorationGoal = <TData = GetV2DashboardTreeRestorationGoalResponse>(
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardTreeRestorationGoalResponse,
-      GetV2DashboardTreeRestorationGoalError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTreeRestorationGoalResponse, GetV2DashboardTreeRestorationGoalError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/tree-restoration-goal",
-      operationId: "getV2DashboardTreeRestorationGoal",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardTreeRestorationGoal({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
@@ -21051,259 +20966,6 @@ export const useGetV2DashboardGetPolygonsStatuses = <TData = GetV2DashboardGetPo
       variables
     }),
     ({ signal }) => fetchGetV2DashboardGetPolygonsStatuses({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardGetBboxProjectQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter: string;
-};
-
-export type GetV2DashboardGetBboxProjectError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetBboxProjectResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardGetBboxProjectVariables = {
-  queryParams: GetV2DashboardGetBboxProjectQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardGetBboxProject = (
-  variables: GetV2DashboardGetBboxProjectVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardGetBboxProjectResponse,
-    GetV2DashboardGetBboxProjectError,
-    undefined,
-    {},
-    GetV2DashboardGetBboxProjectQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-bbox-project", method: "get", ...variables, signal });
-
-export const useGetV2DashboardGetBboxProject = <TData = GetV2DashboardGetBboxProjectResponse>(
-  variables: GetV2DashboardGetBboxProjectVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetBboxProjectResponse, GetV2DashboardGetBboxProjectError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/get-bbox-project", operationId: "getV2DashboardGetBboxProject", variables }),
-    ({ signal }) => fetchGetV2DashboardGetBboxProject({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardBboxProjectQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter: string;
-};
-
-export type GetV2DashboardBboxProjectError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardBboxProjectResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardBboxProjectVariables = {
-  queryParams: GetV2DashboardBboxProjectQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardBboxProject = (variables: GetV2DashboardBboxProjectVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardBboxProjectResponse,
-    GetV2DashboardBboxProjectError,
-    undefined,
-    {},
-    GetV2DashboardBboxProjectQueryParams,
-    {}
-  >({ url: "/v2/dashboard/bbox/project", method: "get", ...variables, signal });
-
-export const useGetV2DashboardBboxProject = <TData = GetV2DashboardBboxProjectResponse>(
-  variables: GetV2DashboardBboxProjectVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardBboxProjectResponse, GetV2DashboardBboxProjectError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/bbox/project", operationId: "getV2DashboardBboxProject", variables }),
-    ({ signal }) => fetchGetV2DashboardBboxProject({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardBboxLandscapeQueryParams = {
-  /**
-   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
-   */
-  landscapes: string;
-};
-
-export type GetV2DashboardBboxLandscapeError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardBboxLandscapeResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardBboxLandscapeVariables = {
-  queryParams: GetV2DashboardBboxLandscapeQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardBboxLandscape = (
-  variables: GetV2DashboardBboxLandscapeVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardBboxLandscapeResponse,
-    GetV2DashboardBboxLandscapeError,
-    undefined,
-    {},
-    GetV2DashboardBboxLandscapeQueryParams,
-    {}
-  >({ url: "/v2/dashboard/bbox/landscape", method: "get", ...variables, signal });
-
-export const useGetV2DashboardBboxLandscape = <TData = GetV2DashboardBboxLandscapeResponse>(
-  variables: GetV2DashboardBboxLandscapeVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardBboxLandscapeResponse, GetV2DashboardBboxLandscapeError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/bbox/landscape", operationId: "getV2DashboardBboxLandscape", variables }),
-    ({ signal }) => fetchGetV2DashboardBboxLandscape({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardBboxCountryLandscapeQueryParams = {
-  /**
-   * Multiple landscapes can be sent either as comma-separated values (?landscapes=Ghana Cocoa Belt,etc)
-   */
-  landscapes: string;
-  /**
-   * Country iso name
-   */
-  country?: string;
-};
-
-export type GetV2DashboardBboxCountryLandscapeError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardBboxCountryLandscapeResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardBboxCountryLandscapeVariables = {
-  queryParams: GetV2DashboardBboxCountryLandscapeQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardBboxCountryLandscape = (
-  variables: GetV2DashboardBboxCountryLandscapeVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardBboxCountryLandscapeResponse,
-    GetV2DashboardBboxCountryLandscapeError,
-    undefined,
-    {},
-    GetV2DashboardBboxCountryLandscapeQueryParams,
-    {}
-  >({ url: "/v2/dashboard/bbox/country-landscape", method: "get", ...variables, signal });
-
-export const useGetV2DashboardBboxCountryLandscape = <TData = GetV2DashboardBboxCountryLandscapeResponse>(
-  variables: GetV2DashboardBboxCountryLandscapeVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardBboxCountryLandscapeResponse,
-      GetV2DashboardBboxCountryLandscapeError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardBboxCountryLandscapeResponse,
-    GetV2DashboardBboxCountryLandscapeError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/bbox/country-landscape",
-      operationId: "getV2DashboardBboxCountryLandscape",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardBboxCountryLandscape({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardCountryCountryPathParams = {
-  /**
-   * ISO code of the country
-   */
-  country: string;
-};
-
-export type GetV2DashboardCountryCountryError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardCountryCountryResponse = {
-  bbox?: number[];
-};
-
-export type GetV2DashboardCountryCountryVariables = {
-  pathParams: GetV2DashboardCountryCountryPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardCountryCountry = (
-  variables: GetV2DashboardCountryCountryVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardCountryCountryResponse,
-    GetV2DashboardCountryCountryError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardCountryCountryPathParams
-  >({ url: "/v2/dashboard/country/{country}", method: "get", ...variables, signal });
-
-export const useGetV2DashboardCountryCountry = <TData = GetV2DashboardCountryCountryResponse>(
-  variables: GetV2DashboardCountryCountryVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardCountryCountryResponse, GetV2DashboardCountryCountryError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardCountryCountryResponse, GetV2DashboardCountryCountryError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/country/{country}", operationId: "getV2DashboardCountryCountry", variables }),
-    ({ signal }) => fetchGetV2DashboardCountryCountry({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -21847,75 +21509,6 @@ export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResp
   return reactQuery.useQuery<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>(
     queryKeyFn({ path: "/v2/dashboard/frameworks", operationId: "getV2DashboardFrameworks", variables }),
     ({ signal }) => fetchGetV2DashboardFrameworks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardTopTreesPlantedQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTopTreesPlantedResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
-  };
-};
-
-export type GetV2DashboardTopTreesPlantedVariables = {
-  queryParams?: GetV2DashboardTopTreesPlantedQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const fetchGetV2DashboardTopTreesPlanted = (
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTopTreesPlantedResponse,
-    GetV2DashboardTopTreesPlantedError,
-    undefined,
-    {},
-    GetV2DashboardTopTreesPlantedQueryParams,
-    {}
-  >({ url: "/v2/dashboard/top-trees-planted", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesPlantedResponse>(
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
-    ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -22588,10 +22181,6 @@ export type GetV2TypeEntityResponse = {
     version_name?: string;
     validation_status?: boolean;
   }[];
-  /**
-   * Bounding box of the entity
-   */
-  bbox?: number[];
 };
 
 export type GetV2TypeEntityVariables = {
@@ -25133,16 +24722,6 @@ export type QueryOperation =
       variables: GetV2SitesSitePolygonVariables;
     }
   | {
-      path: "/v2/sites/{site}/bbox";
-      operationId: "getV2SitesSiteBbox";
-      variables: GetV2SitesSiteBboxVariables;
-    }
-  | {
-      path: "/v2/terrafund/polygon/bbox/{uuid}";
-      operationId: "getV2TerrafundPolygonBboxUuid";
-      variables: GetV2TerrafundPolygonBboxUuidVariables;
-    }
-  | {
       path: "/v2/terrafund/geojson/complete";
       operationId: "getV2TerrafundGeojsonComplete";
       variables: GetV2TerrafundGeojsonCompleteVariables;
@@ -25173,11 +24752,6 @@ export type QueryOperation =
       variables: GetV2DashboardRestorationStrategyVariables;
     }
   | {
-      path: "/v2/dashboard/tree-restoration-goal";
-      operationId: "getV2DashboardTreeRestorationGoal";
-      variables: GetV2DashboardTreeRestorationGoalVariables;
-    }
-  | {
       path: "/v2/dashboard/project-list-export";
       operationId: "getV2DashboardProjectListExport";
       variables: GetV2DashboardProjectListExportVariables;
@@ -25191,31 +24765,6 @@ export type QueryOperation =
       path: "/v2/dashboard/get-polygons/statuses";
       operationId: "getV2DashboardGetPolygonsStatuses";
       variables: GetV2DashboardGetPolygonsStatusesVariables;
-    }
-  | {
-      path: "/v2/dashboard/get-bbox-project";
-      operationId: "getV2DashboardGetBboxProject";
-      variables: GetV2DashboardGetBboxProjectVariables;
-    }
-  | {
-      path: "/v2/dashboard/bbox/project";
-      operationId: "getV2DashboardBboxProject";
-      variables: GetV2DashboardBboxProjectVariables;
-    }
-  | {
-      path: "/v2/dashboard/bbox/landscape";
-      operationId: "getV2DashboardBboxLandscape";
-      variables: GetV2DashboardBboxLandscapeVariables;
-    }
-  | {
-      path: "/v2/dashboard/bbox/country-landscape";
-      operationId: "getV2DashboardBboxCountryLandscape";
-      variables: GetV2DashboardBboxCountryLandscapeVariables;
-    }
-  | {
-      path: "/v2/dashboard/country/{country}";
-      operationId: "getV2DashboardCountryCountry";
-      variables: GetV2DashboardCountryCountryVariables;
     }
   | {
       path: "/v2/dashboard/polygon-data/{uuid}";
@@ -25251,11 +24800,6 @@ export type QueryOperation =
       path: "/v2/dashboard/frameworks";
       operationId: "getV2DashboardFrameworks";
       variables: GetV2DashboardFrameworksVariables;
-    }
-  | {
-      path: "/v2/dashboard/top-trees-planted";
-      operationId: "getV2DashboardTopTreesPlanted";
-      variables: GetV2DashboardTopTreesPlantedVariables;
     }
   | {
       path: "/v2/dashboard/indicator/hectares-restoration";

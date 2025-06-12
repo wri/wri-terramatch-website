@@ -172,7 +172,8 @@ const Dashboard = () => {
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories,
+    lastUpdatedAt
   } = useDashboardData(filters);
 
   const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
@@ -194,8 +195,9 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.lastUpdatedAt ?? "");
-  }, [setLastUpdatedAt, totalSectionHeader]);
+    setLastUpdatedAt?.(lastUpdatedAt ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {
@@ -416,6 +418,10 @@ const Dashboard = () => {
       id: gadmCountry.id
     };
   }, [projectFullDto?.country, countryChoices]);
+
+  const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
+    return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
+  };
 
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
@@ -718,7 +724,7 @@ const Dashboard = () => {
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
-        bbox={filters.uuid ? projectBbox : currentBbox}
+        bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
         projectCounts={projectCounts}
         transformedStories={transformedStories}
         isLoading={isLoadingImpactStories}

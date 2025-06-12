@@ -68,12 +68,16 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
       jobs: {
         all: t("All"),
         "full-time": t("Full-time"),
-        "part-time": t("Part-time")
+        "full-time-clt": t("Full-time CLT"),
+        "part-time": t("Part-time"),
+        "part-time-clt": t("Part-time CLT")
       },
       employees: {
         all: t("All"),
         "full-time": t("Full-time"),
+        "full-time-clt": t("Full-time CLT"),
         "part-time": t("Part-time"),
+        "part-time-clt": t("Part-time CLT"),
         temp: t("Temp")
       },
       volunteers: {
@@ -87,6 +91,9 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
       },
       indirectBeneficiaries: {
         indirect: t("Indirect Beneficiaries")
+      },
+      associates: {
+        all: t("All Associates")
       }
     }),
     [t]

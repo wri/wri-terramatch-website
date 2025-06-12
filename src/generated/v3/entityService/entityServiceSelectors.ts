@@ -5,12 +5,24 @@ import {
   ProjectPitchIndexVariables,
   ProjectPitchGetPathParams,
   ProjectPitchGetVariables,
+  ImpactStoryIndexQueryParams,
+  ImpactStoryIndexVariables,
+  ImpactStoryGetPathParams,
+  ImpactStoryGetVariables,
   TaskIndexQueryParams,
   TaskIndexVariables,
   TaskGetPathParams,
   TaskGetVariables,
   TaskUpdatePathParams,
   TaskUpdateVariables,
+  TreeScientificNamesSearchQueryParams,
+  TreeScientificNamesSearchVariables,
+  EstablishmentTreesFindPathParams,
+  EstablishmentTreesFindVariables,
+  TreeReportCountsFindPathParams,
+  TreeReportCountsFindVariables,
+  BoundingBoxGetQueryParams,
+  BoundingBoxGetVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -22,15 +34,7 @@ import {
   EntityUpdateVariables,
   EntityAssociationIndexPathParams,
   EntityAssociationIndexQueryParams,
-  EntityAssociationIndexVariables,
-  TreeScientificNamesSearchQueryParams,
-  TreeScientificNamesSearchVariables,
-  EstablishmentTreesFindPathParams,
-  EstablishmentTreesFindVariables,
-  TreeReportCountsFindPathParams,
-  TreeReportCountsFindVariables,
-  BoundingBoxGetQueryParams,
-  BoundingBoxGetVariables
+  EntityAssociationIndexVariables
 } from "./entityServiceComponents";
 
 export const projectPitchIndexIsFetching = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
@@ -67,6 +71,37 @@ export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariab
     ...variables
   });
 
+export const impactStoryIndexIsFetching = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  isFetchingSelector<ImpactStoryIndexQueryParams, {}>({
+    url: "/entities/v3/impactStories",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryIndexFetchFailed = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  fetchFailedSelector<ImpactStoryIndexQueryParams, {}>({
+    url: "/entities/v3/impactStories",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryIndexIndexMeta = (resource: ResourceType, variables: Omit<ImpactStoryIndexVariables, "body">) =>
+  indexMetaSelector<ImpactStoryIndexQueryParams, {}>({ url: "/entities/v3/impactStories", resource, ...variables });
+
+export const impactStoryGetIsFetching = (variables: Omit<ImpactStoryGetVariables, "body">) =>
+  isFetchingSelector<{}, ImpactStoryGetPathParams>({
+    url: "/entities/v3/impactStories/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const impactStoryGetFetchFailed = (variables: Omit<ImpactStoryGetVariables, "body">) =>
+  fetchFailedSelector<{}, ImpactStoryGetPathParams>({
+    url: "/entities/v3/impactStories/{uuid}",
+    method: "get",
+    ...variables
+  });
+
 export const taskIndexIsFetching = (variables: Omit<TaskIndexVariables, "body">) =>
   isFetchingSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
 
@@ -87,6 +122,64 @@ export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body"
 
 export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
   fetchFailedSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
+
+export const treeScientificNamesSearchIsFetching = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
+  isFetchingSelector<TreeScientificNamesSearchQueryParams, {}>({
+    url: "/trees/v3/scientificNames",
+    method: "get",
+    ...variables
+  });
+
+export const treeScientificNamesSearchFetchFailed = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
+  fetchFailedSelector<TreeScientificNamesSearchQueryParams, {}>({
+    url: "/trees/v3/scientificNames",
+    method: "get",
+    ...variables
+  });
+
+export const treeScientificNamesSearchIndexMeta = (
+  resource: ResourceType,
+  variables: Omit<TreeScientificNamesSearchVariables, "body">
+) =>
+  indexMetaSelector<TreeScientificNamesSearchQueryParams, {}>({
+    url: "/trees/v3/scientificNames",
+    resource,
+    ...variables
+  });
+
+export const establishmentTreesFindIsFetching = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
+  isFetchingSelector<{}, EstablishmentTreesFindPathParams>({
+    url: "/trees/v3/establishments/{entity}/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const establishmentTreesFindFetchFailed = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
+  fetchFailedSelector<{}, EstablishmentTreesFindPathParams>({
+    url: "/trees/v3/establishments/{entity}/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const treeReportCountsFindIsFetching = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
+  isFetchingSelector<{}, TreeReportCountsFindPathParams>({
+    url: "/trees/v3/reportCounts/{entity}/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
+  fetchFailedSelector<{}, TreeReportCountsFindPathParams>({
+    url: "/trees/v3/reportCounts/{entity}/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
+
+export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({
@@ -166,61 +259,3 @@ export const entityAssociationIndexIndexMeta = (
     resource,
     ...variables
   });
-
-export const treeScientificNamesSearchIsFetching = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
-  isFetchingSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
-    method: "get",
-    ...variables
-  });
-
-export const treeScientificNamesSearchFetchFailed = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
-  fetchFailedSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
-    method: "get",
-    ...variables
-  });
-
-export const treeScientificNamesSearchIndexMeta = (
-  resource: ResourceType,
-  variables: Omit<TreeScientificNamesSearchVariables, "body">
-) =>
-  indexMetaSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
-    resource,
-    ...variables
-  });
-
-export const establishmentTreesFindIsFetching = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
-  isFetchingSelector<{}, EstablishmentTreesFindPathParams>({
-    url: "/trees/v3/establishments/{entity}/{uuid}",
-    method: "get",
-    ...variables
-  });
-
-export const establishmentTreesFindFetchFailed = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
-  fetchFailedSelector<{}, EstablishmentTreesFindPathParams>({
-    url: "/trees/v3/establishments/{entity}/{uuid}",
-    method: "get",
-    ...variables
-  });
-
-export const treeReportCountsFindIsFetching = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
-  isFetchingSelector<{}, TreeReportCountsFindPathParams>({
-    url: "/trees/v3/reportCounts/{entity}/{uuid}",
-    method: "get",
-    ...variables
-  });
-
-export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
-  fetchFailedSelector<{}, TreeReportCountsFindPathParams>({
-    url: "/trees/v3/reportCounts/{entity}/{uuid}",
-    method: "get",
-    ...variables
-  });
-
-export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3", method: "get", ...variables });
-
-export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3", method: "get", ...variables });

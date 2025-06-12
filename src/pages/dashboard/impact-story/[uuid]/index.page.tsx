@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2ImpactStoriesId } from "@/generated/apiComponents";
+import { useImpactStory } from "@/connections/ImpactStory";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import SectionShare from "../components/SectionShare";
 
@@ -16,42 +17,9 @@ const ImpactStoryLanding = () => {
   const uuid = router.query.uuid as string;
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const {
-    data: storyData,
-    isLoading,
-    error
-  } = useGetV2ImpactStoriesId({
-    pathParams: {
-      id: uuid
-    }
-  });
+  const [isLoaded, { impactStory, requestFailed }] = useImpactStory({ uuid });
 
-  const data: any = storyData;
-
-  const transformedData = {
-    uuid: data?.data?.uuid,
-    title: data?.data?.title,
-    date: data?.data?.date,
-    content: data?.data?.content ? JSON.parse(data?.data?.content) : [],
-    category: data?.data?.category ? data?.data?.category : [],
-    thumbnail:
-      data?.data?.thumbnail instanceof File ? URL.createObjectURL(data?.data?.thumbnail) : data?.data?.thumbnail || "",
-    organization: {
-      name: data?.data?.organization?.name,
-      category: data?.data?.category ? data?.data?.category : [],
-      country:
-        data?.data?.organization?.countries?.length > 0
-          ? data?.data?.organization.countries.map((c: any) => c.label).join(", ")
-          : "No country",
-      facebook_url: data?.data?.organization?.facebook_url,
-      instagram_url: data?.data?.organization?.instagram_url,
-      linkedin_url: data?.data?.organization?.linkedin_url,
-      twitter_url: data?.data?.organization?.twitter_url
-    },
-    status: data?.data?.status
-  };
-
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Text variant="text-16">{t("Loading...")}</Text>
@@ -59,13 +27,38 @@ const ImpactStoryLanding = () => {
     );
   }
 
-  if (error || !transformedData) {
+  if (requestFailed || !impactStory) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Text variant="text-16">{t("Failed to load impact story")}</Text>
       </div>
     );
   }
+
+  const transformedData = {
+    uuid: impactStory.uuid ?? "",
+    title: impactStory.title ?? "",
+    date: impactStory.date ?? "",
+    content: impactStory.content ? parseImpactStoryContent(impactStory.content) : [],
+    category: impactStory.category ?? [],
+    thumbnail:
+      impactStory?.thumbnail instanceof File
+        ? URL.createObjectURL(impactStory?.thumbnail)
+        : impactStory?.thumbnail ?? "",
+    organization: {
+      name: impactStory.organization?.name ?? "",
+      category: impactStory.category ?? [],
+      country:
+        impactStory.organization?.countries && impactStory.organization.countries.length > 0
+          ? impactStory.organization.countries.map((c: any) => c.label).join(", ")
+          : "No country",
+      facebook_url: impactStory.organization?.facebook_url ?? "",
+      instagram_url: impactStory.organization?.instagram_url ?? "",
+      linkedin_url: impactStory.organization?.linkedin_url ?? "",
+      twitter_url: impactStory.organization?.twitter_url ?? ""
+    },
+    status: impactStory.status ?? ""
+  };
 
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden bg-white bg-impactStoryBg bg-cover bg-center bg-no-repeat text-darkCustom">

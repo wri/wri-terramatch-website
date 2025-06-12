@@ -13,11 +13,11 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
 
   const initialValues = useMemo(
     () => ({
-      content: currentData?.content ? JSON.parse(currentData.content) : "",
+      content: currentData?.content ?? "",
       title: currentData?.title || "",
       date: currentData?.date || "",
       thumbnail: currentData?.thumbnail,
-      categories: currentData?.category ? currentData.category : "",
+      categories: currentData?.category ? currentData.category : [],
       orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
     }),
     [

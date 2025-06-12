@@ -24,7 +24,7 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const queryParams = useMemo(
     () => ({
       "page[number]": 1,
-      "page[size]": 1000,
+      "page[size]": 100,
       fileType: "documents"
     }),
     []

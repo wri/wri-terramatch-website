@@ -23,12 +23,13 @@ import {
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
@@ -62,9 +63,10 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const entityPolygonData = getEntityPolygonData(record, type, entity);
   let bbox: any;
   if (type === "sites") {
-    bbox = getSiteBbox(record);
+    const [, { bbox: siteBbox }] = useBoundingBox({ siteUuid: record?.uuid });
+    bbox = siteBbox;
   } else {
-    bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
+    bbox = entityPolygonData?.bbox;
   }
   const mapFunctions = useMap();
 
@@ -129,7 +131,8 @@ export const getFormEntries = (
       case FieldType.AllBeneficiariesTable:
       case FieldType.TrainingBeneficiariesTable:
       case FieldType.IndirectBeneficiariesTable:
-      case FieldType.EmployeesTable: {
+      case FieldType.EmployeesTable:
+      case FieldType.AssociatesTable: {
         const entries = (values[f.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
           title: f.label,
@@ -370,7 +373,9 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
         uuid: uuid ?? ""
       }
     });
-    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
+    const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
+    const [, { bbox }] = useBoundingBox({ polygonUuid });
+    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid], bbox } : null;
   }
 
   return null;

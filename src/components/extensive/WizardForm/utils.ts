@@ -166,6 +166,8 @@ export const getAnswer = (field: FormField, values: any): Answer => {
 
       return value;
     }
+    case FieldType.Boolean:
+      return value;
 
     default:
       return undefined;
@@ -253,6 +255,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
     case FieldType.TrainingBeneficiariesTable:
     case FieldType.IndirectBeneficiariesTable:
     case FieldType.EmployeesTable:
+    case FieldType.AssociatesTable:
     case FieldType.SeedingsDataTable: {
       let headers: AccessorKeyColumnDef<any>[] = [];
 

@@ -32,6 +32,7 @@ export type SitePolygonIndexConnectionProps = {
     | "earlyTreeVerification"
     | "fieldMonitoring"
     | "msuCarbon";
+  enabled?: boolean;
 };
 
 const ENTITY_QUERY_KEYS: Dictionary<keyof SitePolygonsIndexQueryParams> = {
@@ -67,8 +68,10 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
   return { queryParams };
 };
 
-const indexIsLoaded = ({ sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonLightDto>) =>
-  sitePolygons != null || fetchFailure != null;
+const indexIsLoaded = (
+  { sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonLightDto>,
+  { enabled }: SitePolygonIndexConnectionProps
+) => enabled === false || sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
   `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${props.search}`;
@@ -78,7 +81,7 @@ const sitePolygonsConnection: Connection<
   SitePolygonIndexConnectionProps
 > = {
   load: (connection, props) => {
-    if (!indexIsLoaded(connection)) sitePolygonsIndex(sitePolygonQueryParams(props));
+    if (!indexIsLoaded(connection, props)) sitePolygonsIndex(sitePolygonQueryParams(props));
   },
 
   isLoaded: indexIsLoaded,

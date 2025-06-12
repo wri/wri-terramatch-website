@@ -720,6 +720,7 @@ export type FundingProgramme = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -1045,6 +1046,7 @@ export type FormRead = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -2808,6 +2810,15 @@ export type V2LeadershipsCreate = {
   nationality?: string;
 };
 
+export type V2LeadershipsUpdate = {
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  gender?: string;
+  age?: number;
+  nationality?: string;
+};
+
 export type V2LeadershipsRead = {
   uuid?: string;
   organisation_id?: string;
@@ -2836,9 +2847,11 @@ export type V2OwnershipStakeRead = {
 };
 
 export type V2OwnershipStakeUpdate = {
-  position?: string;
+  first_name?: string;
+  last_name?: string;
+  title?: string;
   gender?: string;
-  age?: number;
+  year_of_birth?: number;
   percent_ownership?: number;
 };
 
@@ -4258,6 +4271,7 @@ export type ProjectFullRead = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -4693,6 +4707,7 @@ export type ProjectWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5071,6 +5086,7 @@ export type SiteWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5417,6 +5433,7 @@ export type FormSubmissionRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5549,6 +5566,7 @@ export type FormPaginated = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5656,6 +5674,7 @@ export type StagePaginated = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -5773,6 +5792,7 @@ export type StageRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5944,6 +5964,7 @@ export type ApplicationRead = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -11257,45 +11278,6 @@ export type DashboardRestorationStrategyResponse = {
   };
 };
 
-export type DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type DashboardTreesUnderRestorationActual = {
-  /**
-   * @format date
-   */
-  dueDate?: string;
-  treeSpeciesAmount?: number;
-  treeSpeciesPercentage?: number;
-};
-
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
   /**
@@ -11313,18 +11295,6 @@ export type DashboardGetPolygonStatusResponse = {
     lat?: number;
     description?: void;
   }[];
-};
-
-export type DashboardBBOXProject = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXLandscape = {
-  bbox?: number[];
-};
-
-export type DashboardBBOXCountry = {
-  bbox?: number[];
 };
 
 export type DashboardPolygonData = {
@@ -11469,21 +11439,6 @@ export type DashboardProjectProfileData = {
   };
 };
 
-export type DashboardTopProjectsResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
-  };
-};
-
 export type DashboardTopPlantedTree = {
   organization?: string;
   project?: string;
@@ -11598,10 +11553,6 @@ export type EntityTypeResponse = {
     version_name?: string;
     validation_status?: boolean;
   }[];
-  /**
-   * Bounding box of the entity
-   */
-  bbox?: number[];
 };
 
 export type EntityPolygonResponse = {
