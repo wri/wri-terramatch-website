@@ -187,46 +187,6 @@ export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: Ab
     signal
   });
 
-export type ProcessProjectTasksPathParams = {
-  uuid: string;
-};
-
-export type ProcessProjectTasksError = Fetcher.ErrorWrapper<undefined>;
-
-export type ProcessProjectTasksResponse = {
-  meta?: {
-    /**
-     * @example processProjectTasks
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example processProjectTasks
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ProjectTaskProcessingResponseDto;
-  };
-};
-
-export type ProcessProjectTasksVariables = {
-  pathParams: ProcessProjectTasksPathParams;
-};
-
-export const processProjectTasks = (variables: ProcessProjectTasksVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    ProcessProjectTasksResponse,
-    ProcessProjectTasksError,
-    undefined,
-    {},
-    {},
-    ProcessProjectTasksPathParams
-  >({ url: "/entities/v3/projectTaskProcessing/{uuid}", method: "get", ...variables, signal });
-
 export type ImpactStoryIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -392,6 +352,46 @@ export const impactStoryGet = (variables: ImpactStoryGetVariables, signal?: Abor
     ...variables,
     signal
   });
+
+export type ProcessbulkApprovalPathParams = {
+  uuid: string;
+};
+
+export type ProcessbulkApprovalError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProcessbulkApprovalResponse = {
+  meta?: {
+    /**
+     * @example processBulkApproval
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example processBulkApproval
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProcessBulkApprovalDto;
+  };
+};
+
+export type ProcessbulkApprovalVariables = {
+  pathParams: ProcessbulkApprovalPathParams;
+};
+
+export const processbulkApproval = (variables: ProcessbulkApprovalVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProcessbulkApprovalResponse,
+    ProcessbulkApprovalError,
+    undefined,
+    {},
+    {},
+    ProcessbulkApprovalPathParams
+  >({ url: "/entities/v3/projectTaskProcessing/{uuid}", method: "get", ...variables, signal });
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -1955,7 +1955,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
-  projectTaskProcessing: { processProjectTasks },
+  processBulkApproval: { processbulkApproval },
   tasks: { taskIndex, taskGet, taskUpdate },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },

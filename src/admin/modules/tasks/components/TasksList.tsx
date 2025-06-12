@@ -24,7 +24,7 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useFullProject } from "@/connections/Entity";
-import { useProjectTaskProcessing } from "@/connections/ProjectTaskProcessing";
+import { useProcessBulkApproval } from "@/connections/ProcessBulkApproval";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -88,7 +88,7 @@ export const TasksList: FC = () => {
     reference: modules.project.ResourceName,
     id: currentProjectUuid as string
   });
-  const [, { data: projectTaskData }] = useProjectTaskProcessing({ uuid: currentProjectUuid as string });
+  const [, { data: projectTaskData }] = useProcessBulkApproval({ uuid: currentProjectUuid as string });
   const [, { update: updateProject, entityIsUpdating }] = useFullProject({ uuid: currentProjectUuid as string });
 
   useEffect(() => {
@@ -195,12 +195,12 @@ export const TasksList: FC = () => {
               .map(report => report.id);
 
             await updateProject({
-              siteReportNothingToReportStatus: siteReportUuids.length > 0 ? siteReportUuids : null,
-              nurseryReportNothingToReportStatus: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
+              siteReportNothingToReportUuid: siteReportUuids.length > 0 ? siteReportUuids : null,
+              nurseryReportNothingToReportUuid: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
               feedback: text ?? ""
             });
 
-            ApiSlice.pruneCache("processProjectTasks", [currentProjectUuid]);
+            ApiSlice.pruneCache("processBulkApproval", [currentProjectUuid]);
           } catch (error) {
             openNotification(
               "error",
@@ -241,8 +241,8 @@ export const TasksList: FC = () => {
             </div>
             <Button
               onClick={() => {
-                if (projectTaskData?.reports) {
-                  const reportsData = projectTaskData.reports.map(report => ({
+                if (projectTaskData?.reportsBulkApproval) {
+                  const reportsData = projectTaskData.reportsBulkApproval.map(report => ({
                     id: report.uuid,
                     name: report.name,
                     type: report.type === "nurseryReport" ? "Nursery" : "Site",

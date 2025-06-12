@@ -171,7 +171,7 @@ export type ImpactStoryFullDto = {
   content: string | null;
 };
 
-export type ReportDto = {
+export type ReportsBulkApproval = {
   /**
    * Unique identifier of the report
    */
@@ -193,26 +193,22 @@ export type ReportDto = {
   /**
    * UUID of the task this report belongs to
    */
-  taskUuid: string;
+  status: string;
   /**
    * Whether the report has nothing to report
    */
   nothingToReport: boolean;
 };
 
-export type ProjectTaskProcessingResponseDto = {
+export type ProcessBulkApprovalDto = {
   /**
    * UUID of the project
    */
   projectUuid: string;
   /**
-   * Name of the project
-   */
-  projectName: string;
-  /**
    * Array of reports associated with the project's tasks
    */
-  reports: ReportDto[];
+  reportsBulkApproval: ReportsBulkApproval[];
 };
 
 export type TaskLightDto = {
@@ -1294,13 +1290,13 @@ export type ProjectUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
-   * Virtual property to update the status of specific site reports by their UUIDs
+   * UUIDs of site reports to mark as 'Nothing to report'
    */
-  siteReportNothingToReportStatus: string[] | null;
+  siteReportNothingToReportUuid: string[] | null;
   /**
-   * Virtual property to update the status of specific nursery reports by their UUIDs
+   * UUIDs of nusery reports to mark as 'Nothing to report'
    */
-  nurseryReportNothingToReportStatus: string[] | null;
+  nurseryReportNothingToReportUuid: string[] | null;
   /**
    * Update the isTest flag.
    */
@@ -1330,13 +1326,13 @@ export type SiteUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
-   * Virtual property to update the status of specific site reports by their UUIDs
+   * UUIDs of site reports to mark as 'Nothing to report'
    */
-  siteReportNothingToReportStatus: string[] | null;
+  siteReportNothingToReportUuid: string[] | null;
   /**
-   * Virtual property to update the status of specific nursery reports by their UUIDs
+   * UUIDs of nusery reports to mark as 'Nothing to report'
    */
-  nurseryReportNothingToReportStatus: string[] | null;
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type SiteUpdateData = {
@@ -1362,13 +1358,13 @@ export type EntityUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
-   * Virtual property to update the status of specific site reports by their UUIDs
+   * UUIDs of site reports to mark as 'Nothing to report'
    */
-  siteReportNothingToReportStatus: string[] | null;
+  siteReportNothingToReportUuid: string[] | null;
   /**
-   * Virtual property to update the status of specific nursery reports by their UUIDs
+   * UUIDs of nusery reports to mark as 'Nothing to report'
    */
-  nurseryReportNothingToReportStatus: string[] | null;
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type NurseryUpdateData = {
@@ -1394,13 +1390,13 @@ export type ReportUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
-   * Virtual property to update the status of specific site reports by their UUIDs
+   * UUIDs of site reports to mark as 'Nothing to report'
    */
-  siteReportNothingToReportStatus: string[] | null;
+  siteReportNothingToReportUuid: string[] | null;
   /**
-   * Virtual property to update the status of specific nursery reports by their UUIDs
+   * UUIDs of nusery reports to mark as 'Nothing to report'
    */
-  nurseryReportNothingToReportStatus: string[] | null;
+  nurseryReportNothingToReportUuid: string[] | null;
   /**
    * Update the nothingToReport flag.
    */

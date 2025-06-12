@@ -3,7 +3,7 @@ import {
   ProjectPitchDto,
   ImpactStoryLightDto,
   ImpactStoryFullDto,
-  ProjectTaskProcessingResponseDto,
+  processBulkApprovalDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -34,7 +34,7 @@ import {
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "impactStories",
-  "processProjectTasks",
+  "processBulkApproval",
   "tasks",
   "projectReports",
   "siteReports",
@@ -58,7 +58,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
-  processProjectTasks: StoreResourceMap<ProjectTaskProcessingResponseDto>;
+  processBulkApproval: StoreResourceMap<processBulkApprovalDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
