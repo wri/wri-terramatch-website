@@ -571,6 +571,7 @@ export const useDashboardData = (filters: any) => {
     projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
-    isLoadingImpactStories: !impactStories && !fetchFailure
+    isLoadingImpactStories: !impactStories && !fetchFailure,
+    lastUpdatedAt: dashboardRestorationGoalData?.lastUpdatedAt
   };
 };
