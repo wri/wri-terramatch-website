@@ -245,12 +245,26 @@ export const apiFormQuestionToFormField = (
     }
     case "password":
     case "color":
-    case "date":
     case "datetime-local":
     case "email":
       return {
         ...sharedProps,
         type: FieldType.Input,
+
+        fieldProps: {
+          required,
+          type: question.input_type,
+          max: question.validation?.max,
+          maxLength: question.validation?.max,
+          min: question.validation?.min,
+          minLength: question.validation?.min
+        }
+      };
+
+    case "date":
+      return {
+        ...sharedProps,
+        type: FieldType.Date,
 
         fieldProps: {
           required,

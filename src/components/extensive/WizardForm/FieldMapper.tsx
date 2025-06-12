@@ -11,6 +11,7 @@ import RHFOwnershipStakeDataTable from "@/components/elements/Inputs/DataTable/R
 import RHFSeedingTable from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFStrataTable from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
+import DateField from "@/components/elements/Inputs/DateField/DateField";
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
@@ -45,6 +46,16 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
   switch (field.type) {
     case FieldType.Input:
       return <Input {...field.fieldProps} {...sharedProps} formHook={formHook} onChangeCapture={onChange} ref={null} />;
+    case FieldType.Date:
+      return (
+        <DateField
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          onChangeCapture={onChange}
+          control={formHook.control}
+        />
+      );
 
     case FieldType.TextArea:
       return <TextArea {...field.fieldProps} {...sharedProps} formHook={formHook} onChangeCapture={onChange} />;

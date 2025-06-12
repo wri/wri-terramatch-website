@@ -81,13 +81,16 @@ export enum FieldType {
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
   StrategyAreaInput = "strategyAreaInput",
-  FinancialTableInput = "financialTableInput"
+  FinancialTableInput = "financialTableInput",
+  Date = "date"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
+export type DateFormField = FieldTypeBuilder<FieldType.Date, InputProps>;
 
 export type FormField =
   | InputFormField
+  | DateFormField
   | FieldTypeBuilder<FieldType.TextArea, TextAreaProps>
   | FieldTypeBuilder<FieldType.StrategyAreaInput, StrategyAreaInputProps>
   | FieldTypeBuilder<
