@@ -253,7 +253,7 @@ const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   "traditional-community": {
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
-    balanced: false
+    balanced: true
   }
 };
 
@@ -262,12 +262,12 @@ const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   race: {
     title: "Race",
     typeMap: RACES,
-    balanced: false
+    balanced: true
   },
   "traditional-community": {
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
-    balanced: false
+    balanced: true
   }
 };
 
