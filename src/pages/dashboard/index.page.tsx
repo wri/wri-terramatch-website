@@ -172,7 +172,8 @@ const Dashboard = () => {
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories,
+    lastUpdatedAt
   } = useDashboardData(filters);
 
   const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
@@ -194,8 +195,9 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.lastUpdatedAt ?? "");
-  }, [setLastUpdatedAt, totalSectionHeader]);
+    setLastUpdatedAt?.(lastUpdatedAt ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {

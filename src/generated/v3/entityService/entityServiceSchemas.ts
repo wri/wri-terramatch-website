@@ -585,6 +585,7 @@ export type ProjectLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
 };
 
 export type SiteLightDto = {
@@ -719,6 +720,7 @@ export type ProjectFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -744,7 +746,6 @@ export type ProjectFullDto = {
   survivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
-  treesPlantedCount: number;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
   workdayCount: number;
