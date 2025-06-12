@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import FrameworkProvider from "@/context/framework.provider";
+import FrameworkProvider, { useFramework } from "@/context/framework.provider";
 import {
   useGetV2FormsSubmissionsUUID,
   usePatchV2FormsSubmissionsUUID,
@@ -37,17 +37,19 @@ const SubmissionPage = () => {
     }
   });
 
-  const formSteps = useGetCustomFormSteps(formData?.data?.form, {
-    entityName: "project-pitch",
-    entityUUID: formData?.data?.project_pitch_uuid ?? ""
-  });
+  const framework = useFramework(formData?.data?.form?.framework_key);
+  const formSteps = useGetCustomFormSteps(
+    formData?.data?.form,
+    { entityName: "project-pitch", entityUUID: formData?.data?.project_pitch_uuid ?? "" },
+    framework
+  );
   //@ts-ignore
   const defaultValues = useNormalizedFormDefaultValue(formData?.data?.answers, formSteps);
 
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
-        <FrameworkProvider frameworkKey={formData?.data?.form?.framework_key}>
+        <FrameworkProvider frameworkKey={framework}>
           <WizardForm
             steps={formSteps!}
             errors={error}
