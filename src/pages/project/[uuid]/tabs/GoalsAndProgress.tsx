@@ -120,7 +120,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.treesPlantedCount
+                      value: project.treesPlantedCount ?? 0
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
@@ -163,7 +163,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       />
                     </div>
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                      {project.treesPlantedCount.toLocaleString()}
+                      {(project.treesPlantedCount ?? 0).toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
                         of {(project.treesGrownGoal ?? 0).toLocaleString()}
                       </Text>

@@ -33,6 +33,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["projectId[]"]?: string[];
   /**
+   * Filter results by project short name(s)
+   */
+  ["prprojectShortNames[]"]?: string[];
+  /**
    * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
    */
   ["siteId[]"]?: string[];
