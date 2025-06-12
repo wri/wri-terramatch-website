@@ -5,7 +5,6 @@ import { twMerge as tw } from "tailwind-merge";
 import Text from "@/components/elements/Text/Text";
 import { useModalContext } from "@/context/modal.provider";
 import SectionShare from "@/pages/dashboard/impact-story/components/SectionShare";
-import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBase, ModalProps } from "./Modal";
@@ -28,6 +27,18 @@ export interface ImpactStoryData {
 export interface ModalStoryProps extends ModalProps {
   data: ImpactStoryData;
   preview?: boolean;
+}
+
+function parseSerializedValue(value: string): any {
+  try {
+    const onceParsed = JSON.parse(value);
+    if (typeof onceParsed === "string") {
+      return JSON.parse(onceParsed);
+    }
+    return onceParsed;
+  } catch {
+    return value;
+  }
 }
 
 const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
@@ -75,7 +86,7 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
               className="modal-impact-story-content mt-6 leading-[normal] text-darkCustom"
               containHtml
             >
-              {parseImpactStoryContent(data.content)}
+              {parseSerializedValue(data.content)}
             </Text>
           </div>
         </div>

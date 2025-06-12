@@ -240,7 +240,7 @@ export type UploadedFile = {
 export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "restoration";
 
 export type EntityName = BaseModelNames | ReportsModelNames;
-export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches" | "tasks";
+export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
 export type ReportsModelNames =
   | "project-reports"
   | "site-reports"
