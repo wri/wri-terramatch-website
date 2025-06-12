@@ -16,6 +16,13 @@ export enum Framework {
 export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES] as const;
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
+export const toFramework = (frameworkKey?: string | null) =>
+  Object.values(Framework).includes(frameworkKey as unknown as Framework)
+    ? (frameworkKey as Framework)
+    : Framework.UNDEFINED;
+
+export const useFramework = (frameworkKey?: string | null) => useMemo(() => toFramework(frameworkKey), [frameworkKey]);
+
 interface IFrameworkContext {
   framework: Framework;
 }
@@ -27,14 +34,7 @@ export const FrameworkContext = createContext<IFrameworkContext>({
 type FrameworkProviderProps = { children: ReactNode; frameworkKey?: string | null };
 
 const FrameworkProvider = ({ children, frameworkKey }: FrameworkProviderProps) => {
-  const framework = useMemo(
-    () =>
-      Object.values(Framework).includes(frameworkKey as unknown as Framework)
-        ? (frameworkKey as Framework)
-        : Framework.UNDEFINED,
-    [frameworkKey]
-  );
-
+  const framework = useFramework(frameworkKey);
   return <FrameworkContext.Provider value={{ framework }}>{children}</FrameworkContext.Provider>;
 };
 
