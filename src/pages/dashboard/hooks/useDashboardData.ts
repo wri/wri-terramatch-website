@@ -295,10 +295,8 @@ export const useDashboardData = (filters: any) => {
     }
   }, [currentPageProjects, page, projectsLoaded, totalProjects]);
 
-  const allProjectsLoaded = useMemo(() => !hasMoreProjects && !isLoadingProjects, [hasMoreProjects, isLoadingProjects]);
-
   const topProjects = useMemo(() => {
-    if (!allProjectsLoaded) return [];
+    if (!(allProjects.length && !hasMoreProjects && !isLoadingProjects)) return [];
     return allProjects
       .filter(project => project?.treesPlantedCount > 0)
       .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
@@ -309,7 +307,7 @@ export const useDashboardData = (filters: any) => {
         trees_planted: project.treesPlantedCount ?? 0,
         uuid: project.uuid ?? ""
       }));
-  }, [allProjects, allProjectsLoaded]);
+  }, [allProjects, hasMoreProjects, isLoadingProjects]);
 
   const loadMoreProjects = useCallback(() => {
     if (hasMoreProjects && !isLoadingProjects) {
@@ -437,7 +435,7 @@ export const useDashboardData = (filters: any) => {
   }, [allProjects, activeProjects]);
 
   useEffect(() => {
-    if (!allProjectsLoaded || topProjects.length === 0) return;
+    if (!(allProjects.length && !hasMoreProjects && !isLoadingProjects) || topProjects.length === 0) return;
     const tableData = topProjects.map(project => ({
       label: project.organization,
       valueText: project.trees_planted.toLocaleString("en-US"),
@@ -447,7 +445,7 @@ export const useDashboardData = (filters: any) => {
       tableData,
       maxValue: Math.max(...topProjects.map(p => p.trees_planted)) * (7 / 6)
     });
-  }, [allProjectsLoaded, topProjects]);
+  }, [allProjects, hasMoreProjects, isLoadingProjects, topProjects]);
 
   useEffect(() => {
     if (filters.uuid) {
