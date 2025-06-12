@@ -19,3 +19,10 @@ export type Connection<SelectedType, PropsType extends OptionalProps = undefined
 };
 
 export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [false, Record<any, never>];
+
+export type PaginatedConnectionProps = {
+  pageSize?: number;
+  pageNumber?: number;
+  sortField?: string;
+  sortDirection?: "ASC" | "DESC";
+};

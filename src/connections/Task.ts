@@ -1,6 +1,5 @@
 import { createSelector } from "reselect";
 
-import { PaginatedConnectionProps } from "@/connections/util/types";
 import {
   taskGet,
   taskIndex,
@@ -17,7 +16,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
+import { Connection, PaginatedConnectionProps } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 

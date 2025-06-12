@@ -7,9 +7,8 @@ import {
   ServerSideTable,
   ServerSideTableProps
 } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { PaginatedConnectionProps } from "@/connections/util/types";
 import { useConnection } from "@/hooks/useConnection";
-import { Connection } from "@/types/connection";
+import { Connection, PaginatedConnectionProps } from "@/types/connection";
 
 type ConnectionTableProps<TData, TSelected, TProps extends PaginatedConnectionProps, State> = Omit<
   ServerSideTableProps<unknown>,

@@ -1,6 +1,5 @@
 import { createSelector } from "reselect";
 
-import { PaginatedConnectionProps } from "@/connections/util/types";
 import {
   entityDelete,
   entityGet,
@@ -41,7 +40,7 @@ import {
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, JsonApiResource, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
-import { Connection } from "@/types/connection";
+import { Connection, PaginatedConnectionProps } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
