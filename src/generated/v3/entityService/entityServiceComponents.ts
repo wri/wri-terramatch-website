@@ -353,6 +353,46 @@ export const impactStoryGet = (variables: ImpactStoryGetVariables, signal?: Abor
     signal
   });
 
+export type ProcessbulkApprovalPathParams = {
+  uuid: string;
+};
+
+export type ProcessbulkApprovalError = Fetcher.ErrorWrapper<undefined>;
+
+export type ProcessbulkApprovalResponse = {
+  meta?: {
+    /**
+     * @example processBulkApproval
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example processBulkApproval
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProcessBulkApprovalDto;
+  };
+};
+
+export type ProcessbulkApprovalVariables = {
+  pathParams: ProcessbulkApprovalPathParams;
+};
+
+export const processbulkApproval = (variables: ProcessbulkApprovalVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    ProcessbulkApprovalResponse,
+    ProcessbulkApprovalError,
+    undefined,
+    {},
+    {},
+    ProcessbulkApprovalPathParams
+  >({ url: "/entities/v3/projectTaskProcessing/{uuid}", method: "get", ...variables, signal });
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -1915,6 +1955,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
+  processBulkApproval: { processbulkApproval },
   tasks: { taskIndex, taskGet, taskUpdate },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },

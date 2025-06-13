@@ -9,6 +9,8 @@ import {
   ImpactStoryIndexVariables,
   ImpactStoryGetPathParams,
   ImpactStoryGetVariables,
+  ProcessbulkApprovalPathParams,
+  ProcessbulkApprovalVariables,
   TaskIndexQueryParams,
   TaskIndexVariables,
   TaskGetPathParams,
@@ -98,6 +100,20 @@ export const impactStoryGetIsFetching = (variables: Omit<ImpactStoryGetVariables
 export const impactStoryGetFetchFailed = (variables: Omit<ImpactStoryGetVariables, "body">) =>
   fetchFailedSelector<{}, ImpactStoryGetPathParams>({
     url: "/entities/v3/impactStories/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const processbulkApprovalIsFetching = (variables: Omit<ProcessbulkApprovalVariables, "body">) =>
+  isFetchingSelector<{}, ProcessbulkApprovalPathParams>({
+    url: "/entities/v3/projectTaskProcessing/{uuid}",
+    method: "get",
+    ...variables
+  });
+
+export const processbulkApprovalFetchFailed = (variables: Omit<ProcessbulkApprovalVariables, "body">) =>
+  fetchFailedSelector<{}, ProcessbulkApprovalPathParams>({
+    url: "/entities/v3/projectTaskProcessing/{uuid}",
     method: "get",
     ...variables
   });

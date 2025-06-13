@@ -171,6 +171,46 @@ export type ImpactStoryFullDto = {
   content: string | null;
 };
 
+export type ReportsBulkApproval = {
+  /**
+   * Unique identifier of the report
+   */
+  uuid: string;
+  /**
+   * Name of the report or related entity
+   */
+  name: string;
+  /**
+   * Type of the report
+   */
+  type: "siteReport" | "nurseryReport";
+  /**
+   * When the report was submitted
+   *
+   * @format date-time
+   */
+  submittedAt: string;
+  /**
+   * UUID of the task this report belongs to
+   */
+  status: string;
+  /**
+   * Whether the report has nothing to report
+   */
+  nothingToReport: boolean;
+};
+
+export type ProcessBulkApprovalDto = {
+  /**
+   * UUID of the project
+   */
+  projectUuid: string;
+  /**
+   * Array of reports associated with the project's tasks
+   */
+  reportsBulkApproval: ReportsBulkApproval[];
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1251,6 +1291,14 @@ export type ProjectUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
+  /**
    * Update the isTest flag.
    */
   isTest: boolean | null;
@@ -1278,6 +1326,14 @@ export type SiteUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type SiteUpdateData = {
@@ -1302,6 +1358,14 @@ export type EntityUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type NurseryUpdateData = {
@@ -1326,6 +1390,14 @@ export type ReportUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
   /**
    * Update the nothingToReport flag.
    */

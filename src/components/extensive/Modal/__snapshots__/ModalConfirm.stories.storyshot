@@ -40,7 +40,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
       className="mt-4 flex w-full gap-4"
     >
       <button
-        className="py-2 px-3 bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full"
+        className="px-3 bg-white rounded-lg text-darkCustom-100 border border-grey-750 hover:bg-grey-900 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full py-3"
         onClick={[Function]}
       >
         <span
@@ -55,7 +55,7 @@ exports[`Storyshots Components/Extensive/Modal/ModalConfirm Default 1`] = `
         </span>
       </button>
       <button
-        className="bg-primary-500 hover:bg-primary-400 py-2 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full"
+        className="bg-primary-500 hover:bg-primary-400 !text-white rounded-md px-4 uppercase disabled:bg-neutral-300 disabled:text-neutral-800 transition whitespace-nowrap text-black min-h-10 flex items-center justify-center gap-1.5 tracking-wide w-fit-content w-full py-3"
         onClick={[Function]}
       >
         <span
