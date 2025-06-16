@@ -68,6 +68,9 @@ export const dataProvider = combineDataProviders(resource => {
     case modules.nurseryReport.ResourceName:
       return nurseryReportDataProvider;
 
+    case modules.financialReport.ResourceName:
+      return siteReportDataProvider;
+
     case modules.audit.ResourceName:
       return auditDataProvider;
 
