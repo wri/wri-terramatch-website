@@ -1,21 +1,21 @@
 import { CreateParams, UpdateParams } from "react-admin";
 
 import {
-  fetchPostV2FileUploadMODELCOLLECTIONUUID,
-  PostV2FileUploadMODELCOLLECTIONUUIDPathParams
-} from "@/generated/apiComponents";
+  uploadFile,
+  UploadFilePathParams
+} from "@/generated/v3/entityService/entityServiceComponents";
 
-export const upload = (file: File, pathParams: PostV2FileUploadMODELCOLLECTIONUUIDPathParams) => {
+export const upload = (file: File, pathParams: UploadFilePathParams) => {
   const body = new FormData();
-  body.append("upload_file", file);
+  body.append("uploadFile", file);
   //@ts-ignore
-  return fetchPostV2FileUploadMODELCOLLECTIONUUID({ pathParams, body });
+  return uploadFile({ pathParams, body, headers: { "Content-Type": "multipart/form-data" } });
 };
 
 export const handleUploads = (
   params: CreateParams<any> | UpdateParams<any>,
   uploadKeys: string[],
-  pathParams: Omit<PostV2FileUploadMODELCOLLECTIONUUIDPathParams, "collection">
+  pathParams: Omit<UploadFilePathParams, "collection">
 ) => {
   let uploads: { file: File; key: string }[] = [];
 
