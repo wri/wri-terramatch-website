@@ -124,6 +124,10 @@ export type SitePolygonFullDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string | null;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
   projectId: string | null;
   projectShortName: string | null;
   /**
@@ -131,6 +135,14 @@ export type SitePolygonFullDto = {
    */
   plantStart: string | null;
   calcArea: number | null;
+  /**
+   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLatitude: number | null;
+  /**
+   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLongitude: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
@@ -172,6 +184,10 @@ export type SitePolygonLightDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string | null;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
   projectId: string | null;
   projectShortName: string | null;
   /**
@@ -179,6 +195,14 @@ export type SitePolygonLightDto = {
    */
   plantStart: string | null;
   calcArea: number | null;
+  /**
+   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLatitude: number | null;
+  /**
+   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLongitude: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
