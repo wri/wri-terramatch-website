@@ -1,4 +1,5 @@
 import { Dictionary } from "lodash";
+import { useEffect, useState } from "react";
 import { createSelector } from "reselect";
 
 import {
@@ -13,6 +14,7 @@ import {
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
+import { loadConnection } from "@/utils/loadConnection";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type SitePolygonIndexConnectionProps = {
@@ -32,6 +34,7 @@ export type SitePolygonIndexConnectionProps = {
     | "earlyTreeVerification"
     | "fieldMonitoring"
     | "msuCarbon";
+  polygonStatus?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   enabled?: boolean;
 };
 
@@ -65,6 +68,10 @@ const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
     queryParams["presentIndicator[]"] = [props.presentIndicator];
   }
 
+  if (props.polygonStatus) {
+    queryParams["polygonStatus[]"] = props.polygonStatus;
+  }
+
   return { queryParams };
 };
 
@@ -74,7 +81,9 @@ const indexIsLoaded = (
 ) => enabled === false || sitePolygons != null || fetchFailure != null;
 
 const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
-  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${props.search}`;
+  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${
+    props.search
+  }:${props.polygonStatus?.join(",")}`;
 
 const sitePolygonsConnection: Connection<
   SitePolygonIndexConnection<SitePolygonLightDto>,
@@ -107,6 +116,88 @@ const sitePolygonsConnection: Connection<
       )
   )
 };
+export const useAllSitePolygons = (props: Omit<SitePolygonIndexConnectionProps, "pageNumber" | "pageSize">) => {
+  const { entityName, entityUuid, search, presentIndicator, polygonStatus, enabled = true } = props;
 
+  const [allPolygons, setAllPolygons] = useState<SitePolygonLightDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<PendingErrorState | null>(null);
+
+  const PAGE_SIZE = 100;
+
+  useEffect(() => {
+    if (!enabled || !entityUuid) {
+      setIsLoading(false);
+      setAllPolygons([]);
+      return;
+    }
+
+    const fetchAllPages = async () => {
+      setIsLoading(true);
+      setError(null);
+      setAllPolygons([]);
+
+      try {
+        const fetchProps = { entityName, entityUuid, search, presentIndicator, polygonStatus, enabled };
+
+        const firstPageResponse = await loadConnection(sitePolygonsConnection, {
+          ...fetchProps,
+          pageSize: PAGE_SIZE,
+          pageNumber: 1
+        });
+
+        if (firstPageResponse.fetchFailure) {
+          throw firstPageResponse.fetchFailure;
+        }
+
+        const polygons = firstPageResponse.sitePolygons ?? [];
+        const total = firstPageResponse.total ?? 0;
+
+        if (total === 0) {
+          setAllPolygons([]);
+          setIsLoading(false);
+          return;
+        }
+
+        const totalPages = Math.ceil(total / PAGE_SIZE);
+
+        if (totalPages === 1) {
+          setAllPolygons(polygons);
+          setIsLoading(false);
+          return;
+        }
+
+        const remainingPageNumbers = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+        const pagePromises = remainingPageNumbers.map(pageNumber =>
+          loadConnection(sitePolygonsConnection, {
+            ...fetchProps,
+            pageSize: PAGE_SIZE,
+            pageNumber: pageNumber
+          })
+        );
+
+        const remainingPages = await Promise.all(pagePromises);
+
+        let allFetchedPolygons = [...polygons];
+        for (const page of remainingPages) {
+          if (page.fetchFailure) {
+            throw page.fetchFailure;
+          }
+          allFetchedPolygons.push(...(page.sitePolygons ?? []));
+        }
+
+        setAllPolygons(allFetchedPolygons);
+      } catch (e: any) {
+        setError(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllPages();
+  }, [entityName, entityUuid, search, presentIndicator, polygonStatus, enabled]);
+
+  return { data: allPolygons, isLoading, error };
+};
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
 export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
