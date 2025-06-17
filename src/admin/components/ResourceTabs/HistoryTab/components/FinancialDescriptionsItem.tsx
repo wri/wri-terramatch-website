@@ -13,7 +13,7 @@ const FinancialDescriptionsItem: FC<FinancialDescriptionsItemProps> = ({ label, 
       <Text variant="text-16-bold" className="text-blueCustom-900">
         {label}
       </Text>
-      <Text variant="text-16-light" className="w-full truncate text-left text-blueCustom-900">
+      <Text variant="text-16-light" className="w-full text-left text-blueCustom-900">
         {description}
       </Text>
     </div>

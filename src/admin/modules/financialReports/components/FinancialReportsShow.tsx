@@ -6,6 +6,7 @@ import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import HistoryTab from "@/admin/components/ResourceTabs/HistoryTab/HistoryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import Button from "@/components/elements/Button/Button";
+import Text from "@/components/elements/Text/Text";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const FinancialReportsShow = () => (
@@ -19,25 +20,29 @@ const FinancialReportsShow = () => (
           <DocumentTab label="Restoration Experience" entity="financialReport" />
         </TabbedShowLayout>
       </RecordFrameworkProvider>
-      <div className="bg-white">
-        <header className="border-b border-neutral-200 py-3 text-lg font-semibold">Organization Review</header>
+      <div className="bg-white pr-1">
+        <header className="flex h-[calc(3rem+1px)] items-center border-b border-neutral-200 pl-4 text-lg font-semibold">
+          Organization Review
+        </header>
         <div className="grid grid-cols-2 gap-4 p-4">
-          <div className="flex flex-col gap-2">
-            <span>Name</span>
-            <span className="font-medium">EXOTIC EPZ LIMITED</span>
+          <div className="flex flex-col gap-0">
+            <Text variant="text-14-light">Name</Text>
+            <Text variant="text-14">EXOTIC EPZ LIMITED</Text>
           </div>
-          <div className="flex flex-col gap-2">
-            <span>Type</span>
-            <span className="font-medium">For-Profit Organization</span>
+          <div className="flex flex-col gap-0">
+            <Text variant="text-14-light">Type</Text>
+            <Text variant="text-14">For-Profit Organization</Text>
           </div>
-          <div className="flex flex-col gap-2">
-            <span>Status</span>
-            <span className="font-medium">Approved</span>
+          <div className="flex flex-col gap-0">
+            <Text variant="text-14-light">Status</Text>
+            <Text variant="text-14">Approved</Text>
           </div>
         </div>
-        <footer className="flex gap-4 pb-4">
+        <footer className="flex gap-4 pb-4 pl-4">
           <Button>Approve</Button>
-          <Button variant="white-page-admin">Reject</Button>
+          <Button variant="white-page-admin" className="text-black ">
+            Reject
+          </Button>
         </footer>
       </div>
     </div>

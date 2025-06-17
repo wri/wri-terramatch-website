@@ -6,6 +6,7 @@ import { EntityName } from "@/types/common";
 
 import FinancialDescriptionsSection from "./components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "./components/FinancialDocumentsSection";
+import FinancialMetrics from "./components/FinancialMetrics";
 import FundingSourcesSection from "./components/FundingSourcesSection";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -43,7 +44,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   return (
     <TabbedShowLayout.Tab label={label ?? "History"} {...rest}>
       <div className="flex flex-col gap-4">
-        <div>Table</div>
+        <FinancialMetrics />
         <Accordion
           title="Financial Documents per Year"
           variant="drawer"
