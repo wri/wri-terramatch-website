@@ -565,6 +565,7 @@ export const useDashboardData = (filters: any) => {
     topProject,
     activeCountries,
     activeProjects: filteredProjects,
+    allAvailableProjects: allProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData ?? {},
     isUserAllowed,
