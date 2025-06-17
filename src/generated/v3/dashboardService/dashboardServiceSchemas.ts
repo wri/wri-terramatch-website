@@ -56,3 +56,51 @@ export type DelayedJobDto = {
    */
   entityName?: string | null;
 };
+
+export type TreeRestorationData = {
+  /**
+   * Due date for this restoration data
+   *
+   * @format date-time
+   */
+  dueDate: string;
+  /**
+   * Number of tree species for this period
+   */
+  treeSpeciesAmount: number;
+  /**
+   * Tree species goal for calculating percentage
+   */
+  treeSpeciesGoal: number;
+};
+
+export type TreeRestorationGoalDto = {
+  /**
+   * Total number of trees grown goal for for-profit organizations
+   */
+  forProfitTreeCount: number;
+  /**
+   * Total number of trees grown goal for non-profit organizations
+   */
+  nonProfitTreeCount: number;
+  /**
+   * Total trees grown goal across all organizations
+   */
+  totalTreesGrownGoal: number;
+  /**
+   * Trees under restoration data across all organizations by due date
+   */
+  treesUnderRestorationActualTotal: TreeRestorationData[];
+  /**
+   * Trees under restoration data for for-profit organizations by due date
+   */
+  treesUnderRestorationActualForProfit: TreeRestorationData[];
+  /**
+   * Trees under restoration data for non-profit organizations by due date
+   */
+  treesUnderRestorationActualNonProfit: TreeRestorationData[];
+  /**
+   * Timestamp when the data was last updated
+   */
+  lastUpdatedAt: string | null;
+};

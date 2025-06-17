@@ -720,6 +720,7 @@ export type FundingProgramme = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -1045,6 +1046,7 @@ export type FormRead = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -4269,6 +4271,7 @@ export type ProjectFullRead = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -4704,6 +4707,7 @@ export type ProjectWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5082,6 +5086,7 @@ export type SiteWithSchemaRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5428,6 +5433,7 @@ export type FormSubmissionRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5560,6 +5566,7 @@ export type FormPaginated = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5667,6 +5674,7 @@ export type StagePaginated = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -5784,6 +5792,7 @@ export type StageRead = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -5955,6 +5964,7 @@ export type ApplicationRead = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -11268,45 +11278,6 @@ export type DashboardRestorationStrategyResponse = {
   };
 };
 
-export type DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type DashboardTreesUnderRestorationActual = {
-  /**
-   * @format date
-   */
-  dueDate?: string;
-  treeSpeciesAmount?: number;
-  treeSpeciesPercentage?: number;
-};
-
 export type DashboardGetPolygonStatusResponse = {
   data?: any[];
   /**
@@ -11465,21 +11436,6 @@ export type DashboardProjectProfileData = {
   };
   landTenure?: {
     data?: string[];
-  };
-};
-
-export type DashboardTopProjectsResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
   };
 };
 

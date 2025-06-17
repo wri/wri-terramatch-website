@@ -1935,6 +1935,7 @@ export type GetV2AdminFormsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -3233,6 +3234,7 @@ export type GetV2FormsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -3359,6 +3361,7 @@ export type PatchV2AdminFormsUUIDPublishResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -3984,6 +3987,7 @@ export type PatchV2AdminFormsUUIDResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -9752,6 +9756,7 @@ export type GetV2FormsSitesUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10296,6 +10301,7 @@ export type GetV2AdminFormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -10568,6 +10574,7 @@ export type GetV2AdminFormsSubmissionsResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10752,6 +10759,7 @@ export type GetV2FormsMySubmissionsResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -10924,6 +10932,7 @@ export type GetV2FormsUUIDResponse = {
   published?: boolean;
   stage_id?: string;
   funding_programme_uuid?: string;
+  funding_programme_framework_key?: string;
   options_other?: boolean;
   form_sections?: {
     order?: number;
@@ -11046,6 +11055,7 @@ export type PostV2AdminFundingProgrammeStageResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11184,6 +11194,7 @@ export type DeleteV2AdminFundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11320,6 +11331,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -11476,6 +11488,7 @@ export type GetV2FundingProgrammeResponse = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -11673,6 +11686,7 @@ export type GetV2AdminFundingProgrammeResponse = {
         published?: boolean;
         stage_id?: string;
         funding_programme_uuid?: string;
+        funding_programme_framework_key?: string;
         options_other?: boolean;
         form_sections?: {
           order?: number;
@@ -11858,6 +11872,7 @@ export type PostV2AdminFundingProgrammeResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12029,6 +12044,7 @@ export type GetV2FundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12197,6 +12213,7 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12373,6 +12390,7 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12647,6 +12665,7 @@ export type GetV2FundingProgrammeStageResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -12791,6 +12810,7 @@ export type PatchV2AdminFundingProgrammeStageUUIDStatusResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -12931,6 +12951,7 @@ export type GetV2FundingProgrammeStageUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13064,6 +13085,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13227,6 +13249,7 @@ export type PostV2FormsSubmissionsResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13388,6 +13411,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13543,6 +13567,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13750,6 +13775,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -13912,6 +13938,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     published?: boolean;
     stage_id?: string;
     funding_programme_uuid?: string;
+    funding_programme_framework_key?: string;
     options_other?: boolean;
     form_sections?: {
       order?: number;
@@ -14523,6 +14550,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -15181,6 +15209,7 @@ export type GetV2ApplicationsUUIDResponse = {
       published?: boolean;
       stage_id?: string;
       funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
       options_other?: boolean;
       form_sections?: {
         order?: number;
@@ -20764,92 +20793,6 @@ export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardResto
   );
 };
 
-export type GetV2DashboardTreeRestorationGoalQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTreeRestorationGoalResponse = {
-  forProfitTreeCount?: number;
-  nonProfitTreeCount?: number;
-  totalTreesGrownGoal?: number;
-  treesUnderRestorationActualTotal?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualForProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-  treesUnderRestorationActualNonProfit?: {
-    /**
-     * @format date
-     */
-    dueDate?: string;
-    treeSpeciesAmount?: number;
-    treeSpeciesPercentage?: number;
-  }[];
-};
-
-export type GetV2DashboardTreeRestorationGoalVariables = {
-  queryParams?: GetV2DashboardTreeRestorationGoalQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardTreeRestorationGoal = (
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTreeRestorationGoalResponse,
-    GetV2DashboardTreeRestorationGoalError,
-    undefined,
-    {},
-    GetV2DashboardTreeRestorationGoalQueryParams,
-    {}
-  >({ url: "/v2/dashboard/tree-restoration-goal", method: "get", ...variables, signal });
-
-export const useGetV2DashboardTreeRestorationGoal = <TData = GetV2DashboardTreeRestorationGoalResponse>(
-  variables: GetV2DashboardTreeRestorationGoalVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardTreeRestorationGoalResponse,
-      GetV2DashboardTreeRestorationGoalError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTreeRestorationGoalResponse, GetV2DashboardTreeRestorationGoalError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/tree-restoration-goal",
-      operationId: "getV2DashboardTreeRestorationGoal",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardTreeRestorationGoal({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
@@ -21566,75 +21509,6 @@ export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResp
   return reactQuery.useQuery<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>(
     queryKeyFn({ path: "/v2/dashboard/frameworks", operationId: "getV2DashboardFrameworks", variables }),
     ({ signal }) => fetchGetV2DashboardFrameworks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardTopTreesPlantedQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTopTreesPlantedError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTopTreesPlantedResponse = {
-  data?: {
-    top_projects_most_planted_trees?: {
-      organization?: string;
-      project?: string;
-      uuid?: string;
-      trees_planted?: number;
-    }[];
-    top_tree_species_planted?: {
-      name?: string;
-      amount?: number;
-    }[];
-  };
-};
-
-export type GetV2DashboardTopTreesPlantedVariables = {
-  queryParams?: GetV2DashboardTopTreesPlantedQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const fetchGetV2DashboardTopTreesPlanted = (
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTopTreesPlantedResponse,
-    GetV2DashboardTopTreesPlantedError,
-    undefined,
-    {},
-    GetV2DashboardTopTreesPlantedQueryParams,
-    {}
-  >({ url: "/v2/dashboard/top-trees-planted", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns Tops and metrics related to projects and tree species.
- */
-export const useGetV2DashboardTopTreesPlanted = <TData = GetV2DashboardTopTreesPlantedResponse>(
-  variables: GetV2DashboardTopTreesPlantedVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTopTreesPlantedResponse, GetV2DashboardTopTreesPlantedError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/top-trees-planted", operationId: "getV2DashboardTopTreesPlanted", variables }),
-    ({ signal }) => fetchGetV2DashboardTopTreesPlanted({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -24878,11 +24752,6 @@ export type QueryOperation =
       variables: GetV2DashboardRestorationStrategyVariables;
     }
   | {
-      path: "/v2/dashboard/tree-restoration-goal";
-      operationId: "getV2DashboardTreeRestorationGoal";
-      variables: GetV2DashboardTreeRestorationGoalVariables;
-    }
-  | {
       path: "/v2/dashboard/project-list-export";
       operationId: "getV2DashboardProjectListExport";
       variables: GetV2DashboardProjectListExportVariables;
@@ -24931,11 +24800,6 @@ export type QueryOperation =
       path: "/v2/dashboard/frameworks";
       operationId: "getV2DashboardFrameworks";
       variables: GetV2DashboardFrameworksVariables;
-    }
-  | {
-      path: "/v2/dashboard/top-trees-planted";
-      operationId: "getV2DashboardTopTreesPlanted";
-      variables: GetV2DashboardTopTreesPlantedVariables;
     }
   | {
       path: "/v2/dashboard/indicator/hectares-restoration";

@@ -37,12 +37,11 @@ const totalSectionHeaderConnection: Connection<TotalSectionHeaderConnection, Tot
   isLoaded: totalSectionHeaderIsLoaded,
 
   selector: selectorCache(
-    props => indexCacheKey(props)?.replace(/%5B%5D/g, ""),
+    props => indexCacheKey(props).replace(/%5B%5D/g, ""),
     props =>
       createSelector(
         [
-          (store: ApiDataStore) =>
-            store.totalSectionHeaders?.[indexCacheKey(props)?.replace(/%5B%5D/g, "")]?.attributes,
+          (store: ApiDataStore) => store.totalSectionHeaders?.[indexCacheKey(props).replace(/%5B%5D/g, "")]?.attributes,
           getTotalSectionHeadersFetchFailed({ queryParams: props })
         ],
         (indexMeta, fetchFailure) => {

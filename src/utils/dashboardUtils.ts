@@ -1,6 +1,6 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
-import { DashboardTreeRestorationGoalResponse } from "@/generated/apiSchemas";
+import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DataPoint = {
@@ -164,13 +164,11 @@ export const createQueryParams = (filters: any) => {
   return queryParams.toString();
 };
 
-export const getRestorationGoalResumeData = (data: DashboardTreeRestorationGoalResponse) => {
-  return [
-    { name: "Total", value: data?.totalTreesGrownGoal, color: "#13487A" },
-    { name: "Enterprise", value: data?.forProfitTreeCount, color: "#7BBD31" },
-    { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
-  ];
-};
+export const getRestorationGoalResumeData = (data: TreeRestorationGoalDto) => [
+  { name: "Total", value: data?.totalTreesGrownGoal, color: "#13487A" },
+  { name: "Enterprise", value: data?.forProfitTreeCount, color: "#7BBD31" },
+  { name: "Non Profit", value: data?.nonProfitTreeCount, color: "#B9EDFF" }
+];
 
 export const getRestorationGoalDataForChart = (
   data: RestorationData,
