@@ -15,12 +15,13 @@ export interface StatusProps {
   status: StatusEnum;
   textVariant?: TextVariants;
   variant?: "default" | "small";
+  classNameText?: string;
 }
 
 const Status = (props: StatusProps) => {
   const t = useT();
 
-  const { className, status, textVariant = "text-12-semibold", variant = "default" } = props;
+  const { className, status, textVariant = "text-12-semibold", variant = "default", classNameText } = props;
 
   const convertStatusToReadableStatus = (status: string): string => {
     const statusMap: { [key: string]: string } = {
@@ -52,7 +53,11 @@ const Status = (props: StatusProps) => {
     <div className={tw("flex items-center justify-center rounded-xl py-1 px-[6px]", COLOR_BG_MAP[status], className)}>
       <Text
         variant={textVariant}
-        className={`flex w-fit items-center justify-center gap-[6px] text-center ${COLOR_TEXT_MAP[status]}`}
+        className={tw(
+          "flex w-fit items-center justify-center gap-[6px] text-center",
+          COLOR_TEXT_MAP[status],
+          classNameText
+        )}
       >
         <When condition={status === "approved"}>
           <div className="h-4 w-4">

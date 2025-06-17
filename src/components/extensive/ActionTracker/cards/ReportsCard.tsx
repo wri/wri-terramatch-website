@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import { useProjectIndex } from "@/connections/Entity";
 import { GetV2MyActionsResponse, usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
@@ -11,7 +12,6 @@ import { sortByDate } from "@/utils/sort";
 import { IconNames } from "../../Icon/Icon";
 import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
-
 export type ReportsCardProps = {
   actions?: GetV2MyActionsResponse["data"];
 };
@@ -84,11 +84,45 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       });
   }, [actions, format, clearAction, t]);
 
+  const mockedReportActions = [
+    {
+      title: "Project 1",
+      subtitle: "Subtitle 1",
+      status: StatusEnum.SUBMITTED,
+      ctaLink: "/my-projects",
+      ctaText: "View Project Report",
+      onClick: () => {
+        console.log("clicked");
+        return {};
+      },
+      polygonCheck: "Polygon Check",
+      approve: "Approve",
+      statusText: "submitted",
+      updatedAt: "2021/01/01",
+      updatedBy: "John Doe"
+    },
+    {
+      title: "Project 2",
+      subtitle: "Subtitle 2",
+      status: StatusEnum.DRAFT,
+      ctaLink: "/my-projects",
+      ctaText: "View Project Report",
+      onClick: () => {
+        console.log("clicked");
+        return {};
+      },
+      polygonCheck: "Polygon Check",
+      approve: "Approve",
+      statusText: "draft",
+      updatedAt: "2021/01/01",
+      updatedBy: "John Doe"
+    }
+  ];
   return (
     <ActionTrackerCard
-      data={reportActions}
+      data={mockedReportActions}
       title={t("Reports")}
-      subtitle={reportActions.length && t("You have {n} updates", { n: reportActions.length })}
+      subtitle={mockedReportActions.length && t("You have {n} updates", { n: mockedReportActions.length })}
       icon={IconNames.ARROW_SPIN_CIRCLE}
       limit={10}
       emptyState={{
