@@ -126,7 +126,7 @@ export const useAllSitePolygons = (props: Omit<SitePolygonIndexConnectionProps, 
   const PAGE_SIZE = 100;
 
   useEffect(() => {
-    if (!enabled || !entityUuid) {
+    if (enabled === false || entityUuid == null || entityUuid === "") {
       setIsLoading(false);
       setAllPolygons([]);
       return;
