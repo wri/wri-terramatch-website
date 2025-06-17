@@ -26,15 +26,21 @@ const FinancialReportsShow = () => (
         </header>
         <div className="grid grid-cols-2 gap-4 p-4">
           <div className="flex flex-col gap-0">
-            <Text variant="text-14-light">Name</Text>
+            <Text variant="text-14-light" className="text-darkCustom-300">
+              Name
+            </Text>
             <Text variant="text-14">EXOTIC EPZ LIMITED</Text>
           </div>
           <div className="flex flex-col gap-0">
-            <Text variant="text-14-light">Type</Text>
+            <Text variant="text-14-light" className="text-darkCustom-300">
+              Type
+            </Text>
             <Text variant="text-14">For-Profit Organization</Text>
           </div>
           <div className="flex flex-col gap-0">
-            <Text variant="text-14-light">Status</Text>
+            <Text variant="text-14-light" className="text-darkCustom-300">
+              Status
+            </Text>
             <Text variant="text-14">Approved</Text>
           </div>
         </div>
