@@ -24,6 +24,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
+import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
@@ -129,12 +130,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     }
   ];
 
-  const landscapeOption = [
-    { title: "Greater Rift Valley of Kenya", value: "Greater Rift Valley of Kenya" },
-    { title: "Ghana Cocoa Belt ", value: "Ghana Cocoa Belt" },
-    { title: "Lake Kivu & Rusizi River Basin ", value: "Lake Kivu & Rusizi River Basin" }
-  ];
-
   const { data: frameworks } = useGetV2DashboardFrameworks({
     queryParams: {}
   });
@@ -180,7 +175,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const query: any = {
       ...router.query,
       programmes: filters.programmes,
-      landscapes: filters.landscapes,
+      landscapes: convertNamesToCodes(filters.landscapes),
       country: filters.country?.country_slug || undefined,
       organizations: filters.organizations,
       cohort: filters.cohort,
@@ -223,7 +218,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
-      landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
+      landscapes: landscapes ? convertCodesToNames(Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country
         ? {
             country_slug: country as string,
@@ -436,7 +431,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 onClear={() => {
                   handleChange("landscapes", []);
                 }}
-                options={landscapeOption}
+                options={LANDSCAPE_OPTIONS}
                 optionClassName="hover:bg-grey-200"
                 containerClassName="z-[4] w-full"
               />
