@@ -44,7 +44,7 @@ const FinancialReportsDataGrid: FC = () => {
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
-      <TextField source="organisationName" label="Organization" sortable={false} />
+      <TextField source="name" label="Organization" sortable={false} />
       <FunctionField
         source="status"
         label="Status"
@@ -55,7 +55,7 @@ const FinancialReportsDataGrid: FC = () => {
         }}
       />
       <FunctionField
-        source="updateRequestStatus"
+        source="update_request_status"
         label="Change Request Status"
         sortable={false}
         render={(record: SiteReportLightDto) => {
@@ -65,8 +65,8 @@ const FinancialReportsDataGrid: FC = () => {
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
-      <DateField source="yearOfReport" label="Year of Report" locales="en-GB" />
-      <DateField source="dueAt" label="Due Date" locales="en-GB" />
+      <TextField source="year_of_report" label="Year of Report" />
+      <DateField source="due_at" label="Due Date" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
