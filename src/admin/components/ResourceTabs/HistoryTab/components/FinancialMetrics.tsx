@@ -6,22 +6,22 @@ import { ColumnsTableFinancialMetrics } from "./ColumnsTableFinancialMetrics";
 
 const FinancialMetrics = () => {
   return (
-    <div className="rounded-lg bg-white px-6 py-4 shadow-all">
+    <div className="rounded-lg bg-white px-6 py-6 shadow-all">
       <div className="mb-5 grid w-[70%] grid-cols-2 gap-6">
         <div className="flex flex-col gap-0">
-          <Text variant="text-14" className="text-darkCustom-50">
+          <Text variant="text-14-light" className="text-darkCustom-300">
             Start of financial year (month)
           </Text>
           <Text variant="text-14">Not Provided</Text>
         </div>
         <div className="flex flex-col gap-0">
-          <Text variant="text-14" className="text-darkCustom-50">
+          <Text variant="text-14-light" className="text-darkCustom-300">
             Currency
           </Text>
           <Text variant="text-14">USD</Text>
         </div>
       </div>
-      <div className="w-full max-w-[48vw] overflow-hidden lg:max-w-[57vw] wide:max-w-[65vw]">
+      <div className="w-full max-w-[47.8vw] overflow-hidden lg:max-w-[57vw] wide:max-w-[65vw]">
         <Table
           columns={ColumnsTableFinancialMetrics}
           data={[
