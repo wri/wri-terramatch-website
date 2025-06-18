@@ -85,14 +85,28 @@ const mapActiveProjects = (activeProjects: any[], excludeUUID?: string) => {
   return activeProjects
     ? activeProjects
         .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
-        .map((item: any) => ({
-          uuid: item.uuid,
-          project: item.name,
-          treesPlanted: item.trees_under_restoration.toLocaleString(),
-          restorationHectares: item.hectares_under_restoration.toLocaleString(),
-          jobsCreated: item.jobs_created.toLocaleString(),
-          volunteers: item.volunteers.toLocaleString()
-        }))
+        .map((item: any) => {
+          if (excludeUUID) {
+            // Use alternative mapping when excludeUUID is present
+            return {
+              uuid: item.uuid,
+              project: item.name,
+              treesPlanted: (item.treesPlantedCount ?? 0).toLocaleString(),
+              restorationHectares: (item.totalHectaresRestoredSum ?? 0).toLocaleString()
+              // jobsCreated will be added once the data is gotten from the v3
+            };
+          } else {
+            // TODO: remove volunteers when excludeUUID is present and also remove once the data is gotten from the v3
+            return {
+              uuid: item.uuid,
+              project: item.name,
+              treesPlanted: (item.trees_under_restoration ?? 0).toLocaleString(),
+              restorationHectares: (item.hectares_under_restoration ?? 0).toLocaleString(),
+              jobsCreated: (item.jobs_created ?? 0).toLocaleString(),
+              volunteers: (item.volunteers ?? 0).toLocaleString()
+            };
+          }
+        })
     : [];
 };
 
@@ -167,12 +181,14 @@ const Dashboard = () => {
     centroidsDataProjects,
     activeCountries,
     activeProjects,
+    allAvailableProjects,
     polygonsData,
     projectBbox,
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories,
+    lastUpdatedAt
   } = useDashboardData(filters);
 
   const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
@@ -194,8 +210,9 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.lastUpdatedAt ?? "");
-  }, [setLastUpdatedAt, totalSectionHeader]);
+    setLastUpdatedAt?.(lastUpdatedAt ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {
@@ -297,11 +314,6 @@ const Dashboard = () => {
         enableSorting: false
       },
       {
-        header: "Volunteers",
-        accessorKey: "volunteers",
-        enableSorting: false
-      },
-      {
         header: "",
         accessorKey: "link",
         enableSorting: false,
@@ -354,10 +366,9 @@ const Dashboard = () => {
 
   const DATA_ACTIVE_COUNTRY = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
   const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = useMemo(
-    () => mapActiveProjects(activeProjects, filters.uuid),
-    [activeProjects, filters.uuid]
+    () => mapActiveProjects(allAvailableProjects, filters.uuid),
+    [allAvailableProjects, filters.uuid]
   );
-
   const organizationName = useMemo(
     () => getOrganizationByUuid(activeProjects, filters.uuid),
     [activeProjects, filters.uuid]

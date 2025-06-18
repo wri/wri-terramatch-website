@@ -366,7 +366,7 @@ const VersionHistory = ({
             optionVariant="text-12-light"
             titleClassname="one-line-text !w-full !text-nowrap"
             titleContainerClassName="!w-[calc(100%-25px)] !text-nowrap"
-            defaultValue={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
+            value={[selectPolygonVersion?.uuid ?? selectedPolygon?.uuid] as string[]}
             onChange={e => {
               const polygonVersionData = (data as SitePolygonsDataResponse)?.find(item => item.uuid === e[0]);
               setSelectPolygonVersion(polygonVersionData);
