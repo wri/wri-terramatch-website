@@ -24,14 +24,12 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useFullProject } from "@/connections/Entity";
-import { useProcessBulkApproval } from "@/connections/ProcessBulkApproval";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -79,6 +77,18 @@ const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void
   );
 };
 
+const TreesPlantedTotal: FC = () => {
+  const { data } = useListContext();
+
+  const total = Array.isArray(data) ? data.reduce((sum, item) => sum + (item.treesPlantedCount || 0), 0) : 0;
+
+  return (
+    <Text variant="text-14-bold" className="leading-none">
+      {total.toLocaleString()}
+    </Text>
+  );
+};
+
 export const TasksList: FC = () => {
   const frameworkChoices = useFrameworkChoices();
   const { openModal, closeModal } = useModalContext();
@@ -88,8 +98,28 @@ export const TasksList: FC = () => {
     reference: modules.project.ResourceName,
     id: currentProjectUuid as string
   });
-  const [, { data: projectTaskData }] = useProcessBulkApproval({ uuid: currentProjectUuid as string });
+
   const [, { update: updateProject, entityIsUpdating }] = useFullProject({ uuid: currentProjectUuid as string });
+  let projectTaskData: any[] = [];
+  const ListDataLogger: FC = () => {
+    const { data } = useListContext();
+
+    useEffect(() => {
+      projectTaskData.length = 0;
+      if (Array.isArray(data)) {
+        data.forEach((task: any) => {
+          if (Array.isArray(task.siteReports)) {
+            projectTaskData.push(...task.siteReports);
+          }
+          if (Array.isArray(task.nurseryReports)) {
+            projectTaskData.push(...task.nurseryReports);
+          }
+        });
+      }
+    }, [data]);
+
+    return null;
+  };
 
   useEffect(() => {
     if (entityIsUpdating) {
@@ -199,8 +229,6 @@ export const TasksList: FC = () => {
               nurseryReportNothingToReportUuid: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
               feedback: text ?? ""
             });
-
-            ApiSlice.pruneCache("processBulkApproval", [currentProjectUuid]);
           } catch (error) {
             openNotification(
               "error",
@@ -221,7 +249,14 @@ export const TasksList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+      <List
+        actions={<ListActions onExport={onClickExportButton} />}
+        filters={filters}
+        filter={{
+          ...(currentProjectUuid && { nothingToReportStatus: true })
+        }}
+      >
+        <ListDataLogger />
         {selectedProject && (
           <div className="m-6 flex items-center justify-between gap-6 rounded-2xl border border-neutral-300 px-6 py-4">
             <Text variant="text-20-bold" className="w-full leading-none">
@@ -235,17 +270,15 @@ export const TasksList: FC = () => {
                 Trees Planted
               </Text>
               <Status status={selectedProject?.status} variant="small" />
-              <Text variant="text-14-bold" className="leading-none">
-                {selectedProject?.trees_planted_count?.toLocaleString() ?? 0}
-              </Text>
+              <TreesPlantedTotal />
             </div>
             <Button
               onClick={() => {
-                if (projectTaskData?.reportsBulkApproval) {
-                  const reportsData = projectTaskData.reportsBulkApproval.map(report => ({
+                if (projectTaskData.length > 0) {
+                  const reportsData = projectTaskData.map(report => ({
                     id: report.uuid,
-                    name: report.name,
-                    type: report.type === "nurseryReport" ? "Nursery" : "Site",
+                    name: report.title ?? report.siteName ?? report.nurseryName,
+                    type: report.nurseryUuid ? "Nursery" : "Site",
                     dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
                   }));
                   openModalHandlerBulkApprove(reportsData, currentProjectUuid);

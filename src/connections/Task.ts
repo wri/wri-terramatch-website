@@ -1,13 +1,20 @@
 import { createSelector } from "reselect";
 
 import { PaginatedConnectionProps } from "@/connections/util/types";
+import { APPROVED } from "@/constants/statuses";
 import {
   taskGet,
   taskIndex,
   TaskIndexQueryParams,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { TaskFullDto, TaskLightDto, TaskUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  NurseryReportLightDto,
+  SiteReportLightDto,
+  TaskFullDto,
+  TaskLightDto,
+  TaskUpdateAttributes
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
@@ -105,7 +112,31 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
           const tasks: TaskLightDto[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
-            tasks.push(tasksStore[id].attributes);
+            const task = tasksStore[id];
+            if (props.filter?.nothingToReportStatus) {
+              const getReportDataById = (id: string, type: string) => {
+                console.log(indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes);
+                return indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes;
+              };
+
+              const siteReports = (task?.relationships?.["siteReports"] ?? [])
+                .map(({ id }) => getReportDataById(id, "siteReports"))
+                .filter(report => report.status != APPROVED);
+
+              const nurseryReports = (task?.relationships?.["nurseryReports"] ?? [])
+                .map(({ id }) => getReportDataById(id, "nurseryReports"))
+                .filter(report => report.status != APPROVED);
+
+              const taskWithRelationships = {
+                ...task.attributes,
+                siteReports,
+                nurseryReports
+              } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
+
+              tasks.push(taskWithRelationships);
+            } else {
+              tasks.push(task.attributes);
+            }
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };
