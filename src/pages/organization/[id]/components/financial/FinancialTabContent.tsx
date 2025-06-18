@@ -3,7 +3,13 @@ import _ from "lodash";
 import { useMemo } from "react";
 import { When } from "react-if";
 
+import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
+import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
+import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import ActionTrackerCardRow from "@/components/extensive/ActionTracker/ActionTrackerCardRow";
+import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
@@ -12,6 +18,7 @@ import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
 import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
 import Files from "../Files";
+import CardFinancial from "./components/cardFinancial";
 import FinancialInformation from "./FinancialInformation";
 
 type FinancialTabContentProps = {
@@ -58,45 +65,231 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     ];
   }, [organization]);
 
-  return (
-    <Container className="py-15">
-      <Text variant="text-heading-2000">{t("Financial Information")}</Text>
+  const mockedReportActions = [
+    {
+      title: "Project 1",
+      subtitle: "Subtitle 1",
+      status: StatusEnum.SUBMITTED,
+      ctaLink: "/my-projects",
+      ctaText: "View Project Report",
+      onClick: () => {
+        console.log("clicked");
+        return {};
+      },
+      polygonCheck: "Polygon Check",
+      approve: "Approve",
+      statusText: "submitted",
+      updatedAt: "2021/01/01",
+      updatedBy: "John Doe"
+    },
+    {
+      title: "Project 2",
+      subtitle: "Subtitle 2",
+      status: StatusEnum.DRAFT,
+      ctaLink: "/my-projects",
+      ctaText: "View Project Report",
+      onClick: () => {
+        console.log("clicked");
+        return {};
+      },
+      polygonCheck: "Polygon Check",
+      approve: "Approve",
+      statusText: "draft",
+      updatedAt: "2021/01/01",
+      updatedBy: "John Doe"
+    },
+    {
+      title: "Project 3",
+      subtitle: "Subtitle 3",
+      status: StatusEnum.SUBMITTED,
+      ctaLink: "/my-projects",
+      ctaText: "View Project Report",
+      onClick: () => {
+        console.log("clicked");
+        return {};
+      },
+      polygonCheck: "Polygon Check",
+      approve: "Approve",
+      statusText: "approved",
+      updatedAt: "2021/01/01",
+      updatedBy: "John Doe"
+    }
+  ];
 
-      {/* Information */}
-      <When condition={!incompleteSteps.financial}>
-        <FinancialInformation organization={organization} />
-      </When>
-      {/* Files */}
-      <When condition={!incompleteSteps.statementFiles}>
-        <Files files={files} />
-      </When>
-      {/* Build a Stronger Profile */}
-      <When condition={showIncompleteStepsSection}>
-        <BuildStrongerProfile
-          steps={[
-            {
-              showWhen: incompleteSteps.financial,
-              title: t("Add Organizational Budget"),
-              subtitle: t(
-                "Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD."
-              )
-            },
-            {
-              showWhen: incompleteSteps.statementFiles,
-              title: t("Add Financial Documents"),
-              subtitle: t(
-                "Note that your organisation's financial documents denotes the amount of money managed by your organization in the given year, converted into USD."
-              )
+  const financialDocumentsItems = [
+    { year: "2020", files: ["GFW Pro High Level Arch Diagram Feb 2023", "TERRAFUND Reference Letter New"] },
+    { year: "2021", files: ["GFW Pro High Level Arch Diagram Feb 2023"] },
+    { year: "2022", files: [] },
+    { year: "2023", files: ["GFW Pro High Level Arch Diagram Feb 2023", "TERRAFUND Reference Letter New"] },
+    { year: "2024", files: ["GFW Pro High Level Arch Diagram Feb 2023"] },
+    { year: "2025", files: [] }
+  ];
+
+  const financialDescriptionsItems = [
+    {
+      label: "2020",
+      description:
+        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
+    },
+    {
+      label: "2021",
+      description:
+        "Strong recovery emerged with 28% revenue growth driven by digital transformation initiatives and pent-up market demand, though increased operational expenses compressed profit margins."
+    },
+    {
+      label: "2022",
+      description:
+        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
+    },
+    {
+      label: "2023",
+      description:
+        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
+    },
+    {
+      label: "2024",
+      description:
+        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
+    },
+    {
+      label: "2025",
+      description:
+        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
+    }
+  ];
+
+  const fundingSourcesItems = [
+    { key: "2020", render: 2020 },
+    { key: "2021", render: 2021 },
+    { key: "2022", render: 2022 },
+    { key: "2023", render: 2023 },
+    { key: "2024", render: 2024 }
+  ];
+  return (
+    <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
+      <Container className="max-w-full bg-neutral-50 px-0 py-16">
+        <Container className="mx-auto grid grid-cols-2 gap-6">
+          <div className="flex flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
+            <Text variant="text-24-bold" className="mb-2">
+              {t("Basic Info")}
+            </Text>
+            <div className="flex flex-col gap-1">
+              <Text variant="text-16-light">{t("Local Currency")}</Text>
+              <Text variant="text-20-bold">{t("USD - US Dollar")}</Text>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
+              <Text variant="text-20-bold">{t("January")}</Text>
+            </div>
+          </div>
+          <div className="flex h-72 flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
+            <Text variant="text-24-bold">{t("Financial Information")}</Text>
+            <List
+              className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto p-3 text-left"
+              items={mockedReportActions}
+              render={row => <ActionTrackerCardRow {...row} />}
+            />
+          </div>
+        </Container>
+      </Container>
+
+      <Container className="mx-auto rounded-2xl p-8 shadow-all">
+        <Text variant="text-24-bold" className="mb-2">
+          {t("Financial Documents")}
+        </Text>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="flex flex-col gap-6 ">
+            <img src="/images/graphic-2.png" alt="Financial Documents" />
+          </div>
+          <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+            <CardFinancial title={t("2020")} data={t("+77")} description={t("Net Profit")} />
+            <CardFinancial title={t("2021")} data={t("+86")} description={t("Net Profit")} />
+            <CardFinancial title={t("2022")} data={t("+67")} description={t("Net Profit")} />
+            <CardFinancial title={t("2023")} data={t("+92")} description={t("Net Profit")} />
+            <CardFinancial title={t("2024")} data={t("+82")} description={t("Net Profit")} />
+            <CardFinancial title={t("2025")} data={t("+91")} description={t("Net Profit")} />
+          </div>
+        </div>
+      </Container>
+
+      <Container className="mx-auto rounded-2xl p-8 shadow-all">
+        <div className="grid grid-cols-2 gap-6">
+          <div className="flex flex-col gap-6 ">
+            <Text variant="text-24-bold" className="mb-2">
+              {t("Current Ratio by Year")}
+            </Text>
+            <img src="/images/graphic-3.png" alt="Financial Documents" />
+          </div>
+          <div className="flex h-full flex-col justify-center">
+            <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
+              <CardFinancial title={t("Latest Ratio")} data="2.4" description={t("2025")} />
+              <CardFinancial title={t("5-Year Average")} data="2.4" description={t("2020 - 2025")} />
+              <CardFinancial title={t("Trend")} data="+67" description={t("Improving")} />
+            </div>
+          </div>
+        </div>
+      </Container>
+
+      <Container className="mx-auto grid grid-cols-2 gap-6">
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Financial Documents per Year")}
+          </Text>
+          <FinancialDocumentsSection files={financialDocumentsItems} />
+        </div>
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Descriptions of Financials per Year")}
+          </Text>
+          <FinancialDescriptionsSection items={financialDescriptionsItems} />
+        </div>
+      </Container>
+      <Container className="mx-auto rounded-2xl p-8 shadow-all">
+        <Text variant="text-24-bold" className="mb-2">
+          {t("Major Funding Sources by Year")}
+        </Text>
+        <FundingSourcesSection items={fundingSourcesItems} />
+      </Container>
+      {/* {previous design} */}
+      <Container className="hidden py-15">
+        <Text variant="text-heading-2000">{t("Financial Information")}</Text>
+
+        {/* Information */}
+        <When condition={!incompleteSteps.financial}>
+          <FinancialInformation organization={organization} />
+        </When>
+        {/* Files */}
+        <When condition={!incompleteSteps.statementFiles}>
+          <Files files={files} />
+        </When>
+        {/* Build a Stronger Profile */}
+        <When condition={showIncompleteStepsSection}>
+          <BuildStrongerProfile
+            steps={[
+              {
+                showWhen: incompleteSteps.financial,
+                title: t("Add Organizational Budget"),
+                subtitle: t(
+                  "Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD."
+                )
+              },
+              {
+                showWhen: incompleteSteps.statementFiles,
+                title: t("Add Financial Documents"),
+                subtitle: t(
+                  "Note that your organisation's financial documents denotes the amount of money managed by your organization in the given year, converted into USD."
+                )
+              }
+            ]}
+            subtitle={t(
+              "Organizational Profiles with financial information are more likely to be successful in Funding Applications."
+            )}
+            onEdit={() =>
+              openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
             }
-          ]}
-          subtitle={t(
-            "Organizational Profiles with financial information are more likely to be successful in Funding Applications."
-          )}
-          onEdit={() =>
-            openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
-          }
-        />
-      </When>
+          />
+        </When>
+      </Container>
     </Container>
   );
 };

@@ -43,7 +43,7 @@ const fundingSourcesItems = [
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   return (
     <TabbedShowLayout.Tab label={label ?? "History"} {...rest}>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         <FinancialMetrics />
         <Accordion
           title="Financial Documents per Year"
