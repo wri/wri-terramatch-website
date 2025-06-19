@@ -20,13 +20,14 @@ import { selectorCache } from "@/utils/selectorCache";
 
 import { IdConnectionFactory } from "./util/api-connection-factory";
 
-const projectPitchesSelector = ({ projectPitches }: ApiDataStore) => projectPitches;
-
 const projectPitchConnection = new IdConnectionFactory("projectPitches", ({ id }) => ({ pathParams: { uuid: id } }))
   .singleResource<ProjectPitchDto>(projectPitchGet)
   .fetchInProgress(projectPitchGetIsFetching)
   .fetchFailure(projectPitchGetFetchFailed)
   .buildConnection();
+export const loadProjectPitch = connectionLoader(projectPitchConnection);
+
+const projectPitchesSelector = ({ projectPitches }: ApiDataStore) => projectPitches;
 
 export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;
@@ -101,4 +102,3 @@ const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPit
 };
 
 export const loadProjectPitches = connectionLoader(projectPitchesConnection);
-export const loadProjectPitch = connectionLoader(projectPitchConnection);

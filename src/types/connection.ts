@@ -31,3 +31,10 @@ export type PaginatedConnectionProps = {
   sortField?: string;
   sortDirection?: "ASC" | "DESC";
 };
+
+export type PaginatedQueryParams = {
+  "page[number]"?: number;
+  "page[size]"?: number;
+  "sort[field]"?: string;
+  "sort[direction]"?: "ASC" | "DESC";
+};

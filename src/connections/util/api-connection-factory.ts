@@ -1,33 +1,85 @@
-import { assign } from "lodash";
+import { assign, merge } from "lodash";
 import { createSelector } from "reselect";
 
-import { ApiDataStore, ApiResources, PendingErrorState } from "@/store/apiSlice";
-import { Connection, LoadedPredicate, OptionalProps } from "@/types/connection";
+import { FetchParams, getStableQuery } from "@/generated/v3/utils";
+import {
+  ApiDataStore,
+  ApiFilteredIndexCache,
+  PendingErrorState,
+  ResourceType,
+  StoreResourceMap
+} from "@/store/apiSlice";
+import {
+  Connection,
+  LoadedPredicate,
+  OptionalProps,
+  PaginatedConnectionProps,
+  PaginatedQueryParams
+} from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
 class ApiConnectionFactoryError extends Error {}
 
 type DataConnection<DTO> = { data: DTO | undefined };
+type IndexConnection<DTO> = {
+  data?: DTO[];
+  indexTotal?: number;
+};
 type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
 export type IdProps = { id: string };
 
-type GetFetcher<GetVariables> = (variables: GetVariables, signal?: AbortSignal) => void;
-type GetFailureSelector<GetVariables> = (
-  variables: Omit<GetVariables, "body">
+type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
+type FailureSelector<Variables> = (
+  variables: Omit<Variables, "body">
 ) => (store: ApiDataStore) => PendingErrorState | null;
-type GetInProgressSelector<GetVariables> = (variables: Omit<GetVariables, "body">) => (store: ApiDataStore) => boolean;
+type InProgressSelector<Variables> = (variables: Omit<Variables, "body">) => (store: ApiDataStore) => boolean;
+type IndexMetaSelector<Variables> = (
+  resource: ResourceType,
+  variables: Omit<Variables, "body">
+) => (store: ApiDataStore) => ApiFilteredIndexCache;
 
-type GetParamsFactory<GetVariables> = (props: IdProps) => GetVariables;
+type QueryVariables = {
+  pathParams?: Record<string, unknown>;
+  queryParams?: Record<string, unknown>;
+};
+type VariablesFactory<Variables extends QueryVariables, PropsType> = (props: PropsType) => Variables;
 
 const resourceDataSelector =
-  <DTO>(resource: keyof ApiResources) =>
+  <DTO>(resource: ResourceType) =>
   ({ id }: IdProps) =>
-  (store: ApiDataStore) => ({ data: store[resource][id]?.attributes as DTO | undefined });
+  (store: ApiDataStore): DataConnection<DTO> => ({ data: store[resource][id]?.attributes as DTO | undefined });
+
+const indexDataSelector =
+  <DTO, Variables extends QueryVariables, PropsType>(
+    resource: ResourceType,
+    indexMetaSelector: IndexMetaSelector<Variables>,
+    variablesFactory: VariablesFactory<Variables, PropsType>
+  ) =>
+  (props: PropsType) =>
+    createSelector(
+      [
+        indexMetaSelector(resource, variablesFactory(props)),
+        (store: ApiDataStore) => store[resource] as StoreResourceMap<DTO>
+      ],
+      (indexMeta, resources): IndexConnection<DTO> => {
+        if (indexMeta == null) return {};
+
+        const data = [] as DTO[];
+        for (const id of indexMeta.ids) {
+          // If we're missing any of the data we're supposed to have, return nothing so the
+          // index endpoint is queried again.
+          if (resources[id] == null) return {};
+          data.push(resources[id].attributes as DTO);
+        }
+
+        return { data, indexTotal: indexMeta.total };
+      }
+    );
 
 type SelectorPrototype<SelectedType, PropsType extends OptionalProps = undefined> = (
   props: PropsType
-) => (state: ApiDataStore) => Partial<SelectedType>;
+) => (state: ApiDataStore) => SelectedType;
 
 type ConnectionPrototype<SelectedType, PropsType extends OptionalProps = undefined> = {
   fetcher?: (props: PropsType) => void;
@@ -36,7 +88,7 @@ type ConnectionPrototype<SelectedType, PropsType extends OptionalProps = undefin
 };
 
 abstract class ApiConnectionFactory<SelectedType = {}, PropsType extends Record<string, unknown> = {}> {
-  protected constructor(private connectionPrototype?: ConnectionPrototype<SelectedType, PropsType>) {}
+  protected constructor(protected connectionPrototype?: ConnectionPrototype<SelectedType, PropsType>) {}
 
   buildConnection(): Connection<SelectedType, PropsType> {
     if (this.connectionPrototype == null) {
@@ -102,13 +154,13 @@ abstract class ApiConnectionFactory<SelectedType = {}, PropsType extends Record<
  * pattern implemented in several resources in the v3 backend.
  */
 export class IdConnectionFactory<
-  GetVariables,
+  GetVariables extends QueryVariables,
   SelectedType = {},
   PropsType extends IdProps = IdProps
 > extends ApiConnectionFactory<SelectedType, PropsType> {
   constructor(
-    private readonly resource: keyof ApiResources,
-    private readonly paramsFactory: GetParamsFactory<GetVariables>,
+    private readonly resource: ResourceType,
+    private readonly variablesFactory: VariablesFactory<GetVariables, PropsType>,
     connectionPrototype?: ConnectionPrototype<SelectedType, PropsType>
   ) {
     super(connectionPrototype);
@@ -126,12 +178,13 @@ export class IdConnectionFactory<
    * resulting connection `data` will be typed with "never", which should generate errors in the
    * connection usage.
    */
-  public singleResource<DTO = never>(fetcher: GetFetcher<GetVariables>) {
+  public singleResource<DTO = never>(fetcher: Fetcher<GetVariables>) {
+    const variablesFactory = this.variablesFactory as VariablesFactory<GetVariables, IdProps>;
     return new IdConnectionFactory(
       this.resource,
-      this.paramsFactory,
+      variablesFactory,
       this.chainPrototype<DataConnection<DTO>, IdProps>({
-        fetcher: props => fetcher(this.paramsFactory(props)),
+        fetcher: props => fetcher(variablesFactory(props)),
         isLoaded: ({ data }) => data != null,
         selectors: [props => resourceDataSelector<DTO>(this.resource)(props)]
       })
@@ -147,14 +200,15 @@ export class IdConnectionFactory<
    * resulting connection `data` will be typed with "never", which should generate errors in the
    * connection usage.
    */
-  public singleFullResource<DTO extends { lightResource: boolean } = never>(fetcher: GetFetcher<GetVariables>) {
+  public singleFullResource<DTO extends { lightResource: boolean } = never>(fetcher: Fetcher<GetVariables>) {
+    const variablesFactory = this.variablesFactory as VariablesFactory<GetVariables, IdProps>;
     return new IdConnectionFactory(
       this.resource,
-      this.paramsFactory,
+      variablesFactory,
       this.chainPrototype<DataConnection<DTO>, IdProps>({
-        fetcher: props => fetcher(this.paramsFactory(props)),
+        fetcher: props => fetcher(variablesFactory(props)),
         isLoaded: ({ data }) => data != null && !data.lightResource,
-        selectors: [props => resourceDataSelector<DTO>(this.resource)(props)]
+        selectors: [resourceDataSelector<DTO>(this.resource)]
       })
     );
   }
@@ -163,15 +217,16 @@ export class IdConnectionFactory<
    * Adds a `loadFailure` property to the connection, using the provided failure selector. If the
    * connection reports a load failure, it counts as loaded.
    */
-  public fetchFailure(failureSelector: GetFailureSelector<GetVariables>) {
+  public fetchFailure(failureSelector: FailureSelector<GetVariables>) {
+    const variablesFactory = this.variablesFactory as VariablesFactory<GetVariables, IdProps>;
     return new IdConnectionFactory(
       this.resource,
-      this.paramsFactory,
+      variablesFactory,
       this.chainPrototype<LoadFailureConnection, IdProps>({
         isLoaded: ({ loadFailure }) => loadFailure != null,
         selectors: [
           props => (store: ApiDataStore) => ({
-            loadFailure: failureSelector(this.paramsFactory(props))(store)
+            loadFailure: failureSelector(variablesFactory(props))(store)
           })
         ]
       })
@@ -181,17 +236,102 @@ export class IdConnectionFactory<
   /**
    * Adds an `isLoading` boolean flag to the connection using the provided inProgressSelector.
    */
-  public fetchInProgress(inProgressSelector: GetInProgressSelector<GetVariables>) {
+  public fetchInProgress(inProgressSelector: InProgressSelector<GetVariables>) {
+    const variablesFactory = this.variablesFactory as VariablesFactory<GetVariables, IdProps>;
     return new IdConnectionFactory(
       this.resource,
-      this.paramsFactory,
+      variablesFactory,
       this.chainPrototype<IsLoadingConnection, IdProps>({
         selectors: [
           props => (store: ApiDataStore) => ({
-            isLoading: inProgressSelector(this.paramsFactory(props))(store)
+            isLoading: inProgressSelector(variablesFactory(props))(store)
           })
         ]
       })
+    );
+  }
+}
+
+export class IndexConnectionFactory<
+  IndexVariables extends QueryVariables,
+  SelectedType = {},
+  PropsType extends Record<string, unknown> = {}
+> extends ApiConnectionFactory<SelectedType, PropsType> {
+  constructor(
+    private readonly resource: ResourceType,
+    private readonly variablesFactory?: VariablesFactory<IndexVariables, PropsType>,
+    connectionPrototype?: ConnectionPrototype<SelectedType, PropsType>
+  ) {
+    super(connectionPrototype);
+  }
+
+  protected get selectorCacheKeyFactory() {
+    return (props: PropsType) => {
+      const variables = this.variablesFactory?.(props);
+      if (variables == null) return "";
+
+      let cacheKey = "";
+      const { pathParams, queryParams } = variables;
+      if (pathParams != null) {
+        cacheKey = Object.keys(pathParams)
+          .sort()
+          .map(key => String(pathParams[key]))
+          .join(":");
+        cacheKey = `${cacheKey}:`;
+      }
+      if (queryParams != null) {
+        cacheKey = `${cacheKey}${getStableQuery(queryParams as FetchParams)}`;
+      }
+      return cacheKey;
+    };
+  }
+
+  private chainParamsFactory<AddPropsType>(addVariablesFactory: VariablesFactory<IndexVariables, AddPropsType>) {
+    if (this.variablesFactory == null) return addVariablesFactory;
+
+    const variablesFactory = this.variablesFactory;
+    return (props: PropsType & AddPropsType) => merge({}, variablesFactory(props), addVariablesFactory(props));
+  }
+
+  /**
+   * Adds a `data` property to the connection as an array of the current index data, typed by the
+   * provided DTO generic parameter.
+   *
+   * The generic DTO parameter is required to be provided explicitly. If it is left off, the
+   * resulting connection `data` will be typed with "never", which should generate errors in the
+   * connection usage.
+   */
+  public index<DTO = never>(fetcher: Fetcher<IndexVariables>, indexMetaSelector: IndexMetaSelector<IndexVariables>) {
+    const variablesFactory = this.variablesFactory as VariablesFactory<IndexVariables, PropsType>;
+    return new IndexConnectionFactory(
+      this.resource,
+      variablesFactory,
+      this.chainPrototype<IndexConnection<DTO>, PropsType>({
+        fetcher: props => fetcher(variablesFactory(props)),
+        isLoaded: ({ data }) => data != null,
+        selectors: [
+          indexDataSelector<DTO, IndexVariables, PropsType>(this.resource, indexMetaSelector, variablesFactory)
+        ]
+      })
+    );
+  }
+
+  public pagination() {
+    return new IndexConnectionFactory<IndexVariables, SelectedType, PropsType & PaginatedConnectionProps>(
+      this.resource,
+      this.chainParamsFactory<PaginatedConnectionProps>(({ pageSize, pageNumber, sortField, sortDirection }) => {
+        const queryParams: PaginatedQueryParams = {};
+        if (pageNumber != null) {
+          queryParams["page[number]"] = pageNumber;
+          queryParams["page[size]"] = pageSize;
+        }
+        if (sortField != null) {
+          queryParams["sort[field]"] = sortField;
+          queryParams["sort[direction]"] = sortDirection ?? "ASC";
+        }
+        return { queryParams } as IndexVariables;
+      }),
+      this.connectionPrototype as ConnectionPrototype<SelectedType, PropsType & PaginatedConnectionProps>
     );
   }
 }
