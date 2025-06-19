@@ -18,44 +18,15 @@ import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
+import { IdConnectionFactory } from "./util/api-connection-factory";
+
 const projectPitchesSelector = ({ projectPitches }: ApiDataStore) => projectPitches;
 
-type ProjectPitchConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  projectPitch: ProjectPitchDto | null;
-};
-
-type ProjectPitchConnectionProps = {
-  uuid: string;
-};
-
-const projectPitchIsLoaded = ({ requestFailed, projectPitch }: ProjectPitchConnection) =>
-  requestFailed != null || projectPitch != null;
-
-const projectPitchConnection: Connection<ProjectPitchConnection, ProjectPitchConnectionProps> = {
-  load: (connection, { uuid }) => {
-    if (!projectPitchIsLoaded(connection)) projectPitchGet({ pathParams: { uuid } });
-  },
-
-  isLoaded: projectPitchIsLoaded,
-  selector: selectorCache(
-    ({ uuid }: ProjectPitchConnectionProps) => uuid,
-    ({ uuid }: ProjectPitchConnectionProps) =>
-      createSelector(
-        [
-          projectPitchGetIsFetching({ pathParams: { uuid } }),
-          projectPitchGetFetchFailed({ pathParams: { uuid } }),
-          projectPitchesSelector
-        ],
-        (isLoading, requestFailed, selector) => ({
-          isLoading,
-          requestFailed,
-          projectPitch: selector[uuid]?.attributes ?? null
-        })
-      )
-  )
-};
+const projectPitchConnection = new IdConnectionFactory("projectPitches", ({ id }) => ({ pathParams: { uuid: id } }))
+  .singleResource<ProjectPitchDto>(projectPitchGet)
+  .fetchInProgress(projectPitchGetIsFetching)
+  .fetchFailure(projectPitchGetFetchFailed)
+  .buildConnection();
 
 export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;

@@ -38,10 +38,10 @@ export const pitchDataProvider: PitchDataProvider = {
   },
 
   //@ts-ignore
-  async getOne(_, params) {
-    const { requestFailed, projectPitch } = await loadProjectPitch({ uuid: params.id });
-    if (requestFailed != null) {
-      throw v3ErrorForRA("Project Pitch get fetch failed", requestFailed);
+  async getOne(_, { id }) {
+    const { loadFailure, data: projectPitch } = await loadProjectPitch({ id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Project Pitch get fetch failed", loadFailure);
     }
 
     return { data: { ...projectPitch, id: projectPitch?.uuid } };

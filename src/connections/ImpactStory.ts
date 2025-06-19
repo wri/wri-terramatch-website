@@ -18,70 +18,15 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
+import { IdConnectionFactory } from "./util/api-connection-factory";
+
 const impactStoriesSelector = ({ impactStories }: ApiDataStore) => impactStories;
 
-type ImpactStoryConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  impactStory: ImpactStoryFullDto | null;
-};
-
-type ImpactStoryConnectionProps = {
-  uuid: string;
-};
-
-const impactStoryIsLoaded =
-  (requireFull: boolean) =>
-  ({ requestFailed, impactStory }: ImpactStoryConnection) =>
-    requestFailed != null || (impactStory != null && (!requireFull || !impactStory.lightResource));
-
-const impactStoryConnection: Connection<ImpactStoryConnection, ImpactStoryConnectionProps> = {
-  load: (connection, { uuid }) => {
-    if (!impactStoryIsLoaded(true)(connection)) impactStoryGet({ pathParams: { uuid } });
-  },
-
-  isLoaded: impactStoryIsLoaded(true),
-  selector: selectorCache(
-    ({ uuid }: ImpactStoryConnectionProps) => uuid,
-    ({ uuid }: ImpactStoryConnectionProps) =>
-      createSelector(
-        [
-          impactStoryGetIsFetching({ pathParams: { uuid } }),
-          impactStoryGetFetchFailed({ pathParams: { uuid } }),
-          impactStoriesSelector
-        ],
-        (isLoading, requestFailed, selector) => ({
-          isLoading,
-          requestFailed,
-          impactStory: selector[uuid]?.attributes as ImpactStoryFullDto | null
-        })
-      )
-  )
-};
-
-const lightImpactStoryConnection: Connection<ImpactStoryConnection, ImpactStoryConnectionProps> = {
-  load: (connection, { uuid }) => {
-    if (!impactStoryIsLoaded(false)(connection)) impactStoryGet({ pathParams: { uuid } });
-  },
-
-  isLoaded: impactStoryIsLoaded(false),
-  selector: selectorCache(
-    ({ uuid }: ImpactStoryConnectionProps) => uuid,
-    ({ uuid }: ImpactStoryConnectionProps) =>
-      createSelector(
-        [
-          impactStoryGetIsFetching({ pathParams: { uuid } }),
-          impactStoryGetFetchFailed({ pathParams: { uuid } }),
-          impactStoriesSelector
-        ],
-        (isLoading, requestFailed, selector) => ({
-          isLoading,
-          requestFailed,
-          impactStory: selector[uuid]?.attributes as ImpactStoryFullDto | null
-        })
-      )
-  )
-};
+const impactStoryConnection = new IdConnectionFactory("impactStories", ({ id }) => ({ pathParams: { uuid: id } }))
+  .singleFullResource<ImpactStoryFullDto>(impactStoryGet)
+  .fetchFailure(impactStoryGetFetchFailed)
+  .fetchInProgress(impactStoryGetIsFetching)
+  .buildConnection();
 
 export type ImpactStoriesConnection = {
   fetchFailure: PendingErrorState | null;
@@ -182,9 +127,7 @@ const impactStoriesConnection: Connection<ImpactStoriesConnection, ImpactStoryIn
 };
 
 export const useImpactStory = connectionHook(impactStoryConnection);
-export const useLightImpactStory = connectionHook(lightImpactStoryConnection);
 export const useImpactStories = connectionHook(impactStoriesConnection);
 
 export const loadImpactStory = connectionLoader(impactStoryConnection);
-export const loadLightImpactStory = connectionLoader(lightImpactStoryConnection);
 export const loadImpactStories = connectionLoader(impactStoriesConnection);

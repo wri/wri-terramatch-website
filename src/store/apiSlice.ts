@@ -94,7 +94,7 @@ export const RESOURCES = [
   ...DASHBOARD_SERVICE_RESOURCES
 ] as const;
 
-type ApiResources = EntityServiceApiResources &
+export type ApiResources = EntityServiceApiResources &
   JobServiceApiResources &
   UserServiceApiResources &
   ResearchServiceApiResources &

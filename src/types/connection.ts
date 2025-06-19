@@ -8,13 +8,18 @@ export type Selector<State, SelectedType, PropsType extends OptionalProps = unde
   props: PropsType
 ) => SelectedType;
 
+export type LoadedPredicate<SelectedType, PropsType extends OptionalProps = undefined> = (
+  selected: SelectedType,
+  props: PropsType
+) => boolean;
+
 export type Connection<SelectedType, PropsType extends OptionalProps = undefined, State = ApiDataStore> = {
   // If the `State` is not ApiDataStore, this method is required to provide the State from the overall redux store.
   // Note: this method must _not_ do any data mapping, it should simply select a subset of the AppStore and
   // return it.
   getState?: (store: AppStore) => State;
   selector: Selector<State, SelectedType, PropsType>;
-  isLoaded?: (selected: SelectedType, props: PropsType) => boolean;
+  isLoaded?: LoadedPredicate<SelectedType, PropsType>;
   load?: (selected: SelectedType, props: PropsType) => void;
 };
 
