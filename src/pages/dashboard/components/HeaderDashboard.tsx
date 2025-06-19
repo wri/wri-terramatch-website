@@ -96,27 +96,15 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   }, [activeProjects, gadmCountries]);
 
   const optionMenu = activeProjects
-    ? activeProjects?.map(
-        (
-          item: {
-            project_country: string;
-            organisation: string;
-            name: string;
-            programme: string;
-            uuid: string;
-            country_slug: string;
-          },
-          index: number
-        ) => ({
-          id: index,
-          country: item?.project_country,
-          organization: item?.organisation,
-          project: item?.name,
-          programme: item?.programme,
-          uuid: item?.uuid,
-          country_slug: item?.country_slug
-        })
-      )
+    ? activeProjects?.map((item, index: number) => ({
+        id: String(index),
+        country: item?.project_country || item?.country_slug || "",
+        organization: item?.organisation || "",
+        project: item?.name || "",
+        programme: item?.programme || "",
+        uuid: item?.uuid || "",
+        country_slug: item?.country_slug || ""
+      }))
     : [];
 
   const organizationOptions = [
@@ -563,7 +551,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   isDefaultOpen={true}
                   menu={optionMenu.map(
                     (option: {
-                      id: number;
+                      id: string;
                       country: string;
                       organization: string;
                       project: string;

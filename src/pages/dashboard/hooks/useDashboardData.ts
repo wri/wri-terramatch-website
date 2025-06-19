@@ -40,6 +40,8 @@ export interface ProcessedProject {
   jobs_created: number;
   lat?: string | number | null;
   long?: string | number | null;
+  // Legacy field for compatibility with HeaderDashboard
+  project_country?: string;
   // V3 specific fields
   organisationName?: string;
   treesPlantedCount?: number;
@@ -61,6 +63,8 @@ const convertV3ToProcessed = (v3Project: any): ProcessedProject => ({
   jobs_created: v3Project.totalJobsCreated || 0,
   lat: v3Project.lat,
   long: v3Project.long,
+  // Legacy field for compatibility with HeaderDashboard
+  project_country: v3Project.country || "",
   // Keep V3 fields for potential future use
   organisationName: v3Project.organisationName,
   treesPlantedCount: v3Project.treesPlantedCount,
@@ -82,6 +86,8 @@ const convertV2ToProcessed = (v2Project: any): ProcessedProject => ({
   jobs_created: v2Project.jobs_created || 0,
   lat: v2Project.lat,
   long: v2Project.long,
+  // Legacy field for compatibility with HeaderDashboard
+  project_country: v2Project.project_country || v2Project.country_slug || "",
   isV3Data: false
 });
 
