@@ -15,7 +15,6 @@ import {
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
-  BoundingBoxDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -41,7 +40,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
-  "boundingBoxes",
   "projects",
   "sites",
   "nurseries",
@@ -64,7 +62,6 @@ export type EntityServiceApiResources = {
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
