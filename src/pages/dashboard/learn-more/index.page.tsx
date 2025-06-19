@@ -173,7 +173,7 @@ const Homepage = () => {
             <Text variant="text-14-light" className="text-darkCustom-150">
               Access pre-filtered pages for each of TerraFund’s target landscapes here-{" "}
               <a
-                href="/dashboard?landscapes=Ghana+Cocoa+Belt"
+                href="/dashboard?landscapes=gcb"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
@@ -181,7 +181,7 @@ const Homepage = () => {
               </a>
               ,{" "}
               <a
-                href="/dashboard?landscapes=Greater+Rift+Valley+of+Kenya"
+                href="/dashboard?landscapes=grv"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >
@@ -189,7 +189,7 @@ const Homepage = () => {
               </a>
               , and{" "}
               <a
-                href="/dashboard?landscapes=Lake+Kivu+%26+Rusizi+River+Basin"
+                href="/dashboard?landscapes=ikr"
                 target="_blank"
                 className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
               >

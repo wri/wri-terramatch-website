@@ -1138,7 +1138,7 @@ export type EntityIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
@@ -1803,7 +1803,7 @@ export type EntityAssociationIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
