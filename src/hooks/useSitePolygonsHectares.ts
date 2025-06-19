@@ -12,6 +12,7 @@ export interface UseSitePolygonsHectaresResult {
   data: HectaresData | null;
   isLoading: boolean;
   error: string | null;
+  allPolygonsData: SitePolygonLightDto[];
 }
 
 const APPROVED_STATUS: SitePolygonIndexConnectionProps["polygonStatus"] = ["approved"];
@@ -85,6 +86,7 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
   return {
     data: hectaresData,
     isLoading: isLoading,
-    error: combinedError
+    error: combinedError,
+    allPolygonsData: allPolygonsData
   };
 };

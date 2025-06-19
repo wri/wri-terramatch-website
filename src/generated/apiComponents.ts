@@ -20896,83 +20896,6 @@ export const useGetV2DashboardPolygonsPolyUuidCentroid = <TData = GetV2Dashboard
   );
 };
 
-export type GetV2DashboardGetPolygonsStatusesQueryParams = {
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardGetPolygonsStatusesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardGetPolygonsStatusesResponse = {
-  data?: any[];
-  /**
-   * Centroids of polygons
-   */
-  centroids?: {
-    /**
-     * Uuid of polygon
-     */
-    uuid?: string;
-    /**
-     * Longitude of polygon
-     */
-    long?: number;
-    lat?: number;
-    description?: void;
-  }[];
-};
-
-export type GetV2DashboardGetPolygonsStatusesVariables = {
-  queryParams?: GetV2DashboardGetPolygonsStatusesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const fetchGetV2DashboardGetPolygonsStatuses = (
-  variables: GetV2DashboardGetPolygonsStatusesVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardGetPolygonsStatusesResponse,
-    GetV2DashboardGetPolygonsStatusesError,
-    undefined,
-    {},
-    GetV2DashboardGetPolygonsStatusesQueryParams,
-    {}
-  >({ url: "/v2/dashboard/get-polygons/statuses", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all polygons by project uuid.
- */
-export const useGetV2DashboardGetPolygonsStatuses = <TData = GetV2DashboardGetPolygonsStatusesResponse>(
-  variables: GetV2DashboardGetPolygonsStatusesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardGetPolygonsStatusesResponse,
-      GetV2DashboardGetPolygonsStatusesError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardGetPolygonsStatusesResponse, GetV2DashboardGetPolygonsStatusesError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/get-polygons/statuses",
-      operationId: "getV2DashboardGetPolygonsStatuses",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardGetPolygonsStatuses({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonDataUuidPathParams = {
   /**
    * UUID of the polygon
@@ -24760,11 +24683,6 @@ export type QueryOperation =
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
       operationId: "getV2DashboardPolygonsPolyUuidCentroid";
       variables: GetV2DashboardPolygonsPolyUuidCentroidVariables;
-    }
-  | {
-      path: "/v2/dashboard/get-polygons/statuses";
-      operationId: "getV2DashboardGetPolygonsStatuses";
-      variables: GetV2DashboardGetPolygonsStatusesVariables;
     }
   | {
       path: "/v2/dashboard/polygon-data/{uuid}";
