@@ -717,6 +717,111 @@ export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal)
     signal
   });
 
+export type UploadFilePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+  /**
+   * Media collection to retrieve
+   */
+  collection: string;
+};
+
+export type UploadFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadFileResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export type UploadFileVariables = {
+  pathParams: UploadFilePathParams;
+};
+
+/**
+ * Upload a file to a media collection
+ */
+export const uploadFile = (variables: UploadFileVariables, signal?: AbortSignal) =>
+  entityServiceFetch<UploadFileResponse, UploadFileError, undefined, {}, {}, UploadFilePathParams>({
+    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
+    method: "post",
+    ...variables,
+    signal
+  });
+
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
 };
@@ -1033,7 +1138,7 @@ export type EntityIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
@@ -1698,7 +1803,7 @@ export type EntityAssociationIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
@@ -1916,6 +2021,7 @@ export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
+  fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   boundingBoxes: { boundingBoxGet },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },

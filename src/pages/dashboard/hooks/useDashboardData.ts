@@ -20,22 +20,12 @@ import {
 } from "@/generated/apiComponents";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { createQueryParams } from "@/utils/dashboardUtils";
+import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
-
-const LANDSCAPE_SLUGS = {
-  "Ghana Cocoa Belt": "gcb",
-  "Greater Rift Valley of Kenya": "grv",
-  "Lake Kivu & Rusizi River Basin": "ikr"
-} as const;
-
-//TODO: remove this once we have the correct landscape slugs for all filters
-const getLandscapeSlugs = (landscapes: string[]) => {
-  return landscapes.map(landscape => LANDSCAPE_SLUGS[landscape as keyof typeof LANDSCAPE_SLUGS] ?? landscape);
-};
 
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
@@ -63,7 +53,7 @@ export const useDashboardData = (filters: any) => {
     totalValue: 0
   });
   const [, { bbox: generalBbox }] = useBoundingBox({
-    landscapes: getLandscapeSlugs(filters.landscapes),
+    landscapes: convertNamesToCodes(filters.landscapes),
     country: filters.country.country_slug
   });
   const [updateFilters, setUpdateFilters] = useState<any>({});
@@ -72,7 +62,7 @@ export const useDashboardData = (filters: any) => {
       programmes: filters.programmes,
       country: filters.country.country_slug,
       organisationType: filters.organizations,
-      landscapes: filters.landscapes,
+      landscapes: convertNamesToCodes(filters.landscapes),
       cohort: filters.cohort,
       projectUuid: filters.uuid
     };
@@ -107,7 +97,7 @@ export const useDashboardData = (filters: any) => {
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
-    landscapes: filters.landscapes,
+    landscapes: convertNamesToCodes(filters.landscapes),
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
@@ -147,7 +137,7 @@ export const useDashboardData = (filters: any) => {
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
-    landscapes: filters.landscapes,
+    landscapes: convertNamesToCodes(filters.landscapes),
     cohort: filters.cohort,
     projectUuid: filters.uuid
   });
@@ -216,7 +206,7 @@ export const useDashboardData = (filters: any) => {
     }
 
     if (filters?.landscapes?.length > 0) {
-      params.landscape = filters.landscapes;
+      params.landscape = convertNamesToCodes(filters.landscapes);
     }
 
     if (filters?.cohort) {
