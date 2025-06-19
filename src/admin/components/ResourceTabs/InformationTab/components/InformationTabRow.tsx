@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 import classNames from "classnames";
 import { LabeledClasses } from "react-admin";
-import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
@@ -24,20 +23,19 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
         render={entry => (
           <div>
             <Typography className={LabeledClasses.label}>
-              <Text variant="text-14-light" className="capitalize text-grey-700">
+              <Text as="span" variant="text-14-light" className="capitalize text-grey-700">
                 {entry.title === "Upload Site Boundary" ? "Site Boundary" : entry.title}
               </Text>
             </Typography>
-            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-              <Then>
-                <Text
-                  variant="text-14-semibold"
-                  className="text-darkCustom"
-                  dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
-                />
-              </Then>
-              <Else>{formatEntryValue(entry.value)}</Else>
-            </If>
+            {typeof entry.value === "string" || typeof entry.value === "number" ? (
+              <Text
+                variant="text-14-semibold"
+                className="text-darkCustom"
+                dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
+              />
+            ) : (
+              formatEntryValue(entry.value)
+            )}
           </div>
         )}
       />
