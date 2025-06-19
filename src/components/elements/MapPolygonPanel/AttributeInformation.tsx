@@ -33,6 +33,10 @@ const dropdownOptionsTarget = [
     value: "agroforest"
   },
   {
+    title: "Grassland",
+    value: "grassland"
+  },
+  {
     title: "Natural Forest",
     value: "natural-forest"
   },
