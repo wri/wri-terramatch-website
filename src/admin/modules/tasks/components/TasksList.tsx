@@ -27,9 +27,14 @@ import { useFullProject } from "@/connections/Entity";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { APPROVED } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  NurseryReportLightDto,
+  SiteReportLightDto,
+  TaskLightDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -109,10 +114,16 @@ export const TasksList: FC = () => {
       if (Array.isArray(data)) {
         data.forEach((task: any) => {
           if (Array.isArray(task.siteReports)) {
-            projectTaskData.push(...task.siteReports);
+            const siteReports = task.siteReports.filter(
+              (report: SiteReportLightDto) => report.status != APPROVED && report.nothingToReport == true
+            );
+            projectTaskData.push(...siteReports);
           }
           if (Array.isArray(task.nurseryReports)) {
-            projectTaskData.push(...task.nurseryReports);
+            const nurseryReports = task.nurseryReports.filter(
+              (report: NurseryReportLightDto) => report.status != APPROVED && report.nothingToReport == true
+            );
+            projectTaskData.push(...nurseryReports);
           }
         });
       }
@@ -249,13 +260,7 @@ export const TasksList: FC = () => {
         </Text>
       </Stack>
 
-      <List
-        actions={<ListActions onExport={onClickExportButton} />}
-        filters={filters}
-        filter={{
-          ...(currentProjectUuid && { nothingToReportStatus: true })
-        }}
-      >
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <ListDataLogger />
         {selectedProject && (
           <div className="m-6 flex items-center justify-between gap-6 rounded-2xl border border-neutral-300 px-6 py-4">

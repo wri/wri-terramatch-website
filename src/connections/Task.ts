@@ -1,7 +1,6 @@
 import { createSelector } from "reselect";
 
 import { PaginatedConnectionProps } from "@/connections/util/types";
-import { APPROVED } from "@/constants/statuses";
 import {
   taskGet,
   taskIndex,
@@ -113,30 +112,26 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
             const task = tasksStore[id];
-            if (props.filter?.nothingToReportStatus) {
-              const getReportDataById = (id: string, type: string) => {
-                console.log(indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes);
-                return indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes;
-              };
 
-              const siteReports = (task?.relationships?.["siteReports"] ?? [])
-                .map(({ id }) => getReportDataById(id, "siteReports"))
-                .filter(report => report.status != APPROVED);
+            const getReportDataById = (id: string, type: string) => {
+              return indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes;
+            };
 
-              const nurseryReports = (task?.relationships?.["nurseryReports"] ?? [])
-                .map(({ id }) => getReportDataById(id, "nurseryReports"))
-                .filter(report => report.status != APPROVED);
+            const siteReports = (task?.relationships?.["siteReports"] ?? []).map(({ id }) =>
+              getReportDataById(id, "siteReports")
+            );
 
-              const taskWithRelationships = {
-                ...task.attributes,
-                siteReports,
-                nurseryReports
-              } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
+            const nurseryReports = (task?.relationships?.["nurseryReports"] ?? []).map(({ id }) =>
+              getReportDataById(id, "nurseryReports")
+            );
 
-              tasks.push(taskWithRelationships);
-            } else {
-              tasks.push(task.attributes);
-            }
+            const taskWithRelationships = {
+              ...task.attributes,
+              siteReports,
+              nurseryReports
+            } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
+
+            tasks.push(taskWithRelationships);
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };

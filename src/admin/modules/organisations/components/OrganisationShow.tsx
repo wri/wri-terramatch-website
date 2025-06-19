@@ -40,7 +40,10 @@ import { OrganisationShowAside } from "./OrganisationShowAside";
 import OrganisationUserTable from "./OrganisationUserTable";
 
 const OrganisationShowActions: FC = () => {
-  const { uuid, is_test } = useRecordContext();
+  const record = useRecordContext();
+  if (!record) return null; // o fallback
+
+  const { uuid, is_test } = record;
   const refresh = useRefresh();
   const queryClient = useQueryClient();
   const { mutate: updateOrg } = usePutV2OrganisationsUUID({

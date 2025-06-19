@@ -374,10 +374,6 @@ export type TaskIndexQueryParams = {
   status?: string;
   frameworkKey?: string;
   projectUuid?: string;
-  /**
-   * Optional filter to retrieve reports with 'nothing to report' set to true; applied only when this filter is present
-   */
-  nothingToReportStatus?: boolean;
 };
 
 export type TaskIndexError = Fetcher.ErrorWrapper<{
