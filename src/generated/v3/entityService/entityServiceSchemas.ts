@@ -191,71 +191,6 @@ export type TaskLightDto = {
   updatedAt: string;
 };
 
-export type TaskFullDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  projectName: string;
-  organisationName: string;
-  frameworkKey: string;
-  status: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  treesPlantedCount: number;
-};
-
-export type ProjectReportLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  frameworkKey: string | null;
-  /**
-   * The associated organisation name
-   */
-  organisationName: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
-  projectName: string | null;
-  projectUuid: string | null;
-  status: string;
-  completion: number | null;
-  /**
-   * @format date-time
-   */
-  submittedAt: string | null;
-  /**
-   * The associated task uuid
-   */
-  taskUuid: string | null;
-  title: string | null;
-  updateRequestStatus: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  pctSurvivalToDate: number | null;
-};
-
 export type SiteReportLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -365,6 +300,71 @@ export type NurseryReportLightDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+};
+
+export type TaskFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number;
+};
+
+export type ProjectReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  status: string;
+  completion: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  title: string | null;
+  updateRequestStatus: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  pctSurvivalToDate: number | null;
 };
 
 export type TaskUpdateAttributes = {
@@ -1251,6 +1251,14 @@ export type ProjectUpdateAttributes = {
    */
   feedbackFields: string[] | null;
   /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
+  /**
    * Update the isTest flag.
    */
   isTest: boolean | null;
@@ -1278,6 +1286,14 @@ export type SiteUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type SiteUpdateData = {
@@ -1302,6 +1318,14 @@ export type EntityUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
 };
 
 export type NurseryUpdateData = {
@@ -1326,6 +1350,14 @@ export type ReportUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields: string[] | null;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuid: string[] | null;
+  /**
+   * UUIDs of nusery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuid: string[] | null;
   /**
    * Update the nothingToReport flag.
    */

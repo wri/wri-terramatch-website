@@ -7,7 +7,13 @@ import {
   TaskIndexQueryParams,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { TaskFullDto, TaskLightDto, TaskUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  NurseryReportLightDto,
+  SiteReportLightDto,
+  TaskFullDto,
+  TaskLightDto,
+  TaskUpdateAttributes
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
@@ -105,7 +111,27 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
           const tasks: TaskLightDto[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
-            tasks.push(tasksStore[id].attributes);
+            const task = tasksStore[id];
+
+            const getReportDataById = (id: string, type: string) => {
+              return indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes;
+            };
+
+            const siteReports = (task?.relationships?.["siteReports"] ?? []).map(({ id }) =>
+              getReportDataById(id, "siteReports")
+            );
+
+            const nurseryReports = (task?.relationships?.["nurseryReports"] ?? []).map(({ id }) =>
+              getReportDataById(id, "nurseryReports")
+            );
+
+            const taskWithRelationships = {
+              ...task.attributes,
+              siteReports,
+              nurseryReports
+            } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
+
+            tasks.push(taskWithRelationships);
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };
