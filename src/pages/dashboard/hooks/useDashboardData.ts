@@ -6,13 +6,11 @@ import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGo
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
-import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardActiveProjects,
-  useGetV2DashboardGetPolygonsStatuses,
   useGetV2DashboardIndicatorHectaresRestoration,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardViewProjectUuid,
@@ -30,7 +28,6 @@ import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
-  const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -81,7 +78,11 @@ export const useDashboardData = (filters: any) => {
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
 
-  const { data: projectHectaresData, isLoading: isLoadingProjectHectares } = useSitePolygonsHectares(filters.uuid);
+  const {
+    data: projectHectaresData,
+    isLoading: isLoadingProjectHectares,
+    allPolygonsData
+  } = useSitePolygonsHectares(filters.uuid);
 
   const activeProjectsQueryParams: any = useMemo(() => {
     const modifiedFilters = {
@@ -118,14 +119,41 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!searchTerm || !!filters }
   );
 
-  const { data: polygonsData } = useGetV2DashboardGetPolygonsStatuses<any>(
-    {
-      queryParams: queryParams
-    },
-    {
-      enabled: !!filters.uuid && isUserAllowed?.allowed === true && user?.primaryRole !== "government"
+  const polygonsData = useMemo(() => {
+    if (!allPolygonsData || allPolygonsData.length === 0) {
+      return {
+        centroids: [],
+        data: {}
+      };
     }
-  );
+
+    const centroids: { lat: number; long: number; uuid: string; status: string }[] = [];
+    const data: { [status: string]: string[] } = {};
+
+    allPolygonsData.forEach(polygon => {
+      if (polygon.centroidLatitude && polygon.centroidLongitude && polygon.polygonUuid && polygon.status) {
+        centroids.push({
+          lat: polygon.centroidLatitude,
+          long: polygon.centroidLongitude,
+          uuid: polygon.polygonUuid,
+          status: polygon.status
+        });
+      }
+
+      if (polygon.status && polygon.polygonUuid) {
+        if (!data[polygon.status]) {
+          data[polygon.status] = [];
+        }
+        data[polygon.status].push(polygon.polygonUuid);
+      }
+    });
+
+    return { centroids, data };
+  }, [allPolygonsData]);
+
+  useEffect(() => {
+    console.log("Site Polygons:", allPolygonsData);
+  }, [allPolygonsData]);
 
   const filteredProjects = activeProjects?.data?.filter(
     (project: { name: string | null; organisation: string | null }) =>
@@ -557,7 +585,7 @@ export const useDashboardData = (filters: any) => {
     activeProjects: filteredProjects,
     allAvailableProjects: allProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
-    polygonsData: polygonsData ?? {},
+    polygonsData: polygonsData,
     isUserAllowed,
     projectBbox: projectBbox,
     generalBbox: generalBboxParsed,

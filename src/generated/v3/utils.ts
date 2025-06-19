@@ -37,7 +37,7 @@ const V3_NAMESPACES: Record<string, string> = {
   trees: entityServiceUrl,
   users: userServiceUrl,
   dashboard: dashboardServiceUrl,
-  boundingBoxes: entityServiceUrl
+  boundingBoxes: researchServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
