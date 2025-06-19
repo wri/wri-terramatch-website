@@ -1,6 +1,11 @@
 import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
-import { SitePolygonsIndexQueryParams, SitePolygonsIndexVariables } from "./researchServiceComponents";
+import {
+  SitePolygonsIndexQueryParams,
+  SitePolygonsIndexVariables,
+  BoundingBoxGetQueryParams,
+  BoundingBoxGetVariables
+} from "./researchServiceComponents";
 
 export const sitePolygonsIndexIsFetching = (variables: Omit<SitePolygonsIndexVariables, "body">) =>
   isFetchingSelector<SitePolygonsIndexQueryParams, {}>({
@@ -30,3 +35,9 @@ export const bulkUpdateSitePolygonsFetchFailed = fetchFailedSelector<{}, {}>({
   url: "/research/v3/sitePolygons",
   method: "patch"
 });
+
+export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
+
+export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
+  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });

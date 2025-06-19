@@ -222,3 +222,15 @@ export type SitePolygonUpdate = {
 export type SitePolygonBulkUpdateBodyDto = {
   data: SitePolygonUpdate[];
 };
+
+export type BoundingBoxDto = {
+  /**
+   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
+   *
+   * @example -13.17273163
+   * @example -21.3169788
+   * @example 48.8126753
+   * @example 13.47775425
+   */
+  bbox: number[];
+};
