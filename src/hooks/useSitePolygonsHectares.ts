@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { useSitePolygons } from "@/connections/SitePolygons";
+import { SitePolygonIndexConnectionProps, useAllSitePolygons } from "@/connections/SitePolygons";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export interface HectaresData {
   restoration_strategies_represented: Record<string, number>;
@@ -13,23 +14,22 @@ export interface UseSitePolygonsHectaresResult {
   error: string | null;
 }
 
+const APPROVED_STATUS: SitePolygonIndexConnectionProps["polygonStatus"] = ["approved"];
+
 export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePolygonsHectaresResult => {
-  const [allPolygonsData, setAllPolygonsData] = useState<any[]>([]);
-  const [isLoadingBatch, setIsLoadingBatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const PAGE_SIZE = 100;
-
-  const [isLoaded, { sitePolygons, total }] = useSitePolygons({
+  const {
+    data: allPolygonsData,
+    isLoading,
+    error: fetchError
+  } = useAllSitePolygons({
     entityName: "projects",
     entityUuid: projectUuid ?? "",
-    pageSize: PAGE_SIZE,
-    pageNumber: currentPage,
-    enabled: !!projectUuid
+    enabled: !!projectUuid,
+    polygonStatus: APPROVED_STATUS
   });
 
-  const transformPolygonsToHectaresData = useCallback((polygons: any[]): HectaresData => {
+  const transformPolygonsToHectaresData = useCallback((polygons: SitePolygonLightDto[]): HectaresData => {
     const restoration_strategies_represented: Record<string, number> = {};
     const target_land_use_types_represented: Record<string, number> = {};
 
@@ -65,65 +65,8 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
     };
   }, []);
 
-  useEffect(() => {
-    if (!projectUuid) {
-      setAllPolygonsData([]);
-      setIsLoadingBatch(false);
-      setError(null);
-      setCurrentPage(1);
-      return;
-    }
-
-    if (currentPage === 1) {
-      setAllPolygonsData([]);
-      setIsLoadingBatch(true);
-      setError(null);
-    }
-  }, [projectUuid, currentPage]);
-
-  useEffect(() => {
-    if (!projectUuid) return;
-
-    if (isLoaded && sitePolygons) {
-      try {
-        if (currentPage === 1) {
-          setAllPolygonsData(sitePolygons);
-        } else {
-          setAllPolygonsData(prev => [...prev, ...sitePolygons]);
-        }
-
-        const totalLoaded = currentPage === 1 ? sitePolygons.length : allPolygonsData.length + sitePolygons.length;
-        const hasMore = total ? totalLoaded < total : false;
-
-        if (hasMore) {
-          setCurrentPage(prev => prev + 1);
-        } else {
-          setIsLoadingBatch(false);
-        }
-
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error processing polygons data");
-        setIsLoadingBatch(false);
-      }
-    }
-
-    if (isLoaded && !sitePolygons) {
-      setIsLoadingBatch(false);
-    }
-  }, [isLoaded, sitePolygons, total, currentPage, projectUuid, allPolygonsData.length]);
-
-  useEffect(() => {
-    if (!projectUuid) return;
-
-    setCurrentPage(1);
-    setAllPolygonsData([]);
-    setIsLoadingBatch(true);
-    setError(null);
-  }, [projectUuid]);
-
   const hectaresData = useMemo(() => {
-    if (isLoadingBatch || !allPolygonsData.length) return null;
+    if (isLoading || !allPolygonsData.length) return null;
 
     try {
       return transformPolygonsToHectaresData(allPolygonsData);
@@ -131,11 +74,17 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
       setError(err instanceof Error ? err.message : "Error transforming data");
       return null;
     }
-  }, [allPolygonsData, isLoadingBatch, transformPolygonsToHectaresData]);
+  }, [allPolygonsData, isLoading, transformPolygonsToHectaresData]);
+
+  const combinedError = useMemo(() => {
+    if (error) return error;
+    if (fetchError) return fetchError.message || "An error occurred while fetching polygons.";
+    return null;
+  }, [error, fetchError]);
 
   return {
     data: hectaresData,
-    isLoading: isLoadingBatch || !isLoaded,
-    error
+    isLoading: isLoading,
+    error: combinedError
   };
 };
