@@ -50,6 +50,12 @@ export interface ProcessedProject {
   isV3Data?: boolean;
 }
 
+interface ExtendedProject extends ProcessedProject {
+  country?: string;
+}
+
+type UnifiedProjectForCoordinates = ProcessedProject | ExtendedProject;
+
 // Function to convert V3 project to V2-compatible structure
 const convertV3ToProcessed = (v3Project: any): ProcessedProject => ({
   uuid: v3Project.uuid,
@@ -402,7 +408,13 @@ export const useDashboardData = (filters: any) => {
       totalHectaresRestoredSum: project.hectares_under_restoration,
       totalJobsCreated: project.jobs_created,
       lat: project.lat,
-      long: project.long
+      long: project.long,
+      // Add fields for compatibility with ProcessedProject
+      organisation: project.organisation,
+      country_slug: project.country_slug,
+      trees_under_restoration: project.trees_under_restoration,
+      hectares_under_restoration: project.hectares_under_restoration,
+      jobs_created: project.jobs_created
     }));
   }, [processedProjects]);
 
@@ -454,22 +466,12 @@ export const useDashboardData = (filters: any) => {
   }, [filters.uuid, isLoadingProjectHectares, isLoadingGeneralHectaresUnderRestoration]);
 
   const centroidsDataProjects = useMemo(() => {
-    const projectsToUse = allAvailableProjects?.length > 0 ? allAvailableProjects : activeProjects ?? [];
+    const projectsToUse: UnifiedProjectForCoordinates[] =
+      allAvailableProjects?.length > 0 ? allAvailableProjects : activeProjects ?? [];
 
     if (!projectsToUse?.length) return { data: [], bbox: [] };
 
-    interface ProjectData {
-      uuid?: string;
-      long?: string | number | null;
-      lat?: string | number | null;
-      name?: string;
-      organisationType?: string;
-      programme?: string;
-      organisationName?: string;
-      organisation?: string;
-    }
-
-    const projectsWithCoordinates = projectsToUse.filter((project: ProjectData) => {
+    const projectsWithCoordinates = projectsToUse.filter((project: UnifiedProjectForCoordinates) => {
       if (!project) return false;
 
       const long = project.long;
@@ -489,7 +491,7 @@ export const useDashboardData = (filters: any) => {
       return { data: [], bbox: [] };
     }
 
-    const transformedData = projectsWithCoordinates.map((project: ProjectData) => ({
+    const transformedData = projectsWithCoordinates.map((project: UnifiedProjectForCoordinates) => ({
       uuid: project.uuid ?? "",
       long: Number(project.long) || 0,
       lat: Number(project.lat) || 0,
