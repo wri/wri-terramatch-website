@@ -31,7 +31,7 @@ type SelectorPrototype<SelectedType, PropsType extends OptionalProps = undefined
 
 type ConnectionPrototype<SelectedType, PropsType extends OptionalProps = undefined> = {
   fetcher?: (props: PropsType) => void;
-  loadedPredicates?: LoadedPredicate<SelectedType, PropsType>[];
+  isLoaded?: LoadedPredicate<SelectedType, PropsType>;
   selectors: SelectorPrototype<SelectedType, PropsType>[];
 };
 
@@ -43,13 +43,7 @@ abstract class ApiConnectionFactory<SelectedType = {}, PropsType extends Record<
       throw new ApiConnectionFactoryError("Connection prototype not defined");
     }
 
-    const { fetcher, loadedPredicates, selectors } = this.connectionPrototype;
-
-    const isLoaded =
-      loadedPredicates == null || loadedPredicates.length === 0
-        ? undefined
-        : (selected: SelectedType, props: PropsType) =>
-            loadedPredicates.find(predicate => predicate(selected, props)) != null;
+    const { fetcher, isLoaded, selectors } = this.connectionPrototype;
 
     const connection: Connection<SelectedType, PropsType> = {
       isLoaded,
@@ -63,7 +57,7 @@ abstract class ApiConnectionFactory<SelectedType = {}, PropsType extends Record<
 
     if (fetcher != null) {
       if (isLoaded == null) {
-        throw new ApiConnectionFactoryError("Fetcher defined without loaded predicates");
+        throw new ApiConnectionFactoryError("Fetcher defined without isLoaded predicate");
       }
 
       connection.load = (selected, props) => {
@@ -78,25 +72,35 @@ abstract class ApiConnectionFactory<SelectedType = {}, PropsType extends Record<
 
   protected chainPrototype<AddSelectedType, AddPropsType extends OptionalProps>(
     addPrototype: ConnectionPrototype<AddSelectedType, AddPropsType>
-  ) {
+  ): ConnectionPrototype<SelectedType & AddSelectedType, PropsType & AddPropsType> {
     if (addPrototype.fetcher != null && this.connectionPrototype?.fetcher != null) {
       throw new ApiConnectionFactoryError("Fetcher already defined");
     }
 
+    let isLoaded: LoadedPredicate<SelectedType & AddSelectedType, PropsType & AddPropsType> | undefined =
+      this.connectionPrototype?.isLoaded ?? addPrototype.isLoaded;
+    if (this.connectionPrototype?.isLoaded != null && addPrototype.isLoaded != null) {
+      const firstPredicate = this.connectionPrototype.isLoaded;
+      const secondPredicate = addPrototype.isLoaded;
+      isLoaded = (selected: SelectedType & AddSelectedType, props: PropsType & AddPropsType) =>
+        firstPredicate(selected, props) || secondPredicate(selected, props);
+    }
+
     return {
       fetcher: addPrototype.fetcher ?? this.connectionPrototype?.fetcher,
-      loadedPredicates: [
-        ...(this.connectionPrototype?.loadedPredicates ?? []),
-        ...(addPrototype.loadedPredicates ?? [])
-      ],
+      isLoaded,
       selectors: [...(this.connectionPrototype?.selectors ?? []), ...addPrototype.selectors] as SelectorPrototype<
         SelectedType & AddSelectedType,
         PropsType & AddPropsType
       >[]
-    } as ConnectionPrototype<SelectedType & AddSelectedType, PropsType & AddPropsType>;
+    };
   }
 }
 
+/**
+ * A factory for creating connections to fetch a single resource by ID. Has support for the "full DTO"
+ * pattern implemented in several resources in the v3 backend.
+ */
 export class IdConnectionFactory<
   GetVariables,
   SelectedType = {},
@@ -114,36 +118,57 @@ export class IdConnectionFactory<
     return ({ id }: PropsType) => id;
   }
 
+  /**
+   * Adds a `data` property to the connection, specified by the id in IdProps, and typed with the
+   * provided DTO generic parameter.
+   *
+   * The generic DTO parameter is required to be provided explicitly. If it is left off, the
+   * resulting connection `data` will be typed with "never", which should generate errors in the
+   * connection usage.
+   */
   public singleResource<DTO = never>(fetcher: GetFetcher<GetVariables>) {
     return new IdConnectionFactory(
       this.resource,
       this.paramsFactory,
       this.chainPrototype<DataConnection<DTO>, IdProps>({
         fetcher: props => fetcher(this.paramsFactory(props)),
-        loadedPredicates: [({ data }) => data != null],
+        isLoaded: ({ data }) => data != null,
         selectors: [props => resourceDataSelector<DTO>(this.resource)(props)]
       })
     );
   }
 
+  /**
+   * Adds a `data` property to the connection, specified by the id in IdProps. The connection will
+   * only count as loaded if the resulting data has lightResource: false, and will therefore ask
+   * the server for the full DTO if it is not already loaded.
+   *
+   * The generic DTO parameter is required to be provided explicitly. If it is left off, the
+   * resulting connection `data` will be typed with "never", which should generate errors in the
+   * connection usage.
+   */
   public singleFullResource<DTO extends { lightResource: boolean } = never>(fetcher: GetFetcher<GetVariables>) {
     return new IdConnectionFactory(
       this.resource,
       this.paramsFactory,
       this.chainPrototype<DataConnection<DTO>, IdProps>({
         fetcher: props => fetcher(this.paramsFactory(props)),
-        loadedPredicates: [({ data }) => data != null && !data.lightResource],
+        isLoaded: ({ data }) => data != null && !data.lightResource,
         selectors: [props => resourceDataSelector<DTO>(this.resource)(props)]
       })
     );
   }
 
+  /**
+   * Adds a `loadFailure` property to the connection, using the provided failure selector. If the
+   * connection reports a load failure, it counts as loaded.
+   */
   public fetchFailure(failureSelector: GetFailureSelector<GetVariables>) {
     return new IdConnectionFactory(
       this.resource,
       this.paramsFactory,
       this.chainPrototype<LoadFailureConnection, IdProps>({
-        loadedPredicates: [({ loadFailure }) => loadFailure != null],
+        isLoaded: ({ loadFailure }) => loadFailure != null,
         selectors: [
           props => (store: ApiDataStore) => ({
             loadFailure: failureSelector(this.paramsFactory(props))(store)
@@ -153,6 +178,9 @@ export class IdConnectionFactory<
     );
   }
 
+  /**
+   * Adds an `isLoading` boolean flag to the connection using the provided inProgressSelector.
+   */
   public fetchInProgress(inProgressSelector: GetInProgressSelector<GetVariables>) {
     return new IdConnectionFactory(
       this.resource,
