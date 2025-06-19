@@ -24325,6 +24325,653 @@ export const usePatchV2FinancialIndicators = (
   );
 };
 
+export type GetV2FinancialReportsQueryParams = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+  /**
+   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
+   */
+  sort?: string;
+  /**
+   * number of results (per page) to return
+   */
+  per_page?: number;
+  /**
+   * page number you want results from
+   */
+  page?: number;
+};
+
+export type GetV2FinancialReportsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2FinancialReportsResponse = {
+  data?: {
+    uuid?: string;
+    status?: string;
+    readable_status?: string;
+    type?: string;
+    is_test?: boolean;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    founding_date?: string;
+    description?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg. slug: name
+     */
+    tags?: string[];
+    created_at?: string;
+    updated_at?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    from?: number;
+    to?: number;
+    current_page?: number;
+    last_page?: number;
+    per_page?: number;
+    total?: number;
+    path?: string;
+    links?: {
+      url?: string;
+      label?: string;
+      active?: boolean;
+    }[];
+  };
+};
+
+export type GetV2FinancialReportsVariables = {
+  queryParams?: GetV2FinancialReportsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Currently available sort is status, name, year, created_at
+ */
+export const fetchGetV2FinancialReports = (variables: GetV2FinancialReportsVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2FinancialReportsResponse,
+    GetV2FinancialReportsError,
+    undefined,
+    {},
+    GetV2FinancialReportsQueryParams,
+    {}
+  >({ url: "/v2/financial-reports", method: "get", ...variables, signal });
+
+/**
+ * Currently available sort is status, name, year, created_at
+ */
+export const useGetV2FinancialReports = <TData = GetV2FinancialReportsResponse>(
+  variables: GetV2FinancialReportsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2FinancialReportsResponse, GetV2FinancialReportsError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2FinancialReportsResponse, GetV2FinancialReportsError, TData>(
+    queryKeyFn({ path: "/v2/financial-reports", operationId: "getV2FinancialReports", variables }),
+    ({ signal }) => fetchGetV2FinancialReports({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type GetV2FinancialReportsUUIDPathParams = {
+  uuid: string;
+};
+
+export type GetV2FinancialReportsUUIDError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2FinancialReportsUUIDResponse = {
+  uuid?: string;
+  status?: string;
+  readable_status?: string;
+  type?: string;
+  is_test?: boolean;
+  private?: boolean;
+  name?: string;
+  phone?: string;
+  founding_date?: string;
+  description?: string;
+  countries?: string[];
+  languages?: string[];
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  web_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  hq_street_1?: string;
+  hq_street_2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_zipcode?: string;
+  hq_country?: string;
+  fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
+  ha_restored_total?: number;
+  /**
+   * @format float
+   */
+  ha_restored_3year?: number;
+  relevant_experience_years?: number;
+  trees_grown_total?: number;
+  trees_grown_3year?: number;
+  tree_care_approach?: string;
+  ft_permanent_employees?: number;
+  pt_permanent_employees?: number;
+  temp_employees?: number;
+  female_employees?: number;
+  male_employees?: number;
+  young_employees?: number;
+  additional_funding_details?: string;
+  community_experience?: string;
+  total_engaged_community_members_3yr?: number;
+  percent_engaged_women_3yr?: number;
+  percent_engaged_men_3yr?: number;
+  percent_engaged_under_35_3yr?: number;
+  percent_engaged_over_35_3yr?: number;
+  percent_engaged_smallholder_3yr?: number;
+  total_trees_grown?: number;
+  avg_tree_survival_rate?: number;
+  tree_maintenance_aftercare_approach?: string;
+  restored_areas_description?: string;
+  monitoring_evaluation_experience?: string;
+  funding_history?: string;
+  shapefiles?: {
+    uuid?: string;
+    shapefileable_type?: string;
+    shapefileable_id?: number;
+    geojson?: string;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
+  }[];
+  bank_statements?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  previous_annual_reports?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  logo?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  reference?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_2year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_last_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_this_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_next_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  legal_registration?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  /**
+   * this is a list of key value pairs eg. slug: name
+   */
+  tags?: string[];
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type GetV2FinancialReportsUUIDVariables = {
+  pathParams: GetV2FinancialReportsUUIDPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2FinancialReportsUUID = (variables: GetV2FinancialReportsUUIDVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2FinancialReportsUUIDResponse,
+    GetV2FinancialReportsUUIDError,
+    undefined,
+    {},
+    {},
+    GetV2FinancialReportsUUIDPathParams
+  >({ url: "/v2/financial-reports/{uuid}", method: "get", ...variables, signal });
+
+export const useGetV2FinancialReportsUUID = <TData = GetV2FinancialReportsUUIDResponse>(
+  variables: GetV2FinancialReportsUUIDVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2FinancialReportsUUIDResponse, GetV2FinancialReportsUUIDError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2FinancialReportsUUIDResponse, GetV2FinancialReportsUUIDError, TData>(
+    queryKeyFn({ path: "/v2/financial-reports/{UUID}", operationId: "getV2FinancialReportsUUID", variables }),
+    ({ signal }) => fetchGetV2FinancialReportsUUID({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -24905,4 +25552,14 @@ export type QueryOperation =
       path: "/v2/impact-stories/{id}";
       operationId: "getV2ImpactStoriesId";
       variables: GetV2ImpactStoriesIdVariables;
+    }
+  | {
+      path: "/v2/financial-reports";
+      operationId: "getV2FinancialReports";
+      variables: GetV2FinancialReportsVariables;
+    }
+  | {
+      path: "/v2/financial-reports/{UUID}";
+      operationId: "getV2FinancialReportsUUID";
+      variables: GetV2FinancialReportsUUIDVariables;
     };

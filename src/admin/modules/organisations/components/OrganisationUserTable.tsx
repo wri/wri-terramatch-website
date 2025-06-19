@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
+import { useShowContext } from "react-admin";
 import { useParams } from "react-router-dom";
 
 import Menu from "@/components/elements/Menu/Menu";
@@ -28,8 +29,10 @@ const statusMap: { [key: string]: string } = {
   rejected: "rejected"
 };
 
-const OrganisationUserTable = () => {
+const OrganisationUserTable = ({ financialReport }: { financialReport?: boolean }) => {
   const { id } = useParams<"id">();
+  const ctx = useShowContext();
+  const orgId = financialReport ? ctx?.record.org_uuid : (id as string);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
@@ -40,7 +43,7 @@ const OrganisationUserTable = () => {
     isLoading
   } = useGetV2AdminUsersUsersOrganisationListUUID({
     pathParams: {
-      uuid: id as string
+      uuid: orgId
     }
   }) as any;
 
@@ -109,7 +112,7 @@ const OrganisationUserTable = () => {
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
             const actionBody = {
-              organisation_uuid: id as string,
+              organisation_uuid: orgId,
               user_uuid: userUuid
             } as V2PostOrganisationsApproveUserBody;
 

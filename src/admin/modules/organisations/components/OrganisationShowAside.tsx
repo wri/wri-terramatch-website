@@ -11,7 +11,7 @@ import { optionToChoices } from "@/utils/options";
 export const OrganisationShowAside = () => {
   const refresh = useRefresh();
   const { record } = useShowContext<V2OrganisationRead & RaRecord>();
-  const uuid = record?.uuid as string;
+  const uuid = record?.org_uuid ?? (record?.uuid as string);
 
   const { mutate: approve } = usePutV2AdminOrganisationsApprove({
     onSuccess() {
