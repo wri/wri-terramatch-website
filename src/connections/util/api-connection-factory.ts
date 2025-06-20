@@ -11,6 +11,7 @@ import {
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
+import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
 class ApiConnectionFactoryError extends Error {}
@@ -105,6 +106,34 @@ type ConnectionPrototype<Variables extends QueryVariables, Selected, Props exten
   fetcher: FetcherPrototype<Variables, Props>;
   selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
 };
+
+const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, unknown>>(
+  label: string,
+  { variablesFactory, isLoaded, selectors, fetcher, selectorCacheKeyFactory }: ConnectionPrototype<V, S, P>
+): ConnectionPrototype<V, S, P> => ({
+  variablesFactory:
+    variablesFactory == null
+      ? undefined
+      : props => {
+          const result = variablesFactory(props);
+          Log.debug(`[${label}] Variables`, { props, result });
+          return result;
+        },
+  isLoaded:
+    isLoaded == null
+      ? undefined
+      : (selected, props) => {
+          const result = isLoaded(selected, props);
+          Log.debug(`[${label}] isLoaded`, { props, result });
+          return result;
+        },
+  selectors,
+  fetcher: (props, variablesFactory) => {
+    Log.debug(`[${label}] Fetching data`, { props, variables: variablesFactory(props) });
+    fetcher(props, variablesFactory);
+  },
+  selectorCacheKeyFactory
+});
 
 export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
   constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
@@ -294,29 +323,48 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
 
   /**
    * Builds the Connection based on the current state of the prototype.
+   *
+   * @param debugLoggingLabel If provided, debug logging will be enabled on this connection, and will
+   *   be proceeded by the provided label.
    */
-  public buildConnection(): Connection<Selected, Props> {
+  public buildConnection(debugLoggingLabel?: string): Connection<Selected, Props> {
     const {
       fetcher,
       variablesFactory: prototypeVariablesFactory,
       isLoaded,
       selectors,
-      selectorCacheKeyFactory
-    } = this.prototype;
+      selectorCacheKeyFactory: prototypeSelectorCacheKeyFactory
+    } = debugLoggingLabel == null ? this.prototype : withDebugLogging(debugLoggingLabel, this.prototype);
     if (selectors == null) throw new ApiConnectionFactoryError("Selectors not defined");
-    if (selectorCacheKeyFactory == null) throw new ApiConnectionFactoryError("Selector cache key factory not defined");
+    if (prototypeSelectorCacheKeyFactory == null) {
+      throw new ApiConnectionFactoryError("Selector cache key factory not defined");
+    }
 
     const variablesFactory = (prototypeVariablesFactory ?? (() => ({} as Variables))) as VariablesFactory<
       Variables,
       Props
     >;
 
+    const selectorCacheKeyFactory =
+      debugLoggingLabel == null
+        ? prototypeSelectorCacheKeyFactory
+        : ((variablesFactory => props => {
+            const result = prototypeSelectorCacheKeyFactory(variablesFactory)(props);
+            Log.debug(`[${debugLoggingLabel}] Selector cache key`, { props, result });
+            return result;
+          }) as SelectorCacheKeyFactory<Variables, Props>);
+
     const connection: Connection<Selected, Props> = {
       isLoaded,
       selector: selectorCache<Selected, Props, ApiDataStore>(selectorCacheKeyFactory(variablesFactory), props =>
         createSelector(
           selectors.map(selector => selector(props, variablesFactory)),
-          (...results: Partial<Selected>[]) => assign({}, ...results) as Selected
+          (...results: Partial<Selected>[]) => {
+            if (debugLoggingLabel != null) {
+              Log.debug(`[${debugLoggingLabel}] Selector`, { props, results });
+            }
+            return assign({}, ...results) as Selected;
+          }
         )
       )
     };
