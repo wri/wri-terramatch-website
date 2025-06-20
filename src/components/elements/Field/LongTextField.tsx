@@ -12,7 +12,7 @@ export interface LongTextFieldProps
 
 const LongTextField: FC<LongTextFieldProps> = ({ title, children, ...rest }) => (
   <div {...rest}>
-    <Text as="div" variant="text-bold-subtitle-400" className="mb-2">
+    <Text variant="text-bold-subtitle-400" className="mb-2">
       {title}
     </Text>
     <ReadMoreText variant="text-light-subtitle-400" defaultVisibleLinesNumber={3}>

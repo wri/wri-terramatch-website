@@ -117,7 +117,7 @@ const ApplicationTimeline = ({ application }: ApplicationTimelineProps) => {
               header: t("Date"),
               enableSorting: false,
               cell: props => (
-                <Text as="span" variant="text-light-body-300" className="whitespace-nowrap">
+                <Text variant="text-light-body-300" className="whitespace-nowrap">
                   {format(props.getValue() as string, "do MMMM yyyy")}
                 </Text>
               )
@@ -130,7 +130,7 @@ const ApplicationTimeline = ({ application }: ApplicationTimelineProps) => {
                 const value = props.getValue();
                 const text = getApplicationUpdateText(t, props.row) || value;
                 return (
-                  <Text as="span" variant="text-bold-subtitle-400" className="whitespace-nowrap">
+                  <Text variant="text-bold-subtitle-400" className="whitespace-nowrap">
                     {text}
                   </Text>
                 );

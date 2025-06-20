@@ -15,12 +15,8 @@ export interface TextFieldProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
 const TextField: FC<TextFieldProps> = ({ label, value, variantLabel = "text-16-bold", className, ...rest }) => (
   <BaseField {...rest} className={className}>
     <div className="flex items-center justify-between">
-      <Text as="span" variant={variantLabel!}>
-        {label}
-      </Text>
-      <Text as="span" variant="text-16-light">
-        {value || "N/A"}
-      </Text>
+      <Text variant={variantLabel!}>{label}</Text>
+      <Text variant="text-16-light">{value || "N/A"}</Text>
     </div>
   </BaseField>
 );
