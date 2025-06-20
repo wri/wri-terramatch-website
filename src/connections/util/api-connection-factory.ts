@@ -96,11 +96,11 @@ type FetcherPrototype<Variables extends QueryVariables, Props extends Record<str
 ) => void;
 
 type ConnectionPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = {
-  fetcher?: FetcherPrototype<Variables, Props>;
   variablesFactory?: PartialVariablesFactory<Variables, Props>;
   isLoaded?: LoadedPredicate<Selected, Props>;
-  selectorCacheKeyFactory?: SelectorCacheKeyFactory<Variables, Props>;
   selectors?: SelectorPrototype<Variables, Selected, Props>[];
+  fetcher: FetcherPrototype<Variables, Props>;
+  selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
 };
 
 export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
@@ -279,7 +279,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   public enabledFlag() {
-    return this.addProps<EnabledProp>(undefined, (props, { enabled }) => enabled === false);
+    return this.addProps<EnabledProp>(undefined, (_, { enabled }) => enabled === false);
   }
 
   public refetch(refetch: (props: Props) => void) {
@@ -331,12 +331,8 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   protected chain<AddSelected, AddProps extends Record<string, unknown>>(
-    addPrototype: ConnectionPrototype<Variables, AddSelected, AddProps>
+    addPrototype: Omit<ConnectionPrototype<Variables, AddSelected, AddProps>, "fetcher" | "selectorCacheKeyFactory">
   ): ApiConnectionFactory<Variables, Selected & AddSelected, Props & AddProps> {
-    if (addPrototype.fetcher != null && this.prototype?.fetcher != null) {
-      throw new ApiConnectionFactoryError("Fetcher already defined");
-    }
-
     let isLoaded: LoadedPredicate<Selected & AddSelected, Props & AddProps> | undefined =
       this.prototype?.isLoaded ?? addPrototype.isLoaded;
     if (this.prototype?.isLoaded != null && addPrototype.isLoaded != null) {
@@ -347,18 +343,18 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     }
 
     return new ApiConnectionFactory({
-      fetcher: (addPrototype.fetcher ?? this.prototype?.fetcher) as
-        | FetcherPrototype<Variables, Props & AddProps>
-        | undefined,
       isLoaded,
       selectors: [...(this.prototype?.selectors ?? []), ...(addPrototype?.selectors ?? [])] as SelectorPrototype<
         Variables,
         Selected & AddSelected,
         Props & AddProps
       >[],
-      selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as
-        | SelectorCacheKeyFactory<Variables, Props & AddProps>
-        | undefined
+      variablesFactory: addPrototype.variablesFactory,
+      fetcher: this.prototype.fetcher as FetcherPrototype<Variables, Props & AddProps>,
+      selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as SelectorCacheKeyFactory<
+        Variables,
+        Props & AddProps
+      >
     });
   }
 
