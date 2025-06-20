@@ -21,9 +21,17 @@ type IndexConnection<DTO> = {
 };
 type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
+type RefetchConnection<Props> = { refetch: (props: Props) => void };
 
 export type IdProps = { id: string };
 type FilterProp<FilterFields extends string | number | symbol> = { filter?: Partial<Record<FilterFields, string>> };
+type EnabledProp = {
+  /**
+   * The connection will count as loaded if this value is explicitly set to false, preventing any API
+   * requests until it is removed or set to true.
+   */
+  enabled?: boolean;
+};
 
 type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
 type FailureSelector<Variables> = (
@@ -39,8 +47,8 @@ type QueryVariables = {
   pathParams?: Record<string, unknown>;
   queryParams?: Record<string, unknown>;
 };
-type PartialVariablesFactory<Variables extends QueryVariables, PropsType> = (props: PropsType) => Partial<Variables>;
-type VariablesFactory<Variables extends QueryVariables, PropsType> = (props: PropsType) => Variables;
+type PartialVariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Partial<Variables>;
+type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables;
 
 const resourceDataSelector =
   <DTO>(resource: ResourceType) =>
@@ -48,11 +56,11 @@ const resourceDataSelector =
   (store: ApiDataStore): DataConnection<DTO> => ({ data: store[resource][id]?.attributes as DTO | undefined });
 
 const indexDataSelector =
-  <DTO, Variables extends QueryVariables, PropsType>(
+  <DTO, Variables extends QueryVariables, Props>(
     resource: ResourceType,
     indexMetaSelector: IndexMetaSelector<Variables>
   ) =>
-  (props: PropsType, variablesFactory: VariablesFactory<Variables, PropsType>) =>
+  (props: Props, variablesFactory: VariablesFactory<Variables, Props>) =>
     createSelector(
       [
         indexMetaSelector(resource, variablesFactory(props) as Variables),
@@ -73,34 +81,30 @@ const indexDataSelector =
       }
     );
 
-type SelectorPrototype<Variables extends QueryVariables, SelectedType, PropsType extends Record<string, unknown>> = (
-  props: PropsType,
-  variablesFactory: VariablesFactory<Variables, PropsType>
-) => (state: ApiDataStore) => SelectedType;
+type SelectorPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = (
+  props: Props,
+  variablesFactory: VariablesFactory<Variables, Props>
+) => (state: ApiDataStore) => Selected;
 
-type SelectorCacheKeyFactory<Variables extends QueryVariables, PropsType extends Record<string, unknown>> = (
-  variablesFactory: VariablesFactory<Variables, PropsType>
-) => (props: PropsType) => string;
+type SelectorCacheKeyFactory<Variables extends QueryVariables, Props extends Record<string, unknown>> = (
+  variablesFactory: VariablesFactory<Variables, Props>
+) => (props: Props) => string;
 
-type FetcherPrototype<Variables extends QueryVariables, PropsType extends Record<string, unknown>> = (
-  props: PropsType,
-  variablesFactory: VariablesFactory<Variables, PropsType>
+type FetcherPrototype<Variables extends QueryVariables, Props extends Record<string, unknown>> = (
+  props: Props,
+  variablesFactory: VariablesFactory<Variables, Props>
 ) => void;
 
-type ConnectionPrototype<Variables extends QueryVariables, SelectedType, PropsType extends Record<string, unknown>> = {
-  fetcher?: FetcherPrototype<Variables, PropsType>;
-  variablesFactory?: PartialVariablesFactory<Variables, PropsType>;
-  isLoaded?: LoadedPredicate<SelectedType, PropsType>;
-  selectorCacheKeyFactory?: SelectorCacheKeyFactory<Variables, PropsType>;
-  selectors?: SelectorPrototype<Variables, SelectedType, PropsType>[];
+type ConnectionPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = {
+  fetcher?: FetcherPrototype<Variables, Props>;
+  variablesFactory?: PartialVariablesFactory<Variables, Props>;
+  isLoaded?: LoadedPredicate<Selected, Props>;
+  selectorCacheKeyFactory?: SelectorCacheKeyFactory<Variables, Props>;
+  selectors?: SelectorPrototype<Variables, Selected, Props>[];
 };
 
-export class ApiConnectionFactory<
-  Variables extends QueryVariables,
-  SelectedType,
-  PropsType extends Record<string, unknown>
-> {
-  constructor(readonly prototype: ConnectionPrototype<Variables, SelectedType, PropsType>) {}
+export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
+  constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
 
   /**
    * Adds a `data` property to the connection, specified by the id in IdProps, and typed with the
@@ -149,17 +153,17 @@ export class ApiConnectionFactory<
    * Adds a `data` property to the connection as an array of the current index data, typed by the
    * provided DTO generic parameter.
    */
-  static index<DTO, Variables extends QueryVariables, PropsType extends Record<string, unknown> = {}>(
+  static index<DTO, Variables extends QueryVariables, Props extends Record<string, unknown> = {}>(
     resource: ResourceType,
     fetcher: Fetcher<Variables>,
     indexMetaSelector: IndexMetaSelector<Variables>,
-    variablesFactory: VariablesFactory<Variables, PropsType>
+    variablesFactory: VariablesFactory<Variables, Props>
   ) {
-    return new ApiConnectionFactory<Variables, IndexConnection<DTO>, PropsType>({
+    return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
       fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
       isLoaded: ({ data }) => data != null,
       variablesFactory,
-      selectors: [indexDataSelector<DTO, Variables, PropsType>(resource, indexMetaSelector)],
+      selectors: [indexDataSelector<DTO, Variables, Props>(resource, indexMetaSelector)],
       selectorCacheKeyFactory: variablesFactory => props => {
         const variables = variablesFactory(props);
         if (variables == null) return "";
@@ -186,7 +190,7 @@ export class ApiConnectionFactory<
    * connection reports a load failure, it counts as loaded.
    */
   public fetchFailure(failureSelector: FailureSelector<Variables>) {
-    return this.chain<LoadFailureConnection, PropsType>({
+    return this.chain<LoadFailureConnection, Props>({
       isLoaded: ({ loadFailure }) => loadFailure != null,
       selectors: [
         (props, variablesFactory) => (store: ApiDataStore) => ({
@@ -200,7 +204,7 @@ export class ApiConnectionFactory<
    * Adds an `isLoading` boolean flag to the connection using the provided inProgressSelector.
    */
   public fetchInProgress(inProgressSelector: InProgressSelector<Variables>) {
-    return this.chain<IsLoadingConnection, PropsType>({
+    return this.chain<IsLoadingConnection, Props>({
       selectors: [
         (props, variablesFactory) => (store: ApiDataStore) => ({
           isLoading: inProgressSelector(variablesFactory(props))(store)
@@ -213,12 +217,17 @@ export class ApiConnectionFactory<
    * Adds a prop type to the connection
    * @param addVariablesFactory The method that should modify how the request variables are generated
    *   based on the new props.
+   * @param isLoaded If provided, this method will be chained into the isLoaded predicate of the
+   *   final connection
    */
-  public addProps<AddPropsType extends Record<string, unknown>>(
-    addVariablesFactory: PartialVariablesFactory<Variables, AddPropsType>
+  public addProps<AddProps extends Record<string, unknown>>(
+    addVariablesFactory?: PartialVariablesFactory<Variables, AddProps>,
+    isLoaded?: LoadedPredicate<Selected, AddProps>
   ) {
-    return this.chain<SelectedType, PropsType & AddPropsType>({
-      variablesFactory: this.mergeVariablesFactory<AddPropsType>(addVariablesFactory)
+    return this.chain<Selected, Props & AddProps>({
+      variablesFactory:
+        addVariablesFactory == null ? undefined : this.mergeVariablesFactory<AddProps>(addVariablesFactory),
+      isLoaded
     });
   }
 
@@ -269,10 +278,20 @@ export class ApiConnectionFactory<
     });
   }
 
+  public enabledFlag() {
+    return this.addProps<EnabledProp>(undefined, (props, { enabled }) => enabled === false);
+  }
+
+  public refetch(refetch: (props: Props) => void) {
+    return this.chain<RefetchConnection<Props>, Props>({
+      selectors: [() => () => ({ refetch })]
+    });
+  }
+
   /**
    * Builds the Connection based on the current state of the prototype.
    */
-  public buildConnection(): Connection<SelectedType, PropsType> {
+  public buildConnection(): Connection<Selected, Props> {
     const {
       fetcher,
       variablesFactory: prototypeVariablesFactory,
@@ -285,15 +304,15 @@ export class ApiConnectionFactory<
 
     const variablesFactory = (prototypeVariablesFactory ?? (() => ({} as Variables))) as VariablesFactory<
       Variables,
-      PropsType
+      Props
     >;
 
-    const connection: Connection<SelectedType, PropsType> = {
+    const connection: Connection<Selected, Props> = {
       isLoaded,
-      selector: selectorCache<SelectedType, PropsType, ApiDataStore>(selectorCacheKeyFactory(variablesFactory), props =>
+      selector: selectorCache<Selected, Props, ApiDataStore>(selectorCacheKeyFactory(variablesFactory), props =>
         createSelector(
           selectors.map(selector => selector(props, variablesFactory)),
-          (...results: Partial<SelectedType>[]) => assign({}, ...results) as SelectedType
+          (...results: Partial<Selected>[]) => assign({}, ...results) as Selected
         )
       )
     };
@@ -311,42 +330,42 @@ export class ApiConnectionFactory<
     return connection;
   }
 
-  protected chain<AddSelectedType, AddPropsType extends Record<string, unknown>>(
-    addPrototype: ConnectionPrototype<Variables, AddSelectedType, AddPropsType>
-  ): ApiConnectionFactory<Variables, SelectedType & AddSelectedType, PropsType & AddPropsType> {
+  protected chain<AddSelected, AddProps extends Record<string, unknown>>(
+    addPrototype: ConnectionPrototype<Variables, AddSelected, AddProps>
+  ): ApiConnectionFactory<Variables, Selected & AddSelected, Props & AddProps> {
     if (addPrototype.fetcher != null && this.prototype?.fetcher != null) {
       throw new ApiConnectionFactoryError("Fetcher already defined");
     }
 
-    let isLoaded: LoadedPredicate<SelectedType & AddSelectedType, PropsType & AddPropsType> | undefined =
+    let isLoaded: LoadedPredicate<Selected & AddSelected, Props & AddProps> | undefined =
       this.prototype?.isLoaded ?? addPrototype.isLoaded;
     if (this.prototype?.isLoaded != null && addPrototype.isLoaded != null) {
       const firstPredicate = this.prototype.isLoaded;
       const secondPredicate = addPrototype.isLoaded;
-      isLoaded = (selected: SelectedType & AddSelectedType, props: PropsType & AddPropsType) =>
+      isLoaded = (selected: Selected & AddSelected, props: Props & AddProps) =>
         firstPredicate(selected, props) || secondPredicate(selected, props);
     }
 
     return new ApiConnectionFactory({
       fetcher: (addPrototype.fetcher ?? this.prototype?.fetcher) as
-        | FetcherPrototype<Variables, PropsType & AddPropsType>
+        | FetcherPrototype<Variables, Props & AddProps>
         | undefined,
       isLoaded,
       selectors: [...(this.prototype?.selectors ?? []), ...(addPrototype?.selectors ?? [])] as SelectorPrototype<
         Variables,
-        SelectedType & AddSelectedType,
-        PropsType & AddPropsType
+        Selected & AddSelected,
+        Props & AddProps
       >[],
       selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as
-        | SelectorCacheKeyFactory<Variables, PropsType & AddPropsType>
+        | SelectorCacheKeyFactory<Variables, Props & AddProps>
         | undefined
     });
   }
 
-  protected mergeVariablesFactory<AddPropsType>(addVariablesFactory: PartialVariablesFactory<Variables, AddPropsType>) {
+  protected mergeVariablesFactory<AddProps>(addVariablesFactory: PartialVariablesFactory<Variables, AddProps>) {
     if (this.prototype.variablesFactory == null) return addVariablesFactory;
 
     const { variablesFactory } = this.prototype;
-    return (props: PropsType & AddPropsType) => merge({}, variablesFactory(props), addVariablesFactory(props));
+    return (props: Props & AddProps) => merge({}, variablesFactory(props), addVariablesFactory(props));
   }
 }
