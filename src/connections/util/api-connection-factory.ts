@@ -7,6 +7,7 @@ import {
   ApiFilteredIndexCache,
   PendingErrorState,
   ResourceType,
+  StoreResource,
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
@@ -53,7 +54,9 @@ type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) 
 const resourceDataSelector =
   <DTO>(resource: ResourceType) =>
   ({ id }: IdProps) =>
-  (store: ApiDataStore): DataConnection<DTO> => ({ data: store[resource][id]?.attributes as DTO | undefined });
+    createSelector([(store: ApiDataStore) => store[resource][id] as StoreResource<DTO>], resource => ({
+      data: resource?.attributes as DTO | undefined
+    }));
 
 const indexDataSelector =
   <DTO, Variables extends QueryVariables, Props>(
@@ -81,7 +84,7 @@ const indexDataSelector =
       }
     );
 
-type SelectorPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = (
+type SelectorFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = (
   props: Props,
   variablesFactory: VariablesFactory<Variables, Props>
 ) => (state: ApiDataStore) => Selected;
@@ -98,7 +101,7 @@ type FetcherPrototype<Variables extends QueryVariables, Props extends Record<str
 type ConnectionPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = {
   variablesFactory?: PartialVariablesFactory<Variables, Props>;
   isLoaded?: LoadedPredicate<Selected, Props>;
-  selectors?: SelectorPrototype<Variables, Selected, Props>[];
+  selectors?: SelectorFactory<Variables, Selected, Props>[];
   fetcher: FetcherPrototype<Variables, Props>;
   selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
 };
@@ -193,9 +196,8 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     return this.chain<LoadFailureConnection, Props>({
       isLoaded: ({ loadFailure }) => loadFailure != null,
       selectors: [
-        (props, variablesFactory) => (store: ApiDataStore) => ({
-          loadFailure: failureSelector(variablesFactory(props))(store)
-        })
+        (props, variablesFactory) =>
+          createSelector([failureSelector(variablesFactory(props))], loadFailure => ({ loadFailure }))
       ]
     });
   }
@@ -206,9 +208,8 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   public fetchInProgress(inProgressSelector: InProgressSelector<Variables>) {
     return this.chain<IsLoadingConnection, Props>({
       selectors: [
-        (props, variablesFactory) => (store: ApiDataStore) => ({
-          isLoading: inProgressSelector(variablesFactory(props))(store)
-        })
+        (props, variablesFactory) =>
+          createSelector([inProgressSelector(variablesFactory(props))], isLoading => ({ isLoading }))
       ]
     });
   }
@@ -283,8 +284,11 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   public refetch(refetch: (props: Props) => void) {
+    // It's important for the selector to always return the identical result, regardless of input;
+    // otherwise the final createSelector for the connection will recalculate on every state change.
+    const result = { refetch };
     return this.chain<RefetchConnection<Props>, Props>({
-      selectors: [() => () => ({ refetch })]
+      selectors: [() => () => result]
     });
   }
 
@@ -344,7 +348,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
 
     return new ApiConnectionFactory({
       isLoaded,
-      selectors: [...(this.prototype?.selectors ?? []), ...(addPrototype?.selectors ?? [])] as SelectorPrototype<
+      selectors: [...(this.prototype?.selectors ?? []), ...(addPrototype?.selectors ?? [])] as SelectorFactory<
         Variables,
         Selected & AddSelected,
         Props & AddProps
