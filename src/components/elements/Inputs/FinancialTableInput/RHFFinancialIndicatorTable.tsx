@@ -911,11 +911,7 @@ const RHFFinancialIndicatorsDataTable = ({
         <div className="mb-10">
           <FinancialTableInput
             resetTable={resetTable}
-            label={t(
-              isFundoFloraNonProfitOrEnterprise
-                ? "What was your organization's total budget in 202X?"
-                : "Budget Analysis"
-            )}
+            label={t("Budget Analysis")}
             description={t(
               isFundoFloraNonProfitOrEnterprise
                 ? "The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs.<br><br>Note that the budget denotes the amount of money managed by your organisation in the given year in Reais."
@@ -942,9 +938,7 @@ const RHFFinancialIndicatorsDataTable = ({
       <div className="mb-10">
         <FinancialTableInput
           resetTable={resetTable}
-          label={t(
-            isFundoFloraNonProfitOrEnterprise ? "Please upload your organization's 202X budget" : "Documentation"
-          )}
+          label={t("Documentation")}
           description={t(
             isFundoFloraNonProfitOrEnterprise
               ? "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Budgets must detail your entire organisation's expenses. Audited budgets are preferred, if available, but are not required at this stage.<br><br>Include in the financial statements, if possible: Income Statement (DRE) or Statement of Surplus and Losses (DSP) - in the case of non-profit organisations, Balance Sheet and Cash Flow Statement."
