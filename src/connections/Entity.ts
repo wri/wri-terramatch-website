@@ -1,11 +1,13 @@
 import { createSelector } from "reselect";
 
+import { ApiConnectionFactory } from "@/connections/util/api-connection-factory";
 import {
   entityDelete,
   entityGet,
   EntityGetPathParams,
   entityIndex,
   EntityIndexQueryParams,
+  EntityIndexVariables,
   entityUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
@@ -295,7 +297,37 @@ export const deleteProject = connectedResourceDeleter(
   uuid => entityDeleteFetchFailed(specificEntityParams("projects", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
 );
-const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
+
+const indexProjectConnection = ApiConnectionFactory.index<ProjectLightDto, EntityIndexVariables>(
+  "projects",
+  entityIndex,
+  entityIndexIndexMeta,
+  () => ({ pathParams: { entity: "projects" } } as EntityIndexVariables)
+)
+  .pagination()
+  .filters({
+    search: "string",
+    searchFilter: "string",
+    country: "string",
+    status: "string",
+    updateRequestStatus: "string",
+    projectUuid: "string",
+    nurseryUuid: "string",
+    siteUuid: "string",
+    landscape: "array",
+    organisationType: "array",
+    cohort: "array",
+    polygonStatus: "string",
+    nothingToReport: "boolean",
+    shortName: "string"
+  })
+  .addProps<{ sideloads?: EntityIndexQueryParams["sideloads"] }>(({ sideloads }) => ({
+    queryParams: { sideloads }
+  }))
+  .enabledFlag()
+  .refetch(() => ApiSlice.pruneIndex("projects", ""))
+  .fetchFailure(entityIndexFetchFailed)
+  .buildConnection();
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 

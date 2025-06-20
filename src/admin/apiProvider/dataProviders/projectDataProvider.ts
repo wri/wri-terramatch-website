@@ -4,18 +4,18 @@ import { deleteProject, loadFullProject, loadProjectIndex } from "@/connections/
 import { fetchGetV2AdminProjectsMulti, GetV2AdminProjectsMultiError } from "@/generated/apiComponents";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
-import { entitiesListResult, raConnectionProps } from "../utils/listing";
+import { raConnectionProps } from "../utils/listing";
 
 // @ts-ignore
 export const projectDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
     const connection = await loadProjectIndex(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Project index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Project index fetch failed", connection.loadFailure);
     }
 
-    return entitiesListResult(connection);
+    return { data: connection.data?.map(project => ({ ...project, id: project.uuid })), total: connection.indexTotal };
   },
 
   // @ts-expect-error until we can get the whole DataProvider on Project DTOs

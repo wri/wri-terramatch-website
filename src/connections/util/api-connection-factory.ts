@@ -255,8 +255,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     isLoaded?: LoadedPredicate<Selected, AddProps>
   ) {
     return this.chain<Selected, Props & AddProps>({
-      variablesFactory:
-        addVariablesFactory == null ? undefined : this.mergeVariablesFactory<AddProps>(addVariablesFactory),
+      variablesFactory: addVariablesFactory,
       isLoaded
     });
   }
@@ -386,34 +385,35 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     addPrototype: Omit<ConnectionPrototype<Variables, AddSelected, AddProps>, "fetcher" | "selectorCacheKeyFactory">
   ): ApiConnectionFactory<Variables, Selected & AddSelected, Props & AddProps> {
     let isLoaded: LoadedPredicate<Selected & AddSelected, Props & AddProps> | undefined =
-      this.prototype?.isLoaded ?? addPrototype.isLoaded;
-    if (this.prototype?.isLoaded != null && addPrototype.isLoaded != null) {
+      this.prototype.isLoaded ?? addPrototype.isLoaded;
+    if (this.prototype.isLoaded != null && addPrototype.isLoaded != null) {
       const firstPredicate = this.prototype.isLoaded;
       const secondPredicate = addPrototype.isLoaded;
       isLoaded = (selected: Selected & AddSelected, props: Props & AddProps) =>
         firstPredicate(selected, props) || secondPredicate(selected, props);
     }
 
+    let variablesFactory = (this.prototype.variablesFactory ??
+      addPrototype.variablesFactory) as PartialVariablesFactory<Variables, Props & AddProps>;
+    if (this.prototype.variablesFactory != null && addPrototype.variablesFactory != null) {
+      const firstFactory = this.prototype.variablesFactory;
+      const secondFactory = addPrototype.variablesFactory;
+      variablesFactory = (props: Props & AddProps) => merge({}, firstFactory(props), secondFactory(props));
+    }
+
     return new ApiConnectionFactory({
       isLoaded,
-      selectors: [...(this.prototype?.selectors ?? []), ...(addPrototype?.selectors ?? [])] as SelectorFactory<
+      variablesFactory,
+      selectors: [...(this.prototype.selectors ?? []), ...(addPrototype.selectors ?? [])] as SelectorFactory<
         Variables,
         Selected & AddSelected,
         Props & AddProps
       >[],
-      variablesFactory: addPrototype.variablesFactory,
       fetcher: this.prototype.fetcher as FetcherPrototype<Variables, Props & AddProps>,
       selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as SelectorCacheKeyFactory<
         Variables,
         Props & AddProps
       >
     });
-  }
-
-  protected mergeVariablesFactory<AddProps>(addVariablesFactory: PartialVariablesFactory<Variables, AddProps>) {
-    if (this.prototype.variablesFactory == null) return addVariablesFactory;
-
-    const { variablesFactory } = this.prototype;
-    return (props: Props & AddProps) => merge({}, variablesFactory(props), addVariablesFactory(props));
   }
 }
