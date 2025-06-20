@@ -203,6 +203,7 @@ export const FormBuilderForm = () => {
                 linkedFieldsData={appendAdditionalFormQuestionFields(linkedFieldsData?.data || [])}
                 onDeleteQuestion={DeleteQuestion}
                 validate={minLength(1, "At least one question is required")}
+                formTitle={getValues()?.title}
               />
             </AccordionFormIterator>
           </ArrayInput>
