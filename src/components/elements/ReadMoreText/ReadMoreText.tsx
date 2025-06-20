@@ -40,7 +40,7 @@ const ReadMoreText: FC<IProps> = ({ defaultVisibleLinesNumber = 1, className, ..
         className={classNames(isExpanded ? "line-clamp-none" : `line-clamp-${defaultVisibleLinesNumber}`)}
         ref={contentRef}
       >
-        <Text className="whitespace-pre-line" {...rest} />
+        <Text as="div" className="whitespace-pre-line" {...rest} />
       </div>
       <When condition={isClamped}>
         <Button variant="text" onClick={() => setExpanded(prev => !prev)} className="text-primary-500 underline">

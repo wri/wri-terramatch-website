@@ -79,7 +79,12 @@ export const MediaPopup = ({
         <QueryClientProvider client={client}>
           <div className="flex h-full w-full flex-col gap-2 bg-white" onClick={() => setOpenModal(!openModal)}>
             <div className="w-full flex-1">
-              <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={file_url} />
+              <ImageWithPlaceholder
+                className="h-full"
+                alt={t("Image not available")}
+                imageUrl={file_url}
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
             </div>
             <button
               className="absolute right-3 top-3 z-10 rounded bg-grey-200 p-1 leading-normal"

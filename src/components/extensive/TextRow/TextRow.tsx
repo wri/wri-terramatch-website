@@ -25,10 +25,10 @@ const TextRow = ({
 }: TextRowProps) => {
   return (
     <div className={cn("flex gap-2", { className })}>
-      <Text variant={nameVariant} className={nameClassName}>
+      <Text as="span" variant={nameVariant} className={nameClassName}>
         {name}
       </Text>
-      <Text variant={valueVariant} className={classNames(valueClassName, "flex-1")}>
+      <Text as="span" variant={valueVariant} className={classNames(valueClassName, "flex-1")}>
         {value ?? "-"}
       </Text>
     </div>

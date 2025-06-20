@@ -290,7 +290,6 @@ export const addMediaSourceAndLayer = (
   if (modelFilesGeolocalized.length === 0) {
     return;
   }
-
   const features: Feature<Geometry, GeoJsonProperties>[] = modelFilesGeolocalized.map(modelFile => ({
     type: "Feature",
     geometry: {
@@ -301,7 +300,7 @@ export const addMediaSourceAndLayer = (
       uuid: modelFile.uuid,
       name: modelFile.name,
       created_date: modelFile.createdAt,
-      file_url: modelFile.url,
+      file_url: modelFile.thumbUrl,
       location: {
         lat: modelFile.lat,
         lng: modelFile.lng

@@ -127,7 +127,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-12-bold" className="pr-3">
+        <Text as="span" variant="text-12-bold" className="pr-3">
           {t("Edit Attributes")}
         </Text>
       ),
@@ -136,7 +136,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     {
       id: "2",
       render: () => (
-        <Text variant="text-12-bold" className="pr-3">
+        <Text as="span" variant="text-12-bold" className="pr-3">
           {t("Download")}
         </Text>
       ),
@@ -147,7 +147,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
           {
             id: "3",
             render: () => (
-              <Text variant="text-12-bold" className="pr-3">
+              <Text as="span" variant="text-12-bold" className="pr-3">
                 {t("Make Cover")}
               </Text>
             ),
@@ -163,7 +163,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     {
       id: "5",
       render: () => (
-        <Text variant="text-12-bold" className="pr-3">
+        <Text as="span" variant="text-12-bold" className="pr-3">
           {t("Delete")}
         </Text>
       ),
@@ -208,7 +208,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         <div className="flex items-center justify-between gap-1">
           <Text variant="text-14-bold" className="flex items-center gap-1">
             {t("Uploaded via")}:{" "}
-            <Text variant="text-14-light" className="capitalize">
+            <Text as="span" variant="text-14-light" className="capitalize">
               {getReadableEntityName(data?.entityType as EntityName, true)}
             </Text>
           </Text>
@@ -221,7 +221,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         </div>
         <Text variant="text-14-bold" className="flex items-center gap-1">
           {t("Date uploaded")}:{" "}
-          <Text variant="text-14-light" className="capitalize">
+          <Text as="span" variant="text-14-light" className="capitalize">
             {(() => {
               try {
                 return format(new Date(Date.parse(data.createdAt)), "dd/MM/Y");
@@ -233,7 +233,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
         </Text>
         <Text variant="text-14-bold" className="flex items-center gap-1">
           {t("Visibility")}:{" "}
-          <Text variant="text-14-light" className="capitalize">
+          <Text as="span" variant="text-14-light" className="capitalize">
             {data.isPublic ? t("Public") : t("Private")}
           </Text>
         </Text>
