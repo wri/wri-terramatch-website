@@ -136,7 +136,7 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
 });
 
 export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
-  constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
+  protected constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
 
   /**
    * Adds a `data` property to the connection, specified by the id in IdProps, and typed with the
