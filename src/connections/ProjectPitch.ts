@@ -2,6 +2,7 @@ import { createSelector } from "reselect";
 
 import {
   projectPitchGet,
+  ProjectPitchGetVariables,
   projectPitchIndex,
   ProjectPitchIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
@@ -18,10 +19,13 @@ import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-import { IdConnectionFactory } from "./util/api-connection-factory";
+import { ApiConnectionFactory } from "./util/api-connection-factory";
 
-const projectPitchConnection = new IdConnectionFactory("projectPitches", ({ id }) => ({ pathParams: { uuid: id } }))
-  .singleResource<ProjectPitchDto>(projectPitchGet)
+const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchDto, ProjectPitchGetVariables>(
+  "projectPitches",
+  projectPitchGet,
+  ({ id }) => ({ pathParams: { uuid: id } })
+)
   .fetchInProgress(projectPitchGetIsFetching)
   .fetchFailure(projectPitchGetFetchFailed)
   .buildConnection();

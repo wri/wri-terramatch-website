@@ -1,7 +1,9 @@
 import { createSelector } from "reselect";
 
+import { ApiConnectionFactory } from "@/connections/util/api-connection-factory";
 import {
   impactStoryGet,
+  ImpactStoryGetVariables,
   impactStoryIndex,
   ImpactStoryIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
@@ -18,12 +20,13 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-import { IdConnectionFactory } from "./util/api-connection-factory";
-
 const impactStoriesSelector = ({ impactStories }: ApiDataStore) => impactStories;
 
-const impactStoryConnection = new IdConnectionFactory("impactStories", ({ id }) => ({ pathParams: { uuid: id } }))
-  .singleFullResource<ImpactStoryFullDto>(impactStoryGet)
+const impactStoryConnection = ApiConnectionFactory.singleFullResource<ImpactStoryFullDto, ImpactStoryGetVariables>(
+  "impactStories",
+  impactStoryGet,
+  ({ id }) => ({ pathParams: { uuid: id } })
+)
   .fetchFailure(impactStoryGetFetchFailed)
   .fetchInProgress(impactStoryGetIsFetching)
   .buildConnection();
