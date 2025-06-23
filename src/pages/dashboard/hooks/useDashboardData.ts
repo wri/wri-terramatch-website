@@ -6,6 +6,7 @@ import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGo
 import { useFullProject, useProjectIndex } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
+import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
@@ -98,6 +99,7 @@ const convertV2ToProcessed = (v2Project: any): ProcessedProject => ({
 export const useDashboardData = (filters: any) => {
   const [topProject, setTopProjects] = useState<any>([]);
   const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
+  const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -186,7 +188,7 @@ export const useDashboardData = (filters: any) => {
   const { searchTerm } = useDashboardContext();
   const { data: v2ActiveProjects } = useGetV2DashboardActiveProjects<any>(
     { queryParams: activeProjectsQueryParams },
-    { enabled: !!searchTerm || !!filters }
+    { enabled: !!filters }
   );
 
   const polygonsData = useMemo(() => {
@@ -404,7 +406,26 @@ export const useDashboardData = (filters: any) => {
     const useV3Data = allV3Projects.length > 0 && (!user || user?.primaryRole !== "government");
 
     if (useV3Data) {
-      return allV3Projects.map(convertV3ToProcessed);
+      const v2ProjectsMap = new Map<string, any>();
+      if (v2ActiveProjects?.data) {
+        v2ActiveProjects.data.forEach((project: any) => {
+          if (project.uuid) {
+            v2ProjectsMap.set(project.uuid, project);
+          }
+        });
+      }
+
+      return allV3Projects.map(v3Project => {
+        const v2Project = v2ProjectsMap.get(v3Project.uuid);
+        const convertedProject = convertV3ToProcessed(v3Project);
+
+        if (v2Project && v2Project.jobs_created !== undefined) {
+          convertedProject.jobs_created = v2Project.jobs_created;
+          convertedProject.totalJobsCreated = v2Project.jobs_created;
+        }
+
+        return convertedProject;
+      });
     } else if (v2ActiveProjects?.data) {
       return v2ActiveProjects.data.map(convertV2ToProcessed);
     }
