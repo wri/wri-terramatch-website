@@ -23,6 +23,8 @@ import {
   EstablishmentTreesFindVariables,
   TreeReportCountsFindPathParams,
   TreeReportCountsFindVariables,
+  DemographicsIndexQueryParams,
+  DemographicsIndexVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -188,6 +190,25 @@ export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCounts
     method: "get",
     ...variables
   });
+
+export const demographicsIndexIsFetching = (variables: Omit<DemographicsIndexVariables, "body">) =>
+  isFetchingSelector<DemographicsIndexQueryParams, {}>({
+    url: "/entities/v3/demographics",
+    method: "get",
+    ...variables
+  });
+
+export const demographicsIndexFetchFailed = (variables: Omit<DemographicsIndexVariables, "body">) =>
+  fetchFailedSelector<DemographicsIndexQueryParams, {}>({
+    url: "/entities/v3/demographics",
+    method: "get",
+    ...variables
+  });
+
+export const demographicsIndexIndexMeta = (
+  resource: ResourceType,
+  variables: Omit<DemographicsIndexVariables, "body">
+) => indexMetaSelector<DemographicsIndexQueryParams, {}>({ url: "/entities/v3/demographics", resource, ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({

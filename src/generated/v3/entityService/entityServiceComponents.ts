@@ -1004,6 +1004,125 @@ export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, s
     TreeReportCountsFindPathParams
   >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
 
+export type DemographicsIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * project uuid array
+   */
+  projectUuid?: string[];
+  /**
+   * projectReport uuid array
+   */
+  projectReportUuid?: string[];
+  /**
+   * siteReport uuid array
+   */
+  siteReportUuid?: string[];
+};
+
+export type DemographicsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DemographicsIndexResponse = {
+  meta?: {
+    /**
+     * @example demographics
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example demographics
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DemographicDto;
+  }[];
+};
+
+export type DemographicsIndexVariables = {
+  queryParams?: DemographicsIndexQueryParams;
+};
+
+export const demographicsIndex = (variables: DemographicsIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    DemographicsIndexResponse,
+    DemographicsIndexError,
+    undefined,
+    {},
+    DemographicsIndexQueryParams,
+    {}
+  >({ url: "/entities/v3/demographics", method: "get", ...variables, signal });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -1926,6 +2045,7 @@ export const operationsByTag = {
   tasks: { taskIndex, taskGet, taskUpdate },
   fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
+  demographics: { demographicsIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex }
 };
