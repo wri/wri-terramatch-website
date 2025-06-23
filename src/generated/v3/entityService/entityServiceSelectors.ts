@@ -15,14 +15,14 @@ import {
   TaskGetVariables,
   TaskUpdatePathParams,
   TaskUpdateVariables,
+  UploadFilePathParams,
+  UploadFileVariables,
   TreeScientificNamesSearchQueryParams,
   TreeScientificNamesSearchVariables,
   EstablishmentTreesFindPathParams,
   EstablishmentTreesFindVariables,
   TreeReportCountsFindPathParams,
   TreeReportCountsFindVariables,
-  BoundingBoxGetQueryParams,
-  BoundingBoxGetVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -123,6 +123,20 @@ export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body"
 export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
   fetchFailedSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
 
+export const uploadFileIsFetching = (variables: Omit<UploadFileVariables, "body">) =>
+  isFetchingSelector<{}, UploadFilePathParams>({
+    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
+    method: "post",
+    ...variables
+  });
+
+export const uploadFileFetchFailed = (variables: Omit<UploadFileVariables, "body">) =>
+  fetchFailedSelector<{}, UploadFilePathParams>({
+    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
+    method: "post",
+    ...variables
+  });
+
 export const treeScientificNamesSearchIsFetching = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
   isFetchingSelector<TreeScientificNamesSearchQueryParams, {}>({
     url: "/trees/v3/scientificNames",
@@ -174,12 +188,6 @@ export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCounts
     method: "get",
     ...variables
   });
-
-export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
-
-export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({

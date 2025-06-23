@@ -8,6 +8,7 @@ export type orgSubmission = {
   type: string;
   currency: string;
   start_month: string | number;
+  title?: string | null;
 };
 
 export type BaseYearlyData = {

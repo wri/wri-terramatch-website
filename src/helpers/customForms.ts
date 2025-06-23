@@ -66,6 +66,14 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
 
 export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
+  if (typeof values === "string") {
+    try {
+      values = JSON.parse(values);
+    } catch (e) {
+      console.warn("Failed to parse values as JSON:", e);
+      return {};
+    }
+  }
 
   delete values.uuid;
   delete values.updated_at;

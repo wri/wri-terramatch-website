@@ -470,18 +470,6 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
-export type BoundingBoxDto = {
-  /**
-   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
-   *
-   * @example -13.17273163
-   * @example -21.3169788
-   * @example 48.8126753
-   * @example 13.47775425
-   */
-  bbox: number[];
-};
-
 export type ANRDto = {
   /**
    * Site name
@@ -585,6 +573,7 @@ export type ProjectLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
 };
 
 export type SiteLightDto = {
@@ -719,6 +708,7 @@ export type ProjectFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -744,7 +734,6 @@ export type ProjectFullDto = {
   survivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
-  treesPlantedCount: number;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
   workdayCount: number;
