@@ -45,7 +45,8 @@ export const raListParamsToQueryParams = (
   params: GetListParams,
   sortableList?: string[],
   filterReplaceList: { key: string; replaceWith: string }[] = [],
-  sortReplaceList: { key: string; replaceWith: string }[] = []
+  sortReplaceList: { key: string; replaceWith: string }[] = [],
+  extraParams: Record<string, unknown> | null = null
 ) => {
   const queryParams: ListQueryParams = {
     per_page: params.pagination.perPage,
@@ -76,6 +77,12 @@ export const raListParamsToQueryParams = (
     queryParams.sort = `${params.sort.order === "DESC" ? "-" : ""}${params.sort.field}`;
   } else if (!sortableList) {
     queryParams.sort = `${params.sort.order === "DESC" ? "-" : ""}${params.sort.field}`;
+  }
+
+  if (extraParams != null) {
+    Object.entries(extraParams).forEach(([k, v]) => {
+      queryParams[k] = v;
+    });
   }
 
   return queryParams as any;
