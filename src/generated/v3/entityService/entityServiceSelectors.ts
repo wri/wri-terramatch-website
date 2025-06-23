@@ -39,116 +39,93 @@ import {
   EntityAssociationIndexVariables
 } from "./entityServiceComponents";
 
+export const PROJECT_PITCH_INDEX_URL = "/entities/v3/projectPitches";
+
 export const projectPitchIndexIsFetching = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
-  isFetchingSelector<ProjectPitchIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<ProjectPitchIndexQueryParams, {}>({ url: PROJECT_PITCH_INDEX_URL, method: "get", ...variables });
 
 export const projectPitchIndexFetchFailed = (variables: Omit<ProjectPitchIndexVariables, "body">) =>
-  fetchFailedSelector<ProjectPitchIndexQueryParams, {}>({
-    url: "/entities/v3/projectPitches",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<ProjectPitchIndexQueryParams, {}>({ url: PROJECT_PITCH_INDEX_URL, method: "get", ...variables });
 
 export const projectPitchIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<ProjectPitchIndexVariables, "body">
-) =>
-  indexMetaSelector<ProjectPitchIndexQueryParams, {}>({ url: "/entities/v3/projectPitches", resource, ...variables });
+) => indexMetaSelector<ProjectPitchIndexQueryParams, {}>({ url: PROJECT_PITCH_INDEX_URL, resource, ...variables });
+
+export const PROJECT_PITCH_GET_URL = "/entities/v3/projectPitches/{uuid}";
 
 export const projectPitchGetIsFetching = (variables: Omit<ProjectPitchGetVariables, "body">) =>
-  isFetchingSelector<{}, ProjectPitchGetPathParams>({
-    url: "/entities/v3/projectPitches/{uuid}",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<{}, ProjectPitchGetPathParams>({ url: PROJECT_PITCH_GET_URL, method: "get", ...variables });
 
 export const projectPitchGetFetchFailed = (variables: Omit<ProjectPitchGetVariables, "body">) =>
-  fetchFailedSelector<{}, ProjectPitchGetPathParams>({
-    url: "/entities/v3/projectPitches/{uuid}",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<{}, ProjectPitchGetPathParams>({ url: PROJECT_PITCH_GET_URL, method: "get", ...variables });
+
+export const IMPACT_STORY_INDEX_URL = "/entities/v3/impactStories";
 
 export const impactStoryIndexIsFetching = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
-  isFetchingSelector<ImpactStoryIndexQueryParams, {}>({
-    url: "/entities/v3/impactStories",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<ImpactStoryIndexQueryParams, {}>({ url: IMPACT_STORY_INDEX_URL, method: "get", ...variables });
 
 export const impactStoryIndexFetchFailed = (variables: Omit<ImpactStoryIndexVariables, "body">) =>
-  fetchFailedSelector<ImpactStoryIndexQueryParams, {}>({
-    url: "/entities/v3/impactStories",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<ImpactStoryIndexQueryParams, {}>({ url: IMPACT_STORY_INDEX_URL, method: "get", ...variables });
 
 export const impactStoryIndexIndexMeta = (resource: ResourceType, variables: Omit<ImpactStoryIndexVariables, "body">) =>
-  indexMetaSelector<ImpactStoryIndexQueryParams, {}>({ url: "/entities/v3/impactStories", resource, ...variables });
+  indexMetaSelector<ImpactStoryIndexQueryParams, {}>({ url: IMPACT_STORY_INDEX_URL, resource, ...variables });
+
+export const IMPACT_STORY_GET_URL = "/entities/v3/impactStories/{uuid}";
 
 export const impactStoryGetIsFetching = (variables: Omit<ImpactStoryGetVariables, "body">) =>
-  isFetchingSelector<{}, ImpactStoryGetPathParams>({
-    url: "/entities/v3/impactStories/{uuid}",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<{}, ImpactStoryGetPathParams>({ url: IMPACT_STORY_GET_URL, method: "get", ...variables });
 
 export const impactStoryGetFetchFailed = (variables: Omit<ImpactStoryGetVariables, "body">) =>
-  fetchFailedSelector<{}, ImpactStoryGetPathParams>({
-    url: "/entities/v3/impactStories/{uuid}",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<{}, ImpactStoryGetPathParams>({ url: IMPACT_STORY_GET_URL, method: "get", ...variables });
+
+export const TASK_INDEX_URL = "/entities/v3/tasks";
 
 export const taskIndexIsFetching = (variables: Omit<TaskIndexVariables, "body">) =>
-  isFetchingSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
+  isFetchingSelector<TaskIndexQueryParams, {}>({ url: TASK_INDEX_URL, method: "get", ...variables });
 
 export const taskIndexFetchFailed = (variables: Omit<TaskIndexVariables, "body">) =>
-  fetchFailedSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", method: "get", ...variables });
+  fetchFailedSelector<TaskIndexQueryParams, {}>({ url: TASK_INDEX_URL, method: "get", ...variables });
 
 export const taskIndexIndexMeta = (resource: ResourceType, variables: Omit<TaskIndexVariables, "body">) =>
-  indexMetaSelector<TaskIndexQueryParams, {}>({ url: "/entities/v3/tasks", resource, ...variables });
+  indexMetaSelector<TaskIndexQueryParams, {}>({ url: TASK_INDEX_URL, resource, ...variables });
+
+export const TASK_GET_URL = "/entities/v3/tasks/{uuid}";
 
 export const taskGetIsFetching = (variables: Omit<TaskGetVariables, "body">) =>
-  isFetchingSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+  isFetchingSelector<{}, TaskGetPathParams>({ url: TASK_GET_URL, method: "get", ...variables });
 
 export const taskGetFetchFailed = (variables: Omit<TaskGetVariables, "body">) =>
-  fetchFailedSelector<{}, TaskGetPathParams>({ url: "/entities/v3/tasks/{uuid}", method: "get", ...variables });
+  fetchFailedSelector<{}, TaskGetPathParams>({ url: TASK_GET_URL, method: "get", ...variables });
+
+export const TASK_UPDATE_URL = "/entities/v3/tasks/{uuid}";
 
 export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body">) =>
-  isFetchingSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
+  isFetchingSelector<{}, TaskUpdatePathParams>({ url: TASK_UPDATE_URL, method: "patch", ...variables });
 
 export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
-  fetchFailedSelector<{}, TaskUpdatePathParams>({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables });
+  fetchFailedSelector<{}, TaskUpdatePathParams>({ url: TASK_UPDATE_URL, method: "patch", ...variables });
+
+export const UPLOAD_FILE_URL = "/entities/v3/files/{entity}/{uuid}/{collection}";
 
 export const uploadFileIsFetching = (variables: Omit<UploadFileVariables, "body">) =>
-  isFetchingSelector<{}, UploadFilePathParams>({
-    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
-    method: "post",
-    ...variables
-  });
+  isFetchingSelector<{}, UploadFilePathParams>({ url: UPLOAD_FILE_URL, method: "post", ...variables });
 
 export const uploadFileFetchFailed = (variables: Omit<UploadFileVariables, "body">) =>
-  fetchFailedSelector<{}, UploadFilePathParams>({
-    url: "/entities/v3/files/{entity}/{uuid}/{collection}",
-    method: "post",
-    ...variables
-  });
+  fetchFailedSelector<{}, UploadFilePathParams>({ url: UPLOAD_FILE_URL, method: "post", ...variables });
+
+export const TREE_SCIENTIFIC_NAMES_SEARCH_URL = "/trees/v3/scientificNames";
 
 export const treeScientificNamesSearchIsFetching = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
   isFetchingSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
+    url: TREE_SCIENTIFIC_NAMES_SEARCH_URL,
     method: "get",
     ...variables
   });
 
 export const treeScientificNamesSearchFetchFailed = (variables: Omit<TreeScientificNamesSearchVariables, "body">) =>
   fetchFailedSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
+    url: TREE_SCIENTIFIC_NAMES_SEARCH_URL,
     method: "get",
     ...variables
   });
@@ -158,123 +135,111 @@ export const treeScientificNamesSearchIndexMeta = (
   variables: Omit<TreeScientificNamesSearchVariables, "body">
 ) =>
   indexMetaSelector<TreeScientificNamesSearchQueryParams, {}>({
-    url: "/trees/v3/scientificNames",
+    url: TREE_SCIENTIFIC_NAMES_SEARCH_URL,
     resource,
     ...variables
   });
 
+export const ESTABLISHMENT_TREES_FIND_URL = "/trees/v3/establishments/{entity}/{uuid}";
+
 export const establishmentTreesFindIsFetching = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
   isFetchingSelector<{}, EstablishmentTreesFindPathParams>({
-    url: "/trees/v3/establishments/{entity}/{uuid}",
+    url: ESTABLISHMENT_TREES_FIND_URL,
     method: "get",
     ...variables
   });
 
 export const establishmentTreesFindFetchFailed = (variables: Omit<EstablishmentTreesFindVariables, "body">) =>
   fetchFailedSelector<{}, EstablishmentTreesFindPathParams>({
-    url: "/trees/v3/establishments/{entity}/{uuid}",
+    url: ESTABLISHMENT_TREES_FIND_URL,
     method: "get",
     ...variables
   });
 
+export const TREE_REPORT_COUNTS_FIND_URL = "/trees/v3/reportCounts/{entity}/{uuid}";
+
 export const treeReportCountsFindIsFetching = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
   isFetchingSelector<{}, TreeReportCountsFindPathParams>({
-    url: "/trees/v3/reportCounts/{entity}/{uuid}",
+    url: TREE_REPORT_COUNTS_FIND_URL,
     method: "get",
     ...variables
   });
 
 export const treeReportCountsFindFetchFailed = (variables: Omit<TreeReportCountsFindVariables, "body">) =>
   fetchFailedSelector<{}, TreeReportCountsFindPathParams>({
-    url: "/trees/v3/reportCounts/{entity}/{uuid}",
+    url: TREE_REPORT_COUNTS_FIND_URL,
     method: "get",
     ...variables
   });
+
+export const DEMOGRAPHICS_INDEX_URL = "/entities/v3/demographics";
 
 export const demographicsIndexIsFetching = (variables: Omit<DemographicsIndexVariables, "body">) =>
-  isFetchingSelector<DemographicsIndexQueryParams, {}>({
-    url: "/entities/v3/demographics",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<DemographicsIndexQueryParams, {}>({ url: DEMOGRAPHICS_INDEX_URL, method: "get", ...variables });
 
 export const demographicsIndexFetchFailed = (variables: Omit<DemographicsIndexVariables, "body">) =>
-  fetchFailedSelector<DemographicsIndexQueryParams, {}>({
-    url: "/entities/v3/demographics",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<DemographicsIndexQueryParams, {}>({ url: DEMOGRAPHICS_INDEX_URL, method: "get", ...variables });
 
 export const demographicsIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<DemographicsIndexVariables, "body">
-) => indexMetaSelector<DemographicsIndexQueryParams, {}>({ url: "/entities/v3/demographics", resource, ...variables });
+) => indexMetaSelector<DemographicsIndexQueryParams, {}>({ url: DEMOGRAPHICS_INDEX_URL, resource, ...variables });
+
+export const ENTITY_INDEX_URL = "/entities/v3/{entity}";
 
 export const entityIndexIsFetching = (variables: Omit<EntityIndexVariables, "body">) =>
   isFetchingSelector<EntityIndexQueryParams, EntityIndexPathParams>({
-    url: "/entities/v3/{entity}",
+    url: ENTITY_INDEX_URL,
     method: "get",
     ...variables
   });
 
 export const entityIndexFetchFailed = (variables: Omit<EntityIndexVariables, "body">) =>
   fetchFailedSelector<EntityIndexQueryParams, EntityIndexPathParams>({
-    url: "/entities/v3/{entity}",
+    url: ENTITY_INDEX_URL,
     method: "get",
     ...variables
   });
 
 export const entityIndexIndexMeta = (resource: ResourceType, variables: Omit<EntityIndexVariables, "body">) =>
-  indexMetaSelector<EntityIndexQueryParams, EntityIndexPathParams>({
-    url: "/entities/v3/{entity}",
-    resource,
-    ...variables
-  });
+  indexMetaSelector<EntityIndexQueryParams, EntityIndexPathParams>({ url: ENTITY_INDEX_URL, resource, ...variables });
+
+export const ENTITY_GET_URL = "/entities/v3/{entity}/{uuid}";
 
 export const entityGetIsFetching = (variables: Omit<EntityGetVariables, "body">) =>
-  isFetchingSelector<{}, EntityGetPathParams>({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables });
+  isFetchingSelector<{}, EntityGetPathParams>({ url: ENTITY_GET_URL, method: "get", ...variables });
 
 export const entityGetFetchFailed = (variables: Omit<EntityGetVariables, "body">) =>
-  fetchFailedSelector<{}, EntityGetPathParams>({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables });
+  fetchFailedSelector<{}, EntityGetPathParams>({ url: ENTITY_GET_URL, method: "get", ...variables });
+
+export const ENTITY_DELETE_URL = "/entities/v3/{entity}/{uuid}";
 
 export const entityDeleteIsFetching = (variables: Omit<EntityDeleteVariables, "body">) =>
-  isFetchingSelector<{}, EntityDeletePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "delete",
-    ...variables
-  });
+  isFetchingSelector<{}, EntityDeletePathParams>({ url: ENTITY_DELETE_URL, method: "delete", ...variables });
 
 export const entityDeleteFetchFailed = (variables: Omit<EntityDeleteVariables, "body">) =>
-  fetchFailedSelector<{}, EntityDeletePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "delete",
-    ...variables
-  });
+  fetchFailedSelector<{}, EntityDeletePathParams>({ url: ENTITY_DELETE_URL, method: "delete", ...variables });
+
+export const ENTITY_UPDATE_URL = "/entities/v3/{entity}/{uuid}";
 
 export const entityUpdateIsFetching = (variables: Omit<EntityUpdateVariables, "body">) =>
-  isFetchingSelector<{}, EntityUpdatePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "patch",
-    ...variables
-  });
+  isFetchingSelector<{}, EntityUpdatePathParams>({ url: ENTITY_UPDATE_URL, method: "patch", ...variables });
 
 export const entityUpdateFetchFailed = (variables: Omit<EntityUpdateVariables, "body">) =>
-  fetchFailedSelector<{}, EntityUpdatePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "patch",
-    ...variables
-  });
+  fetchFailedSelector<{}, EntityUpdatePathParams>({ url: ENTITY_UPDATE_URL, method: "patch", ...variables });
+
+export const ENTITY_ASSOCIATION_INDEX_URL = "/entities/v3/{entity}/{uuid}/{association}";
 
 export const entityAssociationIndexIsFetching = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
   isFetchingSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
-    url: "/entities/v3/{entity}/{uuid}/{association}",
+    url: ENTITY_ASSOCIATION_INDEX_URL,
     method: "get",
     ...variables
   });
 
 export const entityAssociationIndexFetchFailed = (variables: Omit<EntityAssociationIndexVariables, "body">) =>
   fetchFailedSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
-    url: "/entities/v3/{entity}/{uuid}/{association}",
+    url: ENTITY_ASSOCIATION_INDEX_URL,
     method: "get",
     ...variables
   });
@@ -284,7 +249,7 @@ export const entityAssociationIndexIndexMeta = (
   variables: Omit<EntityAssociationIndexVariables, "body">
 ) =>
   indexMetaSelector<EntityAssociationIndexQueryParams, EntityAssociationIndexPathParams>({
-    url: "/entities/v3/{entity}/{uuid}/{association}",
+    url: ENTITY_ASSOCIATION_INDEX_URL,
     resource,
     ...variables
   });

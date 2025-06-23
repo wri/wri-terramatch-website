@@ -7,37 +7,35 @@ import {
   BoundingBoxGetVariables
 } from "./researchServiceComponents";
 
+export const SITE_POLYGONS_INDEX_URL = "/research/v3/sitePolygons";
+
 export const sitePolygonsIndexIsFetching = (variables: Omit<SitePolygonsIndexVariables, "body">) =>
-  isFetchingSelector<SitePolygonsIndexQueryParams, {}>({
-    url: "/research/v3/sitePolygons",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<SitePolygonsIndexQueryParams, {}>({ url: SITE_POLYGONS_INDEX_URL, method: "get", ...variables });
 
 export const sitePolygonsIndexFetchFailed = (variables: Omit<SitePolygonsIndexVariables, "body">) =>
-  fetchFailedSelector<SitePolygonsIndexQueryParams, {}>({
-    url: "/research/v3/sitePolygons",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<SitePolygonsIndexQueryParams, {}>({ url: SITE_POLYGONS_INDEX_URL, method: "get", ...variables });
 
 export const sitePolygonsIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<SitePolygonsIndexVariables, "body">
-) => indexMetaSelector<SitePolygonsIndexQueryParams, {}>({ url: "/research/v3/sitePolygons", resource, ...variables });
+) => indexMetaSelector<SitePolygonsIndexQueryParams, {}>({ url: SITE_POLYGONS_INDEX_URL, resource, ...variables });
+
+export const BULK_UPDATE_SITE_POLYGONS_URL = "/research/v3/sitePolygons";
 
 export const bulkUpdateSitePolygonsIsFetching = isFetchingSelector<{}, {}>({
-  url: "/research/v3/sitePolygons",
+  url: BULK_UPDATE_SITE_POLYGONS_URL,
   method: "patch"
 });
 
 export const bulkUpdateSitePolygonsFetchFailed = fetchFailedSelector<{}, {}>({
-  url: "/research/v3/sitePolygons",
+  url: BULK_UPDATE_SITE_POLYGONS_URL,
   method: "patch"
 });
 
+export const BOUNDING_BOX_GET_URL = "/boundingBoxes/v3/get";
+
 export const boundingBoxGetIsFetching = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
+  isFetchingSelector<BoundingBoxGetQueryParams, {}>({ url: BOUNDING_BOX_GET_URL, method: "get", ...variables });
 
 export const boundingBoxGetFetchFailed = (variables: Omit<BoundingBoxGetVariables, "body">) =>
-  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: "/boundingBoxes/v3/get", method: "get", ...variables });
+  fetchFailedSelector<BoundingBoxGetQueryParams, {}>({ url: BOUNDING_BOX_GET_URL, method: "get", ...variables });
