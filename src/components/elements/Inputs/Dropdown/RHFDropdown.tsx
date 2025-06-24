@@ -50,7 +50,11 @@ const WithApiOptions: FC<WithApiOptionsProps> = props => {
     if (options != null) setOptionsCache(options);
   }, [options]);
 
-  return optionsCache == null ? <Loader /> : <DropdownDisplay {...displayProps} options={optionsCache} />;
+  return optionsCache == null ? (
+    <Loader />
+  ) : (
+    <DropdownDisplay {...displayProps} formHook={formHook} options={optionsCache} />
+  );
 };
 
 const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
