@@ -301,7 +301,7 @@ export const addMediaSourceAndLayer = (
       uuid: modelFile.uuid,
       name: modelFile.name,
       created_date: modelFile.createdAt,
-      file_url: modelFile.thumbUrl,
+      thumbUrl: modelFile.thumbUrl,
       location: {
         lat: modelFile.lat,
         lng: modelFile.lng
