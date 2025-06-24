@@ -503,31 +503,6 @@ const DataCard = ({
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
         {
-          accessorKey: "data.2010",
-          header: "2010",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
-          accessorKey: "data.2011",
-          header: "2011",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
-          accessorKey: "data.2012",
-          header: "2012",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
-          accessorKey: "data.2013",
-          header: "2013",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
-          accessorKey: "data.2014",
-          header: "2014",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
           accessorKey: "data.2015",
           header: "2015",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
@@ -575,11 +550,6 @@ const DataCard = ({
         {
           accessorKey: "data.2024",
           header: "2024",
-          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
-        },
-        {
-          accessorKey: "data.2025",
-          header: "2025",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         }
       ]
@@ -1029,7 +999,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 2}>
-            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} />
+            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} record={record} />
           </When>
         </div>
       </div>
