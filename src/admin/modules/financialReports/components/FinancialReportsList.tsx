@@ -23,7 +23,11 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import {
+  getChangeRequestStatusOptions,
+  getFinancialReportStatusOptions,
+  getReportStatusOptions
+} from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -50,7 +54,7 @@ const FinancialReportsDataGrid: FC = () => {
         label="Status"
         sortable={false}
         render={({ status }: SiteReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+          const { title } = getFinancialReportStatusOptions().find((option: any) => option.value === status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
