@@ -445,11 +445,27 @@ const createSelectorNodes = ({
   name: string;
   includeIndexMeta: boolean;
 }) => {
-  const nodes: ts.Node[] = [];
+  const urlNodeName = _.snakeCase(`${name}_url`).toUpperCase();
+  const nodes: ts.Node[] = [
+    f.createVariableStatement(
+      [f.createModifier(ts.SyntaxKind.ExportKeyword)],
+      f.createVariableDeclarationList(
+        [
+          f.createVariableDeclaration(
+            f.createIdentifier(urlNodeName),
+            undefined,
+            undefined,
+            f.createStringLiteral(camelizedPathParams(url))
+          )
+        ],
+        ts.NodeFlags.Const
+      )
+    )
+  ];
 
   const createSelectorNode = (fnName: string) => {
     const selectorArguments: ts.ObjectLiteralElementLike[] = [
-      f.createPropertyAssignment(f.createIdentifier("url"), f.createStringLiteral(camelizedPathParams(url)))
+      f.createPropertyAssignment(f.createIdentifier("url"), f.createIdentifier(urlNodeName))
     ];
     if (fnName === "indexMeta") {
       selectorArguments.push(f.createShorthandPropertyAssignment("resource"));

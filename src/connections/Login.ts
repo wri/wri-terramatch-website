@@ -1,10 +1,13 @@
-import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
 import { createSelector } from "reselect";
 
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
-import { authLoginFetchFailed, authLoginIsFetching } from "@/generated/v3/userService/userServiceSelectors";
-import { selectFirstLogin } from "@/generated/v3/utils";
+import {
+  AUTH_LOGIN_URL,
+  authLoginFetchFailed,
+  authLoginIsFetching
+} from "@/generated/v3/userService/userServiceSelectors";
+import { resolveUrl, selectFirstLogin } from "@/generated/v3/utils";
+import ApiSlice from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
@@ -15,7 +18,12 @@ type LoginConnection = {
   token?: string;
 };
 
-export const login = (emailAddress: string, password: string) => authLogin({ body: { emailAddress, password } });
+export const login = (emailAddress: string, password: string) => {
+  // If there was a previous failed login, we need to clear it out so that the authLogin() call below
+  // doesn't get immediately stopped.
+  ApiSlice.clearPending(resolveUrl(AUTH_LOGIN_URL), "POST");
+  authLogin({ body: { emailAddress, password } });
+};
 
 const loginConnection: Connection<LoginConnection> = {
   selector: createSelector(
@@ -32,45 +40,3 @@ const loginConnection: Connection<LoginConnection> = {
 };
 export const useLogin = connectionHook(loginConnection);
 export const loadLogin = connectionLoader(loginConnection);
-
-export const useLoginRedirect = () => {
-  const router = useRouter();
-  const { returnUrl } = router.query;
-  const [, { isLoggedIn }] = useLogin();
-  const hasRedirected = useRef(false);
-  const isRouterReady = useRef(false);
-
-  useEffect(() => {
-    if (router.isReady) {
-      isRouterReady.current = true;
-    }
-  }, [router.isReady]);
-
-  useEffect(() => {
-    if (isLoggedIn && isRouterReady.current && !hasRedirected.current) {
-      hasRedirected.current = true;
-
-      let redirectTarget: string | null = null;
-
-      if (typeof window !== "undefined") {
-        const savedUrl = localStorage.getItem("dashboardReturnUrl");
-        if (savedUrl) {
-          redirectTarget = savedUrl;
-          localStorage.removeItem("dashboardReturnUrl");
-          localStorage.removeItem("dashboardReturnUrlTimestamp");
-        }
-      }
-
-      if (!redirectTarget && returnUrl && typeof returnUrl === "string") {
-        redirectTarget = decodeURIComponent(returnUrl);
-      }
-
-      if (redirectTarget) {
-        // Use router.replace helps prevent Bootstrap's useRedirect from catching and redirecting again
-        setTimeout(() => {
-          router.replace(redirectTarget as string);
-        }, 50);
-      }
-    }
-  }, [isLoggedIn, returnUrl, router]);
-};
