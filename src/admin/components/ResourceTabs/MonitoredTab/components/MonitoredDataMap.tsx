@@ -7,6 +7,7 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { getPolygonsData, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { OptionValue } from "@/types/common";
 
 import NoDataMap from "./NoDataMap";
@@ -27,6 +28,11 @@ const MonitoredDataMap = ({
   const [, { bbox: entityBbox }] = useBoundingBox(
     entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid }
   );
+
+  const [, { associations: modelFilesData }] = useMedias({
+    entity: entityName as SupportedEntity,
+    uuid: entityUuid
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -51,6 +57,9 @@ const MonitoredDataMap = ({
           polygonsData={polygonsData}
           bbox={entityBbox as BBox}
           setLoader={setLoading}
+          modelFilesData={modelFilesData}
+          showPopups={true}
+          tooltipType="view"
         />
       </LoadingContainerOpacity>
       <When condition={selected.includes("6")}>
