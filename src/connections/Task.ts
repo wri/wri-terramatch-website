@@ -113,17 +113,8 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
             if (tasksStore[id] == null) return { fetchFailure };
             const task = tasksStore[id];
 
-            const getReportDataById = (id: string, type: string) => {
-              return indexMeta?.included?.find(item => item.id === id && item.type === type)?.attributes;
-            };
-
-            const siteReports = (task?.relationships?.["siteReports"] ?? []).map(({ id }) =>
-              getReportDataById(id, "siteReports")
-            );
-
-            const nurseryReports = (task?.relationships?.["nurseryReports"] ?? []).map(({ id }) =>
-              getReportDataById(id, "nurseryReports")
-            );
+            const siteReports = indexMeta?.included?.filter(report => report.type == "siteReports");
+            const nurseryReports = indexMeta?.included?.filter(report => report.type == "nurseryReports");
 
             const taskWithRelationships = {
               ...task.attributes,
