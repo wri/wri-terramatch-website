@@ -15,11 +15,13 @@ import NoDataMap from "./NoDataMap";
 const MonitoredDataMap = ({
   selected,
   entityName,
-  entityUuid
+  entityUuid,
+  record
 }: {
   selected: OptionValue[];
   entityName: string;
   entityUuid: string;
+  record?: any;
 }) => {
   const mapFunctions = useMap();
   const [polygonsData, setPolygonsData] = useState<any>(null);
@@ -43,6 +45,14 @@ const MonitoredDataMap = ({
     });
   }, [entityName, entityUuid]);
 
+  // Transform record to the structure expected by ModalImageDetails
+  const transformedEntityData = record
+    ? {
+        name: record.name,
+        project: record.projectName ? { name: record.projectName } : undefined
+      }
+    : undefined;
+
   return (
     <div className="relative h-[calc(100vh-295px)] w-full">
       <LoadingContainerOpacity loading={loading}>
@@ -60,6 +70,7 @@ const MonitoredDataMap = ({
           modelFilesData={modelFilesData}
           showPopups={true}
           tooltipType="view"
+          entityData={transformedEntityData}
         />
       </LoadingContainerOpacity>
       <When condition={selected.includes("6")}>
