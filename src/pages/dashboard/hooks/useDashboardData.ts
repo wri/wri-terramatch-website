@@ -258,7 +258,7 @@ export const useDashboardData = (filters: any) => {
     setIsLoadingProjects(false);
   }, [filterParams]);
 
-  const [projectsLoaded, { entities: currentPageProjects, indexTotal }] = useProjectIndex({
+  const [projectsLoaded, { data: currentPageProjects, indexTotal }] = useProjectIndex({
     pageSize: PAGE_SIZE,
     pageNumber: page,
     filter: filterParams
@@ -301,7 +301,7 @@ export const useDashboardData = (filters: any) => {
     }
 
     const filteredProjects = allProjects.filter(project => project?.treesPlantedCount > 0);
-    const sortedProjects = filteredProjects
+    return filteredProjects
       .sort((a, b) => (b.treesPlantedCount ?? 0) - (a.treesPlantedCount ?? 0))
       .slice(0, 5)
       .map(project => ({
@@ -310,8 +310,6 @@ export const useDashboardData = (filters: any) => {
         trees_planted: project.treesPlantedCount ?? 0,
         uuid: project.uuid ?? ""
       }));
-
-    return sortedProjects;
   }, [allProjects, isLoadingProjects]);
 
   const loadMoreProjects = useCallback(() => {
@@ -340,7 +338,7 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
-  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : undefined);
+  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
   const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
     useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
 

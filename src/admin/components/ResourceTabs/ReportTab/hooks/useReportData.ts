@@ -1,18 +1,11 @@
+import { flatten } from "lodash";
 import { useEffect, useState } from "react";
-import { useDataProvider, useShowContext } from "react-admin";
+import { GetListResult, useDataProvider, useShowContext } from "react-admin";
 
-import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
-import { usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
+import { selectDemographics, usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
+import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import {
-  BeneficiaryData,
-  EmploymentDemographicData,
-  IncludedDemographic,
-  ProjectReport,
-  ReportData,
-  Site,
-  SiteReport
-} from "../types";
+import { BeneficiaryData, EmploymentDemographicData, ProjectReport, ReportData, Site, SiteReport } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
 
 export const useReportData = () => {
@@ -58,7 +51,7 @@ export const useReportData = () => {
           meta: {
             sideloads: [{ entity: "demographics", pageSize: 100 }]
           }
-        }) as Promise<ExtendedGetListResult<ProjectReport>>;
+        }) as Promise<GetListResult<ProjectReport>>;
 
         const sitesPromise = dataProvider.getList<Site>("site", {
           filter: {
@@ -77,17 +70,15 @@ export const useReportData = () => {
 
         setLatestSurvivalRate(latestReportWithSurvivalRate?.pctSurvivalToDate ?? 0);
 
-        if (reportsResult.included && Array.isArray(reportsResult.included)) {
-          const demographicsData = reportsResult.included.filter(item => item.type === "demographics");
-
-          if (demographicsData.length > 0) {
-            const typedDemographicsData = demographicsData as unknown as IncludedDemographic[];
-            const processedEmploymentData = processDemographicData(typedDemographicsData);
-            setEmploymentData(processedEmploymentData);
-
-            const processedBeneficiaryData = processBeneficiaryData(typedDemographicsData);
-            setBeneficiaryData(processedBeneficiaryData);
-          }
+        // Pull the demographics data sideloaded on the reports request.
+        const demographics = flatten(
+          reportsResult.data
+            .map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).associations)
+            .filter(associations => associations != null)
+        ) as DemographicDto[];
+        if (demographics.length > 0) {
+          setEmploymentData(processDemographicData(demographics));
+          setBeneficiaryData(processBeneficiaryData(demographics));
         }
 
         const sitesData = sitesResult.data as Site[];

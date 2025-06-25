@@ -40,7 +40,7 @@ import {
   entityUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, JsonApiResource, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection, PaginatedConnectionProps } from "@/types/connection";
 import { connectedResourceDeleter, resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
@@ -90,7 +90,6 @@ export type EntityIndexConnection<T extends EntityDtoType> = {
   indexTotal?: number;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
-  included?: JsonApiResource[];
 };
 
 export type EntityListConnection<T extends EntityLightDto> = {
@@ -245,18 +244,11 @@ const createEntityIndexConnection = <T extends EntityDtoType>(
           entities.push(entitiesStore[id].attributes as T);
         }
 
-        // Get the included data if it exists in the response
-        let included: JsonApiResource[] | undefined;
-        if (indexMeta.included) {
-          included = indexMeta.included;
-        }
-
         return {
           entities,
           indexTotal: indexMeta.total,
           refetch,
-          fetchFailure,
-          included
+          fetchFailure
         };
       }
     )

@@ -1,9 +1,10 @@
-import { isEmpty } from "lodash";
+import { flatten, isEmpty } from "lodash";
 import { useMemo } from "react";
 
-import { IncludedDemographic } from "@/admin/components/ResourceTabs/ReportTab/types";
 import { processDemographicData } from "@/admin/components/ResourceTabs/ReportTab/utils/demographicsProcessor";
 import { useProjectReportIndex } from "@/connections/Entity";
+import { selectDemographics } from "@/connections/EntityAssociation";
+import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
@@ -13,8 +14,8 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
   volunteers: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 }
 };
 
-export const useDashboardEmploymentData = (projectUuid: string | undefined) => {
-  const [connectionLoaded, { fetchFailure, included }] = useProjectReportIndex({
+export const useDashboardEmploymentData = (projectUuid?: string) => {
+  const [connectionLoaded, { fetchFailure, entities: reports }] = useProjectReportIndex({
     pageNumber: 1,
     sortField: "createdAt",
     sortDirection: "DESC",
@@ -29,14 +30,17 @@ export const useDashboardEmploymentData = (projectUuid: string | undefined) => {
     }
   });
 
-  const { rawEmploymentData, formattedJobsData } = useMemo(() => {
-    const demographicsData = included?.filter(({ type }) => type === "demographics");
-    const rawEmploymentData =
-      demographicsData == null || demographicsData.length === 0
-        ? DEFAULT_DEMOGRAPHIC_DATA
-        : processDemographicData(demographicsData as unknown as IncludedDemographic[]);
+  const formattedJobsData = useMemo(() => {
+    // Pull the demographics data sideloaded on the reports request.
+    const demographics = flatten(
+      reports
+        ?.map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).associations)
+        .filter(associations => associations != null)
+    ) as DemographicDto[];
 
-    const formattedJobsData = {
+    const rawEmploymentData =
+      demographics.length === 0 ? DEFAULT_DEMOGRAPHIC_DATA : processDemographicData(demographics);
+    return {
       total_ft: rawEmploymentData.fullTimeJobs.total,
       total_pt: rawEmploymentData.partTimeJobs.total,
       total_ft_women: rawEmploymentData.fullTimeJobs.female,
@@ -49,12 +53,9 @@ export const useDashboardEmploymentData = (projectUuid: string | undefined) => {
       total_pt_non_youth: rawEmploymentData.partTimeJobs.nonYouth,
       totalJobsCreated: rawEmploymentData.fullTimeJobs.total + rawEmploymentData.partTimeJobs.total
     };
-
-    return { rawEmploymentData, formattedJobsData };
-  }, [included]);
+  }, [reports]);
 
   return {
-    rawEmploymentData,
     formattedJobsData,
     isLoading: !connectionLoaded,
     error: fetchFailure == null ? undefined : new Error(`Failed to fetch project reports: ${fetchFailure.message}`)

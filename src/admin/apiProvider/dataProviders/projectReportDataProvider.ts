@@ -5,7 +5,7 @@ import { EntityLightDto } from "@/connections/Entity";
 import { JsonApiResource } from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
-import { entitiesListResult, ExtendedGetListResult, raConnectionProps } from "../utils/listing";
+import { entitiesListResult, raConnectionProps } from "../utils/listing";
 
 export const entitiesListResultWithIncluded = <T extends EntityLightDto>({
   entities,
@@ -30,17 +30,7 @@ export const projectReportDataProvider: DataProvider = {
       throw v3ErrorForRA("Project report index fetch failed", connection.fetchFailure);
     }
 
-    const included = (connection as any).included;
-
-    if (!included) {
-      return entitiesListResult(connection);
-    } else {
-      return entitiesListResultWithIncluded({
-        entities: connection.entities,
-        indexTotal: connection.indexTotal,
-        included
-      }) as ExtendedGetListResult;
-    }
+    return entitiesListResult(connection);
   },
 
   // @ts-ignore

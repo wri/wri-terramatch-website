@@ -23,7 +23,7 @@ import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { Connected, Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
+import { connectionHook, connectionSelector } from "@/utils/connectionShortcuts";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
@@ -76,7 +76,7 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
   association: SupportedAssociation
 ): Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps> => ({
   load: (connection, props) => {
-    if (!props.uuid || props.uuid.trim() === "") return;
+    if (props.uuid == null || props.uuid.trim() === "") return;
 
     if (!indexIsLoaded(connection)) entityAssociationIndex(associationIndexParams(association, props));
   },
@@ -165,6 +165,7 @@ const mediaConnection = createAssociationIndexConnection<MediaDto>("media");
 export const useDemographic = collectionTypeHook(demographicConnection);
 /** Returns all demographics for the given entity */
 export const useDemographics = connectionHook(demographicConnection);
+export const selectDemographics = connectionSelector(demographicConnection);
 /** Returns the one media that matches the given type / collection on the given entity */
 export const useMedia = collectionTypeHook(mediaConnection);
 /** Returns all media for the given entity */

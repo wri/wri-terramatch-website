@@ -33,5 +33,5 @@ export const connectionSelector =
   <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
   (...args: PropsParamType<TProps>) => {
     const state = (connection.getState ?? ApiSlice.getState)(ApiSlice.redux.getState()) as State;
-    connection.selector(state, args[0] as TProps);
+    return connection.selector(state, args[0] as TProps);
   };
