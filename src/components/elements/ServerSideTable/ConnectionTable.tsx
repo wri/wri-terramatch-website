@@ -7,17 +7,18 @@ import {
   ServerSideTable,
   ServerSideTableProps
 } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { IndexConnection } from "@/connections/util/api-connection-factory";
 import { useConnection } from "@/hooks/useConnection";
 import { Connection, PaginatedConnectionProps } from "@/types/connection";
 
-type ConnectionTableProps<TData, TSelected, TProps extends PaginatedConnectionProps, State> = Omit<
-  ServerSideTableProps<unknown>,
-  "meta" | "onQueryParamChange" | "data" | "isLoading" | "columns"
-> & {
+type ConnectionTableProps<
+  TData,
+  TSelected extends IndexConnection<TData>,
+  TProps extends PaginatedConnectionProps,
+  State
+> = Omit<ServerSideTableProps<unknown>, "meta" | "onQueryParamChange" | "data" | "isLoading" | "columns"> & {
   connection: Connection<TSelected, TProps, State>;
   connectionProps?: Omit<TProps, keyof PaginatedConnectionProps>;
-  dataProp: keyof TSelected;
-  totalProp: keyof TSelected;
   columns: ColumnDef<TData>[];
   onFetch?: (connectedData: TSelected) => void;
 };
@@ -43,11 +44,14 @@ export const usePaginatedConnectionProps = (initialPageSize = DEFAULT_PAGE_SIZE)
   return { paginatedConnectionProps, onQueryParamChange };
 };
 
-export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnectionProps, State>({
+export function ConnectionTable<
+  TData,
+  TSelected extends IndexConnection<TData>,
+  TProps extends PaginatedConnectionProps,
+  State
+>({
   connection,
   connectionProps,
-  dataProp,
-  totalProp,
   onFetch,
   ...serverSideTableProps
 }: ConnectionTableProps<TData, TSelected, TProps, State>) {
@@ -61,7 +65,7 @@ export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnec
     if (connectionLoaded) onFetch?.(connected as TSelected);
   }, [connected, connectionLoaded, onFetch]);
 
-  const indexTotal = connected?.[totalProp] as number | undefined;
+  const indexTotal = connected?.indexTotal;
   return (
     <ServerSideTable
       meta={{
@@ -71,7 +75,7 @@ export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnec
             : 1
       }}
       isLoading={!connectionLoaded}
-      data={(connected?.[dataProp] ?? []) as TData[]}
+      data={(connected?.data ?? []) as TData[]}
       onQueryParamChange={onQueryParamChange}
       {...serverSideTableProps}
     />

@@ -25,6 +25,9 @@ export type Connection<SelectedType, PropsType extends OptionalProps = undefined
 
 export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [false, Record<any, never>];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type Selected<T> = T extends Connection<infer Selected, infer Props, infer State> ? Selected : never;
+
 export type PaginatedConnectionProps = {
   pageSize?: number;
   pageNumber?: number;

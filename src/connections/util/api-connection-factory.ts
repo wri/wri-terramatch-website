@@ -17,7 +17,7 @@ import { selectorCache } from "@/utils/selectorCache";
 class ApiConnectionFactoryError extends Error {}
 
 type DataConnection<DTO> = { data: DTO | undefined };
-type IndexConnection<DTO> = {
+export type IndexConnection<DTO> = {
   data?: DTO[];
   indexTotal?: number;
 };
@@ -189,7 +189,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     resource: ResourceType,
     fetcher: Fetcher<Variables>,
     indexMetaSelector: IndexMetaSelector<Variables>,
-    variablesFactory: VariablesFactory<Variables, Props>
+    variablesFactory: VariablesFactory<Variables, Props> = () => ({} as Variables)
   ) {
     return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
       fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
