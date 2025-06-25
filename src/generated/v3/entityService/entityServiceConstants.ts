@@ -5,13 +5,13 @@ import {
   ImpactStoryFullDto,
   TaskLightDto,
   TaskFullDto,
+  ProjectReportLightDto,
+  ProjectReportFullDto,
   SiteReportLightDto,
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
   MediaDto,
-  ProjectReportLightDto,
-  ProjectReportFullDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
@@ -33,10 +33,10 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "impactStories",
   "tasks",
+  "projectReports",
   "siteReports",
   "nurseryReports",
   "media",
-  "projectReports",
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
@@ -55,10 +55,10 @@ export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
+  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
   media: StoreResourceMap<MediaDto>;
-  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;

@@ -23,7 +23,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useFullProject } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -35,6 +35,7 @@ import {
   SiteReportLightDto,
   TaskLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { EntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -104,7 +105,8 @@ export const TasksList: FC = () => {
     id: currentProjectUuid as string
   });
 
-  const [, { update: updateProject, entityIsUpdating }] = useFullProject({ uuid: currentProjectUuid as string });
+  // const [, { bulkApprove }] = useBulkApproveTasks({ filter: { projectUuid: currentProjectUuid } });
+  const [, { submitForApproval }] = useTask({ uuid: "taskUuid" });
   let projectTaskData: any[] = [];
   const ListDataLogger: FC = () => {
     const { data } = useListContext();
@@ -126,20 +128,17 @@ export const TasksList: FC = () => {
             projectTaskData.push(...nurseryReports);
           }
         });
+        const seen = new Set<string>();
+        projectTaskData = projectTaskData.filter(report => {
+          if (seen.has(report.uuid)) return false;
+          seen.add(report.uuid);
+          return true;
+        });
       }
     }, [data]);
 
     return null;
   };
-
-  useEffect(() => {
-    if (entityIsUpdating) {
-      openNotification("success", "Reports approved successfully", "");
-      closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-      closeModal(ModalId.APPROVE_POLYGONS);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityIsUpdating]);
 
   const filters = [
     <ReferenceInput
@@ -162,7 +161,10 @@ export const TasksList: FC = () => {
     <SelectInput key="frameworkKey" label="Framework" source="frameworkKey" choices={frameworkChoices} />
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("tasks", frameworkChoices);
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    modules.task.ResourceName as EntityName,
+    frameworkChoices
+  );
 
   const openModalHandlerBulkApprove = (data: Array<SelectedItem>, currentProjectUuid?: string) => {
     let currentSelectedReports: Array<SelectedItem> = [];
@@ -222,8 +224,8 @@ export const TasksList: FC = () => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
         }}
         onConfirm={async (text: string) => {
-          if (!currentProjectUuid || !updateProject) {
-            console.error("No project UUID available for approval or update function not available");
+          if (!currentProjectUuid || !submitForApproval) {
+            console.error("No project UUID available for approval or bulkApprove function not available");
             return;
           }
 
@@ -235,11 +237,14 @@ export const TasksList: FC = () => {
               .filter(report => report.type === "Nursery")
               .map(report => report.id);
 
-            await updateProject({
+            submitForApproval({
               siteReportNothingToReportUuid: siteReportUuids.length > 0 ? siteReportUuids : null,
               nurseryReportNothingToReportUuid: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
               feedback: text ?? ""
             });
+            openNotification("success", "Reports approved successfully", "");
+            closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+            closeModal(ModalId.APPROVE_POLYGONS);
           } catch (error) {
             openNotification(
               "error",

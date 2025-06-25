@@ -431,30 +431,19 @@ export type TaskIndexResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskLightDto;
-    relationships?: {
-      siteReports?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-      nurseryReports?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-    };
   }[];
   included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
     | {
         /**
          * @example siteReports
@@ -491,6 +480,125 @@ export const taskIndex = (variables: TaskIndexVariables, signal?: AbortSignal) =
     ...variables,
     signal
   });
+
+export type BulkApproveTasksQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  status?: string;
+  frameworkKey?: string;
+  projectUuid?: string;
+};
+
+export type BulkApproveTasksError = Fetcher.ErrorWrapper<undefined>;
+
+export type BulkApproveTasksResponse = {
+  meta?: {
+    /**
+     * @example tasks
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example tasks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TaskLightDto;
+  }[];
+  included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
+    | {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }
+    | {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }
+  )[];
+};
+
+export type BulkApproveTasksVariables = {
+  body: Schemas.BulkTaskUpdateBody;
+  queryParams?: BulkApproveTasksQueryParams;
+};
+
+export const bulkApproveTasks = (variables: BulkApproveTasksVariables, signal?: AbortSignal) =>
+  entityServiceFetch<
+    BulkApproveTasksResponse,
+    BulkApproveTasksError,
+    Schemas.BulkTaskUpdateBody,
+    {},
+    BulkApproveTasksQueryParams,
+    {}
+  >({ url: "/entities/v3/tasks", method: "patch", ...variables, signal });
 
 export type TaskGetPathParams = {
   /**
@@ -634,6 +742,29 @@ export type TaskUpdatePathParams = {
   uuid: string;
 };
 
+export type TaskUpdateQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  status?: string;
+  frameworkKey?: string;
+  projectUuid?: string;
+};
+
 export type TaskUpdateError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -680,38 +811,6 @@ export type TaskUpdateResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskFullDto;
-    relationships?: {
-      projectReport?: {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      };
-      siteReports?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-      nurseryReports?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-    };
   };
   included?: (
     | {
@@ -753,15 +852,18 @@ export type TaskUpdateResponse = {
 export type TaskUpdateVariables = {
   body: Schemas.TaskUpdateBody;
   pathParams: TaskUpdatePathParams;
+  queryParams?: TaskUpdateQueryParams;
 };
 
 export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskUpdateResponse, TaskUpdateError, Schemas.TaskUpdateBody, {}, {}, TaskUpdatePathParams>({
-    url: "/entities/v3/tasks/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+  entityServiceFetch<
+    TaskUpdateResponse,
+    TaskUpdateError,
+    Schemas.TaskUpdateBody,
+    {},
+    TaskUpdateQueryParams,
+    TaskUpdatePathParams
+  >({ url: "/entities/v3/tasks/{uuid}", method: "patch", ...variables, signal });
 
 export type UploadFilePathParams = {
   /**
@@ -1224,6 +1326,10 @@ export type EntityIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
+  /**
+   * Filter by UUIDs
+   */
+  uuids?: string[];
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -1889,6 +1995,10 @@ export type EntityAssociationIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
+  /**
+   * Filter by UUIDs
+   */
+  uuids?: string[];
   modelType?: string;
   /**
    * @default false
@@ -2088,7 +2198,7 @@ export const entityAssociationIndex = (variables: EntityAssociationIndexVariable
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
-  tasks: { taskIndex, taskGet, taskUpdate },
+  tasks: { taskIndex, bulkApproveTasks, taskGet, taskUpdate },
   fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },

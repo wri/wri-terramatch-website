@@ -50,7 +50,11 @@ export type TaskConnection = {
 
   taskIsUpdating: boolean;
   taskUpdateFailure?: PendingErrorState | null;
-  submitForApproval?: () => void;
+  submitForApproval?: (params: {
+    siteReportNothingToReportUuid?: string[] | null;
+    nurseryReportNothingToReportUuid?: string[] | null;
+    feedback?: string | null;
+  }) => void;
 };
 
 export type TaskProps = {
@@ -79,7 +83,7 @@ const taskIndexQuery = (props?: TaskIndexProps) => {
 const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQuery(props) });
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
 
-const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid: uuid ?? "" } });
+const taskParams = (props: TaskProps) => ({ pathParams: { uuid: props.uuid ?? "" } });
 const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
   if (uuid == null || fetchFailure != null) return true;
   return task != null && !task.lightResource;
@@ -113,8 +117,12 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
             if (tasksStore[id] == null) return { fetchFailure };
             const task = tasksStore[id];
 
-            const siteReports = indexMeta?.included?.filter(report => report.type == "siteReports");
-            const nurseryReports = indexMeta?.included?.filter(report => report.type == "nurseryReports");
+            const siteReports = indexMeta?.included
+              ?.filter(report => report.type == "siteReports")
+              .map(report => report.attributes);
+            const nurseryReports = indexMeta?.included
+              ?.filter(report => report.type == "nurseryReports")
+              .map(report => report.attributes);
 
             const taskWithRelationships = {
               ...task.attributes,
@@ -165,7 +173,13 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
             taskIsUpdating,
             taskUpdateFailure,
 
-            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" })
+            submitForApproval: ({ siteReportNothingToReportUuid, nurseryReportNothingToReportUuid, feedback }) =>
+              updateTask(taskResponse.attributes.uuid, {
+                status: "awaiting-approval",
+                siteReportNothingToReportUuid: siteReportNothingToReportUuid ?? null,
+                nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuid ?? null,
+                feedback: feedback ?? null
+              })
           };
         }
       )
