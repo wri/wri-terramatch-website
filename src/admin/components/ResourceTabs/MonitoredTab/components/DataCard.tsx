@@ -837,7 +837,7 @@ const DataCard = ({
     treeCover: {},
     treeCoverLoss: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
@@ -849,7 +849,7 @@ const DataCard = ({
     },
     treeCoverLossFires: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
