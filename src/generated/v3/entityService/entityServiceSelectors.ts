@@ -11,12 +11,9 @@ import {
   ImpactStoryGetVariables,
   TaskIndexQueryParams,
   TaskIndexVariables,
-  BulkApproveTasksQueryParams,
-  BulkApproveTasksVariables,
   TaskGetPathParams,
   TaskGetVariables,
   TaskUpdatePathParams,
-  TaskUpdateQueryParams,
   TaskUpdateVariables,
   UploadFilePathParams,
   UploadFileVariables,
@@ -93,14 +90,6 @@ export const taskIndexFetchFailed = (variables: Omit<TaskIndexVariables, "body">
 export const taskIndexIndexMeta = (resource: ResourceType, variables: Omit<TaskIndexVariables, "body">) =>
   indexMetaSelector<TaskIndexQueryParams, {}>({ url: TASK_INDEX_URL, resource, ...variables });
 
-export const BULK_APPROVE_TASKS_URL = "/entities/v3/tasks";
-
-export const bulkApproveTasksIsFetching = (variables: Omit<BulkApproveTasksVariables, "body">) =>
-  isFetchingSelector<BulkApproveTasksQueryParams, {}>({ url: BULK_APPROVE_TASKS_URL, method: "patch", ...variables });
-
-export const bulkApproveTasksFetchFailed = (variables: Omit<BulkApproveTasksVariables, "body">) =>
-  fetchFailedSelector<BulkApproveTasksQueryParams, {}>({ url: BULK_APPROVE_TASKS_URL, method: "patch", ...variables });
-
 export const TASK_GET_URL = "/entities/v3/tasks/{uuid}";
 
 export const taskGetIsFetching = (variables: Omit<TaskGetVariables, "body">) =>
@@ -112,18 +101,10 @@ export const taskGetFetchFailed = (variables: Omit<TaskGetVariables, "body">) =>
 export const TASK_UPDATE_URL = "/entities/v3/tasks/{uuid}";
 
 export const taskUpdateIsFetching = (variables: Omit<TaskUpdateVariables, "body">) =>
-  isFetchingSelector<TaskUpdateQueryParams, TaskUpdatePathParams>({
-    url: TASK_UPDATE_URL,
-    method: "patch",
-    ...variables
-  });
+  isFetchingSelector<{}, TaskUpdatePathParams>({ url: TASK_UPDATE_URL, method: "patch", ...variables });
 
 export const taskUpdateFetchFailed = (variables: Omit<TaskUpdateVariables, "body">) =>
-  fetchFailedSelector<TaskUpdateQueryParams, TaskUpdatePathParams>({
-    url: TASK_UPDATE_URL,
-    method: "patch",
-    ...variables
-  });
+  fetchFailedSelector<{}, TaskUpdatePathParams>({ url: TASK_UPDATE_URL, method: "patch", ...variables });
 
 export const UPLOAD_FILE_URL = "/entities/v3/files/{entity}/{uuid}/{collection}";
 

@@ -413,25 +413,6 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
-export type BulkTaskUpdateBody = {
-  /**
-   * Request to change to the status of the given tasks
-   */
-  status: "due" | "needs-more-information" | "awaiting-approval" | "approved" | null;
-  /**
-   * Specific feedback for the PD
-   */
-  feedback: string | null;
-  /**
-   * UUIDs of site reports to mark as 'Nothing to report'
-   */
-  siteReportNothingToReportUuid: string[] | null;
-  /**
-   * UUIDs of nursery reports to mark as 'Nothing to report'
-   */
-  nurseryReportNothingToReportUuid: string[] | null;
-};
-
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
