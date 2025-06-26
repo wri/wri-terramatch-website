@@ -154,10 +154,7 @@ const useLoadEntityList = ({
       // @ts-ignore
       pathParams: params
     });
-    const _entityList =
-      entityType == SITE
-        ? (res as { entities: EntityListItem[] }).entities
-        : (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
         entityType: PROJECT_REPORT,

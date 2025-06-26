@@ -15,7 +15,7 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
 };
 
 export const useDashboardEmploymentData = (projectUuid?: string) => {
-  const [connectionLoaded, { fetchFailure, entities: reports }] = useProjectReportIndex({
+  const [connectionLoaded, { loadFailure, data: reports }] = useProjectReportIndex({
     pageNumber: 1,
     sortField: "createdAt",
     sortDirection: "DESC",
@@ -24,9 +24,9 @@ export const useDashboardEmploymentData = (projectUuid?: string) => {
     enabled: !isEmpty(projectUuid)
   });
 
-  useValueChanged(fetchFailure, () => {
-    if (fetchFailure != null) {
-      Log.error("Error fetching project reports with demographics:", fetchFailure);
+  useValueChanged(loadFailure, () => {
+    if (loadFailure != null) {
+      Log.error("Error fetching project reports with demographics:", loadFailure);
     }
   });
 
@@ -58,6 +58,6 @@ export const useDashboardEmploymentData = (projectUuid?: string) => {
   return {
     formattedJobsData,
     isLoading: !connectionLoaded,
-    error: fetchFailure == null ? undefined : new Error(`Failed to fetch project reports: ${fetchFailure.message}`)
+    error: loadFailure == null ? undefined : new Error(`Failed to fetch project reports: ${loadFailure.message}`)
   };
 };

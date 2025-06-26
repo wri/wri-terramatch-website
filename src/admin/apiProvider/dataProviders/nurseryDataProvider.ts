@@ -11,8 +11,8 @@ export const nurseryDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on Nurseries DTOs
   async getList(_, params) {
     const connection = await loadNurseryIndex(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Nursery index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Nursery index fetch failed", connection.loadFailure);
     }
     return entitiesListResult(connection);
   },

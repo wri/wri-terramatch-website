@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { ApiConnectionFactory } from "@/connections/util/api-connection-factory";
+import { ApiConnectionFactory, EnabledProp, FilterProp } from "@/connections/util/api-connection-factory";
 import {
   entityDelete,
   entityGet,
@@ -39,7 +39,6 @@ import {
   entityUpdateFetchFailed,
   entityUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Connection, PaginatedConnectionProps } from "@/types/connection";
@@ -85,13 +84,6 @@ type EntityConnectionProps = {
   uuid?: string;
 };
 
-export type EntityIndexConnection<T extends EntityDtoType> = {
-  entities?: T[];
-  indexTotal?: number;
-  fetchFailure?: PendingErrorState | null;
-  refetch: () => void;
-};
-
 export type EntityListConnection<T extends EntityLightDto> = {
   entities?: T[];
 };
@@ -104,16 +96,13 @@ type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
-export type EntityIndexConnectionProps = PaginatedConnectionProps & {
-  filter?: Partial<Record<EntityIndexFilterKey, string>>;
-  sideloads?: EntityIndexQueryParams["sideloads"];
-  // Defaults to true if not included.
-  enabled?: boolean;
-};
+export type EntityIndexConnectionProps = PaginatedConnectionProps &
+  FilterProp<EntityIndexFilterKey> &
+  EnabledProp & {
+    sideloads?: EntityIndexQueryParams["sideloads"];
+  };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
-
-type PolygonStatus = EntityIndexQueryParams["polygonStatus"];
 
 const entitySelector =
   <T extends EntityDtoType>(entityName: SupportedEntity) =>
@@ -124,41 +113,6 @@ const specificEntityParams = (entity: SupportedEntity, uuid?: string) => ({ path
 
 const updateEntity = <U extends EntityUpdateData>(entity: U["type"], uuid: string, attributes: U["attributes"]) =>
   entityUpdate({ pathParams: { entity, uuid }, body: { data: { type: entity, id: uuid, attributes } as U } });
-
-const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
-  const queryParams = {
-    "page[number]": props?.pageNumber,
-    "page[size]": props?.pageSize,
-    sideloads: props?.sideloads
-  } as EntityIndexQueryParams;
-  if (props?.sortField != null) {
-    queryParams["sort[field]"] = props.sortField;
-    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
-  }
-  if (props?.filter != null) {
-    for (const [key, value] of Object.entries(props.filter)) {
-      if (key === "polygonStatus") {
-        queryParams.polygonStatus = value as PolygonStatus;
-      } else if (key === "nothingToReport") {
-        queryParams.nothingToReport = value === "true";
-      } else if (["landscape", "organisationType", "cohort"].includes(key)) {
-        queryParams[key as "landscape" | "organisationType" | "cohort"] = Array.isArray(value) ? value : [value];
-      } else {
-        queryParams[
-          key as Exclude<
-            EntityIndexFilterKey,
-            "polygonStatus" | "landscape" | "organisationType" | "cohort" | "nothingToReport"
-          >
-        ] = value;
-      }
-    }
-  }
-  return queryParams;
-};
-const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectionProps) => ({
-  pathParams: { entity },
-  queryParams: entityIndexQuery(props)
-});
 
 const entityIsLoaded =
   (requireFullEntity: boolean) =>
@@ -208,52 +162,37 @@ const createGetEntityConnection = <T extends EntityDtoType, U extends EntityUpda
   )
 });
 
-const indexIsLoaded = <T extends EntityDtoType>(
-  { entities, fetchFailure }: EntityIndexConnection<T>,
-  { enabled }: EntityIndexConnectionProps
-) => enabled === false || entities != null || fetchFailure != null;
-
-const indexCacheKey = (props: EntityIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
-
-const createEntityIndexConnection = <T extends EntityDtoType>(
-  entityName: SupportedEntity
-): Connection<EntityIndexConnection<T>, EntityIndexConnectionProps> => ({
-  load: (connection, props) => {
-    if (!indexIsLoaded(connection, props)) entityIndex(entityIndexParams(entityName, props));
-  },
-
-  isLoaded: indexIsLoaded,
-
-  selector: selectorCache(indexCacheKey, props =>
-    createSelector(
-      [
-        entityIndexIndexMeta(entityName, entityIndexParams(entityName, props)),
-        entitySelector(entityName),
-        entityIndexFetchFailed(entityIndexParams(entityName, props))
-      ],
-      (indexMeta, entitiesStore, fetchFailure) => {
-        // For now, we don't have filter support, so all search queries should be ""
-        const refetch = () => ApiSlice.pruneIndex(entityName, "");
-        if (indexMeta == null) return { refetch, fetchFailure };
-
-        const entities = [] as T[];
-        for (const id of indexMeta.ids) {
-          // If we're missing any of the entities we're supposed to have, return nothing so the
-          // index endpoint is queried again.
-          if (entitiesStore[id] == null) return { refetch, fetchFailure };
-          entities.push(entitiesStore[id].attributes as T);
-        }
-
-        return {
-          entities,
-          indexTotal: indexMeta.total,
-          refetch,
-          fetchFailure
-        };
-      }
-    )
+const createEntityIndexConnection = <T extends EntityLightDto>(entity: SupportedEntity) =>
+  ApiConnectionFactory.index<T, EntityIndexVariables>(
+    entity,
+    entityIndex,
+    entityIndexIndexMeta,
+    () => ({ pathParams: { entity } } as EntityIndexVariables)
   )
-});
+    .pagination()
+    .filters({
+      search: "string",
+      searchFilter: "string",
+      country: "string",
+      status: "string",
+      updateRequestStatus: "string",
+      projectUuid: "string",
+      nurseryUuid: "string",
+      siteUuid: "string",
+      landscape: "array",
+      organisationType: "array",
+      cohort: "array",
+      polygonStatus: "string",
+      nothingToReport: "boolean",
+      shortName: "string"
+    })
+    .addProps<{ sideloads?: EntityIndexQueryParams["sideloads"] }>(({ sideloads }) => ({
+      queryParams: { sideloads }
+    }))
+    .enabledFlag()
+    .refetch(() => ApiSlice.pruneIndex(entity, ""))
+    .fetchFailure(entityIndexFetchFailed)
+    .buildConnection();
 
 const createEntityListConnection = <T extends EntityLightDto>(
   entityName: SupportedEntity
@@ -290,36 +229,7 @@ export const deleteProject = connectedResourceDeleter(
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
 );
 
-const indexProjectConnection = ApiConnectionFactory.index<ProjectLightDto, EntityIndexVariables>(
-  "projects",
-  entityIndex,
-  entityIndexIndexMeta,
-  () => ({ pathParams: { entity: "projects" } } as EntityIndexVariables)
-)
-  .pagination()
-  .filters({
-    search: "string",
-    searchFilter: "string",
-    country: "string",
-    status: "string",
-    updateRequestStatus: "string",
-    projectUuid: "string",
-    nurseryUuid: "string",
-    siteUuid: "string",
-    landscape: "array",
-    organisationType: "array",
-    cohort: "array",
-    polygonStatus: "string",
-    nothingToReport: "boolean",
-    shortName: "string"
-  })
-  .addProps<{ sideloads?: EntityIndexQueryParams["sideloads"] }>(({ sideloads }) => ({
-    queryParams: { sideloads }
-  }))
-  .enabledFlag()
-  .refetch(() => ApiSlice.pruneIndex("projects", ""))
-  .fetchFailure(entityIndexFetchFailed)
-  .buildConnection();
+const indexProjectConnection = createEntityIndexConnection("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 
@@ -371,7 +281,7 @@ export const deleteProjectReport = connectedResourceDeleter(
 );
 
 // Site Reports
-const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
+export const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
 export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
 const fullSiteReportConnection = createGetEntityConnection<SiteReportFullDto, SiteReportUpdateData>("siteReports");
@@ -396,9 +306,8 @@ export const deleteSiteReport = connectedResourceDeleter(
 );
 
 // Nursery Reports
-const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
+export const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
 export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
-export const useNurseryReportIndex = connectionHook(indexNurseryReportConnection);
 const fullNurseryReportConnection = createGetEntityConnection<NurseryReportFullDto, NurseryReportUpdateData>(
   "nurseryReports"
 );

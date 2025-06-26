@@ -178,6 +178,7 @@ const invasiveConnection = createAssociationIndexConnection<InvasiveDto>("invasi
 export const useInvasives = connectionHook(invasiveConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
+export const selectTreeSpecies = connectionSelector(treeSpeciesConnection);
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
 
 export type PlantDto = TreeSpeciesDto | SeedingDto;

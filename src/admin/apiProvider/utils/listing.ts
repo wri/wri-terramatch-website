@@ -1,6 +1,7 @@
 import { GetListParams, GetListResult } from "react-admin";
 
-import { EntityIndexConnection, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+import { EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
+import { IndexConnection } from "@/connections/util/api-connection-factory";
 import { JsonApiResource } from "@/store/apiSlice";
 
 interface ListQueryParams extends Record<string, unknown> {
@@ -83,8 +84,8 @@ interface ApiListResponse {
   included?: JsonApiResource[];
 }
 
-export const entitiesListResult = <T extends EntityLightDto>({ entities, indexTotal }: EntityIndexConnection<T>) => ({
-  data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
+export const entitiesListResult = <T extends EntityLightDto>({ data, indexTotal }: IndexConnection<T>) => ({
+  data: data?.map(entity => ({ ...entity, id: entity.uuid })),
   total: indexTotal
 });
 

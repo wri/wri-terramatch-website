@@ -10,8 +10,8 @@ export const siteReportDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on SiteReportLightDto
   async getList(_, params) {
     const connection = await loadSiteReportIndex(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Site report index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Site report index fetch failed", connection.loadFailure);
     }
     return entitiesListResult(connection);
   },

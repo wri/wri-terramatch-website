@@ -1,33 +1,17 @@
 import { DataProvider } from "react-admin";
 
 import { deleteProjectReport, loadFullProjectReport, loadProjectReportIndex } from "@/connections/Entity";
-import { EntityLightDto } from "@/connections/Entity";
-import { JsonApiResource } from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 import { entitiesListResult, raConnectionProps } from "../utils/listing";
-
-export const entitiesListResultWithIncluded = <T extends EntityLightDto>({
-  entities,
-  indexTotal,
-  included
-}: {
-  entities?: T[];
-  indexTotal?: number;
-  included?: JsonApiResource[];
-}) => ({
-  data: entities?.map(entity => ({ ...entity, id: entity.uuid })),
-  total: indexTotal,
-  included
-});
 
 // @ts-ignore
 export const projectReportDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on ProjectReportLightDto
   async getList(_, params) {
     const connection = await loadProjectReportIndex(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Project report index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Project report index fetch failed", connection.loadFailure);
     }
 
     return entitiesListResult(connection);

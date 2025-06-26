@@ -11,8 +11,8 @@ export const siteDataProvider: DataProvider = {
   // @ts-expect-error until we can get the whole DataProvider on Site DTOs
   async getList(_, params) {
     const connection = await loadSiteIndex(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Site index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Site index fetch failed", connection.loadFailure);
     }
 
     return entitiesListResult(connection);

@@ -26,8 +26,10 @@ type IsLoadingConnection = { isLoading: boolean };
 type RefetchConnection<Props> = { refetch: (props: Props) => void };
 
 export type IdProps = { id: string };
-type FilterProp<FilterFields extends string | number | symbol> = { filter?: Partial<Record<FilterFields, string>> };
-type EnabledProp = {
+export type FilterProp<FilterFields extends string | number | symbol> = {
+  filter?: Partial<Record<FilterFields, string>>;
+};
+export type EnabledProp = {
   /**
    * The connection will count as loaded if this value is explicitly set to false, preventing any API
    * requests until it is removed or set to true.
