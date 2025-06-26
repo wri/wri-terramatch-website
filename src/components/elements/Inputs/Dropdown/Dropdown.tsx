@@ -114,7 +114,9 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   // Use a ref so setting it doesn't trigger a re-render, and the value is immediately changed when
   // modified in onChange()
-  const otherSelected = useRef(props.hasOtherOptions && !isEmpty(getOtherValue(props.value ?? [], props.options)));
+  const otherSelected = useRef(
+    (props.hasOtherOptions ?? false) && !isEmpty(getOtherValue(props.value ?? [], props.options))
+  );
   const { selected, otherValue } = useSelected(props, otherSelected.current);
 
   const onChange = useCallback(
