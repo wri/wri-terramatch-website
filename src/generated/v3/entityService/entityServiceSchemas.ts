@@ -1491,7 +1491,9 @@ export type DemographicCollections = {
   /**
    * @example all
    * @example full-time
+   * @example full-time-clt
    * @example part-time
+   * @example part-time-clt
    */
   JOBS_PROJECT: string[];
   /**
