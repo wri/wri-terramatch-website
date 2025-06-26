@@ -1108,6 +1108,9 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
