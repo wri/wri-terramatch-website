@@ -165,7 +165,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     [otherSelected.current, otherValue, t]
   );
   useValueChanged(internalError, () => {
-    if (internalError != null) props.onInternalError?.(internalError as ErrorOption);
+    props.onInternalError?.(internalError as ErrorOption);
   });
 
   const verifyDisableOption = useCallback(
