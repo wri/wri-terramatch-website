@@ -107,8 +107,10 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   useEffect(() => {
     setSelected(getDefaultDropDownValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
-    setOtherValue(getDefaultOtherValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
-  }, [props.value, props.options, props.hasOtherOptions]);
+    if (!otherValue) {
+      setOtherValue(getDefaultOtherValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
+    }
+  }, [props.value, props.options, props.hasOtherOptions, otherValue]);
 
   const onChange = useCallback(
     (value: OptionValue | OptionValue[], _otherValue?: string) => {
@@ -121,13 +123,11 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
           }
         }
         const allowedValues = getAllowedValues(value, props.options);
-        props.onChange(
-          props.hasOtherOptions && otherStr && value.includes(otherKey) ? [...allowedValues, otherStr] : allowedValues
-        );
+        props.onChange(otherStr && value.includes("other") ? [...allowedValues, otherStr] : allowedValues);
       } else if (value != null) {
         const allowedValues = getAllowedValues([value], props.options);
         setSelected([value]);
-        props.onChange(props.hasOtherOptions && otherStr && value === otherKey ? [otherStr] : allowedValues);
+        props.onChange(props.hasOtherOptions && otherStr && value === "other" ? [otherStr] : allowedValues);
       } else {
         setSelected([]);
       }
@@ -157,7 +157,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return output;
   }, [props.options, props.hasOtherOptions, props.optionsFilter]);
 
-  const otherIsSelected = useMemo(() => selected?.includes(otherKey), [selected]);
+  const otherIsSelected = useMemo(() => selected?.includes("other"), [selected]);
   const internalError = useMemo(() => {
     const error =
       otherIsSelected && !otherValue
