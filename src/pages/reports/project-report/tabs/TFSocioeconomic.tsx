@@ -38,7 +38,7 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Description of Jobs")}>{report.newJobsDescription}</LongTextField>
-              {DemographicCollections.JOBS_PROJECT.map(collection => (
+              {["full-time", "part-time"].map(collection => (
                 <DemographicsDisplay
                   key={collection}
                   entity="projectReports"
