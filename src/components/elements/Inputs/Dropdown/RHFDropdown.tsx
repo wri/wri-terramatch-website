@@ -1,4 +1,4 @@
-import { difference, isEqual } from "lodash";
+import { difference } from "lodash";
 import { useRouter } from "next/router";
 import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
@@ -122,7 +122,6 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
 
 const DropdownDisplay: FC<DropdownDisplayProps> = props => {
   const { onChangeCapture, formHook, optionsFilterFieldName, defaultValue, ...dropdownProps } = props;
-  const { options } = dropdownProps;
 
   const {
     field: { value, onChange }
@@ -140,18 +139,6 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
   const valueArray = useMemo(() => toArray(value), [value]);
   const defaultValueArray = useMemo(() => toArray(defaultValue), [defaultValue]);
 
-  useEffect(() => {
-    // if our options change and our current values aren't available, reset to the default.
-    const filtered = valueArray.filter(value => options.find(option => option.value === value) != null);
-    if (!isEqual(filtered, valueArray)) {
-      if (filtered.length === 0) {
-        _onChange(defaultValueArray);
-      } else {
-        _onChange(filtered);
-      }
-    }
-  }, [_onChange, defaultValueArray, options, valueArray]);
-
   return (
     <Dropdown
       {...dropdownProps}
@@ -160,7 +147,7 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
       onChange={_onChange}
       optionsFilter={optionsFilterFieldName ? formHook?.watch(optionsFilterFieldName) : undefined}
       onInternalError={error => {
-        if (error) formHook?.setError(props.name, error);
+        if (error != null) formHook?.setError(props.name, error);
         else formHook?.clearErrors(props.name);
       }}
     />
