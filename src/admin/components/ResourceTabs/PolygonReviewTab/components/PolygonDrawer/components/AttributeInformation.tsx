@@ -7,6 +7,11 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import {
+  dropdownOptionsRestoration,
+  dropdownOptionsTarget,
+  dropdownOptionsTree
+} from "@/constants/polygonDropdownOptions";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuid,
@@ -16,69 +21,6 @@ import {
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import Log from "@/utils/log";
 
-const dropdownOptionsRestoration = [
-  {
-    title: "Tree Planting",
-    value: "tree-planting"
-  },
-  {
-    title: "Direct Seeding",
-    value: "direct-seeding"
-  },
-  {
-    title: "Assisted Natural Regeneration",
-    value: "assisted-natural-regeneration"
-  }
-];
-const dropdownOptionsTarget = [
-  {
-    title: "Agroforest",
-    value: "agroforest"
-  },
-  {
-    title: "Natural Forest",
-    value: "natural-forest"
-  },
-  {
-    title: "Mangrove",
-    value: "mangrove"
-  },
-  {
-    title: "Peatland",
-    value: "peatland"
-  },
-  {
-    title: "Riparian Area or Wetland",
-    value: "riparian-area-or-wetland"
-  },
-  {
-    title: "Silvopasture",
-    value: "silvopasture"
-  },
-  {
-    title: "Woodlot or Plantation",
-    value: "woodlot-or-plantation"
-  },
-  {
-    title: "Urban Forest",
-    value: "urban-forest"
-  }
-];
-
-const dropdownOptionsTree = [
-  {
-    title: "Single Line",
-    value: "single-line"
-  },
-  {
-    title: "Partial",
-    value: "partial"
-  },
-  {
-    title: "Full Coverage",
-    value: "full"
-  }
-];
 const AttributeInformation = ({
   selectedPolygon,
   updateSingleSitePolygonData,

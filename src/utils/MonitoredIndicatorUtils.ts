@@ -124,7 +124,7 @@ export const formatDescriptionIndicator = (
   return formattedItems;
 };
 
-const formattedValue = (value: number, decimals: number) => (value === 0 ? "0" : value.toFixed(decimals));
+const formattedValue = (value: number, decimals: number) => (value === 0 ? "0" : value?.toFixed(decimals));
 
 const getEcoRegionCategory = (region: string): EcoRegionCategory | null => {
   for (const category in categoriesFromEcoRegion) {
@@ -174,6 +174,11 @@ export const processIndicatorData = (apiResponse: any[], presentIndicator: strin
             ...commonFields,
             site_name: sitePolygon.siteName || sitePolygon.site_name,
             data: {
+              "2010": formattedValue(indicator.value?.["2010"], 3),
+              "2011": formattedValue(indicator.value?.["2011"], 3),
+              "2012": formattedValue(indicator.value?.["2012"], 3),
+              "2013": formattedValue(indicator.value?.["2013"], 3),
+              "2014": formattedValue(indicator.value?.["2014"], 3),
               "2015": formattedValue(indicator.value?.["2015"], 3),
               "2016": formattedValue(indicator.value?.["2016"], 3),
               "2017": formattedValue(indicator.value?.["2017"], 3),
@@ -183,7 +188,8 @@ export const processIndicatorData = (apiResponse: any[], presentIndicator: strin
               "2021": formattedValue(indicator.value?.["2021"], 3),
               "2022": formattedValue(indicator.value?.["2022"], 3),
               "2023": formattedValue(indicator.value?.["2023"], 3),
-              "2024": formattedValue(indicator.value?.["2024"], 3)
+              "2024": formattedValue(indicator.value?.["2024"], 3),
+              "2025": formattedValue(indicator.value?.["2025"], 3)
             },
             created_at: indicator.created_at
           };

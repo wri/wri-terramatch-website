@@ -209,6 +209,11 @@ type PruneCacheProps = {
   searchQuery?: string;
 };
 
+type ClearPendingProps = {
+  urlPrefix: string;
+  method: Method;
+};
+
 const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
   for (const resource of RESOURCES) {
     state[resource] = {};
@@ -223,6 +228,15 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
   }
 
   delete state.meta.meUserId;
+};
+
+const clearPending = (state: WritableDraft<ApiDataStore>, action: PayloadAction<ClearPendingProps>) => {
+  const { urlPrefix, method } = action.payload;
+  for (const url of Object.keys(state.meta.pending[method])) {
+    if (url.startsWith(urlPrefix)) {
+      delete state.meta.pending[method][url];
+    }
+  }
 };
 
 const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<PruneCacheProps>) => {
@@ -276,7 +290,7 @@ export const apiSlice = createSlice({
         // re-fetch their data with the new login credentials.
         clearApiCache(state);
       } else {
-        delete state.meta.pending[method][url];
+        clearPending(state, apiSlice.actions.clearPending({ urlPrefix: url, method }));
       }
 
       if (isDeleteResponse(method, response)) {
@@ -349,6 +363,8 @@ export const apiSlice = createSlice({
         state.meta.meUserId = (response.data as JsonApiResource).id;
       }
     },
+
+    clearPending,
 
     pruneCache,
 
@@ -423,6 +439,10 @@ export default class ApiSlice {
 
   static pruneIndex(resource: ResourceType, searchQuery: string) {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, searchQuery }));
+  }
+
+  static clearPending(urlPrefix: string, method: Method) {
+    this.redux.dispatch(apiSlice.actions.clearPending({ urlPrefix, method }));
   }
 
   static clearApiCache() {

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
@@ -45,68 +46,73 @@ type DemographicLabelProperties = {
   rowLabelPlural: string;
 };
 
-const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = {
-  workdays: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Workday",
-    rowLabelPlural: "Workdays"
-  },
-  restorationPartners: {
-    sectionLabel: "Total Restoration",
-    rowLabelSingular: "Partner",
-    rowLabelPlural: "Partners"
-  },
-  jobs: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Job",
-    rowLabelPlural: "Jobs"
-  },
-  employees: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Employee",
-    rowLabelPlural: "Employees"
-  },
-  volunteers: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Volunteer",
-    rowLabelPlural: "Volunteers"
-  },
-  allBeneficiaries: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  trainingBeneficiaries: {
-    sectionLabel: "Total Training",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  indirectBeneficiaries: {
-    sectionLabel: "Total Indirect",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  associates: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Associate",
-    rowLabelPlural: "Associates"
-  }
-};
-
 export const useDemographicLabels = (type: DemographicType) => {
+  const t = useT();
+
+  const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = useMemo(
+    () => ({
+      workdays: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Workday"),
+        rowLabelPlural: t("Workdays")
+      },
+      restorationPartners: {
+        sectionLabel: t("Total Restoration"),
+        rowLabelSingular: t("Partner"),
+        rowLabelPlural: t("Partners")
+      },
+      jobs: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Job"),
+        rowLabelPlural: t("Jobs")
+      },
+      employees: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Employee"),
+        rowLabelPlural: t("Employees")
+      },
+      volunteers: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Volunteer"),
+        rowLabelPlural: t("Volunteers")
+      },
+      allBeneficiaries: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      trainingBeneficiaries: {
+        sectionLabel: t("Total Training"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      indirectBeneficiaries: {
+        sectionLabel: t("Total Indirect"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      associates: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Associate"),
+        rowLabelPlural: t("Associates")
+      }
+    }),
+    [t]
+  );
+
   const { framework } = useFrameworkContext();
   return useMemo(() => {
     const props = DEMOGRAPHIC_LABELS[type];
     if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
       return {
         ...props,
-        rowLabelSingular: "Partner",
-        rowLabelPlural: "Partners"
+        rowLabelSingular: t("Partner"),
+        rowLabelPlural: t("Partners")
       } as DemographicLabelProperties;
     }
 
     return props;
-  }, [framework, type]);
+  }, [framework, type, DEMOGRAPHIC_LABELS, t]);
 };
 
 export interface DemographicsCollapseGridProps {
@@ -253,7 +259,7 @@ const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   "traditional-community": {
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
-    balanced: false
+    balanced: true
   }
 };
 
@@ -262,12 +268,12 @@ const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   race: {
     title: "Race",
     typeMap: RACES,
-    balanced: false
+    balanced: true
   },
   "traditional-community": {
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
-    balanced: false
+    balanced: true
   }
 };
 

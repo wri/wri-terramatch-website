@@ -693,6 +693,10 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
               <MapContainer
                 record={record}
+                entityData={{
+                  name: record?.name,
+                  project: record?.projectName ? { name: record.projectName } : undefined
+                }}
                 polygonsData={polygonDataMap}
                 bbox={activeBbox}
                 className="rounded-lg"

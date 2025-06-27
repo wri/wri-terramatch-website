@@ -124,12 +124,25 @@ export type SitePolygonFullDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string | null;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
   projectId: string | null;
+  projectShortName: string | null;
   /**
    * @format date-time
    */
   plantStart: string | null;
   calcArea: number | null;
+  /**
+   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLatitude: number | null;
+  /**
+   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLongitude: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
@@ -171,12 +184,25 @@ export type SitePolygonLightDto = {
    * If this ID points to a deleted site, the indicators will be empty.
    */
   siteId: string | null;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
   projectId: string | null;
+  projectShortName: string | null;
   /**
    * @format date-time
    */
   plantStart: string | null;
   calcArea: number | null;
+  /**
+   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLatitude: number | null;
+  /**
+   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   */
+  centroidLongitude: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
@@ -219,4 +245,16 @@ export type SitePolygonUpdate = {
 
 export type SitePolygonBulkUpdateBodyDto = {
   data: SitePolygonUpdate[];
+};
+
+export type BoundingBoxDto = {
+  /**
+   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
+   *
+   * @example -13.17273163
+   * @example -21.3169788
+   * @example 48.8126753
+   * @example 13.47775425
+   */
+  bbox: number[];
 };

@@ -106,7 +106,21 @@ export type MediaDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -470,16 +484,49 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
-export type BoundingBoxDto = {
+export type DemographicEntryDto = {
+  type: string;
+  subtype: string;
+  name?: string;
+  amount: number;
+};
+
+export type DemographicDto = {
   /**
-   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
-   *
-   * @example -13.17273163
-   * @example -21.3169788
-   * @example 48.8126753
-   * @example 13.47775425
+   * The entity type this resource is associated with.
    */
-  bbox: number[];
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  type:
+    | "workdays"
+    | "restoration-partners"
+    | "jobs"
+    | "employees"
+    | "volunteers"
+    | "all-beneficiaries"
+    | "training-beneficiaries"
+    | "indirect-beneficiaries"
+    | "associates";
+  collection: string;
+  entries: DemographicEntryDto[];
 };
 
 export type ANRDto = {
@@ -585,6 +632,7 @@ export type ProjectLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
 };
 
 export type SiteLightDto = {
@@ -719,6 +767,7 @@ export type ProjectFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  treesPlantedCount: number | null;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -744,7 +793,6 @@ export type ProjectFullDto = {
   survivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
-  treesPlantedCount: number;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
   workdayCount: number;
@@ -1060,6 +1108,9 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
@@ -1368,13 +1419,6 @@ export type EntityUpdateBody = {
     | NurseryReportUpdateData;
 };
 
-export type DemographicEntryDto = {
-  type: string;
-  subtype: string;
-  name?: string;
-  amount: number;
-};
-
 /**
  * CONSTANTS
  */
@@ -1469,35 +1513,25 @@ export type DemographicCollections = {
   BENEFICIARIES_PROJECT_TRAINING: string[];
 };
 
-export type DemographicDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  type:
-    | "workdays"
-    | "restoration-partners"
-    | "jobs"
-    | "employees"
-    | "volunteers"
-    | "all-beneficiaries"
-    | "training-beneficiaries"
-    | "indirect-beneficiaries"
-    | "associates";
-  collection: string;
-  entries: DemographicEntryDto[];
-};
-
 export type SeedingDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1514,7 +1548,21 @@ export type TreeSpeciesDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1530,7 +1578,21 @@ export type DisturbanceDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1546,7 +1608,21 @@ export type InvasiveDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1559,7 +1635,21 @@ export type StrataDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */

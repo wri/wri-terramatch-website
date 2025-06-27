@@ -11278,25 +11278,6 @@ export type DashboardRestorationStrategyResponse = {
   };
 };
 
-export type DashboardGetPolygonStatusResponse = {
-  data?: any[];
-  /**
-   * Centroids of polygons
-   */
-  centroids?: {
-    /**
-     * Uuid of polygon
-     */
-    uuid?: string;
-    /**
-     * Longitude of polygon
-     */
-    long?: number;
-    lat?: number;
-    description?: void;
-  }[];
-};
-
 export type DashboardPolygonData = {
   data?: {
     /**

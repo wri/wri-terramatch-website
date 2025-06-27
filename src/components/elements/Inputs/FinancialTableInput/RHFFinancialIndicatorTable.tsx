@@ -858,6 +858,9 @@ const RHFFinancialIndicatorsDataTable = ({
   ]);
 
   const initialized = useRef(false);
+  const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
+    formSubmissionOrg?.title ?? ""
+  );
 
   useEffect(() => {
     if (!initialized.current && !isEmpty(value)) {
@@ -910,7 +913,9 @@ const RHFFinancialIndicatorsDataTable = ({
             resetTable={resetTable}
             label={t("Budget Analysis")}
             description={t(
-              "The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs."
+              isFundoFloraNonProfitOrEnterprise
+                ? "The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs.<br><br>Note that the budget denotes the amount of money managed by your organisation in the given year in Reais."
+                : "The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs."
             )}
             tableColumns={nonProfitAnalysisColumns}
             value={nonProfitAnalysisData ?? []}
@@ -935,7 +940,9 @@ const RHFFinancialIndicatorsDataTable = ({
           resetTable={resetTable}
           label={t("Documentation")}
           description={t(
-            "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
+            isFundoFloraNonProfitOrEnterprise
+              ? "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Budgets must detail your entire organisation's expenses. Audited budgets are preferred, if available, but are not required at this stage.<br><br>Include in the financial statements, if possible: Income Statement (DRE) or Statement of Surplus and Losses (DSP) - in the case of non-profit organisations, Balance Sheet and Cash Flow Statement."
+              : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
           )}
           tableColumns={documentationColumns}
           value={documentationData ?? []}

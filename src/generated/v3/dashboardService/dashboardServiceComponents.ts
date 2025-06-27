@@ -15,9 +15,9 @@ export type GetTotalSectionHeadersQueryParams = {
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
   cohort?: string;
   /**
-   * Filter results by landscapes
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */
-  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  landscapes?: ("gcb" | "grv" | "ikr")[];
   /**
    * Filter results by organisationType
    */
@@ -86,9 +86,9 @@ export type GetTreeRestorationGoalQueryParams = {
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
   cohort?: string;
   /**
-   * Filter results by landscapes
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */
-  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  landscapes?: ("gcb" | "grv" | "ikr")[];
   /**
    * Filter results by organisationType
    */
