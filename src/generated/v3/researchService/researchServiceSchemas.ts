@@ -136,13 +136,13 @@ export type SitePolygonFullDto = {
   plantStart: string | null;
   calcArea: number | null;
   /**
-   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   * Latitude of the site polygon
    */
-  centroidLatitude: number | null;
+  lat: number | null;
   /**
-   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   * Longitude of the site polygon
    */
-  centroidLongitude: number | null;
+  lng: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
@@ -196,13 +196,13 @@ export type SitePolygonLightDto = {
   plantStart: string | null;
   calcArea: number | null;
   /**
-   * Latitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   * Latitude of the site polygon
    */
-  centroidLatitude: number | null;
+  lat: number | null;
   /**
-   * Longitude of the polygon's centroid, computed using PostGIS ST_Centroid
+   * Longitude of the site polygon
    */
-  centroidLongitude: number | null;
+  lng: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
