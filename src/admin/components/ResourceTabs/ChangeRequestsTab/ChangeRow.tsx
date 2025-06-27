@@ -28,7 +28,7 @@ export default function ChangeRow({ stepChange }: IChangeRowProps) {
                 {title}
               </Typography>
               <Switch>
-                <Case condition={newValue == null || newValue?.props?.entries.length == 0}>
+                <Case condition={newValue == null}>
                   <Box sx={{ flexGrow: 1 }}>
                     Existing Value (unchanged):
                     <FieldView type={type} value={currentValue} />
