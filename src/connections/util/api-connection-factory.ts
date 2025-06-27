@@ -24,6 +24,11 @@ export type IndexConnection<DTO> = {
 type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
 type RefetchConnection<Props> = { refetch: (props: Props) => void };
+type UpdateConnection<UpdateAttributes> = {
+  updateInProgress: boolean;
+  updateFailure: PendingErrorState | null;
+  update: (attributes: UpdateAttributes) => void;
+};
 
 export type IdProps = { id: string };
 export type FilterProp<FilterFields extends string | number | symbol> = {
@@ -37,7 +42,7 @@ export type EnabledProp = {
   enabled?: boolean;
 };
 
-type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
+export type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
 type FailureSelector<Variables> = (
   variables: Omit<Variables, "body">
 ) => (store: ApiDataStore) => PendingErrorState | null;
@@ -50,6 +55,13 @@ type IndexMetaSelector<Variables> = (
 type QueryVariables = {
   pathParams?: Record<string, unknown>;
   queryParams?: Record<string, unknown>;
+};
+type UpdateData<Attributes = unknown> = { type: ResourceType; id: string; attributes: Attributes };
+type UpdateAttributes<T> = T extends UpdateData<infer A> ? A : never;
+export type UpdateBody<U extends UpdateData> = {
+  body: {
+    data: U;
+  };
 };
 type PartialVariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Partial<Variables>;
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables;
@@ -89,7 +101,8 @@ const indexDataSelector =
 
 type SelectorFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = (
   props: Props,
-  variablesFactory: VariablesFactory<Variables, Props>
+  variablesFactory: VariablesFactory<Variables, Props>,
+  resource: ResourceType
 ) => (state: ApiDataStore) => Selected;
 
 type SelectorCacheKeyFactory<Variables extends QueryVariables, Props extends Record<string, unknown>> = (
@@ -105,13 +118,14 @@ type ConnectionPrototype<Variables extends QueryVariables, Selected, Props exten
   variablesFactory?: PartialVariablesFactory<Variables, Props>;
   isLoaded?: LoadedPredicate<Selected, Props>;
   selectors?: SelectorFactory<Variables, Selected, Props>[];
+  resource: ResourceType;
   fetcher: FetcherPrototype<Variables, Props>;
   selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
 };
 
 const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, unknown>>(
   label: string,
-  { variablesFactory, isLoaded, selectors, fetcher, selectorCacheKeyFactory }: ConnectionPrototype<V, S, P>
+  { variablesFactory, isLoaded, selectors, resource, fetcher, selectorCacheKeyFactory }: ConnectionPrototype<V, S, P>
 ): ConnectionPrototype<V, S, P> => ({
   variablesFactory:
     variablesFactory == null
@@ -130,6 +144,7 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
           return result;
         },
   selectors,
+  resource,
   fetcher: (props, variablesFactory) => {
     Log.debug(`[${label}] Fetching data`, { props, variables: variablesFactory(props) });
     fetcher(props, variablesFactory);
@@ -150,6 +165,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     variablesFactory: VariablesFactory<Variables, IdProps>
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
+      resource,
       fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
       isLoaded: ({ data }) => data != null,
       variablesFactory,
@@ -172,6 +188,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     variablesFactory: VariablesFactory<Variables, IdProps>
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
+      resource,
       fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
       isLoaded: ({ data }) => data != null && !data.lightResource,
       variablesFactory,
@@ -194,6 +211,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     variablesFactory: VariablesFactory<Variables, Props> = () => ({} as Variables)
   ) {
     return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
+      resource,
       fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
       isLoaded: ({ data }) => data != null,
       variablesFactory,
@@ -242,23 +260,6 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         (props, variablesFactory) =>
           createSelector([inProgressSelector(variablesFactory(props))], isLoading => ({ isLoading }))
       ]
-    });
-  }
-
-  /**
-   * Adds a prop type to the connection
-   * @param addVariablesFactory The method that should modify how the request variables are generated
-   *   based on the new props.
-   * @param isLoaded If provided, this method will be chained into the isLoaded predicate of the
-   *   final connection
-   */
-  public addProps<AddProps extends Record<string, unknown>>(
-    addVariablesFactory?: PartialVariablesFactory<Variables, AddProps>,
-    isLoaded?: LoadedPredicate<Selected, AddProps>
-  ) {
-    return this.chain<Selected, Props & AddProps>({
-      variablesFactory: addVariablesFactory,
-      isLoaded
     });
   }
 
@@ -322,6 +323,49 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     });
   }
 
+  public update<U extends UpdateData>(
+    updateFetcher: Fetcher<Variables & UpdateBody<U>>,
+    updateInProgress: InProgressSelector<Variables>,
+    updateFailed: FailureSelector<Variables>
+  ) {
+    return this.chain<UpdateConnection<UpdateAttributes<U>>, IdProps & Props>({
+      selectors: [
+        (props, variablesFactory, resource) =>
+          createSelector(
+            [updateInProgress(variablesFactory(props)), updateFailed(variablesFactory(props))],
+            (updateInProgress, updateFailure) => ({
+              updateInProgress,
+              updateFailure,
+              update: (attributes: UpdateAttributes<U>) => {
+                if (props.id == null) return;
+                updateFetcher({
+                  ...variablesFactory(props),
+                  body: { data: { type: resource, id: props.id, attributes } as U }
+                });
+              }
+            })
+          )
+      ]
+    });
+  }
+
+  /**
+   * Adds a prop type to the connection
+   * @param addVariablesFactory The method that should modify how the request variables are generated
+   *   based on the new props.
+   * @param isLoaded If provided, this method will be chained into the isLoaded predicate of the
+   *   final connection
+   */
+  public addProps<AddProps extends Record<string, unknown>>(
+    addVariablesFactory?: PartialVariablesFactory<Variables, AddProps>,
+    isLoaded?: LoadedPredicate<Selected, AddProps>
+  ) {
+    return this.chain<Selected, Props & AddProps>({
+      variablesFactory: addVariablesFactory,
+      isLoaded
+    });
+  }
+
   /**
    * Builds the Connection based on the current state of the prototype.
    *
@@ -330,6 +374,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
    */
   public buildConnection(debugLoggingLabel?: string): Connection<Selected, Props> {
     const {
+      resource,
       fetcher,
       variablesFactory: prototypeVariablesFactory,
       isLoaded,
@@ -359,7 +404,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       isLoaded,
       selector: selectorCache<Selected, Props, ApiDataStore>(selectorCacheKeyFactory(variablesFactory), props =>
         createSelector(
-          selectors.map(selector => selector(props, variablesFactory)),
+          selectors.map(selector => selector(props, variablesFactory, resource)),
           (...results: Partial<Selected>[]) => {
             if (debugLoggingLabel != null) {
               Log.debug(`[${debugLoggingLabel}] Selector`, { props, results });
@@ -384,7 +429,10 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   protected chain<AddSelected, AddProps extends Record<string, unknown>>(
-    addPrototype: Omit<ConnectionPrototype<Variables, AddSelected, AddProps>, "fetcher" | "selectorCacheKeyFactory">
+    addPrototype: Omit<
+      ConnectionPrototype<Variables, AddSelected, AddProps>,
+      "resource" | "fetcher" | "selectorCacheKeyFactory"
+    >
   ): ApiConnectionFactory<Variables, Selected & AddSelected, Props & AddProps> {
     let isLoaded: LoadedPredicate<Selected & AddSelected, Props & AddProps> | undefined =
       this.prototype.isLoaded ?? addPrototype.isLoaded;
@@ -411,6 +459,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         Selected & AddSelected,
         Props & AddProps
       >[],
+      resource: this.prototype.resource,
       fetcher: this.prototype.fetcher as FetcherPrototype<Variables, Props & AddProps>,
       selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as SelectorCacheKeyFactory<
         Variables,
