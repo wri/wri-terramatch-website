@@ -81,26 +81,40 @@ export interface GraphicLegendProps {
   color: string;
 }
 
-const mapActiveProjects = (activeProjects: any[], excludeUUID?: string) => {
-  return activeProjects
-    ? activeProjects
+const mapActiveProjects = (projects: any[], excludeUUID?: string) => {
+  return projects
+    ? projects
         .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
-        .map((item: any) => ({
-          uuid: item.uuid,
-          project: item.name,
-          treesPlanted: item.trees_under_restoration.toLocaleString(),
-          restorationHectares: item.hectares_under_restoration.toLocaleString(),
-          jobsCreated: item.jobs_created.toLocaleString(),
-          volunteers: item.volunteers.toLocaleString()
-        }))
+        .map((item: any) => {
+          // Handle both V2 and V3 data structures uniformly until we have all the data from V3 after applying authentication
+          const isV3Data = item.isV3Data || item.treesPlantedCount !== undefined;
+
+          return {
+            uuid: item.uuid,
+            project: item.name || item.project,
+            treesPlanted: isV3Data
+              ? (item.treesPlantedCount || item.trees_under_restoration || 0).toLocaleString()
+              : (item.trees_under_restoration || 0).toLocaleString(),
+            restorationHectares: isV3Data
+              ? (item.totalHectaresRestoredSum || item.hectares_under_restoration || 0).toLocaleString()
+              : (item.hectares_under_restoration || 0).toLocaleString(),
+            jobsCreated: isV3Data
+              ? (item.totalJobsCreated || item.jobs_created || 0).toLocaleString()
+              : (item.jobs_created || 0).toLocaleString(),
+            ...(item.volunteers !== undefined && { volunteers: item.volunteers.toLocaleString() })
+          };
+        })
     : [];
 };
 
-const getOrganizationByUuid = (activeProjects: any[], uuid: string) => {
-  const project = activeProjects
-    ? activeProjects.find((project: any) => project.uuid === uuid)
-    : "Unknown Organization";
-  return project?.organisation;
+const getOrganizationByUuid = (projects: any[], uuid: string) => {
+  if (!projects) return "Unknown Organization";
+
+  const project = projects.find((project: any) => project.uuid === uuid);
+  if (!project) return "Unknown Organization";
+
+  // Handle both V2 and V3 data structures
+  return project.organisationName || project.organisation || "Unknown Organization";
 };
 
 const parseJobCreatedByType = (data: any, type: string) => {
@@ -167,6 +181,7 @@ const Dashboard = () => {
     centroidsDataProjects,
     activeCountries,
     activeProjects,
+    allAvailableProjects,
     polygonsData,
     projectBbox,
     isUserAllowed,
@@ -299,11 +314,6 @@ const Dashboard = () => {
         enableSorting: false
       },
       {
-        header: "Volunteers",
-        accessorKey: "volunteers",
-        enableSorting: false
-      },
-      {
         header: "",
         accessorKey: "link",
         enableSorting: false,
@@ -354,12 +364,11 @@ const Dashboard = () => {
     [activeCountries?.data]
   );
 
-  const DATA_ACTIVE_COUNTRY = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
-  const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = useMemo(
-    () => mapActiveProjects(activeProjects, filters.uuid),
-    [activeProjects, filters.uuid]
+  const projectsInCountry = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
+  const otherProjectsInCountry = useMemo(
+    () => mapActiveProjects(allAvailableProjects, filters.uuid),
+    [allAvailableProjects, filters.uuid]
   );
-
   const organizationName = useMemo(
     () => getOrganizationByUuid(activeProjects, filters.uuid),
     [activeProjects, filters.uuid]
@@ -394,13 +403,13 @@ const Dashboard = () => {
   const tooltipText = useMemo(() => {
     if (filters.country.id === 0) {
       return t(ACTIVE_COUNTRIES_TOOLTIP);
-    } else if (DATA_ACTIVE_COUNTRY.length > 0) {
+    } else if (projectsInCountry.length > 0) {
       return t(ACTIVE_PROJECTS_TOOLTIP);
     } else if (transformedStories.length > 0) {
       return t(IMPACT_STORIES_TOOLTIP);
     }
     return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
-  }, [t, filters.country.id, DATA_ACTIVE_COUNTRY, transformedStories]);
+  }, [t, filters.country.id, projectsInCountry, transformedStories]);
 
   const countryData = useMemo(() => {
     if (!projectFullDto?.country || !countryChoices?.length) return undefined;
@@ -700,11 +709,7 @@ const Dashboard = () => {
       </ContentDashboardtWrapper>
       <ContentOverview
         dataTable={
-          filters.country.id === 0
-            ? DATA_ACTIVE_PROGRAMME
-            : filters.uuid
-            ? DATA_ACTIVE_COUNTRY_WITHOUT_UUID
-            : DATA_ACTIVE_COUNTRY
+          filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
         }
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}

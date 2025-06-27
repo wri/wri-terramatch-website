@@ -1,8 +1,8 @@
 import { createSelector } from "reselect";
 
-import { boundingBoxGet } from "@/generated/v3/entityService/entityServiceComponents";
-import { BoundingBoxDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { boundingBoxGetFetchFailed } from "@/generated/v3/entityService/entityServiceSelectors";
+import { boundingBoxGet } from "@/generated/v3/researchService/researchServiceComponents";
+import { BoundingBoxDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { boundingBoxGetFetchFailed } from "@/generated/v3/researchService/researchServiceSelectors";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";

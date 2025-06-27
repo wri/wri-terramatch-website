@@ -2,33 +2,25 @@ import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../u
 import { ResourceType } from "@/store/apiSlice";
 import { DelayedJobsFindPathParams, DelayedJobsFindVariables } from "./jobServiceComponents";
 
-export const listDelayedJobsIsFetching = isFetchingSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
+export const LIST_DELAYED_JOBS_URL = "/jobs/v3/delayedJobs";
 
-export const listDelayedJobsFetchFailed = fetchFailedSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", method: "get" });
+export const listDelayedJobsIsFetching = isFetchingSelector<{}, {}>({ url: LIST_DELAYED_JOBS_URL, method: "get" });
+
+export const listDelayedJobsFetchFailed = fetchFailedSelector<{}, {}>({ url: LIST_DELAYED_JOBS_URL, method: "get" });
 
 export const listDelayedJobsIndexMeta = (resource: ResourceType) =>
-  indexMetaSelector<{}, {}>({ url: "/jobs/v3/delayedJobs", resource });
+  indexMetaSelector<{}, {}>({ url: LIST_DELAYED_JOBS_URL, resource });
+
+export const DELAYED_JOBS_FIND_URL = "/jobs/v3/delayedJobs/{uuid}";
 
 export const delayedJobsFindIsFetching = (variables: Omit<DelayedJobsFindVariables, "body">) =>
-  isFetchingSelector<{}, DelayedJobsFindPathParams>({
-    url: "/jobs/v3/delayedJobs/{uuid}",
-    method: "get",
-    ...variables
-  });
+  isFetchingSelector<{}, DelayedJobsFindPathParams>({ url: DELAYED_JOBS_FIND_URL, method: "get", ...variables });
 
 export const delayedJobsFindFetchFailed = (variables: Omit<DelayedJobsFindVariables, "body">) =>
-  fetchFailedSelector<{}, DelayedJobsFindPathParams>({
-    url: "/jobs/v3/delayedJobs/{uuid}",
-    method: "get",
-    ...variables
-  });
+  fetchFailedSelector<{}, DelayedJobsFindPathParams>({ url: DELAYED_JOBS_FIND_URL, method: "get", ...variables });
 
-export const bulkUpdateJobsIsFetching = isFetchingSelector<{}, {}>({
-  url: "/jobs/v3/delayedJobs/bulk-update",
-  method: "patch"
-});
+export const BULK_UPDATE_JOBS_URL = "/jobs/v3/delayedJobs/bulk-update";
 
-export const bulkUpdateJobsFetchFailed = fetchFailedSelector<{}, {}>({
-  url: "/jobs/v3/delayedJobs/bulk-update",
-  method: "patch"
-});
+export const bulkUpdateJobsIsFetching = isFetchingSelector<{}, {}>({ url: BULK_UPDATE_JOBS_URL, method: "patch" });
+
+export const bulkUpdateJobsFetchFailed = fetchFailedSelector<{}, {}>({ url: BULK_UPDATE_JOBS_URL, method: "patch" });
