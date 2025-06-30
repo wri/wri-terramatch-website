@@ -1,5 +1,3 @@
-import { createSelector } from "reselect";
-
 import { ApiConnectionFactory, EnabledProp, FilterProp, IdProps } from "@/connections/util/api-connection-factory";
 import {
   entityDelete,
@@ -40,12 +38,11 @@ import {
   entityUpdateFetchFailed,
   entityUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import ApiSlice, { ApiDataStore, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
-import { Connection, PaginatedConnectionProps } from "@/types/connection";
+import { PaginatedConnectionProps } from "@/types/connection";
 import { connectedResourceDeleter } from "@/utils/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
 
 export type EntityFullDto =
   | ProjectFullDto
@@ -70,14 +67,6 @@ export type EntityUpdateData =
   | ProjectReportUpdateData
   | SiteReportUpdateData
   | NurseryReportUpdateData;
-
-export type EntityListConnection<T extends EntityLightDto> = {
-  entities?: T[];
-};
-
-export type EntityListProps = {
-  uuids?: string[];
-};
 
 type EntityIndexFilterKey = keyof Omit<
   EntityIndexQueryParams,
@@ -108,11 +97,6 @@ const INDEX_FILTERS: Record<EntityIndexFilterKey, "string" | "array" | "boolean"
 };
 
 export type SupportedEntity = EntityGetPathParams["entity"];
-
-const entitySelector =
-  <T extends EntityDtoType>(entityName: SupportedEntity) =>
-  (store: ApiDataStore) =>
-    store[entityName] as StoreResourceMap<T>;
 
 const specificEntityParams = (entity: SupportedEntity, uuid?: string) => ({ pathParams: { entity, uuid: uuid ?? "" } });
 
@@ -150,18 +134,6 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
     .refetch(() => ApiSlice.pruneIndex(entity, ""))
     .fetchFailure(entityIndexFetchFailed)
     .buildConnection();
-
-const createEntityListConnection = <T extends EntityLightDto>(
-  entityName: SupportedEntity
-): Connection<EntityListConnection<T>, EntityListProps> => ({
-  selector: selectorCache(
-    ({ uuids }) => (uuids ?? []).join(),
-    ({ uuids }) =>
-      createSelector([entitySelector(entityName)], entitiesStore => ({
-        entities: (uuids ?? []).map(uuid => entitiesStore[uuid]?.attributes as T)
-      }))
-  )
-});
 
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
   SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
@@ -249,7 +221,7 @@ const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, 
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
-const siteReportListConnection = createEntityListConnection<SiteReportLightDto>("siteReports");
+const siteReportListConnection = ApiConnectionFactory.list<SiteReportLightDto>("siteReports").buildConnection();
 /**
  * Delivers the cached light DTOs for site reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.
@@ -275,7 +247,8 @@ const lightNurseryReportConnection = createEntityGetConnection<NurseryReportLigh
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
-const nurseryReportListConnection = createEntityListConnection<NurseryReportLightDto>("nurseryReports");
+const nurseryReportListConnection =
+  ApiConnectionFactory.list<NurseryReportLightDto>("nurseryReports").buildConnection();
 /**
  * Delivers the cached light DTOs for nursery reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.

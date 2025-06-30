@@ -18,8 +18,8 @@ import { selectorCache } from "@/utils/selectorCache";
 class ApiConnectionFactoryError extends Error {}
 
 type DataConnection<DTO> = { data: DTO | undefined };
-export type IndexConnection<DTO> = {
-  data?: DTO[];
+type ListConnection<DTO> = { data?: DTO[] };
+export type IndexConnection<DTO> = ListConnection<DTO> & {
   indexTotal?: number;
 };
 type LoadFailureConnection = { loadFailure: PendingErrorState | null };
@@ -33,6 +33,7 @@ type UpdateConnection<UpdateAttributes> = {
 };
 
 export type IdProps = { id?: string };
+export type IdsProps = { ids?: string[] };
 export type FilterProp<FilterFields extends string | number | symbol> = {
   filter?: Partial<Record<FilterFields, string>>;
 };
@@ -71,8 +72,8 @@ type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
 
 const resourceDataSelector =
-  <DTO>(resource: ResourceType) =>
-  ({ id }: IdProps) =>
+  <DTO>() =>
+  ({ id }: IdProps, _: unknown, resource: ResourceType) =>
     createSelector(
       [(store: ApiDataStore) => (id == null ? undefined : (store[resource][id] as StoreResource<DTO>))],
       resource => ({
@@ -122,12 +123,12 @@ type FetcherPrototype<Variables extends QueryVariables, Props extends Record<str
 ) => void;
 
 type ConnectionPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = {
+  resource: ResourceType;
+  selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
+  selectors?: SelectorFactory<Variables, Selected, Props>[];
   variablesFactory?: PartialVariablesFactory<Variables, Props>;
   isLoaded?: LoadedPredicate<Selected, Props>;
-  selectors?: SelectorFactory<Variables, Selected, Props>[];
-  resource: ResourceType;
-  fetcher: FetcherPrototype<Variables, Props>;
-  selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
+  fetcher?: FetcherPrototype<Variables, Props>;
 };
 
 const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, unknown>>(
@@ -150,12 +151,15 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
           Log.debug(`[${label}] isLoaded`, { props, result });
           return result;
         },
+  fetcher:
+    fetcher == null
+      ? undefined
+      : (props, variablesFactory) => {
+          Log.debug(`[${label}] Fetching data`, { props, variables: variablesFactory(props) });
+          fetcher(props, variablesFactory);
+        },
   selectors,
   resource,
-  fetcher: (props, variablesFactory) => {
-    Log.debug(`[${label}] Fetching data`, { props, variables: variablesFactory(props) });
-    fetcher(props, variablesFactory);
-  },
   selectorCacheKeyFactory
 });
 
@@ -163,8 +167,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   protected constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
 
   /**
-   * Adds a `data` property to the connection, specified by the id in IdProps, and typed with the
-   * provided DTO generic parameter.
+   * Creates a connection that fetches a single resource from the backend.
    */
   static singleResource<DTO, Variables extends QueryVariables>(
     resource: ResourceType,
@@ -179,7 +182,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
-      selectors: [resourceDataSelector<DTO>(resource)],
+      selectors: [resourceDataSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
@@ -188,9 +191,9 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
-   * Adds a `data` property to the connection, specified by the id in IdProps. The connection will
-   * only count as loaded if the resulting data has lightResource: false, and will therefore ask
-   * the server for the full DTO if it is not already loaded.
+   * Creates a connection that fetches a "full" resource from the backend (one that has
+   * lightResource: false in its DTO). If the current cached copy of this resource is a light resource,
+   * the connection is not complete, and the fetch will occur.
    */
   static singleFullResource<DTO extends { lightResource: boolean }, Variables extends QueryVariables>(
     resource: ResourceType,
@@ -205,7 +208,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
-      selectors: [resourceDataSelector<DTO>(resource)],
+      selectors: [resourceDataSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
@@ -214,8 +217,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
-   * Adds a `data` property to the connection as an array of the current index data, typed by the
-   * provided DTO generic parameter.
+   * Creates a connection that fetches a resource index from the backend.
    */
   static index<DTO, Variables extends QueryVariables, Props extends Record<string, unknown> = {}>(
     resource: ResourceType,
@@ -250,6 +252,27 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         }
         return cacheKey;
       }
+    });
+  }
+
+  /**
+   * Creates a connection that does no fetching; it simply pulls a list of resources by ID from the cache.
+   */
+  static list<DTO>(resource: ResourceType) {
+    return new ApiConnectionFactory<never, ListConnection<DTO>, IdsProps>({
+      resource,
+      selectors: [
+        ({ ids }, _, resource) => {
+          if (ids == null) return () => ({ data: undefined });
+          return createSelector([(store: ApiDataStore) => store[resource] as StoreResourceMap<DTO>], resources => ({
+            data: ids.map(id => resources[id]?.attributes)
+          }));
+        }
+      ],
+      selectorCacheKeyFactory:
+        () =>
+        ({ ids }) =>
+          ids?.join() ?? ""
     });
   }
 

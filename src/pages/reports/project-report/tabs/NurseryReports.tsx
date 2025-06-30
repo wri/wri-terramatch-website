@@ -26,7 +26,7 @@ const NurseryReportsTab = ({ taskUuid }: NurseryReportsTabProps) => {
   const t = useT();
   const { format } = useDate();
   const [loaded, { nurseryReportUuids }] = useTask({ uuid: taskUuid });
-  const [, { entities: nurseryReports }] = useLightNurseryReportList({ uuids: nurseryReportUuids ?? [] });
+  const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids ?? [] });
 
   if (!loaded || nurseryReports == null) return <LoadingPage />;
 

@@ -26,7 +26,7 @@ const SiteReportsTab = ({ taskUuid }: SiteReportsTabProps) => {
   const t = useT();
   const { format } = useDate();
   const [loaded, { siteReportUuids }] = useTask({ uuid: taskUuid });
-  const [, { entities: siteReports }] = useLightSiteReportList({ uuids: siteReportUuids ?? [] });
+  const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids ?? [] });
 
   if (!loaded || siteReports == null) return <LoadingPage />;
 
