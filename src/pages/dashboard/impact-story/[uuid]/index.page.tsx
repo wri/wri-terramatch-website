@@ -7,9 +7,20 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { useImpactStory } from "@/connections/ImpactStory";
-import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import SectionShare from "../components/SectionShare";
+
+function parseSerializedValue(value: string): any {
+  try {
+    const onceParsed = JSON.parse(value);
+    if (typeof onceParsed === "string") {
+      return JSON.parse(onceParsed);
+    }
+    return onceParsed;
+  } catch {
+    return value;
+  }
+}
 
 const ImpactStoryLanding = () => {
   const router = useRouter();
@@ -39,7 +50,7 @@ const ImpactStoryLanding = () => {
     uuid: impactStory.uuid ?? "",
     title: impactStory.title ?? "",
     date: impactStory.date ?? "",
-    content: impactStory.content ? parseImpactStoryContent(impactStory.content) : [],
+    content: impactStory.content ? parseSerializedValue(impactStory.content) : [],
     category: impactStory.category ?? [],
     thumbnail:
       impactStory?.thumbnail instanceof File

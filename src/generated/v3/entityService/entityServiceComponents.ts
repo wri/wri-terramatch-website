@@ -432,6 +432,41 @@ export type TaskIndexResponse = {
     id?: string;
     attributes?: Schemas.TaskLightDto;
   }[];
+  included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
+    | {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }
+    | {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }
+  )[];
 };
 
 export type TaskIndexVariables = {
@@ -634,38 +669,6 @@ export type TaskUpdateResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskFullDto;
-    relationships?: {
-      projectReport?: {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      };
-      siteReports?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-      nurseryReports?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-      }[];
-    };
   };
   included?: (
     | {

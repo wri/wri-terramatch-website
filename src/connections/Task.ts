@@ -7,7 +7,13 @@ import {
   TaskIndexQueryParams,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { TaskFullDto, TaskLightDto, TaskUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  NurseryReportLightDto,
+  SiteReportLightDto,
+  TaskFullDto,
+  TaskLightDto,
+  TaskUpdateAttributes
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
@@ -44,7 +50,11 @@ export type TaskConnection = {
 
   taskIsUpdating: boolean;
   taskUpdateFailure?: PendingErrorState | null;
-  submitForApproval?: () => void;
+  submitForApproval?: (params: {
+    siteReportNothingToReportUuid?: string[] | null;
+    nurseryReportNothingToReportUuid?: string[] | null;
+    feedback?: string | null;
+  }) => void;
 };
 
 export type TaskProps = {
@@ -73,7 +83,7 @@ const taskIndexQuery = (props?: TaskIndexProps) => {
 const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQuery(props) });
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
 
-const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid: uuid ?? "" } });
+const taskParams = (props: TaskProps) => ({ pathParams: { uuid: props.uuid ?? "" } });
 const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
   if (uuid == null || fetchFailure != null) return true;
   return task != null && !task.lightResource;
@@ -105,7 +115,22 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
           const tasks: TaskLightDto[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
-            tasks.push(tasksStore[id].attributes);
+            const task = tasksStore[id];
+
+            const siteReports = indexMeta?.included
+              ?.filter(report => report.type == "siteReports")
+              .map(report => report.attributes);
+            const nurseryReports = indexMeta?.included
+              ?.filter(report => report.type == "nurseryReports")
+              .map(report => report.attributes);
+
+            const taskWithRelationships = {
+              ...task.attributes,
+              siteReports,
+              nurseryReports
+            } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
+
+            tasks.push(taskWithRelationships);
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };
@@ -148,7 +173,13 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
             taskIsUpdating,
             taskUpdateFailure,
 
-            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" })
+            submitForApproval: ({ siteReportNothingToReportUuid, nurseryReportNothingToReportUuid, feedback }) =>
+              updateTask(taskResponse.attributes.uuid, {
+                status: "awaiting-approval",
+                siteReportNothingToReportUuid: siteReportNothingToReportUuid ?? null,
+                nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuid ?? null,
+                feedback: feedback ?? null
+              })
           };
         }
       )

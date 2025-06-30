@@ -1,5 +1,5 @@
-import { Divider, Stack, Typography } from "@mui/material";
-import { FC } from "react";
+import { Stack } from "@mui/material";
+import { FC, useEffect, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -8,20 +8,52 @@ import {
   List,
   ReferenceInput,
   SelectInput,
-  TextField
+  TextField,
+  useListContext,
+  useReference
 } from "react-admin";
 
+import ListActions from "@/admin/components/Actions/ListActions";
+import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
+import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
+import Button from "@/components/elements/Button/Button";
+import Status from "@/components/elements/Status/Status";
+import Text from "@/components/elements/Text/Text";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useTask } from "@/connections/Task";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { APPROVED } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import {
+  NurseryReportLightDto,
+  SiteReportLightDto,
+  TaskLightDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { EntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-const TaskDataGrid: FC = () => {
+type SelectedItem = {
+  id: string;
+  name: string;
+  type: string;
+  dateSubmitted: string;
+};
+
+const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void }> = ({ onProjectUuidChange }) => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const { filterValues } = useListContext();
+
+  useEffect(() => {
+    onProjectUuidChange(filterValues.projectUuid);
+  }, [filterValues, onProjectUuidChange]);
 
   return (
     <Datagrid rowClick="show" bulkActionButtons={false}>
@@ -30,8 +62,8 @@ const TaskDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: TaskLightDto) => {
-          const { title } = getTaskStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: TaskLightDto) => {
+          const { title } = getTaskStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -39,7 +71,7 @@ const TaskDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record: TaskLightDto) =>
+        render={(record?: TaskLightDto) =>
           frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
           record?.frameworkKey
         }
@@ -51,8 +83,62 @@ const TaskDataGrid: FC = () => {
   );
 };
 
+const TreesPlantedTotal: FC = () => {
+  const { data } = useListContext();
+
+  const total = Array.isArray(data) ? data.reduce((sum, item) => sum + (item.treesPlantedCount || 0), 0) : 0;
+
+  return (
+    <Text variant="text-14-bold" className="leading-none">
+      {total.toLocaleString()}
+    </Text>
+  );
+};
+
 export const TasksList: FC = () => {
   const frameworkChoices = useFrameworkChoices();
+  const { openModal, closeModal } = useModalContext();
+  const [currentProjectUuid, setCurrentProjectUuid] = useState<string | undefined>();
+  const { openNotification } = useNotificationContext();
+  const { referenceRecord: selectedProject } = useReference({
+    reference: modules.project.ResourceName,
+    id: currentProjectUuid as string
+  });
+
+  // const [, { bulkApprove }] = useBulkApproveTasks({ filter: { projectUuid: currentProjectUuid } });
+  const [, { submitForApproval }] = useTask({ uuid: "taskUuid" });
+  let projectTaskData: any[] = [];
+  const ListDataLogger: FC = () => {
+    const { data } = useListContext();
+
+    useEffect(() => {
+      projectTaskData.length = 0;
+      if (Array.isArray(data)) {
+        data.forEach((task: any) => {
+          if (Array.isArray(task.siteReports)) {
+            const siteReports = task.siteReports.filter(
+              (report: SiteReportLightDto) => report.status != APPROVED && report.nothingToReport == true
+            );
+            projectTaskData.push(...siteReports);
+          }
+          if (Array.isArray(task.nurseryReports)) {
+            const nurseryReports = task.nurseryReports.filter(
+              (report: NurseryReportLightDto) => report.status != APPROVED && report.nothingToReport == true
+            );
+            projectTaskData.push(...nurseryReports);
+          }
+        });
+        const seen = new Set<string>();
+        projectTaskData = projectTaskData.filter(report => {
+          if (seen.has(report.uuid)) return false;
+          seen.add(report.uuid);
+          return true;
+        });
+      }
+    }, [data]);
+
+    return null;
+  };
 
   const filters = [
     <ReferenceInput
@@ -65,22 +151,163 @@ export const TasksList: FC = () => {
         order: "ASC"
       }}
     >
-      <AutocompleteInput optionText="name" label="Project" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>,
     <SelectInput key="status" label="Status" source="status" choices={optionToChoices(getTaskStatusOptions())} />,
     <SelectInput key="frameworkKey" label="Framework" source="frameworkKey" choices={frameworkChoices} />
   ];
 
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    modules.task.ResourceName as EntityName,
+    frameworkChoices
+  );
+
+  const openModalHandlerBulkApprove = (data: Array<SelectedItem>, currentProjectUuid?: string) => {
+    let currentSelectedReports: Array<SelectedItem> = [];
+
+    openModal(
+      ModalId.APPROVE_POLYGONS,
+      <ModalBulkApprove
+        title="Bulk Approve - Nothing to Report"
+        data={data}
+        onClose={() => {
+          closeModal(ModalId.APPROVE_POLYGONS);
+        }}
+        content={`This project has indicated there is nothing to report for the following reports that were due [task due date]. Press "select all" to bulk approve these reports (you can manually adjust your selection before final approval if needed).`}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            openModalHandlerBulkConfirm(currentSelectedReports, currentProjectUuid);
+          }
+        }}
+        secondaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "white-page-admin",
+          onClick: () => {
+            closeModal(ModalId.APPROVE_POLYGONS);
+          }
+        }}
+        primaryButtonText="Next"
+        secondaryButtonText="Cancel"
+        onSelectionChange={selectedIds => {
+          currentSelectedReports = selectedIds;
+        }}
+      />
+    );
+  };
+
+  const openModalHandlerBulkConfirm = (currentSelectedReports: Array<SelectedItem>, currentProjectUuid?: string) => {
+    openModal(
+      ModalId.CONFIRM_POLYGON_APPROVAL,
+      <ModalConfirm
+        title={"Confirm Bulk Approval"}
+        content={
+          <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
+            {currentSelectedReports.length > 0 ? (
+              currentSelectedReports.map(report => (
+                <li key={report.id} className="text-12-light">
+                  {report.type} Report - {report.name} - {report.dateSubmitted}
+                </li>
+              ))
+            ) : (
+              <li className="text-12-light">No reports selected</li>
+            )}
+          </div>
+        }
+        commentArea
+        onClose={() => {
+          closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+        }}
+        onConfirm={async (text: string) => {
+          if (!currentProjectUuid || !submitForApproval) {
+            console.error("No project UUID available for approval or bulkApprove function not available");
+            return;
+          }
+
+          try {
+            const siteReportUuids = currentSelectedReports
+              .filter(report => report.type === "Site")
+              .map(report => report.id);
+            const nurseryReportUuids = currentSelectedReports
+              .filter(report => report.type === "Nursery")
+              .map(report => report.id);
+
+            submitForApproval({
+              siteReportNothingToReportUuid: siteReportUuids.length > 0 ? siteReportUuids : null,
+              nurseryReportNothingToReportUuid: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
+              feedback: text ?? ""
+            });
+            openNotification("success", "Reports approved successfully", "");
+            closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+            closeModal(ModalId.APPROVE_POLYGONS);
+          } catch (error) {
+            openNotification(
+              "error",
+              "Failed to approve reports",
+              error instanceof Error ? error.message : "An error occurred"
+            );
+          }
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <Stack gap={1} py={2}>
-        <Typography variant="h5">Tasks</Typography>
-        <Divider />
+        <Text variant="text-36-bold" className="leading-none">
+          Tasks
+        </Text>
       </Stack>
 
-      <List filters={filters}>
-        <TaskDataGrid />
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+        <ListDataLogger />
+        {selectedProject && (
+          <div className="m-6 flex items-center justify-between gap-6 rounded-2xl border border-neutral-300 px-6 py-4">
+            <Text variant="text-20-bold" className="w-full leading-none">
+              {selectedProject?.name ?? "N/A"}
+            </Text>
+            <div className="grid shrink-0 grid-cols-2 items-center gap-x-6 gap-y-2">
+              <Text variant="text-12-light" className="leading-none">
+                Status
+              </Text>
+              <Text variant="text-12-light" className="whitespace-nowrap leading-none">
+                Trees Planted
+              </Text>
+              <Status status={selectedProject?.status} variant="small" />
+              <TreesPlantedTotal />
+            </div>
+            <Button
+              onClick={() => {
+                if (projectTaskData.length > 0) {
+                  const reportsData = projectTaskData.map(report => ({
+                    id: report.uuid,
+                    name: report.title ?? report.siteName ?? report.nurseryName,
+                    type: report.nurseryUuid ? "Nursery" : "Site",
+                    dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
+                  }));
+                  openModalHandlerBulkApprove(reportsData, currentProjectUuid);
+                }
+              }}
+              variant="primary"
+            >
+              Bulk Approve &quot;Nothing to Report&quot;
+            </Button>
+          </div>
+        )}
+        <div className="m-6 overflow-hidden rounded-2xl border border-neutral-300">
+          <TaskDataGrid onProjectUuidChange={setCurrentProjectUuid} />
+        </div>
       </List>
+
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
+
+      <ExportProcessingAlert show={exporting} />
     </>
   );
 };
