@@ -6,8 +6,8 @@ import {
   ApiDataStore,
   ApiFilteredIndexCache,
   PendingErrorState,
+  Relationships,
   ResourceType,
-  StoreResource,
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
@@ -71,15 +71,20 @@ type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
 ) => Partial<Variables> | undefined;
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
 
-const resourceDataSelector =
-  <DTO>() =>
+const resourceSelector =
   ({ id }: IdProps, _: unknown, resource: ResourceType) =>
-    createSelector(
-      [(store: ApiDataStore) => (id == null ? undefined : (store[resource][id] as StoreResource<DTO>))],
-      resource => ({
-        data: resource?.attributes as DTO | undefined
-      })
-    );
+  (store: ApiDataStore) =>
+    id == null ? undefined : store[resource][id];
+
+const resourceAttributesSelector =
+  <DTO>() =>
+  (props: IdProps, variablesFactory: unknown, resource: ResourceType) =>
+    createSelector([resourceSelector(props, variablesFactory, resource)], resource => ({
+      data: resource?.attributes as DTO | undefined
+    }));
+
+const resourceRelationshipsSelector = (props: IdProps, variablesFactory: unknown, resource: ResourceType) =>
+  createSelector([resourceSelector(props, variablesFactory, resource)], resource => resource?.relationships);
 
 const indexDataSelector =
   <DTO, Variables extends QueryVariables, Props>(
@@ -182,7 +187,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
-      selectors: [resourceDataSelector<DTO>()],
+      selectors: [resourceAttributesSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
@@ -208,7 +213,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
-      selectors: [resourceDataSelector<DTO>()],
+      selectors: [resourceAttributesSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
@@ -433,6 +438,20 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     return this.chain<Selected, Props & AddProps>({
       variablesFactory: addVariablesFactory,
       isLoaded
+    });
+  }
+
+  /**
+   * Adds properties to the final selected shape of the connection based on the resource relationships.
+   * @param selector The selector to add. It will accept the props of the current state of the
+   *   connection factory, and must return the shape indicated by the AddSelected generic parameter.
+   */
+  public addRelationshipData<AddSelected>(selector: (relationships?: Relationships) => AddSelected) {
+    return this.chain<AddSelected, IdProps>({
+      selectors: [
+        (props, variablesFactory, resource) =>
+          createSelector([resourceRelationshipsSelector(props, variablesFactory, resource)], selector)
+      ]
     });
   }
 

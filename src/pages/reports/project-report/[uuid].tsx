@@ -29,7 +29,7 @@ const ProjectReportDetailPage = () => {
   const [isLoaded, { data: projectReport }] = useFullProjectReport({ id: uuid });
 
   const [, { data: project }] = useFullProject({ id: projectReport?.projectUuid! });
-  const [, { task }] = useTask({ uuid: projectReport?.taskUuid! });
+  const [, { data: task }] = useTask({ id: projectReport?.taskUuid! });
 
   const report = (projectReport ?? {}) as ProjectReportFullDto;
   const reportTitle = report?.reportTitle ?? t("Project Report");

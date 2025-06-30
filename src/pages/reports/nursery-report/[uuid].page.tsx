@@ -34,7 +34,7 @@ const NurseryReportDetailPage = () => {
   const [isLoaded, { data: nurseryReport }] = useFullNurseryReport({ id: nurseryReportUUID });
 
   const [, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
-  const [, { task }] = useTask({ uuid: nurseryReport?.taskUuid });
+  const [, { data: task }] = useTask({ id: nurseryReport?.taskUuid });
 
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";

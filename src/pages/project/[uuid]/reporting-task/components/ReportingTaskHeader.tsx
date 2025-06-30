@@ -29,7 +29,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const router = useRouter();
-  const [, { task, submitForApproval, taskUpdateFailure, taskIsUpdating }] = useTask({ uuid: taskUuid });
+  const [, { data: task, update, updateFailure, isUpdating }] = useTask({ id: taskUuid });
 
   const onSuccess = useCallback(() => {
     openModal(
@@ -55,7 +55,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       />
     );
   }, [closeModal, openModal, project?.uuid, router, t]);
-  useUpdateSuccess(taskIsUpdating, taskUpdateFailure, onSuccess);
+  useUpdateSuccess(isUpdating, updateFailure, onSuccess);
 
   const ModalsMapping = {
     ready_to_submit: {
@@ -64,7 +64,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitForApproval?.();
+          update?.({ status: "awaiting-approval" });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -93,7 +93,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          submitForApproval?.();
+          update?.({ status: "awaiting-approval" });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },

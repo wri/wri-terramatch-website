@@ -119,8 +119,8 @@ const ReportingTaskPage = () => {
   const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const [, { task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
-    uuid: reportingTaskUUID
+  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
+    id: reportingTaskUUID
   });
   const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
   const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });

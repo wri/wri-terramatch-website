@@ -46,7 +46,7 @@ export interface EntityListItem {
 
 // Munging the v3 task report data into a shape that works for this very complicated component.
 async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string } }) {
-  const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ uuid: pathParams.uuid });
+  const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ id: pathParams.uuid });
 
   // These data should all be cached from the task load above
   const { data: projectReport } = await loadLightProjectReport({ id: projectReportUuid });

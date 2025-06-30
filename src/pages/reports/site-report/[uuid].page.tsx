@@ -52,7 +52,7 @@ const SiteReportDetailPage = () => {
   const [isLoaded, { data: siteReport }] = useFullSiteReport({ id: siteReportUUID });
 
   const [, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
-  const [, { task }] = useTask({ uuid: siteReport?.taskUuid });
+  const [, { data: task }] = useTask({ id: siteReport?.taskUuid });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";
