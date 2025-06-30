@@ -142,7 +142,7 @@ export type SitePolygonFullDto = {
   /**
    * Longitude of the site polygon
    */
-  lng: number | null;
+  long: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
@@ -202,7 +202,7 @@ export type SitePolygonLightDto = {
   /**
    * Longitude of the site polygon
    */
-  lng: number | null;
+  long: number | null;
   /**
    * All indicators currently recorded for this site polygon
    */
