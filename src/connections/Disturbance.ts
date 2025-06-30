@@ -1,19 +1,24 @@
 import { createSelector } from "reselect";
 
 import { disturbanceIndex, DisturbanceIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServiceSelectors";
+import { DisturbanceDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  disturbanceIndexFetchFailed,
+  disturbanceIndexIsFetching
+} from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, PendingErrorState, StoreResource } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionLoader } from "@/utils/connectionShortcuts";
+import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export const selectVerificationUser = (store: ApiDataStore) => Object.values(store.verifications)?.[0]?.attributes;
+export const disturbanceSelector = (store: ApiDataStore) => Object.values(store.disturbances);
 
 type DisturbanceConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
   isSuccess: boolean | null;
+  data?: StoreResource<DisturbanceDto>[] | null;
 };
 
 type DisturbanceProps = {
@@ -46,23 +51,28 @@ const disturbanceIndexParams = (props?: DisturbanceProps) => ({
 const indexCacheKey = (props: DisturbanceProps) => getStableQuery(disturbanceIndexQuery(props));
 
 const disturbanceConnection: Connection<DisturbanceConnection, DisturbanceProps> = {
-  load: ({ isSuccess, requestFailed }, props) => {
-    if (isSuccess == null && requestFailed == null) disturbanceIndex(disturbanceIndexParams(props));
+  load: ({ isSuccess, requestFailed, data }, props) => {
+    if (!data) disturbanceIndex(disturbanceIndexParams(props));
   },
 
-  isLoaded: ({ isSuccess }) => isSuccess !== null,
+  isLoaded: ({ data }) => data !== undefined,
   selector: selectorCache(
     props => indexCacheKey(props),
-    ({ siteReportUuid }) =>
+    props =>
       createSelector(
-        [verifyUserIsFetching, verifyUserFetchFailed, selectVerificationUser],
+        [
+          disturbanceIndexIsFetching(disturbanceIndexParams(props)),
+          disturbanceIndexFetchFailed(disturbanceIndexParams(props)),
+          disturbanceSelector
+        ],
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          isSuccess: selector?.verified
+          isSuccess: selector != null,
+          data: selector
         })
       )
   )
 };
 
-export const useDisturbance = connectionLoader(disturbanceConnection);
+export const useDisturbance = connectionHook(disturbanceConnection);

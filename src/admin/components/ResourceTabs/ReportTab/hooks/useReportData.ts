@@ -3,7 +3,7 @@ import { useDataProvider, useShowContext } from "react-admin";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
 import { useDisturbance } from "@/connections/Disturbance";
-import { usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
+import { usePlants } from "@/connections/EntityAssociation";
 
 import {
   BeneficiaryData,
@@ -16,7 +16,7 @@ import {
 } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
 
-export const useReportData = () => {
+export const useReportData = async () => {
   const { record } = useShowContext();
   const dataProvider = useDataProvider();
   const [sites, setSites] = useState<Site[]>([]);
@@ -25,10 +25,10 @@ export const useReportData = () => {
   const [latestSurvivalRate, setLatestSurvivalRate] = useState<number>(0);
   const [siteReportUuids, setSiteReportUuids] = useState<string[]>([]);
 
-  const disturbances = useSiteReportDisturbances(siteReportUuids);
-  const disturbances2 = useDisturbance(siteReportUuids);
+  //const disturbances = useSiteReportDisturbances(siteReportUuids);
+  const [, { isSuccess, data: disturbances }] = useDisturbance({ siteReportUuid: siteReportUuids });
 
-  console.log("disturbances", disturbances2);
+  console.log("disturbances", disturbances, isSuccess);
 
   const [, { associations: plants }] = usePlants({
     entity: "projects",
