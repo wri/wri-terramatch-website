@@ -16,6 +16,7 @@ import {
   EstablishmentsTreesDto,
   TreeReportCountsDto,
   DemographicDto,
+  DisturbanceDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -24,7 +25,6 @@ import {
   NurseryFullDto,
   SeedingDto,
   TreeSpeciesDto,
-  DisturbanceDto,
   InvasiveDto,
   StrataDto
 } from "./entityServiceSchemas";
@@ -41,12 +41,12 @@ export const ENTITY_SERVICE_RESOURCES = [
   "establishmentTrees",
   "treeReportCounts",
   "demographics",
+  "disturbances",
   "projects",
   "sites",
   "nurseries",
   "seedings",
   "treeSpecies",
-  "disturbances",
   "invasives",
   "stratas"
 ] as const;
@@ -63,12 +63,12 @@ export type EntityServiceApiResources = {
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   demographics: StoreResourceMap<DemographicDto>;
+  disturbances: StoreResourceMap<DisturbanceDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
 };
@@ -138,7 +138,7 @@ export const DemographicCollections = {
     "indirect-other"
   ] as const,
   RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
-  JOBS_PROJECT: ["all", "full-time", "full-time-clt", "part-time", "part-time-clt"] as const,
+  JOBS_PROJECT: ["all", "full-time", "part-time"] as const,
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const

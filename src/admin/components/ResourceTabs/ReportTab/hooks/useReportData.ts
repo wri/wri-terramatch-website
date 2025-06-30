@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDataProvider, useShowContext } from "react-admin";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
+import { useDisturbance } from "@/connections/Disturbance";
 import { usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
 
 import {
@@ -25,6 +26,9 @@ export const useReportData = () => {
   const [siteReportUuids, setSiteReportUuids] = useState<string[]>([]);
 
   const disturbances = useSiteReportDisturbances(siteReportUuids);
+  const disturbances2 = useDisturbance(siteReportUuids);
+
+  console.log("disturbances", disturbances2);
 
   const [, { associations: plants }] = usePlants({
     entity: "projects",
