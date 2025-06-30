@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { ApiConnectionFactory } from "@/connections/util/api-connection-factory";
+import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
 import {
   impactStoryGet,
   ImpactStoryGetVariables,

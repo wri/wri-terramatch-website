@@ -7,7 +7,7 @@ import {
   ServerSideTable,
   ServerSideTableProps
 } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { IndexConnection } from "@/connections/util/api-connection-factory";
+import { IndexConnection } from "@/connections/util/apiConnectionFactory";
 import { useConnection } from "@/hooks/useConnection";
 import { Connection, PaginatedConnectionProps } from "@/types/connection";
 

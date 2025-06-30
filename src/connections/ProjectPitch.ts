@@ -19,7 +19,7 @@ import { Connection } from "@/types/connection";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-import { ApiConnectionFactory } from "./util/api-connection-factory";
+import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
 const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchDto, ProjectPitchGetVariables>(
   "projectPitches",

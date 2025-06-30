@@ -1,4 +1,4 @@
-import { ApiConnectionFactory, EnabledProp, FilterProp, IdProps } from "@/connections/util/api-connection-factory";
+import { ApiConnectionFactory, EnabledProp, FilterProp, IdProps } from "@/connections/util/apiConnectionFactory";
 import {
   entityDelete,
   entityGet,

@@ -17,12 +17,12 @@ import { selectorCache } from "@/utils/selectorCache";
 
 class ApiConnectionFactoryError extends Error {}
 
-type DataConnection<DTO> = { data: DTO | undefined };
+export type DataConnection<DTO> = { data: DTO | undefined };
 type ListConnection<DTO> = { data?: DTO[] };
 export type IndexConnection<DTO> = ListConnection<DTO> & {
   indexTotal?: number;
 };
-type LoadFailureConnection = { loadFailure: PendingErrorState | null };
+export type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
 type IsDeletedConnection = { isDeleted: boolean };
 type RefetchConnection = { refetch: () => void };
