@@ -19,9 +19,9 @@ export const projectReportDataProvider: DataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
-    const { entity: projectReport, fetchFailure } = await loadFullProjectReport({ uuid: params.id });
-    if (fetchFailure != null) {
-      throw v3ErrorForRA("Project report get fetch failed", fetchFailure);
+    const { data: projectReport, loadFailure } = await loadFullProjectReport({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Project report get fetch failed", loadFailure);
     }
 
     return { data: { ...projectReport, id: projectReport!.uuid } };

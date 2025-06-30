@@ -71,34 +71,24 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
 };
 
 const ProjectReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightProjectReport({ uuid });
-  if (entity == null) return null;
+  const [, { data }] = useLightProjectReport({ id: uuid });
+  if (data == null) return null;
   return (
-    <ReportRow
-      report={entity}
-      typeLabel="Project Report"
-      parentName={entity.projectName ?? ""}
-      resource="projectReport"
-    />
+    <ReportRow report={data} typeLabel="Project Report" parentName={data.projectName ?? ""} resource="projectReport" />
   );
 };
 
 const SiteReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightSiteReport({ uuid });
-  if (entity == null) return null;
-  return <ReportRow report={entity} typeLabel="Site Report" parentName={entity.siteName ?? ""} resource="siteReport" />;
+  const [, { data }] = useLightSiteReport({ id: uuid });
+  if (data == null) return null;
+  return <ReportRow report={data} typeLabel="Site Report" parentName={data.siteName ?? ""} resource="siteReport" />;
 };
 
 const NurseryReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightNurseryReport({ uuid });
-  if (entity == null) return null;
+  const [, { data }] = useLightNurseryReport({ id: uuid });
+  if (data == null) return null;
   return (
-    <ReportRow
-      report={entity}
-      typeLabel="Nursery Report"
-      parentName={entity.nurseryName ?? ""}
-      resource="nurseryReport"
-    />
+    <ReportRow report={data} typeLabel="Nursery Report" parentName={data.nurseryName ?? ""} resource="nurseryReport" />
   );
 };
 

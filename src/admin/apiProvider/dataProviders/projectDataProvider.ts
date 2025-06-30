@@ -20,9 +20,9 @@ export const projectDataProvider: DataProvider = {
 
   // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getOne(_, params) {
-    const { entity: project, fetchFailure } = await loadFullProject({ uuid: params.id });
-    if (fetchFailure != null) {
-      throw v3ErrorForRA("Project get fetch failed", fetchFailure);
+    const { data: project, loadFailure } = await loadFullProject({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Project get fetch failed", loadFailure);
     }
 
     return { data: { ...project, id: project!.uuid } };

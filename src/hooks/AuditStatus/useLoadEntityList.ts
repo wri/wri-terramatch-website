@@ -49,7 +49,7 @@ async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string }
   const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ uuid: pathParams.uuid });
 
   // These data should all be cached from the task load above
-  const { entity: projectReport } = await loadLightProjectReport({ uuid: projectReportUuid });
+  const { data: projectReport } = await loadLightProjectReport({ id: projectReportUuid });
   const { entities: siteReports } = await loadLightSiteReportList({ uuids: siteReportUuids });
   const { entities: nurseryReports } = await loadLightNurseryReportList({ uuids: nurseryReportUuids });
   const listItems: EntityListItem[] = [];

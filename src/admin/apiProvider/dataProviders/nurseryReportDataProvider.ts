@@ -18,9 +18,9 @@ export const nurseryReportDataProvider: DataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
-    const { entity: nurseryReport, fetchFailure } = await loadFullNurseryReport({ uuid: params.id });
-    if (fetchFailure != null) {
-      throw v3ErrorForRA("Nursery report get fetch failed", fetchFailure);
+    const { data: nurseryReport, loadFailure } = await loadFullNurseryReport({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Nursery report get fetch failed", loadFailure);
     }
 
     return { data: { ...nurseryReport, id: nurseryReport!.uuid } };

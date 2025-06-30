@@ -17,9 +17,9 @@ export const siteReportDataProvider: DataProvider = {
   },
   // @ts-ignore
   async getOne(_, params) {
-    const { entity: siteReport, fetchFailure } = await loadFullSiteReport({ uuid: params.id });
-    if (fetchFailure != null) {
-      throw v3ErrorForRA("Site report get fetch failed", fetchFailure);
+    const { data: siteReport, loadFailure } = await loadFullSiteReport({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Site report get fetch failed", loadFailure);
     }
 
     return { data: { ...siteReport, id: siteReport!.uuid } };

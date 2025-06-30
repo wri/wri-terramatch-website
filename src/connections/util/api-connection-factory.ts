@@ -1,4 +1,4 @@
-import { assign, merge } from "lodash";
+import { assign, isEmpty } from "lodash";
 import { createSelector } from "reselect";
 
 import { FetchParams, getStableQuery } from "@/generated/v3/utils";
@@ -11,6 +11,7 @@ import {
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
+import { resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -23,14 +24,15 @@ export type IndexConnection<DTO> = {
 };
 type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
-type RefetchConnection<Props> = { refetch: (props: Props) => void };
+type IsDeletedConnection = { isDeleted: boolean };
+type RefetchConnection = { refetch: () => void };
 type UpdateConnection<UpdateAttributes> = {
-  updateInProgress: boolean;
+  isUpdating: boolean;
   updateFailure: PendingErrorState | null;
   update: (attributes: UpdateAttributes) => void;
 };
 
-export type IdProps = { id: string };
+export type IdProps = { id?: string };
 export type FilterProp<FilterFields extends string | number | symbol> = {
   filter?: Partial<Record<FilterFields, string>>;
 };
@@ -63,15 +65,20 @@ export type UpdateBody<U extends UpdateData> = {
     data: U;
   };
 };
-type PartialVariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Partial<Variables>;
-type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables;
+type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
+  props: Props
+) => Partial<Variables> | undefined;
+type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
 
 const resourceDataSelector =
   <DTO>(resource: ResourceType) =>
   ({ id }: IdProps) =>
-    createSelector([(store: ApiDataStore) => store[resource][id] as StoreResource<DTO>], resource => ({
-      data: resource?.attributes as DTO | undefined
-    }));
+    createSelector(
+      [(store: ApiDataStore) => (id == null ? undefined : (store[resource][id] as StoreResource<DTO>))],
+      resource => ({
+        data: resource?.attributes as DTO | undefined
+      })
+    );
 
 const indexDataSelector =
   <DTO, Variables extends QueryVariables, Props>(
@@ -166,14 +173,17 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
       resource,
-      fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
-      isLoaded: ({ data }) => data != null,
+      fetcher: (props, variablesFactory) => {
+        const variables = variablesFactory(props);
+        if (variables != null) fetcher(variables);
+      },
+      isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
       selectors: [resourceDataSelector<DTO>(resource)],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
-          id
+          id ?? ""
     });
   }
 
@@ -189,14 +199,17 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
       resource,
-      fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
-      isLoaded: ({ data }) => data != null && !data.lightResource,
+      fetcher: (props, variablesFactory) => {
+        const variables = variablesFactory(props);
+        if (variables != null) fetcher(variables);
+      },
+      isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
       selectors: [resourceDataSelector<DTO>(resource)],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProps) =>
-          id
+          id ?? ""
     });
   }
 
@@ -212,7 +225,10 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
       resource,
-      fetcher: (props, variablesFactory) => fetcher(variablesFactory(props)),
+      fetcher: (props, variablesFactory) => {
+        const variables = variablesFactory(props);
+        if (variables != null) fetcher(variables);
+      },
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [indexDataSelector<DTO, Variables, Props>(resource, indexMetaSelector)],
@@ -245,8 +261,11 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     return this.chain<LoadFailureConnection, Props>({
       isLoaded: ({ loadFailure }) => loadFailure != null,
       selectors: [
-        (props, variablesFactory) =>
-          createSelector([failureSelector(variablesFactory(props))], loadFailure => ({ loadFailure }))
+        (props, variablesFactory) => {
+          const variables = variablesFactory(props);
+          if (variables == null) return () => ({ loadFailure: null });
+          return createSelector([failureSelector(variables)], loadFailure => ({ loadFailure }));
+        }
       ]
     });
   }
@@ -257,8 +276,25 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   public fetchInProgress(inProgressSelector: InProgressSelector<Variables>) {
     return this.chain<IsLoadingConnection, Props>({
       selectors: [
-        (props, variablesFactory) =>
-          createSelector([inProgressSelector(variablesFactory(props))], isLoading => ({ isLoading }))
+        (props, variablesFactory) => {
+          const variables = variablesFactory(props);
+          if (variables == null) return () => ({ isLoading: false });
+          return createSelector([inProgressSelector(variables)], isLoading => ({ isLoading }));
+        }
+      ]
+    });
+  }
+
+  public isDeleted() {
+    return this.chain<IsDeletedConnection, IdProps & Props>({
+      isLoaded: ({ isDeleted }) => isDeleted,
+      selectors: [
+        ({ id }, _, resource) => {
+          if (id == null) return () => ({ isDeleted: false });
+          return createSelector([resourcesDeletedSelector(resource)], deleted => ({
+            isDeleted: deleted.includes(id)
+          }));
+        }
       ]
     });
   }
@@ -315,11 +351,15 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   public refetch(refetch: (props: Props) => void) {
-    // It's important for the selector to always return the identical result, regardless of input;
-    // otherwise the final createSelector for the connection will recalculate on every state change.
-    const result = { refetch };
-    return this.chain<RefetchConnection<Props>, Props>({
-      selectors: [() => () => result]
+    return this.chain<RefetchConnection, Props>({
+      selectors: [
+        props => {
+          // It's important for the selector to always return the identical result, regardless of input;
+          // otherwise the final createSelector for the connection will recalculate on every state change.
+          const result = { refetch: () => refetch(props) };
+          return () => result;
+        }
+      ]
     });
   }
 
@@ -330,21 +370,28 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return this.chain<UpdateConnection<UpdateAttributes<U>>, IdProps & Props>({
       selectors: [
-        (props, variablesFactory, resource) =>
-          createSelector(
-            [updateInProgress(variablesFactory(props)), updateFailed(variablesFactory(props))],
-            (updateInProgress, updateFailure) => ({
-              updateInProgress,
-              updateFailure,
-              update: (attributes: UpdateAttributes<U>) => {
-                if (props.id == null) return;
-                updateFetcher({
-                  ...variablesFactory(props),
-                  body: { data: { type: resource, id: props.id, attributes } as U }
-                });
-              }
-            })
-          )
+        (props, variablesFactory, resource) => {
+          const variables = variablesFactory(props);
+          if (variables == null) {
+            const update = () => {};
+            return () => ({
+              isUpdating: false,
+              updateFailure: null,
+              update
+            });
+          }
+
+          // Avoid creating inline in the createSelector call so that the function has the same identity on every
+          // state update, preventing some possible re-renders when the function is a dependency in useEffect.
+          const update = (attributes: UpdateAttributes<U>) => {
+            if (props.id == null) return;
+            updateFetcher({ ...variables, body: { data: { type: resource, id: props.id, attributes } as U } });
+          };
+          return createSelector(
+            [updateInProgress(variables), updateFailed(variables)],
+            (isUpdating, updateFailure) => ({ isUpdating, updateFailure, update })
+          );
+        }
       ]
     });
   }
@@ -448,7 +495,13 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     if (this.prototype.variablesFactory != null && addPrototype.variablesFactory != null) {
       const firstFactory = this.prototype.variablesFactory;
       const secondFactory = addPrototype.variablesFactory;
-      variablesFactory = (props: Props & AddProps) => merge({}, firstFactory(props), secondFactory(props));
+      variablesFactory = (props: Props & AddProps) => {
+        const first = firstFactory(props);
+        const second = secondFactory(props);
+        // If either factory isn't getting the props it needs to succeed, the whole chain fails.
+        if (first == null || second == null) return undefined;
+        return { ...first, ...second };
+      };
     }
 
     return new ApiConnectionFactory({

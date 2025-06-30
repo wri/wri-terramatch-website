@@ -20,9 +20,9 @@ export const siteDataProvider: DataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
-    const { entity: site, fetchFailure } = await loadFullSite({ uuid: params.id });
-    if (fetchFailure != null) {
-      throw v3ErrorForRA("Site get fetch failed", fetchFailure);
+    const { data: site, loadFailure } = await loadFullSite({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Site get fetch failed", loadFailure);
     }
 
     return { data: { ...site, id: site!.uuid } };

@@ -49,9 +49,9 @@ const SiteReportDetailPage = () => {
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: siteReport }] = useFullSiteReport({ uuid: siteReportUUID });
+  const [isLoaded, { data: siteReport }] = useFullSiteReport({ id: siteReportUUID });
 
-  const [, { entity: site }] = useFullSite({ uuid: siteReport?.siteUuid! });
+  const [, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
   const [, { task }] = useTask({ uuid: siteReport?.taskUuid });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");

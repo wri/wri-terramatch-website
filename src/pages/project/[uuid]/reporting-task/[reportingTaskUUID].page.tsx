@@ -122,10 +122,10 @@ const ReportingTaskPage = () => {
   const [, { task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
     uuid: reportingTaskUUID
   });
-  const [, { entity: projectReport }] = useLightProjectReport({ uuid: projectReportUuid });
+  const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
   const [, { entities: siteReports }] = useLightSiteReportList({ uuids: siteReportUuids });
   const [, { entities: nurseryReports }] = useLightNurseryReportList({ uuids: nurseryReportUuids });
-  const [projectLoaded, { entity: project }] = useFullProject({ uuid: projectUUID });
+  const [projectLoaded, { data: project }] = useFullProject({ id: projectUUID });
 
   const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
     onSuccess: result => {

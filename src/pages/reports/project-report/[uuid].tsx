@@ -26,9 +26,9 @@ const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
 
   const t = useT();
-  const [isLoaded, { entity: projectReport }] = useFullProjectReport({ uuid: uuid });
+  const [isLoaded, { data: projectReport }] = useFullProjectReport({ id: uuid });
 
-  const [, { entity: project }] = useFullProject({ uuid: projectReport?.projectUuid! });
+  const [, { data: project }] = useFullProject({ id: projectReport?.projectUuid! });
   const [, { task }] = useTask({ uuid: projectReport?.taskUuid! });
 
   const report = (projectReport ?? {}) as ProjectReportFullDto;

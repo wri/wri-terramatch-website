@@ -276,7 +276,7 @@ export const useDashboardData = (filters: any) => {
       }
     );
 
-  const [projectLoaded, { entity: projectFullDto }] = useFullProject({ uuid: filters?.uuid! });
+  const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
   const [, { association: coverImage }] = useMedia({
     entity: "projects",
     uuid: filters?.uuid ?? null,
