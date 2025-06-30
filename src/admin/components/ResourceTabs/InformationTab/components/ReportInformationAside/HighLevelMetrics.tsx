@@ -31,7 +31,7 @@ const COLLECTIONS: Record<TotalsType, CollectionValue> = {
     demographicType: "workdays"
   },
   jobs: {
-    projectReport: DemographicCollections.JOBS_PROJECT,
+    projectReport: ["all", "full-time", "part-time"],
     siteReport: undefined,
     demographicType: "jobs"
   },

@@ -230,9 +230,9 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
       <p
         className="w-full text-14-light"
         data-testid="txt"
-        title=""
+        title="Aerobic Agroforestry"
       >
-        Select Polygon
+        Aerobic Agroforestry
       </p>
     </div>
     <div
