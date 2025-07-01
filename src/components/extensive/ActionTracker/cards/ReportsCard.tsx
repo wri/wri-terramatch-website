@@ -20,7 +20,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
   const t = useT();
 
   const { mutate: clearAction } = usePutV2MyActionsUUIDComplete();
-  const [, { entities: projects }] = useProjectIndex();
+  const [, { data: projects }] = useProjectIndex({});
   const { format } = useDate();
 
   const reportActions = useMemo(() => {

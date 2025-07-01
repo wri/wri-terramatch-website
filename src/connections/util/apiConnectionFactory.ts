@@ -1,4 +1,4 @@
-import { assign, isEmpty } from "lodash";
+import { assign, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
 import { FetchParams, getStableQuery } from "@/generated/v3/utils";
@@ -25,7 +25,7 @@ export type IndexConnection<DTO> = ListConnection<DTO> & {
 export type LoadFailureConnection = { loadFailure: PendingErrorState | null };
 type IsLoadingConnection = { isLoading: boolean };
 type IsDeletedConnection = { isDeleted: boolean };
-type RefetchConnection = { refetch: () => void };
+export type RefetchConnection = { refetch: () => void };
 type UpdateConnection<UpdateAttributes> = {
   isUpdating: boolean;
   updateFailure: PendingErrorState | null;
@@ -34,9 +34,7 @@ type UpdateConnection<UpdateAttributes> = {
 
 export type IdProps = { id?: string };
 export type IdsProps = { ids?: string[] };
-export type FilterProp<FilterFields extends string | number | symbol> = {
-  filter?: Partial<Record<FilterFields, string>>;
-};
+export type FilterProp<Filters> = { filter?: Filters };
 export type EnabledProp = {
   /**
    * The connection will count as loaded if this value is explicitly set to false, preventing any API
@@ -246,11 +244,11 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         let cacheKey = "";
         const { pathParams, queryParams } = variables;
         if (pathParams != null) {
-          cacheKey = Object.keys(pathParams)
-            .sort()
-            .map(key => String(pathParams[key]))
-            .join(":");
-          cacheKey = `${cacheKey}:`;
+          cacheKey =
+            Object.keys(pathParams)
+              .sort()
+              .map(key => String(pathParams[key]))
+              .join(":") + ":";
         }
         if (queryParams != null) {
           cacheKey = `${cacheKey}${getStableQuery(queryParams as FetchParams)}`;
@@ -346,32 +344,11 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
-   * Adds a `filter` prop to the connection that is a record of string values that maps onto
-   * the query params of the generated request variables.
+   * Adds a `filter` prop to the connection that is a subset of the query params for the request.
+   * Explicitly supplying the FilterFields generic parameter is required for correct typing.
    */
-  public filters<FilterField extends keyof Required<Variables>["queryParams"]>(
-    fields: Record<FilterField, "string" | "boolean" | "array">
-  ) {
-    return this.addProps<FilterProp<FilterField>>(({ filter }) => {
-      const queryParams: FetchParams = {};
-      if (filter != null) {
-        for (const [field, type] of Object.entries(fields)) {
-          const value = filter[field as FilterField];
-          if (value == null) continue;
-
-          if (type === "string") {
-            queryParams[field] = value;
-          } else if (type === "boolean") {
-            queryParams[field] = value === "true";
-          } else if (type === "array") {
-            queryParams[field] = Array.isArray(value) ? value : [value];
-          } else {
-            throw new ApiConnectionFactoryError(`Unsupported filter type: ${type}`);
-          }
-        }
-      }
-      return { queryParams } as Variables;
-    });
+  public filters<FilterFields extends Required<Variables>["queryParams"] = never>() {
+    return this.addProps<FilterProp<FilterFields>>(({ filter }) => ({ queryParams: filter ?? {} } as Variables));
   }
 
   public enabledFlag() {
@@ -542,7 +519,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         const second = secondFactory(props);
         // If either factory isn't getting the props it needs to succeed, the whole chain fails.
         if (first == null || second == null) return undefined;
-        return { ...first, ...second };
+        return merge({}, first, second);
       };
     }
 

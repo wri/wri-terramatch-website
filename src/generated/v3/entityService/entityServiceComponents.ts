@@ -1153,6 +1153,8 @@ export type EntityIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
+  frameworkKey?: string[];
+  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
@@ -1818,6 +1820,8 @@ export type EntityAssociationIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
+  frameworkKey?: string[];
+  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;

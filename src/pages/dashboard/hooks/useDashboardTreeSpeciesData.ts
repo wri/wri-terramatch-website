@@ -86,9 +86,7 @@ export const useDashboardTreeSpeciesData = (
     });
 
     const treeSpecies = flatten(
-      data
-        .map(({ uuid }) => selectTreeSpecies({ entity: "siteReports", uuid }).associations)
-        .filter(trees => trees != null)
+      data.map(({ uuid }) => selectTreeSpecies({ entity: "siteReports", uuid }).data).filter(trees => trees != null)
     ) as TreeSpeciesDto[];
 
     treeSpecies

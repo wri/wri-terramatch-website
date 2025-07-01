@@ -1,3 +1,4 @@
+import { FilterProp } from "@/connections/util/apiConnectionFactory";
 import { ApiDataStore } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 
@@ -27,6 +28,11 @@ export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Selected<T> = T extends Connection<infer Selected, infer Props, infer State> ? Selected : never;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type HookProps<T> = T extends (props: infer Props) => Connected<infer Selected> ? Props : never;
+export type HookFilters<T> = Filters<HookProps<T>>;
+export type Filters<T> = T extends FilterProp<infer Filters> ? Filters : never;
 
 export type PaginatedConnectionProps = {
   pageSize?: number;

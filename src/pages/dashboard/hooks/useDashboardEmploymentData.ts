@@ -34,7 +34,7 @@ export const useDashboardEmploymentData = (projectUuid?: string) => {
     // Pull the demographics data sideloaded on the reports request.
     const demographics = flatten(
       reports
-        ?.map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).associations)
+        ?.map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).data)
         .filter(associations => associations != null)
     ) as DemographicDto[];
 

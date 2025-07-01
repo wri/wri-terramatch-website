@@ -68,33 +68,16 @@ export type EntityUpdateData =
   | SiteReportUpdateData
   | NurseryReportUpdateData;
 
-type EntityIndexFilterKey = keyof Omit<
+type EntityIndexFilter = Omit<
   EntityIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
 >;
 
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
-  FilterProp<EntityIndexFilterKey> &
+  FilterProp<EntityIndexFilter> &
   EnabledProp & {
     sideloads?: EntityIndexQueryParams["sideloads"];
   };
-
-const INDEX_FILTERS: Record<EntityIndexFilterKey, "string" | "array" | "boolean"> = {
-  search: "string",
-  searchFilter: "string",
-  country: "string",
-  status: "string",
-  updateRequestStatus: "string",
-  projectUuid: "string",
-  nurseryUuid: "string",
-  siteUuid: "string",
-  landscape: "array",
-  organisationType: "array",
-  cohort: "array",
-  polygonStatus: "string",
-  nothingToReport: "boolean",
-  shortName: "string"
-};
 
 export type SupportedEntity = EntityGetPathParams["entity"];
 
@@ -126,7 +109,7 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
     () => ({ pathParams: { entity } } as EntityIndexVariables)
   )
     .pagination()
-    .filters(INDEX_FILTERS)
+    .filters<EntityIndexFilter>()
     .addProps<{ sideloads?: EntityIndexQueryParams["sideloads"] }>(({ sideloads }) => ({
       queryParams: { sideloads }
     }))

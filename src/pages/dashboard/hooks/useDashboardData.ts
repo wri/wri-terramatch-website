@@ -18,6 +18,7 @@ import {
   useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
+import { HookFilters } from "@/types/connection";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
@@ -277,10 +278,10 @@ export const useDashboardData = (filters: any) => {
     );
 
   const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
-  const [, { association: coverImage }] = useMedia({
+  const [, { data: coverImage }] = useMedia({
     entity: "projects",
     uuid: filters?.uuid ?? null,
-    queryParams: { isCover: true }
+    filter: { isCover: true }
   });
 
   const [page, setPage] = useState(1);
@@ -291,7 +292,7 @@ export const useDashboardData = (filters: any) => {
   const [totalV3Projects, setTotalV3Projects] = useState(0);
 
   const filterParams = useMemo(() => {
-    const params: any = {
+    const params: HookFilters<typeof useProjectIndex> = {
       status: "approved"
     };
 

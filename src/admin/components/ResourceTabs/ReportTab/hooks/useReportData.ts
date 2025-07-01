@@ -19,7 +19,7 @@ export const useReportData = () => {
 
   const disturbances = useSiteReportDisturbances(siteReportUuids);
 
-  const [, { associations: plants }] = usePlants({
+  const [, { data: plants }] = usePlants({
     entity: "projects",
     uuid: record?.id,
     collection: "tree-planted"
@@ -73,7 +73,7 @@ export const useReportData = () => {
         // Pull the demographics data sideloaded on the reports request.
         const demographics = flatten(
           reportsResult.data
-            .map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).associations)
+            .map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).data)
             .filter(associations => associations != null)
         ) as DemographicDto[];
         if (demographics.length > 0) {

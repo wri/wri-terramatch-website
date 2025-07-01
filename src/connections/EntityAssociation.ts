@@ -1,11 +1,11 @@
 import { Dictionary } from "lodash";
 import { useEffect, useMemo, useState } from "react";
-import { createSelector } from "reselect";
 
 import {
   entityAssociationIndex,
   EntityAssociationIndexPathParams,
-  EntityAssociationIndexQueryParams
+  EntityAssociationIndexQueryParams,
+  EntityAssociationIndexVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
   DemographicDto,
@@ -19,14 +19,21 @@ import {
   entityAssociationIndexFetchFailed,
   entityAssociationIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
-import ApiSlice, { ApiDataStore, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
-import { Connected, Connection } from "@/types/connection";
+import ApiSlice from "@/store/apiSlice";
+import { Connected, Connection, PaginatedConnectionProps } from "@/types/connection";
 import { connectionHook, connectionSelector } from "@/utils/connectionShortcuts";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
-import { selectorCache } from "@/utils/selectorCache";
+
+import {
+  ApiConnectionFactory,
+  EnabledProp,
+  FilterProp,
+  IndexConnection,
+  LoadFailureConnection,
+  RefetchConnection
+} from "./util/apiConnectionFactory";
 
 export type EntityAssociationDtoType =
   | DemographicDto
@@ -38,83 +45,42 @@ export type EntityAssociationDtoType =
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
-export type EntityAssociationIndexConnection<T extends EntityAssociationDtoType> = {
-  associations?: T[];
-  indexTotal?: number;
-  fetchFailure?: PendingErrorState | null;
-  refetch?: () => void;
-};
+type AssociationIndexFilter = Omit<
+  EntityAssociationIndexQueryParams,
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
+>;
 
-export type EntityAssociationIndexConnectionProps = {
+type SideloadsProp = { sideloads?: EntityAssociationIndexQueryParams["sideloads"] };
+
+type BaseEntityAssociationProps = {
   entity: SupportedEntity;
   uuid: string;
-  queryParams?: EntityAssociationIndexQueryParams;
 };
 
-const associationSelector =
-  <T extends EntityAssociationDtoType>(association: SupportedAssociation) =>
-  (store: ApiDataStore) =>
-    store[association] as StoreResourceMap<T>;
+export type EntityAssociationIndexConnectionProps = BaseEntityAssociationProps &
+  PaginatedConnectionProps &
+  FilterProp<AssociationIndexFilter> &
+  SideloadsProp &
+  EnabledProp;
 
-const associationIndexParams = (
-  association: SupportedAssociation,
-  { entity, uuid, queryParams }: EntityAssociationIndexConnectionProps
-) => ({
-  pathParams: { entity, uuid, association },
-  queryParams
-});
-
-const indexIsLoaded = <T extends EntityAssociationDtoType>({
-  associations,
-  fetchFailure
-}: EntityAssociationIndexConnection<T>) => associations != null || fetchFailure != null;
-
-const indexCacheKey = ({ entity, uuid, queryParams }: EntityAssociationIndexConnectionProps) =>
-  `${entity}:${uuid}:${getStableQuery(queryParams)}`;
-
-const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(
-  association: SupportedAssociation
-): Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps> => ({
-  load: (connection, props) => {
-    if (props.uuid == null || props.uuid.trim() === "") return;
-
-    if (!indexIsLoaded(connection)) entityAssociationIndex(associationIndexParams(association, props));
-  },
-
-  isLoaded: indexIsLoaded,
-
-  selector: selectorCache(
-    props => indexCacheKey(props),
-    props =>
-      createSelector(
-        [
-          entityAssociationIndexIndexMeta(association, associationIndexParams(association, props)),
-          associationSelector(association),
-          entityAssociationIndexFetchFailed(associationIndexParams(association, props))
-        ],
-        (indexMeta, associationsStore, fetchFailure) => {
-          if (indexMeta == null) return { fetchFailure };
-
-          const associations = [] as T[];
-          for (const id of indexMeta.ids) {
-            // if we're missing any of the associations we're supposed to have, return nothing so the
-            // index endpoint is queried again.
-            if (associationsStore[id] == null) return { fetchFailure };
-            associations.push(associationsStore[id].attributes as T);
-          }
-
-          return {
-            associations,
-            fetchFailure,
-            indexTotal: indexMeta.total,
-            refetch: () => {
-              if (props.uuid != null) ApiSlice.pruneIndex(association, props.uuid);
-            }
-          };
-        }
-      )
+const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(association: SupportedAssociation) =>
+  ApiConnectionFactory.index<T, EntityAssociationIndexVariables, BaseEntityAssociationProps>(
+    association,
+    entityAssociationIndex,
+    entityAssociationIndexIndexMeta,
+    ({ entity, uuid }) => ({ pathParams: { entity, uuid, association } } as EntityAssociationIndexVariables)
   )
-});
+    .fetchFailure(entityAssociationIndexFetchFailed)
+    .pagination()
+    .filters<AssociationIndexFilter>()
+    .addProps<SideloadsProp>(({ sideloads }) => ({
+      queryParams: { sideloads }
+    }))
+    .refetch(({ uuid }) => {
+      if (uuid != null) ApiSlice.pruneIndex(association, uuid);
+    })
+    .enabledFlag()
+    .buildConnection();
 
 type CollectionProps = EntityAssociationIndexConnectionProps & {
   collection?: string;
@@ -124,10 +90,9 @@ type CollectionTypeProps = CollectionProps & {
   type?: string;
 };
 
-type FilteredEntityAssociationConnection<T extends EntityAssociationDtoType> = Omit<
-  EntityAssociationIndexConnection<T>,
-  "associations"
-> & { association?: T };
+type FilteredEntityAssociationConnection<T extends EntityAssociationDtoType> = LoadFailureConnection & {
+  data?: T;
+};
 
 /**
  * Create a hook that depends on the given connection, and filters the results based on type and/or
@@ -137,12 +102,15 @@ type FilteredEntityAssociationConnection<T extends EntityAssociationDtoType> = O
  */
 const collectionTypeHook =
   <T extends EntityAssociationDtoType>(
-    connection: Connection<EntityAssociationIndexConnection<T>, EntityAssociationIndexConnectionProps>
+    connection: Connection<
+      IndexConnection<T> & LoadFailureConnection & RefetchConnection,
+      EntityAssociationIndexConnectionProps
+    >
   ) =>
   (props: CollectionTypeProps): Connected<FilteredEntityAssociationConnection<T>> => {
-    const [loaded, { associations, fetchFailure }] = useConnection(connection, props);
+    const [loaded, { data: associations, loadFailure }] = useConnection(connection, props);
 
-    const association = useMemo(() => {
+    const data = useMemo(() => {
       if (!loaded) return undefined;
 
       const matches = ((associations as { collection?: string; type?: string }[]) ?? []).filter(
@@ -155,7 +123,7 @@ const collectionTypeHook =
       return matches[0] as T | undefined;
     }, [associations, loaded, props]);
 
-    return loaded ? [true, { association, fetchFailure }] : [false, {}];
+    return loaded ? [true, { data, loadFailure }] : [false, {}];
   };
 
 const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
@@ -190,11 +158,11 @@ export type PlantDto = TreeSpeciesDto | SeedingDto;
  */
 export const usePlants = <T extends PlantDto = PlantDto>(
   props: CollectionProps
-): Connected<EntityAssociationIndexConnection<T>> => {
+): Connected<IndexConnection<T> & LoadFailureConnection> => {
   // We have to be careful here to be sure that if props.collection changes, we don't change the number of
   // hooks executed internally here, so we're directly using useConnection for both cases, and then filtering on
   // collection afterward
-  const [loaded, { associations, fetchFailure }] =
+  const [loaded, { data: associations, loadFailure }] =
     props.collection === "seeds"
       ? useConnection(seedingsConnection, props)
       : useConnection(treeSpeciesConnection, props);
@@ -208,7 +176,7 @@ export const usePlants = <T extends PlantDto = PlantDto>(
     ) as T[];
   }, [associations, loaded, props.collection]);
 
-  return loaded ? [true, { associations: filteredAssociations, fetchFailure }] : [false, {}];
+  return loaded ? [true, { data: filteredAssociations, loadFailure }] : [false, {}];
 };
 
 /**
@@ -217,7 +185,7 @@ export const usePlants = <T extends PlantDto = PlantDto>(
 export const useSiteReportDisturbances = (siteReportUuids: string[]) => {
   const [disturbances, setDisturbances] = useState<Dictionary<DisturbanceDto[]> | undefined>();
   useEffect(() => {
-    if (!siteReportUuids.length) {
+    if (siteReportUuids.length === 0) {
       setDisturbances({});
       return;
     }
@@ -235,13 +203,13 @@ export const useSiteReportDisturbances = (siteReportUuids: string[]) => {
       const result: Dictionary<DisturbanceDto[]> = {};
       for (let i = 0; i < siteReportUuids.length; i++) {
         const response = connectionResponses[i];
-        if (response.fetchFailure != null) {
-          Log.error("Fetching site report association failed", response.fetchFailure);
+        if (response.loadFailure != null) {
+          Log.error("Fetching site report association failed", response.loadFailure);
           result[siteReportUuids[i]] = [];
           continue;
         }
 
-        result[siteReportUuids[i]] = response.associations ?? [];
+        result[siteReportUuids[i]] = response.data ?? [];
       }
 
       setDisturbances(result);

@@ -188,9 +188,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
 
-  const [, { associations: modelFilesData }] = useMedias({
+  const [, { data: modelFilesData }] = useMedias({
     entity: "sites",
-    uuid: record?.uuid ?? ""
+    uuid: record?.uuid,
+    enabled: record?.uuid != null
   });
 
   useValueChanged(validFilter, () => {

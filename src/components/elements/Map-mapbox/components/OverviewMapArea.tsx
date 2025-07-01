@@ -64,7 +64,7 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const [, { associations: modelFilesData }] = useMedias({
+  const [, { data: modelFilesData }] = useMedias({
     entity: type as SupportedEntity,
     uuid: entityModel?.uuid
   });

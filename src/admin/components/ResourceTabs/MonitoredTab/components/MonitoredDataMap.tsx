@@ -31,7 +31,7 @@ const MonitoredDataMap = ({
     entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid }
   );
 
-  const [, { associations: modelFilesData }] = useMedias({
+  const [, { data: modelFilesData }] = useMedias({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
   });
