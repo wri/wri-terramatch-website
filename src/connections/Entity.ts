@@ -97,7 +97,7 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
     ? ApiConnectionFactory.singleFullResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory)
     : ApiConnectionFactory.singleResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory);
   return factory
-    .fetchFailure(entityGetFetchFailed)
+    .loadFailure(entityGetFetchFailed)
     .isDeleted()
     .refetch(({ id }) => {
       if (id != null) ApiSlice.pruneCache(entity, [id]);
@@ -114,11 +114,11 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
     () => ({ pathParams: { entity } } as EntityIndexVariables)
   )
     .pagination()
-    .filters<EntityIndexFilter>()
+    .filter<EntityIndexFilter>()
     .sideloads()
-    .enabledFlag()
+    .enabledProp()
     .refetch(() => ApiSlice.pruneIndex(entity, ""))
-    .fetchFailure(entityIndexFetchFailed)
+    .loadFailure(entityIndexFetchFailed)
     .buildConnection();
 
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>

@@ -20,8 +20,8 @@ const impactStoryConnection = ApiConnectionFactory.singleFullResource<ImpactStor
   impactStoryGet,
   ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
 )
-  .fetchFailure(impactStoryGetFetchFailed)
-  .fetchInProgress(impactStoryGetIsFetching)
+  .loadFailure(impactStoryGetFetchFailed)
+  .isLoading(impactStoryGetIsFetching)
   .buildConnection();
 
 type ImpactStoryIndexFilter = Omit<
@@ -35,8 +35,8 @@ const impactStoriesConnection = ApiConnectionFactory.index<ImpactStoryLightDto, 
   impactStoryIndexIndexMeta
 )
   .pagination()
-  .filters<ImpactStoryIndexFilter>()
-  .fetchFailure(impactStoryIndexFetchFailed)
+  .filter<ImpactStoryIndexFilter>()
+  .loadFailure(impactStoryIndexFetchFailed)
   .buildConnection();
 
 export const useImpactStory = connectionHook(impactStoryConnection);

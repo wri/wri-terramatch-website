@@ -18,15 +18,15 @@ import { selectorCache } from "@/utils/selectorCache";
 class ApiConnectionFactoryError extends Error {}
 
 export type DataConnection<DTO> = { data: DTO | undefined };
-type ListConnection<DTO> = { data?: DTO[] };
+export type ListConnection<DTO> = { data?: DTO[] };
 export type IndexConnection<DTO> = ListConnection<DTO> & {
   indexTotal?: number;
 };
 export type LoadFailureConnection = { loadFailure: PendingErrorState | null };
-type IsLoadingConnection = { isLoading: boolean };
-type IsDeletedConnection = { isDeleted: boolean };
+export type IsLoadingConnection = { isLoading: boolean };
+export type IsDeletedConnection = { isDeleted: boolean };
 export type RefetchConnection = { refetch: () => void };
-type UpdateConnection<UpdateAttributes> = {
+export type UpdateConnection<UpdateAttributes> = {
   isUpdating: boolean;
   updateFailure: PendingErrorState | null;
   update: (attributes: UpdateAttributes) => void;
@@ -288,7 +288,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
    * Adds a `loadFailure` property to the connection, using the provided failure selector. If the
    * connection reports a load failure, it counts as loaded.
    */
-  public fetchFailure(failureSelector: FailureSelector<Variables>) {
+  public loadFailure(failureSelector: FailureSelector<Variables>) {
     return this.chain<LoadFailureConnection, Props>({
       isLoaded: ({ loadFailure }) => loadFailure != null,
       selectors: [
@@ -304,7 +304,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   /**
    * Adds an `isLoading` boolean flag to the connection using the provided inProgressSelector.
    */
-  public fetchInProgress(inProgressSelector: InProgressSelector<Variables>) {
+  public isLoading(inProgressSelector: InProgressSelector<Variables>) {
     return this.chain<IsLoadingConnection, Props>({
       selectors: [
         (props, variablesFactory) => {
@@ -316,6 +316,9 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     });
   }
 
+  /**
+   * Adds an isDeleted flag to the connection using the resourcesDeletedSelector from connectedResourceDeleter
+   */
   public isDeleted() {
     return this.chain<IsDeletedConnection, IdProp & Props>({
       isLoaded: ({ isDeleted }) => isDeleted,
@@ -352,14 +355,14 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
    * Adds a `filter` prop to the connection that is a subset of the query params for the request.
    * Explicitly supplying the FilterFields generic parameter is required for correct typing.
    */
-  public filters<FilterFields extends Required<Variables>["queryParams"] = never>() {
+  public filter<FilterFields extends Required<Variables>["queryParams"] = never>() {
     return this.addProps<FilterProp<FilterFields>>(({ filter }) => ({ queryParams: filter ?? {} } as Variables));
   }
 
   /**
    * Adds an "enabled" connection prop so that the final connection can be disabled easily via props.
    */
-  public enabledFlag() {
+  public enabledProp() {
     return this.addProps<EnabledProp>(undefined, (_, { enabled }) => enabled === false);
   }
 

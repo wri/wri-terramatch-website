@@ -26,8 +26,8 @@ export const taskIndexConnection = ApiConnectionFactory.index<TaskLightDto, Task
   taskIndexIndexMeta
 )
   .pagination()
-  .fetchFailure(taskIndexFetchFailed)
-  .filters<TaskIndexFilter>()
+  .loadFailure(taskIndexFetchFailed)
+  .filter<TaskIndexFilter>()
   .buildConnection();
 
 const taskConnection = ApiConnectionFactory.singleFullResource<TaskFullDto, TaskGetVariables>(
@@ -40,7 +40,7 @@ const taskConnection = ApiConnectionFactory.singleFullResource<TaskFullDto, Task
           pathParams: { uuid: id }
         }
 )
-  .fetchFailure(taskGetFetchFailed)
+  .loadFailure(taskGetFetchFailed)
   .update(taskUpdate, taskUpdateIsFetching, taskUpdateFetchFailed)
   .addRelationshipData(relationships => {
     if (relationships == null) return {};

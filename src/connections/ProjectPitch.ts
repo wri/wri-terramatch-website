@@ -26,8 +26,8 @@ const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchD
   projectPitchGet,
   ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
 )
-  .fetchInProgress(projectPitchGetIsFetching)
-  .fetchFailure(projectPitchGetFetchFailed)
+  .isLoading(projectPitchGetIsFetching)
+  .loadFailure(projectPitchGetFetchFailed)
   .buildConnection();
 export const loadProjectPitch = connectionLoader(projectPitchConnection);
 

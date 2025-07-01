@@ -70,14 +70,14 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(as
     entityAssociationIndexIndexMeta,
     ({ entity, uuid }) => ({ pathParams: { entity, uuid, association } } as EntityAssociationIndexVariables)
   )
-    .fetchFailure(entityAssociationIndexFetchFailed)
+    .loadFailure(entityAssociationIndexFetchFailed)
     .pagination()
-    .filters<AssociationIndexFilter>()
+    .filter<AssociationIndexFilter>()
     .sideloads()
     .refetch(({ uuid }) => {
       if (uuid != null) ApiSlice.pruneIndex(association, uuid);
     })
-    .enabledFlag()
+    .enabledProp()
     .buildConnection();
 
 type CollectionProps = EntityAssociationIndexConnectionProps & {
