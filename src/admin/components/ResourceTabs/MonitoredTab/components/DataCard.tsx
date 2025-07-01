@@ -20,7 +20,7 @@ import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import SitePolygonsTable from "@/components/extensive/Tables/SitePolygonsTable";
-import { SitePolygonIndexConnectionProps } from "@/connections/SitePolygons";
+import { Indicator } from "@/connections/SitePolygons";
 import {
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
@@ -29,7 +29,7 @@ import {
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
-import { EntityName, OptionValue } from "@/types/common";
+import { OptionValue } from "@/types/common";
 import {
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
@@ -256,7 +256,7 @@ const DataCard = ({
   type,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement> & {
-  type?: EntityName;
+  type: "projects" | "sites";
 }) => {
   const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
@@ -265,7 +265,7 @@ const DataCard = ({
   const basename = useBasename();
   const { record } = useShowContext();
   const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
-    useMonitoredData(type!, record.uuid);
+    useMonitoredData(type, record.uuid);
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
@@ -733,7 +733,7 @@ const DataCard = ({
     try {
       setExporting(true);
       const blob = await fetchGetV2IndicatorsEntityUuidSlugExport({
-        pathParams: { entity: type!, uuid: record.uuid, slug: indicatorSlug! }
+        pathParams: { entity: type, uuid: record.uuid, slug: indicatorSlug! }
       });
       downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
 
@@ -951,10 +951,10 @@ const DataCard = ({
           <When condition={tabActive === 0}>
             <div className="relative w-full px-6 pb-6">
               <SitePolygonsTable
-                entityName={type!}
+                entityName={type}
                 entityUuid={record.uuid}
                 searchTerm={searchTerm}
-                presentIndicator={indicatorSlug as SitePolygonIndexConnectionProps["presentIndicator"]}
+                presentIndicator={indicatorSlug as Indicator}
                 TABLE_COLUMNS_MAPPING={TABLE_COLUMNS_MAPPING}
                 variant={VARIANT_TABLE_MONITORED}
               />

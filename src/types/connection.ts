@@ -30,6 +30,9 @@ export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [
 export type Selected<T> = T extends Connection<infer Selected, infer Props, infer State> ? Selected : never;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type ConnectionProps<T> = T extends Connection<infer Selected, infer Props, infer State> ? Props : never;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type HookProps<T> = T extends (props: infer Props) => Connected<infer Selected> ? Props : never;
 export type HookFilters<T> = Filters<HookProps<T>>;
 export type Filters<T> = T extends FilterProp<infer Filters> ? Filters : never;
