@@ -13,7 +13,10 @@ export type GetTotalSectionHeadersQueryParams = {
    * Filter results by programmes
    */
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
   /**
    * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */
@@ -84,7 +87,10 @@ export type GetTreeRestorationGoalQueryParams = {
    * Filter results by programmes
    */
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
   /**
    * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */

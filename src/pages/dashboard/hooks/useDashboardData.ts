@@ -303,12 +303,8 @@ export const useDashboardData = (filters: any) => {
       params.landscape = convertNamesToCodes(filters.landscapes);
     }
 
-    if (filters?.cohort) {
-      if (Array.isArray(filters.cohort)) {
-        params.cohort = filters.cohort;
-      } else {
-        params.cohort = [filters.cohort];
-      }
+    if (filters?.cohort && filters.cohort.length > 0) {
+      params.cohort = filters.cohort;
     } else {
       params.cohort = ["terrafund", "terrafund-landscapes"];
     }

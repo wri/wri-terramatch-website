@@ -41,9 +41,9 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["siteId[]"]?: string[];
   /**
-   * Filter results by project cohort. May not be used with projectId[] or siteId[]
+   * Filter results by project cohorts. May not be used with projectId[] or siteId[]
    */
-  projectCohort?: string;
+  ["projectCohort[]"]?: string[];
   /**
    * Filter results by project landscape. May not be used with projectId[] or siteId[]
    */

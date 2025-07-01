@@ -141,7 +141,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         }
       },
       organizations: [],
-      cohort: "",
+      cohort: [],
       uuid: ""
     });
     setSearchTerm("");
@@ -218,7 +218,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           }
         : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
-      cohort: Array.isArray(cohort) ? cohort[0] : cohort ?? "",
+      cohort: Array.isArray(cohort) ? cohort : cohort ? [cohort] : [],
       uuid: (uuid as string) || ""
     };
 
@@ -281,7 +281,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     return [];
   }, [filters.country, activeCountries]);
 
-  const valueForCohort = useMemo(() => (filters.cohort ? [filters.cohort] : []), [filters.cohort]);
+  const valueForCohort = useMemo(
+    () => (filters.cohort && filters.cohort.length > 0 ? filters.cohort : []),
+    [filters.cohort]
+  );
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
@@ -495,10 +498,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[2] w-full"
               />
               <ResponsiveDropdownContainer
-                key={`cohort-${filters.cohort || "empty"}`}
+                key={`cohort-${filters.cohort.join("-") || "empty"}`}
                 className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
+                showSelectAll
+                showLabelAsMultiple
                 showClear
                 prefix={
                   <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
@@ -506,22 +511,16 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   </Text>
                 }
                 inputVariant="text-14-semibold"
+                multiSelect
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
+                multipleText={t("Multiple Cohorts")}
                 value={valueForCohort}
                 onChange={(value: OptionValue[]) => {
-                  return setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: value[0] as string
-                  }));
+                  handleChange("cohort", value);
                 }}
                 onClear={() => {
-                  setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: ""
-                  }));
+                  handleChange("cohort", []);
                 }}
                 options={optionsCohort}
                 optionClassName="hover:bg-grey-200"
