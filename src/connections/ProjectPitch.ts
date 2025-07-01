@@ -1,10 +1,9 @@
-import { createSelector } from "reselect";
-
 import {
   projectPitchGet,
   ProjectPitchGetVariables,
   projectPitchIndex,
-  ProjectPitchIndexQueryParams
+  ProjectPitchIndexQueryParams,
+  ProjectPitchIndexVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
@@ -13,11 +12,8 @@ import {
   projectPitchIndexFetchFailed,
   projectPitchIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { getStableQuery } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
+import { PendingErrorState } from "@/store/apiSlice";
 import { connectionLoader } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
 
 import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
@@ -29,9 +25,6 @@ const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchD
   .isLoading(projectPitchGetIsFetching)
   .loadFailure(projectPitchGetFetchFailed)
   .buildConnection();
-export const loadProjectPitch = connectionLoader(projectPitchConnection);
-
-const projectPitchesSelector = ({ projectPitches }: ApiDataStore) => projectPitches;
 
 export type ProjectsPitchesConnection = {
   fetchFailure: PendingErrorState | null;
@@ -39,70 +32,20 @@ export type ProjectsPitchesConnection = {
   indexTotal?: number;
 };
 
-type ProjectPitchIndexFilterKey = keyof Omit<
+type ProjectPitchIndexFilter = Omit<
   ProjectPitchIndexQueryParams,
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
 >;
 
-export type ProjectPitchIndexConnectionProps = {
-  pageSize?: number;
-  pageNumber?: number;
-  sortField?: string;
-  sortDirection?: "ASC" | "DESC";
-  filter?: Partial<Record<ProjectPitchIndexFilterKey, string>>;
-};
+const projectPitchesConnection = ApiConnectionFactory.index<ProjectPitchDto, ProjectPitchIndexVariables>(
+  "projectPitches",
+  projectPitchIndex,
+  projectPitchIndexIndexMeta
+)
+  .pagination()
+  .loadFailure(projectPitchIndexFetchFailed)
+  .filter<ProjectPitchIndexFilter>()
+  .buildConnection();
 
-const projectPitchIndexQuery = (props?: ProjectPitchIndexConnectionProps) => {
-  const queryParams = {
-    "page[number]": props?.pageNumber,
-    "page[size]": props?.pageSize
-  } as ProjectPitchIndexQueryParams;
-  if (props?.sortField != null) {
-    queryParams["sort[field]"] = props.sortField;
-    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
-  }
-  if (props?.filter != null) {
-    for (const [key, value] of Object.entries(props.filter)) {
-      (queryParams as Record<string, string | number | undefined>)[key] = value;
-    }
-  }
-  return queryParams;
-};
-
-const indexCacheKey = (props: ProjectPitchIndexConnectionProps) => getStableQuery(projectPitchIndexQuery(props));
-
-const projectPitchesIndexParams = (props?: ProjectPitchIndexConnectionProps) => ({
-  queryParams: projectPitchIndexQuery(props)
-});
-
-const projectPitchesConnection: Connection<ProjectsPitchesConnection, ProjectPitchIndexConnectionProps> = {
-  load: ({ data }, props) => {
-    if (!data) projectPitchIndex(projectPitchesIndexParams(props));
-  },
-
-  isLoaded: ({ data }) => data !== undefined,
-  selector: selectorCache(
-    props => indexCacheKey(props),
-    props =>
-      createSelector(
-        [
-          projectPitchIndexIndexMeta("projectPitches", projectPitchesIndexParams(props)),
-          projectPitchIndexFetchFailed(projectPitchesIndexParams(props)),
-          projectPitchesSelector
-        ],
-        (indexMeta, fetchFailure, selector) => {
-          if (indexMeta == null) return { fetchFailure };
-
-          const entities = [] as ProjectPitchDto[];
-          for (const id of indexMeta.ids) {
-            if (selector[id] == null) return { fetchFailure };
-            entities.push(selector[id].attributes);
-          }
-
-          return { data: entities, indexTotal: indexMeta.total, fetchFailure };
-        }
-      )
-  )
-};
-
+export const loadProjectPitch = connectionLoader(projectPitchConnection);
 export const loadProjectPitches = connectionLoader(projectPitchesConnection);

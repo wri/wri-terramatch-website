@@ -2,7 +2,7 @@ import _ from "lodash";
 import { DataProvider } from "react-admin";
 
 import { keysToSnakeCase } from "@/admin/utils/forms";
-import { loadProjectPitch, loadProjectPitches, ProjectsPitchesConnection } from "@/connections/ProjectPitch";
+import { loadProjectPitch, loadProjectPitches } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
@@ -12,7 +12,6 @@ import {
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
-import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
@@ -22,19 +21,17 @@ export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
 }
 
-const projectPitchesListResult = ({ data, indexTotal }: ProjectsPitchesConnection) => ({
-  data: data?.map((pitch: ProjectPitchDto) => ({ ...pitch, id: pitch.uuid })),
-  total: indexTotal ?? 0
-});
-
-export const pitchDataProvider: PitchDataProvider = {
+export const pitchDataProvider: Partial<PitchDataProvider> = {
   // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
     const connection = await loadProjectPitches(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Project Pitch index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Project Pitch index fetch failed", connection.loadFailure);
     }
-    return projectPitchesListResult(connection);
+    return {
+      data: connection.data?.map(pitch => ({ ...pitch, id: pitch.uuid })),
+      total: connection.indexTotal ?? 0
+    };
   },
 
   //@ts-ignore
@@ -96,13 +93,13 @@ export const pitchDataProvider: PitchDataProvider = {
       throw getFormattedErrorForRA(err as DeleteV2ProjectPitchesUUIDError);
     }
   },
-  export() {
-    return fetchGetV2AdminProjectPitchesExport({})
-      .then((response: any) => {
-        downloadFileBlob(response, "Pitches.csv");
-      })
-      .catch(e => {
-        throw getFormattedErrorForRA(e as GetV2AdminProjectPitchesExportError);
-      });
+
+  async export() {
+    try {
+      const response = (await fetchGetV2AdminProjectPitchesExport({})) as Blob;
+      await downloadFileBlob(response, "Pitches.csv");
+    } catch (e) {
+      throw getFormattedErrorForRA(e as GetV2AdminProjectPitchesExportError);
+    }
   }
 };
