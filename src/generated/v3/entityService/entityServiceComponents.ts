@@ -669,6 +669,38 @@ export type TaskUpdateResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskFullDto;
+    relationships?: {
+      projectReport?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      };
+      siteReports?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      nurseryReports?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+    };
   };
   included?: (
     | {

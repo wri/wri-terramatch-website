@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -23,7 +23,6 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useTask } from "@/connections/Task";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
@@ -35,16 +34,23 @@ import {
   SiteReportLightDto,
   TaskLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
+import BulkApprovalRunner from "./BulkApprovalRunner";
 
 type SelectedItem = {
   id: string;
   name: string;
   type: string;
   dateSubmitted: string;
+};
+
+type TaskWithReports = TaskLightDto & {
+  siteReports?: SiteReportLightDto[];
+  nurseryReports?: NurseryReportLightDto[];
 };
 
 const TaskDataGrid: FC<{ onProjectUuidChange: (uuid: string | undefined) => void }> = ({ onProjectUuidChange }) => {
@@ -105,35 +111,49 @@ export const TasksList: FC = () => {
     id: currentProjectUuid as string
   });
 
-  // const [, { bulkApprove }] = useBulkApproveTasks({ filter: { projectUuid: currentProjectUuid } });
-  const [, { submitForApproval }] = useTask({ uuid: "taskUuid" });
-  let projectTaskData: any[] = [];
+  const tasksListRef = useRef<TaskWithReports[]>([]);
+  const [selectableReports, setSelectableReports] = useState<SelectedItem[]>([]);
+  const [bulkApprovalTasks, setBulkApprovalTasks] = useState<
+    {
+      uuid: string;
+      site: string[] | null;
+      nursery: string[] | null;
+      feedback: string;
+    }[]
+  >([]);
+  const [triggerBulk, setTriggerBulk] = useState(false);
+  // const [completedBulk, setCompletedBulk] = useState<string[]>([]);
+
   const ListDataLogger: FC = () => {
     const { data } = useListContext();
 
     useEffect(() => {
-      projectTaskData.length = 0;
       if (Array.isArray(data)) {
-        data.forEach((task: any) => {
-          if (Array.isArray(task.siteReports)) {
-            const siteReports = task.siteReports.filter(
-              (report: SiteReportLightDto) => report.status != APPROVED && report.nothingToReport == true
-            );
-            projectTaskData.push(...siteReports);
-          }
-          if (Array.isArray(task.nurseryReports)) {
-            const nurseryReports = task.nurseryReports.filter(
-              (report: NurseryReportLightDto) => report.status != APPROVED && report.nothingToReport == true
-            );
-            projectTaskData.push(...nurseryReports);
-          }
+        tasksListRef.current = data as TaskWithReports[];
+        const reports: SelectedItem[] = [];
+        (data as TaskWithReports[]).forEach(task => {
+          (task.siteReports ?? []).forEach(report => {
+            if (report.status !== APPROVED && report.nothingToReport == true) {
+              reports.push({
+                id: report.uuid,
+                name: report.siteName ?? report.reportTitle ?? "",
+                type: "Site",
+                dateSubmitted: report.submittedAt ? new Date(report.submittedAt).toLocaleDateString("en-GB") : ""
+              });
+            }
+          });
+          (task.nurseryReports ?? []).forEach(report => {
+            if (report.status !== APPROVED && report.nothingToReport == true) {
+              reports.push({
+                id: report.uuid,
+                name: report.nurseryName ?? report.reportTitle ?? "",
+                type: "Nursery",
+                dateSubmitted: report.submittedAt ? new Date(report.submittedAt).toLocaleDateString("en-GB") : ""
+              });
+            }
+          });
         });
-        const seen = new Set<string>();
-        projectTaskData = projectTaskData.filter(report => {
-          if (seen.has(report.uuid)) return false;
-          seen.add(report.uuid);
-          return true;
-        });
+        setSelectableReports(reports);
       }
     }, [data]);
 
@@ -166,7 +186,7 @@ export const TasksList: FC = () => {
     frameworkChoices
   );
 
-  const openModalHandlerBulkApprove = (data: Array<SelectedItem>, currentProjectUuid?: string) => {
+  const openModalHandlerBulkApprove = (data: Array<SelectedItem>, tasks?: TaskWithReports[]) => {
     let currentSelectedReports: Array<SelectedItem> = [];
 
     openModal(
@@ -182,8 +202,9 @@ export const TasksList: FC = () => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            openModalHandlerBulkConfirm(currentSelectedReports, currentProjectUuid);
-          }
+            openModalHandlerBulkConfirm(currentSelectedReports, tasks);
+          },
+          disabled: data.length > 0 ? false : true
         }}
         secondaryButtonProps={{
           className: "px-8 py-3",
@@ -201,7 +222,7 @@ export const TasksList: FC = () => {
     );
   };
 
-  const openModalHandlerBulkConfirm = (currentSelectedReports: Array<SelectedItem>, currentProjectUuid?: string) => {
+  const openModalHandlerBulkConfirm = (currentSelectedReports: SelectedItem[], tasks?: TaskWithReports[]) => {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
@@ -224,11 +245,6 @@ export const TasksList: FC = () => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
         }}
         onConfirm={async (text: string) => {
-          if (!currentProjectUuid || !submitForApproval) {
-            console.error("No project UUID available for approval or bulkApprove function not available");
-            return;
-          }
-
           try {
             const siteReportUuids = currentSelectedReports
               .filter(report => report.type === "Site")
@@ -237,12 +253,40 @@ export const TasksList: FC = () => {
               .filter(report => report.type === "Nursery")
               .map(report => report.id);
 
-            submitForApproval({
-              siteReportNothingToReportUuid: siteReportUuids.length > 0 ? siteReportUuids : null,
-              nurseryReportNothingToReportUuid: nurseryReportUuids.length > 0 ? nurseryReportUuids : null,
-              feedback: text ?? ""
-            });
+            const tasksWithSelectedReports = (tasks ?? tasksListRef.current)
+              .map((task: TaskWithReports) => {
+                const filteredSiteReports =
+                  task.siteReports?.filter((report: SiteReportLightDto) => siteReportUuids.includes(report.uuid)) || [];
+
+                const filteredNurseryReports =
+                  task.nurseryReports?.filter((report: NurseryReportLightDto) =>
+                    nurseryReportUuids.includes(report.uuid)
+                  ) || [];
+
+                if (filteredSiteReports.length === 0 && filteredNurseryReports.length === 0) {
+                  return null;
+                }
+
+                return {
+                  uuid: task.uuid,
+                  site: filteredSiteReports.map(r => r.uuid),
+                  nursery: filteredNurseryReports.map(r => r.uuid),
+                  feedback: text ?? ""
+                };
+              })
+              .filter(task => task !== null) as {
+              uuid: string;
+              site: string[] | null;
+              nursery: string[] | null;
+              feedback: string;
+            }[];
+
+            setBulkApprovalTasks(tasksWithSelectedReports);
+            setTriggerBulk(true);
+            // setCompletedBulk([]);
             openNotification("success", "Reports approved successfully", "");
+            //to update list in modal
+            ApiSlice.pruneCache("tasks", [currentProjectUuid!]);
             closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
             closeModal(ModalId.APPROVE_POLYGONS);
           } catch (error) {
@@ -284,15 +328,7 @@ export const TasksList: FC = () => {
             </div>
             <Button
               onClick={() => {
-                if (projectTaskData.length > 0) {
-                  const reportsData = projectTaskData.map(report => ({
-                    id: report.uuid,
-                    name: report.title ?? report.siteName ?? report.nurseryName,
-                    type: report.nurseryUuid ? "Nursery" : "Site",
-                    dateSubmitted: new Date(report.submittedAt).toLocaleDateString("en-GB")
-                  }));
-                  openModalHandlerBulkApprove(reportsData, currentProjectUuid);
-                }
+                openModalHandlerBulkApprove(selectableReports, tasksListRef.current);
               }}
               variant="primary"
             >
@@ -308,6 +344,20 @@ export const TasksList: FC = () => {
       <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
+
+      {triggerBulk &&
+        bulkApprovalTasks.map(task => (
+          <BulkApprovalRunner
+            key={task.uuid}
+            uuid={task.uuid}
+            siteReportUuids={task.site}
+            nurseryReportUuids={task.nursery}
+            feedback={task.feedback}
+            trigger={triggerBulk}
+            // onDone={uuid => setCompletedBulk(prev => [...prev, uuid])}
+            onDone={uuid => console.log(uuid)}
+          />
+        ))}
     </>
   );
 };

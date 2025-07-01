@@ -7,13 +7,7 @@ import {
   TaskIndexQueryParams,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import {
-  NurseryReportLightDto,
-  SiteReportLightDto,
-  TaskFullDto,
-  TaskLightDto,
-  TaskUpdateAttributes
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import { TaskFullDto, TaskLightDto, TaskUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   taskGetFetchFailed,
   taskIndexFetchFailed,
@@ -26,6 +20,8 @@ import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
+
+import { NurseryReportLightDto, SiteReportLightDto } from "../generated/v3/entityService/entityServiceSchemas";
 
 export type TaskIndexConnection = {
   tasks?: TaskLightDto[];
@@ -83,7 +79,7 @@ const taskIndexQuery = (props?: TaskIndexProps) => {
 const taskIndexParams = (props?: TaskIndexProps) => ({ queryParams: taskIndexQuery(props) });
 const indexIsLoaded = ({ tasks, fetchFailure }: TaskIndexConnection) => tasks != null || fetchFailure != null;
 
-const taskParams = (props: TaskProps) => ({ pathParams: { uuid: props.uuid ?? "" } });
+const taskParams = ({ uuid }: TaskProps) => ({ pathParams: { uuid: uuid ?? "" } });
 const taskIsLoaded = ({ task, fetchFailure }: TaskConnection, { uuid }: TaskProps) => {
   if (uuid == null || fetchFailure != null) return true;
   return task != null && !task.lightResource;
@@ -112,25 +108,29 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
         (indexMeta, tasksStore, fetchFailure) => {
           if (indexMeta == null) return { fetchFailure };
 
-          const tasks: TaskLightDto[] = [];
+          const tasks: ({
+            siteReports?: SiteReportLightDto[];
+            nurseryReports?: NurseryReportLightDto[];
+          } & TaskLightDto)[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
             const task = tasksStore[id];
 
+            const siteReportUuids = (task?.relationships?.["siteReports"] ?? []).map(({ id }) => id!);
+            const nurseryReportUuids = (task?.relationships?.["nurseryReports"] ?? []).map(({ id }) => id!);
+
             const siteReports = indexMeta?.included
-              ?.filter(report => report.type == "siteReports")
+              ?.filter(report => report.type == "siteReports" && siteReportUuids.includes(report.id))
               .map(report => report.attributes);
             const nurseryReports = indexMeta?.included
-              ?.filter(report => report.type == "nurseryReports")
+              ?.filter(report => report.type == "nurseryReports" && nurseryReportUuids.includes(report.id))
               .map(report => report.attributes);
 
-            const taskWithRelationships = {
+            tasks.push({
               ...task.attributes,
               siteReports,
               nurseryReports
-            } as TaskLightDto & { siteReports: SiteReportLightDto[]; nurseryReports: NurseryReportLightDto[] };
-
-            tasks.push(taskWithRelationships);
+            });
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };
