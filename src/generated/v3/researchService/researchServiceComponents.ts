@@ -308,6 +308,10 @@ export type BoundingBoxGetQueryParams = {
    */
   projectUuid?: string;
   /**
+   * UUID of a project pitch to get the bounding box of all its polygons
+   */
+  projectPitchUuid?: string;
+  /**
    * Array of landscape slugs for combined bounding box (used with country)
    */
   landscapes?: string[];

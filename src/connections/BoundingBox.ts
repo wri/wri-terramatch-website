@@ -19,11 +19,14 @@ type BoundingBoxProps = {
   projectUuid?: string;
   landscapes?: string[];
   country?: string;
+  projectPitchUuid?: string;
 };
 
 const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, country, landscapes } = props;
-  return [polygonUuid, siteUuid, projectUuid, country, landscapes?.join(",")].filter(Boolean).join(",");
+  const { polygonUuid, siteUuid, projectUuid, country, landscapes, projectPitchUuid } = props;
+  return [polygonUuid, siteUuid, projectUuid, projectPitchUuid, country, landscapes?.join(",")]
+    .filter(Boolean)
+    .join(",");
 };
 
 const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
@@ -36,20 +39,29 @@ const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore)
   return boundingBoxGetFetchFailed({ queryParams: getQueryParams(props) })(store) != null;
 };
 
-const hasValidParams = ({ polygonUuid, siteUuid, projectUuid, landscapes, country }: BoundingBoxProps): boolean =>
+const hasValidParams = ({
+  polygonUuid,
+  siteUuid,
+  projectUuid,
+  landscapes,
+  country,
+  projectPitchUuid
+}: BoundingBoxProps): boolean =>
   (polygonUuid != null && polygonUuid !== "") ||
   (siteUuid != null && siteUuid !== "") ||
   (projectUuid != null && projectUuid !== "") ||
+  (projectPitchUuid != null && projectPitchUuid !== "") ||
   (landscapes?.length ?? 0) > 0 ||
   (country != null && country !== "");
 
 const getQueryParams = (props: BoundingBoxProps) => {
-  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
+  const { polygonUuid, siteUuid, projectUuid, landscapes, country, projectPitchUuid } = props;
 
   return {
     polygonUuid,
     siteUuid,
     projectUuid,
+    projectPitchUuid,
     landscapes,
     country
   };
