@@ -196,7 +196,13 @@ const Dashboard = () => {
     lastUpdatedAt
   } = useDashboardData(filters);
 
-  const cohortDisplayName = useMemo(() => formatCohortDisplay(projectFullDto?.cohort), [projectFullDto?.cohort]);
+  const cohortArray = useMemo(() => {
+    const cohort = projectFullDto?.cohort;
+    if (!cohort) return null;
+    if (Array.isArray(cohort)) return cohort;
+  }, [projectFullDto?.cohort]);
+
+  const cohortDisplayName = useMemo(() => formatCohortDisplay(cohortArray), [cohortArray]);
 
   const dataToggle = useMemo(
     () => [
@@ -477,7 +483,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              cohort={projectFullDto?.cohort}
+              cohort={cohortArray}
               countryData={countryData as CountriesProps}
               projectName={projectFullDto?.name}
               className="pt-0"
