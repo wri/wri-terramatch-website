@@ -7,18 +7,18 @@ import {
   disturbanceIndexIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState, StoreResource } from "@/store/apiSlice";
+import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-export const disturbanceSelector = (store: ApiDataStore) => Object.values(store.disturbances);
+export const disturbanceSelector = (store: ApiDataStore) =>
+  Object.values(store.disturbances)?.map(resource => resource.attributes) ?? [];
 
 type DisturbanceConnection = {
   isLoading: boolean;
   requestFailed: PendingErrorState | null;
-  isSuccess: boolean | null;
-  data?: StoreResource<DisturbanceDto>[] | null;
+  data?: DisturbanceDto[] | null;
 };
 
 type DisturbanceProps = {
@@ -50,12 +50,15 @@ const disturbanceIndexParams = (props?: DisturbanceProps) => ({
 
 const indexCacheKey = (props: DisturbanceProps) => getStableQuery(disturbanceIndexQuery(props));
 
+const disturbanceIsLoaded = ({ requestFailed, data }: DisturbanceConnection) =>
+  requestFailed != null || (data != null && data.length > 0);
+
 const disturbanceConnection: Connection<DisturbanceConnection, DisturbanceProps> = {
-  load: ({ isSuccess, requestFailed, data }, props) => {
-    if (!data) disturbanceIndex(disturbanceIndexParams(props));
+  load: (connection, props) => {
+    if (!disturbanceIsLoaded(connection)) disturbanceIndex(disturbanceIndexParams(props));
   },
 
-  isLoaded: ({ data }) => data !== undefined,
+  isLoaded: disturbanceIsLoaded,
   selector: selectorCache(
     props => indexCacheKey(props),
     props =>
@@ -68,7 +71,6 @@ const disturbanceConnection: Connection<DisturbanceConnection, DisturbanceProps>
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,
-          isSuccess: selector != null,
           data: selector
         })
       )
