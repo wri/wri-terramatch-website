@@ -203,10 +203,10 @@ export const useDashboardData = (filters: any) => {
     const data: { [status: string]: string[] } = {};
 
     allPolygonsData.forEach(polygon => {
-      if (polygon.centroidLatitude && polygon.centroidLongitude && polygon.polygonUuid && polygon.status) {
+      if (polygon.lat && polygon.long && polygon.polygonUuid && polygon.status) {
         centroids.push({
-          lat: polygon.centroidLatitude,
-          long: polygon.centroidLongitude,
+          lat: polygon.lat,
+          long: polygon.long,
           uuid: polygon.polygonUuid,
           status: polygon.status
         });
