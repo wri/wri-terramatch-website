@@ -24,7 +24,7 @@ import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchDto, ProjectPitchGetVariables>(
   "projectPitches",
   projectPitchGet,
-  ({ id }) => ({ pathParams: { uuid: id } })
+  ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
 )
   .fetchInProgress(projectPitchGetIsFetching)
   .fetchFailure(projectPitchGetFetchFailed)

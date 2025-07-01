@@ -18,7 +18,7 @@ import { formatOptionsList } from "@/utils/options";
 
 const ProjectsTabContent = () => {
   const t = useT();
-  const [, { entities: projects }] = useProjectIndex();
+  const [, { data: projects }] = useProjectIndex({});
   const countryOptions = useGadmOptions({ level: 0 });
 
   return (

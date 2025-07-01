@@ -18,7 +18,7 @@ export interface InvasiveTableProps {
 const InvasiveTable = ({ modelName, modelUUID }: InvasiveTableProps) => {
   const t = useT();
 
-  const [, { associations: invasives }] = useInvasives({ entity: modelName, uuid: modelUUID });
+  const [, { data: invasives }] = useInvasives({ entity: modelName, uuid: modelUUID });
 
   const columns = useMemo(
     () => [

@@ -144,7 +144,7 @@ export const deleteProject = connectedResourceDeleter(
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
 );
 
-const indexProjectConnection = createEntityIndexConnection("projects");
+const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
 
