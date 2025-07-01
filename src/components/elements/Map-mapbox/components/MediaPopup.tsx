@@ -18,7 +18,7 @@ export const MediaPopup = ({
   uuid,
   name,
   created_date,
-  file_url,
+  thumbUrl,
   onClose,
   handleDownload,
   coverImage,
@@ -29,7 +29,7 @@ export const MediaPopup = ({
   uuid: string;
   name: string;
   created_date: string;
-  file_url: string;
+  thumbUrl: string;
   onClose: () => void;
   handleDownload: () => void;
   coverImage: () => void;
@@ -79,7 +79,7 @@ export const MediaPopup = ({
         <QueryClientProvider client={client}>
           <div className="flex h-full w-full flex-col gap-2 bg-white" onClick={() => setOpenModal(!openModal)}>
             <div className="w-full flex-1">
-              <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={file_url} />
+              <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={thumbUrl} />
             </div>
             <button
               className="absolute right-3 top-3 z-10 rounded bg-grey-200 p-1 leading-normal"
@@ -123,7 +123,7 @@ export const MediaPopup = ({
       <ImagePreview
         data={{
           uuid: uuid,
-          fullImageUrl: file_url
+          fullImageUrl: thumbUrl
         }}
         onCLose={() => setOpenModal(false)}
         WrapperClassName={openModal ? "" : "hidden"}

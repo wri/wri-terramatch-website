@@ -23,11 +23,13 @@ import Log from "@/utils/log";
 interface ConfirmationDialogProps extends DialogProps {
   question?: FormQuestionRead;
   linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[];
+  formTitle?: string;
 }
 
 export const FormQuestionPreviewDialog = ({
   linkedFieldData,
   question: _question,
+  formTitle,
   ...props
 }: ConfirmationDialogProps) => {
   const formHook = useForm();
@@ -55,7 +57,12 @@ export const FormQuestionPreviewDialog = ({
         <Divider />
 
         <DialogContent>
-          <FieldMapper field={field} formHook={formHook} onChange={() => Log.debug("Field Mapper onChange")} />
+          <FieldMapper
+            field={field}
+            formHook={formHook}
+            onChange={() => Log.debug("Field Mapper onChange")}
+            formSubmissionOrg={{ title: formTitle }}
+          />
         </DialogContent>
 
         <DialogActions sx={{ padding: 3 }}>

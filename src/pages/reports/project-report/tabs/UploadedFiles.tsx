@@ -35,7 +35,10 @@ const sections = [
   { name: "Indirect Community Partners Upload", property: "indirectCommunityPartnersUpload" },
   { name: "Training or Capacity Building Upload", property: "trainingCapacityBuildingUpload" },
   { name: "Training or Capacity Building Photos", property: "trainingCapacityBuildingPhotos" },
-  { name: "Financial Report Upload', ", property: "financialReportUpload" }
+  { name: "Financial Report Upload", property: "financialReportUpload" },
+  { name: "Tree Planting Upload", property: "treePlantingUpload" },
+  { name: "Soil Water Conservation Upload", property: "soilWaterConservationUpload" },
+  { name: "Soil Water Conservation Photos", property: "soilWaterConservationPhotos" }
 ];
 
 const UploadedFilesTab = ({ report }: UploadedFilesTabProps) => {

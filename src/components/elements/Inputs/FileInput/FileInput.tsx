@@ -87,7 +87,7 @@ const FileInput = (props: FileInputProps) => {
 
     if (output.length > 0)
       return t("Upload File {additionalInfo}", { additionalInfo: `(${output.join(", ") + maxFileSizeInfo})` });
-    else return "Upload File";
+    else return t("Upload File");
   }, [t, accept, props.maxFileSize]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

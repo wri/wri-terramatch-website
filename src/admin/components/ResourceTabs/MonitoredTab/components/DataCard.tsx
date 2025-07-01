@@ -837,7 +837,7 @@ const DataCard = ({
     treeCover: {},
     treeCoverLoss: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
@@ -849,7 +849,7 @@ const DataCard = ({
     },
     treeCoverLossFires: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
@@ -999,7 +999,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 2}>
-            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} />
+            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} record={record} />
           </When>
         </div>
       </div>

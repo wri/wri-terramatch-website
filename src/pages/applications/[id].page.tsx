@@ -24,7 +24,8 @@ const ApplicationPage = () => {
   } = useGetV2ApplicationsUUID<{ data: ApplicationRead }>({
     pathParams: {
       uuid
-    }
+    },
+    queryParams: { lang: router.locale }
   });
   const application = applicationData?.data;
   const currentSubmission = (application?.form_submissions ?? []).find(

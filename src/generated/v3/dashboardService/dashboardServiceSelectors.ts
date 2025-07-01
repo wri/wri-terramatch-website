@@ -6,30 +6,34 @@ import {
   GetTreeRestorationGoalVariables
 } from "./dashboardServiceComponents";
 
+export const GET_TOTAL_SECTION_HEADERS_URL = "/dashboard/v3/totalSectionHeaders";
+
 export const getTotalSectionHeadersIsFetching = (variables: Omit<GetTotalSectionHeadersVariables, "body">) =>
   isFetchingSelector<GetTotalSectionHeadersQueryParams, {}>({
-    url: "/dashboard/v3/totalSectionHeaders",
+    url: GET_TOTAL_SECTION_HEADERS_URL,
     method: "get",
     ...variables
   });
 
 export const getTotalSectionHeadersFetchFailed = (variables: Omit<GetTotalSectionHeadersVariables, "body">) =>
   fetchFailedSelector<GetTotalSectionHeadersQueryParams, {}>({
-    url: "/dashboard/v3/totalSectionHeaders",
+    url: GET_TOTAL_SECTION_HEADERS_URL,
     method: "get",
     ...variables
   });
 
+export const GET_TREE_RESTORATION_GOAL_URL = "/dashboard/v3/treeRestorationGoal";
+
 export const getTreeRestorationGoalIsFetching = (variables: Omit<GetTreeRestorationGoalVariables, "body">) =>
   isFetchingSelector<GetTreeRestorationGoalQueryParams, {}>({
-    url: "/dashboard/v3/treeRestorationGoal",
+    url: GET_TREE_RESTORATION_GOAL_URL,
     method: "get",
     ...variables
   });
 
 export const getTreeRestorationGoalFetchFailed = (variables: Omit<GetTreeRestorationGoalVariables, "body">) =>
   fetchFailedSelector<GetTreeRestorationGoalQueryParams, {}>({
-    url: "/dashboard/v3/treeRestorationGoal",
+    url: GET_TREE_RESTORATION_GOAL_URL,
     method: "get",
     ...variables
   });

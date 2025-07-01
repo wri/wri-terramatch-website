@@ -195,7 +195,7 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
-          formSubmissionOrg={props?.formSubmissionOrg}
+          formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
         ></FormStep>
         <FormFooter
           variant="sticky"

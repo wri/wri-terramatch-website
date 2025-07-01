@@ -11,20 +11,19 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  MediaDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
-  BoundingBoxDto,
+  DemographicDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
   SiteFullDto,
   NurseryLightDto,
   NurseryFullDto,
-  DemographicDto,
   SeedingDto,
   TreeSpeciesDto,
-  MediaDto,
   DisturbanceDto,
   InvasiveDto,
   StrataDto
@@ -37,17 +36,16 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "media",
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
-  "boundingBoxes",
+  "demographics",
   "projects",
   "sites",
   "nurseries",
-  "demographics",
   "seedings",
   "treeSpecies",
-  "media",
   "disturbances",
   "invasives",
   "stratas"
@@ -60,17 +58,16 @@ export type EntityServiceApiResources = {
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  media: StoreResourceMap<MediaDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  boundingBoxes: StoreResourceMap<BoundingBoxDto>;
+  demographics: StoreResourceMap<DemographicDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
-  demographics: StoreResourceMap<DemographicDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
-  media: StoreResourceMap<MediaDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
