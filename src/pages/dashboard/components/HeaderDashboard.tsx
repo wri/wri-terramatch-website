@@ -502,6 +502,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
+                showSelectAll
+                showLabelAsMultiple
                 showClear
                 prefix={
                   <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
@@ -509,22 +511,16 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   </Text>
                 }
                 inputVariant="text-14-semibold"
+                multiSelect
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
+                multipleText={t("Multiple Cohorts")}
                 value={valueForCohort}
                 onChange={(value: OptionValue[]) => {
-                  return setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: value as string[]
-                  }));
+                  handleChange("cohort", value);
                 }}
                 onClear={() => {
-                  setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: []
-                  }));
+                  handleChange("cohort", []);
                 }}
                 options={optionsCohort}
                 optionClassName="hover:bg-grey-200"
