@@ -27,8 +27,6 @@ export const useReportData = async () => {
 
   const [, { data: disturbances }] = useDisturbance({ siteReportUuid: siteReportUuids });
 
-  console.log("disturbances", disturbances);
-
   const [, { associations: plants }] = usePlants({
     entity: "projects",
     uuid: record?.id,
