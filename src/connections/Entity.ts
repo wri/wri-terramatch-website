@@ -1,4 +1,10 @@
-import { ApiConnectionFactory, EnabledProp, FilterProp, IdProps } from "@/connections/util/apiConnectionFactory";
+import {
+  ApiConnectionFactory,
+  EnabledProp,
+  FilterProp,
+  IdProp,
+  SideloadsProp
+} from "@/connections/util/apiConnectionFactory";
 import {
   entityDelete,
   entityGet,
@@ -75,9 +81,8 @@ type EntityIndexFilter = Omit<
 
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<EntityIndexFilter> &
-  EnabledProp & {
-    sideloads?: EntityIndexQueryParams["sideloads"];
-  };
+  EnabledProp &
+  SideloadsProp<EntityIndexQueryParams["sideloads"]>;
 
 export type SupportedEntity = EntityGetPathParams["entity"];
 
@@ -87,7 +92,7 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
   entity: U["type"],
   requireFullEntity: boolean = true
 ) => {
-  const pathParamsFactory = ({ id }: IdProps) => (id == null ? undefined : { pathParams: { entity, uuid: id } });
+  const pathParamsFactory = ({ id }: IdProp) => (id == null ? undefined : { pathParams: { entity, uuid: id } });
   const factory = requireFullEntity
     ? ApiConnectionFactory.singleFullResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory)
     : ApiConnectionFactory.singleResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory);
@@ -110,9 +115,7 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
   )
     .pagination()
     .filters<EntityIndexFilter>()
-    .addProps<{ sideloads?: EntityIndexQueryParams["sideloads"] }>(({ sideloads }) => ({
-      queryParams: { sideloads }
-    }))
+    .sideloads()
     .enabledFlag()
     .refetch(() => ApiSlice.pruneIndex(entity, ""))
     .fetchFailure(entityIndexFetchFailed)

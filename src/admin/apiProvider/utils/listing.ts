@@ -3,11 +3,14 @@ import { DataProvider, DeleteManyParams, DeleteParams, GetListParams, GetListRes
 import { EntityFullDto, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
 import {
   DataConnection,
-  IdProps,
+  FilterProp,
+  IdProp,
   IndexConnection,
-  LoadFailureConnection
+  LoadFailureConnection,
+  SideloadsProp
 } from "@/connections/util/apiConnectionFactory";
 import { JsonApiResource } from "@/store/apiSlice";
+import { PaginatedConnectionProps } from "@/types/connection";
 
 import { v3ErrorForRA } from "./error";
 
@@ -27,8 +30,8 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
   return replace.replaceWith;
 };
 
-export const raConnectionProps = (params: GetListParams) => {
-  const queryParams: EntityIndexConnectionProps = {
+export const raConnectionProps = <FilterType, SideloadType>(params: GetListParams) => {
+  const queryParams: PaginatedConnectionProps & FilterProp<FilterType> & SideloadsProp<SideloadType> = {
     pageSize: params.pagination.perPage,
     pageNumber: params.pagination.page,
     filter: params.filter
@@ -98,11 +101,6 @@ interface ApiListResponse {
   included?: JsonApiResource[];
 }
 
-export const entitiesListResult = <T extends EntityLightDto>({ data, indexTotal }: IndexConnection<T>) => ({
-  data: data?.map(entity => ({ ...entity, id: entity.uuid })),
-  total: indexTotal
-});
-
 export const apiListResponseToRAListResult = (response: ApiListResponse): GetListResult => ({
   data: response?.data?.map(item => ({ ...item, id: item.uuid })) || [],
   total: (response?.meta?.total || response?.data?.length) as number,
@@ -116,7 +114,7 @@ type EntityListLoader<DTO extends EntityLightDto> = (
   props: EntityIndexConnectionProps
 ) => Promise<IndexConnection<DTO> & LoadFailureConnection>;
 type EntitySingleLoader<DTO extends EntityFullDto> = (
-  props: IdProps
+  props: IdProp
 ) => Promise<DataConnection<DTO> & LoadFailureConnection>;
 type EntityDeleter = (id: string) => Promise<void>;
 

@@ -32,9 +32,14 @@ type UpdateConnection<UpdateAttributes> = {
   update: (attributes: UpdateAttributes) => void;
 };
 
-export type IdProps = { id?: string };
-export type IdsProps = { ids?: string[] };
+type Sideloads<Variables extends QueryVariables> = Required<Variables>["queryParams"] extends { sideloads?: infer T }
+  ? T
+  : never;
+
+export type IdProp = { id?: string };
+export type IdsProp = { ids?: string[] };
 export type FilterProp<Filters> = { filter?: Filters };
+export type SideloadsProp<SideloadsType> = { sideloads?: SideloadsType };
 export type EnabledProp = {
   /**
    * The connection will count as loaded if this value is explicitly set to false, preventing any API
@@ -70,18 +75,18 @@ type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
 
 const resourceSelector =
-  ({ id }: IdProps, _: unknown, resource: ResourceType) =>
+  ({ id }: IdProp, _: unknown, resource: ResourceType) =>
   (store: ApiDataStore) =>
     id == null ? undefined : store[resource][id];
 
 const resourceAttributesSelector =
   <DTO>() =>
-  (props: IdProps, variablesFactory: unknown, resource: ResourceType) =>
+  (props: IdProp, variablesFactory: unknown, resource: ResourceType) =>
     createSelector([resourceSelector(props, variablesFactory, resource)], resource => ({
       data: resource?.attributes as DTO | undefined
     }));
 
-const resourceRelationshipsSelector = (props: IdProps, variablesFactory: unknown, resource: ResourceType) =>
+const resourceRelationshipsSelector = (props: IdProp, variablesFactory: unknown, resource: ResourceType) =>
   createSelector([resourceSelector(props, variablesFactory, resource)], resource => resource?.relationships);
 
 const indexDataSelector =
@@ -175,9 +180,9 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   static singleResource<DTO, Variables extends QueryVariables>(
     resource: ResourceType,
     fetcher: Fetcher<Variables>,
-    variablesFactory: VariablesFactory<Variables, IdProps>
+    variablesFactory: VariablesFactory<Variables, IdProp>
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
       resource,
       fetcher: (props, variablesFactory) => {
         const variables = variablesFactory(props);
@@ -188,7 +193,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       selectors: [resourceAttributesSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
-        ({ id }: IdProps) =>
+        ({ id }: IdProp) =>
           id ?? ""
     });
   }
@@ -201,9 +206,9 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   static singleFullResource<DTO extends { lightResource: boolean }, Variables extends QueryVariables>(
     resource: ResourceType,
     fetcher: Fetcher<Variables>,
-    variablesFactory: VariablesFactory<Variables, IdProps>
+    variablesFactory: VariablesFactory<Variables, IdProp>
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProps>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
       resource,
       fetcher: (props, variablesFactory) => {
         const variables = variablesFactory(props);
@@ -214,7 +219,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       selectors: [resourceAttributesSelector<DTO>()],
       selectorCacheKeyFactory:
         () =>
-        ({ id }: IdProps) =>
+        ({ id }: IdProp) =>
           id ?? ""
     });
   }
@@ -262,7 +267,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
    * Creates a connection that does no fetching; it simply pulls a list of resources by ID from the cache.
    */
   static list<DTO>(resource: ResourceType) {
-    return new ApiConnectionFactory<never, ListConnection<DTO>, IdsProps>({
+    return new ApiConnectionFactory<never, ListConnection<DTO>, IdsProp>({
       resource,
       selectors: [
         ({ ids }, _, resource) => {
@@ -312,7 +317,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   public isDeleted() {
-    return this.chain<IsDeletedConnection, IdProps & Props>({
+    return this.chain<IsDeletedConnection, IdProp & Props>({
       isLoaded: ({ isDeleted }) => isDeleted,
       selectors: [
         ({ id }, _, resource) => {
@@ -351,10 +356,16 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     return this.addProps<FilterProp<FilterFields>>(({ filter }) => ({ queryParams: filter ?? {} } as Variables));
   }
 
+  /**
+   * Adds an "enabled" connection prop so that the final connection can be disabled easily via props.
+   */
   public enabledFlag() {
     return this.addProps<EnabledProp>(undefined, (_, { enabled }) => enabled === false);
   }
 
+  /**
+   * Adds a no-arg refetch() method to the final connection shape that calls the provided refetch method under the hood.
+   */
   public refetch(refetch: (props: Props) => void) {
     return this.chain<RefetchConnection, Props>({
       selectors: [
@@ -368,12 +379,15 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     });
   }
 
+  /**
+   * Adds an update method and update progress / failure members to the final selected connection shape.
+   */
   public update<U extends UpdateData>(
     updateFetcher: Fetcher<Variables & UpdateBody<U>>,
     updateInProgress: InProgressSelector<Variables>,
     updateFailed: FailureSelector<Variables>
   ) {
-    return this.chain<UpdateConnection<UpdateAttributes<U>>, IdProps & Props>({
+    return this.chain<UpdateConnection<UpdateAttributes<U>>, IdProp & Props>({
       selectors: [
         (props, variablesFactory, resource) => {
           const variables = variablesFactory(props);
@@ -402,6 +416,17 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
+   * Extracts the type of the sideloads query param from the Variables generic parameter on the factory
+   * and adds that type to the connection props for addition to the final query.
+   */
+  public sideloads() {
+    return this.addProps<SideloadsProp<Sideloads<Variables>>>(({ sideloads }) => {
+      const queryParams: Variables["queryParams"] = { sideloads };
+      return { queryParams } as Variables;
+    });
+  }
+
+  /**
    * Adds a prop type to the connection
    * @param addVariablesFactory The method that should modify how the request variables are generated
    *   based on the new props.
@@ -412,7 +437,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     addVariablesFactory?: PartialVariablesFactory<Variables, AddProps>,
     isLoaded?: LoadedPredicate<Selected, AddProps>
   ) {
-    return this.chain<Selected, Props & AddProps>({
+    return this.chain<Selected, AddProps>({
       variablesFactory: addVariablesFactory,
       isLoaded
     });
@@ -424,7 +449,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
    *   connection factory, and must return the shape indicated by the AddSelected generic parameter.
    */
   public addRelationshipData<AddSelected>(selector: (relationships?: Relationships) => AddSelected) {
-    return this.chain<AddSelected, IdProps>({
+    return this.chain<AddSelected, IdProp>({
       selectors: [
         (props, variablesFactory, resource) =>
           createSelector([resourceRelationshipsSelector(props, variablesFactory, resource)], selector)

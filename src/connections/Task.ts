@@ -2,6 +2,7 @@ import {
   taskGet,
   TaskGetVariables,
   taskIndex,
+  TaskIndexQueryParams,
   TaskIndexVariables,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
@@ -17,6 +18,8 @@ import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
+type TaskIndexFilter = Omit<TaskIndexQueryParams, "page[size]" | "page[number]" | "sort[field]" | "sort[direction]">;
+
 export const taskIndexConnection = ApiConnectionFactory.index<TaskLightDto, TaskIndexVariables>(
   "tasks",
   taskIndex,
@@ -24,11 +27,7 @@ export const taskIndexConnection = ApiConnectionFactory.index<TaskLightDto, Task
 )
   .pagination()
   .fetchFailure(taskIndexFetchFailed)
-  .filters({
-    status: "string",
-    frameworkKey: "string",
-    projectUuid: "string"
-  })
+  .filters<TaskIndexFilter>()
   .buildConnection();
 
 const taskConnection = ApiConnectionFactory.singleFullResource<TaskFullDto, TaskGetVariables>(

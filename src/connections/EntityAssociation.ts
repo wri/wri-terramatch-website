@@ -73,9 +73,7 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(as
     .fetchFailure(entityAssociationIndexFetchFailed)
     .pagination()
     .filters<AssociationIndexFilter>()
-    .addProps<SideloadsProp>(({ sideloads }) => ({
-      queryParams: { sideloads }
-    }))
+    .sideloads()
     .refetch(({ uuid }) => {
       if (uuid != null) ApiSlice.pruneIndex(association, uuid);
     })
