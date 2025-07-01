@@ -16,7 +16,7 @@ import {
 } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
 
-export const useReportData = async () => {
+export const useReportData = () => {
   const { record } = useShowContext();
   const dataProvider = useDataProvider();
   const [sites, setSites] = useState<Site[]>([]);
