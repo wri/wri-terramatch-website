@@ -1,7 +1,7 @@
-import lo from "lodash";
+import { omit } from "lodash";
 import { DataProvider } from "react-admin";
 
-import { ImpactStoriesConnection, loadImpactStories, loadImpactStory } from "@/connections/ImpactStory";
+import { loadImpactStories, loadImpactStory } from "@/connections/ImpactStory";
 import {
   DeleteV2AdminImpactStoriesIdError,
   fetchDeleteV2AdminImpactStoriesId,
@@ -12,35 +12,28 @@ import {
   PostV2AdminImpactStoriesError,
   PutV2AdminImpactStoriesIdError
 } from "@/generated/apiComponents";
-import { ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
-export interface ImpactStoriesDataProvider extends DataProvider {
-  export: (resource: string) => Promise<void>;
-}
-
-const impactStoriesListResult = ({ data, indexTotal }: ImpactStoriesConnection) => ({
-  data: data?.map((impactStory: ImpactStoryLightDto) => ({ ...impactStory, id: impactStory.uuid })),
-  total: indexTotal ?? 0
-});
-// @ts-ignore
-export const impactStoriesDataProvider: DataProvider = {
+export const impactStoriesDataProvider: Partial<DataProvider> = {
   //@ts-ignore
   async getList(_, params) {
     const connection = await loadImpactStories(raConnectionProps(params));
-    if (connection.fetchFailure != null) {
-      throw v3ErrorForRA("Site report index fetch failed", connection.fetchFailure);
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Site report index fetch failed", connection.loadFailure);
     }
-    return impactStoriesListResult(connection);
+    return {
+      data: connection.data?.map(story => ({ ...story, id: story.uuid })),
+      total: connection.indexTotal ?? 0
+    };
   },
   // @ts-ignore
   async getOne(_, params) {
-    const { requestFailed, impactStory } = await loadImpactStory({ uuid: params.id });
-    if (requestFailed != null) {
-      throw v3ErrorForRA("Project Pitch get fetch failed", requestFailed);
+    const { loadFailure, data: impactStory } = await loadImpactStory({ id: params.id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Project Pitch get fetch failed", loadFailure);
     }
 
     return { data: { ...impactStory, id: impactStory?.uuid } };
@@ -48,7 +41,7 @@ export const impactStoriesDataProvider: DataProvider = {
   //@ts-ignore
   async create(__, params) {
     const uploadKeys = ["thumbnail"];
-    const body: any = lo.omit(params.data, uploadKeys);
+    const body: any = omit(params.data, uploadKeys);
     try {
       const response = await fetchPostV2AdminImpactStories({
         body: body
@@ -69,7 +62,7 @@ export const impactStoriesDataProvider: DataProvider = {
   async update(__, params) {
     const uuid = params.id as string;
     const uploadKeys = ["thumbnail"];
-    const body = lo.omit(params.data, uploadKeys);
+    const body = omit(params.data, uploadKeys);
 
     try {
       await handleUploads(params, uploadKeys, {

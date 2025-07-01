@@ -1,11 +1,10 @@
-import { createSelector } from "reselect";
-
 import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
 import {
   impactStoryGet,
   ImpactStoryGetVariables,
   impactStoryIndex,
-  ImpactStoryIndexQueryParams
+  ImpactStoryIndexQueryParams,
+  ImpactStoryIndexVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ImpactStoryFullDto, ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
@@ -14,120 +13,31 @@ import {
   impactStoryIndexFetchFailed,
   impactStoryIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { getStableQuery } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
-
-const impactStoriesSelector = ({ impactStories }: ApiDataStore) => impactStories;
 
 const impactStoryConnection = ApiConnectionFactory.singleFullResource<ImpactStoryFullDto, ImpactStoryGetVariables>(
   "impactStories",
   impactStoryGet,
-  ({ id }) => ({ pathParams: { uuid: id } })
+  ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
 )
   .fetchFailure(impactStoryGetFetchFailed)
   .fetchInProgress(impactStoryGetIsFetching)
   .buildConnection();
 
-export type ImpactStoriesConnection = {
-  fetchFailure: PendingErrorState | null;
-  data?: ImpactStoryLightDto[];
-  indexTotal?: number;
-};
-
-type ImpactStoryIndexFilterKey = keyof Omit<
+type ImpactStoryIndexFilter = Omit<
   ImpactStoryIndexQueryParams,
-  | "page[size]"
-  | "page[number]"
-  | "sort[field]"
-  | "sort[direction]"
-  | "country"
-  | "programmesType[]"
-  | "cohort"
-  | "landscapes"
-  | "organisationType[]"
-  | "projectUuid"
+  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
 >;
 
-export type ImpactStoryIndexConnectionProps = {
-  pageSize?: number;
-  pageNumber?: number;
-  sortField?: string;
-  sortDirection?: "ASC" | "DESC";
-  filter?: Partial<Record<ImpactStoryIndexFilterKey, string>>;
-  country?: string;
-  status?: string;
-  organizationType?: ("for-profit-organization" | "non-profit-organization")[];
-  projectUuid?: string;
-  category?: string;
-};
-
-const impactStoryIndexQuery = (props?: ImpactStoryIndexConnectionProps) => {
-  const queryParams = {
-    "page[number]": props?.pageNumber,
-    "page[size]": props?.pageSize
-  } as ImpactStoryIndexQueryParams;
-  if (props?.sortField != null) {
-    queryParams["sort[field]"] = props.sortField;
-    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
-  }
-  if (props?.filter != null) {
-    for (const [key, value] of Object.entries(props.filter)) {
-      (queryParams as Record<string, string | number | undefined>)[key] = value;
-    }
-  }
-  if (props?.country != null) {
-    queryParams["country"] = props.country;
-  }
-  if (props?.organizationType) {
-    queryParams["organisationType[]"] = props.organizationType;
-  }
-  if (props?.projectUuid != null) {
-    queryParams["projectUuid"] = props.projectUuid;
-  }
-  if (props?.category != null) {
-    queryParams["category"] = props.category as any;
-  }
-  return queryParams;
-};
-
-const indexCacheKey = (props: ImpactStoryIndexConnectionProps) => getStableQuery(impactStoryIndexQuery(props));
-
-const impactStoriesIndexParams = (props?: ImpactStoryIndexConnectionProps) => ({
-  queryParams: impactStoryIndexQuery(props)
-});
-
-const impactStoriesConnection: Connection<ImpactStoriesConnection, ImpactStoryIndexConnectionProps> = {
-  load: ({ data }, props) => {
-    if (!data) impactStoryIndex(impactStoriesIndexParams(props));
-  },
-
-  isLoaded: ({ data }) => data !== undefined,
-  selector: selectorCache(
-    props => indexCacheKey(props),
-    props =>
-      createSelector(
-        [
-          impactStoryIndexIndexMeta("impactStories", impactStoriesIndexParams(props)),
-          impactStoryIndexFetchFailed(impactStoriesIndexParams(props)),
-          impactStoriesSelector
-        ],
-        (indexMeta, fetchFailure, selector) => {
-          if (indexMeta == null) return { fetchFailure };
-
-          const entities = [] as ImpactStoryLightDto[];
-          for (const id of indexMeta.ids) {
-            if (selector[id] == null) return { fetchFailure };
-            entities.push(selector[id].attributes);
-          }
-
-          return { data: entities, indexTotal: indexMeta.total, fetchFailure };
-        }
-      )
-  )
-};
+const impactStoriesConnection = ApiConnectionFactory.index<ImpactStoryLightDto, ImpactStoryIndexVariables>(
+  "impactStories",
+  impactStoryIndex,
+  impactStoryIndexIndexMeta
+)
+  .pagination()
+  .filters<ImpactStoryIndexFilter>()
+  .fetchFailure(impactStoryIndexFetchFailed)
+  .buildConnection();
 
 export const useImpactStory = connectionHook(impactStoryConnection);
 export const useImpactStories = connectionHook(impactStoriesConnection);

@@ -330,9 +330,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const ModalStoryOpen = async (storyData: any) => {
     try {
       showLoader();
-      const { requestFailed, impactStory } = await loadImpactStory({ uuid: storyData.uuid });
-      if (requestFailed || !impactStory) {
-        throw new Error("Failed to fetch story details");
+      const { loadFailure, data: impactStory } = await loadImpactStory({ id: storyData.uuid });
+      if (loadFailure != null) {
+        throw new Error(`Failed to fetch story details: ${loadFailure.message}`);
       }
 
       const fullStory = impactStory as unknown as ImpactStoryFullDto;

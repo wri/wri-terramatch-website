@@ -654,11 +654,13 @@ export const useDashboardData = (filters: any) => {
     }
   }, [generalBbox, centroidsDataProjects]);
 
-  const [, { data: impactStories, fetchFailure }] = useImpactStories({
-    status: "published",
-    country: filters.country?.country_slug,
-    organizationType: filters.organizations ? filters.organizations : [],
-    projectUuid: filters.uuid
+  const [isLoaded, { data: impactStories }] = useImpactStories({
+    filter: {
+      status: "published",
+      country: filters.country?.country_slug,
+      "organisationType[]": filters.organizations ? filters.organizations : [],
+      projectUuid: filters.uuid
+    }
   });
 
   const transformedStories = useMemo(
@@ -713,7 +715,7 @@ export const useDashboardData = (filters: any) => {
     projectBbox: projectBbox,
     generalBbox: generalBboxParsed,
     transformedStories,
-    isLoadingImpactStories: !impactStories && !fetchFailure,
+    isLoadingImpactStories: !isLoaded,
     lastUpdatedAt: dashboardRestorationGoalData?.lastUpdatedAt
   };
 };

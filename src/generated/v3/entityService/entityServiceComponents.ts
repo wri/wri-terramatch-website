@@ -213,6 +213,14 @@ export type ImpactStoryIndexQueryParams = {
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
   category?: string;
+  title?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  createdAt?: string;
+  organisationUuid?: string;
+  uuid?: string;
 };
 
 export type ImpactStoryIndexError = Fetcher.ErrorWrapper<{
