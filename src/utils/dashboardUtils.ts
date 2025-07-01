@@ -498,6 +498,20 @@ export const getCohortName = (cohortKey: string): string | undefined => {
   return cohortNames[cohortKey as keyof typeof cohortNames];
 };
 
+export const getCohortNamesFromArray = (cohortKeys: string[]): string[] => {
+  return cohortKeys.map(key => getCohortName(key)).filter((name): name is string => name !== undefined);
+};
+
+export const getFirstCohortFromArray = (cohort: string[] | null | undefined): string => {
+  return cohort && cohort.length > 0 ? cohort[0] : "";
+};
+
+export const formatCohortDisplay = (cohort: string[] | null | undefined): string => {
+  if (!cohort || cohort.length === 0) return "";
+  if (cohort.length === 1) return getCohortName(cohort[0]) || cohort[0];
+  return getCohortNamesFromArray(cohort).join(", ");
+};
+
 export const isEmptyChartData = (chartType: string, data: any): boolean => {
   if (!data) return false;
   switch (chartType) {

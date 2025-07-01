@@ -16,7 +16,12 @@ import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES }
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import {
+  formatCohortDisplay,
+  formatLabelsVolunteers,
+  parseDataToObjetive,
+  parseHectaresUnderRestorationData
+} from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -191,7 +196,7 @@ const Dashboard = () => {
     lastUpdatedAt
   } = useDashboardData(filters);
 
-  const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
+  const cohortDisplayName = useMemo(() => formatCohortDisplay(projectFullDto?.cohort), [projectFullDto?.cohort]);
 
   const dataToggle = useMemo(
     () => [
@@ -472,7 +477,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              cohort={cohortName}
+              cohort={projectFullDto?.cohort}
               countryData={countryData as CountriesProps}
               projectName={projectFullDto?.name}
               className="pt-0"
@@ -546,7 +551,7 @@ const Dashboard = () => {
                     `Type: ${ORGANIZATIONS_TYPES[projectFullDto?.organisationType as keyof typeof ORGANIZATIONS_TYPES]}`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Cohort: ${cohortName}`)}
+                  {t(`Cohort: ${cohortDisplayName}`)}
                 </Text>
               </div>
             </div>
