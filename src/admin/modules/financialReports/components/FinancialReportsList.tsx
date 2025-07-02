@@ -24,7 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import {
-  getChangeRequestStatusOptions,
+  // getChangeRequestStatusOptions,
   getFinancialReportStatusOptions,
   getReportStatusOptions
 } from "@/constants/options/status";
@@ -58,7 +58,7 @@ const FinancialReportsDataGrid: FC = () => {
           return <CustomChipField label={title} />;
         }}
       />
-      <FunctionField
+      {/* <FunctionField
         source="update_request_status"
         label="Change Request Status"
         sortable={false}
@@ -68,7 +68,7 @@ const FinancialReportsDataGrid: FC = () => {
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
-      />
+      /> */}
       <TextField source="year_of_report" label="Year of Report" />
       <DateField source="due_at" label="Due Date" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
@@ -103,14 +103,14 @@ export const FinancialReportsList: FC = () => {
       source="status"
       choices={optionToChoices(getReportStatusOptions())}
       className="select-page-admin"
-    />,
-    <SelectInput
-      key="updateRequestStatus"
-      label="Change Request Status"
-      source="updateRequestStatus"
-      choices={optionToChoices(getChangeRequestStatusOptions())}
-      className="select-page-admin"
     />
+    // <SelectInput
+    //   key="updateRequestStatus"
+    //   label="Change Request Status"
+    //   source="updateRequestStatus"
+    //   choices={optionToChoices(getChangeRequestStatusOptions())}
+    //   className="select-page-admin"
+    // />
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(

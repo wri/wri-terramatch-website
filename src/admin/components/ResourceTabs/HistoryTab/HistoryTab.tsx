@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { TabbedShowLayout, TabProps } from "react-admin";
+import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { EntityName } from "@/types/common";
@@ -14,24 +14,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: EntityName;
 }
 
-const financialDescriptionsItems = [
-  {
-    label: "2020",
-    description:
-      "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-  },
-  {
-    label: "2021",
-    description:
-      "Strong recovery emerged with 28% revenue growth driven by digital transformation initiatives and pent-up market demand, though increased operational expenses compressed profit margins."
-  }
-];
-
-const financialDocumentsItems = [
-  { year: "2020", files: ["GFW Pro High Level Arch Diagram Feb 2023", "TERRAFUND Reference Letter New"] },
-  { year: "2022", files: [] }
-];
-
 const fundingSourcesItems = [
   { key: "2020", render: 2020 },
   { key: "2021", render: 2021 },
@@ -41,6 +23,16 @@ const fundingSourcesItems = [
 ];
 
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
+  const ctx = useShowContext();
+  const financialCollection = ctx?.record?.financialCollection;
+  const documentsYears = financialCollection
+    ?.filter((financial: any) => financial?.collection == "description-documents")
+    .map((financial: any) => ({ year: financial?.year, files: financial?.documentation }));
+
+  const descriptionYears = financialCollection
+    ?.filter((financial: any) => financial?.collection == "description-documents")
+    .map((financial: any) => ({ label: financial?.year, description: financial?.description }));
+
   return (
     <TabbedShowLayout.Tab label={label ?? "History"} {...rest}>
       <div className="flex flex-col gap-8">
@@ -50,14 +42,14 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           variant="drawer"
           className="rounded-lg bg-white px-6 py-4 shadow-all"
         >
-          <FinancialDocumentsSection files={financialDocumentsItems} />
+          <FinancialDocumentsSection files={documentsYears} />
         </Accordion>
         <Accordion
           title="Descriptions of Financials per Year"
           variant="drawer"
           className="rounded-lg bg-white px-6 py-4 shadow-all"
         >
-          <FinancialDescriptionsSection items={financialDescriptionsItems} />
+          <FinancialDescriptionsSection items={descriptionYears} />
         </Accordion>
         <Accordion
           title="Major Funding Sources by Year"

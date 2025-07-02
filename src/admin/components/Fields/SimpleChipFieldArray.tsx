@@ -5,13 +5,19 @@ import { Choice } from "@/admin/types/common";
 
 interface SimpleChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
   choices: Choice[];
+  valueByPath?: Boolean;
 }
+
+const getValueByPath = (obj: any, path: string) => {
+  return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+};
 
 const SimpleChipFieldArray = (props: SimpleChipFieldArrayProps) => {
   const recordContext = useRecordContext();
+  const sourceValue = props.valueByPath ? getValueByPath(recordContext, props.source!) : recordContext[props.source!];
 
   //fix: RA crashes when null or undefined passed to an arrayField
-  if (!Array.isArray(recordContext[props.source!])) {
+  if (!Array.isArray(sourceValue)) {
     return (
       <Typography component="span" variant="body2">
         {props.emptyText || "Not Provided"}

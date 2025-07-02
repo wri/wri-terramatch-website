@@ -9,7 +9,7 @@ interface IProps {
 const FinancialDocumentsSection: FC<IProps> = ({ files }) => {
   return (
     <div className="flex flex-col gap-4">
-      {files.map(({ year, files }) => (
+      {files?.map(({ year, files }) => (
         <YearSection key={year} year={year} files={files} />
       ))}
     </div>

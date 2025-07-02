@@ -64,29 +64,5 @@ export const ColumnsTableFinancialMetrics: ColumnDef<any>[] = [
     accessorKey: "2026",
     header: "2026",
     enableSorting: false
-  },
-  {
-    id: "2027",
-    accessorKey: "2027",
-    header: "2027",
-    enableSorting: false
-  },
-  {
-    id: "2028",
-    accessorKey: "2028",
-    header: "2028",
-    enableSorting: false
-  },
-  {
-    id: "2029",
-    accessorKey: "2029",
-    header: "2029",
-    enableSorting: false
-  },
-  {
-    id: "2030",
-    accessorKey: "2030",
-    header: "2030",
-    enableSorting: false
   }
 ];

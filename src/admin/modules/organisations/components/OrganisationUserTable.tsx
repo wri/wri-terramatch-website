@@ -29,10 +29,10 @@ const statusMap: { [key: string]: string } = {
   rejected: "rejected"
 };
 
-const OrganisationUserTable = ({ financialReport }: { financialReport?: boolean }) => {
+const OrganisationUserTable = () => {
   const { id } = useParams<"id">();
   const ctx = useShowContext();
-  const orgId = financialReport ? ctx?.record.org_uuid : (id as string);
+  const orgId = ctx?.record.organisation ? ctx?.record.organisation?.uuid : (id as string);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();

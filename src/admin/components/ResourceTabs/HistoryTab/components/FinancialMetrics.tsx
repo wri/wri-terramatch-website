@@ -8,10 +8,41 @@ import { getMonthOptions } from "@/constants/options/months";
 
 import { ColumnsTableFinancialMetrics } from "./ColumnsTableFinancialMetrics";
 
+const COLLECTION_LABELS: Record<string, string> = {
+  revenue: "Revenue",
+  budget: "Budget",
+  expenses: "Expenses",
+  "current-assets": "Current Assets",
+  "current-liabilities": "Current Liabilities",
+  profit: "Profit",
+  "current-ratio": "Current Ratio",
+  "description-documents": "Description Documents"
+};
+
 const FinancialMetrics = () => {
   const ctx = useShowContext();
   const t = useT();
-  const organisationData = ctx.record;
+  const organisationData = ctx.record?.organisation;
+  const financialMetrics = Object.values(
+    ctx.record?.financialCollection?.reduce((acc: any, financial: any) => {
+      if (financial?.collection === "description-documents") {
+        return acc;
+      }
+
+      const collectionLabel = COLLECTION_LABELS[financial.collection] ?? financial.collection;
+      const year = financial.year;
+      const amount = financial.amount;
+
+      if (!acc[collectionLabel]) {
+        acc[collectionLabel] = { financialMetrics: collectionLabel };
+      }
+
+      acc[collectionLabel][year] = `$${Number(amount).toLocaleString()}`;
+
+      return acc;
+    }, {} as Record<string, Record<string, string>>)
+  );
+
   return (
     <div className="rounded-lg bg-white px-6 py-6 shadow-all">
       <div className="mb-5 grid w-[70%] grid-cols-2 gap-6">
@@ -35,70 +66,7 @@ const FinancialMetrics = () => {
       <div className="w-full max-w-[47.8vw] overflow-hidden lg:max-w-[57vw] wide:max-w-[65vw]">
         <Table
           columns={ColumnsTableFinancialMetrics}
-          data={[
-            {
-              financialMetrics: "Revenue & Expenses",
-              isHeader: true
-            },
-            {
-              financialMetrics: "Revenue",
-              2020: "$2,450,000",
-              2021: "$2,450,000",
-              2022: "$2,450,000",
-              2023: "$2,450,000",
-              2024: "$2,450,000",
-              2025: "$2,450,000",
-              2026: "$2,450,000",
-              2027: "$2,450,000",
-              2028: "$2,450,000",
-              2029: "$2,450,000",
-              2030: "$2,450,000"
-            },
-            {
-              financialMetrics: "Expenses",
-              2020: "$2,450,000",
-              2021: "$2,450,000",
-              2022: "$2,450,000",
-              2023: "$2,450,000",
-              2024: "$2,450,000",
-              2025: "$2,450,000",
-              2026: "$2,450,000"
-            },
-            {
-              financialMetrics: "Net Profit",
-              2020: "$2,450,000",
-              2021: "$2,450,000",
-              2022: "$2,450,000",
-              2023: "$2,450,000",
-              2024: "$2,450,000",
-              2025: "$2,450,000",
-              2026: "$2,450,000"
-            },
-            {
-              financialMetrics: "Revenue & Expenses",
-              isHeader: true
-            },
-            {
-              financialMetrics: "Current Assets",
-              2020: "$2,450,000",
-              2021: "$2,450,000",
-              2022: "$2,450,000",
-              2023: "$2,450,000",
-              2024: "$2,450,000",
-              2025: "$2,450,000",
-              2026: "$2,450,000"
-            },
-            {
-              financialMetrics: "Current Liabilities",
-              2020: "$2,450,000",
-              2021: "$2,450,000",
-              2022: "$2,450,000",
-              2023: "$2,450,000",
-              2024: "$2,450,000",
-              2025: "$2,450,000",
-              2026: "$2,450,000"
-            }
-          ]}
+          data={financialMetrics}
           getRowClassName={row => (row.isHeader ? "table-financial-metrics-header" : " table-financial-metrics")}
           variant={VARIANT_TABLE_FINANCIAL_METRICS}
         />

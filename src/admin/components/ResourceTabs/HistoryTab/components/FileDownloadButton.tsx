@@ -4,18 +4,20 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 interface FileDownloadButtonProps {
-  fileName: string;
+  file: any;
   onClick?: () => void;
 }
 
-const FileDownloadButton: FC<FileDownloadButtonProps> = ({ fileName, src, onClick }) => {
+const FileDownloadButton: FC<FileDownloadButtonProps> = ({ file, onClick }) => {
   return (
     <button className="flex items-center gap-2 rounded p-4 shadow-monitored" onClick={onClick}>
       <Icon name={IconNames.FILE} className="h-6 w-6 text-blueCustom-900" />
       <Text variant="text-14-bold" className="w-full truncate text-left text-blueCustom-900">
-        {fileName}
+        {file?.file_name}
       </Text>
-      <Icon name={IconNames.DOWNLOAD} className="h-6 w-6 text-blueCustom-900 opacity-60" />
+      <a href={file?.url} target="_blank" rel="noopener noreferrer">
+        <Icon name={IconNames.DOWNLOAD} className="h-6 w-6 text-blueCustom-900 opacity-60" />
+      </a>
     </button>
   );
 };
