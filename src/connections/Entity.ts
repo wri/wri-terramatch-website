@@ -5,8 +5,8 @@ import {
   IdProp,
   SideloadsProp
 } from "@/connections/util/apiConnectionFactory";
-import { connectedResourceDeleter } from "@/connections/util/connectedResourceDeleter";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   entityDelete,
   entityGet,
@@ -138,7 +138,7 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
 const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectUpdateData>("projects");
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
-export const deleteProject = connectedResourceDeleter(
+export const deleteProject = deleterAsync(
   "projects",
   uuid => entityDeleteFetchFailed(specificEntityParams("projects", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
@@ -152,7 +152,7 @@ export const useProjectIndex = connectionHook(indexProjectConnection);
 const fullSiteConnection = createEntityGetConnection<SiteFullDto, EntityUpdateData>("sites");
 export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);
-export const deleteSite = connectedResourceDeleter(
+export const deleteSite = deleterAsync(
   "sites",
   uuid => entityDeleteFetchFailed(specificEntityParams("sites", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("sites", uuid)))
@@ -165,7 +165,7 @@ export const useSiteIndex = connectionHook(indexSiteConnection);
 const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
 export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
-export const deleteNursery = connectedResourceDeleter(
+export const deleteNursery = deleterAsync(
   "nurseries",
   uuid => entityDeleteFetchFailed(specificEntityParams("nurseries", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseries", uuid)))
@@ -189,7 +189,7 @@ export const loadFullProjectReport = connectionLoader(fullProjectReportConnectio
 export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
-export const deleteProjectReport = connectedResourceDeleter(
+export const deleteProjectReport = deleterAsync(
   "projectReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("projectReports", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("projectReports", uuid)))
@@ -214,7 +214,7 @@ const siteReportListConnection = ApiConnectionFactory.list<SiteReportLightDto>("
  */
 export const useLightSiteReportList = connectionHook(siteReportListConnection);
 export const loadLightSiteReportList = connectionLoader(siteReportListConnection);
-export const deleteSiteReport = connectedResourceDeleter(
+export const deleteSiteReport = deleterAsync(
   "siteReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("siteReports", uuid)))
@@ -241,7 +241,7 @@ const nurseryReportListConnection =
  */
 export const useLightNurseryReportList = connectionHook(nurseryReportListConnection);
 export const loadLightNurseryReportList = connectionLoader(nurseryReportListConnection);
-export const deleteNurseryReport = connectedResourceDeleter(
+export const deleteNurseryReport = deleterAsync(
   "nurseryReports",
   uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),
   uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseryReports", uuid)))

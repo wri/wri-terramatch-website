@@ -15,7 +15,7 @@ export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiD
  * condition and will often fail. Therefore, for deletions, we have this utility for handling
  * deletes more gracefully.
  */
-export const connectedResourceDeleter = (
+export const deleterAsync = (
   type: ResourceType,
   fetchFailedSelector: (id: string) => (store: ApiDataStore) => PendingErrorState | null,
   deleteFetch: (id: string) => void

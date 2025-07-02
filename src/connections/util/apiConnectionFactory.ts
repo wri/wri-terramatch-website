@@ -1,7 +1,7 @@
 import { assign, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
-import { resourcesDeletedSelector } from "@/connections/util/connectedResourceDeleter";
+import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
 import { FetchParams, getStableQuery } from "@/generated/v3/utils";
 import {
   ApiDataStore,

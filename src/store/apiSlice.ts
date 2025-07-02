@@ -24,18 +24,19 @@ import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 
-export type PendingErrorState = {
+export type PendingError = {
   statusCode: number;
   message: string;
   error?: string;
 };
+export type PendingErrorState = PendingError & { requestId: string };
 
 export const isPendingErrorState = (error: unknown): error is PendingErrorState =>
   error != null && isNumber((error as PendingErrorState).statusCode) && isString((error as PendingErrorState).message);
 
-export type Pending = true | PendingErrorState;
+export type Pending = string | PendingErrorState;
 
-export const isInProgress = (pending?: Pending) => pending === true;
+export const isInProgress = (pending?: Pending) => isString(pending);
 
 export const isErrorState = (pending?: Pending): pending is PendingErrorState =>
   pending != null && !isInProgress(pending);
@@ -52,14 +53,12 @@ export type ApiFilteredIndexCache = {
   total?: number;
 };
 
-// This one is a map of resource -> queryString -> page number -> list of ids from that page.
-export type ApiIndexStore = {
-  [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
-};
-
-type ApiDeletedStore = {
-  [key in ResourceType]: string[];
-};
+// Mapping of resource -> queryString -> page number -> list of ids from that page.
+export type ApiIndexStore = Record<ResourceType, Record<string, Record<number, ApiFilteredIndexCache>>>;
+// Mapping of ResourceType to an array of ids that have been deleted.
+type ApiDeletedStore = Record<ResourceType, string[]>;
+// Mapping of request id to an array of ids that were created.
+type ApiCreatedStore = Record<string, string[]>;
 
 type AttributeValue = string | number | boolean;
 type Attributes = {
@@ -150,6 +149,8 @@ export type ApiDataStore = ApiResources & {
 
     deleted: ApiDeletedStore;
 
+    created: ApiCreatedStore;
+
     /** Is snatched and stored by middleware when a users/me request completes. */
     meUserId?: string;
   };
@@ -183,17 +184,20 @@ export const INITIAL_STATE = {
     deleted: RESOURCES.reduce(
       (acc, resource) => ({ ...acc, [resource]: [] as string[] }),
       {} as Partial<ApiDeletedStore>
-    )
+    ),
+
+    created: {} as ApiCreatedStore
   }
 } as ApiDataStore;
 
 type ApiFetchStartingProps = {
   url: string;
   method: Method;
+  requestId: string;
 };
 
 type ApiFetchFailedProps = ApiFetchStartingProps & {
-  error: PendingErrorState;
+  error: PendingError;
 };
 
 type ApiFetchSucceededProps = ApiFetchStartingProps & {
@@ -273,17 +277,17 @@ export const apiSlice = createSlice({
 
   reducers: {
     apiFetchStarting: (state, action: PayloadAction<ApiFetchStartingProps>) => {
-      const { url, method } = action.payload;
-      state.meta.pending[method][url] = true;
+      const { url, method, requestId } = action.payload;
+      state.meta.pending[method][url] = requestId;
     },
 
     apiFetchFailed: (state, action: PayloadAction<ApiFetchFailedProps>) => {
-      const { url, method, error } = action.payload;
-      state.meta.pending[method][url] = error;
+      const { url, method, requestId, error } = action.payload;
+      state.meta.pending[method][url] = { ...error, requestId };
     },
 
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
-      const { url, method, response } = action.payload;
+      const { url, method, requestId, response } = action.payload;
 
       if (isLogin(action.payload)) {
         // After a successful login, clear the entire cache; we want all mounted components to
@@ -315,6 +319,8 @@ export const apiSlice = createSlice({
             total: indexMeta.total
           };
         }
+      } else if (method === "POST") {
+        state.meta.created[requestId] = data.map(({ id }) => id);
       }
 
       if (included != null) {

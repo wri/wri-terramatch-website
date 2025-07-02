@@ -3,7 +3,7 @@ import ApiSlice, {
   isErrorState,
   isInProgress,
   Method,
-  PendingErrorState,
+  PendingError,
   ResourceType
 } from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -14,12 +14,14 @@ import {
   researchServiceUrl,
   userServiceUrl
 } from "@/constants/environment";
-import { cloneDeep, Dictionary } from "lodash";
+import { Dictionary } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { DelayedJobDto } from "./jobService/jobServiceSchemas";
 import JobsSlice from "@/store/jobsSlice";
 import { resolveUrl as resolveV3Url } from "./utils";
+import { v4 as uuid } from "uuid";
+
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 type SelectorOptions<TQueryParams, TPathParams> = {
@@ -146,7 +148,7 @@ export const logout = () => {
 export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
 
 async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
-  const actionPayload = { url, method: requestInit.method as Method };
+  const actionPayload = { url, method: requestInit.method as Method, requestId: uuid() };
   ApiSlice.fetchStarting(actionPayload);
 
   try {
@@ -154,7 +156,7 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
 
     if (!response.ok) {
       const error = (await response.json()) as ErrorWrapper<TError>;
-      ApiSlice.fetchFailed({ ...actionPayload, error: error as PendingErrorState });
+      ApiSlice.fetchFailed({ ...actionPayload, error: error as PendingError });
 
       if (url.endsWith("/users/me") && response.status === 401) {
         // If the users/me fetch is unauthorized, our login has timed out and we need to transition
@@ -270,7 +272,7 @@ async function loadJob(
   signal: AbortSignal | undefined,
   delayedJobId: string,
   retries = 3,
-  actionPayload: { url: string; method: Method }
+  actionPayload: { url: string; method: Method; requestId: string }
 ): Promise<JobResult> {
   let response, error;
   try {
@@ -328,7 +330,7 @@ async function loadJob(
 async function processDelayedJob<TData>(
   signal: AbortSignal | undefined,
   delayedJobId: string,
-  actionPayload: { url: string; method: Method }
+  actionPayload: { url: string; method: Method; requestId: string }
 ): Promise<TData> {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();
