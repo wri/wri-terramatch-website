@@ -11445,7 +11445,7 @@ export type ProjectPipeline = {
     id?: number;
     submitted_by?: string;
     program?: string;
-    cohort?: string;
+    cohort?: string[];
     publish_for?: string;
     url?: string;
     /**
@@ -11467,7 +11467,7 @@ export type ProjectPipelinePost = {
   id?: number;
   submitted_by?: string;
   program?: string;
-  cohort?: string;
+  cohort?: string[];
   publish_for?: string;
   url?: string;
 };
