@@ -34,7 +34,7 @@ import {
   SiteReportLightDto,
   TaskLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+// import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -122,7 +122,6 @@ export const TasksList: FC = () => {
     }[]
   >([]);
   const [triggerBulk, setTriggerBulk] = useState(false);
-  // const [completedBulk, setCompletedBulk] = useState<string[]>([]);
 
   const ListDataLogger: FC = () => {
     const { data } = useListContext();
@@ -283,10 +282,9 @@ export const TasksList: FC = () => {
 
             setBulkApprovalTasks(tasksWithSelectedReports);
             setTriggerBulk(true);
-            // setCompletedBulk([]);
             openNotification("success", "Reports approved successfully", "");
             //to update list in modal
-            ApiSlice.pruneCache("tasks", [currentProjectUuid!]);
+            // ApiSlice.pruneIndex("tasks", searchParam);
             closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
             closeModal(ModalId.APPROVE_POLYGONS);
           } catch (error) {
@@ -354,7 +352,6 @@ export const TasksList: FC = () => {
             nurseryReportUuids={task.nursery}
             feedback={task.feedback}
             trigger={triggerBulk}
-            // onDone={uuid => setCompletedBulk(prev => [...prev, uuid])}
             onDone={uuid => console.log(uuid)}
           />
         ))}
