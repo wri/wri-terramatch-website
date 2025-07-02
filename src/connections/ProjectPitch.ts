@@ -12,7 +12,6 @@ import {
   projectPitchIndexFetchFailed,
   projectPitchIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { PendingErrorState } from "@/store/apiSlice";
 import { connectionLoader } from "@/utils/connectionShortcuts";
 
 import { ApiConnectionFactory } from "./util/apiConnectionFactory";
@@ -25,12 +24,6 @@ const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchD
   .isLoading(projectPitchGetIsFetching)
   .loadFailure(projectPitchGetFetchFailed)
   .buildConnection();
-
-export type ProjectsPitchesConnection = {
-  fetchFailure: PendingErrorState | null;
-  data?: ProjectPitchDto[];
-  indexTotal?: number;
-};
 
 type ProjectPitchIndexFilter = Omit<
   ProjectPitchIndexQueryParams,
