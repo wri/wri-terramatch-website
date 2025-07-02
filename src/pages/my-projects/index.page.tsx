@@ -23,7 +23,7 @@ const MyProjectsPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
 
-  const [isLoaded, { entities: projects }] = useProjectIndex({
+  const [isLoaded, { data: projects }] = useProjectIndex({
     sideloads: [
       { entity: "sites", pageSize: DEFAULT_PAGE_SIZE },
       { entity: "nurseries", pageSize: DEFAULT_PAGE_SIZE }

@@ -31,10 +31,10 @@ const NurseryReportDetailPage = () => {
   const { format } = useDate();
   const nurseryReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: nurseryReport }] = useFullNurseryReport({ uuid: nurseryReportUUID });
+  const [isLoaded, { data: nurseryReport }] = useFullNurseryReport({ id: nurseryReportUUID });
 
-  const [, { entity: nursery }] = useFullNursery({ uuid: nurseryReport?.nurseryUuid! });
-  const [, { task }] = useTask({ uuid: nurseryReport?.taskUuid });
+  const [, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
+  const [, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
 
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";

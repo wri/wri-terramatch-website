@@ -69,7 +69,7 @@ const TreeSpeciesDataFetcher: FC<TreeSpeciesDataFetcherProps> = ({
   collection,
   tableType
 }) => {
-  const [, { associations: plants }] = usePlants({ entity, uuid: entityUuid, collection });
+  const [, { data: plants }] = usePlants({ entity, uuid: entityUuid, collection });
   return plants == null ? null : (
     <GoalsDataFetcher {...{ plants, entity, entityUuid, collection, tableType }}>{render}</GoalsDataFetcher>
   );

@@ -10,19 +10,20 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { deleteSite, EntityIndexConnection, indexSiteConnection } from "@/connections/Entity";
+import { deleteSite, indexSiteConnection } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { Selected } from "@/types/connection";
 
 import { ModalId } from "../Modal/ModalConst";
 
 interface SitesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
-  onFetch?: (data: EntityIndexConnection<SiteLightDto>) => void;
+  onFetch?: (data: Selected<typeof indexSiteConnection>) => void;
   alwaysShowPagination?: boolean;
 }
 
@@ -133,8 +134,6 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
     <ConnectionTable
       connection={indexSiteConnection}
       connectionProps={{ filter: { projectUuid: project.uuid } }}
-      dataProp="entities"
-      totalProp="indexTotal"
       onFetch={onFetch}
       variant={VARIANT_TABLE_BORDER_ALL}
       columns={columns}

@@ -17,11 +17,11 @@ const ProjectShowActions: FC = () => {
   const record = useRecordContext();
   if (!record) return null;
   const { uuid, isTest } = record;
-  const [, { entityIsUpdating, update }] = useFullProject({ uuid });
+  const [, { isUpdating, update }] = useFullProject({ id: uuid });
   const refresh = useRefresh();
-  const wasUpdating = usePrevious(entityIsUpdating);
+  const wasUpdating = usePrevious(isUpdating);
 
-  if (wasUpdating && !entityIsUpdating) refresh();
+  if (wasUpdating && !isUpdating) refresh();
 
   const toggleTestStatus = useCallback(() => update({ isTest: !isTest }), [isTest, update]);
 

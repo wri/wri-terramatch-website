@@ -95,7 +95,7 @@ const ProjectDetailPage = () => {
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: project, refetch }] = useFullProject({ uuid: projectUUID });
+  const [isLoaded, { data: project, refetch }] = useFullProject({ id: projectUUID });
 
   return (
     (!isLoaded || project != null) && (

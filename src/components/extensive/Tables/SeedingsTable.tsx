@@ -15,7 +15,7 @@ export interface SeedingsTableProps {
 const SeedingsTable = ({ entity, entityUuid }: SeedingsTableProps) => {
   const t = useT();
 
-  const [, { associations: seedings }] = usePlants<SeedingDto>({ entity, uuid: entityUuid });
+  const [, { data: seedings }] = usePlants<SeedingDto>({ entity, uuid: entityUuid });
   const sortedSeedings = useMemo(() => orderBy(seedings ?? [], ["seedsInSample"], ["desc"]), [seedings]);
 
   const columns = useMemo(

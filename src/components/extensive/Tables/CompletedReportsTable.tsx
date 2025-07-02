@@ -1,85 +1,31 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { FC, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import {
-  EntityIndexConnection,
-  EntityIndexConnectionProps,
-  useNurseryReportIndex,
-  useSiteReportIndex
-} from "@/connections/Entity";
+import { indexNurseryReportConnection, indexSiteReportConnection } from "@/connections/Entity";
 import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { BaseModelNames } from "@/types/common";
 
 interface CompletedReportsTableProps {
-  modelName: BaseModelNames;
+  modelName: "nurseries" | "sites";
   modelUUID: string;
-  onFetch?: (data: EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>) => void;
 }
 
-const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedReportsTableProps) => {
+const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, modelUUID }) => {
   const t = useT();
   const { format } = useDate();
-  const [tableParams, setTableParams] = useState<EntityIndexConnectionProps>({});
 
-  const statusActionsMap = {
-    ["nurseries" as BaseModelNames]: {
-      queryParam: { nurseryUuid: modelUUID },
-      hookReportIndex: useNurseryReportIndex
-    },
-    ["sites" as BaseModelNames]: {
-      queryParam: { siteUuid: modelUUID },
-      hookReportIndex: useSiteReportIndex
-    }
-  };
-
-  const entityIndexQueryParams = {
-    filter: statusActionsMap?.[modelName!]?.queryParam,
-    ...tableParams
-  };
-  const hookReportIndex = statusActionsMap?.[modelName!]?.hookReportIndex;
-  const [isLoaded, entityReportIndex] = hookReportIndex
-    ? hookReportIndex(entityIndexQueryParams as EntityIndexConnectionProps)
-    : [false, {} as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>];
-
-  useEffect(() => {
-    onFetch?.(entityReportIndex as EntityIndexConnection<NurseryReportLightDto | SiteReportLightDto | any>);
-  }, [entityReportIndex, onFetch]);
-
-  return (
-    <ServerSideTable
-      meta={{
-        last_page:
-          entityReportIndex?.indexTotal && tableParams.pageSize
-            ? Math.ceil(entityReportIndex?.indexTotal / tableParams.pageSize)
-            : 1
-      }}
-      data={entityReportIndex.entities || []}
-      isLoading={!isLoaded}
-      onQueryParamChange={param => {
-        let sortDirection: EntityIndexConnectionProps["sortDirection"], sortField;
-        if (param?.sort) {
-          const startWithMinus = param?.sort.startsWith("-");
-          sortDirection = startWithMinus ? "DESC" : "ASC";
-          sortField = startWithMinus ? (param?.sort as string).substring(1, param?.sort?.length) : param?.sort;
-        }
-        setTableParams({
-          pageNumber: param.page,
-          pageSize: param.per_page,
-          sortDirection,
-          sortField
-        } as EntityIndexConnectionProps);
-      }}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      columns={[
+  const columns = useMemo(
+    () =>
+      [
         {
           accessorKey: "dueAt",
           header: t("Due date"),
@@ -100,7 +46,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
           enableSorting: false,
           cell: props => {
             const reportTitle = props.getValue() as string;
-            const title = props.row.original.title;
+            const title = modelName === "nurseries" ? (props.row.original as NurseryReportLightDto).title : undefined;
 
             return (
               <Text variant="text-14-light" className="whitespace-normal">
@@ -147,9 +93,31 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
             </Button>
           )
         }
-      ]}
-    />
+      ] as ColumnDef<SiteReportLightDto | NurseryReportLightDto>[],
+    [format, modelName, t]
   );
+
+  if (modelName === "sites") {
+    return (
+      <ConnectionTable
+        connection={indexSiteReportConnection}
+        connectionProps={{ filter: { siteUuid: modelUUID } }}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        columns={columns as ColumnDef<SiteReportLightDto>[]}
+      />
+    );
+  } else if (modelName === "nurseries") {
+    return (
+      <ConnectionTable
+        connection={indexNurseryReportConnection}
+        connectionProps={{ filter: { nurseryUuid: modelUUID } }}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        columns={columns as ColumnDef<NurseryReportLightDto>[]}
+      />
+    );
+  } else {
+    throw new Error(`Invalid modelName: ${modelName}`);
+  }
 };
 
 export default CompletedReportsTable;

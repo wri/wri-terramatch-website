@@ -99,7 +99,11 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const entity = handleBaseEntityTrees ? (camelCase(entityName) as EstablishmentEntity) : undefined;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
-  const [establishmentLoaded, { establishmentTrees, previousPlantingCounts }] = useEstablishmentTrees({
+  const {
+    isLoaded: establishmentLoaded,
+    establishmentTrees,
+    previousPlantingCounts
+  } = useEstablishmentTrees({
     entity,
     uuid,
     collection

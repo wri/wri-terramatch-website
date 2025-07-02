@@ -1,67 +1,43 @@
-import { createSelector } from "reselect";
-
-import { treeReportCountsFind } from "@/generated/v3/entityService/entityServiceComponents";
+import {
+  treeReportCountsFind,
+  TreeReportCountsFindVariables
+} from "@/generated/v3/entityService/entityServiceComponents";
 import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
 import { TreeReportCountsDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { treeReportCountsFindFetchFailed } from "@/generated/v3/entityService/entityServiceSelectors";
-import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { useConnection } from "@/hooks/useConnection";
+
+import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
 export type TreeReportCountsEntity =
   | (typeof TreeEntityTypes.REPORT_COUNT_ENTITIES)[number]
   | (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
 
-type TreeReportCountsConnection = {
-  reportCounts?: Exclude<TreeReportCountsDto["reportCounts"], null>[string];
-  establishmentTrees?: Exclude<TreeReportCountsDto["establishmentTrees"], null>[string];
-
-  reportCountsFailed: boolean;
-};
-
 type TreeReportCountProps = {
   entity?: TreeReportCountsEntity;
   uuid?: string;
-  collection?: string;
 };
 
-const treeReportCountsSelector = (entity?: TreeReportCountsEntity, uuid?: string) => (store: ApiDataStore) =>
-  entity == null || uuid == null ? undefined : store.treeReportCounts?.[`${entity}|${uuid}`];
-const treeReportCountsLoadFailed = (entity?: TreeReportCountsEntity, uuid?: string) => (store: ApiDataStore) =>
-  entity == null || uuid == null
-    ? false
-    : treeReportCountsFindFetchFailed({ pathParams: { entity, uuid } })(store) != null;
+const treeReportCountsConnection = ApiConnectionFactory.singleByCustomId<
+  TreeReportCountsDto,
+  TreeReportCountsFindVariables,
+  TreeReportCountProps
+>(
+  "treeReportCounts",
+  treeReportCountsFind,
+  ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+  ({ entity, uuid }) => `${entity}|${uuid}`
+)
+  .loadFailure(treeReportCountsFindFetchFailed)
+  .enabledProp()
+  .buildConnection();
 
-const connectionIsLoaded = (
-  { reportCounts, reportCountsFailed }: TreeReportCountsConnection,
-  { entity, uuid, collection }: TreeReportCountProps
-) => collection == null || entity == null || uuid == null || reportCounts != null || reportCountsFailed;
-
-const treeReportCountsConnection: Connection<TreeReportCountsConnection, TreeReportCountProps> = {
-  load: (connection, props) => {
-    if (!connectionIsLoaded(connection, props)) {
-      treeReportCountsFind({ pathParams: { entity: props.entity!, uuid: props.uuid! } });
-    }
-  },
-
-  isLoaded: connectionIsLoaded,
-
-  selector: selectorCache(
-    ({ entity, uuid, collection }) => `${entity}|${uuid}|${collection}`,
-    ({ entity, uuid, collection }) =>
-      createSelector(
-        [treeReportCountsSelector(entity, uuid), treeReportCountsLoadFailed(entity, uuid)],
-        (countsDto, reportCountsFailed) => {
-          const loadComplete = countsDto?.attributes != null;
-          const reportCounts =
-            collection == null || !loadComplete ? undefined : countsDto.attributes.reportCounts?.[collection] ?? {};
-          const establishmentTrees =
-            collection == null || !loadComplete ? undefined : countsDto.attributes.establishmentTrees?.[collection];
-          return { reportCounts, establishmentTrees, reportCountsFailed };
-        }
-      )
-  )
+export const useTreeReportCounts = ({ entity, uuid, collection }: TreeReportCountProps & { collection?: string }) => {
+  const enabled = collection != null && entity != null && uuid != null;
+  const [isLoaded, { data }] = useConnection(treeReportCountsConnection, { entity, uuid, enabled });
+  return {
+    isLoaded,
+    reportCounts: collection == null ? undefined : data?.reportCounts?.[collection] ?? {},
+    establishmentTrees: collection == null ? undefined : data?.establishmentTrees?.[collection]
+  };
 };
-
-export const useTreeReportCounts = connectionHook(treeReportCountsConnection);

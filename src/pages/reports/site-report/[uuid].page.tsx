@@ -49,10 +49,10 @@ const SiteReportDetailPage = () => {
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: siteReport }] = useFullSiteReport({ uuid: siteReportUUID });
+  const [isLoaded, { data: siteReport }] = useFullSiteReport({ id: siteReportUUID });
 
-  const [, { entity: site }] = useFullSite({ uuid: siteReport?.siteUuid! });
-  const [, { task }] = useTask({ uuid: siteReport?.taskUuid });
+  const [, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
+  const [, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";

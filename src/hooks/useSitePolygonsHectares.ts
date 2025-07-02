@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { SitePolygonIndexConnectionProps, useAllSitePolygons } from "@/connections/SitePolygons";
+import { PolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export interface HectaresData {
@@ -15,7 +15,7 @@ export interface UseSitePolygonsHectaresResult {
   allPolygonsData: SitePolygonLightDto[];
 }
 
-const APPROVED_STATUS: SitePolygonIndexConnectionProps["polygonStatus"] = ["approved"];
+const APPROVED_STATUS: PolygonStatus[] = ["approved"];
 
 export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePolygonsHectaresResult => {
   const [error, setError] = useState<string | null>(null);
@@ -25,9 +25,9 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
     error: fetchError
   } = useAllSitePolygons({
     entityName: "projects",
-    entityUuid: projectUuid ?? "",
-    enabled: !!projectUuid,
-    polygonStatus: APPROVED_STATUS
+    entityUuid: projectUuid ?? undefined,
+    enabled: projectUuid != null,
+    filter: { "polygonStatus[]": APPROVED_STATUS }
   });
 
   const transformPolygonsToHectaresData = useCallback((polygons: SitePolygonLightDto[]): HectaresData => {

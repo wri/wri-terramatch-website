@@ -21,7 +21,7 @@ interface ProjectNurseriesTabProps {
 const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
 
-  const [isLoaded, { entities: nurseries }] = useNurseryIndex({
+  const [isLoaded, { data: nurseries }] = useNurseryIndex({
     filter: { projectUuid: project.uuid },
     pageSize: DEFAULT_PAGE_SIZE,
     pageNumber: 1

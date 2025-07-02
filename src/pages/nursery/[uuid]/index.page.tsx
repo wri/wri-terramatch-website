@@ -19,7 +19,7 @@ const NurseryDetailPage = () => {
   const router = useRouter();
   const nurseryUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: nursery }] = useFullNursery({ uuid: nurseryUUID });
+  const [isLoaded, { data: nursery }] = useFullNursery({ id: nurseryUUID });
 
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>

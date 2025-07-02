@@ -1,8 +1,10 @@
 import { TabProps } from "react-admin";
+
 export interface ReportTabProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   type: string;
 }
+
 export interface ProjectReport {
   id: string;
   uuid: string;
@@ -12,24 +14,6 @@ export interface ProjectReport {
   [key: string]: any;
 }
 
-export interface DemographicEntry {
-  type: string;
-  subtype: string;
-  name: string | null;
-  amount: number;
-}
-export interface IncludedDemographic {
-  type: string;
-  id: string;
-  attributes: {
-    entityType: string;
-    entityUuid: string;
-    uuid: string;
-    type: string;
-    collection: string;
-    entries: DemographicEntry[];
-  };
-}
 export interface DemographicCounts {
   total: number;
   male: number;
@@ -43,10 +27,12 @@ export interface EmploymentDemographicData {
   partTimeJobs: DemographicCounts;
   volunteers: DemographicCounts;
 }
+
 export interface BeneficiaryData {
   beneficiaries: number;
   farmers: number;
 }
+
 export interface Site {
   id: string;
   uuid: string;

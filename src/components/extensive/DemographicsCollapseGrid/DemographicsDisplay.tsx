@@ -110,7 +110,7 @@ const DemographicsDisplay: FC<DemographicsDisplayProps> = ({
   collection,
   variant = GRID_VARIANT_DEFAULT
 }) => {
-  const [loaded, { association: demographic }] = useDemographic({ entity, uuid, type: kebabCase(type), collection });
+  const [loaded, { data: demographic }] = useDemographic({ entity, uuid, type: kebabCase(type), collection });
   const title = useGetDemographicTitle(type, collection);
 
   return !loaded ? null : (

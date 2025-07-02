@@ -87,7 +87,7 @@ const Polygons = (props: IPolygonProps) => {
   } = contextMapArea;
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid });
+  const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
 
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
@@ -127,7 +127,7 @@ const Polygons = (props: IPolygonProps) => {
 
   // If bbox is loaded, use it to fit the map
   useEffect(() => {
-    if (bbox && map.current) {
+    if (bbox != null && map.current) {
       map.current.fitBounds(bbox, {
         padding: 100,
         linear: false

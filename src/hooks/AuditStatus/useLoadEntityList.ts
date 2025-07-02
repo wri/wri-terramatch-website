@@ -46,12 +46,12 @@ export interface EntityListItem {
 
 // Munging the v3 task report data into a shape that works for this very complicated component.
 async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string } }) {
-  const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ uuid: pathParams.uuid });
+  const { projectReportUuid, siteReportUuids, nurseryReportUuids } = await loadTask({ id: pathParams.uuid });
 
   // These data should all be cached from the task load above
-  const { entity: projectReport } = await loadLightProjectReport({ uuid: projectReportUuid });
-  const { entities: siteReports } = await loadLightSiteReportList({ uuids: siteReportUuids });
-  const { entities: nurseryReports } = await loadLightNurseryReportList({ uuids: nurseryReportUuids });
+  const { data: projectReport } = await loadLightProjectReport({ id: projectReportUuid });
+  const { data: siteReports } = await loadLightSiteReportList({ ids: siteReportUuids });
+  const { data: nurseryReports } = await loadLightNurseryReportList({ ids: nurseryReportUuids });
   const listItems: EntityListItem[] = [];
   if (projectReport != null) {
     const { projectName, title, status, uuid } = projectReport;
@@ -154,10 +154,7 @@ const useLoadEntityList = ({
       // @ts-ignore
       pathParams: params
     });
-    const _entityList =
-      entityType == SITE
-        ? (res as { entities: EntityListItem[] }).entities
-        : (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
         entityType: PROJECT_REPORT,

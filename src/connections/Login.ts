@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import {
   AUTH_LOGIN_URL,
@@ -9,7 +10,6 @@ import {
 import { resolveUrl, selectFirstLogin } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 type LoginConnection = {
   isLoggingIn: boolean;

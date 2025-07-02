@@ -6,7 +6,6 @@ export type DisturbanceEntity = "projectReports" | "siteReports" | "sites" | "pr
 export interface DisturbancesTableProps {
   modelName: DisturbanceEntity;
   modelUUID: string;
-  collection?: string;
   visibleRows?: number;
   headerName?: string;
 }
@@ -14,11 +13,10 @@ export interface DisturbancesTableProps {
 const DisturbancesTablePD = ({
   modelName,
   modelUUID,
-  collection,
   visibleRows = 5,
   headerName = "Disturbance Type"
 }: DisturbancesTableProps) => {
-  const [, { associations: disturbances }] = useDisturbances({ entity: modelName, uuid: modelUUID });
+  const [, { data: disturbances }] = useDisturbances({ entity: modelName, uuid: modelUUID });
 
   const processDisturbanceData = (rows: any[]) => {
     if (!rows) return [];

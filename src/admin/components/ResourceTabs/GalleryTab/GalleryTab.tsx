@@ -12,9 +12,9 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
-import { EntityAssociationIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
+import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -37,46 +37,44 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   });
   const resource = entity ?? ctx.resource;
 
-  const queryParams = useMemo(() => {
-    const params: EntityAssociationIndexQueryParams = {
-      "page[number]": pagination.page,
-      "page[size]": pagination.pageSize
-    };
+  const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      const requestFilters: HookFilters<typeof useMedias> = {};
+      if (filter !== "all") {
+        requestFilters.isPublic = filter === "public";
+      } else {
+        requestFilters.isPublic = filters.isPublic;
+      }
+      if (filters.modelType) {
+        requestFilters.modelType = filters.modelType;
+      }
+      requestFilters.search = searchString;
 
-    if (filter !== "all") {
-      params.isPublic = filter === "public";
-    }
-    if (filters.isPublic !== undefined) {
-      params.isPublic = filters.isPublic;
-    }
-    if (filters.modelType) {
-      params.modelType = filters.modelType;
-    }
-    params.search = searchString;
+      if (isGeotagged !== null) {
+        requestFilters.isGeotagged = isGeotagged;
+      }
 
-    if (isGeotagged !== null) {
-      params.isGeotagged = isGeotagged;
-    }
-
-    params["sort[direction]"] = sortOrder;
-
-    return params;
-  }, [
-    filter,
-    filters.isPublic,
-    filters.modelType,
-    isGeotagged,
-    pagination.page,
-    pagination.pageSize,
-    searchString,
-    sortOrder
-  ]);
-
-  const [isLoaded, { associations: mediaList, indexTotal, refetch }] = useMedias({
-    entity: resource as SupportedEntity,
-    uuid: ctx?.record?.uuid,
-    queryParams
-  });
+      return {
+        entity: resource as SupportedEntity,
+        uuid: ctx?.record?.uuid,
+        pageNumber: pagination.page,
+        pageSize: pagination.pageSize,
+        sortDirection: sortOrder,
+        filter: requestFilters
+      };
+    }, [
+      ctx?.record?.uuid,
+      filter,
+      filters.isPublic,
+      filters.modelType,
+      isGeotagged,
+      pagination.page,
+      pagination.pageSize,
+      resource,
+      searchString,
+      sortOrder
+    ])
+  );
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess() {

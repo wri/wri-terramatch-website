@@ -58,9 +58,7 @@ const MapSidePanel = ({
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
 
-  const [, { bbox: selectedPolygonBbox }] = useBoundingBox(
-    selected?.poly_id ? { polygonUuid: selected.poly_id } : undefined
-  );
+  const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
 
   const flyToPolygonBounds = async () => {
     if (!map.current || !selectedPolygonBbox) {
