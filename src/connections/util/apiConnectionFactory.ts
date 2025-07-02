@@ -86,6 +86,13 @@ const resourceSelectorById =
   (store: ApiDataStore) =>
     id == null ? undefined : store[resource][id];
 
+const resourceSelectorByCustomId =
+  <Props>(customIdFactory: (props: Props) => string) =>
+  (props: Props, _: unknown, resource: ResourceType) => {
+    const id = customIdFactory(props);
+    return (store: ApiDataStore) => (id == null ? undefined : store[resource][id]);
+  };
+
 const resourceSelectorByFilter = <
   FilterFields,
   Props extends FilterProp<FilterFields>,
@@ -169,18 +176,13 @@ type SelectorCacheKeyFactory<Variables extends QueryVariables, Props extends Rec
   variablesFactory: VariablesFactory<Variables, Props>
 ) => (props: Props) => string;
 
-type FetcherPrototype<Variables extends QueryVariables, Props extends Record<string, unknown>> = (
-  props: Props,
-  variablesFactory: VariablesFactory<Variables, Props>
-) => void;
-
 type ConnectionPrototype<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = {
   resource: ResourceType;
   selectorCacheKeyFactory: SelectorCacheKeyFactory<Variables, Props>;
   selectors?: SelectorFactory<Variables, Selected, Props>[];
   variablesFactory?: PartialVariablesFactory<Variables, Props>;
   isLoaded?: LoadedPredicate<Selected, Props>;
-  fetcher?: FetcherPrototype<Variables, Props>;
+  fetcher?: Fetcher<Variables>;
 };
 
 const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, unknown>>(
@@ -203,13 +205,7 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
           Log.debug(`[${label}] isLoaded`, { props, result });
           return result;
         },
-  fetcher:
-    fetcher == null
-      ? undefined
-      : (props, variablesFactory) => {
-          Log.debug(`[${label}] Fetching data`, { props, variables: variablesFactory(props) });
-          fetcher(props, variablesFactory);
-        },
+  fetcher,
   selectors,
   resource,
   selectorCacheKeyFactory
@@ -228,10 +224,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
       resource,
-      fetcher: (props, variablesFactory) => {
-        const variables = variablesFactory(props);
-        if (variables != null) fetcher(variables);
-      },
+      fetcher,
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -254,10 +247,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
       resource,
-      fetcher: (props, variablesFactory) => {
-        const variables = variablesFactory(props);
-        if (variables != null) fetcher(variables);
-      },
+      fetcher,
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -268,6 +258,30 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     });
   }
 
+  static singleByCustomId<DTO, Variables extends QueryVariables, Props extends Record<string, unknown>>(
+    resource: ResourceType,
+    fetcher: Fetcher<Variables>,
+    variablesFactory: VariablesFactory<Variables, Props>,
+    customIdFactory: (props: Props) => string
+  ) {
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, Props>({
+      resource,
+      fetcher,
+      isLoaded: ({ data }, props) => {
+        const id = customIdFactory(props);
+        return isEmpty(id) || data != null;
+      },
+      variablesFactory,
+      selectors: [resourceAttributesSelector<DTO, Props, Variables>(resourceSelectorByCustomId(customIdFactory))],
+      selectorCacheKeyFactory: () => props => customIdFactory(props)
+    });
+  }
+
+  /**
+   * Creates a connection that fetches a single resource by using query param filters instead of
+   * a single resource ID. The ID from the BE is expected to be the stable query string as created
+   * by getStableQuery().
+   */
   static singleByFilter<DTO, Variables extends QueryVariables, FilterFields extends Required<Variables>["queryParams"]>(
     resource: ResourceType,
     fetcher: Fetcher<Variables>,
@@ -275,10 +289,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, {}>({
       resource,
-      fetcher: (props, variablesFactory) => {
-        const variables = variablesFactory(props);
-        if (variables != null) fetcher(variables);
-      },
+      fetcher,
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [
@@ -299,10 +310,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   ) {
     return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
       resource,
-      fetcher: (props, variablesFactory) => {
-        const variables = variablesFactory(props);
-        if (variables != null) fetcher(variables);
-      },
+      fetcher,
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [indexDataSelector<DTO, Variables, Props>(resource, indexMetaSelector)],
@@ -334,6 +342,10 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   /**
    * Adds a `loadFailure` property to the connection, using the provided failure selector. If the
    * connection reports a load failure, it counts as loaded.
+   *
+   * This will typically be used on every connection that fetches data. If it is left off, the FE
+   * will keep polling the BE on failure until a successful response is returned, which is not
+   * likely to be the desired behavior.
    */
   public loadFailure(failureSelector: FailureSelector<Variables>) {
     return this.chain<LoadFailureConnection, Props>({
@@ -562,7 +574,15 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       }
 
       connection.load = (selected, props) => {
-        if (!isLoaded(selected, props)) fetcher(props, variablesFactory);
+        if (!isLoaded(selected, props)) {
+          const variables = variablesFactory(props);
+          if (debugLoggingLabel != null) {
+            Log.debug(`[${debugLoggingLabel}] Fetching data`, { props, variables });
+          }
+          if (variables != null) {
+            fetcher(variables);
+          }
+        }
       };
     }
 
@@ -607,7 +627,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         Props & AddProps
       >[],
       resource: this.prototype.resource,
-      fetcher: this.prototype.fetcher as FetcherPrototype<Variables, Props & AddProps>,
+      fetcher: this.prototype.fetcher,
       selectorCacheKeyFactory: this.prototype.selectorCacheKeyFactory as SelectorCacheKeyFactory<
         Variables,
         Props & AddProps

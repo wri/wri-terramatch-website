@@ -25,17 +25,13 @@ const boundingBoxConnection = ApiConnectionFactory.singleByFilter<
   BoundingBoxDto,
   BoundingBoxGetVariables,
   BoundingBoxGetQueryParams
->(
-  "boundingBoxes",
-  boundingBoxGet,
-  // Providing this variables factory will prevent the request from happening if hasValidParams is false.
-  props => (hasValidParams(props.filter) ? {} : undefined)
-)
+>("boundingBoxes", boundingBoxGet)
+  .enabledProp()
   .loadFailure(boundingBoxGetFetchFailed)
   .buildConnection();
 
 export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
-  const result = useConnection(boundingBoxConnection, { filter });
+  const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });
   const { bbox } = result[1].data ?? {};
   return bbox as BBox | undefined;
 };
