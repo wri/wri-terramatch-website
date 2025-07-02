@@ -41,7 +41,7 @@ import OrganisationUserTable from "./OrganisationUserTable";
 
 const OrganisationShowActions: FC = () => {
   const record = useRecordContext();
-  if (!record) return null; // o fallback
+  if (!record) return null;
 
   const { uuid, is_test } = record;
   const refresh = useRefresh();
