@@ -76,11 +76,11 @@ const OverviewMapArea = ({
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
-  const [, { bbox: modelBbox }] = useBoundingBox(
+  const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
-  const [, { bbox: countryBbox }] = useBoundingBox(
+  const countryBbox = useBoundingBox(
     type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
   );
 

@@ -35,9 +35,7 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
     }
   );
 
-  const [, { bbox }] = useBoundingBox({
-    polygonUuid: projectPolygon?.project_polygon?.poly_uuid
-  });
+  const bbox = useBoundingBox({ polygonUuid: projectPolygon?.project_polygon?.poly_uuid });
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {

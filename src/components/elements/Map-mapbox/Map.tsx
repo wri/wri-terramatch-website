@@ -235,7 +235,7 @@ export const MapContainer = ({
   }
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
-  const [, { bbox: polygonBbox }] = useBoundingBox({ polygonUuid: polygonFromMap?.uuid });
+  const polygonBbox = useBoundingBox({ polygonUuid: polygonFromMap?.uuid });
 
   useOnMount(() => {
     initMap(!!isDashboard);

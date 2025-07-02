@@ -54,7 +54,7 @@ const getBaseUrl = (url: string) => {
 export type FetchParamValue = number | string | boolean | null | undefined | FetchParamValue[];
 export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams[]>;
 
-export const getStableQuery = (queryParams?: FetchParams) => {
+export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets = true) => {
   if (queryParams == null) return "";
 
   const keys = Object.keys(queryParams);
@@ -72,11 +72,12 @@ export const getStableQuery = (queryParams?: FetchParams) => {
   }
 
   const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
-  return query.length === 0 ? query : `?${query}`;
+  if (query.length === 0) return query;
+  return `?${replaceEmptyBrackets ? query.replace(/%5B%5D/g, "") : query}`;
 };
 
 const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) => {
-  const query = getStableQuery(queryParams);
+  const query = getStableQuery(queryParams, false);
   return `${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)] as string)}${query}`;
 };
 

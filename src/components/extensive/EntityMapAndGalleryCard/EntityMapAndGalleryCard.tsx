@@ -7,7 +7,6 @@ import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
@@ -113,12 +112,7 @@ const EntityMapAndGalleryCard = ({
     }
   });
 
-  const [, { bbox: bboxArray }] = useBoundingBox(
-    modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID }
-  );
-
-  const mapBbox = bboxArray?.length === 4 ? (bboxArray as BBox) : undefined;
-
+  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({

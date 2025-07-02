@@ -1,78 +1,41 @@
-import { createSelector } from "reselect";
+import { isEmpty } from "lodash";
 
-import { boundingBoxGet } from "@/generated/v3/researchService/researchServiceComponents";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import {
+  boundingBoxGet,
+  BoundingBoxGetQueryParams,
+  BoundingBoxGetVariables
+} from "@/generated/v3/researchService/researchServiceComponents";
 import { BoundingBoxDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { boundingBoxGetFetchFailed } from "@/generated/v3/researchService/researchServiceSelectors";
-import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { useConnection } from "@/hooks/useConnection";
 
-type BoundingBoxConnection = {
-  bbox?: BoundingBoxDto["bbox"];
-  boundingBoxFailed: boolean;
+import { ApiConnectionFactory } from "./util/apiConnectionFactory";
+
+const hasValidParams = ({
+  polygonUuid,
+  siteUuid,
+  projectUuid,
+  landscapes,
+  country
+}: BoundingBoxGetQueryParams = {}): boolean =>
+  !isEmpty(polygonUuid) || !isEmpty(siteUuid) || !isEmpty(projectUuid) || !isEmpty(landscapes) || !isEmpty(country);
+
+const boundingBoxConnection = ApiConnectionFactory.singleByFilter<
+  BoundingBoxDto,
+  BoundingBoxGetVariables,
+  BoundingBoxGetQueryParams
+>(
+  "boundingBoxes",
+  boundingBoxGet,
+  // Providing this variables factory will prevent the request from happening if hasValidParams is false.
+  props => (hasValidParams(props.filter) ? {} : undefined)
+)
+  .loadFailure(boundingBoxGetFetchFailed)
+  .buildConnection();
+
+export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
+  const result = useConnection(boundingBoxConnection, { filter });
+  const { bbox } = result[1].data ?? {};
+  return bbox as BBox | undefined;
 };
-
-type BoundingBoxProps = {
-  polygonUuid?: string;
-  siteUuid?: string;
-  projectUuid?: string;
-  landscapes?: string[];
-  country?: string;
-};
-
-const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, country, landscapes } = props;
-  return [polygonUuid, siteUuid, projectUuid, country, landscapes?.join(",")].filter(Boolean).join(",");
-};
-
-const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
-  const key = getBoundingBoxKey(props);
-  return key == null ? undefined : store.boundingBoxes?.[key];
-};
-
-const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore) => {
-  if (!hasValidParams(props)) return false;
-  return boundingBoxGetFetchFailed({ queryParams: getQueryParams(props) })(store) != null;
-};
-
-const hasValidParams = ({ polygonUuid, siteUuid, projectUuid, landscapes, country }: BoundingBoxProps): boolean =>
-  (polygonUuid != null && polygonUuid !== "") ||
-  (siteUuid != null && siteUuid !== "") ||
-  (projectUuid != null && projectUuid !== "") ||
-  (landscapes?.length ?? 0) > 0 ||
-  (country != null && country !== "");
-
-const getQueryParams = (props: BoundingBoxProps) => {
-  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
-
-  return {
-    polygonUuid,
-    siteUuid,
-    projectUuid,
-    landscapes,
-    country
-  };
-};
-
-const connectionIsLoaded = ({ bbox, boundingBoxFailed }: BoundingBoxConnection, props: BoundingBoxProps) =>
-  !hasValidParams(props) || bbox !== undefined || boundingBoxFailed;
-
-const boundingBoxConnection: Connection<BoundingBoxConnection, BoundingBoxProps> = {
-  load: (connection, props) => {
-    if (!connectionIsLoaded(connection, props) && hasValidParams(props)) {
-      boundingBoxGet({ queryParams: getQueryParams(props) });
-    }
-  },
-
-  isLoaded: connectionIsLoaded,
-
-  selector: selectorCache(getBoundingBoxKey, props =>
-    createSelector([boundingBoxSelector(props), boundingBoxLoadFailed(props)], (boundingBoxData, boundingBoxFailed) => {
-      const bbox = boundingBoxData?.attributes?.bbox;
-      return { bbox, boundingBoxFailed };
-    })
-  )
-};
-
-export const useBoundingBox = connectionHook(boundingBoxConnection);

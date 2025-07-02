@@ -1,58 +1,19 @@
-import { createSelector } from "reselect";
-
+import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
 import {
   getTreeRestorationGoal,
-  GetTreeRestorationGoalQueryParams
+  GetTreeRestorationGoalQueryParams,
+  GetTreeRestorationGoalVariables
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
+import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { getTreeRestorationGoalFetchFailed } from "@/generated/v3/dashboardService/dashboardServiceSelectors";
-import { getStableQuery } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
 import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
 
-import { TreeRestorationGoalDto } from "../generated/v3/dashboardService/dashboardServiceSchemas";
-
-export type TreeRestorationGoalConnectionProps = Partial<GetTreeRestorationGoalQueryParams>;
-
-export type TreeRestorationGoalConnection = {
-  data?: TreeRestorationGoalDto;
-  fetchFailure?: PendingErrorState | null;
-};
-
-const treeRestorationGoalIsLoaded = (connection: TreeRestorationGoalConnection) =>
-  connection.data != null || connection.fetchFailure != null;
-
-const treeRestorationGoalConnection: Connection<TreeRestorationGoalConnection, TreeRestorationGoalConnectionProps> = {
-  load: (connection, props) => {
-    if (!treeRestorationGoalIsLoaded(connection)) {
-      getTreeRestorationGoal({ queryParams: props });
-    }
-  },
-
-  isLoaded: treeRestorationGoalIsLoaded,
-
-  selector: selectorCache(
-    props => getStableQuery(props as GetTreeRestorationGoalQueryParams)?.replace(/%5B%5D/g, ""),
-    props =>
-      createSelector(
-        [
-          (store: ApiDataStore) =>
-            store.treeRestorationGoals?.[
-              getStableQuery(props as GetTreeRestorationGoalQueryParams)?.replace(/%5B%5D/g, "")
-            ]?.attributes,
-          getTreeRestorationGoalFetchFailed({ queryParams: props })
-        ],
-        (treeRestorationGoalData, fetchFailure) => {
-          if (treeRestorationGoalData == null) return { fetchFailure };
-
-          return {
-            data: treeRestorationGoalData as TreeRestorationGoalDto,
-            fetchFailure
-          };
-        }
-      )
-  )
-};
+const treeRestorationGoalConnection = ApiConnectionFactory.singleByFilter<
+  TreeRestorationGoalDto,
+  GetTreeRestorationGoalVariables,
+  GetTreeRestorationGoalQueryParams
+>("treeRestorationGoals", getTreeRestorationGoal)
+  .loadFailure(getTreeRestorationGoalFetchFailed)
+  .buildConnection();
 
 export const useTreeRestorationGoal = connectionHook(treeRestorationGoalConnection);

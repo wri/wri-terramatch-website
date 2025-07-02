@@ -8,6 +8,7 @@ import {
   PendingErrorState,
   Relationships,
   ResourceType,
+  StoreResource,
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
@@ -74,20 +75,42 @@ type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
 ) => Partial<Variables> | undefined;
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
 
-const resourceSelector =
+type ResourceSelector<Props, Variables extends QueryVariables> = (
+  props: Props,
+  variablesFactory: VariablesFactory<Variables, Props>,
+  resource: ResourceType
+) => (store: ApiDataStore) => StoreResource<unknown> | undefined;
+
+const resourceSelectorById =
   ({ id }: IdProp, _: unknown, resource: ResourceType) =>
   (store: ApiDataStore) =>
     id == null ? undefined : store[resource][id];
 
+const resourceSelectorByFilter = <
+  FilterFields,
+  Props extends FilterProp<FilterFields>,
+  Variables extends QueryVariables
+>(
+  props: Props,
+  variablesFactory: VariablesFactory<Variables, Props>,
+  resource: ResourceType
+) => {
+  const variables = variablesFactory(props);
+  if (variables == null) return () => undefined;
+
+  const id = getStableQuery(variables.queryParams as FetchParams);
+  return (store: ApiDataStore) => store[resource][id];
+};
+
 const resourceAttributesSelector =
-  <DTO>() =>
-  (props: IdProp, variablesFactory: unknown, resource: ResourceType) =>
+  <DTO, Props, Variables extends QueryVariables>(resourceSelector: ResourceSelector<Props, Variables>) =>
+  (props: Props, variablesFactory: VariablesFactory<Variables, Props>, resource: ResourceType) =>
     createSelector([resourceSelector(props, variablesFactory, resource)], resource => ({
       data: resource?.attributes as DTO | undefined
     }));
 
 const resourceRelationshipsSelector = (props: IdProp, variablesFactory: unknown, resource: ResourceType) =>
-  createSelector([resourceSelector(props, variablesFactory, resource)], resource => resource?.relationships);
+  createSelector([resourceSelectorById(props, variablesFactory, resource)], resource => resource?.relationships);
 
 const indexDataSelector =
   <DTO, Variables extends QueryVariables, Props>(
@@ -114,6 +137,27 @@ const indexDataSelector =
         return { data, indexTotal: indexMeta.total };
       }
     );
+
+const queryParamCacheKeyFactory =
+  <Variables extends QueryVariables, Props>(variablesFactory: VariablesFactory<Variables, Props>) =>
+  (props: Props) => {
+    const variables = variablesFactory(props);
+    if (variables == null) return "";
+
+    let cacheKey = "";
+    const { pathParams, queryParams } = variables;
+    if (pathParams != null) {
+      cacheKey =
+        Object.keys(pathParams)
+          .sort()
+          .map(key => String(pathParams[key]))
+          .join(":") + ":";
+    }
+    if (queryParams != null) {
+      cacheKey = `${cacheKey}${getStableQuery(queryParams as FetchParams)}`;
+    }
+    return cacheKey;
+  };
 
 type SelectorFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> = (
   props: Props,
@@ -190,7 +234,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
-      selectors: [resourceAttributesSelector<DTO>()],
+      selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProp) =>
@@ -216,12 +260,32 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       },
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
-      selectors: [resourceAttributesSelector<DTO>()],
+      selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
       selectorCacheKeyFactory:
         () =>
         ({ id }: IdProp) =>
           id ?? ""
     });
+  }
+
+  static singleByFilter<DTO, Variables extends QueryVariables, FilterFields extends Required<Variables>["queryParams"]>(
+    resource: ResourceType,
+    fetcher: Fetcher<Variables>,
+    variablesFactory: VariablesFactory<Variables, FilterProp<Variables["queryParams"]>> = () => ({} as Variables)
+  ) {
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, {}>({
+      resource,
+      fetcher: (props, variablesFactory) => {
+        const variables = variablesFactory(props);
+        if (variables != null) fetcher(variables);
+      },
+      isLoaded: ({ data }) => data != null,
+      variablesFactory,
+      selectors: [
+        resourceAttributesSelector<DTO, FilterProp<Variables["queryParams"]>, Variables>(resourceSelectorByFilter)
+      ],
+      selectorCacheKeyFactory: queryParamCacheKeyFactory
+    }).filter<FilterFields>();
   }
 
   /**
@@ -242,24 +306,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [indexDataSelector<DTO, Variables, Props>(resource, indexMetaSelector)],
-      selectorCacheKeyFactory: variablesFactory => props => {
-        const variables = variablesFactory(props);
-        if (variables == null) return "";
-
-        let cacheKey = "";
-        const { pathParams, queryParams } = variables;
-        if (pathParams != null) {
-          cacheKey =
-            Object.keys(pathParams)
-              .sort()
-              .map(key => String(pathParams[key]))
-              .join(":") + ":";
-        }
-        if (queryParams != null) {
-          cacheKey = `${cacheKey}${getStableQuery(queryParams as FetchParams)}`;
-        }
-        return cacheKey;
-      }
+      selectorCacheKeyFactory: queryParamCacheKeyFactory
     });
   }
 
@@ -369,13 +416,13 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   /**
    * Adds a no-arg refetch() method to the final connection shape that calls the provided refetch method under the hood.
    */
-  public refetch(refetch: (props: Props) => void) {
+  public refetch(refetch: (props: Props, variablesFactory: VariablesFactory<Variables, Props>) => void) {
     return this.chain<RefetchConnection, Props>({
       selectors: [
-        props => {
+        (props, variablesFactory) => {
           // It's important for the selector to always return the identical result, regardless of input;
           // otherwise the final createSelector for the connection will recalculate on every state change.
-          const result = { refetch: () => refetch(props) };
+          const result = { refetch: () => refetch(props, variablesFactory) };
           return () => result;
         }
       ]

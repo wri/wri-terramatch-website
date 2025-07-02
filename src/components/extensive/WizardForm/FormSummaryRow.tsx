@@ -63,8 +63,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const entityPolygonData = getEntityPolygonData(record, type, entity);
   let bbox: any;
   if (type === "sites") {
-    const [, { bbox: siteBbox }] = useBoundingBox({ siteUuid: record?.uuid });
-    bbox = siteBbox;
+    bbox = useBoundingBox({ siteUuid: record?.uuid });
   } else {
     bbox = entityPolygonData?.bbox;
   }
@@ -374,7 +373,7 @@ const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) =
       }
     });
     const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
-    const [, { bbox }] = useBoundingBox({ polygonUuid });
+    const bbox = useBoundingBox({ polygonUuid });
     return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid], bbox } : null;
   }
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
@@ -23,7 +24,6 @@ import { createQueryParams } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
-import { BBox } from "./../../../components/elements/Map-mapbox/GeoJSON";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
@@ -122,7 +122,7 @@ export const useDashboardData = (filters: any) => {
     value: 0,
     totalValue: 0
   });
-  const [, { bbox: generalBbox }] = useBoundingBox({
+  const generalBbox = useBoundingBox({
     landscapes: convertNamesToCodes(filters.landscapes),
     country: filters.country.country_slug
   });
@@ -168,12 +168,14 @@ export const useDashboardData = (filters: any) => {
   const { showLoader, hideLoader } = useLoading();
 
   const [isDashboardHeaderLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
-    "programmesType[]": filters.programmes,
-    country: filters.country.country_slug,
-    "organisationType[]": filters.organizations,
-    landscapes: convertNamesToCodes(filters.landscapes),
-    cohort: filters.cohort,
-    projectUuid: filters.uuid
+    filter: {
+      "programmesType[]": filters.programmes,
+      country: filters.country.country_slug,
+      "organisationType[]": filters.organizations,
+      landscapes: convertNamesToCodes(filters.landscapes),
+      cohort: filters.cohort,
+      projectUuid: filters.uuid
+    }
   });
 
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
@@ -224,17 +226,15 @@ export const useDashboardData = (filters: any) => {
     return { centroids, data };
   }, [allPolygonsData]);
 
-  useEffect(() => {
-    console.log("Site Polygons:", allPolygonsData);
-  }, [allPolygonsData]);
-
   const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
-    "programmesType[]": filters.programmes,
-    country: filters.country.country_slug,
-    "organisationType[]": filters.organizations,
-    landscapes: convertNamesToCodes(filters.landscapes),
-    cohort: filters.cohort,
-    projectUuid: filters.uuid
+    filter: {
+      "programmesType[]": filters.programmes,
+      country: filters.country.country_slug,
+      "organisationType[]": filters.organizations,
+      landscapes: convertNamesToCodes(filters.landscapes),
+      cohort: filters.cohort,
+      projectUuid: filters.uuid
+    }
   });
 
   const transformedTreeRestorationGoalData = useMemo(() => {
@@ -489,7 +489,7 @@ export const useDashboardData = (filters: any) => {
     return jobsCreatedData;
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
-  const [, { bbox: projectBbox }] = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
+  const projectBbox = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
   const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
     useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
 
@@ -621,6 +621,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
     } else if (totalSectionHeader != null) {
+      console.log("setting dashboard header", totalSectionHeader);
       setDashboardHeader(prev => [
         {
           ...prev[0],
