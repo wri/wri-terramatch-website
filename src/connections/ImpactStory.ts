@@ -1,4 +1,5 @@
 import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   impactStoryGet,
   ImpactStoryGetVariables,
@@ -13,7 +14,6 @@ import {
   impactStoryIndexFetchFailed,
   impactStoryIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 const impactStoryConnection = ApiConnectionFactory.singleFullResource<ImpactStoryFullDto, ImpactStoryGetVariables>(
   "impactStories",

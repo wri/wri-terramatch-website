@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { connectionHook } from "@/connections/util/connectionShortcuts";
 import { requestPasswordReset, resetPassword } from "@/generated/v3/userService/userServiceComponents";
 import {
   requestPasswordResetFetchFailed,
@@ -9,7 +10,6 @@ import {
 } from "@/generated/v3/userService/userServiceSelectors";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const sendRequestPasswordReset = (emailAddress: string, callbackUrl: string) =>

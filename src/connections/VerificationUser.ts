@@ -1,10 +1,10 @@
 import { createSelector } from "reselect";
 
+import { connectionHook } from "@/connections/util/connectionShortcuts";
 import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServiceSelectors";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectVerificationUser = (store: ApiDataStore) => Object.values(store.verifications)?.[0]?.attributes;

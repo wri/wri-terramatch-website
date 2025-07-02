@@ -5,6 +5,8 @@ import {
   IdProp,
   SideloadsProp
 } from "@/connections/util/apiConnectionFactory";
+import { connectedResourceDeleter } from "@/connections/util/connectedResourceDeleter";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   entityDelete,
   entityGet,
@@ -47,8 +49,6 @@ import {
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { PaginatedConnectionProps } from "@/types/connection";
-import { connectedResourceDeleter } from "@/utils/connectedResourceDeleter";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 export type EntityFullDto =
   | ProjectFullDto

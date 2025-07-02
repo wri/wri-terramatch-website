@@ -1,6 +1,7 @@
 import { assign, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
+import { resourcesDeletedSelector } from "@/connections/util/connectedResourceDeleter";
 import { FetchParams, getStableQuery } from "@/generated/v3/utils";
 import {
   ApiDataStore,
@@ -12,7 +13,6 @@ import {
   StoreResourceMap
 } from "@/store/apiSlice";
 import { Connection, LoadedPredicate, PaginatedConnectionProps, PaginatedQueryParams } from "@/types/connection";
-import { resourcesDeletedSelector } from "@/utils/connectedResourceDeleter";
 import Log from "@/utils/log";
 import { selectorCache } from "@/utils/selectorCache";
 

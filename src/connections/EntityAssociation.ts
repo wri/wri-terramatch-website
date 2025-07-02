@@ -1,6 +1,7 @@
 import { Dictionary } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 
+import { connectionHook, connectionSelector } from "@/connections/util/connectionShortcuts";
 import {
   entityAssociationIndex,
   EntityAssociationIndexPathParams,
@@ -22,7 +23,6 @@ import {
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { Connected, Connection, PaginatedConnectionProps } from "@/types/connection";
-import { connectionHook, connectionSelector } from "@/utils/connectionShortcuts";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 

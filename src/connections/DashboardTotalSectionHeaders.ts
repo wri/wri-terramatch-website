@@ -1,4 +1,5 @@
 import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { connectionHook } from "@/connections/util/connectionShortcuts";
 import {
   getTotalSectionHeaders,
   GetTotalSectionHeadersQueryParams,
@@ -8,7 +9,6 @@ import { TotalSectionHeaderDto } from "@/generated/v3/dashboardService/dashboard
 import { getTotalSectionHeadersFetchFailed } from "@/generated/v3/dashboardService/dashboardServiceSelectors";
 import { getStableQuery } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
-import { connectionHook } from "@/utils/connectionShortcuts";
 
 const totalSectionHeaderConnection = ApiConnectionFactory.singleByFilter<
   TotalSectionHeaderDto,

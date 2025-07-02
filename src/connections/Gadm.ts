@@ -3,10 +3,10 @@ import { Dictionary, difference, filter, isEmpty, merge } from "lodash";
 import { useMemo } from "react";
 import { createSelector } from "reselect";
 
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { PendingErrorState } from "@/store/apiSlice";
 import DataApiSlice, { DataApiStore } from "@/store/dataApiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
 import Log from "@/utils/log";
 import { optionToChoices } from "@/utils/options";

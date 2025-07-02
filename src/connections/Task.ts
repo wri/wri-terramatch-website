@@ -1,3 +1,4 @@
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   taskGet,
   TaskGetVariables,
@@ -14,7 +15,6 @@ import {
   taskUpdateFetchFailed,
   taskUpdateIsFetching
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 
 import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 

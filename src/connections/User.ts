@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   userCreation,
   usersFind,
@@ -16,7 +17,6 @@ import {
 import { selectFirstLogin } from "@/generated/v3/utils";
 import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
 export type ValidLocale = Exclude<UserUpdateAttributes["locale"], null>;

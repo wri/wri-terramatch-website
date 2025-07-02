@@ -1,3 +1,4 @@
+import { connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   projectPitchGet,
   ProjectPitchGetVariables,
@@ -12,7 +13,6 @@ import {
   projectPitchIndexFetchFailed,
   projectPitchIndexIndexMeta
 } from "@/generated/v3/entityService/entityServiceSelectors";
-import { connectionLoader } from "@/utils/connectionShortcuts";
 
 import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
