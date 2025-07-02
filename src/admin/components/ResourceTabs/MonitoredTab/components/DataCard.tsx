@@ -118,16 +118,6 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     },
     meta: { style: { width: "13.65%" } }
   }
-  // Uncomment when LightResoruce for research service is applied
-  // {
-  //   accessorKey: "base_line",
-  //   header: "Baseline",
-  //   cell: (props: any) => {
-  //     const value = props.getValue();
-  //     return format(new Date(value), "dd/MM/yyyy");
-  //   },
-  //   meta: { style: { width: "8.87%" } }
-  // }
 ];
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };

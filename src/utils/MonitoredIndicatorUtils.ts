@@ -213,8 +213,6 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            // TODO: baseline is not currently on the hectares indicator model / table.
-            // base_line: hectares.baseline,
             data: {
               tree_planting: formattedValue(hectares.value?.["tree-planting"], 3),
               assisted_natural_regeneration: formattedValue(hectares.value?.["assisted-natural-regeneration"], 3),
@@ -243,8 +241,6 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            // TODO: baseline is not currently on the hectares indicator model / table.
-            // base_line: hectares.baseline,
             data: data
           };
         }
@@ -254,8 +250,6 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            // TODO: baseline is not currently on the hectares indicator model / table.
-            // base_line: hectares.baseline,
             data: {
               agroforest: formattedValue(hectares.value?.agroforest, 3),
               natural_forest: formattedValue(hectares.value?.["natural-forest"], 3),
