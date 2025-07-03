@@ -6,8 +6,8 @@ import React from "react";
 import { Show, ShowButton, useShowContext } from "react-admin";
 
 import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
-import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -67,7 +67,7 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
       <TableCell>{parentName}</TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
         {/* {t(ReadableStatus[report.status ?? ""])} */}
-        <Status status={report.status as any} variant="small" className="w-fit" />
+        <CustomChipField label={ReadableStatus[report.status ?? ""]} />
       </TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>{t(ReadableStatus[report.updateRequestStatus ?? ""])}</TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
@@ -171,6 +171,7 @@ function ShowReports() {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            closeModal(ModalId.APPROVE_POLYGONS);
             openModalHandlerBulkConfirm(currentSelectedReports);
           },
           disabled: selectableReports.length > 0 ? false : true
@@ -194,6 +195,7 @@ function ShowReports() {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
+        className="pointer-events-auto z-[99999]"
         title={"Confirm Bulk Approval"}
         content={
           <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
@@ -242,7 +244,7 @@ function ShowReports() {
         <Text variant="text-20-bold" className="w-full leading-none">
           {task.projectName ?? "N/A"}
         </Text>
-        <div className="grid shrink-0 grid-cols-3 items-center gap-x-6 gap-y-2">
+        <div className="grid shrink-0 grid-cols-3 items-center gap-y-2 gap-x-6">
           <Text variant="text-12-light" className="leading-none">
             Status
           </Text>
@@ -252,7 +254,8 @@ function ShowReports() {
           <Text variant="text-12-light" className="whitespace-nowrap leading-none">
             Trees Planted
           </Text>
-          <Status status={task.status} variant="small" />
+          <CustomChipField label={ReadableStatus[task.status ?? ""]} />
+          {/* <Status status={task.status} variant="small" /> */}
           <Text variant="text-14-bold" className="leading-none">
             {format(new Date(task.dueAt))}
           </Text>
