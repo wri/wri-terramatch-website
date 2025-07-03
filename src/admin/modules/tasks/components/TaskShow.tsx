@@ -66,7 +66,6 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
       </TableCell>
       <TableCell>{parentName}</TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
-        {/* {t(ReadableStatus[report.status ?? ""])} */}
         <CustomChipField label={ReadableStatus[report.status ?? ""]} />
       </TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>{t(ReadableStatus[report.updateRequestStatus ?? ""])}</TableCell>
