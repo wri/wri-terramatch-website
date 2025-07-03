@@ -1123,6 +1123,115 @@ export const demographicsIndex = (variables: DemographicsIndexVariables, signal?
     {}
   >({ url: "/entities/v3/demographics", method: "get", ...variables, signal });
 
+export type DisturbanceIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * siteReport uuid array
+   */
+  siteReportUuid?: string[];
+};
+
+export type DisturbanceIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DisturbanceIndexResponse = {
+  meta?: {
+    /**
+     * @example disturbances
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example disturbances
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceDto;
+  }[];
+};
+
+export type DisturbanceIndexVariables = {
+  queryParams?: DisturbanceIndexQueryParams;
+};
+
+export const disturbanceIndex = (variables: DisturbanceIndexVariables, signal?: AbortSignal) =>
+  entityServiceFetch<DisturbanceIndexResponse, DisturbanceIndexError, undefined, {}, DisturbanceIndexQueryParams, {}>({
+    url: "/entities/v3/disturbances",
+    method: "get",
+    ...variables,
+    signal
+  });
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -2046,6 +2155,7 @@ export const operationsByTag = {
   fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
+  disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex }
 };

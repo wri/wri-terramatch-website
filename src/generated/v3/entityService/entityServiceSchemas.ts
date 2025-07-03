@@ -529,6 +529,42 @@ export type DemographicDto = {
   entries: DemographicEntryDto[];
 };
 
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  disturbanceDate: string | null;
+  collection: string | null;
+  type: string | null;
+  subtype: string | null;
+  intensity: string | null;
+  extent: string | null;
+  peopleAffected: number | null;
+  monetaryDamage: number | null;
+  description: string | null;
+  actionDescription: string | null;
+  propertyAffected: string | null;
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -1572,36 +1608,6 @@ export type TreeSpeciesDto = {
   amount: number | null;
   taxonId: string | null;
   collection: string | null;
-};
-
-export type DisturbanceDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "organisations"
-    | "auditStatuses"
-    | "forms"
-    | "formQuestionOptions"
-    | "fundingProgrammes"
-    | "impactStories"
-    | "financialIndicators"
-    | any;
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  collection: string | null;
-  type: string | null;
-  intensity: string | null;
-  extent: string | null;
-  description: string | null;
 };
 
 export type InvasiveDto = {
