@@ -65,7 +65,10 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
         {t(typeLabel)}
       </TableCell>
       <TableCell>{parentName}</TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{t(ReadableStatus[report.status ?? ""])}</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>
+        {/* {t(ReadableStatus[report.status ?? ""])} */}
+        <Status status={report.status as any} variant="small" className="w-fit" />
+      </TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>{t(ReadableStatus[report.updateRequestStatus ?? ""])}</TableCell>
       <TableCell sx={{ whiteSpace: "nowrap" }}>
         {report.submittedAt == null ? null : format(new Date(report.submittedAt))}
