@@ -223,3 +223,18 @@ export const VARIANT_TABLE_TREE_SPECIES = {
   paginationVariant: VARIANT_PAGINATION_DASHBOARD,
   thead: "bg-transparent"
 };
+
+export const VARIANT_TABLE_FINANCIAL_METRICS = {
+  table: "border-collapse",
+  name: "border-airtable",
+  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto w-full max-h-[calc(100vh-219px)]",
+  trHeader: "bg-[#F5F5F5] sticky top-0 z-auto",
+  thHeader:
+    "bg-[#F5F5F5] text-12-bold border-r border-neutral-200 last:border-r-0 first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 whitespace-normal px-1.5 border-t-0 py-3",
+  tBody: "",
+  trBody: "bg-white border-neutral-200 last:border-b-0",
+  tdBody:
+    "text-12-light border-r border-neutral-200 px-2 py-4 last:border-r-0 first:pl-4 first:pr-2 last:pl-2 last:pr-4 first:sticky first:left-0 first:z-10 ",
+  thead: "text-14-semibold bg-blueCustom-100 ",
+  paginationVariant: VARIANT_PAGINATION_DASHBOARD
+};

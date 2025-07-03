@@ -34,7 +34,8 @@ export const formTypeChoices = [
   { id: "nursery", name: "Nursery" },
   { id: "project-report", name: "Project Report" },
   { id: "site-report", name: "Site Report" },
-  { id: "nursery-report", name: "Nursery Report" }
+  { id: "nursery-report", name: "Nursery Report" },
+  { id: "financial-report", name: "Financial Report" }
 ];
 
 export const getLinkedFieldListingQuery = (formType: string): string =>

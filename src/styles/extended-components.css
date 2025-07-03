@@ -127,3 +127,13 @@
 .modal-impact-story-content p {
   margin-bottom: 6px;
 }
+
+.table-financial-metrics td {
+  background-color: white !important;
+}
+
+.table-financial-metrics-header td {
+  background-color: #fAfAfA !important;
+  font-weight: 700 !important;
+}
+

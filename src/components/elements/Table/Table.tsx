@@ -60,6 +60,7 @@ export interface TableProps<TData>
   galleryType?: string;
   classPagination?: string;
   alwaysShowPagination?: boolean;
+  getRowClassName?: (row: TData) => string;
 }
 
 export interface TableState {
@@ -97,6 +98,7 @@ function Table<TData extends RowData>({
   galleryType,
   classPagination,
   alwaysShowPagination = false,
+  getRowClassName,
   ...props
 }: TableProps<TData>) {
   const t = useT();
@@ -284,7 +286,7 @@ function Table<TData extends RowData>({
                   {getRowModel().rows.map(row => (
                     <tr
                       key={row.id}
-                      className={classNames("rounded-lg", variant.trBody)}
+                      className={classNames(getRowClassName?.(row.original), "rounded-lg", variant.trBody)}
                       onClick={() => onRowClick?.(row.original)}
                     >
                       {row.getVisibleCells().map(cell => (
