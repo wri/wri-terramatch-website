@@ -122,7 +122,7 @@ function ShowReports() {
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
-  const [, { submitForApproval }] = useTask({ uuid: task.uuid });
+  const [, { submitForApproval }] = useTask({ uuid: task?.uuid });
 
   const siteReportUuids = task?.siteReportUuids ?? [];
   const nurseryReportUuids = task?.nurseryReportUuids ?? [];
