@@ -1,4 +1,9 @@
-import { Box, Card, Divider, Typography } from "@mui/material";
+import {
+  // Box,
+  // Card,
+  Divider,
+  Typography
+} from "@mui/material";
 import {
   ArrayField,
   Datagrid,
@@ -7,8 +12,8 @@ import {
   NumberField,
   SelectField,
   Show,
-  ShowBase,
-  SimpleShowLayout,
+  // ShowBase,
+  // SimpleShowLayout,
   TabbedShowLayout,
   TextField,
   UrlField
@@ -30,11 +35,11 @@ import { getRestorationInterventionTypeOptions } from "@/constants/options/resto
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 import { optionToChoices } from "@/utils/options";
 
-import OrganisationApplicationsTable from "../../organisations/components/OrganisationApplicationsTable";
-import OrganisationFundingProgrammesTable from "../../organisations/components/OrganisationFundingProgrammesTable";
-import OrganisationPitchesTable from "../../organisations/components/OrganisationPitchesTable";
+// import OrganisationApplicationsTable from "../../organisations/components/OrganisationApplicationsTable";
+// import OrganisationFundingProgrammesTable from "../../organisations/components/OrganisationFundingProgrammesTable";
+// import OrganisationPitchesTable from "../../organisations/components/OrganisationPitchesTable";
 import { OrganisationShowAside } from "../../organisations/components/OrganisationShowAside";
-import OrganisationUserTable from "../../organisations/components/OrganisationUserTable";
+// import OrganisationUserTable from "../../organisations/components/OrganisationUserTable";
 
 const FinancialReportsShow = () => {
   const countryChoices = useGadmChoices({ level: 0 });
@@ -239,7 +244,7 @@ const FinancialReportsShow = () => {
           </TabbedShowLayout>
         </RecordFrameworkProvider>
       </Show>
-      <ShowBase>
+      {/* <ShowBase>
         <Box mr="366px">
           <Card sx={{ marginTop: 2, marginBottom: 2 }}>
             <SimpleShowLayout>
@@ -263,7 +268,7 @@ const FinancialReportsShow = () => {
           </Card>
           <br />
         </Box>
-      </ShowBase>
+      </ShowBase> */}
     </>
   );
 };

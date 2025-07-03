@@ -6,6 +6,7 @@ import _ from "lodash";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
+import { useParams } from "react-router-dom";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -103,6 +104,7 @@ const RHFFinancialIndicatorsDataTable = ({
   ...props
 }: PropsWithChildren<RHFFinancialIndicatorsDataTableProps>) => {
   const t = useT();
+  const { id } = useParams<"id">();
   const { field } = useController(props);
   const value = field?.value || [];
   const [files, setFiles] = useState<Partial<UploadedFile>[]>();
@@ -817,7 +819,8 @@ const RHFFinancialIndicatorsDataTable = ({
       current_radio_data: currentRadioData,
       documentation_data: documentationData,
       local_currency: selectCurrency as string,
-      financial_year_start_month: selectFinancialMonth as number
+      financial_year_start_month: selectFinancialMonth as number,
+      financial_report_id: id
     };
 
     const isSame = JSON.stringify(payload) === JSON.stringify(lastSentData.current);
