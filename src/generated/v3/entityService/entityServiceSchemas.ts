@@ -205,6 +205,27 @@ export type TaskLightDto = {
   updatedAt: string;
 };
 
+export type TaskFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number;
+};
+
 export type ProjectReportLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -360,27 +381,6 @@ export type NurseryReportLightDto = {
   nothingToReport: boolean | null;
 };
 
-export type TaskFullDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  projectName: string;
-  organisationName: string;
-  frameworkKey: string;
-  status: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  treesPlantedCount: number;
-};
-
 export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
@@ -389,7 +389,7 @@ export type TaskUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * UUIDs of site reports to mark as 'Nothing to report'
    */
