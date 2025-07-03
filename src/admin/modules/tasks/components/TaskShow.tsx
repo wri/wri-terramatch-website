@@ -233,11 +233,7 @@ function ShowReports() {
       closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
       closeModal(ModalId.APPROVE_POLYGONS);
     } else {
-      openNotification(
-        "error",
-        "Failed to approve reports",
-        taskUpdateFailure instanceof Error ? taskUpdateFailure.message : "An error occurred"
-      );
+      openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
     }
   });
 
