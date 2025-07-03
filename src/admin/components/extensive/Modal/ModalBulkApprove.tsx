@@ -4,7 +4,7 @@ import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
-import CollapsibleRowBulk from "@/components/extensive/Modal/components/CollapsibleRowBulk";
+import CollablesRowBulk from "@/components/extensive/Modal/components/CollapsibleRowBulk";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -111,7 +111,7 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
           </header>
           {data?.length > 0 ? (
             data.map((item: any) => (
-              <CollapsibleRowBulk
+              <CollablesRowBulk
                 key={item.id}
                 item={item}
                 selected={selectedIds.some(selected => selected.id === item.id && selected.type === item.type)}

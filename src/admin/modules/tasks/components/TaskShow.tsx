@@ -125,7 +125,7 @@ function ShowReports() {
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
-  const [, { submitForApproval }] = useTask({ uuid: task?.uuid });
+  const [, { bulkApproveReports }] = useTask({ uuid: task?.uuid });
 
   const siteReportUuids = task?.siteReportUuids ?? [];
   const nurseryReportUuids = task?.nurseryReportUuids ?? [];
@@ -218,12 +218,8 @@ function ShowReports() {
             const nurseryReportUuids = currentSelectedReports
               .filter(report => report.type === "Nursery")
               .map(report => report.id);
-            if (submitForApproval) {
-              await submitForApproval({
-                siteReportNothingToReportUuid: siteReportUuids,
-                nurseryReportNothingToReportUuid: nurseryReportUuids,
-                feedback: text ?? ""
-              });
+            if (bulkApproveReports) {
+              await bulkApproveReports(text ?? "", siteReportUuids, nurseryReportUuids);
             }
             openNotification("success", "Reports approved successfully", "");
             closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);

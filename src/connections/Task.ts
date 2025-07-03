@@ -44,11 +44,13 @@ export type TaskConnection = {
 
   taskIsUpdating: boolean;
   taskUpdateFailure?: PendingErrorState | null;
-  submitForApproval?: (params: {
-    siteReportNothingToReportUuid?: string[] | null;
-    nurseryReportNothingToReportUuid?: string[] | null;
-    feedback?: string | null;
-  }) => void;
+  submitForApproval?: () => void;
+
+  bulkApproveReports?: (
+    feedback?: string,
+    siteReportNothingToReportUuids?: string[],
+    nurseryReportNothingToReportUuids?: string[]
+  ) => void;
 };
 
 export type TaskProps = {
@@ -152,12 +154,18 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
             taskIsUpdating,
             taskUpdateFailure,
 
-            submitForApproval: ({ siteReportNothingToReportUuid, nurseryReportNothingToReportUuid, feedback }) =>
+            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" }),
+
+            bulkApproveReports: (
+              feedback?: string,
+              siteReportNothingToReportUuids?: string[],
+              nurseryReportNothingToReportUuids?: string[]
+            ) =>
               updateTask(taskResponse.attributes.uuid, {
-                status: "awaiting-approval",
-                siteReportNothingToReportUuid: siteReportNothingToReportUuid ?? null,
-                nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuid ?? null,
-                feedback: feedback ?? ""
+                status: null,
+                feedback: feedback ?? null,
+                siteReportNothingToReportUuid: siteReportNothingToReportUuids ?? null,
+                nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuids ?? null
               })
           };
         }
