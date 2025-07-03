@@ -385,7 +385,7 @@ export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "due" | "needs-more-information" | "awaiting-approval" | "approved" | null;
+  status?: "due" | "needs-more-information" | "awaiting-approval" | "approved";
   /**
    * Specific feedback for the PD
    */
@@ -393,11 +393,11 @@ export type TaskUpdateAttributes = {
   /**
    * UUIDs of site reports to mark as 'Nothing to report'
    */
-  siteReportNothingToReportUuid: string[] | null;
+  siteReportNothingToReportUuids?: string[];
   /**
    * UUIDs of nursery reports to mark as 'Nothing to report'
    */
-  nurseryReportNothingToReportUuid: string[] | null;
+  nurseryReportNothingToReportUuids?: string[];
 };
 
 export type TaskData = {

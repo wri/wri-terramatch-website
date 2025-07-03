@@ -162,10 +162,9 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
               nurseryReportNothingToReportUuids?: string[]
             ) =>
               updateTask(taskResponse.attributes.uuid, {
-                status: null,
-                feedback: feedback ?? null,
-                siteReportNothingToReportUuid: siteReportNothingToReportUuids ?? null,
-                nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuids ?? null
+                feedback: feedback,
+                siteReportNothingToReportUuids: siteReportNothingToReportUuids,
+                nurseryReportNothingToReportUuids: nurseryReportNothingToReportUuids
               })
           };
         }
