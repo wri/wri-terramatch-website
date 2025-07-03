@@ -255,7 +255,6 @@ function ShowReports() {
             Trees Planted
           </Text>
           <CustomChipField label={ReadableStatus[task.status ?? ""]} />
-          {/* <Status status={task.status} variant="small" /> */}
           <Text variant="text-14-bold" className="leading-none">
             {format(new Date(task.dueAt))}
           </Text>
