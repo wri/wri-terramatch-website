@@ -552,11 +552,17 @@ export type DisturbanceDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
+  disturbanceDate: string | null;
   collection: string | null;
   type: string | null;
+  subtype: string | null;
   intensity: string | null;
   extent: string | null;
+  peopleAffected: number | null;
+  monetaryDamage: number | null;
   description: string | null;
+  actionDescription: string | null;
+  propertyAffected: string | null;
 };
 
 export type ANRDto = {
@@ -1138,6 +1144,9 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
@@ -1521,7 +1530,9 @@ export type DemographicCollections = {
   /**
    * @example all
    * @example full-time
+   * @example full-time-clt
    * @example part-time
+   * @example part-time-clt
    */
   JOBS_PROJECT: string[];
   /**

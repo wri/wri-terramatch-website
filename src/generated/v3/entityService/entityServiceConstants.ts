@@ -138,7 +138,7 @@ export const DemographicCollections = {
     "indirect-other"
   ] as const,
   RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
-  JOBS_PROJECT: ["all", "full-time", "part-time"] as const,
+  JOBS_PROJECT: ["all", "full-time", "full-time-clt", "part-time", "part-time-clt"] as const,
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
