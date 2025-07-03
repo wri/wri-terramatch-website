@@ -27,6 +27,7 @@ import {
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 
 const ReadableStatus: { [index: string]: string } = {
@@ -124,7 +125,7 @@ function ShowReports() {
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
-  const [, { bulkApproveReports }] = useTask({ uuid: task?.uuid });
+  const [, { bulkApproveReports, taskIsUpdating, taskUpdateFailure }] = useTask({ uuid: task?.uuid });
 
   const siteReportUuids = task?.siteReportUuids ?? [];
   const nurseryReportUuids = task?.nurseryReportUuids ?? [];
@@ -211,31 +212,34 @@ function ShowReports() {
         }
         commentArea
         onClose={() => closeModal(ModalId.CONFIRM_POLYGON_APPROVAL)}
-        onConfirm={async (text: string) => {
-          try {
-            const siteReportUuids = currentSelectedReports
-              .filter(report => report.type === "Site")
-              .map(report => report.id);
-            const nurseryReportUuids = currentSelectedReports
-              .filter(report => report.type === "Nursery")
-              .map(report => report.id);
-            if (bulkApproveReports) {
-              await bulkApproveReports(text ?? "", siteReportUuids, nurseryReportUuids);
-            }
-            openNotification("success", "Reports approved successfully", "");
-            closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-            closeModal(ModalId.APPROVE_POLYGONS);
-          } catch (error) {
-            openNotification(
-              "error",
-              "Failed to approve reports",
-              error instanceof Error ? error.message : "An error occurred"
-            );
+        onConfirm={(text: string) => {
+          const siteReportUuids = currentSelectedReports
+            .filter(report => report.type === "Site")
+            .map(report => report.id);
+          const nurseryReportUuids = currentSelectedReports
+            .filter(report => report.type === "Nursery")
+            .map(report => report.id);
+          if (bulkApproveReports) {
+            bulkApproveReports(text ?? "", siteReportUuids, nurseryReportUuids);
           }
         }}
       />
     );
   };
+
+  useUpdateComplete(taskIsUpdating, () => {
+    if (taskUpdateFailure == null) {
+      openNotification("success", "Reports approved successfully", "");
+      closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+      closeModal(ModalId.APPROVE_POLYGONS);
+    } else {
+      openNotification(
+        "error",
+        "Failed to approve reports",
+        taskUpdateFailure instanceof Error ? taskUpdateFailure.message : "An error occurred"
+      );
+    }
+  });
 
   return isLoading ? null : (
     <Card sx={{ padding: 4 }}>
@@ -292,12 +296,10 @@ function ShowReports() {
   );
 }
 
-const TaskShow = () => {
-  return (
-    <Show>
-      <ShowReports />
-    </Show>
-  );
-};
+const TaskShow = () => (
+  <Show>
+    <ShowReports />
+  </Show>
+);
 
 export default TaskShow;
