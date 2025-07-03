@@ -21,8 +21,6 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-import { NurseryReportLightDto, SiteReportLightDto } from "../generated/v3/entityService/entityServiceSchemas";
-
 export type TaskIndexConnection = {
   tasks?: TaskLightDto[];
   indexTotal?: number;
@@ -108,29 +106,10 @@ export const taskIndexConnection: Connection<TaskIndexConnection, TaskIndexProps
         (indexMeta, tasksStore, fetchFailure) => {
           if (indexMeta == null) return { fetchFailure };
 
-          const tasks: ({
-            siteReports?: SiteReportLightDto[];
-            nurseryReports?: NurseryReportLightDto[];
-          } & TaskLightDto)[] = [];
+          const tasks: TaskLightDto[] = [];
           for (const id of indexMeta.ids) {
             if (tasksStore[id] == null) return { fetchFailure };
-            const task = tasksStore[id];
-
-            const siteReportUuids = (task?.relationships?.["siteReports"] ?? []).map(({ id }) => id!);
-            const nurseryReportUuids = (task?.relationships?.["nurseryReports"] ?? []).map(({ id }) => id!);
-
-            const siteReports = indexMeta?.included
-              ?.filter(report => report.type == "siteReports" && siteReportUuids.includes(report.id))
-              .map(report => report.attributes);
-            const nurseryReports = indexMeta?.included
-              ?.filter(report => report.type == "nurseryReports" && nurseryReportUuids.includes(report.id))
-              .map(report => report.attributes);
-
-            tasks.push({
-              ...task.attributes,
-              siteReports,
-              nurseryReports
-            });
+            tasks.push(tasksStore[id].attributes);
           }
 
           return { tasks, indexTotal: indexMeta?.total, fetchFailure };
@@ -178,7 +157,7 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
                 status: "awaiting-approval",
                 siteReportNothingToReportUuid: siteReportNothingToReportUuid ?? null,
                 nurseryReportNothingToReportUuid: nurseryReportNothingToReportUuid ?? null,
-                feedback: feedback ?? null
+                feedback: feedback ?? ""
               })
           };
         }
