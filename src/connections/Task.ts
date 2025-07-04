@@ -45,6 +45,12 @@ export type TaskConnection = {
   taskIsUpdating: boolean;
   taskUpdateFailure?: PendingErrorState | null;
   submitForApproval?: () => void;
+
+  bulkApproveReports?: (
+    feedback?: string,
+    siteReportNothingToReportUuids?: string[],
+    nurseryReportNothingToReportUuids?: string[]
+  ) => void;
 };
 
 export type TaskProps = {
@@ -148,7 +154,18 @@ const taskConnection: Connection<TaskConnection, TaskProps> = {
             taskIsUpdating,
             taskUpdateFailure,
 
-            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" })
+            submitForApproval: () => updateTask(taskResponse.attributes.uuid, { status: "awaiting-approval" }),
+
+            bulkApproveReports: (
+              feedback?: string,
+              siteReportNothingToReportUuids?: string[],
+              nurseryReportNothingToReportUuids?: string[]
+            ) =>
+              updateTask(taskResponse.attributes.uuid, {
+                feedback,
+                siteReportNothingToReportUuids,
+                nurseryReportNothingToReportUuids
+              })
           };
         }
       )
