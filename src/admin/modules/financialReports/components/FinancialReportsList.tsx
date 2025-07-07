@@ -60,7 +60,6 @@ const FinancialReportsDataGrid: FC = () => {
         }}
       />
       <TextField source="year_of_report" label="Year of Report" />
-      <DateField source="due_at" label="Due Date" locales="en-GB" />
       <DateField source="updated_at" label="Last Updated" locales="en-GB" />
       <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">

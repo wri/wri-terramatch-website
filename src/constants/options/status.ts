@@ -18,6 +18,10 @@ export const getFinancialReportStatusOptions = (t: typeof useT | Function = (t: 
       title: t("Draft")
     },
     {
+      value: "due",
+      title: t("Draft")
+    },
+    {
       value: "started",
       title: t("Draft")
     },
