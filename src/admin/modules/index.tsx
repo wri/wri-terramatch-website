@@ -15,6 +15,8 @@ import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/compo
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
+import { FinancialReportsList } from "./financialReports/components/FinancialReportsList";
+import FinancialReportsShow from "./financialReports/components/FinancialReportsShow";
 import FundingProgrammeCreate from "./fundingProgrammes/components/FundingProgrammeCreate";
 import FundingProgrammeEdit from "./fundingProgrammes/components/FundingProgrammeEdit";
 import { FundingProgrammeList } from "./fundingProgrammes/components/FundingProgrammeList";
@@ -150,6 +152,13 @@ const nurseryReport = {
   Edit: EntityEdit
 };
 
+const financialReport = {
+  ResourceName: "financialReport",
+  List: FinancialReportsList,
+  Show: FinancialReportsShow,
+  Edit: EntityEdit
+};
+
 const audit = {
   ResourceName: "audit"
 };
@@ -182,6 +191,7 @@ const modules = {
   projectReport,
   siteReport,
   nurseryReport,
+  financialReport,
   audit,
   validatePolygonFile,
   impactStories

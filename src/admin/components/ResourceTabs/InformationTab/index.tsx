@@ -89,6 +89,8 @@ const InformationTab: FC<IProps> = props => {
       case "site-reports":
       case "nursery-reports":
         return "Reported Data";
+      case "financial-reports":
+        return "Organization History";
       default:
         return "Information";
     }

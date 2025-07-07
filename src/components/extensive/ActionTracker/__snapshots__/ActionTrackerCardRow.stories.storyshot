@@ -2,7 +2,7 @@
 
 exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
 <a
-  className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+  className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
   href="/"
   onClick={[Function]}
   onMouseEnter={[Function]}
@@ -10,38 +10,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
   title="TerraFund for AFR100: Landscapes - Non Profits"
 >
   <div
-    className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+    className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
   >
     <div
-      className="mb-1 flex items-start gap-3"
+      className="flex items-start gap-3"
     >
       <p
-        className="flex-1 text-body-500"
+        className="flex-1 text-14-bold"
         data-testid="txt"
       >
         TerraFund for AFR100: Landscapes - Non Profits
       </p>
       <div
-        className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+        className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
       >
-        <div
-          style={
-            Object {
-              "height": undefined,
-              "width": 24,
-            }
-          }
-        />
         <p
-          className="text-bold-caption-100"
+          className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
           data-testid="txt"
-        >
-          Draft
-        </p>
+        />
       </div>
     </div>
     <p
-      className="text-body-300 with-inner-html"
+      className="mb-2 text-14-light with-inner-html"
       dangerouslySetInnerHTML={
         Object {
           "__html": "<strong>Stage:</strong> Expression of Interest",
@@ -50,29 +40,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/CardRow Default 1`] = `
       data-testid="txt"
     />
     <p
-      className="text-body-300 with-inner-html"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": undefined,
-        }
-      }
+      className="text-14-light"
       data-testid="txt"
-    />
-    <p
-      className="text-body-300 with-inner-html"
-      dangerouslySetInnerHTML={
-        Object {
-          "__html": undefined,
-        }
-      }
-      data-testid="txt"
-    />
+    >
+      <span
+        className="text-12-bold"
+        data-testid="txt"
+      >
+        Due
+         
+      </span>
+      <span
+        className="text-12-light"
+        data-testid="txt"
+      />
+    </p>
   </div>
   <div
     className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
   >
     <p
-      className="group-hover:text-white text-button-700"
+      className="text-primary group-hover:text-white text-14-bold"
       data-testid="txt"
     >
       Continue Draft

@@ -11,7 +11,9 @@ import { optionToChoices } from "@/utils/options";
 export const OrganisationShowAside = () => {
   const refresh = useRefresh();
   const { record } = useShowContext<V2OrganisationRead & RaRecord>();
-  const uuid = record?.uuid as string;
+  const hasOrganisationAttrib = !!record?.organisation;
+  const uuid = hasOrganisationAttrib ? record?.organisation?.uuid : (record?.uuid as string);
+  const status = hasOrganisationAttrib ? record?.organisation?.status : record?.status;
 
   const { mutate: approve } = usePutV2AdminOrganisationsApprove({
     onSuccess() {
@@ -30,13 +32,13 @@ export const OrganisationShowAside = () => {
       <Grid container spacing={2} marginY={2}>
         <Grid item xs={6}>
           <Labeled>
-            <TextField source="name" />
+            <TextField source={hasOrganisationAttrib ? "organisation.name" : "name"} />
           </Labeled>
         </Grid>
         <Grid item xs={6}>
           <Labeled>
             <SelectField
-              source="type"
+              source={hasOrganisationAttrib ? "organisation.type" : "type"}
               choices={optionToChoices(getOrganisationTypeOptions())}
               emptyText="Not Provided"
             />
@@ -44,13 +46,13 @@ export const OrganisationShowAside = () => {
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source="readable_status" />
+            <TextField source={hasOrganisationAttrib ? "organisation.readable_status" : "readable_status"} />
           </Labeled>
         </Grid>
       </Grid>
       <Divider />
       <Box pt={2}>
-        <When condition={record?.status !== "draft"}>
+        <When condition={status !== "draft"}>
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button variant="contained" onClick={() => approve({ body: { uuid } })}>
               Approve
