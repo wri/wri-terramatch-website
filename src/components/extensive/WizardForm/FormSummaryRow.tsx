@@ -78,7 +78,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
-        entityType: pluralEntityNameToSingular(entityType as EntityName) ?? "",
+        entityType: pluralEntityNameToSingular((entityType ?? "") as EntityName),
         uuid: uuid ?? ""
       }
     },
