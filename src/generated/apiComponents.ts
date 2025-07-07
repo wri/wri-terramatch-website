@@ -21606,7 +21606,7 @@ export type GetV2ProjectPipelineResponse = {
     id?: number;
     submitted_by?: string;
     program?: string;
-    cohort?: string;
+    cohort?: string[];
     publish_for?: string;
     url?: string;
     /**
@@ -21664,7 +21664,7 @@ export type PostV2ProjectPipelineResponse = {
   id?: number;
   submitted_by?: string;
   program?: string;
-  cohort?: string;
+  cohort?: string[];
   publish_for?: string;
   url?: string;
 };
@@ -21727,7 +21727,7 @@ export type GetV2ProjectPipelineIdResponse = {
     id?: number;
     submitted_by?: string;
     program?: string;
-    cohort?: string;
+    cohort?: string[];
     publish_for?: string;
     url?: string;
     /**
@@ -21790,7 +21790,7 @@ export type PutV2ProjectPipelineIdResponse = {
   id?: number;
   submitted_by?: string;
   program?: string;
-  cohort?: string;
+  cohort?: string[];
   publish_for?: string;
   url?: string;
 };

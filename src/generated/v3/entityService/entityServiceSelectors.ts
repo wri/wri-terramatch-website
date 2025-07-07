@@ -25,6 +25,8 @@ import {
   TreeReportCountsFindVariables,
   DemographicsIndexQueryParams,
   DemographicsIndexVariables,
+  DisturbanceIndexQueryParams,
+  DisturbanceIndexVariables,
   EntityIndexPathParams,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -184,6 +186,17 @@ export const demographicsIndexIndexMeta = (
   resource: ResourceType,
   variables: Omit<DemographicsIndexVariables, "body">
 ) => indexMetaSelector<DemographicsIndexQueryParams, {}>({ url: DEMOGRAPHICS_INDEX_URL, resource, ...variables });
+
+export const DISTURBANCE_INDEX_URL = "/entities/v3/disturbances";
+
+export const disturbanceIndexIsFetching = (variables: Omit<DisturbanceIndexVariables, "body">) =>
+  isFetchingSelector<DisturbanceIndexQueryParams, {}>({ url: DISTURBANCE_INDEX_URL, method: "get", ...variables });
+
+export const disturbanceIndexFetchFailed = (variables: Omit<DisturbanceIndexVariables, "body">) =>
+  fetchFailedSelector<DisturbanceIndexQueryParams, {}>({ url: DISTURBANCE_INDEX_URL, method: "get", ...variables });
+
+export const disturbanceIndexIndexMeta = (resource: ResourceType, variables: Omit<DisturbanceIndexVariables, "body">) =>
+  indexMetaSelector<DisturbanceIndexQueryParams, {}>({ url: DISTURBANCE_INDEX_URL, resource, ...variables });
 
 export const ENTITY_INDEX_URL = "/entities/v3/{entity}";
 
