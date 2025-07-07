@@ -10,7 +10,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2UpdateRequestsENTITYUUIDResponse, useDeleteV2UpdateRequestsUUID } from "@/generated/apiComponents";
-import { EntityName } from "@/types/common";
+import { EntityName, Status } from "@/types/common";
 
 interface UpdateRequestStatusBarProps {
   entityName: EntityName;
@@ -82,7 +82,7 @@ const UpdateRequestStatusBar = ({ entityName, entityUUID, updateRequest }: Updat
   };
 
   return (
-    <StatusBar status={projectStatus} title={statusProps?.title || ""}>
+    <StatusBar status={projectStatus as unknown as Status} title={statusProps?.title || ""}>
       <When condition={status !== "awaiting-approval"}>
         <Button variant="secondary" onClick={viewFeedback}>
           {t("View Feedback")}

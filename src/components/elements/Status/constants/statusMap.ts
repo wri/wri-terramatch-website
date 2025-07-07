@@ -27,5 +27,11 @@ export enum StatusEnum {
   // eslint-disable-next-line no-unused-vars
   RESTORATION_IN_PROGRESS = "restoration-in-progress",
   // eslint-disable-next-line no-unused-vars
-  AWAITING_APPROVAL = "awaiting-approval"
+  AWAITING_APPROVAL = "awaiting-approval",
+  // eslint-disable-next-line no-unused-vars
+  EDIT = "edit",
+  // eslint-disable-next-line no-unused-vars
+  ERROR = "error",
+  // eslint-disable-next-line no-unused-vars
+  WARNING = "warning"
 }

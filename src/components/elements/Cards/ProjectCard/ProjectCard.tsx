@@ -26,6 +26,8 @@ import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 import { Status } from "@/types/common";
 import Log from "@/utils/log";
 
+import { StatusEnum } from "../../Status/constants/statusMap";
+
 export interface ProjectCardProps
   extends PropsWithChildren,
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -104,7 +106,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             </div>
           </div>
           <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
-            <If condition={String(statusProps?.status) === "edit"}>
+            <If condition={statusProps?.status === StatusEnum.EDIT}>
               <Then>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
@@ -125,7 +127,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             </If>
           </div>
         </div>
-        <When condition={String(statusProps?.status) !== "edit"}>
+        <When condition={statusProps?.status !== StatusEnum.EDIT}>
           <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={

@@ -43,12 +43,14 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 1
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50 w-fit"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
                 data-testid="txt"
-              />
+              >
+                Awaiting Approval
+              </p>
             </div>
           </div>
           <p
@@ -271,12 +273,26 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 4
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-secondary-200 w-fit"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-green-500 text-12-semibold"
                 data-testid="txt"
-              />
+              >
+                <div
+                  className="h-4 w-4"
+                >
+                  <div
+                    style={
+                      Object {
+                        "height": undefined,
+                        "width": 24,
+                      }
+                    }
+                  />
+                </div>
+                Approved
+              </p>
             </div>
           </div>
           <p

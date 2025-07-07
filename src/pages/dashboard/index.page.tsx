@@ -472,7 +472,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              cohort={cohortName}
+              cohort={cohortName as unknown as string}
               countryData={countryData as CountriesProps}
               projectName={projectFullDto?.name}
               className="pt-0"
