@@ -23,6 +23,7 @@ import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
+import { Status } from "@/types/common";
 import Log from "@/utils/log";
 
 export interface ProjectCardProps
@@ -88,7 +89,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             {statusProps && (
               <div className="flex">
                 <Text variant="text-bold-subtitle-500">{t("Status")}:&#160;</Text>
-                <StatusPill status={statusProps.status!} className="w-fit-content">
+                <StatusPill status={statusProps.status as unknown as Status} className="w-fit-content">
                   <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
                 </StatusPill>
               </div>
@@ -103,7 +104,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             </div>
           </div>
           <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
-            <If condition={statusProps?.status === "edit"}>
+            <If condition={String(statusProps?.status) === "edit"}>
               <Then>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
@@ -124,7 +125,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             </If>
           </div>
         </div>
-        <When condition={statusProps?.status !== "edit"}>
+        <When condition={String(statusProps?.status) !== "edit"}>
           <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={
