@@ -23,7 +23,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
   >
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -31,38 +31,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 1"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="mb-1 flex items-start gap-3"
+            className="flex items-start gap-3"
           >
             <p
-              className="flex-1 text-body-500"
+              className="flex-1 text-14-bold"
               data-testid="txt"
             >
               Card 1
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
             >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
               <p
-                className="text-bold-caption-100"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
                 data-testid="txt"
-              >
-                Awaiting
-              </p>
+              />
             </div>
           </div>
           <p
-            className="text-body-300 with-inner-html"
+            className="mb-2 text-14-light with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
@@ -71,29 +61,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             data-testid="txt"
           />
           <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
+            className="text-14-light"
             data-testid="txt"
-          />
-          <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
-            data-testid="txt"
-          />
+          >
+            <span
+              className="text-12-bold"
+              data-testid="txt"
+            >
+              Due
+               
+            </span>
+            <span
+              className="text-12-light"
+              data-testid="txt"
+            />
+          </p>
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="group-hover:text-white text-button-700"
+            className="text-primary group-hover:text-white text-14-bold"
             data-testid="txt"
           >
             cta
@@ -111,7 +99,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -119,38 +107,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 2"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="mb-1 flex items-start gap-3"
+            className="flex items-start gap-3"
           >
             <p
-              className="flex-1 text-body-500"
+              className="flex-1 text-14-bold"
               data-testid="txt"
             >
               Card 2
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
             >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
               <p
-                className="text-bold-caption-100"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
                 data-testid="txt"
-              >
-                Edit
-              </p>
+              />
             </div>
           </div>
           <p
-            className="text-body-300 with-inner-html"
+            className="mb-2 text-14-light with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
@@ -159,29 +137,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             data-testid="txt"
           />
           <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
+            className="text-14-light"
             data-testid="txt"
-          />
-          <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
-            data-testid="txt"
-          />
+          >
+            <span
+              className="text-12-bold"
+              data-testid="txt"
+            >
+              Due
+               
+            </span>
+            <span
+              className="text-12-light"
+              data-testid="txt"
+            />
+          </p>
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="group-hover:text-white text-button-700"
+            className="text-primary group-hover:text-white text-14-bold"
             data-testid="txt"
           >
             cta
@@ -199,7 +175,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -207,38 +183,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 3"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="mb-1 flex items-start gap-3"
+            className="flex items-start gap-3"
           >
             <p
-              className="flex-1 text-body-500"
+              className="flex-1 text-14-bold"
               data-testid="txt"
             >
               Card 3
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-error-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
             >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
               <p
-                className="text-bold-caption-100"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
                 data-testid="txt"
-              >
-                Error
-              </p>
+              />
             </div>
           </div>
           <p
-            className="text-body-300 with-inner-html"
+            className="mb-2 text-14-light with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
@@ -247,29 +213,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             data-testid="txt"
           />
           <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
+            className="text-14-light"
             data-testid="txt"
-          />
-          <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
-            data-testid="txt"
-          />
+          >
+            <span
+              className="text-12-bold"
+              data-testid="txt"
+            >
+              Due
+               
+            </span>
+            <span
+              className="text-12-light"
+              data-testid="txt"
+            />
+          </p>
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="group-hover:text-white text-button-700"
+            className="text-primary group-hover:text-white text-14-bold"
             data-testid="txt"
           >
             cta
@@ -287,7 +251,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -295,38 +259,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 4"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="mb-1 flex items-start gap-3"
+            className="flex items-start gap-3"
           >
             <p
-              className="flex-1 text-body-500"
+              className="flex-1 text-14-bold"
               data-testid="txt"
             >
               Card 4
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
             >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
               <p
-                className="text-bold-caption-100"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
                 data-testid="txt"
-              >
-                Success
-              </p>
+              />
             </div>
           </div>
           <p
-            className="text-body-300 with-inner-html"
+            className="mb-2 text-14-light with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
@@ -335,29 +289,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             data-testid="txt"
           />
           <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
+            className="text-14-light"
             data-testid="txt"
-          />
-          <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
-            data-testid="txt"
-          />
+          >
+            <span
+              className="text-12-bold"
+              data-testid="txt"
+            >
+              Due
+               
+            </span>
+            <span
+              className="text-12-light"
+              data-testid="txt"
+            />
+          </p>
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="group-hover:text-white text-button-700"
+            className="text-primary group-hover:text-white text-14-bold"
             data-testid="txt"
           >
             cta
@@ -375,7 +327,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
         href="/"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -383,38 +335,28 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
         title="Card 5"
       >
         <div
-          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="mb-1 flex items-start gap-3"
+            className="flex items-start gap-3"
           >
             <p
-              className="flex-1 text-body-500"
+              className="flex-1 text-14-bold"
               data-testid="txt"
             >
               Card 5
             </p>
             <div
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
             >
-              <div
-                style={
-                  Object {
-                    "height": undefined,
-                    "width": 24,
-                  }
-                }
-              />
               <p
-                className="text-bold-caption-100"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
                 data-testid="txt"
-              >
-                Warning
-              </p>
+              />
             </div>
           </div>
           <p
-            className="text-body-300 with-inner-html"
+            className="mb-2 text-14-light with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Subtitle",
@@ -423,29 +365,27 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
             data-testid="txt"
           />
           <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
+            className="text-14-light"
             data-testid="txt"
-          />
-          <p
-            className="text-body-300 with-inner-html"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": undefined,
-              }
-            }
-            data-testid="txt"
-          />
+          >
+            <span
+              className="text-12-bold"
+              data-testid="txt"
+            >
+              Due
+               
+            </span>
+            <span
+              className="text-12-light"
+              data-testid="txt"
+            />
+          </p>
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="group-hover:text-white text-button-700"
+            className="text-primary group-hover:text-white text-14-bold"
             data-testid="txt"
           >
             cta
