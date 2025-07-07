@@ -35,11 +35,7 @@ import { getRestorationInterventionTypeOptions } from "@/constants/options/resto
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 import { optionToChoices } from "@/utils/options";
 
-// import OrganisationApplicationsTable from "../../organisations/components/OrganisationApplicationsTable";
-// import OrganisationFundingProgrammesTable from "../../organisations/components/OrganisationFundingProgrammesTable";
-// import OrganisationPitchesTable from "../../organisations/components/OrganisationPitchesTable";
 import { OrganisationShowAside } from "../../organisations/components/OrganisationShowAside";
-// import OrganisationUserTable from "../../organisations/components/OrganisationUserTable";
 
 const FinancialReportsShow = () => {
   const countryChoices = useGadmChoices({ level: 0 });
@@ -52,7 +48,6 @@ const FinancialReportsShow = () => {
       >
         <RecordFrameworkProvider>
           <TabbedShowLayout>
-            {/* <InformationTab type="financial-reports" /> */}
             <TabbedShowLayout.Tab label="Organization Details">
               <TextField source="organisation.name" label="Legal Name" emptyText="Not Provided" />
               <TextField source="organisation.readable_status" label="Status" emptyText="Not Provided" />
@@ -245,31 +240,6 @@ const FinancialReportsShow = () => {
           </TabbedShowLayout>
         </RecordFrameworkProvider>
       </Show>
-      {/* <ShowBase>
-        <Box mr="366px">
-          <Card sx={{ marginTop: 2, marginBottom: 2 }}>
-            <SimpleShowLayout>
-              <OrganisationFundingProgrammesTable />
-            </SimpleShowLayout>
-          </Card>
-          <Card sx={{ marginTop: 2, marginBottom: 2 }}>
-            <SimpleShowLayout>
-              <OrganisationPitchesTable />
-            </SimpleShowLayout>
-          </Card>
-          <Card sx={{ marginTop: 2, marginBottom: 2 }}>
-            <SimpleShowLayout>
-              <OrganisationApplicationsTable />
-            </SimpleShowLayout>
-          </Card>
-          <Card sx={{ marginTop: 2, marginBottom: "180px", overflow: "visible" }}>
-            <SimpleShowLayout>
-              <OrganisationUserTable />
-            </SimpleShowLayout>
-          </Card>
-          <br />
-        </Box>
-      </ShowBase> */}
     </>
   );
 };
