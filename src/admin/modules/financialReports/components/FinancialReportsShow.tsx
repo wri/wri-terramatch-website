@@ -52,6 +52,7 @@ const FinancialReportsShow = () => {
       >
         <RecordFrameworkProvider>
           <TabbedShowLayout>
+            {/* <InformationTab type="financial-reports" /> */}
             <TabbedShowLayout.Tab label="Organization Details">
               <TextField source="organisation.name" label="Legal Name" emptyText="Not Provided" />
               <TextField source="organisation.readable_status" label="Status" emptyText="Not Provided" />

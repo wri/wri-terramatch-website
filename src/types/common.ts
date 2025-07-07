@@ -262,6 +262,7 @@ export type SingularReportsModelNames =
   | "projectReport"
   | "nurseryReport"
   | "financialReport"
+  | "financial-report"
   | "siteReport";
 
 export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>

@@ -8,12 +8,16 @@ import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTa
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import type { ActionTrackerCardRowProps } from "@/components/extensive/ActionTracker/ActionTrackerCardRow";
 import ActionTrackerCardRow from "@/components/extensive/ActionTracker/ActionTrackerCardRow";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
@@ -65,98 +69,18 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     ];
   }, [organization]);
 
-  const mockedReportActions = [
-    {
-      title: "Project 1",
-      subtitle: "Subtitle 1",
-      status: StatusEnum.SUBMITTED,
-      ctaLink: "/my-projects",
-      ctaText: "View Project Report",
-      onClick: () => {
-        console.log("clicked");
-        return {};
-      },
-      polygonCheck: "Polygon Check",
-      approve: "Approve",
-      statusText: "submitted",
-      updatedAt: "2021/01/01",
-      updatedBy: "John Doe"
-    },
-    {
-      title: "Project 2",
-      subtitle: "Subtitle 2",
-      status: StatusEnum.DRAFT,
-      ctaLink: "/my-projects",
-      ctaText: "View Project Report",
-      onClick: () => {
-        console.log("clicked");
-        return {};
-      },
-      polygonCheck: "Polygon Check",
-      approve: "Approve",
-      statusText: "draft",
-      updatedAt: "2021/01/01",
-      updatedBy: "John Doe"
-    },
-    {
-      title: "Project 3",
-      subtitle: "Subtitle 3",
-      status: StatusEnum.SUBMITTED,
-      ctaLink: "/my-projects",
-      ctaText: "View Project Report",
-      onClick: () => {
-        console.log("clicked");
-        return {};
-      },
-      polygonCheck: "Polygon Check",
-      approve: "Approve",
-      statusText: "approved",
-      updatedAt: "2021/01/01",
-      updatedBy: "John Doe"
-    }
-  ];
-
-  const financialDocumentsItems = [
-    { year: "2020", files: ["GFW Pro High Level Arch Diagram Feb 2023", "TERRAFUND Reference Letter New"] },
-    { year: "2021", files: ["GFW Pro High Level Arch Diagram Feb 2023"] },
-    { year: "2022", files: [] },
-    { year: "2023", files: ["GFW Pro High Level Arch Diagram Feb 2023", "TERRAFUND Reference Letter New"] },
-    { year: "2024", files: ["GFW Pro High Level Arch Diagram Feb 2023"] },
-    { year: "2025", files: [] }
-  ];
-
-  const financialDescriptionsItems = [
-    {
-      label: "2020",
-      description:
-        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-    },
-    {
-      label: "2021",
-      description:
-        "Strong recovery emerged with 28% revenue growth driven by digital transformation initiatives and pent-up market demand, though increased operational expenses compressed profit margins."
-    },
-    {
-      label: "2022",
-      description:
-        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-    },
-    {
-      label: "2023",
-      description:
-        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-    },
-    {
-      label: "2024",
-      description:
-        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-    },
-    {
-      label: "2025",
-      description:
-        "The organization faced significant revenue decline of 15% due to pandemic-related disruptions while maintaining stable operating margins through aggressive cost-cutting measures."
-    }
-  ];
+  const financialReports = (organization as any)?.financialReports ?? [];
+  const mappedReportActions: ActionTrackerCardRowProps[] = (financialReports ?? []).map((report: any) => ({
+    title: report.name,
+    subtitle: `Year: ${report.year_of_report}`,
+    status: Object.values(StatusEnum).includes(report.status) ? report.status : StatusEnum.DRAFT,
+    ctaLink: `/reports/financial-report/${report.uuid}`,
+    ctaText: t("View Report"),
+    onClick: () => {},
+    statusText: report.status,
+    updatedAt: report.updated_at ? new Date(report.updated_at).toLocaleDateString() : "",
+    updatedBy: report.updated_by || ""
+  }));
 
   const fundingSourcesItems = [
     { key: "2020", render: 2020 },
@@ -165,6 +89,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     { key: "2023", render: 2023 },
     { key: "2024", render: 2024 }
   ];
+
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
       <Container className="max-w-full bg-neutral-50 px-0 py-16">
@@ -175,24 +100,33 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             </Text>
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Local Currency")}</Text>
-              <Text variant="text-20-bold">{t("USD - US Dollar")}</Text>
+              <Text variant="text-20-bold">
+                {organization?.currency
+                  ? getCurrencyOptions(t).find(opt => opt.value == organization?.currency)?.title
+                  : "Not Provided"}
+              </Text>
             </div>
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
-              <Text variant="text-20-bold">{t("January")}</Text>
+              <Text variant="text-20-bold">
+                {organization?.fin_start_month
+                  ? getMonthOptions(t).find(opt => opt.value == organization?.fin_start_month)?.title
+                  : "Not Provided"}
+              </Text>
             </div>
           </div>
           <div className="flex h-72 flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
             <Text variant="text-24-bold">{t("Financial Information")}</Text>
             <List
               className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto p-3 text-left"
-              items={mockedReportActions}
+              items={mappedReportActions}
               render={row => <ActionTrackerCardRow {...row} />}
             />
           </div>
         </Container>
       </Container>
 
+      {/* graphic */}
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <Text variant="text-24-bold" className="mb-2">
           {t("Financial Documents")}
@@ -212,6 +146,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         </div>
       </Container>
 
+      {/* graphic */}
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col gap-6 ">
@@ -235,13 +170,13 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           <Text variant="text-24-bold" className="mb-2">
             {t("Financial Documents per Year")}
           </Text>
-          <FinancialDocumentsSection files={financialDocumentsItems} />
+          <FinancialDocumentsSection files={formatDocumentData((organization as any)?.financialCollection)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Descriptions of Financials per Year")}
           </Text>
-          <FinancialDescriptionsSection items={financialDescriptionsItems} />
+          <FinancialDescriptionsSection items={formatDescriptionData((organization as any)?.financialCollection)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">

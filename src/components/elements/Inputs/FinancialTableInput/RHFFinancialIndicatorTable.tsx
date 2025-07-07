@@ -878,7 +878,14 @@ const RHFFinancialIndicatorsDataTable = ({
   }, [value]);
 
   return (
-    <>
+    <InputWrapper
+      label={props.label}
+      required={props.required}
+      containerClassName={props.containerClassName}
+      description={props.description}
+      inputId={id}
+      feedbackRequired={props.feedbackRequired}
+    >
       <div className="mb-10 space-y-6">
         <Dropdown
           options={getCurrencyOptions(t)}
@@ -951,7 +958,7 @@ const RHFFinancialIndicatorsDataTable = ({
           value={documentationData ?? []}
         />
       </div>
-    </>
+    </InputWrapper>
   );
 };
 

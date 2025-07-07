@@ -9,7 +9,7 @@ interface IProps {
 const FinancialDescriptionsSection: FC<IProps> = ({ items }) => {
   return (
     <div className="flex flex-col gap-4">
-      {items.map(({ label, description }) => (
+      {items?.map(({ label, description }) => (
         <FinancialDescriptionsItem key={label} label={label} description={description} />
       ))}
     </div>

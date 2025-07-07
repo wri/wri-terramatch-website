@@ -37,7 +37,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
         let canClearActionClientSide = status === "approved";
 
-        let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.due_at) });
+        let dueText = t(
+          type == "FinancialReport" ? "<strong>Submitted:</strong> {date}" : "<strong>Due:</strong> {date}",
+          {
+            date: format(type == "FinancialReport" ? target?.submitted_at : target?.due_at)
+          }
+        );
         let subtitle;
         let ctaText;
         let ctaLink;
@@ -68,6 +73,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             if (status?.includes("due")) {
               ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task_uuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
+            break;
+          }
+          case "FinancialReport": {
+            ctaText = t("View Financial Report");
+            subtitle = t("<strong>Organization:</strong> {name}", { name: target?.name });
+            ctaLink = `reports/financial-report/${target?.uuid}`;
           }
         }
 

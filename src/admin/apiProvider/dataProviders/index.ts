@@ -6,7 +6,7 @@ import modules from "@/admin/modules";
 
 import { applicationDataProvider } from "./applicationDataProvider";
 import { auditDataProvider } from "./auditDataProvider";
-import { financialIndicatorDataProvider } from "./financialIndicatorDataProvider";
+import { financialReportDataProvider } from "./financialReportDataProvider";
 import { formDataProvider } from "./formDataProvider";
 import { fundingProgrammeDataProvider } from "./fundingProgrammeDataProvider";
 import { impactStoriesDataProvider } from "./impactStoriesDataProvider";
@@ -70,7 +70,7 @@ export const dataProvider = combineDataProviders(resource => {
       return nurseryReportDataProvider;
 
     case modules.financialReport.ResourceName:
-      return financialIndicatorDataProvider;
+      return financialReportDataProvider;
 
     case modules.audit.ResourceName:
       return auditDataProvider;

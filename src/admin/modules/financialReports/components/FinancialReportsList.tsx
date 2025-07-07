@@ -23,15 +23,11 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import {
-  // getChangeRequestStatusOptions,
-  getFinancialReportStatusOptions,
-  getReportStatusOptions
-} from "@/constants/options/status";
+import { getFinancialReportStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
+import { V2FinancialLiteReportRead } from "../../../../generated/apiSchemas";
 import modules from "../..";
 
 const FinancialReportsDataGrid: FC = () => {
@@ -53,24 +49,15 @@ const FinancialReportsDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: SiteReportLightDto) => {
+        render={({ status }: V2FinancialLiteReportRead) => {
           const { title } = getFinancialReportStatusOptions().find((option: any) => option.value === status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
-      {/* <FunctionField
-        source="update_request_status"
-        label="Change Request Status"
-        sortable={false}
-        render={(record: SiteReportLightDto) => {
-          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.updateRequestStatus
-          );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
-        }}
-      /> */}
       <TextField source="year_of_report" label="Year of Report" />
       <DateField source="due_at" label="Due Date" locales="en-GB" />
+      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
+      <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -104,13 +91,6 @@ export const FinancialReportsList: FC = () => {
       choices={optionToChoices(getReportStatusOptions())}
       className="select-page-admin"
     />
-    // <SelectInput
-    //   key="updateRequestStatus"
-    //   label="Change Request Status"
-    //   source="updateRequestStatus"
-    //   choices={optionToChoices(getChangeRequestStatusOptions())}
-    //   className="select-page-admin"
-    // />
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(

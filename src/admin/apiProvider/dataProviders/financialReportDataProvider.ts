@@ -23,13 +23,13 @@ const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
   return { data: { ...object.data, id: object.data.uuid, enrolled_funding_programmes } };
 };
 
-export const financialIndicatorSortableList: string[] = ["created_at"];
+export const financialReportSortableList: string[] = ["created_at"];
 // @ts-ignore
-export const financialIndicatorDataProvider: DataProvider = {
+export const financialReportDataProvider: DataProvider = {
   async getList(_, params) {
     try {
       const response = await fetchGetV2FinancialReports({
-        queryParams: raListParamsToQueryParams(params, financialIndicatorSortableList)
+        queryParams: raListParamsToQueryParams(params, financialReportSortableList)
       });
 
       return apiListResponseToRAListResult(response);
