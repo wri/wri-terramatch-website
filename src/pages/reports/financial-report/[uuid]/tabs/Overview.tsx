@@ -8,11 +8,268 @@ import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import CardFinancial from "@/pages/organization/[id]/components/financial/components/cardFinancial";
-import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
+import { calculateFinancialRatioStats, formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
+
+import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
+import FinancialStackedBarChart from "../components/FinancialStackedBarChart";
 
 type FinancialReportOverviewTabProps = {
   report?: any;
 };
+
+type FinancialStackedBarChartProps = {
+  uuid: string;
+  organisation_id: number;
+  financial_report_id: number;
+  collection: string;
+  amount: number | null;
+  year: number;
+  description: string | null;
+  documentation: any[];
+};
+
+const financialData: FinancialStackedBarChartProps[] = [
+  {
+    uuid: "ed5c3ee4-1061-4704-a5b2-ad6c90bb88a5",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "revenue",
+    amount: 112,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "9a093a44-de44-4038-ac84-d782954bc3c7",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "expenses",
+    amount: 15,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "959cdc0d-7f66-401d-831f-26dc0270bfb4",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "profit",
+    amount: 97,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "9155d292-0877-408a-bd13-c374c0334938",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "revenue",
+    amount: 20,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "c5883e3a-1e06-46a9-bd84-fc5d9563a328",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "expenses",
+    amount: 15,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "b6db4324-8b96-422d-8fb4-66a74f7bdb35",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "profit",
+    amount: 5,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "d72f7980-d53f-42f7-ae42-87a13f59d3f6",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "revenue",
+    amount: 50,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "ea0c9136-72af-4576-b242-c8f62d8c06f8",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "expenses",
+    amount: 10,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "a69e814e-6441-4552-832d-d63d2441a080",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "profit",
+    amount: 40,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "fd4b73e6-cec2-42c0-917a-b96edb3fdf5b",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "budget",
+    amount: 10,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "8d2b4939-ed19-4695-b4c3-c3e97e72b635",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "budget",
+    amount: 13,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "a1c225a0-030d-447a-bc76-3e7baee729b8",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "budget",
+    amount: 14,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "e6c46642-f91f-4ce2-9598-152cefbb5e67",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-assets",
+    amount: 20,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "4f670d6e-a512-453e-9e8c-c8e28eb57136",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-liabilities",
+    amount: 10,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "ee8b2121-8320-4b26-af59-388df97eaa8e",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-ratio",
+    amount: 2,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "e2087917-5e19-422c-978e-9a7f7d4c571b",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-assets",
+    amount: 50,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "18995f43-ebaf-41ea-89c4-8fc2623de87c",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-liabilities",
+    amount: 2,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "e6908512-fc62-4ca0-9440-6b005414e082",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-ratio",
+    amount: 25,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "69de29e4-f81d-47bc-8f75-4b9d0e6043d0",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-assets",
+    amount: 1000,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "a4b32236-4cfa-4285-b631-e846b8c7f4f0",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-liabilities",
+    amount: 3,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "b86f06e7-db8f-4e20-a098-60238c3e261e",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "current-ratio",
+    amount: 33.3333333333333,
+    year: 2022,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "553596ad-ed20-4da5-ac5c-59a2b5cd7181",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "description-documents",
+    amount: null,
+    year: 2020,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "e3c3606e-e7d0-402f-8d24-bf40f54d5b5b",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "description-documents",
+    amount: null,
+    year: 2021,
+    description: null,
+    documentation: []
+  },
+  {
+    uuid: "b94c6bb7-f3ef-434a-8b20-08df3e7d7fa9",
+    organisation_id: 3439,
+    financial_report_id: 1,
+    collection: "description-documents",
+    amount: null,
+    year: 2022,
+    description: null,
+    documentation: []
+  }
+];
 
 const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps) => {
   const t = useT();
@@ -24,6 +281,8 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
       </Container>
     );
   }
+
+  const financialRatioStats = calculateFinancialRatioStats(financialData);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -53,40 +312,49 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
         </Container>
       </Container>
 
-      {/* graphic */}
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <Text variant="text-24-bold" className="mb-2">
           {t("Financial Documents")}
         </Text>
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col gap-6 ">
-            <img src="/images/graphic-2.png" alt="Financial Documents" />
+            <FinancialStackedBarChart data={financialData} />
           </div>
           <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-            <CardFinancial title={t("2020")} data={t("+77")} description={t("Net Profit")} />
-            <CardFinancial title={t("2021")} data={t("+86")} description={t("Net Profit")} />
-            <CardFinancial title={t("2022")} data={t("+67")} description={t("Net Profit")} />
-            <CardFinancial title={t("2023")} data={t("+92")} description={t("Net Profit")} />
-            <CardFinancial title={t("2024")} data={t("+82")} description={t("Net Profit")} />
-            <CardFinancial title={t("2025")} data={t("+91")} description={t("Net Profit")} />
+            {financialData
+              .filter(item => item.collection === "profit")
+              .map(item => (
+                <CardFinancial
+                  key={item.uuid}
+                  title={t(item.year.toString())}
+                  data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                  description={t("Net Profit")}
+                />
+              ))}
           </div>
         </div>
       </Container>
 
-      {/* graphic */}
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col gap-6 ">
             <Text variant="text-24-bold" className="mb-2">
               {t("Current Ratio by Year")}
             </Text>
-            <img src="/images/graphic-3.png" alt="Financial Documents" />
+            <FinancialCurrentRatioChart data={financialData} />
           </div>
           <div className="flex h-full flex-col justify-center">
             <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
-              <CardFinancial title={t("Latest Ratio")} data="2.4" description={t("2025")} />
-              <CardFinancial title={t("5-Year Average")} data="2.4" description={t("2020 - 2025")} />
-              <CardFinancial title={t("Trend")} data="+67" description={t("Improving")} />
+              <CardFinancial
+                title={t("Latest Ratio")}
+                data={financialRatioStats.latestRatio.toString()}
+                description={financialRatioStats.latestYear.toString()}
+              />
+              <CardFinancial
+                title={t(`${financialRatioStats.yearCount}-Year Average`)}
+                data={financialRatioStats.averageRatio.toString()}
+                description={financialRatioStats.yearRange}
+              />
             </div>
           </div>
         </div>
