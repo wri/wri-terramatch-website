@@ -1,14 +1,15 @@
 import { DataProvider } from "react-admin";
 
-import { deleteSiteReport } from "@/connections/Entity";
 import {
+  DeleteV2FinancialReportsUUIDError,
+  fetchDeleteV2FinancialReportsUUID,
   fetchGetV2FinancialReports,
   fetchGetV2FinancialReportsUUID,
   GetV2FinancialReportsError
 } from "@/generated/apiComponents";
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
 
 const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
@@ -53,22 +54,27 @@ export const financialReportDataProvider: DataProvider = {
   // @ts-ignore
   async delete(_, params) {
     try {
-      await deleteSiteReport(params.id as string);
+      await fetchDeleteV2FinancialReportsUUID({
+        pathParams: { uuid: params.id as string }
+      });
+
       return { data: { id: params.id } };
     } catch (err) {
-      throw v3ErrorForRA("Site report delete failed", err);
+      throw getFormattedErrorForRA(err as DeleteV2FinancialReportsUUIDError);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await deleteSiteReport(id as string);
+        await fetchDeleteV2FinancialReportsUUID({
+          pathParams: { uuid: id as string }
+        });
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw v3ErrorForRA("Site report deleteMany failed", err);
+      throw getFormattedErrorForRA(err as DeleteV2FinancialReportsUUIDError);
     }
   }
 };

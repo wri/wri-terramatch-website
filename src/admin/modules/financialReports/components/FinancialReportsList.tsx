@@ -11,7 +11,8 @@ import {
   SearchInput,
   SelectInput,
   ShowButton,
-  TextField
+  TextField,
+  useRecordContext
 } from "react-admin";
 
 import ListActions from "@/admin/components/Actions/ListActions";
@@ -38,7 +39,10 @@ const FinancialReportsDataGrid: FC = () => {
     },
     {
       id: "2",
-      render: () => <EditButton />
+      render: () => {
+        const record = useRecordContext();
+        return <EditButton disabled={record?.status === "submitted"} />;
+      }
     }
   ];
 
@@ -49,8 +53,9 @@ const FinancialReportsDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: V2FinancialLiteReportRead) => {
-          const { title } = getFinancialReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: V2FinancialLiteReportRead) => {
+          const { title } =
+            getFinancialReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
