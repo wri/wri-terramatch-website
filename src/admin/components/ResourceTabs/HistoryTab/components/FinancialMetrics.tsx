@@ -6,6 +6,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getMonthOptions } from "@/constants/options/months";
+import { currencyInput } from "@/utils/financialReport";
 
 import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
 
@@ -19,12 +20,6 @@ const COLLECTION_LABELS: Record<string, string> = {
   "current-ratio": "Current Ratio",
   "description-documents": "Description Documents"
 };
-
-const currencyInput = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£"
-} as any;
 
 const FinancialMetrics = ({ data, years }: { data: V2FinancialIndicatorsRead; years?: number[] }) => {
   const ctx = useShowContext();

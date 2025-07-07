@@ -16,7 +16,7 @@ import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
@@ -82,13 +82,8 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     updatedBy: report.updated_by || ""
   }));
 
-  const fundingSourcesItems = [
-    { key: "2020", render: 2020 },
-    { key: "2021", render: 2021 },
-    { key: "2022", render: 2022 },
-    { key: "2023", render: 2023 },
-    { key: "2024", render: 2024 }
-  ];
+  const fundingTypes: V2FundingTypeRead[] =
+    organization && (organization as any)?.funding_types ? (organization as any)?.funding_types : [];
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -183,7 +178,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection items={fundingSourcesItems} />
+        <FundingSourcesSection data={fundingTypes} currency={organization?.currency} />
       </Container>
       {/* {previous design} */}
       <Container className="hidden py-15">

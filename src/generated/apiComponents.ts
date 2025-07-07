@@ -24632,7 +24632,14 @@ export type GetV2FinancialReportsUUIDResponse = {
   };
   currency?: string;
   fin_start_month?: number;
-  financialCollection?: Record<string, any>[][];
+  financial_collection?: Record<string, any>[][];
+  funding_types?: {
+    uuid?: string;
+    organisation_id?: string;
+    amount?: number;
+    year?: number;
+    type?: string;
+  }[];
 };
 
 export type GetV2FinancialReportsUUIDVariables = {

@@ -25,14 +25,6 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
     );
   }
 
-  const fundingSourcesItems = [
-    { key: "2020", render: 2020 },
-    { key: "2021", render: 2021 },
-    { key: "2022", render: 2022 },
-    { key: "2023", render: 2023 },
-    { key: "2024", render: 2024 }
-  ];
-
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
       <Container className="max-w-full bg-neutral-50 px-0 py-16">
@@ -105,20 +97,20 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
           <Text variant="text-24-bold" className="mb-2">
             {t("Financial Documents per Year")}
           </Text>
-          <FinancialDocumentsSection files={formatDocumentData(report?.financialCollection)} />
+          <FinancialDocumentsSection files={formatDocumentData(report?.financial_collection)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Descriptions of Financials per Year")}
           </Text>
-          <FinancialDescriptionsSection items={formatDescriptionData(report?.financialCollection)} />
+          <FinancialDescriptionsSection items={formatDescriptionData(report?.financial_collection)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection items={fundingSourcesItems} />
+        <FundingSourcesSection data={report?.funding_types} />
       </Container>
     </Container>
   );

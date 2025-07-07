@@ -11,3 +11,9 @@ export const formatDescriptionData = (documents: V2FinancialIndicatorsRead) => {
     ?.filter(financial => financial?.collection == "description-documents")
     .map(financial => ({ label: financial?.year, description: financial?.description }));
 };
+
+export const currencyInput = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£"
+} as any;

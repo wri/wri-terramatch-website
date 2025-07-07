@@ -4,6 +4,7 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
+import { FieldType } from "@/components/extensive/WizardForm/types";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
@@ -19,14 +20,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: EntityName;
 }
-
-const fundingSourcesItems = [
-  { key: "2020", render: 2020 },
-  { key: "2021", render: 2021 },
-  { key: "2022", render: 2022 },
-  { key: "2023", render: 2023 },
-  { key: "2024", render: 2024 }
-];
 
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { isLoading: ctxLoading, record } = useShowContext();
@@ -56,7 +49,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       <div className="flex flex-col gap-8">
         {formSteps.map(step =>
           step?.fields?.map(field =>
-            field.type == "financialTableInput" ? (
+            field.type === FieldType.FinancialTableInput ? (
               <>
                 <FinancialMetrics data={values[field.name]} years={field?.fieldProps?.years} />
                 <Accordion
@@ -73,14 +66,15 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 >
                   <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
                 </Accordion>
-                <Accordion
-                  title="Major Funding Sources by Year"
-                  variant="drawer"
-                  className="rounded-lg bg-white px-6 py-4 shadow-all"
-                >
-                  <FundingSourcesSection items={fundingSourcesItems} />
-                </Accordion>
               </>
+            ) : field.type === FieldType.FundingTypeDataTable ? (
+              <Accordion
+                title="Major Funding Sources by Year"
+                variant="drawer"
+                className="rounded-lg bg-white px-6 py-4 shadow-all"
+              >
+                <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+              </Accordion>
             ) : (
               <></>
             )

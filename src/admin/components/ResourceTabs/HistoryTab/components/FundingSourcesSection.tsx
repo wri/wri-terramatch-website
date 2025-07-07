@@ -1,13 +1,15 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Toggle from "@/components/elements/Toggle/Toggle";
-import { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
+import { V2FundingTypeRead } from "@/generated/apiSchemas";
+import { currencyInput } from "@/utils/financialReport";
 
 interface IProps {
-  items: TogglePropsItem[];
+  data?: V2FundingTypeRead[];
+  currency?: string;
 }
 
 const ColumnsTableFundingSources = [
@@ -43,71 +45,42 @@ const ColumnsTableFundingSources = [
   }
 ];
 
-const dataMock = [
-  {
-    id: 1,
-    fundingYear: "2020",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 2,
-    fundingYear: "2021",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 3,
-    fundingYear: "2022",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 4,
-    fundingYear: "2023",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 5,
-    fundingYear: "2024",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 6,
-    fundingYear: "2025",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 7,
-    fundingYear: "2026",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  },
-  {
-    id: 8,
-    fundingYear: "2027",
-    fundingType: "Private grant from foundation",
-    fundingSource: "IFAD",
-    fundingAmount: "$440,053.67"
-  }
-];
+const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
+  const fundingSourcesItems = Array.from(new Set(data?.map(item => item.year as number)))
+    .sort((a: number, b: number) => a - b)
+    .map((year: number) => ({
+      key: String(year),
+      render: year
+    }));
 
-const FundingSourcesSection: FC<IProps> = ({ items }) => {
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const selectedYear =
+    activeIndex >= 0 && fundingSourcesItems.length > 0 ? Number(fundingSourcesItems[activeIndex].key) : undefined;
+
+  const filteredData = selectedYear !== undefined ? data?.filter(item => item.year === selectedYear) : data;
+
+  const tableData = filteredData?.map((item: any, index) => ({
+    id: index + 1,
+    fundingYear: item?.year,
+    fundingType: item?.type,
+    fundingSource: item?.source,
+    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount}`
+  }));
+
+  const handleToggle = (index: number) => {
+    setActiveIndex(index);
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <Toggle variant={VARIANT_TOGGLE_SECONDARY} items={items} />
+      <Toggle
+        variant={VARIANT_TOGGLE_SECONDARY}
+        items={fundingSourcesItems}
+        onChangeActiveIndex={handleToggle}
+        defaultActiveIndex={activeIndex >= 0 ? activeIndex : undefined}
+      />
       <div>
-        <Table columns={ColumnsTableFundingSources} data={dataMock} variant={VARIANT_TABLE_DASHBOARD_LIST} />
+        <Table columns={ColumnsTableFundingSources} data={tableData ?? []} variant={VARIANT_TABLE_DASHBOARD_LIST} />
       </div>
     </div>
   );
