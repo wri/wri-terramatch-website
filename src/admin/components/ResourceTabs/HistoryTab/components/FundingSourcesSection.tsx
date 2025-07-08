@@ -50,7 +50,7 @@ const ColumnsTableFundingSources = [
 const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const t = useT();
   const fundingSourcesItems = [
-    { key: "all", render: t("All") },
+    { key: "all", render: t("All Years") },
     ...Array.from(new Set(data?.map(item => item.year as number)))
       .sort((a: number, b: number) => a - b)
       .map((year: number) => ({
