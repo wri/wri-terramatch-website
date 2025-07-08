@@ -15,6 +15,7 @@ import {
 import { ApplicationRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps } from "@/helpers/customForms";
 import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { Entity } from "@/types/common";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
@@ -44,13 +45,19 @@ const RequestMoreInformationPage = () => {
     ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
   );
 
+  // Create entity object for RHFMap to work with useGetV2TerrafundProjectPolygon
+  const currentPitchEntity: Entity = {
+    entityName: "project-pitch",
+    entityUUID: submission?.project_pitch_uuid ?? ""
+  };
+
   const requestedInformationForm = getRequestedInformationForm(
     submission?.form ?? {},
     //@ts-ignore
     submission?.feedback_fields ?? []
   );
   const framework = useFramework(submission?.form?.framework_key);
-  const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, undefined, framework) : [];
+  const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, currentPitchEntity, framework) : [];
   const defaultValues = useNormalizedFormDefaultValue(submission?.answers, formSteps);
 
   return (
