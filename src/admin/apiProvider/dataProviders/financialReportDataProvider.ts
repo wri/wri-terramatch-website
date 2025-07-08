@@ -4,10 +4,13 @@ import {
   DeleteV2FinancialReportsUUIDError,
   fetchDeleteV2FinancialReportsUUID,
   fetchGetV2FinancialReports,
+  fetchGetV2FinancialReportsExport,
   fetchGetV2FinancialReportsUUID,
-  GetV2FinancialReportsError
+  GetV2FinancialReportsError,
+  GetV2FinancialReportsExportError
 } from "@/generated/apiComponents";
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
+import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
@@ -23,6 +26,10 @@ const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
   //@ts-ignore
   return { data: { ...object.data, id: object.data.uuid, enrolled_funding_programmes } };
 };
+
+export interface FinancialReportsDataProvider extends DataProvider {
+  export: (resource: string) => Promise<void>;
+}
 
 export const financialReportSortableList: string[] = ["created_at"];
 // @ts-ignore
@@ -76,5 +83,14 @@ export const financialReportDataProvider: DataProvider = {
     } catch (err) {
       throw getFormattedErrorForRA(err as DeleteV2FinancialReportsUUIDError);
     }
+  },
+  export() {
+    return fetchGetV2FinancialReportsExport({})
+      .then((response: any) => {
+        downloadFileBlob(response, "FinancialReports.csv");
+      })
+      .catch(e => {
+        throw getFormattedErrorForRA(e as GetV2FinancialReportsExportError);
+      });
   }
 };
