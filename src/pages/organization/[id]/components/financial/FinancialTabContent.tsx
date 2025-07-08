@@ -91,7 +91,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     ctaText: t("View Report"),
     onClick: () => {},
     statusText: report.status,
-    updatedAt: report.updated_at ? new Date(report.updated_at).toLocaleDateString() : "",
+    updatedAt: report.updated_at ? `Due: ${new Date(report.updated_at).toLocaleDateString()}` : "",
     updatedBy: report.updated_by || ""
   }));
 
@@ -140,7 +140,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             <div className="flex h-72 flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
               <Text variant="text-24-bold">{t("Financial Reports")}</Text>
               <List
-                className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto px-20 py-3 text-left"
+                className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto px-28 py-3 text-left"
                 items={mappedReportActions}
                 render={row => <ActionTrackerCardRow {...row} />}
               />
