@@ -49,18 +49,21 @@ const ColumnsTableFundingSources = [
 
 const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const t = useT();
-  const fundingSourcesItems = Array.from(new Set(data?.map(item => item.year as number)))
-    .sort((a: number, b: number) => a - b)
-    .map((year: number) => ({
-      key: String(year),
-      render: year
-    }));
+  const fundingSourcesItems = [
+    { key: "all", render: t("All Years") },
+    ...Array.from(new Set(data?.map(item => item.year as number)))
+      .sort((a: number, b: number) => a - b)
+      .map((year: number) => ({
+        key: String(year),
+        render: year
+      }))
+  ];
 
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const selectedYear =
-    activeIndex >= 0 && fundingSourcesItems.length > 0 ? Number(fundingSourcesItems[activeIndex].key) : undefined;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const selectedKey = fundingSourcesItems[activeIndex]?.key;
 
-  const filteredData = selectedYear !== undefined ? data?.filter(item => item.year === selectedYear) : data;
+  const filteredData =
+    selectedKey && selectedKey !== "all" ? data?.filter(item => String(item.year) === selectedKey) : data;
 
   const tableData = filteredData?.map((item: any, index) => ({
     id: index + 1,
@@ -80,7 +83,7 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
         variant={VARIANT_TOGGLE_SECONDARY}
         items={fundingSourcesItems}
         onChangeActiveIndex={handleToggle}
-        defaultActiveIndex={activeIndex >= 0 ? activeIndex : undefined}
+        defaultActiveIndex={activeIndex}
       />
       <div>
         <Table columns={ColumnsTableFundingSources} data={tableData ?? []} variant={VARIANT_TABLE_DASHBOARD_LIST} />
