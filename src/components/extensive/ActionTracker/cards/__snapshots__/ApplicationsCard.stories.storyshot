@@ -29,7 +29,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
   >
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -37,28 +37,38 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-secondary-200"
             >
-              <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
-                data-testid="txt"
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
               />
+              <p
+                className="text-bold-caption-100"
+                data-testid="txt"
+              >
+                Approved
+              </p>
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -67,29 +77,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -107,7 +117,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -115,28 +125,38 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
             >
-              <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
-                data-testid="txt"
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
               />
+              <p
+                className="text-bold-caption-100"
+                data-testid="txt"
+              >
+                Draft
+              </p>
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -145,29 +165,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -185,7 +205,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -193,28 +213,38 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-neutral-200"
             >
-              <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
-                data-testid="txt"
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
               />
+              <p
+                className="text-bold-caption-100"
+                data-testid="txt"
+              >
+                Draft
+              </p>
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -223,29 +253,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -263,7 +293,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -271,13 +301,13 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
@@ -292,7 +322,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -301,29 +331,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -341,7 +371,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -349,28 +379,38 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-tertiary-200"
             >
-              <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
-                data-testid="txt"
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
               />
+              <p
+                className="text-bold-caption-100"
+                data-testid="txt"
+              >
+                More info requested
+              </p>
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -379,29 +419,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
@@ -419,7 +459,7 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
     </li>
     <li>
       <a
-        className="group flex cursor-pointer flex-col  rounded-xl p-0 shadow"
+        className="group flex cursor-pointer flex-col  rounded-md p-0 shadow"
         href="applications/undefined"
         onClick={[Function]}
         onMouseEnter={[Function]}
@@ -427,28 +467,38 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
         title="TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)"
       >
         <div
-          className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5"
+          className="mx-3 mb-2 mt-3 wide:mx-6 wide:mt-6 wide:mb-5"
         >
           <div
-            className="flex items-start gap-3"
+            className="mb-1 flex items-start gap-3"
           >
             <p
-              className="flex-1 text-14-bold"
+              className="flex-1 text-body-500"
               data-testid="txt"
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl py-0.5 pr-3 pl-1.5 bg-primary-200"
             >
-              <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
-                data-testid="txt"
+              <div
+                style={
+                  Object {
+                    "height": undefined,
+                    "width": 24,
+                  }
+                }
               />
+              <p
+                className="text-bold-caption-100"
+                data-testid="txt"
+              >
+                Awaiting approval
+              </p>
             </div>
           </div>
           <p
-            className="mb-2 text-14-light with-inner-html"
+            className="text-body-300 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "<strong>Stage</strong>: N/A",
@@ -457,29 +507,29 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             data-testid="txt"
           />
           <p
-            className="text-14-light"
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Last Updated</strong>: ",
+              }
+            }
             data-testid="txt"
-          >
-            <span
-              className="text-12-bold"
-              data-testid="txt"
-            >
-              Due
-               
-            </span>
-            <span
-              className="text-12-light"
-              data-testid="txt"
-            >
-              &lt;strong&gt;Last Updated&lt;/strong&gt;: 
-            </span>
-          </p>
+          />
+          <p
+            className="text-body-300 with-inner-html"
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "<strong>Updated By</strong>: undefined",
+              }
+            }
+            data-testid="txt"
+          />
         </div>
         <div
           className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6"
         >
           <p
-            className="text-primary group-hover:text-white text-14-bold"
+            className="group-hover:text-white text-button-700"
             data-testid="txt"
           >
             View Application
