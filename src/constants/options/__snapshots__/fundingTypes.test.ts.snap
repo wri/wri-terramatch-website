@@ -3,7 +3,7 @@
 exports[`snapShot test getFundingTypesOptions 1`] = `
 [
   {
-    "title": "Private Grant from foundation",
+    "title": "Private grant from foundation",
     "value": "private_grant_from_foundation",
   },
   {
