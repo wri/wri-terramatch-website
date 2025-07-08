@@ -155,7 +155,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6 ">
-              <FinancialStackedBarChart data={financialData} />
+              <FinancialStackedBarChart data={financialData} currency={organization?.currency} />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData

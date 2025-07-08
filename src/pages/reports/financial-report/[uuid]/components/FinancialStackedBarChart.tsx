@@ -14,6 +14,8 @@ import {
   YAxis
 } from "recharts";
 
+import { currencyInput } from "@/utils/financialReport";
+
 type FinancialStackedBarChartProps = {
   uuid: string;
   organisation_id: number;
@@ -25,7 +27,11 @@ type FinancialStackedBarChartProps = {
   documentation?: any[];
 };
 
-const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProps[] }) => {
+const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBarChartProps[]; currency?: string }) => {
+  const currencySymbol = useMemo(() => {
+    return currency ? currencyInput[currency] || "" : "";
+  }, [currency]);
+
   const chartData = useMemo(() => {
     const groupedByYear = _.groupBy(data, "year");
 
@@ -85,7 +91,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
               displayValue = Math.abs(value);
             }
 
-            const formattedValue = `$${Math.abs(displayValue).toLocaleString()}`;
+            const formattedValue = `${currencySymbol}${Math.abs(displayValue).toLocaleString()}`;
 
             return (
               <p key={index} style={{ color: entry.color }} className="capitalize">
@@ -108,9 +114,11 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
   };
 
   const formatYAxis = (value: number) => {
-    if (value === 0) return "$0";
+    if (value === 0) return `${currencySymbol}0`;
     const intValue = Math.round(value);
-    return intValue > 0 ? `$${intValue.toLocaleString()}` : `-$${Math.abs(intValue).toLocaleString()}`;
+    return intValue > 0
+      ? `${currencySymbol}${intValue.toLocaleString()}`
+      : `${currencySymbol}-${Math.abs(intValue).toLocaleString()}`;
   };
 
   const getYAxisTicks = () => {
@@ -142,7 +150,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
     if (value > 0) {
       return (
         <text x={x + width / 2} y={y - 5} fill="#000" textAnchor="middle" fontSize="12" fontWeight="500">
-          ${value.toLocaleString()}
+          {`${currencySymbol}${value.toLocaleString()}`}
         </text>
       );
     }
@@ -163,7 +171,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
           fontWeight="500"
           dominantBaseline="hanging"
         >
-          ${Math.abs(value).toLocaleString()}
+          {`${currencySymbol}${Math.abs(value).toLocaleString()}`}
         </text>
       );
     }
@@ -188,7 +196,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
   return (
     <div className="h-96 w-full p-4">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={chartData} stackOffset="sign" margin={{ top: 20, right: 20, left: 5, bottom: 20 }}>
+        <ComposedChart data={chartData} stackOffset="sign" margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
           <CartesianGrid horizontal={true} vertical={false} stroke="#e0e0e0" strokeDasharray="0" />
 
           <XAxis

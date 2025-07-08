@@ -75,7 +75,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
         </Text>
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col gap-6 ">
-            <FinancialStackedBarChart data={report?.financial_collection} />
+            <FinancialStackedBarChart data={report?.financial_collection} currency={report?.currency} />
           </div>
           <div className="grid grid-cols-3 gap-x-4 gap-y-4">
             {report?.financial_collection
