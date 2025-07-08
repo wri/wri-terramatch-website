@@ -12,9 +12,18 @@ export type LoginDto = {
   token: string;
 };
 
-export type LoginRequest = {
+export type LoginAttributes = {
   emailAddress: string;
   password: string;
+};
+
+export type LoginData = {
+  type: "logins";
+  attributes: LoginAttributes;
+};
+
+export type LoginBody = {
+  data: LoginData;
 };
 
 export type UserFramework = {
@@ -74,7 +83,7 @@ export type UserUpdateBody = {
   data: UserData;
 };
 
-export type UserNewRequest = {
+export type UserCreateAttributes = {
   firstName: string;
   lastName: string;
   password: string;
@@ -85,6 +94,15 @@ export type UserNewRequest = {
   country: string;
   program: string;
   callbackUrl: string;
+};
+
+export type UserCreateData = {
+  type: "users";
+  attributes: UserCreateAttributes;
+};
+
+export type UserCreateBody = {
+  data: UserCreateData;
 };
 
 export type ResetPasswordResponseDto = {

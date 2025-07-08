@@ -8,7 +8,7 @@ import {
   resetPasswordFetchFailed,
   resetPasswordIsFetching
 } from "@/generated/v3/userService/userServiceSelectors";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -19,14 +19,14 @@ export const selectResetPassword = (store: ApiDataStore) => Object.values(store.
 
 type RequestResetPasswordConnection = {
   isLoading: boolean;
-  requestFailed: PendingErrorState | null;
+  requestFailed: PendingError | undefined;
   isSuccess: boolean;
   requestEmail: string;
 };
 
 const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
   selector: createSelector(
-    [requestPasswordResetIsFetching, requestPasswordResetFetchFailed, selectResetPassword],
+    [requestPasswordResetIsFetching(), requestPasswordResetFetchFailed(), selectResetPassword],
     (isLoading, requestFailed, selector) => {
       return {
         isLoading: isLoading,
@@ -40,7 +40,7 @@ const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
 
 type ResetPasswordConnection = {
   isLoading: boolean;
-  requestFailed: PendingErrorState | null;
+  requestFailed: PendingError | undefined;
   isSuccess: boolean;
   resetPassword: (password: string) => void;
 };

@@ -1,4 +1,4 @@
-import { isFetchingSelector, fetchFailedSelector } from "../utils";
+import { isFetchingSelector, fetchFailedSelector, completeSelector } from "../utils";
 import {
   UsersFindPathParams,
   UsersFindVariables,
@@ -10,9 +10,14 @@ import {
 
 export const AUTH_LOGIN_URL = "/auth/v3/logins";
 
-export const authLoginIsFetching = isFetchingSelector<{}, {}>({ url: AUTH_LOGIN_URL, method: "post" });
+export const authLoginIsFetching = (_?: Omit<void, "body">) =>
+  isFetchingSelector<{}, {}>({ url: AUTH_LOGIN_URL, method: "post" });
 
-export const authLoginFetchFailed = fetchFailedSelector<{}, {}>({ url: AUTH_LOGIN_URL, method: "post" });
+export const authLoginFetchFailed = (_?: Omit<void, "body">) =>
+  fetchFailedSelector<{}, {}>({ url: AUTH_LOGIN_URL, method: "post" });
+
+export const authLoginComplete = (_?: Omit<void, "body">) =>
+  completeSelector<{}, {}>({ url: AUTH_LOGIN_URL, method: "post" });
 
 export const USERS_FIND_URL = "/users/v3/users/{uuid}";
 
@@ -32,21 +37,25 @@ export const userUpdateFetchFailed = (variables: Omit<UserUpdateVariables, "body
 
 export const USER_CREATION_URL = "/users/v3/users";
 
-export const userCreationIsFetching = isFetchingSelector<{}, {}>({ url: USER_CREATION_URL, method: "post" });
+export const userCreationIsFetching = (_?: Omit<void, "body">) =>
+  isFetchingSelector<{}, {}>({ url: USER_CREATION_URL, method: "post" });
 
-export const userCreationFetchFailed = fetchFailedSelector<{}, {}>({ url: USER_CREATION_URL, method: "post" });
+export const userCreationFetchFailed = (_?: Omit<void, "body">) =>
+  fetchFailedSelector<{}, {}>({ url: USER_CREATION_URL, method: "post" });
+
+export const userCreationComplete = (_?: Omit<void, "body">) =>
+  completeSelector<{}, {}>({ url: USER_CREATION_URL, method: "post" });
 
 export const REQUEST_PASSWORD_RESET_URL = "/auth/v3/passwordResets";
 
-export const requestPasswordResetIsFetching = isFetchingSelector<{}, {}>({
-  url: REQUEST_PASSWORD_RESET_URL,
-  method: "post"
-});
+export const requestPasswordResetIsFetching = (_?: Omit<void, "body">) =>
+  isFetchingSelector<{}, {}>({ url: REQUEST_PASSWORD_RESET_URL, method: "post" });
 
-export const requestPasswordResetFetchFailed = fetchFailedSelector<{}, {}>({
-  url: REQUEST_PASSWORD_RESET_URL,
-  method: "post"
-});
+export const requestPasswordResetFetchFailed = (_?: Omit<void, "body">) =>
+  fetchFailedSelector<{}, {}>({ url: REQUEST_PASSWORD_RESET_URL, method: "post" });
+
+export const requestPasswordResetComplete = (_?: Omit<void, "body">) =>
+  completeSelector<{}, {}>({ url: REQUEST_PASSWORD_RESET_URL, method: "post" });
 
 export const RESET_PASSWORD_URL = "/auth/v3/passwordResets/{token}";
 
@@ -58,6 +67,11 @@ export const resetPasswordFetchFailed = (variables: Omit<ResetPasswordVariables,
 
 export const VERIFY_USER_URL = "/auth/v3/verifications";
 
-export const verifyUserIsFetching = isFetchingSelector<{}, {}>({ url: VERIFY_USER_URL, method: "post" });
+export const verifyUserIsFetching = (_?: Omit<void, "body">) =>
+  isFetchingSelector<{}, {}>({ url: VERIFY_USER_URL, method: "post" });
 
-export const verifyUserFetchFailed = fetchFailedSelector<{}, {}>({ url: VERIFY_USER_URL, method: "post" });
+export const verifyUserFetchFailed = (_?: Omit<void, "body">) =>
+  fetchFailedSelector<{}, {}>({ url: VERIFY_USER_URL, method: "post" });
+
+export const verifyUserComplete = (_?: Omit<void, "body">) =>
+  completeSelector<{}, {}>({ url: VERIFY_USER_URL, method: "post" });

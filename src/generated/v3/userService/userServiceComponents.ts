@@ -42,14 +42,14 @@ export type AuthLoginResponse = {
 };
 
 export type AuthLoginVariables = {
-  body: Schemas.LoginRequest;
+  body: Schemas.LoginBody;
 };
 
 /**
  * Receive a JWT Token in exchange for login credentials
  */
 export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =>
-  userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginRequest, {}, {}, {}>({
+  userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginBody, {}, {}, {}>({
     url: "/auth/v3/logins",
     method: "post",
     ...variables,
@@ -327,14 +327,14 @@ export type UserCreationResponse = {
 };
 
 export type UserCreationVariables = {
-  body: Schemas.UserNewRequest;
+  body: Schemas.UserCreateBody;
 };
 
 /**
  * Create a new user
  */
 export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserNewRequest, {}, {}, {}>({
+  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserCreateBody, {}, {}, {}>({
     url: "/users/v3/users",
     method: "post",
     ...variables,

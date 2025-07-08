@@ -27,7 +27,7 @@ const delayedJobsSelector = (store: ApiDataStore) =>
     .filter(({ isAcknowledged }) => !isAcknowledged);
 
 const combinedSelector = createSelector(
-  [delayedJobsSelector, bulkUpdateJobsIsFetching, bulkUpdateJobsFetchFailed],
+  [delayedJobsSelector, bulkUpdateJobsIsFetching(), bulkUpdateJobsFetchFailed()],
   (delayedJobs, bulkUpdateJobsIsLoading, bulkUpdateJobsFailure) => ({
     delayedJobs,
     delayedJobsIsLoading: delayedJobs == null && !bulkUpdateJobsFailure,
@@ -47,7 +47,7 @@ export const useDelayedJobs = () => {
   const connection = useConnection(delayedJobsCombinedConnection);
   const { totalContent } = useJobProgress();
   const intervalRef = useRef<NodeJS.Timer | undefined>();
-  const [, { isLoggedIn }] = useLogin();
+  const [, { data: login }] = useLogin({});
 
   const stopPolling = useCallback(() => {
     if (intervalRef.current != null) {
@@ -82,10 +82,10 @@ export const useDelayedJobs = () => {
     else stopPolling();
   }, [hasJobs, startPolling, stopPolling, totalContent]);
 
-  useValueChanged(isLoggedIn, () => {
+  useValueChanged(login, () => {
     // make sure we call the listDelayedJobs request at least once when we first mount if we're
     // logged in, or when we log in with a fresh user.
-    if (isLoggedIn) listDelayedJobs();
+    if (login != null) listDelayedJobs();
   });
 
   return connection;

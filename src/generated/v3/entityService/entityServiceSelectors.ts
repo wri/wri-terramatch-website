@@ -1,4 +1,4 @@
-import { isFetchingSelector, fetchFailedSelector, indexMetaSelector } from "../utils";
+import { isFetchingSelector, fetchFailedSelector, indexMetaSelector, completeSelector } from "../utils";
 import { ResourceType } from "@/store/apiSlice";
 import {
   ProjectPitchIndexQueryParams,
@@ -113,6 +113,9 @@ export const uploadFileIsFetching = (variables: Omit<UploadFileVariables, "body"
 
 export const uploadFileFetchFailed = (variables: Omit<UploadFileVariables, "body">) =>
   fetchFailedSelector<{}, UploadFilePathParams>({ url: UPLOAD_FILE_URL, method: "post", ...variables });
+
+export const uploadFileComplete = (variables: Omit<UploadFileVariables, "body">) =>
+  completeSelector<{}, UploadFilePathParams>({ url: UPLOAD_FILE_URL, method: "post", ...variables });
 
 export const TREE_SCIENTIFIC_NAMES_SEARCH_URL = "/trees/v3/scientificNames";
 

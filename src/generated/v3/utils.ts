@@ -1,5 +1,6 @@
 import ApiSlice, {
   ApiDataStore,
+  isCompletedCreationState,
   isErrorState,
   isInProgress,
   Method,
@@ -20,7 +21,6 @@ import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/tok
 import { DelayedJobDto } from "./jobService/jobServiceSchemas";
 import JobsSlice from "@/store/jobsSlice";
 import { resolveUrl as resolveV3Url } from "./utils";
-import { v4 as uuid } from "uuid";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
@@ -105,7 +105,20 @@ export function fetchFailedSelector<TQueryParams extends FetchParams, TPathParam
   const fullUrl = resolveUrl(url, queryParams, pathParams);
   return (store: ApiDataStore) => {
     const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
-    return isErrorState(pending) ? pending : null;
+    return isErrorState(pending) ? pending : undefined;
+  };
+}
+
+export function completeSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
+  url,
+  method,
+  pathParams,
+  queryParams
+}: SelectorOptions<TQueryParams, TPathParams>) {
+  const fullUrl = resolveUrl(url, queryParams, pathParams);
+  return (store: ApiDataStore) => {
+    const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
+    return isCompletedCreationState(pending) ? pending : undefined;
   };
 }
 
@@ -145,10 +158,8 @@ export const logout = () => {
   ApiSlice.clearApiCache();
 };
 
-export const selectFirstLogin = (store: ApiDataStore) => Object.values(store.logins)?.[0]?.attributes;
-
 async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
-  const actionPayload = { url, method: requestInit.method as Method, requestId: uuid() };
+  const actionPayload = { url, method: requestInit.method as Method };
   ApiSlice.fetchStarting(actionPayload);
 
   try {
@@ -204,6 +215,10 @@ export type ServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = 
   signal?: AbortSignal;
 };
 
+/**
+ * Execute a request to the v3 backend. Returns the client-side-only request ID string. If undefined
+ * is returned, it indicates the request was not sent because it is already pending.
+ */
 export function serviceFetch<
   TData,
   TError,
@@ -238,18 +253,16 @@ export function serviceFetch<
   // store, which means that the next connections that kick off right away don't have access to
   // the token through the getAccessToken method. So, we grab it from the store instead, which is
   // more reliable in this case.
-  const { token } = selectFirstLogin(ApiSlice.currentState) ?? {};
+  const token = Object.values(ApiSlice.currentState.logins)?.[0]?.attributes?.token;
   if (!requestHeaders?.Authorization && token != null) {
     // Always include the JWT access token if we have one.
     requestHeaders.Authorization = `Bearer ${token}`;
   }
 
-  /**
-   * As the fetch API is being used, when multipart/form-data is specified
-   * the Content-Type header must be deleted so that the browser can set
-   * the correct boundary.
-   * https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
-   */
+  // As the fetch API is being used, when multipart/form-data is specified
+  // the Content-Type header must be deleted so that the browser can set
+  // the correct boundary.
+  // https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
   if (requestHeaders["Content-Type"].toLowerCase().includes("multipart/form-data")) {
     delete requestHeaders["Content-Type"];
   }
@@ -272,7 +285,7 @@ async function loadJob(
   signal: AbortSignal | undefined,
   delayedJobId: string,
   retries = 3,
-  actionPayload: { url: string; method: Method; requestId: string }
+  actionPayload: { url: string; method: Method }
 ): Promise<JobResult> {
   let response, error;
   try {
@@ -330,7 +343,7 @@ async function loadJob(
 async function processDelayedJob<TData>(
   signal: AbortSignal | undefined,
   delayedJobId: string,
-  actionPayload: { url: string; method: Method; requestId: string }
+  actionPayload: { url: string; method: Method }
 ): Promise<TData> {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();

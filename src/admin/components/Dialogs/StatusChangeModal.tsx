@@ -26,7 +26,7 @@ import {
 } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -60,7 +60,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
   // This will be a quick cache get in that case, instead of another server round trip.
-  useUpdateComplete(isUpdating, refetch);
+  useRequestComplete(isUpdating, refetch);
 
   const dialogTitle = (() => {
     let name;

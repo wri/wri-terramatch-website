@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import ApiSlice, { ApiDataStore, PendingErrorState, ResourceType } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, PendingError, ResourceType } from "@/store/apiSlice";
 
 export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiDataStore) =>
   store.meta.deleted[resource];
@@ -17,7 +17,7 @@ export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiD
  */
 export const deleterAsync = (
   type: ResourceType,
-  fetchFailedSelector: (id: string) => (store: ApiDataStore) => PendingErrorState | null,
+  fetchFailedSelector: (id: string) => (store: ApiDataStore) => PendingError | undefined,
   deleteFetch: (id: string) => void
 ) => {
   /**

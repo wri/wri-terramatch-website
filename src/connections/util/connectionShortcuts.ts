@@ -1,5 +1,5 @@
 import { useConnection } from "@/hooks/useConnection";
-import ApiSlice from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection, OptionalProps } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -35,3 +35,8 @@ export const connectionSelector =
     const state = (connection.getState ?? ApiSlice.getState)(ApiSlice.redux.getState()) as State;
     return connection.selector(state, args[0] as TProps);
   };
+
+export const selectConnection =
+  <S, P extends OptionalProps>(connection: Connection<S, P>, props: P) =>
+  (state: ApiDataStore) =>
+    connection.selector(state, props);

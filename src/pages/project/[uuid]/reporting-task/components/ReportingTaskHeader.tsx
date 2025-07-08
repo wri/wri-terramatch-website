@@ -12,7 +12,7 @@ import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useTask } from "@/connections/Task";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useUpdateSuccess } from "@/hooks/useConnectionUpdate";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 
@@ -55,7 +55,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       />
     );
   }, [closeModal, openModal, project?.uuid, router, t]);
-  useUpdateSuccess(isUpdating, updateFailure, onSuccess);
+  useRequestSuccess(isUpdating, updateFailure, onSuccess);
 
   const ModalsMapping = {
     ready_to_submit: {

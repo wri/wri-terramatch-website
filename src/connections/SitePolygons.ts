@@ -13,7 +13,7 @@ import {
   sitePolygonsIndexIndexMeta
 } from "@/generated/v3/researchService/researchServiceSelectors";
 import { useStableProps } from "@/hooks/useStableProps";
-import { PendingErrorState } from "@/store/apiSlice";
+import { PendingError } from "@/store/apiSlice";
 import { ConnectionProps } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -51,7 +51,7 @@ export const useAllSitePolygons = (
 ) => {
   const [allPolygons, setAllPolygons] = useState<SitePolygonLightDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<PendingErrorState | null>(null);
+  const [error, setError] = useState<PendingError | null>(null);
 
   const stableProps = useStableProps(props);
 

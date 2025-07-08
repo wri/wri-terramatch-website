@@ -1,21 +1,25 @@
 import { createSelector } from "reselect";
 
-import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { loginConnection } from "@/connections/Login";
+import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { connectionHook, connectionLoader, selectConnection } from "@/connections/util/connectionShortcuts";
 import {
   userCreation,
+  UserCreationVariables,
   usersFind,
   UsersFindVariables,
   userUpdate
 } from "@/generated/v3/userService/userServiceComponents";
-import { UserDto, UserNewRequest, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import { UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import {
+  USER_CREATION_URL,
+  userCreationComplete,
   userCreationFetchFailed,
   userCreationIsFetching,
   usersFindFetchFailed,
   userUpdateFetchFailed
 } from "@/generated/v3/userService/userServiceSelectors";
-import { selectFirstLogin } from "@/generated/v3/utils";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -69,11 +73,11 @@ const myUserConnection: Connection<UserConnection> = {
   isLoaded: ({ user, userLoadFailed, isLoggedIn }) => !isLoggedIn || userLoadFailed || user != null,
 
   selector: createSelector(
-    [selectMe, selectFirstLogin, usersFindFetchFailed(FIND_ME), selectMeUpdateFailure],
-    (resource, firstLogin, userLoadFailure, userUpdateFailure) => ({
+    [selectMe, selectConnection(loginConnection, {}), usersFindFetchFailed(FIND_ME), selectMeUpdateFailure],
+    (resource, { data: login }, userLoadFailure, userUpdateFailure) => ({
       user: resource?.attributes,
       userLoadFailed: userLoadFailure != null,
-      isLoggedIn: firstLogin?.token != null,
+      isLoggedIn: login?.token != null,
       isAdmin: isAdmin(resource?.attributes),
       isFunderOrGovernment: isFunderOrGovernment(resource?.attributes),
       userUpdateFailed: userUpdateFailure != null,
@@ -84,28 +88,14 @@ const myUserConnection: Connection<UserConnection> = {
   )
 };
 
-export const selectUserCreation = (store: ApiDataStore) => Object.values(store.users)?.[0]?.attributes;
-
-type UserCreationConnection = {
-  isLoading: boolean;
-  requestFailed: PendingErrorState | null;
-  isSuccess: boolean;
-  emailNewUser: string;
-  signUp: (newUSer: UserNewRequest) => void;
-};
-
-const userCreationConnection: Connection<UserCreationConnection> = {
-  selector: createSelector(
-    [userCreationIsFetching, userCreationFetchFailed, selectUserCreation],
-    (isLoading, requestFailed, selector) => ({
-      isLoading,
-      requestFailed,
-      isSuccess: selector?.emailAddress != null,
-      emailNewUser: selector?.emailAddress,
-      signUp: (newUser: UserNewRequest) => userCreation({ body: newUser })
-    })
-  )
-};
+const userCreationConnection = ApiConnectionFactory.create<UserDto, UserCreationVariables>(
+  "users",
+  userCreation,
+  userCreationIsFetching,
+  userCreationFetchFailed,
+  userCreationComplete,
+  USER_CREATION_URL
+).buildConnection();
 
 export const useMyUser = connectionHook(myUserConnection);
 export const loadMyUser = connectionLoader(myUserConnection);

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { createSelector } from "reselect";
 
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
-import { PendingErrorState } from "@/store/apiSlice";
+import { PendingError } from "@/store/apiSlice";
 import DataApiSlice, { DataApiStore } from "@/store/dataApiSlice";
 import { Connection } from "@/types/connection";
 import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
@@ -15,7 +15,7 @@ import { selectorCache } from "@/utils/selectorCache";
 export type GadmConnection = {
   byParentCode?: Dictionary<Dictionary<string>>;
   codeMapping?: Dictionary<string>;
-  fetchFailure?: PendingErrorState | null;
+  fetchFailure?: PendingError | null;
 };
 
 type GadmConnectionProps = {

@@ -3,7 +3,7 @@ import { createSelector } from "reselect";
 import { connectionHook } from "@/connections/util/connectionShortcuts";
 import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { verifyUserFetchFailed, verifyUserIsFetching } from "@/generated/v3/userService/userServiceSelectors";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
+import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
@@ -11,7 +11,7 @@ export const selectVerificationUser = (store: ApiDataStore) => Object.values(sto
 
 type VerificationUserConnection = {
   isLoading: boolean;
-  requestFailed: PendingErrorState | null;
+  requestFailed: PendingError | undefined;
   isSuccess: boolean | null;
 };
 
@@ -19,6 +19,8 @@ type VerificationUserProps = {
   token: string;
 };
 
+// Note: this endpoint and usecase are weird and will wait to move to the factory pattern for a
+// later refactor.
 const verificationUserConnection: Connection<VerificationUserConnection, VerificationUserProps> = {
   load: ({ isSuccess, requestFailed }, { token }) => {
     if (isSuccess == null && requestFailed == null) verifyUser({ body: { token } });
@@ -29,7 +31,7 @@ const verificationUserConnection: Connection<VerificationUserConnection, Verific
     ({ token }) => token,
     ({ token }) =>
       createSelector(
-        [verifyUserIsFetching, verifyUserFetchFailed, selectVerificationUser],
+        [verifyUserIsFetching(), verifyUserFetchFailed(), selectVerificationUser],
         (isLoading, requestFailed, selector) => ({
           isLoading,
           requestFailed,

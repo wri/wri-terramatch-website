@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dictionary } from "lodash";
 import { Store } from "redux";
 
-import { Pending, PendingErrorState } from "@/store/apiSlice";
+import { Pending, PendingError } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 
 export type DataApiStore = {
@@ -32,7 +32,7 @@ export type DataApiFetchStartingProps = {
 };
 
 export type DataApiFetchFailedProps = DataApiFetchStartingProps & {
-  error: PendingErrorState;
+  error: PendingError;
 };
 
 export type GadmLevel = keyof DataApiStore["gadm"];

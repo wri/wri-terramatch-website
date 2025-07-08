@@ -2,11 +2,12 @@ import { assign, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
-import { FetchParams, getStableQuery } from "@/generated/v3/utils";
-import {
+import { FetchParams, getStableQuery, resolveUrl } from "@/generated/v3/utils";
+import ApiSlice, {
   ApiDataStore,
   ApiFilteredIndexCache,
-  PendingErrorState,
+  CompletedCreation,
+  PendingError,
   Relationships,
   ResourceType,
   StoreResource,
@@ -23,13 +24,18 @@ export type ListConnection<DTO> = { data?: DTO[] };
 export type IndexConnection<DTO> = ListConnection<DTO> & {
   indexTotal?: number;
 };
-export type LoadFailureConnection = { loadFailure: PendingErrorState | null };
+export type CreateConnection<DTO, CreateAttributes> = DataConnection<DTO> & {
+  isCreating: boolean;
+  createFailure: PendingError | undefined;
+  create: (attributes: CreateAttributes) => void;
+};
+export type LoadFailureConnection = { loadFailure: PendingError | undefined };
 export type IsLoadingConnection = { isLoading: boolean };
 export type IsDeletedConnection = { isDeleted: boolean };
 export type RefetchConnection = { refetch: () => void };
 export type UpdateConnection<UpdateAttributes> = {
   isUpdating: boolean;
-  updateFailure: PendingErrorState | null;
+  updateFailure: PendingError | undefined;
   update: (attributes: UpdateAttributes) => void;
 };
 
@@ -52,14 +58,17 @@ export type EnabledProp = {
 export type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
 type FailureSelector<Variables> = (
   variables: Omit<Variables, "body">
-) => (store: ApiDataStore) => PendingErrorState | null;
+) => (store: ApiDataStore) => PendingError | undefined;
+type CompleteSelector<Variables> = (
+  variables: Omit<Variables, "body">
+) => (store: ApiDataStore) => CompletedCreation | undefined;
 type InProgressSelector<Variables> = (variables: Omit<Variables, "body">) => (store: ApiDataStore) => boolean;
 type IndexMetaSelector<Variables> = (
   resource: ResourceType,
   variables: Omit<Variables, "body">
 ) => (store: ApiDataStore) => ApiFilteredIndexCache;
 
-type QueryVariables = {
+export type QueryVariables = {
   pathParams?: Record<string, unknown>;
   queryParams?: Record<string, unknown>;
 };
@@ -68,6 +77,13 @@ type UpdateAttributes<T> = T extends UpdateData<infer A> ? A : never;
 export type UpdateBody<U extends UpdateData> = {
   body: {
     data: U;
+  };
+};
+type CreateData<Attributes = unknown> = { type: ResourceType; attributes: Attributes };
+type CreateAttributes<T> = T extends CreateBody<infer D> ? (D extends CreateData<infer A> ? A : never) : never;
+export type CreateBody<C extends CreateData = CreateData> = {
+  body: {
+    data: C;
   };
 };
 type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
@@ -119,6 +135,11 @@ const resourceAttributesSelector =
 const resourceRelationshipsSelector = (props: IdProp, variablesFactory: unknown, resource: ResourceType) =>
   createSelector([resourceSelectorById(props, variablesFactory, resource)], resource => resource?.relationships);
 
+const resourceMapSelector =
+  <DTO>(resource: ResourceType) =>
+  (store: ApiDataStore) =>
+    store[resource] as StoreResourceMap<DTO>;
+
 const indexDataSelector =
   <DTO, Variables extends QueryVariables, Props>(
     resource: ResourceType,
@@ -126,10 +147,7 @@ const indexDataSelector =
   ) =>
   (props: Props, variablesFactory: VariablesFactory<Variables, Props>) =>
     createSelector(
-      [
-        indexMetaSelector(resource, variablesFactory(props) as Variables),
-        (store: ApiDataStore) => store[resource] as StoreResourceMap<DTO>
-      ],
+      [indexMetaSelector(resource, variablesFactory(props) as Variables), resourceMapSelector<DTO>(resource)],
       (indexMeta, resources): IndexConnection<DTO> => {
         if (indexMeta == null) return {};
 
@@ -319,6 +337,76 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
+   * Creates a connection for creating a resource.
+   *
+   * If clearPendingUrl is provided, the connection will clear out an old failed request before
+   *   attempting a new one when `create` is called, allowing the new creation request to proceed.
+   */
+  static create<DTO, Variables extends QueryVariables & CreateBody, Props extends Record<string, unknown> = {}>(
+    resource: ResourceType,
+    createFetcher: Fetcher<Variables & CreateBody>,
+    createInProgress: InProgressSelector<Omit<Variables, "body">>,
+    createFailed: FailureSelector<Omit<Variables, "body">>,
+    createCompleted: CompleteSelector<Omit<Variables, "body">>,
+    clearPendingUrl?: string,
+    variablesFactory: VariablesFactory<Omit<Variables, "body">, Props> = () => ({} as Omit<Variables, "body">)
+  ) {
+    return new ApiConnectionFactory<Variables, CreateConnection<DTO, CreateAttributes<Variables>>, Props>({
+      resource,
+      variablesFactory:
+        variablesFactory == null ? undefined : (variablesFactory as PartialVariablesFactory<Variables, Props>),
+      selectors: [
+        (props, variablesFactory, resource) => {
+          const variables = variablesFactory(props);
+          if (variables == null) {
+            const create = () => {};
+            return () => ({ data: undefined, isCreating: false, createFailure: undefined, create });
+          }
+
+          return createSelector(
+            [
+              createInProgress(variables),
+              createFailed(variables),
+              createCompleted(variables),
+              resourceMapSelector<DTO>(resource)
+            ],
+            (isCreating, createFailure, createCompleted, resources) => {
+              if (createCompleted != null && createCompleted.resourceIds.length !== 1) {
+                Log.error("The create connection factory expects a single resource to be created", { createCompleted });
+              }
+
+              const create = (attributes: CreateAttributes<Variables>) => {
+                if (clearPendingUrl != null && createFailure != null) {
+                  ApiSlice.clearPending(
+                    resolveUrl(
+                      clearPendingUrl,
+                      variables.queryParams as FetchParams | undefined,
+                      variables.pathParams as FetchParams | undefined
+                    ),
+                    "POST"
+                  );
+                }
+                createFetcher({ ...variables, body: { data: { type: resource, attributes } } });
+              };
+
+              return {
+                data:
+                  createCompleted != null && createCompleted.resourceIds.length === 1
+                    ? resources[createCompleted?.resourceIds[0]]?.attributes
+                    : undefined,
+                isCreating,
+                createFailure,
+                create
+              };
+            }
+          );
+        }
+      ],
+      selectorCacheKeyFactory: queryParamCacheKeyFactory
+    });
+  }
+
+  /**
    * Creates a connection that does no fetching; it simply pulls a list of resources by ID from the cache.
    */
   static list<DTO>(resource: ResourceType) {
@@ -327,7 +415,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       selectors: [
         ({ ids }, _, resource) => {
           if (ids == null) return () => ({ data: undefined });
-          return createSelector([(store: ApiDataStore) => store[resource] as StoreResourceMap<DTO>], resources => ({
+          return createSelector([resourceMapSelector<DTO>(resource)], resources => ({
             data: ids.map(id => resources[id]?.attributes)
           }));
         }
@@ -353,7 +441,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       selectors: [
         (props, variablesFactory) => {
           const variables = variablesFactory(props);
-          if (variables == null) return () => ({ loadFailure: null });
+          if (variables == null) return () => ({ loadFailure: undefined });
           return createSelector([failureSelector(variables)], loadFailure => ({ loadFailure }));
         }
       ]
@@ -455,11 +543,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
           const variables = variablesFactory(props);
           if (variables == null) {
             const update = () => {};
-            return () => ({
-              isUpdating: false,
-              updateFailure: null,
-              update
-            });
+            return () => ({ isUpdating: false, updateFailure: undefined, update });
           }
 
           // Avoid creating inline in the createSelector call so that the function has the same identity on every

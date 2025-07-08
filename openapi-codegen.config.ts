@@ -369,6 +369,7 @@ const generateSelectors = async (context: Context, config: ConfigBase) => {
   let variablesExtraPropsType: ts.TypeNode = f.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
 
   let hasIndexMeta = false;
+  let hasCreationRequest = false;
   Object.entries(context.openAPIDocument.paths).forEach(([route, verbs]: [string, PathItemObject]) => {
     Object.entries(verbs).forEach(([verb, operation]) => {
       if (!isVerb(verb) || !isOperationObject(operation)) return;
@@ -390,6 +391,7 @@ const generateSelectors = async (context: Context, config: ConfigBase) => {
 
       const includeIndexMeta = isIndex(verb, operation);
       hasIndexMeta ||= includeIndexMeta;
+      hasCreationRequest ||= verb === "post";
       nodes.push(
         ...createSelectorNodes({
           pathParamsType,
@@ -409,6 +411,9 @@ const generateSelectors = async (context: Context, config: ConfigBase) => {
   if (hasIndexMeta) {
     utilsImports.push("indexMetaSelector");
     sliceImports.push("ResourceType");
+  }
+  if (hasCreationRequest) {
+    utilsImports.push("completeSelector");
   }
 
   await writeFile(
@@ -495,7 +500,18 @@ const createSelectorNodes = ({
         )
       );
     }
-    if (variablesType.kind !== ts.SyntaxKind.VoidKeyword) {
+    if (variablesType.kind === ts.SyntaxKind.VoidKeyword) {
+      selectorParameters.push(
+        f.createParameterDeclaration(
+          undefined,
+          undefined,
+          f.createIdentifier("_"),
+          f.createToken(ts.SyntaxKind.QuestionToken),
+          f.createTypeReferenceNode("Omit", [variablesType, f.createLiteralTypeNode(f.createStringLiteral("body"))]),
+          undefined
+        )
+      );
+    } else {
       selectorParameters.push(
         f.createParameterDeclaration(
           undefined,
@@ -534,8 +550,9 @@ const createSelectorNodes = ({
     );
   };
 
-  for (const selector of ["isFetching", "fetchFailed", "indexMeta"]) {
+  for (const selector of ["isFetching", "fetchFailed", "indexMeta", "complete"]) {
     if (selector === "indexMeta" && !includeIndexMeta) continue;
+    if (selector === "complete" && verb !== "post") continue;
     nodes.push(createSelectorNode(selector));
   }
 
