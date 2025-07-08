@@ -23,7 +23,7 @@ export interface ActionTrackerCardRowProps {
   onClick?: () => {};
 }
 
-const STATUS_PILL_STATUSES = ["edit", "error", "success", "awaiting", "warning", "restoration"];
+const STATUS_PILL_STATUSES = ["edit", "error", "success", "awaiting", "warning", "restoration"] as const;
 
 const ActionTrackerCardRow = ({
   title,
@@ -50,7 +50,7 @@ const ActionTrackerCardRow = ({
           <Text variant="text-body-500" className="flex-1">
             {title}
           </Text>
-          {STATUS_PILL_STATUSES.includes(status) ? (
+          {STATUS_PILL_STATUSES.includes(status as (typeof STATUS_PILL_STATUSES)[number]) ? (
             <StatusPill status={status as PillStatuses}>
               <Text variant="text-bold-caption-100">{t(statusText)}</Text>
             </StatusPill>
