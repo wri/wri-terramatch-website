@@ -115,21 +115,43 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
   const getYAxisTicks = () => {
     const [min, max] = yAxisDomain;
-    const range = max - min;
-    const tickCount = 10;
-    const rawStep = range / tickCount;
+    const range = Math.abs(max - min);
 
-    const step = Math.max(1, Math.round(rawStep));
+    const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
+    let step = magnitude;
+
+    if (range / step > 8) {
+      step = magnitude * 2;
+    } else if (range / step < 4) {
+      step = magnitude / 2;
+    }
+
+    if (step < 1) {
+      step = Math.pow(10, Math.floor(Math.log10(range / 5)));
+    }
 
     const ticks = [];
 
     const startTick = Math.ceil(min / step) * step;
-    for (let i = startTick; i <= max; i += step) {
+    const endTick = Math.floor(max / step) * step;
+
+    for (let i = startTick; i <= endTick; i += step) {
       ticks.push(i);
     }
 
-    if (!ticks.includes(0)) {
+    if (min <= 0 && max >= 0 && !ticks.includes(0)) {
       ticks.push(0);
+    }
+
+    if (ticks.length < 3) {
+      const additionalStep = step / 2;
+      const additionalTicks = [];
+      for (let i = Math.ceil(min / additionalStep) * additionalStep; i <= max; i += additionalStep) {
+        if (!ticks.includes(i)) {
+          additionalTicks.push(i);
+        }
+      }
+      ticks.push(...additionalTicks);
     }
 
     ticks.sort((a, b) => a - b);
