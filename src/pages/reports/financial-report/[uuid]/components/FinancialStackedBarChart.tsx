@@ -4,6 +4,7 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
+  Customized,
   LabelList,
   Legend,
   Line,
@@ -13,6 +14,8 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+
+import { currencyInput } from "@/utils/financialReport";
 
 type FinancialStackedBarChartProps = {
   uuid: string;
@@ -25,7 +28,11 @@ type FinancialStackedBarChartProps = {
   documentation?: any[];
 };
 
-const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProps[] }) => {
+const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBarChartProps[]; currency?: string }) => {
+  const currencySymbol = useMemo(() => {
+    return currency ? currencyInput[currency] || "" : "";
+  }, [currency]);
+
   const chartData = useMemo(() => {
     const groupedByYear = _.groupBy(data, "year");
 
@@ -40,9 +47,10 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
 
         return {
           year: parseInt(year),
-          revenue: revenue,
+          revenue,
           expenses: -Math.abs(expenses),
-          profit: profit
+          profit,
+          revenueForLabels: revenue
         };
       });
 
@@ -85,7 +93,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
               displayValue = Math.abs(value);
             }
 
-            const formattedValue = `$${Math.abs(displayValue).toLocaleString()}`;
+            const formattedValue = `${currencySymbol}${Math.abs(displayValue).toLocaleString()}`;
 
             return (
               <p key={index} style={{ color: entry.color }} className="capitalize">
@@ -99,54 +107,58 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
     return null;
   };
 
-  const legendFormatter = (value: string) => {
-    return (
-      <span className="capitalize" style={{ color: "#000000" }}>
-        {value}
-      </span>
-    );
-  };
-
   const formatYAxis = (value: number) => {
-    if (value === 0) return "$0";
+    if (value === 0) return `${currencySymbol}0`;
     const intValue = Math.round(value);
-    return intValue > 0 ? `$${intValue.toLocaleString()}` : `-$${Math.abs(intValue).toLocaleString()}`;
+    return intValue > 0
+      ? `${currencySymbol}${intValue.toLocaleString()}`
+      : `${currencySymbol}-${Math.abs(intValue).toLocaleString()}`;
   };
 
   const getYAxisTicks = () => {
     const [min, max] = yAxisDomain;
-    const range = max - min;
-    const tickCount = 10;
-    const rawStep = range / tickCount;
+    const range = Math.abs(max - min);
 
-    const step = Math.max(1, Math.round(rawStep));
+    const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
+    let step = magnitude;
+
+    if (range / step > 8) {
+      step = magnitude * 2;
+    } else if (range / step < 4) {
+      step = magnitude / 2;
+    }
+
+    if (step < 1) {
+      step = Math.pow(10, Math.floor(Math.log10(range / 5)));
+    }
 
     const ticks = [];
 
     const startTick = Math.ceil(min / step) * step;
-    for (let i = startTick; i <= max; i += step) {
+    const endTick = Math.floor(max / step) * step;
+
+    for (let i = startTick; i <= endTick; i += step) {
       ticks.push(i);
     }
 
-    if (!ticks.includes(0)) {
+    if (min <= 0 && max >= 0 && !ticks.includes(0)) {
       ticks.push(0);
+    }
+
+    if (ticks.length < 3) {
+      const additionalStep = step / 2;
+      const additionalTicks = [];
+      for (let i = Math.ceil(min / additionalStep) * additionalStep; i <= max; i += additionalStep) {
+        if (!ticks.includes(i)) {
+          additionalTicks.push(i);
+        }
+      }
+      ticks.push(...additionalTicks);
     }
 
     ticks.sort((a, b) => a - b);
 
     return [...new Set(ticks)];
-  };
-
-  const renderRevenueLabel = (props: any) => {
-    const { x, y, width, value } = props;
-    if (value > 0) {
-      return (
-        <text x={x + width / 2} y={y - 5} fill="#000" textAnchor="middle" fontSize="12" fontWeight="500">
-          ${value.toLocaleString()}
-        </text>
-      );
-    }
-    return null;
   };
 
   const renderExpenseLabel = (props: any) => {
@@ -156,14 +168,14 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
       return (
         <text
           x={x + width / 2}
-          y={y + 5}
+          y={y + 10}
           fill="#000"
           textAnchor="middle"
           fontSize="12"
           fontWeight="500"
           dominantBaseline="hanging"
         >
-          ${Math.abs(value).toLocaleString()}
+          {`${currencySymbol}${Math.abs(value).toLocaleString()}`}
         </text>
       );
     }
@@ -188,7 +200,7 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
   return (
     <div className="h-96 w-full p-4">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={chartData} stackOffset="sign" margin={{ top: 20, right: 20, left: 5, bottom: 20 }}>
+        <ComposedChart data={chartData} stackOffset="sign" margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
           <CartesianGrid horizontal={true} vertical={false} stroke="#e0e0e0" strokeDasharray="0" />
 
           <XAxis
@@ -210,13 +222,34 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
 
           <Tooltip content={<CustomTooltip />} />
 
-          <Legend formatter={legendFormatter} wrapperStyle={{ paddingTop: "20px" }} />
+          <Legend
+            wrapperStyle={{ paddingTop: "20px" }}
+            content={({ payload }) => (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "20px"
+                }}
+              >
+                {payload?.map((entry: any, index: number) => (
+                  <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ width: "16px", height: "16px", backgroundColor: entry.color, borderRadius: "2px" }} />
+                    <span className="capitalize" style={{ color: "#000000" }}>
+                      {entry.value}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
 
           <ReferenceLine y={0} stroke="#999" strokeWidth={2} strokeOpacity={0.5} />
 
-          <Bar dataKey="revenue" fill="#8BC34A" name="Revenue" stackId="stack">
-            <LabelList content={renderRevenueLabel} />
-          </Bar>
+          <Bar dataKey="revenue" fill="#8BC34A" name="Revenue" stackId="stack" />
 
           <Bar dataKey="expenses" fill="#F44336" name="Expenses" stackId="stack">
             <LabelList content={renderExpenseLabel} />
@@ -230,6 +263,36 @@ const FinancialStackedBarChart = ({ data }: { data: FinancialStackedBarChartProp
             dot={{ fill: "#2196F3", strokeWidth: 2, r: 6 }}
             activeDot={{ r: 8, fill: "#2196F3" }}
             name="Profit"
+          />
+
+          <Customized
+            component={({ xAxisMap, yAxisMap, data }: any) => {
+              const xAxis = xAxisMap[Object.keys(xAxisMap)[0]];
+              const yAxis = yAxisMap[Object.keys(yAxisMap)[0]];
+              const scale = xAxis.scale;
+              const bandwidth = scale.bandwidth ? scale.bandwidth() : 40; // fallback if undefined
+
+              return data.map((entry: any, index: number) => {
+                const x = scale(entry.year) + bandwidth / 2;
+                const y = yAxis.scale(entry.revenue);
+
+                return (
+                  entry.revenue > 0 && (
+                    <text
+                      key={`revenue-label-${index}`}
+                      x={x}
+                      y={y - 10}
+                      fill="#000"
+                      textAnchor="middle"
+                      fontSize={12}
+                      fontWeight={500}
+                    >
+                      {`${currencySymbol}${entry.revenue.toLocaleString()}`}
+                    </text>
+                  )
+                );
+              });
+            }}
           />
         </ComposedChart>
       </ResponsiveContainer>

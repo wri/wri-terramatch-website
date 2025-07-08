@@ -20,7 +20,7 @@ const YearSection: FC<YearSectionProps> = ({ year, files }) => {
       ))}
       {files?.length === 0 && (
         <Text variant="text-16-light" className="text-blueCustom-900">
-          None
+          None Available
         </Text>
       )}
     </div>

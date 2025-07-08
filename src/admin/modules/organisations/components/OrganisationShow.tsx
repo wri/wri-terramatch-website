@@ -15,13 +15,19 @@ import {
   TextField,
   UrlField,
   useRecordContext,
-  useRefresh
+  useRefresh,
+  useShowContext
 } from "react-admin";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
 import MapField from "@/admin/components/Fields/MapField";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
+import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
+import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
+import FinancialMetrics from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialMetrics";
+import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
+import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
 import {
   getFarmersEngagementStrategyOptions,
@@ -31,8 +37,10 @@ import {
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
+import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
+import { V2FinancialIndicatorsRead } from "../../../../generated/apiSchemas";
 import OrganisationApplicationsTable from "./OrganisationApplicationsTable";
 import OrganisationFundingProgrammesTable from "./OrganisationFundingProgrammesTable";
 import OrganisationPitchesTable from "./OrganisationPitchesTable";
@@ -58,6 +66,45 @@ const OrganisationShowActions: FC = () => {
   }, [is_test, updateOrg, uuid]);
 
   return <ShowActions toggleTestStatus={toggleTestStatus} />;
+};
+
+const OrganisationDataConsumer = () => {
+  const { record } = useShowContext();
+  if (!record) <></>;
+
+  const years = Array.isArray(record?.financialCollection)
+    ? Array.from(
+        new Set((record.financialCollection as V2FinancialIndicatorsRead)?.map(item => item.year).filter(Boolean))
+      ).sort()
+    : [];
+
+  return (
+    <div className="flex flex-col gap-8 p-2">
+      <FinancialMetrics data={record?.financialCollection} years={years} />
+      <Accordion
+        title="Financial Documents per Year"
+        variant="drawer"
+        className="rounded-lg bg-white px-6 py-4 shadow-all"
+      >
+        <FinancialDocumentsSection files={formatDocumentData(record?.financialCollection)} />
+      </Accordion>
+      <Accordion
+        title="Descriptions of Financials per Year"
+        variant="drawer"
+        className="rounded-lg bg-white px-6 py-4 shadow-all"
+      >
+        <FinancialDescriptionsSection items={formatDescriptionData(record?.financialCollection)} />
+      </Accordion>
+
+      <Accordion
+        title="Major Funding Sources by Year"
+        variant="drawer"
+        className="rounded-lg bg-white px-6 py-4 shadow-all"
+      >
+        <FundingSourcesSection data={record?.funding_types} currency={record?.currency} />
+      </Accordion>
+    </div>
+  );
 };
 
 export const OrganisationShow = () => {
@@ -113,32 +160,7 @@ export const OrganisationShow = () => {
           </TabbedShowLayout.Tab>
 
           <TabbedShowLayout.Tab label="Financial History">
-            <NumberField source="fin_start_month" label="Start of financial year (month)" emptyText="Not Provided" />
-            <NumberField
-              source="fin_budget_3year"
-              label="Organization Budget in USD for (-3 years from today)"
-              emptyText="Not Provided"
-            />
-            <NumberField
-              source="fin_budget_2year"
-              label="Organization Budget in USD for (-2 years from today)"
-              emptyText="Not Provided"
-            />
-            <NumberField
-              source="fin_budget_1year"
-              label="Organization Budget in USD for (-1 years from today)"
-              emptyText="Not Provided"
-            />
-            <NumberField
-              source="fin_budget_current_year"
-              label=" Organization Budget in USD for (this year)"
-              emptyText="Not Provided"
-            />
-            <NumberField
-              source="fin_budget_current_year"
-              label=" Organization Budget in USD for (this year)"
-              emptyText="Not Provided"
-            />
+            <OrganisationDataConsumer />
           </TabbedShowLayout.Tab>
 
           <TabbedShowLayout.Tab label="Community Engagement">

@@ -97,8 +97,27 @@ const FinancialCurrentRatioChart = ({ data }: { data: FinancialCurrentRatioChart
 
           <Legend
             wrapperStyle={{ paddingTop: "20px" }}
-            iconType="line"
-            formatter={value => <span style={{ color: "#000000" }}>{value}</span>}
+            content={({ payload }) => (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "20px"
+                }}
+              >
+                {payload?.map((entry: any, index: number) => (
+                  <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ width: "16px", height: "16px", backgroundColor: entry.color, borderRadius: "2px" }} />
+                    <span className="capitalize" style={{ color: "#000000" }}>
+                      {entry.value}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           />
 
           <Line

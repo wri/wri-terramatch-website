@@ -1,5 +1,15 @@
 import { Box, Button, Divider, Grid, Stack } from "@mui/material";
-import { Labeled, RaRecord, SelectField, TextField, useRefresh, useShowContext } from "react-admin";
+import {
+  Button as AdminButton,
+  Labeled,
+  Link,
+  RaRecord,
+  SelectField,
+  TextField,
+  useCreatePath,
+  useRefresh,
+  useShowContext
+} from "react-admin";
 import { When } from "react-if";
 
 import Aside from "@/admin/components/Aside/Aside";
@@ -8,12 +18,15 @@ import { usePutV2AdminOrganisationsApprove, usePutV2AdminOrganisationsReject } f
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { optionToChoices } from "@/utils/options";
 
-export const OrganisationShowAside = () => {
+import modules from "../..";
+
+export const OrganisationShowAside = ({ financialReportTab }: { financialReportTab?: boolean }) => {
   const refresh = useRefresh();
   const { record } = useShowContext<V2OrganisationRead & RaRecord>();
   const hasOrganisationAttrib = !!record?.organisation;
   const uuid = hasOrganisationAttrib ? record?.organisation?.uuid : (record?.uuid as string);
   const status = hasOrganisationAttrib ? record?.organisation?.status : record?.status;
+  const createPath = useCreatePath();
 
   const { mutate: approve } = usePutV2AdminOrganisationsApprove({
     onSuccess() {
@@ -28,7 +41,7 @@ export const OrganisationShowAside = () => {
   });
 
   return (
-    <Aside title="Organisation Review">
+    <Aside title={financialReportTab ? "Organisation Details" : "Organisation Review"}>
       <Grid container spacing={2} marginY={2}>
         <Grid item xs={6}>
           <Labeled>
@@ -54,12 +67,28 @@ export const OrganisationShowAside = () => {
       <Box pt={2}>
         <When condition={status !== "draft"}>
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
-            <Button variant="contained" onClick={() => approve({ body: { uuid } })}>
-              Approve
-            </Button>
-            <Button variant="outlined" onClick={() => reject({ body: { uuid } })}>
-              Reject
-            </Button>
+            {financialReportTab ? (
+              <AdminButton
+                variant="outlined"
+                component={Link}
+                to={createPath({
+                  resource: modules.organisation.ResourceName,
+                  type: "show",
+                  id: uuid
+                })}
+                fullWidth
+                label="Back To Organisation"
+              />
+            ) : (
+              <>
+                <Button variant="contained" onClick={() => approve({ body: { uuid } })}>
+                  Approve
+                </Button>
+                <Button variant="outlined" onClick={() => reject({ body: { uuid } })}>
+                  Reject
+                </Button>
+              </>
+            )}
           </Stack>
         </When>
       </Box>

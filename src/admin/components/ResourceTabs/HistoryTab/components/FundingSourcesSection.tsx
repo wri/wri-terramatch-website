@@ -1,9 +1,11 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
+import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { V2FundingTypeRead } from "@/generated/apiSchemas";
 import { currencyInput } from "@/utils/financialReport";
 
@@ -39,32 +41,36 @@ const ColumnsTableFundingSources = [
   },
   {
     id: "fundingAmount",
-    header: "Funding amount",
+    header: "Funding Amount",
     accessorKey: "fundingAmount",
     enableSorting: true
   }
 ];
 
 const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
-  const fundingSourcesItems = Array.from(new Set(data?.map(item => item.year as number)))
-    .sort((a: number, b: number) => a - b)
-    .map((year: number) => ({
-      key: String(year),
-      render: year
-    }));
+  const t = useT();
+  const fundingSourcesItems = [
+    { key: "all", render: t("All Years") },
+    ...Array.from(new Set(data?.map(item => item.year as number)))
+      .sort((a: number, b: number) => a - b)
+      .map((year: number) => ({
+        key: String(year),
+        render: year
+      }))
+  ];
 
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const selectedYear =
-    activeIndex >= 0 && fundingSourcesItems.length > 0 ? Number(fundingSourcesItems[activeIndex].key) : undefined;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const selectedKey = fundingSourcesItems[activeIndex]?.key;
 
-  const filteredData = selectedYear !== undefined ? data?.filter(item => item.year === selectedYear) : data;
+  const filteredData =
+    selectedKey && selectedKey !== "all" ? data?.filter(item => String(item.year) === selectedKey) : data;
 
   const tableData = filteredData?.map((item: any, index) => ({
     id: index + 1,
     fundingYear: item?.year,
-    fundingType: item?.type,
+    fundingType: getFundingTypesOptions(t).find(opt => opt.value == item?.type)?.title,
     fundingSource: item?.source,
-    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount}`
+    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount ? item?.amount?.toLocaleString() : ""}`
   }));
 
   const handleToggle = (index: number) => {
@@ -77,7 +83,7 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
         variant={VARIANT_TOGGLE_SECONDARY}
         items={fundingSourcesItems}
         onChangeActiveIndex={handleToggle}
-        defaultActiveIndex={activeIndex >= 0 ? activeIndex : undefined}
+        defaultActiveIndex={activeIndex}
       />
       <div>
         <Table columns={ColumnsTableFundingSources} data={tableData ?? []} variant={VARIANT_TABLE_DASHBOARD_LIST} />

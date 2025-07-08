@@ -4,7 +4,7 @@ import { Option } from "@/types/common";
 
 export const getFundingTypesOptions = (t: typeof useT = (t: string) => t): Option[] => [
   {
-    title: t("Private grant from foundation"),
+    title: t("Private Grant from foundation"),
     value: "private_grant_from_foundation"
   },
   { title: t("Public Grant from Government"), value: "public_grant_from_government" },

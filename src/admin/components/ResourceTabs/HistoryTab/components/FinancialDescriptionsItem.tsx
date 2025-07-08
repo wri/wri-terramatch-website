@@ -14,7 +14,7 @@ const FinancialDescriptionsItem: FC<FinancialDescriptionsItemProps> = ({ label, 
         {label}
       </Text>
       <Text variant="text-16-light" className="w-full text-left text-blueCustom-900">
-        {description ?? "N/A"}
+        {description ?? "None Available"}
       </Text>
     </div>
   );

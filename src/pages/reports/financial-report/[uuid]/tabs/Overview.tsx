@@ -46,12 +46,12 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
       <Container className="max-w-full bg-neutral-50 px-0 py-16">
         <Container className="mx-auto grid grid-cols-1 gap-6">
           <div className="flex flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
-            <Text variant="text-24-bold" className="mb-2">
+            <Text variant="text-22-bold" className="mb-2">
               {t("Basic Info")}
             </Text>
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Local Currency")}</Text>
-              <Text variant="text-20-bold">
+              <Text variant="text-18-bold">
                 {report?.currency
                   ? getCurrencyOptions(t).find(opt => opt.value == report?.currency)?.title
                   : "Not Provided"}
@@ -59,7 +59,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
             </div>
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
-              <Text variant="text-20-bold">
+              <Text variant="text-18-bold">
                 {report?.fin_start_month
                   ? getMonthOptions(t).find(opt => opt.value == report?.fin_start_month)?.title
                   : "Not Provided"}
@@ -74,8 +74,8 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
           {t("Financial Documents")}
         </Text>
         <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6 ">
-            <FinancialStackedBarChart data={report?.financial_collection} />
+          <div className="flex flex-col gap-6">
+            <FinancialStackedBarChart data={report?.financial_collection} currency={report?.currency} />
           </div>
           <div className="grid grid-cols-3 gap-x-4 gap-y-4">
             {report?.financial_collection
@@ -86,6 +86,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
                   title={t(item.year.toString())}
                   data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                   description={t("Net Profit")}
+                  currency={report?.currency}
                 />
               ))}
           </div>
@@ -94,7 +95,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
 
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6 ">
+          <div className="flex flex-col gap-6">
             <Text variant="text-24-bold" className="mb-2">
               {t("Current Ratio by Year")}
             </Text>
@@ -106,11 +107,13 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
                 title={t("Latest Ratio")}
                 data={financialRatioStats.latestRatio.toString()}
                 description={financialRatioStats.latestYear.toString()}
+                currency={""}
               />
               <CardFinancial
                 title={t(`${financialRatioStats.yearCount}-Year Average`)}
                 data={financialRatioStats.averageRatio.toString()}
                 description={financialRatioStats.yearRange}
+                currency={""}
               />
             </div>
           </div>
