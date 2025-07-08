@@ -4,6 +4,7 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
+  Customized,
   LabelList,
   Legend,
   Line,
@@ -46,9 +47,10 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
         return {
           year: parseInt(year),
-          revenue: revenue,
+          revenue,
           expenses: -Math.abs(expenses),
-          profit: profit
+          profit,
+          revenueForLabels: revenue
         };
       });
 
@@ -159,18 +161,6 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
     return [...new Set(ticks)];
   };
 
-  const renderRevenueLabel = (props: any) => {
-    const { x, y, width, value } = props;
-    if (value > 0) {
-      return (
-        <text x={x + width / 2} y={y - 5} fill="#000" textAnchor="middle" fontSize="12" fontWeight="500">
-          {`${currencySymbol}${value.toLocaleString()}`}
-        </text>
-      );
-    }
-    return null;
-  };
-
   const renderExpenseLabel = (props: any) => {
     const { x, y, width, value } = props;
 
@@ -178,7 +168,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
       return (
         <text
           x={x + width / 2}
-          y={y + 5}
+          y={y + 10}
           fill="#000"
           textAnchor="middle"
           fontSize="12"
@@ -259,9 +249,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
           <ReferenceLine y={0} stroke="#999" strokeWidth={2} strokeOpacity={0.5} />
 
-          <Bar dataKey="revenue" fill="#8BC34A" name="Revenue" stackId="stack">
-            <LabelList content={renderRevenueLabel} />
-          </Bar>
+          <Bar dataKey="revenue" fill="#8BC34A" name="Revenue" stackId="stack" />
 
           <Bar dataKey="expenses" fill="#F44336" name="Expenses" stackId="stack">
             <LabelList content={renderExpenseLabel} />
@@ -275,6 +263,36 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
             dot={{ fill: "#2196F3", strokeWidth: 2, r: 6 }}
             activeDot={{ r: 8, fill: "#2196F3" }}
             name="Profit"
+          />
+
+          <Customized
+            component={({ xAxisMap, yAxisMap, data }: any) => {
+              const xAxis = xAxisMap[Object.keys(xAxisMap)[0]];
+              const yAxis = yAxisMap[Object.keys(yAxisMap)[0]];
+              const scale = xAxis.scale;
+              const bandwidth = scale.bandwidth ? scale.bandwidth() : 40; // fallback if undefined
+
+              return data.map((entry: any, index: number) => {
+                const x = scale(entry.year) + bandwidth / 2;
+                const y = yAxis.scale(entry.revenue);
+
+                return (
+                  entry.revenue > 0 && (
+                    <text
+                      key={`revenue-label-${index}`}
+                      x={x}
+                      y={y - 10}
+                      fill="#000"
+                      textAnchor="middle"
+                      fontSize={12}
+                      fontWeight={500}
+                    >
+                      {`${currencySymbol}${entry.revenue.toLocaleString()}`}
+                    </text>
+                  )
+                );
+              });
+            }}
           />
         </ComposedChart>
       </ResponsiveContainer>
