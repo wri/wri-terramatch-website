@@ -46,7 +46,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   return (
     <TabbedShowLayout.Tab label={label ?? "History"} {...rest}>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 p-2">
         {formSteps.map(step =>
           step?.fields?.map(field =>
             field.type === FieldType.FinancialTableInput ? (
