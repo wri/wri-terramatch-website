@@ -35,7 +35,7 @@ const ActionTrackerCardRow = ({
   <Link
     href={ctaLink!}
     title={title}
-    className={classnames("group flex cursor-pointer flex-col  rounded-xl p-0 shadow", className)}
+    className={classnames("group flex cursor-pointer flex-col rounded-xl p-0 shadow", className)}
     onClick={onClick}
   >
     <div className="mx-4 my-4 wide:mx-6 wide:mt-6 wide:mb-5">
@@ -57,14 +57,7 @@ const ActionTrackerCardRow = ({
       <Text variant="text-14-light" containHtml className="mb-2">
         {subtitle}
       </Text>
-      <Text variant="text-14-light">
-        <Text variant="text-12-bold" as="span">
-          Due{" "}
-        </Text>
-        <Text variant="text-12-light" as="span">
-          {updatedAt}
-        </Text>
-      </Text>
+      <Text variant="text-14-light">Due: {updatedAt}</Text>
     </div>
     <div className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6">
       <Text variant="text-14-bold" className="text-primary group-hover:text-white">
