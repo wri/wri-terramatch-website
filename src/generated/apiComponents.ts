@@ -25013,6 +25013,39 @@ export const useDeleteV2FinancialReportsUUID = (
   );
 };
 
+export type GetV2FinancialReportsExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2FinancialReportsExportVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2FinancialReportsExport = (
+  variables: GetV2FinancialReportsExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Record<string, any>, GetV2FinancialReportsExportError, undefined, {}, {}, {}>({
+    url: "/v2/financial-reports/export",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2FinancialReportsExport = <TData = Record<string, any>>(
+  variables: GetV2FinancialReportsExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2FinancialReportsExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2FinancialReportsExportError, TData>(
+    queryKeyFn({ path: "/v2/financial-reports/export", operationId: "getV2FinancialReportsExport", variables }),
+    ({ signal }) => fetchGetV2FinancialReportsExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -25598,4 +25631,9 @@ export type QueryOperation =
       path: "/v2/financial-reports/{UUID}";
       operationId: "getV2FinancialReportsUUID";
       variables: GetV2FinancialReportsUUIDVariables;
+    }
+  | {
+      path: "/v2/financial-reports/export";
+      operationId: "getV2FinancialReportsExport";
+      variables: GetV2FinancialReportsExportVariables;
     };
