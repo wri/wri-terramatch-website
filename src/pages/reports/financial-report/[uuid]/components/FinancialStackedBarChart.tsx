@@ -105,14 +105,6 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
     return null;
   };
 
-  const legendFormatter = (value: string) => {
-    return (
-      <span className="capitalize" style={{ color: "#000000" }}>
-        {value}
-      </span>
-    );
-  };
-
   const formatYAxis = (value: number) => {
     if (value === 0) return `${currencySymbol}0`;
     const intValue = Math.round(value);
@@ -218,7 +210,30 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
           <Tooltip content={<CustomTooltip />} />
 
-          <Legend formatter={legendFormatter} wrapperStyle={{ paddingTop: "20px" }} />
+          <Legend
+            wrapperStyle={{ paddingTop: "20px" }}
+            content={({ payload }) => (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "20px"
+                }}
+              >
+                {payload?.map((entry: any, index: number) => (
+                  <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ width: "16px", height: "16px", backgroundColor: entry.color, borderRadius: "2px" }} />
+                    <span className="capitalize" style={{ color: "#000000" }}>
+                      {entry.value}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
 
           <ReferenceLine y={0} stroke="#999" strokeWidth={2} strokeOpacity={0.5} />
 
