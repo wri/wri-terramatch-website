@@ -58,6 +58,13 @@ const RHFMap = ({
     }
   };
 
+  const reloadSiteDataWithBoundingBox = () => {
+    reloadProjectPolygonData();
+    if (entity?.entityName === "project-pitch" && entity?.entityUUID) {
+      ApiSlice.pruneCache("boundingBoxes", [entity.entityUUID]);
+    }
+  };
+
   const {
     data: projectPolygon,
     refetch: reloadProjectPolygonData,
@@ -125,7 +132,7 @@ const RHFMap = ({
   return (
     <SitePolygonDataProvider
       sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
-      reloadSiteData={reloadProjectPolygonData}
+      reloadSiteData={reloadSiteDataWithBoundingBox}
     >
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
