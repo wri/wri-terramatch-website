@@ -1,9 +1,11 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
+import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { V2FundingTypeRead } from "@/generated/apiSchemas";
 import { currencyInput } from "@/utils/financialReport";
 
@@ -39,13 +41,14 @@ const ColumnsTableFundingSources = [
   },
   {
     id: "fundingAmount",
-    header: "Funding amount",
+    header: "Funding Amount",
     accessorKey: "fundingAmount",
     enableSorting: true
   }
 ];
 
 const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
+  const t = useT();
   const fundingSourcesItems = Array.from(new Set(data?.map(item => item.year as number)))
     .sort((a: number, b: number) => a - b)
     .map((year: number) => ({
@@ -62,9 +65,9 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const tableData = filteredData?.map((item: any, index) => ({
     id: index + 1,
     fundingYear: item?.year,
-    fundingType: item?.type,
+    fundingType: getFundingTypesOptions(t).find(opt => opt.value == item?.type)?.title,
     fundingSource: item?.source,
-    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount}`
+    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount ? item?.amount?.toLocaleString() : ""}`
   }));
 
   const handleToggle = (index: number) => {

@@ -3,13 +3,15 @@ import { V2FinancialIndicatorsRead } from "@/generated/apiSchemas";
 export const formatDocumentData = (documents: V2FinancialIndicatorsRead) => {
   return documents
     ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ year: financial?.year, files: financial?.documentation }));
+    .map(financial => ({ year: financial?.year, files: financial?.documentation }))
+    .sort((a, b) => b.year - a.year);
 };
 
 export const formatDescriptionData = (documents: V2FinancialIndicatorsRead) => {
   return documents
     ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ label: financial?.year, description: financial?.description }));
+    .map(financial => ({ label: financial?.year, description: financial?.description }))
+    .sort((a, b) => b.label - a.label);
 };
 
 export const currencyInput = {

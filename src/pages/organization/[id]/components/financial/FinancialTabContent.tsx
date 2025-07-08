@@ -98,8 +98,18 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
   const fundingTypes: V2FundingTypeRead[] =
     organization && (organization as any)?.funding_types ? (organization as any)?.funding_types : [];
 
-  const financialRatioStats = calculateFinancialRatioStats((organization as any)?.financialCollection);
-
+  const financialData = (organization as any)?.financialCollection;
+  const financialRatioStats = calculateFinancialRatioStats(financialData);
+  const hasNetProfitData =
+    Array.isArray(financialData) &&
+    financialData.some(
+      item =>
+        (item.collection === "revenue" && item.amount) ||
+        (item.collection === "expenses" && item.amount) ||
+        (item.collection === "profit" && item.amount)
+    );
+  const hasCurrentRatioData =
+    Array.isArray(financialData) && financialData.some(item => item.collection === "current-ratio" && item.amount);
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
       <Container className="max-w-full bg-neutral-50 px-0 py-16">
@@ -125,82 +135,86 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               </Text>
             </div>
           </div>
-          <div className="flex h-72 flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
-            <Text variant="text-24-bold">{t("Financial Information")}</Text>
-            <List
-              className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto p-3 text-left"
-              items={mappedReportActions}
-              render={row => <ActionTrackerCardRow {...row} />}
-            />
-          </div>
+          {mappedReportActions?.length > 0 && (
+            <div className="flex h-72 flex-col gap-4 rounded-lg bg-white p-8 text-center shadow-all">
+              <Text variant="text-24-bold">{t("Financial Reports")}</Text>
+              <List
+                className="flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto p-3 text-left"
+                items={mappedReportActions}
+                render={row => <ActionTrackerCardRow {...row} />}
+              />
+            </div>
+          )}
         </Container>
       </Container>
 
-      {/* graphic */}
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <Text variant="text-24-bold" className="mb-2">
-          {t("Financial Documents")}
-        </Text>
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6 ">
-            <FinancialStackedBarChart data={(organization as any)?.financialCollection} />
-          </div>
-          <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-            {(organization as any)?.financialCollection
-              .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
-              .map((item: FinancialStackedBarChartProps) => (
-                <CardFinancial
-                  key={item.uuid}
-                  title={t(item.year.toString())}
-                  data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
-                  description={t("Net Profit")}
-                />
-              ))}
-          </div>
-        </div>
-      </Container>
-
-      {/* graphic */}
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6 ">
-            <Text variant="text-24-bold" className="mb-2">
-              {t("Current Ratio by Year")}
-            </Text>
-            <FinancialCurrentRatioChart data={(organization as any)?.financialCollection} />
-          </div>
-          <div className="flex h-full flex-col justify-center">
-            <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
-              <CardFinancial
-                title={t("Latest Ratio")}
-                data={financialRatioStats.latestRatio.toString()}
-                description={financialRatioStats.latestYear.toString()}
-              />
-              <CardFinancial
-                title={t(`${financialRatioStats.yearCount}-Year Average`)}
-                data={financialRatioStats.averageRatio.toString()}
-                description={financialRatioStats.yearRange}
-              />
+      {hasNetProfitData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Net Profit By Year")}
+          </Text>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6 ">
+              <FinancialStackedBarChart data={financialData} />
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+              {financialData
+                .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
+                .map((item: FinancialStackedBarChartProps) => (
+                  <CardFinancial
+                    key={item.uuid}
+                    title={t(item.year.toString())}
+                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                    description={t("Net Profit")}
+                  />
+                ))}
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      )}
+      {hasCurrentRatioData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6 ">
+              <Text variant="text-24-bold" className="mb-2">
+                {t("Current Ratio by Year")}
+              </Text>
+              <FinancialCurrentRatioChart data={financialData} />
+            </div>
+            <div className="flex h-full flex-col justify-center">
+              <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
+                <CardFinancial
+                  title={t("Latest Ratio")}
+                  data={financialRatioStats.latestRatio.toString()}
+                  description={financialRatioStats.latestYear.toString()}
+                />
+                <CardFinancial
+                  title={t(`${financialRatioStats.yearCount}-Year Average`)}
+                  data={financialRatioStats.averageRatio.toString()}
+                  description={financialRatioStats.yearRange}
+                />
+              </div>
+            </div>
+          </div>
+        </Container>
+      )}
 
       <Container className="mx-auto grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Financial Documents per Year")}
           </Text>
-          <FinancialDocumentsSection files={formatDocumentData((organization as any)?.financialCollection)} />
+          <FinancialDocumentsSection files={formatDocumentData(financialData)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Descriptions of Financials per Year")}
           </Text>
-          <FinancialDescriptionsSection items={formatDescriptionData((organization as any)?.financialCollection)} />
+          <FinancialDescriptionsSection items={formatDescriptionData(financialData)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
+        {/* getFundingTypesOptions */}
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
