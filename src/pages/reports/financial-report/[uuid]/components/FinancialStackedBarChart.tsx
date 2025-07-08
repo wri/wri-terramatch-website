@@ -105,14 +105,6 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
     return null;
   };
 
-  const legendFormatter = (value: string) => {
-    return (
-      <span className="capitalize" style={{ color: "#000000" }}>
-        {value}
-      </span>
-    );
-  };
-
   const formatYAxis = (value: number) => {
     if (value === 0) return `${currencySymbol}0`;
     const intValue = Math.round(value);
@@ -123,21 +115,43 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
   const getYAxisTicks = () => {
     const [min, max] = yAxisDomain;
-    const range = max - min;
-    const tickCount = 10;
-    const rawStep = range / tickCount;
+    const range = Math.abs(max - min);
 
-    const step = Math.max(1, Math.round(rawStep));
+    const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
+    let step = magnitude;
+
+    if (range / step > 8) {
+      step = magnitude * 2;
+    } else if (range / step < 4) {
+      step = magnitude / 2;
+    }
+
+    if (step < 1) {
+      step = Math.pow(10, Math.floor(Math.log10(range / 5)));
+    }
 
     const ticks = [];
 
     const startTick = Math.ceil(min / step) * step;
-    for (let i = startTick; i <= max; i += step) {
+    const endTick = Math.floor(max / step) * step;
+
+    for (let i = startTick; i <= endTick; i += step) {
       ticks.push(i);
     }
 
-    if (!ticks.includes(0)) {
+    if (min <= 0 && max >= 0 && !ticks.includes(0)) {
       ticks.push(0);
+    }
+
+    if (ticks.length < 3) {
+      const additionalStep = step / 2;
+      const additionalTicks = [];
+      for (let i = Math.ceil(min / additionalStep) * additionalStep; i <= max; i += additionalStep) {
+        if (!ticks.includes(i)) {
+          additionalTicks.push(i);
+        }
+      }
+      ticks.push(...additionalTicks);
     }
 
     ticks.sort((a, b) => a - b);
@@ -218,7 +232,30 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
           <Tooltip content={<CustomTooltip />} />
 
-          <Legend formatter={legendFormatter} wrapperStyle={{ paddingTop: "20px" }} />
+          <Legend
+            wrapperStyle={{ paddingTop: "20px" }}
+            content={({ payload }) => (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "20px"
+                }}
+              >
+                {payload?.map((entry: any, index: number) => (
+                  <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ width: "16px", height: "16px", backgroundColor: entry.color, borderRadius: "2px" }} />
+                    <span className="capitalize" style={{ color: "#000000" }}>
+                      {entry.value}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
 
           <ReferenceLine y={0} stroke="#999" strokeWidth={2} strokeOpacity={0.5} />
 

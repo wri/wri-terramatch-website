@@ -166,6 +166,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
                     title={t(item.year.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Net Profit")}
+                    currency={organization?.currency}
                   />
                 ))}
             </div>
@@ -187,11 +188,13 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
                   title={t("Latest Ratio")}
                   data={financialRatioStats.latestRatio.toString()}
                   description={financialRatioStats.latestYear.toString()}
+                  currency={""}
                 />
                 <CardFinancial
                   title={t(`${financialRatioStats.yearCount}-Year Average`)}
                   data={financialRatioStats.averageRatio.toString()}
                   description={financialRatioStats.yearRange}
+                  currency={""}
                 />
               </div>
             </div>
