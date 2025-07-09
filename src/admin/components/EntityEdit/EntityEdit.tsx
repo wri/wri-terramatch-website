@@ -9,9 +9,10 @@ import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import EntityProvider from "@/context/entity.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
   useGetCustomFormSteps,
@@ -42,11 +43,7 @@ export const EntityEdit = () => {
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
 
-  const {
-    data: formResponse,
-    isLoading,
-    isError: loadError
-  } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+  const { formData: formResponse, isLoading, loadError } = useEntityForm(entityName, entityUUID);
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 

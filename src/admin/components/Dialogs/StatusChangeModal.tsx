@@ -19,14 +19,11 @@ import modules from "@/admin/modules";
 import { validateForm } from "@/admin/utils/forms";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  usePostV2AdminENTITYUUIDReminder
-} from "@/generated/apiComponents";
+import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -100,17 +97,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     }
   })();
 
-  const { data: formResponse } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>(
-    {
-      pathParams: {
-        entity: resourceName,
-        uuid: record.id
-      }
-    },
-    {
-      enabled: !!record?.id
-    }
-  );
+  const { formData: formResponse } = useEntityForm(resourceName, record.id);
 
   const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: { label: string }[] }) =>
     section.form_questions.map((question: any) => ({

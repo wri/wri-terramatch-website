@@ -1,14 +1,9 @@
 import { useMemo } from "react";
 
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { useEntityForm } from "@/hooks/useFormGet";
 
 export function useProcessRecordData(modelUUID: string, modelName: string, inputType: string) {
-  const { data: record } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
-    pathParams: {
-      uuid: modelUUID,
-      entity: modelName
-    }
-  });
+  const { formData: record } = useEntityForm(modelName, modelUUID);
 
   return useMemo(() => {
     if (record?.data?.form == null) return false;

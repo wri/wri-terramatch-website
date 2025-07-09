@@ -5,7 +5,8 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useEntityForm } from "@/hooks/useFormGet";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
 import { EntityName } from "@/types/common";
 
@@ -23,14 +24,11 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data ?? {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { data, isLoading, isError } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID },
-    queryParams: { lang: router.locale }
-  });
+  const { formData: data, isLoading, loadError } = useEntityForm(entityName, entityUUID);
   //@ts-ignore
   const formData = (data?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
-  if (isError) {
+  if (loadError) {
     return notFound();
   }
 

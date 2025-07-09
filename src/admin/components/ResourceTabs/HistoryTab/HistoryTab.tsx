@@ -6,8 +6,8 @@ import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { useFrameworkContext } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
@@ -28,13 +28,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const entityName = entity ?? record?.entity;
   const entityUuid = record?.uuid;
 
-  const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
-    pathParams: {
-      uuid: entityUuid as string,
-      entity: entityName as string
-    }
-  });
-
+  const { formData: response, isLoading: queryLoading } = useEntityForm(entityName, entityUuid);
   const isLoading = ctxLoading || queryLoading;
 
   if (isLoading || !record) return null;
