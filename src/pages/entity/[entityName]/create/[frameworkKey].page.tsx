@@ -7,8 +7,9 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsENTITYUUID, useGetV2FormsUUID, usePostV2FormsENTITY } from "@/generated/apiComponents";
+import { useGetV2FormsUUID, usePostV2FormsENTITY } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
 
@@ -45,13 +46,7 @@ const EntityIntroPage = () => {
     }
   );
 
-  const { data: entityData } = useGetV2FormsENTITYUUID(
-    {
-      pathParams: { entity: entityName, uuid: entityUUID! },
-      queryParams: { lang: router.locale }
-    },
-    { enabled: !!entityUUID }
-  );
+  const { formData: entityData } = useEntityForm(entityName, entityUUID);
 
   //@ts-ignore
   const form = entityData?.data?.form || formData?.data;

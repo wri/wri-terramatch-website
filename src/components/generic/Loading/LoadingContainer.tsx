@@ -1,5 +1,4 @@
-import { Fragment, PropsWithChildren } from "react";
-import { Else, If, Then } from "react-if";
+import { FC, PropsWithChildren } from "react";
 
 import Paper from "@/components/elements/Paper/Paper";
 
@@ -11,23 +10,22 @@ interface LoadingContainerProps {
   wrapInPaper?: boolean;
 }
 
-const LoadingContainer = ({ className, wrapInPaper, loading, children }: PropsWithChildren<LoadingContainerProps>) => {
-  return (
-    <Fragment>
-      <If condition={loading}>
-        <Then>
-          {wrapInPaper ? (
-            <Paper>
-              <Loader className={className} />
-            </Paper>
-          ) : (
-            <Loader className={className} />
-          )}
-        </Then>
-        <Else>{children}</Else>
-      </If>
-    </Fragment>
+const LoadingContainer: FC<PropsWithChildren<LoadingContainerProps>> = ({
+  className,
+  wrapInPaper,
+  loading,
+  children
+}) =>
+  loading ? (
+    wrapInPaper ? (
+      <Paper>
+        <Loader className={className} />
+      </Paper>
+    ) : (
+      <Loader className={className} />
+    )
+  ) : (
+    <>{children}</>
   );
-};
 
 export default LoadingContainer;
