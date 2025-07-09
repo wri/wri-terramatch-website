@@ -74,7 +74,11 @@ const RHFMap = ({
     }
   );
 
-  const bbox = useBoundingBox({ polygonUuid: projectPolygon?.project_polygon?.poly_uuid });
+  const boundingBoxParams =
+    entity?.entityName === "project-pitches"
+      ? { projectPitchUuid: entity?.entityUUID }
+      : { projectUuid: entity?.entityUUID };
+  const bbox = useBoundingBox(boundingBoxParams);
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {

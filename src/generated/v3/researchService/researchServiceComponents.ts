@@ -35,15 +35,15 @@ export type SitePolygonsIndexQueryParams = {
   /**
    * Filter results by project short name(s)
    */
-  ["projectShortNames[]"]?: string[];
+  ["prprojectShortNames[]"]?: string[];
   /**
    * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
    */
   ["siteId[]"]?: string[];
   /**
-   * Filter results by project cohort. May not be used with projectId[] or siteId[]
+   * Filter results by project cohorts. May not be used with projectId[] or siteId[]
    */
-  projectCohort?: string;
+  ["projectCohort[]"]?: string[];
   /**
    * Filter results by project landscape. May not be used with projectId[] or siteId[]
    */
@@ -303,6 +303,10 @@ export type BoundingBoxGetQueryParams = {
    * UUID of a project to get the bounding box of all its site polygons
    */
   projectUuid?: string;
+  /**
+   * UUID of a project pitch to get the bounding box of all its polygons
+   */
+  projectPitchUuid?: string;
   /**
    * Array of landscape slugs for combined bounding box (used with country)
    */

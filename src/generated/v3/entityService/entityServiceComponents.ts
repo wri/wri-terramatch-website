@@ -209,14 +209,6 @@ export type ImpactStoryIndexQueryParams = {
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
   category?: string;
-  title?: string;
-  status?: string;
-  /**
-   * @format date-time
-   */
-  createdAt?: string;
-  organisationUuid?: string;
-  uuid?: string;
 };
 
 export type ImpactStoryIndexError = Fetcher.ErrorWrapper<{
@@ -1101,6 +1093,114 @@ export const demographicsIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/demographics", "GET");
 
+export type DisturbanceIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * siteReport uuid array
+   */
+  siteReportUuid?: string[];
+};
+
+export type DisturbanceIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DisturbanceIndexResponse = {
+  meta?: {
+    /**
+     * @example disturbances
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example disturbances
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceDto;
+  }[];
+};
+
+export type DisturbanceIndexVariables = {
+  queryParams?: DisturbanceIndexQueryParams;
+};
+
+export const disturbanceIndex = new V3ApiEndpoint<
+  DisturbanceIndexResponse,
+  DisturbanceIndexError,
+  DisturbanceIndexVariables,
+  {}
+>("/entities/v3/disturbances", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -1131,8 +1231,6 @@ export type EntityIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
-  frameworkKey?: string[];
-  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
@@ -1786,8 +1884,6 @@ export type EntityAssociationIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
-  frameworkKey?: string[];
-  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
@@ -2013,6 +2109,7 @@ export const operationsByTag = {
   fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
+  disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex }
 };

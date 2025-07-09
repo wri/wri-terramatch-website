@@ -415,7 +415,7 @@ export type PostV2FprojectPipelineBody = {
   id?: number;
   submitted_by?: string;
   program?: string;
-  cohort?: string;
+  cohort?: string[];
   publish_for?: string;
   url?: string;
 };

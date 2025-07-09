@@ -11,9 +11,15 @@ const hasValidParams = ({
   siteUuid,
   projectUuid,
   landscapes,
-  country
+  country,
+  projectPitchUuid
 }: BoundingBoxGetQueryParams = {}): boolean =>
-  !isEmpty(polygonUuid) || !isEmpty(siteUuid) || !isEmpty(projectUuid) || !isEmpty(landscapes) || !isEmpty(country);
+  !isEmpty(polygonUuid) ||
+  !isEmpty(siteUuid) ||
+  !isEmpty(projectUuid) ||
+  !isEmpty(landscapes) ||
+  !isEmpty(country) ||
+  !isEmpty(projectPitchUuid);
 
 const boundingBoxConnection = v3Endpoint("boundingBoxes", boundingBoxGet)
   .singleByFilter<BoundingBoxDto, BoundingBoxGetQueryParams>()

@@ -13,7 +13,10 @@ export type GetTotalSectionHeadersQueryParams = {
    * Filter results by programmes
    */
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
   /**
    * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */
@@ -81,7 +84,10 @@ export type GetTreeRestorationGoalQueryParams = {
    * Filter results by programmes
    */
   ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
   /**
    * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
    */
@@ -126,7 +132,79 @@ export const getTreeRestorationGoal = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/treeRestorationGoal", "GET");
 
+export type GetTotalJobsCreatedQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type GetTotalJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetTotalJobsCreatedVariables = {
+  queryParams?: GetTotalJobsCreatedQueryParams;
+};
+
+export const getTotalJobsCreated = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example totalJobsCreated
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example totalJobsCreated
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TotalJobsCreatedDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  GetTotalJobsCreatedError,
+  GetTotalJobsCreatedVariables,
+  {}
+>("/dashboard/v3/totalJobsCreated", "GET");
+
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
-  treeRestorationGoal: { getTreeRestorationGoal }
+  treeRestorationGoal: { getTreeRestorationGoal },
+  totalJobsCreated: { getTotalJobsCreated }
 };

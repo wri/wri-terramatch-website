@@ -11,7 +11,7 @@ interface DashboardBreadcrumbsProps {
   className?: string;
   clasNameText?: string;
   textVariant?: TextVariants;
-  cohort: string | undefined | null;
+  cohort: string[] | null | undefined;
   countryData?: CountriesProps;
   projectName?: string | undefined | null;
 }
@@ -25,15 +25,18 @@ const DashboardBreadcrumbs = ({
   projectName
 }: DashboardBreadcrumbsProps) => {
   const { setFilters } = useDashboardContext();
+
+  const cohortDisplayName = cohort && cohort.length > 0 ? getCohortName(cohort[0]) || cohort[0] : "";
+
   const links = useMemo(
     () =>
       [
         {
-          title: getCohortName(cohort ?? ""),
+          title: cohortDisplayName,
           onClick: () => {
             setFilters(prevValues => ({
               ...prevValues,
-              cohort: cohort ?? "",
+              cohort: cohort && cohort.length > 0 ? [cohort[0]] : [],
               country: {
                 country_slug: "",
                 id: 0,
@@ -71,7 +74,7 @@ const DashboardBreadcrumbs = ({
             }
           : null
       ].filter(Boolean),
-    [cohort, countryData, projectName, setFilters]
+    [cohortDisplayName, countryData, projectName, setFilters, cohort]
   );
 
   return (

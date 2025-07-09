@@ -206,10 +206,10 @@ export const useDashboardData = (filters: any) => {
     const data: { [status: string]: string[] } = {};
 
     allPolygonsData.forEach(polygon => {
-      if (polygon.centroidLatitude && polygon.centroidLongitude && polygon.polygonUuid && polygon.status) {
+      if (polygon.lat && polygon.long && polygon.polygonUuid && polygon.status) {
         centroids.push({
-          lat: polygon.centroidLatitude,
-          long: polygon.centroidLongitude,
+          lat: polygon.lat,
+          long: polygon.long,
           uuid: polygon.polygonUuid,
           status: polygon.status
         });
@@ -304,12 +304,8 @@ export const useDashboardData = (filters: any) => {
       params.landscape = convertNamesToCodes(filters.landscapes);
     }
 
-    if (filters?.cohort) {
-      if (Array.isArray(filters.cohort)) {
-        params.cohort = filters.cohort;
-      } else {
-        params.cohort = [filters.cohort];
-      }
+    if (filters?.cohort && filters.cohort.length > 0) {
+      params.cohort = filters.cohort;
     } else {
       params.cohort = ["terrafund", "terrafund-landscapes"];
     }

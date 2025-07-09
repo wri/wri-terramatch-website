@@ -104,3 +104,21 @@ export type TreeRestorationGoalDto = {
    */
   lastUpdatedAt: string | null;
 };
+
+export type TotalJobsCreatedDto = {
+  totalJobsCreated: number;
+  totalFt: number;
+  totalFtMen: number;
+  totalFtNonYouth: number;
+  totalFtWomen: number;
+  totalFtYouth: number;
+  totalMen: number;
+  totalNonYouth: number;
+  totalPt: number;
+  totalPtMen: number;
+  totalPtNonYouth: number;
+  totalPtWomen: number;
+  totalPtYouth: number;
+  totalWomen: number;
+  totalYouth: number;
+};
