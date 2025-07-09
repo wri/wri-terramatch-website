@@ -10,6 +10,7 @@ import { getMonthOptions } from "@/constants/options/months";
 import CardFinancial from "@/pages/organization/[id]/components/financial/components/cardFinancial";
 import { calculateFinancialRatioStats, formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
+import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
 import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "../components/FinancialStackedBarChart";
 
@@ -39,7 +40,20 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
     );
   }
 
+  const financialData = report?.financial_collection as V2FinancialIndicatorsRead;
+
   const financialRatioStats = calculateFinancialRatioStats(report?.financial_collection);
+
+  const hasNetProfitData =
+    Array.isArray(financialData) &&
+    financialData.some(
+      item =>
+        (item.collection === "revenue" && item.amount) ||
+        (item.collection === "expenses" && item.amount) ||
+        (item.collection === "profit" && item.amount)
+    );
+  const hasCurrentRatioData =
+    Array.isArray(financialData) && financialData.some(item => item.collection === "current-ratio" && item.amount);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -69,56 +83,60 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
         </Container>
       </Container>
 
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <Text variant="text-24-bold" className="mb-2">
-          {t("Financial Documents")}
-        </Text>
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6">
-            <FinancialStackedBarChart data={report?.financial_collection} currency={report?.currency} />
-          </div>
-          <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-            {report?.financial_collection
-              .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
-              .map((item: FinancialStackedBarChartProps) => (
-                <CardFinancial
-                  key={item.uuid}
-                  title={t(item.year.toString())}
-                  data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
-                  description={t("Net Profit")}
-                  currency={report?.currency}
-                />
-              ))}
-          </div>
-        </div>
-      </Container>
-
-      <Container className="mx-auto rounded-2xl p-8 shadow-all">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col gap-6">
-            <Text variant="text-24-bold" className="mb-2">
-              {t("Current Ratio by Year")}
-            </Text>
-            <FinancialCurrentRatioChart data={report?.financial_collection} />
-          </div>
-          <div className="flex h-full flex-col justify-center">
-            <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
-              <CardFinancial
-                title={t("Latest Ratio")}
-                data={financialRatioStats.latestRatio.toString()}
-                description={financialRatioStats.latestYear.toString()}
-                currency={""}
-              />
-              <CardFinancial
-                title={t(`${financialRatioStats.yearCount}-Year Average`)}
-                data={financialRatioStats.averageRatio.toString()}
-                description={financialRatioStats.yearRange}
-                currency={""}
-              />
+      {hasNetProfitData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Financial Documents")}
+          </Text>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <FinancialStackedBarChart data={report?.financial_collection} currency={report?.currency} />
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+              {report?.financial_collection
+                .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
+                .map((item: FinancialStackedBarChartProps) => (
+                  <CardFinancial
+                    key={item.uuid}
+                    title={t(item.year.toString())}
+                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                    description={t("Net Profit")}
+                    currency={report?.currency}
+                  />
+                ))}
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      )}
+
+      {hasCurrentRatioData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <Text variant="text-24-bold" className="mb-2">
+                {t("Current Ratio by Year")}
+              </Text>
+              <FinancialCurrentRatioChart data={report?.financial_collection} />
+            </div>
+            <div className="flex h-full flex-col justify-center">
+              <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
+                <CardFinancial
+                  title={t("Latest Ratio")}
+                  data={financialRatioStats.latestRatio.toString()}
+                  description={financialRatioStats.latestYear.toString()}
+                  currency={""}
+                />
+                <CardFinancial
+                  title={t(`${financialRatioStats.yearCount}-Year Average`)}
+                  data={financialRatioStats.averageRatio.toString()}
+                  description={financialRatioStats.yearRange}
+                  currency={""}
+                />
+              </div>
+            </div>
+          </div>
+        </Container>
+      )}
 
       <Container className="mx-auto grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
