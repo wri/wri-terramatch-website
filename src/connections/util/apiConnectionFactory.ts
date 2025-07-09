@@ -310,7 +310,7 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>(endpoint, {
       resource,
-      fetcher: endpoint.fetch,
+      fetcher: endpoint.fetch.bind(endpoint),
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -328,7 +328,7 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>(endpoint, {
       resource,
-      fetcher: endpoint.fetch,
+      fetcher: endpoint.fetch.bind(endpoint),
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -347,7 +347,7 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, Props>(endpoint, {
       resource,
-      fetcher: endpoint.fetch,
+      fetcher: endpoint.fetch.bind(endpoint),
       isLoaded: ({ data }, props) => {
         const id = customIdFactory(props);
         return isEmpty(id) || data != null;
@@ -365,7 +365,7 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
   ) {
     return new ApiConnectionFactory<Variables, DataConnection<DTO>, {}>(endpoint, {
       resource,
-      fetcher: endpoint.fetch,
+      fetcher: endpoint.fetch.bind(endpoint),
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [
@@ -384,10 +384,10 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
   ) {
     return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>(endpoint, {
       resource,
-      fetcher: endpoint.fetch,
+      fetcher: endpoint.fetch.bind(endpoint),
       isLoaded: ({ data }) => data != null,
       variablesFactory,
-      selectors: [indexDataSelector<DTO, Variables, Props>(resource, endpoint.indexMetaSelector)],
+      selectors: [indexDataSelector<DTO, Variables, Props>(resource, endpoint.indexMetaSelector.bind(endpoint))],
       selectorCacheKeyFactory: queryParamCacheKeyFactory
     }).loadFailure();
   }
