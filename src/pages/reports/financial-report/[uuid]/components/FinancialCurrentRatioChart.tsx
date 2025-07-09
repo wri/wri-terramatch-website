@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+import { formatYAxisNumber } from "@/utils/financialReport";
+
 type FinancialCurrentRatioChartProps = {
   uuid: string;
   organisation_id: number;
@@ -48,13 +50,7 @@ const FinancialCurrentRatioChart = ({ data }: { data: FinancialCurrentRatioChart
   };
 
   const formatYAxis = (value: number) => {
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(0)}k`;
-    }
-    if (value >= 100) {
-      return value.toFixed(0);
-    }
-    return value.toFixed(1);
+    return formatYAxisNumber(value, "");
   };
 
   const formatXAxis = (value: number) => {
