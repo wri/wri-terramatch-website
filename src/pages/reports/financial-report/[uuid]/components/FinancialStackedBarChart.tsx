@@ -15,7 +15,7 @@ import {
   YAxis
 } from "recharts";
 
-import { currencyInput } from "@/utils/financialReport";
+import { currencyInput, formatYAxisNumber } from "@/utils/financialReport";
 
 type FinancialStackedBarChartProps = {
   uuid: string;
@@ -93,7 +93,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
               displayValue = Math.abs(value);
             }
 
-            const formattedValue = `${currencySymbol}${Math.abs(displayValue).toLocaleString()}`;
+            const formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol);
 
             return (
               <p key={index} style={{ color: entry.color }} className="capitalize">
@@ -109,10 +109,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
   const formatYAxis = (value: number) => {
     if (value === 0) return `${currencySymbol}0`;
-    const intValue = Math.round(value);
-    return intValue > 0
-      ? `${currencySymbol}${intValue.toLocaleString()}`
-      : `${currencySymbol}-${Math.abs(intValue).toLocaleString()}`;
+    return formatYAxisNumber(value, currencySymbol);
   };
 
   const getYAxisTicks = () => {
@@ -175,7 +172,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
           fontWeight="500"
           dominantBaseline="hanging"
         >
-          {`${currencySymbol}${Math.abs(value).toLocaleString()}`}
+          {formatYAxisNumber(Math.abs(value), currencySymbol)}
         </text>
       );
     }
@@ -284,10 +281,10 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
                       y={y - 10}
                       fill="#000"
                       textAnchor="middle"
-                      fontSize={12}
-                      fontWeight={500}
+                      fontSize="12"
+                      fontWeight="500"
                     >
-                      {`${currencySymbol}${entry.revenue.toLocaleString()}`}
+                      {formatYAxisNumber(entry.revenue, currencySymbol)}
                     </text>
                   )
                 );

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import { currencyInput } from "@/utils/financialReport";
+import { currencyInput, formatLargeNumber } from "@/utils/financialReport";
 
 type CardFinancialProps = {
   title: string;
@@ -30,10 +30,10 @@ const CardFinancial = ({ title, data, description, currency }: CardFinancialProp
         return dataValue;
       }
 
-      const formattedNumber = Math.abs(numericValue).toLocaleString();
+      const formattedNumber = formatLargeNumber(Math.abs(numericValue), currencySymbol);
       const sign = isPositive ? "" : "-";
 
-      return `${sign}${currencySymbol}${formattedNumber}`;
+      return `${sign}${formattedNumber}`;
     }
 
     return dataValue;
