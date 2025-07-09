@@ -2,18 +2,12 @@ import { createSelector } from "reselect";
 
 import { connectionHook } from "@/connections/util/connectionShortcuts";
 import { requestPasswordReset, resetPassword } from "@/generated/v3/userService/userServiceComponents";
-import {
-  requestPasswordResetFetchFailed,
-  requestPasswordResetIsFetching,
-  resetPasswordFetchFailed,
-  resetPasswordIsFetching
-} from "@/generated/v3/userService/userServiceSelectors";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const sendRequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
-  requestPasswordReset({ body: { emailAddress, callbackUrl } });
+  requestPasswordReset.fetch({ body: { emailAddress, callbackUrl } });
 
 export const selectResetPassword = (store: ApiDataStore) => Object.values(store.passwordResets)?.[0]?.attributes;
 
@@ -26,7 +20,7 @@ type RequestResetPasswordConnection = {
 
 const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
   selector: createSelector(
-    [requestPasswordResetIsFetching(), requestPasswordResetFetchFailed(), selectResetPassword],
+    [requestPasswordReset.isFetchingSelector({}), requestPasswordReset.fetchFailedSelector({}), selectResetPassword],
     (isLoading, requestFailed, selector) => {
       return {
         isLoading: isLoading,
@@ -55,8 +49,8 @@ const resetPasswordConnection: Connection<ResetPasswordConnection, ResetPassword
     ({ token }) =>
       createSelector(
         [
-          resetPasswordIsFetching({ pathParams: { token } }),
-          resetPasswordFetchFailed({ pathParams: { token } }),
+          resetPassword.isFetchingSelector({ pathParams: { token } }),
+          resetPassword.fetchFailedSelector({ pathParams: { token } }),
           selectResetPassword
         ],
         (isLoading, requestFailed, selector) => ({
@@ -64,7 +58,7 @@ const resetPasswordConnection: Connection<ResetPasswordConnection, ResetPassword
           requestFailed,
           isSuccess: selector?.emailAddress != null,
           resetPassword: (password: string) =>
-            resetPassword({
+            resetPassword.fetch({
               body: {
                 newPassword: password
               },

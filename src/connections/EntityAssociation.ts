@@ -16,10 +16,6 @@ import {
   SeedingDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import {
-  entityAssociationIndexFetchFailed,
-  entityAssociationIndexIndexMeta
-} from "@/generated/v3/entityService/entityServiceSelectors";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { Connected, Connection, PaginatedConnectionProps } from "@/types/connection";
@@ -27,12 +23,12 @@ import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 
 import {
-  ApiConnectionFactory,
   EnabledProp,
   FilterProp,
   IndexConnection,
   LoadFailureConnection,
-  RefetchConnection
+  RefetchConnection,
+  v3Endpoint
 } from "./util/apiConnectionFactory";
 
 export type EntityAssociationDtoType =
@@ -64,13 +60,10 @@ export type EntityAssociationIndexConnectionProps = BaseEntityAssociationProps &
   EnabledProp;
 
 const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(association: SupportedAssociation) =>
-  ApiConnectionFactory.index<T, EntityAssociationIndexVariables, BaseEntityAssociationProps>(
-    association,
-    entityAssociationIndex,
-    entityAssociationIndexIndexMeta,
-    ({ entity, uuid }) => ({ pathParams: { entity, uuid, association } } as EntityAssociationIndexVariables)
-  )
-    .loadFailure(entityAssociationIndexFetchFailed)
+  v3Endpoint(association, entityAssociationIndex)
+    .index<T, BaseEntityAssociationProps>(
+      ({ entity, uuid }) => ({ pathParams: { entity, uuid, association } } as EntityAssociationIndexVariables)
+    )
     .pagination()
     .filter<AssociationIndexFilter>()
     .sideloads()

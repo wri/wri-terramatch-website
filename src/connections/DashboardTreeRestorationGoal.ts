@@ -1,19 +1,13 @@
-import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
 import { connectionHook } from "@/connections/util/connectionShortcuts";
 import {
   getTreeRestorationGoal,
-  GetTreeRestorationGoalQueryParams,
-  GetTreeRestorationGoalVariables
+  GetTreeRestorationGoalQueryParams
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
-import { getTreeRestorationGoalFetchFailed } from "@/generated/v3/dashboardService/dashboardServiceSelectors";
 
-const treeRestorationGoalConnection = ApiConnectionFactory.singleByFilter<
-  TreeRestorationGoalDto,
-  GetTreeRestorationGoalVariables,
-  GetTreeRestorationGoalQueryParams
->("treeRestorationGoals", getTreeRestorationGoal)
-  .loadFailure(getTreeRestorationGoalFetchFailed)
+const treeRestorationGoalConnection = v3Endpoint("treeRestorationGoals", getTreeRestorationGoal)
+  .singleByFilter<TreeRestorationGoalDto, GetTreeRestorationGoalQueryParams>()
   .buildConnection();
 
 export const useTreeRestorationGoal = connectionHook(treeRestorationGoalConnection);

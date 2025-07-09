@@ -1,13 +1,8 @@
-import {
-  treeReportCountsFind,
-  TreeReportCountsFindVariables
-} from "@/generated/v3/entityService/entityServiceComponents";
+import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { treeReportCountsFind } from "@/generated/v3/entityService/entityServiceComponents";
 import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
 import { TreeReportCountsDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { treeReportCountsFindFetchFailed } from "@/generated/v3/entityService/entityServiceSelectors";
 import { useConnection } from "@/hooks/useConnection";
-
-import { ApiConnectionFactory } from "./util/apiConnectionFactory";
 
 export type TreeReportCountsEntity =
   | (typeof TreeEntityTypes.REPORT_COUNT_ENTITIES)[number]
@@ -18,17 +13,11 @@ type TreeReportCountProps = {
   uuid?: string;
 };
 
-const treeReportCountsConnection = ApiConnectionFactory.singleByCustomId<
-  TreeReportCountsDto,
-  TreeReportCountsFindVariables,
-  TreeReportCountProps
->(
-  "treeReportCounts",
-  treeReportCountsFind,
-  ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
-  ({ entity, uuid }) => `${entity}|${uuid}`
-)
-  .loadFailure(treeReportCountsFindFetchFailed)
+const treeReportCountsConnection = v3Endpoint("treeReportCounts", treeReportCountsFind)
+  .singleByCustomId<TreeReportCountsDto, TreeReportCountProps>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    ({ entity, uuid }) => `${entity}|${uuid}`
+  )
   .enabledProp()
   .buildConnection();
 

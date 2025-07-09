@@ -20,9 +20,9 @@ import {
   RESEARCH_SERVICE_RESOURCES,
   ResearchServiceApiResources
 } from "@/generated/v3/researchService/researchServiceConstants";
+import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
-import { AUTH_LOGIN_URL } from "@/generated/v3/userService/userServiceSelectors";
 import { resolveUrl } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 
@@ -191,7 +191,7 @@ if (cachedAccessToken != null) {
   // storage, fake up a logins response and meta creation complete so the connection gets what it
   // expects for an already logged in user.
   INITIAL_STATE.logins["1"] = { attributes: { token: cachedAccessToken } };
-  INITIAL_STATE.meta.pending["POST"][resolveUrl(AUTH_LOGIN_URL)] = { resourceIds: ["1"] };
+  INITIAL_STATE.meta.pending["POST"][resolveUrl(authLogin.url)] = { resourceIds: ["1"] };
 }
 
 type ApiFetchStartingProps = {

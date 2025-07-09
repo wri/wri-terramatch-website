@@ -1,28 +1,16 @@
 import { connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   projectPitchGet,
-  ProjectPitchGetVariables,
   projectPitchIndex,
-  ProjectPitchIndexQueryParams,
-  ProjectPitchIndexVariables
+  ProjectPitchIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ProjectPitchDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import {
-  projectPitchGetFetchFailed,
-  projectPitchGetIsFetching,
-  projectPitchIndexFetchFailed,
-  projectPitchIndexIndexMeta
-} from "@/generated/v3/entityService/entityServiceSelectors";
 
-import { ApiConnectionFactory } from "./util/apiConnectionFactory";
+import { v3Endpoint } from "./util/apiConnectionFactory";
 
-const projectPitchConnection = ApiConnectionFactory.singleResource<ProjectPitchDto, ProjectPitchGetVariables>(
-  "projectPitches",
-  projectPitchGet,
-  ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
-)
-  .isLoading(projectPitchGetIsFetching)
-  .loadFailure(projectPitchGetFetchFailed)
+const projectPitchConnection = v3Endpoint("projectPitches", projectPitchGet)
+  .singleResource<ProjectPitchDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .isLoading()
   .buildConnection();
 
 type ProjectPitchIndexFilter = Omit<
@@ -30,13 +18,9 @@ type ProjectPitchIndexFilter = Omit<
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
 >;
 
-const projectPitchesConnection = ApiConnectionFactory.index<ProjectPitchDto, ProjectPitchIndexVariables>(
-  "projectPitches",
-  projectPitchIndex,
-  projectPitchIndexIndexMeta
-)
+const projectPitchesConnection = v3Endpoint("projectPitches", projectPitchIndex)
+  .index<ProjectPitchDto>()
   .pagination()
-  .loadFailure(projectPitchIndexFetchFailed)
   .filter<ProjectPitchIndexFilter>()
   .buildConnection();
 

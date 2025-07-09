@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./userServiceFetcher";
-import { userServiceFetch } from "./userServiceFetcher";
 import type * as Schemas from "./userServiceSchemas";
 
 export type AuthLoginError = Fetcher.ErrorWrapper<{
@@ -48,13 +48,10 @@ export type AuthLoginVariables = {
 /**
  * Receive a JWT Token in exchange for login credentials
  */
-export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =>
-  userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginBody, {}, {}, {}>({
-    url: "/auth/v3/logins",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const authLogin = new V3ApiEndpoint<AuthLoginResponse, AuthLoginError, AuthLoginVariables, {}>(
+  "/auth/v3/logins",
+  "POST"
+);
 
 export type UsersFindPathParams = {
   /**
@@ -147,13 +144,10 @@ export type UsersFindVariables = {
 /**
  * Fetch a user by UUID, or with the 'me' identifier
  */
-export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
-  userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
-    url: "/users/v3/users/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
+  "/users/v3/users/{uuid}",
+  "GET"
+);
 
 export type UserUpdatePathParams = {
   /**
@@ -258,13 +252,10 @@ export type UserUpdateVariables = {
 /**
  * Update a user by UUID
  */
-export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBody, {}, {}, UserUpdatePathParams>({
-    url: "/users/v3/users/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
+  "/users/v3/users/{uuid}",
+  "PATCH"
+);
 
 export type UserCreationError = Fetcher.ErrorWrapper<{
   status: 401;
@@ -333,13 +324,10 @@ export type UserCreationVariables = {
 /**
  * Create a new user
  */
-export const userCreation = (variables: UserCreationVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserCreationResponse, UserCreationError, Schemas.UserCreateBody, {}, {}, {}>({
-    url: "/users/v3/users",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
+  "/users/v3/users",
+  "POST"
+);
 
 export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
   status: 400;
@@ -382,13 +370,12 @@ export type RequestPasswordResetVariables = {
 /**
  * Send password reset email with a token
  */
-export const requestPasswordReset = (variables: RequestPasswordResetVariables, signal?: AbortSignal) =>
-  userServiceFetch<RequestPasswordResetResponse, RequestPasswordResetError, Schemas.ResetPasswordRequest, {}, {}, {}>({
-    url: "/auth/v3/passwordResets",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const requestPasswordReset = new V3ApiEndpoint<
+  RequestPasswordResetResponse,
+  RequestPasswordResetError,
+  RequestPasswordResetVariables,
+  {}
+>("/auth/v3/passwordResets", "POST");
 
 export type ResetPasswordPathParams = {
   token: string;
@@ -436,15 +423,10 @@ export type ResetPasswordVariables = {
 /**
  * Reset password using the provided token
  */
-export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortSignal) =>
-  userServiceFetch<
-    ResetPasswordResponse,
-    ResetPasswordError,
-    Schemas.ResetPasswordDto,
-    {},
-    {},
-    ResetPasswordPathParams
-  >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPasswordError, ResetPasswordVariables, {}>(
+  "/auth/v3/passwordResets/{token}",
+  "PUT"
+);
 
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
@@ -487,13 +469,10 @@ export type VerifyUserVariables = {
 /**
  * Receive a token to verify a user and return the verification status
  */
-export const verifyUser = (variables: VerifyUserVariables, signal?: AbortSignal) =>
-  userServiceFetch<VerifyUserResponse, VerifyUserError, Schemas.VerificationUserRequest, {}, {}, {}>({
-    url: "/auth/v3/verifications",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError, VerifyUserVariables, {}>(
+  "/auth/v3/verifications",
+  "POST"
+);
 
 export const operationsByTag = {
   login: { authLogin },

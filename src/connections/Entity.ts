@@ -1,17 +1,10 @@
-import {
-  ApiConnectionFactory,
-  EnabledProp,
-  FilterProp,
-  IdProp,
-  SideloadsProp
-} from "@/connections/util/apiConnectionFactory";
+import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Endpoint } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   entityDelete,
   entityGet,
   EntityGetPathParams,
-  EntityGetVariables,
   entityIndex,
   EntityIndexQueryParams,
   EntityIndexVariables,
@@ -38,14 +31,6 @@ import {
   SiteReportUpdateData,
   SiteUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import {
-  entityDeleteFetchFailed,
-  entityGetFetchFailed,
-  entityIndexFetchFailed,
-  entityIndexIndexMeta,
-  entityUpdateFetchFailed,
-  entityUpdateIsFetching
-} from "@/generated/v3/entityService/entityServiceSelectors";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { PaginatedConnectionProps } from "@/types/connection";
@@ -94,32 +79,29 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
 ) => {
   const pathParamsFactory = ({ id }: IdProp) => (id == null ? undefined : { pathParams: { entity, uuid: id } });
   const factory = requireFullEntity
-    ? ApiConnectionFactory.singleFullResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory)
-    : ApiConnectionFactory.singleResource<D, EntityGetVariables>(entity, entityGet, pathParamsFactory);
+    ? v3Endpoint(entity, entityGet).singleFullResource<D>(pathParamsFactory)
+    : v3Endpoint(entity, entityGet).singleResource<D>(pathParamsFactory);
   return factory
-    .loadFailure(entityGetFetchFailed)
     .isDeleted()
     .refetch(({ id }) => {
       if (id != null) ApiSlice.pruneCache(entity, [id]);
     })
-    .update<U>(entityUpdate, entityUpdateIsFetching, entityUpdateFetchFailed)
+    .update(entityUpdate)
     .buildConnection();
 };
 
 const createEntityIndexConnection = <T extends EntityLightDto>(entity: SupportedEntity) =>
-  ApiConnectionFactory.index<T, EntityIndexVariables>(
-    entity,
-    entityIndex,
-    entityIndexIndexMeta,
-    () => ({ pathParams: { entity } } as EntityIndexVariables)
-  )
+  v3Endpoint(entity, entityIndex)
+    .index<T>(() => ({ pathParams: { entity } } as EntityIndexVariables))
     .pagination()
     .filter<EntityIndexFilter>()
     .sideloads()
     .enabledProp()
     .refetch(() => ApiSlice.pruneIndex(entity, ""))
-    .loadFailure(entityIndexFetchFailed)
     .buildConnection();
+
+const createEntityDeleter = (entity: SupportedEntity) =>
+  deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
 
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
   SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
@@ -138,11 +120,7 @@ export const pruneEntityCache = (entity: EntityName, uuid: string) => {
 const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectUpdateData>("projects");
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
-export const deleteProject = deleterAsync(
-  "projects",
-  uuid => entityDeleteFetchFailed(specificEntityParams("projects", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projects", uuid)))
-);
+export const deleteProject = createEntityDeleter("projects");
 
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
@@ -152,11 +130,7 @@ export const useProjectIndex = connectionHook(indexProjectConnection);
 const fullSiteConnection = createEntityGetConnection<SiteFullDto, EntityUpdateData>("sites");
 export const loadFullSite = connectionLoader(fullSiteConnection);
 export const useFullSite = connectionHook(fullSiteConnection);
-export const deleteSite = deleterAsync(
-  "sites",
-  uuid => entityDeleteFetchFailed(specificEntityParams("sites", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("sites", uuid)))
-);
+export const deleteSite = createEntityDeleter("sites");
 export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
@@ -165,11 +139,7 @@ export const useSiteIndex = connectionHook(indexSiteConnection);
 const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
 export const loadFullNursery = connectionLoader(fullNurseryConnection);
 export const useFullNursery = connectionHook(fullNurseryConnection);
-export const deleteNursery = deleterAsync(
-  "nurseries",
-  uuid => entityDeleteFetchFailed(specificEntityParams("nurseries", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseries", uuid)))
-);
+export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
@@ -189,11 +159,7 @@ export const loadFullProjectReport = connectionLoader(fullProjectReportConnectio
 export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
-export const deleteProjectReport = deleterAsync(
-  "projectReports",
-  uuid => entityDeleteFetchFailed(specificEntityParams("projectReports", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("projectReports", uuid)))
-);
+export const deleteProjectReport = createEntityDeleter("projectReports");
 
 // Site Reports
 export const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
@@ -207,18 +173,14 @@ const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, 
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
-const siteReportListConnection = ApiConnectionFactory.list<SiteReportLightDto>("siteReports").buildConnection();
+const siteReportListConnection = v3Endpoint("siteReports").list<SiteReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for site reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.
  */
 export const useLightSiteReportList = connectionHook(siteReportListConnection);
 export const loadLightSiteReportList = connectionLoader(siteReportListConnection);
-export const deleteSiteReport = deleterAsync(
-  "siteReports",
-  uuid => entityDeleteFetchFailed(specificEntityParams("siteReports", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("siteReports", uuid)))
-);
+export const deleteSiteReport = createEntityDeleter("siteReports");
 
 // Nursery Reports
 export const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
@@ -233,19 +195,14 @@ const lightNurseryReportConnection = createEntityGetConnection<NurseryReportLigh
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
-const nurseryReportListConnection =
-  ApiConnectionFactory.list<NurseryReportLightDto>("nurseryReports").buildConnection();
+const nurseryReportListConnection = v3Endpoint("nurseryReports").list<NurseryReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for nursery reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.
  */
 export const useLightNurseryReportList = connectionHook(nurseryReportListConnection);
 export const loadLightNurseryReportList = connectionLoader(nurseryReportListConnection);
-export const deleteNurseryReport = deleterAsync(
-  "nurseryReports",
-  uuid => entityDeleteFetchFailed(specificEntityParams("nurseryReports", uuid)),
-  uuid => (uuid == null ? null : entityDelete(specificEntityParams("nurseryReports", uuid)))
-);
+export const deleteNurseryReport = createEntityDeleter("nurseryReports");
 
 /**
  * Get the full entity connection in a component that is shared amongst entity types. It's technically

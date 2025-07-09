@@ -1,47 +1,25 @@
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   taskGet,
-  TaskGetVariables,
   taskIndex,
   TaskIndexQueryParams,
-  TaskIndexVariables,
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { TaskFullDto, TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import {
-  taskGetFetchFailed,
-  taskIndexFetchFailed,
-  taskIndexIndexMeta,
-  taskUpdateFetchFailed,
-  taskUpdateIsFetching
-} from "@/generated/v3/entityService/entityServiceSelectors";
 
-import { ApiConnectionFactory } from "./util/apiConnectionFactory";
+import { v3Endpoint } from "./util/apiConnectionFactory";
 
 type TaskIndexFilter = Omit<TaskIndexQueryParams, "page[size]" | "page[number]" | "sort[field]" | "sort[direction]">;
 
-export const taskIndexConnection = ApiConnectionFactory.index<TaskLightDto, TaskIndexVariables>(
-  "tasks",
-  taskIndex,
-  taskIndexIndexMeta
-)
+export const taskIndexConnection = v3Endpoint("tasks", taskIndex)
+  .index<TaskLightDto>()
   .pagination()
-  .loadFailure(taskIndexFetchFailed)
   .filter<TaskIndexFilter>()
   .buildConnection();
 
-const taskConnection = ApiConnectionFactory.singleFullResource<TaskFullDto, TaskGetVariables>(
-  "tasks",
-  taskGet,
-  ({ id }) =>
-    id == null
-      ? undefined
-      : {
-          pathParams: { uuid: id }
-        }
-)
-  .loadFailure(taskGetFetchFailed)
-  .update(taskUpdate, taskUpdateIsFetching, taskUpdateFetchFailed)
+const taskConnection = v3Endpoint("tasks", taskGet)
+  .singleFullResource<TaskFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .update(taskUpdate)
   .addRelationshipData(relationships => {
     if (relationships == null) return {};
     return {

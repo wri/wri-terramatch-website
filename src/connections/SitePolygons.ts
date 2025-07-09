@@ -1,17 +1,12 @@
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 
-import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
 import {
   sitePolygonsIndex,
-  SitePolygonsIndexQueryParams,
-  SitePolygonsIndexVariables
+  SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import {
-  sitePolygonsIndexFetchFailed,
-  sitePolygonsIndexIndexMeta
-} from "@/generated/v3/researchService/researchServiceSelectors";
 import { useStableProps } from "@/hooks/useStableProps";
 import { PendingError } from "@/store/apiSlice";
 import { ConnectionProps } from "@/types/connection";
@@ -27,13 +22,8 @@ type SitePolygonFilter = Omit<
   "page[size]" | "page[after]" | "page[number]" | "projectId[]" | "siteId[]"
 >;
 
-export const sitePolygonsConnection = ApiConnectionFactory.index<SitePolygonLightDto, SitePolygonsIndexVariables>(
-  "sitePolygons",
-  sitePolygonsIndex,
-  sitePolygonsIndexIndexMeta,
-  () => ({ queryParams: { lightResource: true } })
-)
-  .loadFailure(sitePolygonsIndexFetchFailed)
+export const sitePolygonsConnection = v3Endpoint("sitePolygons", sitePolygonsIndex)
+  .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .enabledProp()
   .filter<SitePolygonFilter>()

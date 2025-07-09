@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./dashboardServiceFetcher";
-import { dashboardServiceFetch } from "./dashboardServiceFetcher";
 import type * as Schemas from "./dashboardServiceSchemas";
 
 export type GetTotalSectionHeadersQueryParams = {
@@ -31,52 +31,49 @@ export type GetTotalSectionHeadersVariables = {
   queryParams?: GetTotalSectionHeadersQueryParams;
 };
 
-export const getTotalSectionHeaders = (variables: GetTotalSectionHeadersVariables, signal?: AbortSignal) =>
-  dashboardServiceFetch<
-    | {
-        meta?: {
-          /**
-           * @example totalSectionHeaders
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example totalSectionHeaders
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.TotalSectionHeaderDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example delayedJobs
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example delayedJobs
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.DelayedJobDto;
-        };
-      },
-    GetTotalSectionHeadersError,
-    undefined,
-    {},
-    GetTotalSectionHeadersQueryParams,
-    {}
-  >({ url: "/dashboard/v3/totalSectionHeaders", method: "get", ...variables, signal });
+export const getTotalSectionHeaders = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example totalSectionHeaders
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example totalSectionHeaders
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TotalSectionHeaderDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  GetTotalSectionHeadersError,
+  GetTotalSectionHeadersVariables,
+  {}
+>("/dashboard/v3/totalSectionHeaders", "GET");
 
 export type GetTreeRestorationGoalQueryParams = {
   country?: string;
@@ -122,15 +119,12 @@ export type GetTreeRestorationGoalVariables = {
   queryParams?: GetTreeRestorationGoalQueryParams;
 };
 
-export const getTreeRestorationGoal = (variables: GetTreeRestorationGoalVariables, signal?: AbortSignal) =>
-  dashboardServiceFetch<
-    GetTreeRestorationGoalResponse,
-    GetTreeRestorationGoalError,
-    undefined,
-    {},
-    GetTreeRestorationGoalQueryParams,
-    {}
-  >({ url: "/dashboard/v3/treeRestorationGoal", method: "get", ...variables, signal });
+export const getTreeRestorationGoal = new V3ApiEndpoint<
+  GetTreeRestorationGoalResponse,
+  GetTreeRestorationGoalError,
+  GetTreeRestorationGoalVariables,
+  {}
+>("/dashboard/v3/treeRestorationGoal", "GET");
 
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },

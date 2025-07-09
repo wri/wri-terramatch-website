@@ -24,13 +24,6 @@ import { resolveUrl as resolveV3Url } from "./utils";
 
 export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
-type SelectorOptions<TQueryParams, TPathParams> = {
-  url: string;
-  method: string;
-  queryParams?: TQueryParams;
-  pathParams?: TPathParams;
-};
-
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   entities: entityServiceUrl,
@@ -83,66 +76,113 @@ const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathP
   return `${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)] as string)}${query}`;
 };
 
-export const resolveUrl = (url: string, queryParams: FetchParams = {}, pathParams: FetchParams = {}) =>
-  `${getBaseUrl(url)}${getStablePathAndQuery(url, queryParams, pathParams)}`;
+export const resolveUrl = <TQueryParams extends {}, TPathParams extends {}>(
+  url: string,
+  { queryParams, pathParams }: UrlVariables<TQueryParams, TPathParams> = {}
+) => `${getBaseUrl(url)}${getStablePathAndQuery(url, queryParams, pathParams)}`;
 
-export function isFetchingSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
-  url,
-  method,
-  pathParams,
-  queryParams
-}: SelectorOptions<TQueryParams, TPathParams>) {
-  const fullUrl = resolveUrl(url, queryParams, pathParams);
-  return (store: ApiDataStore) => isInProgress(store.meta.pending[method.toUpperCase() as Method][fullUrl]);
-}
+export type UrlVariables<TQueryParams extends {}, TPathParams extends {}> = {
+  queryParams?: TQueryParams;
+  pathParams?: TPathParams;
+};
+export type RequestVariables<
+  TQueryParams extends {} = {},
+  TPathParams extends {} = {},
+  TBody extends {} | FormData | undefined | null = {}
+> = UrlVariables<TQueryParams, TPathParams> & { body?: TBody };
 
-export function fetchFailedSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
-  url,
-  method,
-  pathParams,
-  queryParams
-}: SelectorOptions<TQueryParams, TPathParams>) {
-  const fullUrl = resolveUrl(url, queryParams, pathParams);
-  return (store: ApiDataStore) => {
-    const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
-    return isErrorState(pending) ? pending : undefined;
-  };
-}
+export class V3ApiEndpoint<
+  TResponse = unknown,
+  TError = unknown,
+  TVariables extends RequestVariables = RequestVariables,
+  THeaders extends {} = {}
+> {
+  constructor(readonly url: string, readonly method: Method) {}
 
-export function completeSelector<TQueryParams extends FetchParams, TPathParams extends FetchParams>({
-  url,
-  method,
-  pathParams,
-  queryParams
-}: SelectorOptions<TQueryParams, TPathParams>) {
-  const fullUrl = resolveUrl(url, queryParams, pathParams);
-  return (store: ApiDataStore) => {
-    const pending = store.meta.pending[method.toUpperCase() as Method][fullUrl];
-    return isCompletedCreationState(pending) ? pending : undefined;
-  };
-}
+  fetch(variables: TVariables, headers?: THeaders) {
+    const fullUrl = resolveUrl(this.url, variables);
+    if (isPending(this.method, fullUrl)) {
+      // Ignore requests to issue an API request that is in progress or has failed without a cache
+      // clear.
+      return;
+    }
 
-export function indexMetaSelector<TQueryParams extends {}, TPathParams extends {}>({
-  resource,
-  url,
-  pathParams,
-  queryParams
-}: Omit<SelectorOptions<TQueryParams, TPathParams>, "method"> & { resource: ResourceType }) {
-  // Some query params gets specified as a single indexed key like `page[number]`, and some get
-  // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
-  // what we get through qs stringify / parse will normalize it.
-  const normalizedQuery = qs.parse(qs.stringify(queryParams));
-  const queryKeys = Object.keys(normalizedQuery);
-  const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
-  if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
-    delete (normalizedQuery.page as ParsedQs).number;
+    const requestHeaders: HeadersInit = {
+      "Content-Type": "application/json",
+      ...headers
+    };
+
+    // Note: there's a race condition that I haven't figured out yet: the middleware in apiSlice that
+    // sets the access token in localStorage is firing _after_ the action has been merged into the
+    // store, which means that the next connections that kick off right away don't have access to
+    // the token through the getAccessToken method. So, we grab it from the store instead, which is
+    // more reliable in this case.
+    const token = Object.values(ApiSlice.currentState.logins)?.[0]?.attributes?.token;
+    if (!requestHeaders?.Authorization && token != null) {
+      // Always include the JWT access token if we have one.
+      requestHeaders.Authorization = `Bearer ${token}`;
+    }
+
+    // As the fetch API is being used, when multipart/form-data is specified
+    // the Content-Type header must be deleted so that the browser can set
+    // the correct boundary.
+    // https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
+    if (requestHeaders["Content-Type"].toLowerCase().includes("multipart/form-data")) {
+      delete requestHeaders["Content-Type"];
+    }
+
+    // The promise is ignored on purpose. Further progress of the request is tracked through
+    // redux.
+    dispatchRequest<TResponse, TError>(fullUrl, {
+      method: this.method,
+      body:
+        variables.body == null
+          ? undefined
+          : variables.body instanceof FormData
+          ? variables.body
+          : JSON.stringify(variables.body),
+      headers: requestHeaders
+    });
   }
-  if (queryKeys.includes("sideloads")) {
-    delete normalizedQuery.sideloads;
+
+  isFetchingSelector(variables: Omit<RequestVariables, "body">) {
+    const fullUrl = resolveUrl(this.url, variables);
+    return (store: ApiDataStore) => isInProgress(store.meta.pending[this.method.toUpperCase() as Method][fullUrl]);
   }
 
-  const stableUrl = getStablePathAndQuery(url, normalizedQuery, pathParams);
-  return (store: ApiDataStore) => store.meta.indices[resource][stableUrl]?.[pageNumber];
+  fetchFailedSelector(variables: Omit<RequestVariables, "body">) {
+    const fullUrl = resolveUrl(this.url, variables);
+    return (store: ApiDataStore) => {
+      const pending = store.meta.pending[this.method][fullUrl];
+      return isErrorState(pending) ? pending : undefined;
+    };
+  }
+
+  indexMetaSelector(resource: ResourceType, variables: Omit<RequestVariables, "body">) {
+    // Some query params get specified as a single indexed key like `page[number]`, and some get
+    // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
+    // what we get through qs stringify / parse will normalize it.
+    const normalizedQuery = qs.parse(qs.stringify(variables.queryParams));
+    const queryKeys = Object.keys(normalizedQuery);
+    const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
+    if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
+      delete (normalizedQuery.page as ParsedQs).number;
+    }
+    if (queryKeys.includes("sideloads")) {
+      delete normalizedQuery.sideloads;
+    }
+
+    const stableUrl = getStablePathAndQuery(this.url, normalizedQuery, variables.pathParams);
+    return (store: ApiDataStore) => store.meta.indices[resource][stableUrl]?.[pageNumber];
+  }
+
+  completeSelector(variables: Omit<RequestVariables, "body">) {
+    const fullUrl = resolveUrl(this.url, variables);
+    return (store: ApiDataStore) => {
+      const pending = store.meta.pending[this.method][fullUrl];
+      return isCompletedCreationState(pending) ? pending : undefined;
+    };
+  }
 }
 
 const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
@@ -189,11 +229,7 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
     }
 
     if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
-      return await processDelayedJob<TData>(
-        requestInit?.signal!,
-        responsePayload?.data?.attributes?.uuid,
-        actionPayload
-      );
+      return await processDelayedJob<TData>(responsePayload?.data?.attributes?.uuid, actionPayload);
     }
 
     ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
@@ -205,84 +241,11 @@ async function dispatchRequest<TData, TError>(url: string, requestInit: RequestI
   }
 }
 
-export type ServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
-  url: string;
-  method: string;
-  body?: TBody;
-  headers?: THeaders;
-  queryParams?: TQueryParams;
-  pathParams?: TPathParams;
-  signal?: AbortSignal;
-};
-
-/**
- * Execute a request to the v3 backend. Returns the client-side-only request ID string. If undefined
- * is returned, it indicates the request was not sent because it is already pending.
- */
-export function serviceFetch<
-  TData,
-  TError,
-  TBody extends {} | FormData | undefined | null,
-  THeaders extends {},
-  TQueryParams extends {},
-  TPathParams extends {}
->({
-  url,
-  method: methodString,
-  body,
-  headers,
-  pathParams,
-  queryParams,
-  signal
-}: ServiceFetcherOptions<TBody, THeaders, TQueryParams, TPathParams>) {
-  const fullUrl = resolveUrl(url, queryParams, pathParams);
-  const method = methodString.toUpperCase() as Method;
-  if (isPending(method, fullUrl)) {
-    // Ignore requests to issue an API request that is in progress or has failed without a cache
-    // clear.
-    return;
-  }
-
-  const requestHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...headers
-  };
-
-  // Note: there's a race condition that I haven't figured out yet: the middleware in apiSlice that
-  // sets the access token in localStorage is firing _after_ the action has been merged into the
-  // store, which means that the next connections that kick off right away don't have access to
-  // the token through the getAccessToken method. So, we grab it from the store instead, which is
-  // more reliable in this case.
-  const token = Object.values(ApiSlice.currentState.logins)?.[0]?.attributes?.token;
-  if (!requestHeaders?.Authorization && token != null) {
-    // Always include the JWT access token if we have one.
-    requestHeaders.Authorization = `Bearer ${token}`;
-  }
-
-  // As the fetch API is being used, when multipart/form-data is specified
-  // the Content-Type header must be deleted so that the browser can set
-  // the correct boundary.
-  // https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
-  if (requestHeaders["Content-Type"].toLowerCase().includes("multipart/form-data")) {
-    delete requestHeaders["Content-Type"];
-  }
-
-  // The promise is ignored on purpose. Further progress of the request is tracked through
-  // redux.
-  dispatchRequest<TData, TError>(fullUrl, {
-    signal,
-    method,
-    body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
-    headers: requestHeaders
-  });
-}
-
 const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = { data: { attributes: DelayedJobDto } };
 
 async function loadJob(
-  signal: AbortSignal | undefined,
   delayedJobId: string,
   retries = 3,
   actionPayload: { url: string; method: Method }
@@ -294,7 +257,7 @@ async function loadJob(
     if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
     const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
-    response = await fetch(url, { signal, headers });
+    response = await fetch(url, { headers });
 
     // Retry logic for handling 502 Bad Gateway errors
     // When requesting the job status from the server, a 502 Bad Gateway error may occur. This error should be temporary,
@@ -302,7 +265,7 @@ async function loadJob(
     // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
     if (response.status === 502 && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
-      return loadJob(signal, delayedJobId, retries - 1, actionPayload); // Retry
+      return loadJob(delayedJobId, retries - 1, actionPayload); // Retry
     }
 
     if (!response.ok) {
@@ -332,7 +295,7 @@ async function loadJob(
 
       if ((isNetworkError || statusCode === -1 || statusCode === 401) && retries > 0) {
         await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
-        return loadJob(signal, delayedJobId, retries - 1, actionPayload);
+        return loadJob(delayedJobId, retries - 1, actionPayload);
       }
     }
 
@@ -341,7 +304,6 @@ async function loadJob(
 }
 
 async function processDelayedJob<TData>(
-  signal: AbortSignal | undefined,
   delayedJobId: string,
   actionPayload: { url: string; method: Method }
 ): Promise<TData> {
@@ -351,16 +313,15 @@ async function processDelayedJob<TData>(
 
   let jobResult;
   for (
-    jobResult = await loadJob(signal, delayedJobId, 3, actionPayload);
+    jobResult = await loadJob(delayedJobId, 3, actionPayload);
     jobResult.data?.attributes?.status === "pending";
-    jobResult = await loadJob(signal, delayedJobId, 3, actionPayload)
+    jobResult = await loadJob(delayedJobId, 3, actionPayload)
   ) {
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
     const effectiveTotalContent =
       jobResult.data?.attributes?.status === "pending" && totalContent === null ? 1 : totalContent ?? 0;
     JobsSlice.setJobsProgress(effectiveTotalContent, processedContent ?? 0, progressMessage);
 
-    if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }
 

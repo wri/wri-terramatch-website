@@ -1,27 +1,15 @@
-import { ApiConnectionFactory } from "@/connections/util/apiConnectionFactory";
+import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   impactStoryGet,
-  ImpactStoryGetVariables,
   impactStoryIndex,
-  ImpactStoryIndexQueryParams,
-  ImpactStoryIndexVariables
+  ImpactStoryIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ImpactStoryFullDto, ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import {
-  impactStoryGetFetchFailed,
-  impactStoryGetIsFetching,
-  impactStoryIndexFetchFailed,
-  impactStoryIndexIndexMeta
-} from "@/generated/v3/entityService/entityServiceSelectors";
 
-const impactStoryConnection = ApiConnectionFactory.singleFullResource<ImpactStoryFullDto, ImpactStoryGetVariables>(
-  "impactStories",
-  impactStoryGet,
-  ({ id }) => (id == null ? undefined : { pathParams: { uuid: id } })
-)
-  .loadFailure(impactStoryGetFetchFailed)
-  .isLoading(impactStoryGetIsFetching)
+const impactStoryConnection = v3Endpoint("impactStories", impactStoryGet)
+  .singleFullResource<ImpactStoryFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .isLoading()
   .buildConnection();
 
 type ImpactStoryIndexFilter = Omit<
@@ -29,14 +17,10 @@ type ImpactStoryIndexFilter = Omit<
   "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
 >;
 
-const impactStoriesConnection = ApiConnectionFactory.index<ImpactStoryLightDto, ImpactStoryIndexVariables>(
-  "impactStories",
-  impactStoryIndex,
-  impactStoryIndexIndexMeta
-)
+const impactStoriesConnection = v3Endpoint("impactStories", impactStoryIndex)
+  .index<ImpactStoryLightDto>()
   .pagination()
   .filter<ImpactStoryIndexFilter>()
-  .loadFailure(impactStoryIndexFetchFailed)
   .buildConnection();
 
 export const useImpactStory = connectionHook(impactStoryConnection);

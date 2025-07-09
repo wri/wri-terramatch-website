@@ -2,11 +2,10 @@ import { assign, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
-import { FetchParams, getStableQuery, resolveUrl } from "@/generated/v3/utils";
+import { FetchParams, getStableQuery, RequestVariables, resolveUrl, V3ApiEndpoint } from "@/generated/v3/utils";
 import ApiSlice, {
   ApiDataStore,
   ApiFilteredIndexCache,
-  CompletedCreation,
   PendingError,
   Relationships,
   ResourceType,
@@ -56,13 +55,6 @@ export type EnabledProp = {
 };
 
 export type Fetcher<Variables> = (variables: Variables, signal?: AbortSignal) => void;
-type FailureSelector<Variables> = (
-  variables: Omit<Variables, "body">
-) => (store: ApiDataStore) => PendingError | undefined;
-type CompleteSelector<Variables> = (
-  variables: Omit<Variables, "body">
-) => (store: ApiDataStore) => CompletedCreation | undefined;
-type InProgressSelector<Variables> = (variables: Omit<Variables, "body">) => (store: ApiDataStore) => boolean;
 type IndexMetaSelector<Variables> = (
   resource: ResourceType,
   variables: Omit<Variables, "body">
@@ -73,8 +65,8 @@ export type QueryVariables = {
   queryParams?: Record<string, unknown>;
 };
 type UpdateData<Attributes = unknown> = { type: ResourceType; id: string; attributes: Attributes };
-type UpdateAttributes<T> = T extends UpdateData<infer A> ? A : never;
-export type UpdateBody<U extends UpdateData> = {
+type UpdateAttributes<T> = T extends UpdateBody<infer D> ? (D extends UpdateData<infer A> ? A : never) : never;
+type UpdateBody<U extends UpdateData = UpdateData> = {
   body: {
     data: U;
   };
@@ -229,20 +221,96 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
   selectorCacheKeyFactory
 });
 
-export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
-  protected constructor(readonly prototype: ConnectionPrototype<Variables, Selected, Props>) {}
+const requireEndpoint = <R, E, V extends RequestVariables, H extends {}>(endpoint?: V3ApiEndpoint<R, E, V, H>) => {
+  if (endpoint == null) throw new ApiConnectionFactoryError("Endpoint not defined for this factory");
+  return endpoint;
+};
 
+/**
+ * Begins the ApiConnectionFactory chain for a given resource type and V3ApiEndpoint. For most of the
+ * connection type functions provided off of v3Endpoint, the `endpoint` parameter is required.
+ */
+export const v3Endpoint = <TResponse, TError, TVariables extends RequestVariables, THeaders extends {}>(
+  resource: ResourceType,
+  endpoint?: V3ApiEndpoint<TResponse, TError, TVariables, THeaders>
+) => ({
   /**
    * Creates a connection that fetches a single resource from the backend.
    */
+  singleResource: <DTO>(variablesFactory: VariablesFactory<TVariables, IdProp>) =>
+    ApiConnectionFactory.singleResource<DTO, TVariables>(resource, requireEndpoint(endpoint), variablesFactory),
+
+  /**
+   * Creates a connection that fetches a "full" resource from the backend (one that has
+   * lightResource: false in its DTO). If the current cached copy of this resource is a light resource,
+   * the connection is not complete, and the fetch will occur.
+   */
+  singleFullResource: <DTO extends { lightResource: boolean }>(
+    variablesFactory: VariablesFactory<TVariables, IdProp>
+  ) => ApiConnectionFactory.singleFullResource<DTO, TVariables>(resource, requireEndpoint(endpoint), variablesFactory),
+
+  /**
+   * Creates a connection that fetches a single resource from the BE with a custom ID pattern.
+   */
+  singleByCustomId: <DTO, Props extends Record<string, unknown>>(
+    variablesFactory: VariablesFactory<TVariables, Props>,
+    customIdFactory: (props: Props) => string
+  ) =>
+    ApiConnectionFactory.singleByCustomId<DTO, TVariables, Props>(
+      resource,
+      requireEndpoint(endpoint),
+      variablesFactory,
+      customIdFactory
+    ),
+
+  /**
+   * Creates a connection that fetches a single resource by using query param filters instead of
+   * a single resource ID. The ID from the BE is expected to be the stable query string as created
+   * by getStableQuery().
+   */
+  singleByFilter: <DTO, FilterFields extends Required<TVariables>["queryParams"]>(
+    variablesFactory: VariablesFactory<TVariables, FilterProp<FilterFields>> = () => ({} as TVariables)
+  ) =>
+    ApiConnectionFactory.singleByFilter<DTO, TVariables, FilterFields>(
+      resource,
+      requireEndpoint(endpoint),
+      variablesFactory
+    ),
+
+  /**
+   * Creates a connection that fetches a resource index from the backend.
+   */
+  index: <DTO, Props extends Record<string, unknown> = {}>(
+    variablesFactory: VariablesFactory<TVariables, Props> = () => ({} as TVariables)
+  ) => ApiConnectionFactory.index<DTO, TVariables, Props>(resource, requireEndpoint(endpoint), variablesFactory),
+
+  /**
+   * Creates a connection for creating a resource.
+   */
+  create: <DTO, Props extends Record<string, unknown> = {}>(
+    variablesFactory: VariablesFactory<Omit<TVariables, "body">, Props> = () => ({} as Omit<TVariables, "body">)
+  ) => ApiConnectionFactory.create<DTO, TVariables, Props>(resource, requireEndpoint(endpoint), variablesFactory),
+
+  /**
+   * Creates a connection that does no fetching; it simply pulls a list of resources by ID from the cache.
+   */
+  list: <DTO>() => ApiConnectionFactory.list<DTO>(resource)
+});
+
+class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props extends Record<string, unknown>> {
+  protected constructor(
+    protected readonly endpoint: V3ApiEndpoint | undefined,
+    protected readonly prototype: ConnectionPrototype<Variables, Selected, Props>
+  ) {}
+
   static singleResource<DTO, Variables extends QueryVariables>(
     resource: ResourceType,
-    fetcher: Fetcher<Variables>,
+    endpoint: V3ApiEndpoint,
     variablesFactory: VariablesFactory<Variables, IdProp>
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>(endpoint, {
       resource,
-      fetcher,
+      fetcher: endpoint.fetch,
       isLoaded: ({ data }, { id }) => isEmpty(id) || data != null,
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -250,22 +318,17 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         () =>
         ({ id }: IdProp) =>
           id ?? ""
-    });
+    }).loadFailure();
   }
 
-  /**
-   * Creates a connection that fetches a "full" resource from the backend (one that has
-   * lightResource: false in its DTO). If the current cached copy of this resource is a light resource,
-   * the connection is not complete, and the fetch will occur.
-   */
   static singleFullResource<DTO extends { lightResource: boolean }, Variables extends QueryVariables>(
     resource: ResourceType,
-    fetcher: Fetcher<Variables>,
+    endpoint: V3ApiEndpoint,
     variablesFactory: VariablesFactory<Variables, IdProp>
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, IdProp>(endpoint, {
       resource,
-      fetcher,
+      fetcher: endpoint.fetch,
       isLoaded: ({ data }, { id }) => isEmpty(id) || (data != null && !data.lightResource),
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, IdProp, Variables>(resourceSelectorById)],
@@ -273,18 +336,18 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
         () =>
         ({ id }: IdProp) =>
           id ?? ""
-    });
+    }).loadFailure();
   }
 
   static singleByCustomId<DTO, Variables extends QueryVariables, Props extends Record<string, unknown>>(
     resource: ResourceType,
-    fetcher: Fetcher<Variables>,
+    endpoint: V3ApiEndpoint,
     variablesFactory: VariablesFactory<Variables, Props>,
     customIdFactory: (props: Props) => string
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, Props>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, Props>(endpoint, {
       resource,
-      fetcher,
+      fetcher: endpoint.fetch,
       isLoaded: ({ data }, props) => {
         const id = customIdFactory(props);
         return isEmpty(id) || data != null;
@@ -292,66 +355,49 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       variablesFactory,
       selectors: [resourceAttributesSelector<DTO, Props, Variables>(resourceSelectorByCustomId(customIdFactory))],
       selectorCacheKeyFactory: () => props => customIdFactory(props)
-    });
+    }).loadFailure();
   }
 
-  /**
-   * Creates a connection that fetches a single resource by using query param filters instead of
-   * a single resource ID. The ID from the BE is expected to be the stable query string as created
-   * by getStableQuery().
-   */
   static singleByFilter<DTO, Variables extends QueryVariables, FilterFields extends Required<Variables>["queryParams"]>(
     resource: ResourceType,
-    fetcher: Fetcher<Variables>,
-    variablesFactory: VariablesFactory<Variables, FilterProp<Variables["queryParams"]>> = () => ({} as Variables)
+    endpoint: V3ApiEndpoint,
+    variablesFactory: VariablesFactory<Variables, FilterProp<FilterFields>>
   ) {
-    return new ApiConnectionFactory<Variables, DataConnection<DTO>, {}>({
+    return new ApiConnectionFactory<Variables, DataConnection<DTO>, {}>(endpoint, {
       resource,
-      fetcher,
+      fetcher: endpoint.fetch,
       isLoaded: ({ data }) => data != null,
       variablesFactory,
       selectors: [
         resourceAttributesSelector<DTO, FilterProp<Variables["queryParams"]>, Variables>(resourceSelectorByFilter)
       ],
       selectorCacheKeyFactory: queryParamCacheKeyFactory
-    }).filter<FilterFields>();
+    })
+      .filter<FilterFields>()
+      .loadFailure();
   }
 
-  /**
-   * Creates a connection that fetches a resource index from the backend.
-   */
   static index<DTO, Variables extends QueryVariables, Props extends Record<string, unknown> = {}>(
     resource: ResourceType,
-    fetcher: Fetcher<Variables>,
-    indexMetaSelector: IndexMetaSelector<Variables>,
-    variablesFactory: VariablesFactory<Variables, Props> = () => ({} as Variables)
+    endpoint: V3ApiEndpoint,
+    variablesFactory: VariablesFactory<Variables, Props>
   ) {
-    return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>({
+    return new ApiConnectionFactory<Variables, IndexConnection<DTO>, Props>(endpoint, {
       resource,
-      fetcher,
+      fetcher: endpoint.fetch,
       isLoaded: ({ data }) => data != null,
       variablesFactory,
-      selectors: [indexDataSelector<DTO, Variables, Props>(resource, indexMetaSelector)],
+      selectors: [indexDataSelector<DTO, Variables, Props>(resource, endpoint.indexMetaSelector)],
       selectorCacheKeyFactory: queryParamCacheKeyFactory
-    });
+    }).loadFailure();
   }
 
-  /**
-   * Creates a connection for creating a resource.
-   *
-   * If clearPendingUrl is provided, the connection will clear out an old failed request before
-   *   attempting a new one when `create` is called, allowing the new creation request to proceed.
-   */
-  static create<DTO, Variables extends QueryVariables & CreateBody, Props extends Record<string, unknown> = {}>(
+  static create<DTO, Variables extends RequestVariables, Props extends Record<string, unknown>>(
     resource: ResourceType,
-    createFetcher: Fetcher<Variables & CreateBody>,
-    createInProgress: InProgressSelector<Omit<Variables, "body">>,
-    createFailed: FailureSelector<Omit<Variables, "body">>,
-    createCompleted: CompleteSelector<Omit<Variables, "body">>,
-    clearPendingUrl?: string,
-    variablesFactory: VariablesFactory<Omit<Variables, "body">, Props> = () => ({} as Omit<Variables, "body">)
+    endpoint: V3ApiEndpoint,
+    variablesFactory: VariablesFactory<Omit<Variables, "body">, Props>
   ) {
-    return new ApiConnectionFactory<Variables, CreateConnection<DTO, CreateAttributes<Variables>>, Props>({
+    return new ApiConnectionFactory<Variables, CreateConnection<DTO, CreateAttributes<Variables>>, Props>(undefined, {
       resource,
       variablesFactory:
         variablesFactory == null ? undefined : (variablesFactory as PartialVariablesFactory<Variables, Props>),
@@ -365,9 +411,9 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
 
           return createSelector(
             [
-              createInProgress(variables),
-              createFailed(variables),
-              createCompleted(variables),
+              endpoint.isFetchingSelector(variables),
+              endpoint.fetchFailedSelector(variables),
+              endpoint.completeSelector(variables),
               resourceMapSelector<DTO>(resource)
             ],
             (isCreating, createFailure, createCompleted, resources) => {
@@ -376,17 +422,10 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
               }
 
               const create = (attributes: CreateAttributes<Variables>) => {
-                if (clearPendingUrl != null && createFailure != null) {
-                  ApiSlice.clearPending(
-                    resolveUrl(
-                      clearPendingUrl,
-                      variables.queryParams as FetchParams | undefined,
-                      variables.pathParams as FetchParams | undefined
-                    ),
-                    "POST"
-                  );
+                if (createFailure != null) {
+                  ApiSlice.clearPending(resolveUrl(endpoint.url, variables), endpoint.method);
                 }
-                createFetcher({ ...variables, body: { data: { type: resource, attributes } } });
+                endpoint.fetch({ ...variables, body: { data: { type: resource, attributes } } });
               };
 
               return {
@@ -406,11 +445,8 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
     });
   }
 
-  /**
-   * Creates a connection that does no fetching; it simply pulls a list of resources by ID from the cache.
-   */
   static list<DTO>(resource: ResourceType) {
-    return new ApiConnectionFactory<never, ListConnection<DTO>, IdsProp>({
+    return new ApiConnectionFactory<never, ListConnection<DTO>, IdsProp>(undefined, {
       resource,
       selectors: [
         ({ ids }, _, resource) => {
@@ -428,36 +464,39 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   }
 
   /**
-   * Adds a `loadFailure` property to the connection, using the provided failure selector. If the
-   * connection reports a load failure, it counts as loaded.
+   * Adds a `loadFailure` property to the connection. If the connection reports a load failure, it
+   * counts as loaded.
    *
    * This will typically be used on every connection that fetches data. If it is left off, the FE
    * will keep polling the BE on failure until a successful response is returned, which is not
-   * likely to be the desired behavior.
+   * likely to be the desired behavior. As such, for now it has been marked as protected and is
+   * automatically added to the appropriate factory types.
    */
-  public loadFailure(failureSelector: FailureSelector<Variables>) {
+  protected loadFailure() {
+    const endpoint = requireEndpoint(this.endpoint);
     return this.chain<LoadFailureConnection, Props>({
       isLoaded: ({ loadFailure }) => loadFailure != null,
       selectors: [
         (props, variablesFactory) => {
           const variables = variablesFactory(props);
           if (variables == null) return () => ({ loadFailure: undefined });
-          return createSelector([failureSelector(variables)], loadFailure => ({ loadFailure }));
+          return createSelector([endpoint.fetchFailedSelector(variables)], loadFailure => ({ loadFailure }));
         }
       ]
     });
   }
 
   /**
-   * Adds an `isLoading` boolean flag to the connection using the provided inProgressSelector.
+   * Adds an `isLoading` boolean flag to the connection.
    */
-  public isLoading(inProgressSelector: InProgressSelector<Variables>) {
+  public isLoading() {
+    const endpoint = requireEndpoint(this.endpoint);
     return this.chain<IsLoadingConnection, Props>({
       selectors: [
         (props, variablesFactory) => {
           const variables = variablesFactory(props);
           if (variables == null) return () => ({ isLoading: false });
-          return createSelector([inProgressSelector(variables)], isLoading => ({ isLoading }));
+          return createSelector([endpoint.isFetchingSelector(variables)], isLoading => ({ isLoading }));
         }
       ]
     });
@@ -532,12 +571,10 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
   /**
    * Adds an update method and update progress / failure members to the final selected connection shape.
    */
-  public update<U extends UpdateData>(
-    updateFetcher: Fetcher<Variables & UpdateBody<U>>,
-    updateInProgress: InProgressSelector<Variables>,
-    updateFailed: FailureSelector<Variables>
+  public update<R, E, UpdateVariables extends RequestVariables, H extends {}>(
+    endpoint: V3ApiEndpoint<R, E, UpdateVariables, H>
   ) {
-    return this.chain<UpdateConnection<UpdateAttributes<U>>, IdProp & Props>({
+    return this.chain<UpdateConnection<UpdateAttributes<UpdateVariables>>, IdProp & Props>({
       selectors: [
         (props, variablesFactory, resource) => {
           const variables = variablesFactory(props);
@@ -548,12 +585,15 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
 
           // Avoid creating inline in the createSelector call so that the function has the same identity on every
           // state update, preventing some possible re-renders when the function is a dependency in useEffect.
-          const update = (attributes: UpdateAttributes<U>) => {
+          const update = (attributes: UpdateAttributes<UpdateVariables>) => {
             if (props.id == null) return;
-            updateFetcher({ ...variables, body: { data: { type: resource, id: props.id, attributes } as U } });
+            endpoint.fetch({
+              ...variables,
+              body: { data: { type: resource, id: props.id, attributes } }
+            } as unknown as UpdateVariables);
           };
           return createSelector(
-            [updateInProgress(variables), updateFailed(variables)],
+            [endpoint.isFetchingSelector(variables), endpoint.fetchFailedSelector(variables)],
             (isUpdating, updateFailure) => ({ isUpdating, updateFailure, update })
           );
         }
@@ -702,7 +742,7 @@ export class ApiConnectionFactory<Variables extends QueryVariables, Selected, Pr
       };
     }
 
-    return new ApiConnectionFactory({
+    return new ApiConnectionFactory(this.endpoint, {
       isLoaded,
       variablesFactory,
       selectors: [...(this.prototype.selectors ?? []), ...(addPrototype.selectors ?? [])] as SelectorFactory<
