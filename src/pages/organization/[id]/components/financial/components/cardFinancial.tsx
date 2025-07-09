@@ -39,15 +39,17 @@ const CardFinancial = ({ title, data, description, currency }: CardFinancialProp
     return dataValue;
   };
 
+  const formattedValue = formatData(data);
+
   return (
     <div className="flex flex-col justify-center gap-1 rounded-lg p-5 shadow-all">
-      <Text variant="text-16-bold" className="text-blueCustom-900">
+      <Text variant="text-16-bold" className="truncate text-blueCustom-900" title={title}>
         {title}
       </Text>
-      <Text variant="text-40-bold" className="text-blueCustom">
-        {formatData(data)}
+      <Text variant="text-40-bold" className="truncate text-blueCustom" title={formattedValue}>
+        {formattedValue}
       </Text>
-      <Text variant="text-16-light" className="text-blueCustom-900">
+      <Text variant="text-16-light" className="truncate text-blueCustom-900" title={description}>
         {description}
       </Text>
     </div>
