@@ -1,4 +1,4 @@
-import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
@@ -34,7 +34,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
-import { PaginatedConnectionProps } from "@/types/connection";
+import { Filter, PaginatedConnectionProps } from "@/types/connection";
 
 export type EntityFullDto =
   | ProjectFullDto
@@ -60,13 +60,8 @@ export type EntityUpdateData =
   | SiteReportUpdateData
   | NurseryReportUpdateData;
 
-type EntityIndexFilter = Omit<
-  EntityIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
->;
-
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
-  FilterProp<EntityIndexFilter> &
+  FilterProp<Filter<EntityIndexQueryParams>> &
   EnabledProp &
   SideloadsProp<EntityIndexQueryParams["sideloads"]>;
 
@@ -80,8 +75,8 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
 ) => {
   const pathParamsFactory = ({ id }: IdProp) => (id == null ? undefined : { pathParams: { entity, uuid: id } });
   const factory = requireFullEntity
-    ? v3Endpoint(entity, entityGet).singleFullResource<D>(pathParamsFactory)
-    : v3Endpoint(entity, entityGet).singleResource<D>(pathParamsFactory);
+    ? v3Resource(entity, entityGet).singleFullResource<D>(pathParamsFactory)
+    : v3Resource(entity, entityGet).singleResource<D>(pathParamsFactory);
   return factory
     .isDeleted()
     .refetch(({ id }) => {
@@ -92,10 +87,10 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
 };
 
 const createEntityIndexConnection = <T extends EntityLightDto>(entity: SupportedEntity) =>
-  v3Endpoint(entity, entityIndex)
+  v3Resource(entity, entityIndex)
     .index<T>(() => ({ pathParams: { entity } } as EntityIndexVariables))
     .pagination()
-    .filter<EntityIndexFilter>()
+    .filter<Filter<EntityIndexQueryParams>>()
     .sideloads()
     .enabledProp()
     .refetch(() => ApiSlice.pruneIndex(entity, ""))
@@ -174,7 +169,7 @@ const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, 
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
-const siteReportListConnection = v3Endpoint("siteReports").list<SiteReportLightDto>().buildConnection();
+const siteReportListConnection = v3Resource("siteReports").list<SiteReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for site reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.
@@ -196,7 +191,7 @@ const lightNurseryReportConnection = createEntityGetConnection<NurseryReportLigh
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
-const nurseryReportListConnection = v3Endpoint("nurseryReports").list<NurseryReportLightDto>().buildConnection();
+const nurseryReportListConnection = v3Resource("nurseryReports").list<NurseryReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for nursery reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.

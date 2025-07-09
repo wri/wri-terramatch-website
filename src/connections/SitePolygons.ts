@@ -1,7 +1,7 @@
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import {
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
@@ -9,7 +9,7 @@ import {
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
 import { PendingError } from "@/store/apiSlice";
-import { ConnectionProps } from "@/types/connection";
+import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
 export type Indicator = Required<SitePolygonsIndexQueryParams>["presentIndicator[]"] extends Array<infer T> ? T : never;
@@ -17,16 +17,11 @@ export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatu
   ? T
   : never;
 
-type SitePolygonFilter = Omit<
-  SitePolygonsIndexQueryParams,
-  "page[size]" | "page[after]" | "page[number]" | "projectId[]" | "siteId[]"
->;
-
-export const sitePolygonsConnection = v3Endpoint("sitePolygons", sitePolygonsIndex)
+export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsIndex)
   .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .enabledProp()
-  .filter<SitePolygonFilter>()
+  .filter<Omit<Filter<SitePolygonsIndexQueryParams>, "projectId[]" | "siteId[]">>()
   .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
     if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
     if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };

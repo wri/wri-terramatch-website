@@ -50,3 +50,8 @@ export type PaginatedQueryParams = {
   "sort[field]"?: string;
   "sort[direction]"?: "ASC" | "DESC";
 };
+
+export type Filter<Query extends PaginatedQueryParams> = Omit<
+  Query,
+  "page[number]" | "page[after]" | "page[size]" | "sort[field]" | "sort[direction]" | "sideloads"
+>;

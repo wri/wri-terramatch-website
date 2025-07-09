@@ -1,4 +1,4 @@
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook } from "@/connections/util/connectionShortcuts";
 import {
   getTreeRestorationGoal,
@@ -6,7 +6,7 @@ import {
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 
-const treeRestorationGoalConnection = v3Endpoint("treeRestorationGoals", getTreeRestorationGoal)
+const treeRestorationGoalConnection = v3Resource("treeRestorationGoals", getTreeRestorationGoal)
   .singleByFilter<TreeRestorationGoalDto, GetTreeRestorationGoalQueryParams>()
   .buildConnection();
 

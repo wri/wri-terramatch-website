@@ -18,7 +18,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
-import { Connected, Connection, PaginatedConnectionProps } from "@/types/connection";
+import { Connected, Connection, Filter, PaginatedConnectionProps } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 
@@ -28,7 +28,7 @@ import {
   IndexConnection,
   LoadFailureConnection,
   RefetchConnection,
-  v3Endpoint
+  v3Resource
 } from "./util/apiConnectionFactory";
 
 export type EntityAssociationDtoType =
@@ -41,11 +41,6 @@ export type EntityAssociationDtoType =
 export type SupportedEntity = EntityAssociationIndexPathParams["entity"];
 export type SupportedAssociation = EntityAssociationIndexPathParams["association"];
 
-type AssociationIndexFilter = Omit<
-  EntityAssociationIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]" | "sideloads"
->;
-
 type SideloadsProp = { sideloads?: EntityAssociationIndexQueryParams["sideloads"] };
 
 type BaseEntityAssociationProps = {
@@ -55,17 +50,17 @@ type BaseEntityAssociationProps = {
 
 export type EntityAssociationIndexConnectionProps = BaseEntityAssociationProps &
   PaginatedConnectionProps &
-  FilterProp<AssociationIndexFilter> &
+  FilterProp<Filter<EntityAssociationIndexQueryParams>> &
   SideloadsProp &
   EnabledProp;
 
 const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(association: SupportedAssociation) =>
-  v3Endpoint(association, entityAssociationIndex)
+  v3Resource(association, entityAssociationIndex)
     .index<T, BaseEntityAssociationProps>(
       ({ entity, uuid }) => ({ pathParams: { entity, uuid, association } } as EntityAssociationIndexVariables)
     )
     .pagination()
-    .filter<AssociationIndexFilter>()
+    .filter<Filter<EntityAssociationIndexQueryParams>>()
     .sideloads()
     .refetch(({ uuid }) => {
       if (uuid != null) ApiSlice.pruneIndex(association, uuid);

@@ -6,18 +6,17 @@ import {
   taskUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { TaskFullDto, TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Filter } from "@/types/connection";
 
-import { v3Endpoint } from "./util/apiConnectionFactory";
+import { v3Resource } from "./util/apiConnectionFactory";
 
-type TaskIndexFilter = Omit<TaskIndexQueryParams, "page[size]" | "page[number]" | "sort[field]" | "sort[direction]">;
-
-export const taskIndexConnection = v3Endpoint("tasks", taskIndex)
+export const taskIndexConnection = v3Resource("tasks", taskIndex)
   .index<TaskLightDto>()
   .pagination()
-  .filter<TaskIndexFilter>()
+  .filter<Filter<TaskIndexQueryParams>>()
   .buildConnection();
 
-const taskConnection = v3Endpoint("tasks", taskGet)
+const taskConnection = v3Resource("tasks", taskGet)
   .singleFullResource<TaskFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .update(taskUpdate)
   .addRelationshipData(relationships => {

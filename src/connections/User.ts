@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
 import { loginConnection } from "@/connections/Login";
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, selectConnection } from "@/connections/util/connectionShortcuts";
 import {
   userCreation,
@@ -79,7 +79,7 @@ const myUserConnection: Connection<UserConnection> = {
   )
 };
 
-const userCreationConnection = v3Endpoint("users", userCreation).create<UserDto>().buildConnection();
+const userCreationConnection = v3Resource("users", userCreation).create<UserDto>().buildConnection();
 
 export const useMyUser = connectionHook(myUserConnection);
 export const loadMyUser = connectionLoader(myUserConnection);

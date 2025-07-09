@@ -1,4 +1,4 @@
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   impactStoryGet,
@@ -6,21 +6,17 @@ import {
   ImpactStoryIndexQueryParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { ImpactStoryFullDto, ImpactStoryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Filter } from "@/types/connection";
 
-const impactStoryConnection = v3Endpoint("impactStories", impactStoryGet)
+const impactStoryConnection = v3Resource("impactStories", impactStoryGet)
   .singleFullResource<ImpactStoryFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .isLoading()
   .buildConnection();
 
-type ImpactStoryIndexFilter = Omit<
-  ImpactStoryIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
->;
-
-const impactStoriesConnection = v3Endpoint("impactStories", impactStoryIndex)
+const impactStoriesConnection = v3Resource("impactStories", impactStoryIndex)
   .index<ImpactStoryLightDto>()
   .pagination()
-  .filter<ImpactStoryIndexFilter>()
+  .filter<Filter<ImpactStoryIndexQueryParams>>()
   .buildConnection();
 
 export const useImpactStory = connectionHook(impactStoryConnection);

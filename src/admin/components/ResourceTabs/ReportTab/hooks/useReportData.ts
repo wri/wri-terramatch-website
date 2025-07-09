@@ -18,7 +18,7 @@ export const useReportData = () => {
   const [latestSurvivalRate, setLatestSurvivalRate] = useState<number>(0);
   const [siteReportUuids, setSiteReportUuids] = useState<string[]>([]);
 
-  const [, { data: disturbances }] = useDisturbance({ siteReportUuid: siteReportUuids });
+  const [, { data: disturbances }] = useDisturbance({ filter: { siteReportUuid: siteReportUuids } });
 
   const [, { data: plants }] = usePlants({
     entity: "projects",

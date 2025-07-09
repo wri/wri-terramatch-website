@@ -3,7 +3,7 @@ import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConst
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 
-import { v3Endpoint } from "./util/apiConnectionFactory";
+import { v3Resource } from "./util/apiConnectionFactory";
 
 export type EstablishmentEntity = (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
 
@@ -12,7 +12,7 @@ type EstablishmentTreesProps = {
   uuid?: string;
 };
 
-const establishmentTreesConnection = v3Endpoint("establishmentTrees", establishmentTreesFind)
+const establishmentTreesConnection = v3Resource("establishmentTrees", establishmentTreesFind)
   .singleByCustomId<EstablishmentsTreesDto, EstablishmentTreesProps>(
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
     ({ entity, uuid }) => `${entity}|${uuid}`

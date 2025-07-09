@@ -230,7 +230,7 @@ const requireEndpoint = <R, E, V extends RequestVariables, H extends {}>(endpoin
  * Begins the ApiConnectionFactory chain for a given resource type and V3ApiEndpoint. For most of the
  * connection type functions provided off of v3Endpoint, the `endpoint` parameter is required.
  */
-export const v3Endpoint = <TResponse, TError, TVariables extends RequestVariables, THeaders extends {}>(
+export const v3Resource = <TResponse, TError, TVariables extends RequestVariables, THeaders extends {}>(
   resource: ResourceType,
   endpoint?: V3ApiEndpoint<TResponse, TError, TVariables, THeaders>
 ) => ({

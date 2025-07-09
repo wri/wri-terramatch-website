@@ -1,4 +1,4 @@
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { treeReportCountsFind } from "@/generated/v3/entityService/entityServiceComponents";
 import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
 import { TreeReportCountsDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -13,7 +13,7 @@ type TreeReportCountProps = {
   uuid?: string;
 };
 
-const treeReportCountsConnection = v3Endpoint("treeReportCounts", treeReportCountsFind)
+const treeReportCountsConnection = v3Resource("treeReportCounts", treeReportCountsFind)
   .singleByCustomId<TreeReportCountsDto, TreeReportCountProps>(
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
     ({ entity, uuid }) => `${entity}|${uuid}`

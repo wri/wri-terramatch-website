@@ -1,7 +1,7 @@
 import { isEmpty } from "lodash";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { v3Endpoint } from "@/connections/util/apiConnectionFactory";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { boundingBoxGet, BoundingBoxGetQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { BoundingBoxDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
@@ -21,7 +21,7 @@ const hasValidParams = ({
   !isEmpty(country) ||
   !isEmpty(projectPitchUuid);
 
-const boundingBoxConnection = v3Endpoint("boundingBoxes", boundingBoxGet)
+const boundingBoxConnection = v3Resource("boundingBoxes", boundingBoxGet)
   .singleByFilter<BoundingBoxDto, BoundingBoxGetQueryParams>()
   .enabledProp()
   .buildConnection();
