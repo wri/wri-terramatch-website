@@ -42,7 +42,7 @@ export type AuthLoginResponse = {
 };
 
 export type AuthLoginVariables = {
-  body: Schemas.LoginRequest;
+  body: Schemas.LoginBody;
 };
 
 /**
@@ -318,7 +318,7 @@ export type UserCreationResponse = {
 };
 
 export type UserCreationVariables = {
-  body: Schemas.UserNewRequest;
+  body: Schemas.UserCreateBody;
 };
 
 /**

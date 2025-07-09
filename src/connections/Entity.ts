@@ -8,7 +8,8 @@ import {
   entityIndex,
   EntityIndexQueryParams,
   EntityIndexVariables,
-  entityUpdate
+  entityUpdate,
+  EntityUpdateVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
@@ -86,7 +87,7 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
     .refetch(({ id }) => {
       if (id != null) ApiSlice.pruneCache(entity, [id]);
     })
-    .update(entityUpdate)
+    .update<U["attributes"], EntityUpdateVariables>(entityUpdate)
     .buildConnection();
 };
 

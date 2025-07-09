@@ -570,11 +570,14 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
 
   /**
    * Adds an update method and update progress / failure members to the final selected connection shape.
+   *
+   * The generic parameters may be left to be inferred unless the endpoint accepts more than one type
+   * of body data. In that case, both must be provided. See Entity.ts for an example.
    */
-  public update<R, E, UpdateVariables extends RequestVariables, H extends {}>(
-    endpoint: V3ApiEndpoint<R, E, UpdateVariables, H>
+  public update<Attributes extends UpdateAttributes<UpdateVariables>, UpdateVariables extends Variables>(
+    endpoint: V3ApiEndpoint<unknown, unknown, UpdateVariables>
   ) {
-    return this.chain<UpdateConnection<UpdateAttributes<UpdateVariables>>, IdProp & Props>({
+    return this.chain<UpdateConnection<Attributes>, IdProp & Props>({
       selectors: [
         (props, variablesFactory, resource) => {
           const variables = variablesFactory(props);
@@ -585,7 +588,7 @@ class ApiConnectionFactory<Variables extends QueryVariables, Selected, Props ext
 
           // Avoid creating inline in the createSelector call so that the function has the same identity on every
           // state update, preventing some possible re-renders when the function is a dependency in useEffect.
-          const update = (attributes: UpdateAttributes<UpdateVariables>) => {
+          const update = (attributes: Attributes) => {
             if (props.id == null) return;
             endpoint.fetch({
               ...variables,
