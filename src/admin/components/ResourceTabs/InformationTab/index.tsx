@@ -16,9 +16,9 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
 import InformationTabRow from "./components/InformationTabRow";
@@ -61,13 +61,7 @@ const InformationTab: FC<IProps> = props => {
   const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
-  const { data: response, isLoading: queryLoading } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>({
-    pathParams: {
-      uuid: record?.uuid,
-      entity: props.type
-    }
-  });
-
+  const { formData: response, isLoading: queryLoading } = useEntityForm(props.type, record?.uuid);
   const isLoading = ctxLoading || queryLoading;
 
   if (isLoading || !record) return null;
@@ -89,6 +83,8 @@ const InformationTab: FC<IProps> = props => {
       case "site-reports":
       case "nursery-reports":
         return "Reported Data";
+      case "financial-reports":
+        return "Organization History";
       default:
         return "Information";
     }

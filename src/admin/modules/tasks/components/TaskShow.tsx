@@ -9,6 +9,7 @@ import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprov
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import {
@@ -74,6 +75,11 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
         {report.submittedAt == null ? null : format(new Date(report.submittedAt))}
       </TableCell>
       <TableCell align="center">
+        {"nothingToReport" in report && report?.nothingToReport ? (
+          <Icon name={IconNames.CROSS} className="h-6 w-6" />
+        ) : null}
+      </TableCell>
+      <TableCell align="center">
         <ShowButton record={{ ...report, id: report.uuid }} resource={resource} />
       </TableCell>
     </TableRow>
@@ -135,7 +141,12 @@ function ShowReports() {
   const selectableReports: SelectedItem[] = React.useMemo(() => {
     const reports: SelectedItem[] = [];
     siteReports.forEach((report: any) => {
-      if (report && report.status !== APPROVED && report.nothingToReport === true) {
+      if (
+        report &&
+        report.status !== APPROVED &&
+        report.nothingToReport === true &&
+        report.updateRequestStatus === "no-update"
+      ) {
         reports.push({
           id: report.uuid,
           name: report.siteName ?? report.reportTitle ?? "",
@@ -145,7 +156,12 @@ function ShowReports() {
       }
     });
     nurseryReports.forEach((report: any) => {
-      if (report && report.status !== APPROVED && report.nothingToReport === true) {
+      if (
+        report &&
+        report.status !== APPROVED &&
+        report.nothingToReport === true &&
+        report.updateRequestStatus === "no-update"
+      ) {
         reports.push({
           id: report.uuid,
           name: report.nurseryName ?? report.reportTitle ?? "",
@@ -274,6 +290,7 @@ function ShowReports() {
               <TableCell sx={{ whiteSpace: "nowrap" }}>{t("Status")}</TableCell>
               <TableCell sx={{ whiteSpace: "nowrap" }}>{t("Change Request")}</TableCell>
               <TableCell sx={{ whiteSpace: "nowrap" }}>{t("Date Submitted")}</TableCell>
+              <TableCell sx={{ whiteSpace: "nowrap" }}>{t("Nothing to Report")}</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>

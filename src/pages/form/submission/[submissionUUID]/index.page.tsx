@@ -5,13 +5,9 @@ import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import FrameworkProvider, { useFramework } from "@/context/framework.provider";
-import {
-  useGetV2FormsSubmissionsUUID,
-  usePatchV2FormsSubmissionsUUID,
-  usePutV2FormsSubmissionsSubmitUUID
-} from "@/generated/apiComponents";
-import { FormSubmissionRead } from "@/generated/apiSchemas";
+import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
+import { useFormSubmission } from "@/hooks/useFormGet";
 import {
   useGetCustomFormSteps,
   useNormalizedFormDefaultValue
@@ -22,12 +18,7 @@ const SubmissionPage = () => {
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { data: formData, isLoading } = useGetV2FormsSubmissionsUUID<{ data: FormSubmissionRead }>(
-    { pathParams: { uuid: submissionUUID }, queryParams: { lang: router.locale } },
-    {
-      enabled: !!submissionUUID
-    }
-  );
+  const { isLoading, formData } = useFormSubmission(submissionUUID);
 
   const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
 

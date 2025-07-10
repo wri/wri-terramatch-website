@@ -8,8 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsSubmissionsUUID } from "@/generated/apiComponents";
-import { FormSubmissionRead } from "@/generated/apiSchemas";
+import { useFormSubmission } from "@/hooks/useFormGet";
 
 /* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
 const ConfirmPage = () => {
@@ -17,12 +16,7 @@ const ConfirmPage = () => {
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { data: formData, isLoading } = useGetV2FormsSubmissionsUUID<{ data: FormSubmissionRead }>(
-    { pathParams: { uuid: submissionUUID }, queryParams: { lang: router.locale } },
-    {
-      enabled: !!submissionUUID
-    }
-  );
+  const { formData, isLoading } = useFormSubmission(submissionUUID);
 
   return (
     <BackgroundLayout>

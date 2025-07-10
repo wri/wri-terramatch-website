@@ -166,6 +166,7 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
         <RHFDemographicsTable
           {...field.fieldProps}
           {...sharedProps}
+          formHook={formHook}
           control={formHook.control}
           onChangeCapture={onChange}
           demographicType={field.type}

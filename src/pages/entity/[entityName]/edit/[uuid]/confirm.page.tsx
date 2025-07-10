@@ -8,8 +8,9 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
 /* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
@@ -19,12 +20,7 @@ const ConfirmPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  const { data, isLoading } = useGetV2FormsENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID },
-    queryParams: {
-      lang: router.locale
-    }
-  });
+  const { formData: data, isLoading } = useEntityForm(entityName, entityUUID);
 
   const { data: entityData } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
@@ -75,6 +71,13 @@ const ConfirmPage = () => {
       {
         children: t("Back to reporting tasks"),
         href: `/project/${entity.project?.uuid}/reporting-task/${entity.task_uuid}`
+      }
+    ],
+    "financial-reports": [
+      { children: t("View Report"), href: getEntityDetailPageLink("financial-reports", entityUUID) },
+      {
+        children: t("Back to organization"),
+        href: `/organization/${entity?.organisation?.uuid}?tab=financial_information`
       }
     ]
   };

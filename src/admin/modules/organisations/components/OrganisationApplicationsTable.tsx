@@ -12,7 +12,7 @@ const OrganisationApplicationsTable = () => {
       </Typography>
       <ReferenceManyField
         reference={modules.application.ResourceName}
-        target="organisation_uuid"
+        target="organisation.uuid"
         label={false}
         emptyText="Not Provided"
       >
