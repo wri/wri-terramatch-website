@@ -266,6 +266,7 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     });
 
+  // here we use the V2 endpoint for hectares under restoration
   const { data: generalHectaresUnderRestoration, isLoading: isLoadingGeneralHectaresUnderRestoration } =
     useGetV2DashboardIndicatorHectaresRestoration<any>(
       {
