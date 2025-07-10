@@ -138,7 +138,140 @@ export const getTreeRestorationGoal = (variables: GetTreeRestorationGoalVariable
     {}
   >({ url: "/dashboard/v3/treeRestorationGoal", method: "get", ...variables, signal });
 
+export type GetTotalJobsCreatedQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type GetTotalJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetTotalJobsCreatedVariables = {
+  queryParams?: GetTotalJobsCreatedQueryParams;
+};
+
+export const getTotalJobsCreated = (variables: GetTotalJobsCreatedVariables, signal?: AbortSignal) =>
+  dashboardServiceFetch<
+    | {
+        meta?: {
+          /**
+           * @example totalJobsCreated
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example totalJobsCreated
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.TotalJobsCreatedDto;
+        };
+      }
+    | {
+        meta?: {
+          /**
+           * @example delayedJobs
+           */
+          resourceType?: string;
+        };
+        data?: {
+          /**
+           * @example delayedJobs
+           */
+          type?: string;
+          /**
+           * @format uuid
+           */
+          id?: string;
+          attributes?: Schemas.DelayedJobDto;
+        };
+      },
+    GetTotalJobsCreatedError,
+    undefined,
+    {},
+    GetTotalJobsCreatedQueryParams,
+    {}
+  >({ url: "/dashboard/v3/totalJobsCreated", method: "get", ...variables, signal });
+
+export type GetHectaresRestorationQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type GetHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetHectaresRestorationResponse = {
+  meta?: {
+    /**
+     * @example hectareRestoration
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example hectareRestoration
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.HectareRestorationDto;
+  };
+};
+
+export type GetHectaresRestorationVariables = {
+  queryParams?: GetHectaresRestorationQueryParams;
+};
+
+export const getHectaresRestoration = (variables: GetHectaresRestorationVariables, signal?: AbortSignal) =>
+  dashboardServiceFetch<
+    GetHectaresRestorationResponse,
+    GetHectaresRestorationError,
+    undefined,
+    {},
+    GetHectaresRestorationQueryParams,
+    {}
+  >({ url: "/dashboard/v3/hectaresRestoration", method: "get", ...variables, signal });
+
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
-  treeRestorationGoal: { getTreeRestorationGoal }
+  treeRestorationGoal: { getTreeRestorationGoal },
+  totalJobsCreated: { getTotalJobsCreated },
+  hectaresRestoration: { getHectaresRestoration }
 };
