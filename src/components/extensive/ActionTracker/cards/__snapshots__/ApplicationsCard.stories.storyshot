@@ -312,6 +312,14 @@ exports[`Storyshots Components/Extensive/ActionTracker/ApplicationsCard Default 
             >
               TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)
             </p>
+            <div
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] w-fit"
+            >
+              <p
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-12-semibold"
+                data-testid="txt"
+              />
+            </div>
           </div>
           <p
             className="text-body-300 with-inner-html"

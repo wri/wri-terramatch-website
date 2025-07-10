@@ -14,6 +14,7 @@ import Container from "@/components/generic/Layout/Container";
 import { useProjectIndex } from "@/connections/Entity";
 import { useGadmOptions } from "@/connections/Gadm";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Status } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 const ProjectsTabContent = () => {
@@ -51,7 +52,7 @@ const ProjectsTabContent = () => {
                     if (!statusProps) return null;
 
                     return (
-                      <StatusPill status={statusProps.status!} className="w-fit">
+                      <StatusPill status={statusProps.status! as unknown as Status} className="w-fit">
                         <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
                       </StatusPill>
                     );
