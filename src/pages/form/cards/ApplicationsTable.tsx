@@ -11,6 +11,7 @@ import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/
 import { useGetV2MyApplications } from "@/generated/apiComponents";
 import { ApplicationLiteRead } from "@/generated/apiSchemas";
 import { useDate } from "@/hooks/useDate";
+import { Status } from "@/types/common";
 
 export type DraftApplicationsTableProps = {
   fundingProgrammeUuid?: string;
@@ -66,7 +67,7 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
                 if (!statusProps) return null;
 
                 return (
-                  <StatusPill status={statusProps.status!} className="w-fit">
+                  <StatusPill status={statusProps.status! as unknown as Status} className="w-fit">
                     <Text variant="text-bold-caption-100" className="whitespace-nowrap">
                       {statusProps.statusText}
                     </Text>

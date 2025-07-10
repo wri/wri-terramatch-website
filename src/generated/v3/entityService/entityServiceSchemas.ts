@@ -385,7 +385,19 @@ export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "due" | "needs-more-information" | "awaiting-approval" | "approved" | null;
+  status?: "due" | "needs-more-information" | "awaiting-approval" | "approved";
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuids?: string[];
+  /**
+   * UUIDs of nursery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuids?: string[];
 };
 
 export type TaskData = {
@@ -527,6 +539,42 @@ export type DemographicDto = {
     | "associates";
   collection: string;
   entries: DemographicEntryDto[];
+};
+
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  disturbanceDate: string | null;
+  collection: string | null;
+  type: string | null;
+  subtype: string | null;
+  intensity: string | null;
+  extent: string | null;
+  peopleAffected: number | null;
+  monetaryDamage: number | null;
+  description: string | null;
+  actionDescription: string | null;
+  propertyAffected: string | null;
 };
 
 export type ANRDto = {
@@ -774,7 +822,7 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
-  cohort: string | null;
+  cohort: string[] | null;
   continent: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
@@ -1572,36 +1620,6 @@ export type TreeSpeciesDto = {
   amount: number | null;
   taxonId: string | null;
   collection: string | null;
-};
-
-export type DisturbanceDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "organisations"
-    | "auditStatuses"
-    | "forms"
-    | "formQuestionOptions"
-    | "fundingProgrammes"
-    | "impactStories"
-    | "financialIndicators"
-    | any;
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  collection: string | null;
-  type: string | null;
-  intensity: string | null;
-  extent: string | null;
-  description: string | null;
 };
 
 export type InvasiveDto = {

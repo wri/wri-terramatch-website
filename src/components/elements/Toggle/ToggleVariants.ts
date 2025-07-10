@@ -14,6 +14,14 @@ export const VARIANT_TOGGLE_PRIMARY = {
   heightBtn: 8
 };
 
+export const VARIANT_TOGGLE_SECONDARY = {
+  container: "rounded-lg bg-neutral-40 p-1 w-fit",
+  activeToggle: "rounded-lg bg-white h-[calc(100%_-_8px)]",
+  textActive: "text-14-bold text-blueCustom-900",
+  textInactive: "text-14-light text-darkCustom-60",
+  heightBtn: 8
+};
+
 export const VARIANT_TOGGLE_DASHBOARD = {
   container: "bg-white border-b border-grey-1000 p-0 mobile:w-full mobile:mb-2",
   activeToggle: "uppercase bg-transparent border-b-2 border-blueCustom-700 h-[calc(100%_-_2px)] left-1",

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useDataProvider, useShowContext } from "react-admin";
 
 import { ExtendedGetListResult } from "@/admin/apiProvider/utils/listing";
-import { usePlants, useSiteReportDisturbances } from "@/connections/EntityAssociation";
+import { useDisturbance } from "@/connections/Disturbance";
+import { usePlants } from "@/connections/EntityAssociation";
 
 import {
   BeneficiaryData,
@@ -24,7 +25,7 @@ export const useReportData = () => {
   const [latestSurvivalRate, setLatestSurvivalRate] = useState<number>(0);
   const [siteReportUuids, setSiteReportUuids] = useState<string[]>([]);
 
-  const disturbances = useSiteReportDisturbances(siteReportUuids);
+  const [, { data: disturbances }] = useDisturbance({ siteReportUuid: siteReportUuids });
 
   const [, { associations: plants }] = usePlants({
     entity: "projects",
@@ -148,7 +149,7 @@ export const useReportData = () => {
 
       if (site.siteReports && site.siteReports.length > 0) {
         site.siteReports.forEach(siteReport => {
-          const reportDisturbances = disturbances[siteReport.uuid] || [];
+          const reportDisturbances = disturbances.filter(x => x.entityUuid == siteReport.uuid) || [];
           reportDisturbances.forEach(disturbance => {
             if (disturbance.type) {
               const disturbanceType = disturbance.type.toLowerCase();

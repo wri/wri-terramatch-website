@@ -3,9 +3,11 @@ import { useT } from "@transifex/react";
 import exifr from "exifr";
 import { isEmpty } from "lodash";
 import _ from "lodash";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
+import { useParams } from "react-router-dom";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -103,6 +105,8 @@ const RHFFinancialIndicatorsDataTable = ({
   ...props
 }: PropsWithChildren<RHFFinancialIndicatorsDataTableProps>) => {
   const t = useT();
+  const router = useRouter();
+  const { id } = useParams<"id">();
   const { field } = useController(props);
   const value = field?.value || [];
   const [files, setFiles] = useState<Partial<UploadedFile>[]>();
@@ -817,7 +821,8 @@ const RHFFinancialIndicatorsDataTable = ({
       current_radio_data: currentRadioData,
       documentation_data: documentationData,
       local_currency: selectCurrency as string,
-      financial_year_start_month: selectFinancialMonth as number
+      financial_year_start_month: selectFinancialMonth as number,
+      financial_report_id: id ?? router.query.uuid
     };
 
     const isSame = JSON.stringify(payload) === JSON.stringify(lastSentData.current);
@@ -875,7 +880,14 @@ const RHFFinancialIndicatorsDataTable = ({
   }, [value]);
 
   return (
-    <>
+    <InputWrapper
+      label={props.label}
+      required={props.required}
+      containerClassName={props.containerClassName}
+      description={props.description}
+      inputId={id}
+      feedbackRequired={props.feedbackRequired}
+    >
       <div className="mb-10 space-y-6">
         <Dropdown
           options={getCurrencyOptions(t)}
@@ -948,7 +960,7 @@ const RHFFinancialIndicatorsDataTable = ({
           value={documentationData ?? []}
         />
       </div>
-    </>
+    </InputWrapper>
   );
 };
 

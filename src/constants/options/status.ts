@@ -11,6 +11,26 @@ export const getReportStatusOptions = (t: typeof useT | Function = (t: string) =
     ...getStatusOptions(t)
   ] as Option[];
 
+export const getFinancialReportStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
+  [
+    {
+      value: "draft",
+      title: t("Draft")
+    },
+    {
+      value: "due",
+      title: t("Draft")
+    },
+    {
+      value: "started",
+      title: t("Draft")
+    },
+    {
+      value: "submitted",
+      title: t("Submitted")
+    }
+  ] as Option[];
+
 export const getTaskStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
