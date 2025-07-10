@@ -162,7 +162,7 @@ export class V3ApiEndpoint<
     // Some query params get specified as a single indexed key like `page[number]`, and some get
     // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
     // what we get through qs stringify / parse will normalize it.
-    const normalizedQuery = qs.parse(qs.stringify(variables.queryParams));
+    const normalizedQuery = qs.parse(qs.stringify(variables.queryParams), { arrayLimit: 1000 });
     const queryKeys = Object.keys(normalizedQuery);
     const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
     if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
