@@ -11,12 +11,12 @@ import { Connection } from "@/types/connection";
 import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { selectorCache } from "@/utils/selectorCache";
 
-import { TotalSectionHeaderDto } from "../generated/v3/dashboardService/dashboardServiceSchemas";
+import { HectareRestorationDto } from "../generated/v3/dashboardService/dashboardServiceSchemas";
 
 export type HectareRestorationConnectionProps = Partial<GetTotalSectionHeadersQueryParams>;
 
 export type HectareRestorationConnection = {
-  data?: TotalSectionHeaderDto;
+  data?: HectareRestorationDto;
   fetchFailure?: PendingErrorState | null;
   refetch: () => void;
 };
@@ -41,15 +41,15 @@ const hectareRestorationConnection: Connection<HectareRestorationConnection, Hec
     props =>
       createSelector(
         [
-          (store: ApiDataStore) => store.totalSectionHeaders?.[indexCacheKey(props).replace(/%5B%5D/g, "")]?.attributes,
+          (store: ApiDataStore) => store.hectareRestoration?.[indexCacheKey(props).replace(/%5B%5D/g, "")]?.attributes,
           getTotalSectionHeadersFetchFailed({ queryParams: props })
         ],
         (indexMeta, fetchFailure) => {
-          const refetch = () => ApiSlice.pruneIndex("totalSectionHeaders", "");
+          const refetch = () => ApiSlice.pruneIndex("hectareRestoration", "");
           if (indexMeta == null) return { refetch, fetchFailure };
 
           return {
-            data: indexMeta as TotalSectionHeaderDto,
+            data: indexMeta as HectareRestorationDto,
             fetchFailure,
             refetch
           };
