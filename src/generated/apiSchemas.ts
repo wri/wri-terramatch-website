@@ -12508,3 +12508,22 @@ export type V2FinancialLiteReportRead = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type V2OrganisationInviteCreate = {
+  email_address?: string;
+};
+
+export type V2OrganisationInviteRead = {
+  id?: number;
+  uuid?: string;
+  organisation_id?: number;
+  email_address?: string;
+  /**
+   * @format datetime
+   */
+  accepted_at?: string;
+  /**
+   * @format datetime
+   */
+  created_at?: string;
+};

@@ -34,7 +34,7 @@ const ResetPasswordPage = () => {
   const { mutateAsync: patchAuthChange, isLoading } = usePutV2AuthCompleteSignup({
     onSuccess() {
       openToast(t("Account created successfully"));
-      router.push("/login");
+      router.push("/auth/login");
     }
   });
   const form = useForm<SignUpFormData>({
