@@ -203,8 +203,63 @@ export const getTotalJobsCreated = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/totalJobsCreated", "GET");
 
+export type GetHectaresRestorationQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type GetHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetHectaresRestorationResponse = {
+  meta?: {
+    /**
+     * @example hectareRestoration
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example hectareRestoration
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.HectareRestorationDto;
+  };
+};
+
+export type GetHectaresRestorationVariables = {
+  queryParams?: GetHectaresRestorationQueryParams;
+};
+
+export const getHectaresRestoration = new V3ApiEndpoint<
+  GetHectaresRestorationResponse,
+  GetHectaresRestorationError,
+  GetHectaresRestorationVariables,
+  {}
+>("/dashboard/v3/hectaresRestoration", "GET");
+
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
   treeRestorationGoal: { getTreeRestorationGoal },
-  totalJobsCreated: { getTotalJobsCreated }
+  totalJobsCreated: { getTotalJobsCreated },
+  hectaresRestoration: { getHectaresRestoration }
 };

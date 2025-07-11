@@ -122,3 +122,8 @@ export type TotalJobsCreatedDto = {
   totalWomen: number;
   totalYouth: number;
 };
+
+export type HectareRestorationDto = {
+  restorationStrategiesRepresented: Record<string, any>;
+  targetLandUseTypesRepresented: Record<string, any>;
+};
