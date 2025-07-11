@@ -45,8 +45,8 @@ interface Option {
 }
 
 interface HectaresUnderRestoration {
-  restoration_strategies_represented: Record<string, number>;
-  target_land_use_types_represented: Record<string, number>;
+  restorationStrategiesRepresented: Record<string, number>;
+  targetLandUseTypesRepresented: Record<string, number>;
 }
 
 interface ParsedDataItem {
@@ -383,7 +383,7 @@ const getRestorationStrategyOptions = {
 export const parseHectaresUnderRestorationData = (
   totalHectaresRestored: number,
   numberOfSites: number,
-  hectaresUnderRestoration: HectaresUnderRestoration
+  hectaresUnderRestoration: HectaresUnderRestoration | undefined
 ): HectaresUnderRestorationData => {
   if (totalHectaresRestored === undefined || numberOfSites === undefined || !hectaresUnderRestoration) {
     return {
@@ -427,28 +427,28 @@ export const parseHectaresUnderRestorationData = (
     return option ? option.title : value;
   };
 
-  const noStrategyValue = hectaresUnderRestoration?.restoration_strategies_represented?.[""] || 0;
+  const noStrategyValue = hectaresUnderRestoration?.restorationStrategiesRepresented?.[""] || 0;
 
   const restorationStrategiesRepresented: ParsedDataItem[] = [
     {
       label: getRestorationStrategyOptions["direct-seeding"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["direct-seeding"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["direct-seeding"] || 0
     },
     {
       label: getRestorationStrategyOptions["assisted-natural-regeneration"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["assisted-natural-regeneration"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["assisted-natural-regeneration"] || 0
     },
     {
       label: getRestorationStrategyOptions["tree-planting"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["tree-planting"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["tree-planting"] || 0
     },
     {
       label: "Multiple Strategies",
-      value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
+      value: Object.keys(hectaresUnderRestoration?.restorationStrategiesRepresented || {})
         .filter(
           key => key !== "" && !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key)
         )
-        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restorationStrategiesRepresented?.[key] || 0), 0)
     },
     {
       label: "No Strategy Identified",
@@ -456,16 +456,14 @@ export const parseHectaresUnderRestorationData = (
     }
   ].filter(item => item.value > 0);
 
-  const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
-    item => {
-      const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
-      return {
-        label: getLandUseTypeTitle(item.label),
-        value: adjustedValue,
-        valueText: formatValueText(adjustedValue)
-      };
-    }
-  );
+  const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.targetLandUseTypesRepresented).map(item => {
+    const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
+    return {
+      label: getLandUseTypeTitle(item.label),
+      value: adjustedValue,
+      valueText: formatValueText(adjustedValue)
+    };
+  });
 
   return {
     totalSection: {
