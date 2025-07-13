@@ -83,7 +83,7 @@ const RHFMap = ({
     }
   );
 
-  const [, { bbox }] = useBoundingBox(
+  const bbox = useBoundingBox(
     entity?.entityName == "project-pitch"
       ? { projectPitchUuid: entity?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }

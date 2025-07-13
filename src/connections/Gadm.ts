@@ -3,10 +3,10 @@ import { Dictionary, difference, filter, isEmpty, merge } from "lodash";
 import { useMemo } from "react";
 import { createSelector } from "reselect";
 
-import { PendingErrorState } from "@/store/apiSlice";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { PendingError } from "@/store/apiSlice";
 import DataApiSlice, { DataApiStore } from "@/store/dataApiSlice";
 import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
 import { fetchGadmLevel, gadmFindFetchFailedSelector } from "@/utils/dataApi";
 import Log from "@/utils/log";
 import { optionToChoices } from "@/utils/options";
@@ -15,7 +15,7 @@ import { selectorCache } from "@/utils/selectorCache";
 export type GadmConnection = {
   byParentCode?: Dictionary<Dictionary<string>>;
   codeMapping?: Dictionary<string>;
-  fetchFailure?: PendingErrorState | null;
+  fetchFailure?: PendingError | null;
 };
 
 type GadmConnectionProps = {

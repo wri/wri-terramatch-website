@@ -1,14 +1,12 @@
 import { FC } from "react";
 import { TabbedShowLayout, TabProps } from "react-admin";
 
-import { EntityName } from "@/types/common";
-
 import DataCard from "./components/DataCard";
 import HeaderMonitoredTab from "./components/HeaderMonitoredTab";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
-  type: EntityName;
+  type: "projects" | "sites";
 }
 
 const MonitoredTab: FC<IProps> = ({ label, type, ...rest }) => (

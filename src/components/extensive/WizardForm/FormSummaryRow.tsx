@@ -95,7 +95,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
       ? { projectPitchUuid: uuid }
       : {};
 
-  const [, { bbox }] = useBoundingBox(bboxParams);
+  const bbox = useBoundingBox(bboxParams);
 
   const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonData);
 

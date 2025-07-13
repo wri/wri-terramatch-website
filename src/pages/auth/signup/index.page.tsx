@@ -6,7 +6,7 @@ import * as yup from "yup";
 
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import { useUserCreation } from "@/connections/User";
-import { useValueChanged } from "@/hooks/useValueChanged";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 
 import SignUpForm from "./components/SignupForm";
 
@@ -40,18 +40,13 @@ const SignUpPage = ({
   const t = useT();
   const router = useRouter();
 
-  const [, { isLoading, isSuccess, requestFailed, emailNewUser, signUp }] = useUserCreation();
-
-  useValueChanged(isSuccess, () => {
-    if (isSuccess) {
-      return router.push(`/auth/signup/confirm?email=${encodeURIComponent(emailNewUser)}`);
-    }
-  });
-
-  useValueChanged(requestFailed, () => {
-    if (requestFailed != null) {
+  const [, { isCreating, createFailure, data: newUser, create: signUp }] = useUserCreation({});
+  useRequestComplete(isCreating, () => {
+    if (createFailure == null) {
+      return router.push(`/auth/signup/confirm?email=${encodeURIComponent(newUser?.emailAddress ?? "")}`);
+    } else {
       let message: string;
-      if (requestFailed.statusCode == 422 && requestFailed.message == "User already exists") {
+      if (createFailure.statusCode == 422 && createFailure.message == "User already exists") {
         message = t(
           "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
         );
@@ -96,7 +91,7 @@ const SignUpPage = ({
     });
   };
 
-  return <SignUpForm form={form} handleSave={handleSave} loading={isLoading} role={role} />;
+  return <SignUpForm form={form} handleSave={handleSave} loading={isCreating} role={role} />;
 };
 
 export default SignUpPage;

@@ -64,7 +64,7 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const [, { associations: modelFilesData }] = useMedias({
+  const [, { data: modelFilesData }] = useMedias({
     entity: type as SupportedEntity,
     uuid: entityModel?.uuid
   });
@@ -76,11 +76,11 @@ const OverviewMapArea = ({
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
 
-  const [, { bbox: modelBbox }] = useBoundingBox(
+  const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
-  const [, { bbox: countryBbox }] = useBoundingBox(
+  const countryBbox = useBoundingBox(
     type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
   );
 

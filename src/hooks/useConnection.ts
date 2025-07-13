@@ -1,10 +1,11 @@
-import { isEqual } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useStore } from "react-redux";
 
 import ApiSlice from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps } from "@/types/connection";
+
+import { useStableProps } from "./useStableProps";
 
 /**
  * Use a connection to efficiently depend on data in the Redux store.
@@ -20,12 +21,7 @@ export function useConnection<TSelected, TProps extends OptionalProps, State>(
   const { getState, selector, isLoaded, load } = connection;
   const store = useStore<AppStore>();
 
-  const [stableProps, setStableProps] = useState(props);
-  useEffect(() => {
-    if (!isEqual(stableProps, props)) setStableProps(props);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props]);
-
+  const stableProps = useStableProps(props);
   const getConnected = useCallback(() => {
     const state = (getState ?? ApiSlice.getState)(store.getState()) as State;
     const connected = selector(state, stableProps);

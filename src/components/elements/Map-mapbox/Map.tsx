@@ -236,7 +236,7 @@ export const MapContainer = ({
   const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded, setChangeStyle, changeStyle } =
     mapFunctions;
 
-  const [, { bbox: polygonBbox }] = useBoundingBox(
+  const polygonBbox = useBoundingBox(
     entityData?.entityName == "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }

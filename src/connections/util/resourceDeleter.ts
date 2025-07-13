@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 
-import ApiSlice, { ApiDataStore, PendingErrorState, ResourceType } from "@/store/apiSlice";
+import { RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import ApiSlice, { ApiDataStore, ResourceType } from "@/store/apiSlice";
 
 export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiDataStore) =>
   store.meta.deleted[resource];
@@ -15,10 +16,10 @@ export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiD
  * condition and will often fail. Therefore, for deletions, we have this utility for handling
  * deletes more gracefully.
  */
-export const connectedResourceDeleter = (
+export const deleterAsync = <R, E, V extends RequestVariables, H extends {}>(
   type: ResourceType,
-  fetchFailedSelector: (id: string) => (store: ApiDataStore) => PendingErrorState | null,
-  deleteFetch: (id: string) => void
+  endpoint: V3ApiEndpoint<R, E, V, H>,
+  variablesFactory: (id: string) => V
 ) => {
   /**
    * Deletes the given resource by ID. Note: on a successful deletion, the component that this
@@ -27,7 +28,7 @@ export const connectedResourceDeleter = (
    */
   return async function deleteResource(id: string) {
     const selector = createSelector(
-      [resourcesDeletedSelector(type), fetchFailedSelector(id)],
+      [resourcesDeletedSelector(type), endpoint.fetchFailedSelector(variablesFactory(id))],
       (deleted, deleteFailure) => ({
         isDeleted: id != null && deleted.includes(id),
         deleteFailure
@@ -38,7 +39,7 @@ export const connectedResourceDeleter = (
     if (isDeleted) return;
     if (deleteFailure != null) throw deleteFailure;
 
-    deleteFetch(id);
+    endpoint.fetch(variablesFactory(id));
 
     await new Promise<void>((resolve, reject) => {
       const unsubscribe = ApiSlice.redux.subscribe(() => {
