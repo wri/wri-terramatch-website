@@ -6,6 +6,7 @@ import { When } from "react-if";
 import {
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
@@ -82,7 +83,9 @@ const MapMenuPanelItem = ({
       setShowWarning(
         polygonValidation.nonValidCriteria?.some(
           (criteria: any) =>
-            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID || criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID
+            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
+            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
+            criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID
         )
       );
     }
