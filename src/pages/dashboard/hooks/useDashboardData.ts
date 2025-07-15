@@ -267,15 +267,13 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     });
 
-  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
-    filter: {
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }
+  const generalHectaresUnderRestoration = useHectareRestoration({
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    landscapes: convertNamesToCodes(filters.landscapes),
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
   });
 
   const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
@@ -697,7 +695,7 @@ export const useDashboardData = (filters: any) => {
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
-    isLoadingX: isDashboardHectareRestorationLoaded ?? (filters.uuid && isLoadingProjectHectares),
+    isLoadingX: filters.uuid && isLoadingProjectHectares,
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
