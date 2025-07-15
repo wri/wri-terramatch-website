@@ -1,25 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
+import { useDashboardProjects } from "@/connections/DashboardProjects";
 import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
-import { useFullProject, useProjectIndex } from "@/connections/Entity";
+import { useFullProject } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
-import { useMyUser } from "@/connections/User";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
-  useGetV2DashboardActiveProjects,
   useGetV2DashboardJobsCreated,
   useGetV2DashboardViewProjectUuid,
   useGetV2DashboardVolunteersSurvivalRate
 } from "@/generated/apiComponents";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
-import { HookFilters } from "@/types/connection";
 import { createQueryParams } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
@@ -27,80 +26,8 @@ import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
-// Unified project interface for internal processing until we have all the data from V3 after applying authentication
-export interface ProcessedProject {
-  uuid: string;
-  name: string;
-  organisation: string;
-  organisationType: string;
-  country_slug: string;
-  programme?: string;
-  trees_under_restoration: number;
-  hectares_under_restoration: number;
-  jobs_created: number;
-  lat?: string | number | null;
-  long?: string | number | null;
-  // Legacy field for compatibility with HeaderDashboard
-  project_country?: string;
-  // V3 specific fields
-  organisationName?: string;
-  treesPlantedCount?: number;
-  totalHectaresRestoredSum?: number;
-  totalJobsCreated?: number;
-  isV3Data?: boolean;
-}
-
-interface ExtendedProject extends ProcessedProject {
-  country?: string;
-}
-
-type UnifiedProjectForCoordinates = ProcessedProject | ExtendedProject;
-
-// Function to convert V3 project to V2-compatible structure
-const convertV3ToProcessed = (v3Project: any): ProcessedProject => ({
-  uuid: v3Project.uuid,
-  name: v3Project.name || "",
-  organisation: v3Project.organisationName || "",
-  organisationType: v3Project.organisationType || "",
-  country_slug: v3Project.country || "",
-  programme: v3Project.frameworkKey,
-  trees_under_restoration: v3Project.treesPlantedCount || 0,
-  hectares_under_restoration: v3Project.totalHectaresRestoredSum || 0,
-  jobs_created: v3Project.totalJobsCreated || 0,
-  lat: v3Project.lat,
-  long: v3Project.long,
-  // Legacy field for compatibility with HeaderDashboard
-  project_country: v3Project.country || "",
-  // Keep V3 fields for potential future use
-  organisationName: v3Project.organisationName,
-  treesPlantedCount: v3Project.treesPlantedCount,
-  totalHectaresRestoredSum: v3Project.totalHectaresRestoredSum,
-  totalJobsCreated: v3Project.totalJobsCreated,
-  isV3Data: true
-});
-
-// Function to convert V2 project to processed structure
-const convertV2ToProcessed = (v2Project: any): ProcessedProject => ({
-  uuid: v2Project.uuid,
-  name: v2Project.name || "",
-  organisation: v2Project.organisation || "",
-  organisationType: v2Project.organisationType || "",
-  country_slug: v2Project.country_slug || "",
-  programme: v2Project.programme,
-  trees_under_restoration: v2Project.trees_under_restoration || 0,
-  hectares_under_restoration: v2Project.hectares_under_restoration || 0,
-  jobs_created: v2Project.jobs_created || 0,
-  lat: v2Project.lat,
-  long: v2Project.long,
-  // Legacy field for compatibility with HeaderDashboard
-  project_country: v2Project.project_country || v2Project.country_slug || "",
-  isV3Data: false
-});
-
 export const useDashboardData = (filters: any) => {
-  const [topProject, setTopProjects] = useState<any>([]);
   const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
-  const [, { user }] = useMyUser();
   const [dashboardHeader, setDashboardHeader] = useState([
     {
       label: "Trees Planted",
@@ -157,14 +84,6 @@ export const useDashboardData = (filters: any) => {
     allPolygonsData
   } = useSitePolygonsHectares(filters.uuid);
 
-  const activeProjectsQueryParams: any = useMemo(() => {
-    const modifiedFilters = {
-      ...updateFilters,
-      projectUuid: ""
-    };
-    return createQueryParams(modifiedFilters);
-  }, [updateFilters]);
-
   const { showLoader, hideLoader } = useLoading();
 
   const [isDashboardHeaderLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
@@ -189,10 +108,48 @@ export const useDashboardData = (filters: any) => {
   );
 
   const { searchTerm } = useDashboardContext();
-  const { data: v2ActiveProjects } = useGetV2DashboardActiveProjects<any>(
-    { queryParams: activeProjectsQueryParams },
-    { enabled: !!filters }
-  );
+
+  const dashboardProjectsQueryParams = useMemo(() => {
+    const params: any = {};
+
+    if (filters?.country?.country_slug?.trim() !== "") {
+      params.country = filters.country.country_slug;
+    }
+
+    if (filters?.landscapes?.length > 0) {
+      params.landscapes = convertNamesToCodes(filters.landscapes);
+    }
+
+    if (filters?.cohort && filters.cohort.length > 0) {
+      params.cohort = filters.cohort;
+    } else {
+      params.cohort = ["terrafund", "terrafund-landscapes"];
+    }
+
+    if (filters?.organizations?.length === 1) {
+      params["organisationType[]"] = filters.organizations;
+    } else {
+      params["organisationType[]"] = ["non-profit-organization", "for-profit-organization"];
+    }
+
+    if (filters?.frameworks?.length > 0) {
+      params["programmesType[]"] = filters.frameworks;
+    } else {
+      params["programmesType[]"] = ["terrafund", "terrafund-landscapes", "enterprises"];
+    }
+
+    return params;
+  }, [
+    filters?.country?.country_slug,
+    filters?.landscapes,
+    filters?.cohort,
+    filters?.organizations,
+    filters?.frameworks
+  ]);
+
+  const [dashboardProjectsLoaded, { data: dashboardProjectsData }] = useDashboardProjects({
+    filter: dashboardProjectsQueryParams
+  });
 
   const polygonsData = useMemo(() => {
     if (!allPolygonsData || allPolygonsData.length === 0) {
@@ -285,199 +242,23 @@ export const useDashboardData = (filters: any) => {
     filter: { isCover: true }
   });
 
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 100;
-  const [allV3Projects, setAllV3Projects] = useState<any[]>([]);
-  const [isLoadingV3Projects, setIsLoadingV3Projects] = useState(false);
-  const [hasMoreV3Projects, setHasMoreV3Projects] = useState(true);
-  const [totalV3Projects, setTotalV3Projects] = useState(0);
+  const dashboardProjects = useMemo((): DashboardProjectsLightDto[] => {
+    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData) || dashboardProjectsData.length === 0)
+      return [];
 
-  const filterParams = useMemo(() => {
-    const params: HookFilters<typeof useProjectIndex> = {
-      status: "approved"
-    };
-
-    if (filters?.country?.country_slug?.trim() !== "") {
-      params.country = filters.country.country_slug;
-    }
-
-    if (filters?.landscapes?.length > 0) {
-      params.landscape = convertNamesToCodes(filters.landscapes);
-    }
-
-    if (filters?.cohort && filters.cohort.length > 0) {
-      params.cohort = filters.cohort;
-    } else {
-      params.cohort = ["terrafund", "terrafund-landscapes"];
-    }
-
-    if (filters?.organizations?.length === 1) {
-      params.organisationType = filters.organizations;
-    } else {
-      params.organisationType = ["non-profit-organization", "for-profit-organization"];
-    }
-
-    if (filters?.frameworks?.length > 0) {
-      params.frameworkKey = filters.frameworks;
-    } else {
-      params.frameworkKey = ["terrafund", "terrafund-landscapes", "enterprises"];
-    }
-
-    return params;
-  }, [
-    filters?.country?.country_slug,
-    filters?.landscapes,
-    filters?.cohort,
-    filters?.organizations,
-    filters?.frameworks
-  ]);
-
-  useEffect(() => {
-    setPage(1);
-    setAllV3Projects([]);
-    setHasMoreV3Projects(true);
-    setTotalV3Projects(0);
-    setIsLoadingV3Projects(false);
-  }, [filterParams]);
-
-  const [v3ProjectsLoaded, { data: currentPageV3Projects, indexTotal }] = useProjectIndex({
-    pageSize: PAGE_SIZE,
-    pageNumber: page,
-    filter: filterParams
-  });
-
-  useEffect(() => {
-    if (indexTotal !== undefined) {
-      setTotalV3Projects(indexTotal);
-    }
-  }, [indexTotal]);
-
-  useEffect(() => {
-    if (v3ProjectsLoaded && currentPageV3Projects) {
-      setAllV3Projects(prevProjects => {
-        if (page === 1) {
-          setHasMoreV3Projects(currentPageV3Projects.length < totalV3Projects);
-          return [...currentPageV3Projects];
-        }
-
-        const existingProjectsMap = new Map(prevProjects.map(p => [p.uuid, p]));
-        const newUniqueProjects = currentPageV3Projects.filter(p => !existingProjectsMap.has(p.uuid));
-        const mergedProjects = [...prevProjects, ...newUniqueProjects];
-
-        setHasMoreV3Projects(mergedProjects.length < totalV3Projects && newUniqueProjects.length > 0);
-        return mergedProjects;
-      });
-
-      setIsLoadingV3Projects(false);
-    } else if (!v3ProjectsLoaded) {
-      setIsLoadingV3Projects(true);
-    }
-  }, [currentPageV3Projects, page, v3ProjectsLoaded, totalV3Projects]);
-
-  const loadMoreV3Projects = useCallback(() => {
-    if (hasMoreV3Projects && !isLoadingV3Projects) {
-      setIsLoadingV3Projects(true);
-      setPage(prev => prev + 1);
-    }
-  }, [hasMoreV3Projects, isLoadingV3Projects]);
-
-  useEffect(() => {
-    if (
-      hasMoreV3Projects &&
-      !isLoadingV3Projects &&
-      allV3Projects.length > 0 &&
-      allV3Projects.length < totalV3Projects &&
-      v3ProjectsLoaded
-    ) {
-      loadMoreV3Projects();
-    }
-  }, [
-    allV3Projects.length,
-    hasMoreV3Projects,
-    isLoadingV3Projects,
-    loadMoreV3Projects,
-    v3ProjectsLoaded,
-    totalV3Projects
-  ]);
-
-  const processedProjects = useMemo((): ProcessedProject[] => {
-    const useV3Data = allV3Projects.length > 0 && (!user || user?.primaryRole !== "government");
-
-    if (useV3Data) {
-      const v2ProjectsMap = new Map<string, any>();
-      if (v2ActiveProjects?.data) {
-        v2ActiveProjects.data.forEach((project: any) => {
-          if (project.uuid) {
-            v2ProjectsMap.set(project.uuid, project);
-          }
-        });
-      }
-
-      return allV3Projects.map(v3Project => {
-        const v2Project = v2ProjectsMap.get(v3Project.uuid);
-        const convertedProject = convertV3ToProcessed(v3Project);
-
-        if (v2Project && v2Project.jobs_created !== undefined) {
-          convertedProject.jobs_created = v2Project.jobs_created;
-          convertedProject.totalJobsCreated = v2Project.jobs_created;
-        }
-
-        return convertedProject;
-      });
-    } else if (v2ActiveProjects?.data) {
-      return v2ActiveProjects.data.map(convertV2ToProcessed);
-    }
-
-    return [];
-  }, [allV3Projects, v2ActiveProjects, user]);
+    return dashboardProjectsData as DashboardProjectsLightDto[];
+  }, [dashboardProjectsData]);
 
   const filteredProjects = useMemo(() => {
-    if (!searchTerm) return processedProjects;
+    if (!searchTerm) return dashboardProjects;
 
     const lowerSearchTerm = searchTerm.toLowerCase();
-    return processedProjects.filter(
+    return dashboardProjects.filter(
       project =>
         project.name?.toLowerCase().includes(lowerSearchTerm) ||
-        project.organisation?.toLowerCase().includes(lowerSearchTerm)
+        project.organisationName?.toLowerCase().includes(lowerSearchTerm)
     );
-  }, [processedProjects, searchTerm]);
-
-  const activeProjects = filteredProjects;
-
-  const allAvailableProjects = useMemo(() => {
-    return processedProjects.map(project => ({
-      uuid: project.uuid,
-      name: project.name,
-      organisationName: project.organisation,
-      organisationType: project.organisationType,
-      country: project.country_slug,
-      treesPlantedCount: project.trees_under_restoration,
-      totalHectaresRestoredSum: project.hectares_under_restoration,
-      totalJobsCreated: project.jobs_created,
-      lat: project.lat,
-      long: project.long,
-      // Add fields for compatibility with ProcessedProject
-      organisation: project.organisation,
-      country_slug: project.country_slug,
-      trees_under_restoration: project.trees_under_restoration,
-      hectares_under_restoration: project.hectares_under_restoration,
-      jobs_created: project.jobs_created
-    }));
-  }, [processedProjects]);
-
-  const topProjects = useMemo(() => {
-    if (!(allV3Projects.length && !hasMoreV3Projects && !isLoadingV3Projects)) return [];
-    return allV3Projects
-      .filter(project => (project?.treesPlantedCount || 0) > 0)
-      .sort((a, b) => (b.treesPlantedCount || 0) - (a.treesPlantedCount || 0))
-      .slice(0, 5)
-      .map(project => ({
-        organization: project.organisationName || "",
-        project: project.name || "",
-        trees_planted: project.treesPlantedCount || 0,
-        uuid: project.uuid || ""
-      }));
-  }, [allV3Projects, hasMoreV3Projects, isLoadingV3Projects]);
+  }, [dashboardProjects, searchTerm]);
 
   const combinedJobsData = useMemo(() => {
     if (filters.uuid && projectEmploymentData) {
@@ -512,18 +293,15 @@ export const useDashboardData = (filters: any) => {
   }, [filters.uuid, isLoadingProjectHectares]);
 
   const centroidsDataProjects = useMemo(() => {
-    const projectsToUse: UnifiedProjectForCoordinates[] =
-      allAvailableProjects?.length > 0 ? allAvailableProjects : activeProjects ?? [];
+    if (!dashboardProjects?.length) return { data: [], bbox: [] };
 
-    if (!projectsToUse?.length) return { data: [], bbox: [] };
-
-    const projectsWithCoordinates = projectsToUse.filter((project: UnifiedProjectForCoordinates) => {
+    const projectsWithCoordinates = dashboardProjects.filter(project => {
       if (!project) return false;
 
       const long = project.long;
       const lat = project.lat;
 
-      if (long === null || long === undefined || long === "" || lat === null || lat === undefined || lat === "") {
+      if (long === null || long === undefined || lat === null || lat === undefined) {
         return false;
       }
 
@@ -537,13 +315,13 @@ export const useDashboardData = (filters: any) => {
       return { data: [], bbox: [] };
     }
 
-    const transformedData = projectsWithCoordinates.map((project: UnifiedProjectForCoordinates) => ({
+    const transformedData = projectsWithCoordinates.map(project => ({
       uuid: project.uuid ?? "",
       long: Number(project.long) || 0,
       lat: Number(project.lat) || 0,
       name: project.name ?? "",
       type: project.organisationType ?? "",
-      organisation: project.organisationName ?? project.organisation ?? null
+      organisation: project.organisationName ?? null
     }));
 
     try {
@@ -568,21 +346,33 @@ export const useDashboardData = (filters: any) => {
       console.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
-  }, [allAvailableProjects, activeProjects]);
+  }, [dashboardProjects]);
 
-  useEffect(() => {
-    if (!(allAvailableProjects.length && !hasMoreV3Projects && !isLoadingV3Projects) || topProjects.length === 0)
-      return;
-    const tableData = topProjects.map(project => ({
-      label: project.organization,
-      valueText: project.trees_planted.toLocaleString("en-US"),
-      value: project.trees_planted
+  const topProjectsTable = useMemo(() => {
+    if (
+      !dashboardProjectsLoaded ||
+      !dashboardProjectsData ||
+      !Array.isArray(dashboardProjectsData) ||
+      dashboardProjectsData.length === 0
+    ) {
+      return { tableData: [], maxValue: 0 };
+    }
+
+    const sorted = dashboardProjectsData
+      .filter((project: any) => project && (project.treesPlantedCount || 0) > 0)
+      .sort((a: any, b: any) => (b.treesPlantedCount || 0) - (a.treesPlantedCount || 0))
+      .slice(0, 5);
+
+    const tableData = sorted.map((project: any) => ({
+      label: project.organisationName || "",
+      valueText: (project.treesPlantedCount || 0).toLocaleString("en-US"),
+      value: project.treesPlantedCount || 0
     }));
-    setTopProjects({
-      tableData,
-      maxValue: Math.max(...topProjects.map(p => p.trees_planted)) * (7 / 6)
-    });
-  }, [allAvailableProjects, hasMoreV3Projects, isLoadingV3Projects, topProjects]);
+
+    const maxValue = Math.max(...tableData.map(p => p.value), 0) * (7 / 6);
+
+    return { tableData, maxValue };
+  }, [dashboardProjectsLoaded, dashboardProjectsData]);
 
   useEffect(() => {
     if (filters.uuid) {
@@ -703,10 +493,10 @@ export const useDashboardData = (filters: any) => {
     projectFullDto,
     projectLoaded,
     coverImage,
-    topProject,
+    topProject: topProjectsTable,
     activeCountries,
     activeProjects: filteredProjects,
-    allAvailableProjects: allAvailableProjects,
+    allAvailableProjects: dashboardProjects,
     centroidsDataProjects: centroidsDataProjects?.data,
     polygonsData: polygonsData,
     isUserAllowed,

@@ -133,27 +133,19 @@ const ProjectList = () => {
   const DATA_TABLE_PROJECT_LIST = activeProjects
     ? activeProjects
         .map((item: any) => {
-          const isV3Data = item.isV3Data || item.treesPlantedCount !== undefined;
-
           return {
             uuid: item.uuid,
             project: item.name,
-            organization: isV3Data ? item.organisationName || item.organisation : item.organisation,
-            programme: getFrameworkName(frameworks, item.programme || item.frameworkKey),
+            organization: item.organisationName,
+            programme: getFrameworkName(frameworks, item.frameworkKey),
             country: {
-              country_slug: item.country_slug || item.country,
-              label: countryChoices.find(country => country.id === (item.country_slug || item.country))?.name,
-              image: `/flags/${(item.country_slug || item.country)?.toLowerCase()}.svg`
+              country_slug: item.country,
+              label: countryChoices.find(country => country.id === item.country)?.name,
+              image: `/flags/${item.country?.toLowerCase()}.svg`
             },
-            treesPlanted: isV3Data
-              ? (item.treesPlantedCount || item.trees_under_restoration || 0).toLocaleString()
-              : (item.trees_under_restoration || 0).toLocaleString(),
-            restorationHectares: isV3Data
-              ? (item.totalHectaresRestoredSum || item.hectares_under_restoration || 0).toLocaleString()
-              : (item.hectares_under_restoration || 0).toLocaleString(),
-            jobsCreated: isV3Data
-              ? (item.totalJobsCreated || item.jobs_created || 0).toLocaleString()
-              : (item.jobs_created || 0).toLocaleString()
+            treesPlanted: (item.treesPlantedCount || 0).toLocaleString(),
+            restorationHectares: (item.totalHectaresRestoredSum || 0).toLocaleString(),
+            jobsCreated: (item.totalJobsCreated || 0).toLocaleString()
           };
         })
         .sort(

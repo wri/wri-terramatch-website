@@ -123,6 +123,38 @@ export type TotalJobsCreatedDto = {
   totalYouth: number;
 };
 
+export type DashboardProjectsLightDto = {
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+};
+
+export type DashboardProjectsFullDto = {
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+};
+
 export type HectareRestorationDto = {
   restorationStrategiesRepresented: Record<string, any>;
   targetLandUseTypesRepresented: Record<string, any>;

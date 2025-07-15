@@ -14,6 +14,7 @@ import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
@@ -86,30 +87,8 @@ export interface GraphicLegendProps {
   color: string;
 }
 
-const mapActiveProjects = (projects: any[], excludeUUID?: string) => {
-  return projects
-    ? projects
-        .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
-        .map((item: any) => {
-          // Handle both V2 and V3 data structures uniformly until we have all the data from V3 after applying authentication
-          const isV3Data = item.isV3Data || item.treesPlantedCount !== undefined;
-
-          return {
-            uuid: item.uuid,
-            project: item.name || item.project,
-            treesPlanted: isV3Data
-              ? (item.treesPlantedCount || item.trees_under_restoration || 0).toLocaleString()
-              : (item.trees_under_restoration || 0).toLocaleString(),
-            restorationHectares: isV3Data
-              ? (item.totalHectaresRestoredSum || item.hectares_under_restoration || 0).toLocaleString()
-              : (item.hectares_under_restoration || 0).toLocaleString(),
-            jobsCreated: isV3Data
-              ? (item.totalJobsCreated || item.jobs_created || 0).toLocaleString()
-              : (item.jobs_created || 0).toLocaleString(),
-            ...(item.volunteers !== undefined && { volunteers: item.volunteers.toLocaleString() })
-          };
-        })
-    : [];
+const mapActiveProjects = (projects: DashboardProjectsLightDto[], excludeUUID?: string) => {
+  return projects ? projects.filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID) : [];
 };
 
 const getOrganizationByUuid = (projects: any[], uuid: string) => {
@@ -118,8 +97,7 @@ const getOrganizationByUuid = (projects: any[], uuid: string) => {
   const project = projects.find((project: any) => project.uuid === uuid);
   if (!project) return "Unknown Organization";
 
-  // Handle both V2 and V3 data structures
-  return project.organisationName || project.organisation || "Unknown Organization";
+  return project.organisationName || "Unknown Organization";
 };
 
 const parseJobCreatedByType = (data: any, type: string) => {
@@ -302,7 +280,7 @@ const Dashboard = () => {
     () => [
       {
         header: "Project",
-        accessorKey: "project",
+        accessorKey: "name",
         enableSorting: false,
         cell: (props: any) => {
           const value = props.getValue().split("_");
@@ -311,18 +289,30 @@ const Dashboard = () => {
       },
       {
         header: "Trees Planted",
-        accessorKey: "treesPlanted",
-        enableSorting: false
+        accessorKey: "treesPlantedCount",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "Hectares",
-        accessorKey: "restorationHectares",
-        enableSorting: false
+        accessorKey: "totalHectaresRestoredSum",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "Jobs Created",
-        accessorKey: "jobsCreated",
-        enableSorting: false
+        accessorKey: "totalJobsCreated",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "",

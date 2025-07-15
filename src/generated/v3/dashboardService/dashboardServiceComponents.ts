@@ -203,6 +203,112 @@ export const getTotalJobsCreated = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/totalJobsCreated", "GET");
 
+export type DashboardEntityIndexPathParams = {
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects";
+};
+
+export type DashboardEntityIndexQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type DashboardEntityIndexError = Fetcher.ErrorWrapper<undefined>;
+
+export type DashboardEntityIndexResponse = {
+  meta?: {
+    /**
+     * @example dashboardProjects
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example dashboardProjects
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardProjectsLightDto;
+  };
+};
+
+export type DashboardEntityIndexVariables = {
+  pathParams: DashboardEntityIndexPathParams;
+  queryParams?: DashboardEntityIndexQueryParams;
+};
+
+export const dashboardEntityIndex = new V3ApiEndpoint<
+  DashboardEntityIndexResponse,
+  DashboardEntityIndexError,
+  DashboardEntityIndexVariables,
+  {}
+>("/dashboard/v3/{entity}", "GET");
+
+export type DashboardEntityGetPathParams = {
+  /**
+   * Entity UUID
+   */
+  uuid: void;
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects";
+};
+
+export type DashboardEntityGetError = Fetcher.ErrorWrapper<undefined>;
+
+export type DashboardEntityGetResponse = {
+  meta?: {
+    /**
+     * @example dashboardProjects
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example dashboardProjects
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardProjectsFullDto;
+  };
+};
+
+export type DashboardEntityGetVariables = {
+  pathParams: DashboardEntityGetPathParams;
+};
+
+export const dashboardEntityGet = new V3ApiEndpoint<
+  DashboardEntityGetResponse,
+  DashboardEntityGetError,
+  DashboardEntityGetVariables,
+  {}
+>("/dashboard/v3/{entity}/{uuid}", "GET");
+
 export type GetHectaresRestorationQueryParams = {
   country?: string;
   /**
@@ -261,5 +367,6 @@ export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
   treeRestorationGoal: { getTreeRestorationGoal },
   totalJobsCreated: { getTotalJobsCreated },
+  dashboardEntities: { dashboardEntityIndex, dashboardEntityGet },
   hectaresRestoration: { getHectaresRestoration }
 };
