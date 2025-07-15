@@ -10,11 +10,12 @@ import { getStableQuery } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 
-const hasValidParams = ({ projectUuid, landscapes, country }: GetHectaresRestorationQueryParams = {}): boolean =>
-  !isEmpty(projectUuid) || !isEmpty(landscapes) || !isEmpty(country);
+const hasValidParams = ({ projectUuid, country }: GetHectaresRestorationQueryParams = {}): boolean =>
+  !isEmpty(projectUuid) || !isEmpty(country);
 
 const hectareRestorationConnection = v3Resource("hectareRestoration", getHectaresRestoration)
   .singleByFilter<HectareRestorationDto, GetHectaresRestorationQueryParams>()
+  .enabledProp()
   .refetch((props, variablesFactory) => {
     const variables = variablesFactory(props);
     if (variables != null) {
