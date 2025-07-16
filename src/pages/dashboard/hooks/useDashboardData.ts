@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDashboardProjects } from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
-import { useDashboardProjects } from "@/connections/DashboardProjects";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useFullProject } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
