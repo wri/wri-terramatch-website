@@ -267,7 +267,7 @@ export const useDashboardData = (filters: any) => {
       queryParams: queryParams
     });
 
-  const generalHectaresUnderRestoration = useHectareRestoration({
+  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
     "programmesType[]": filters.programmes,
     country: filters.country.country_slug,
     "organisationType[]": filters.organizations,
@@ -695,7 +695,7 @@ export const useDashboardData = (filters: any) => {
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
-    isLoadingX: filters.uuid && isLoadingProjectHectares,
+    isLoadingX: isDashboardHectareRestorationLoaded ?? (filters.uuid && isLoadingProjectHectares),
     isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,

@@ -25,6 +25,5 @@ const hectareRestorationConnection = v3Resource("hectareRestoration", getHectare
   .buildConnection();
 
 export const useHectareRestoration = (filter: GetHectaresRestorationQueryParams) => {
-  const result = useConnection(hectareRestorationConnection, { filter, enabled: hasValidParams(filter) });
-  return result[1].data;
+  return useConnection(hectareRestorationConnection, { filter, enabled: hasValidParams(filter) });
 };
