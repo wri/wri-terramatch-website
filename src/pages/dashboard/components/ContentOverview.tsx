@@ -51,7 +51,7 @@ export const IMPACT_STORIES_TOOLTIP =
   "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
 
 interface RowData {
-  country_slug: undefined;
+  country: string | null;
   uuid: string;
 }
 
@@ -279,20 +279,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
               closeModal("modalExpand");
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid as string,
+                  uuid: (row.uuid || "") as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
                 }));
               }
 
               if (row.uuid) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid
+                  uuid: (row.uuid || "") as string
                 }));
               }
               return;
@@ -458,13 +457,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
                   uuid: row.uuid as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
                 }));
               }
 
@@ -570,13 +568,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
                   uuid: row.uuid as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
                 }));
               }
 

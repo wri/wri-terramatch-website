@@ -739,3 +739,45 @@ export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[
     }
   );
 };
+
+export const groupProjectsByCountry = (projects: DashboardProjectsLightDto[]) => {
+  if (!projects || projects.length === 0) {
+    return [];
+  }
+
+  const countryGroups = projects.reduce(
+    (acc, project) => {
+      const country = project.country;
+      if (!country) return acc;
+
+      if (!acc[country]) {
+        acc[country] = {
+          country: country,
+          numberOfProjects: 0,
+          totalTreesPlanted: 0,
+          totalJobsCreated: 0,
+          hectaresRestored: 0
+        };
+      }
+
+      acc[country].numberOfProjects += 1;
+      acc[country].totalTreesPlanted += project.treesPlantedCount || 0;
+      acc[country].totalJobsCreated += project.totalJobsCreated || 0;
+      acc[country].hectaresRestored += project.totalHectaresRestoredSum || 0;
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        country: string;
+        numberOfProjects: number;
+        totalTreesPlanted: number;
+        totalJobsCreated: number;
+        hectaresRestored: number;
+      }
+    >
+  );
+
+  return Object.values(countryGroups).sort((a, b) => a.country.localeCompare(b.country));
+};

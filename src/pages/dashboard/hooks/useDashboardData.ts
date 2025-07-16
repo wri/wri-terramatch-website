@@ -10,14 +10,10 @@ import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import {
-  useGetV2DashboardActiveCountries,
-  useGetV2DashboardJobsCreated,
-  useGetV2DashboardViewProjectUuid
-} from "@/generated/apiComponents";
+import { useGetV2DashboardJobsCreated, useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
-import { calculateTotalsFromProjects, createQueryParams } from "@/utils/dashboardUtils";
+import { calculateTotalsFromProjects, createQueryParams, groupProjectsByCountry } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -89,11 +85,6 @@ export const useDashboardData = (filters: any) => {
     { enabled: !!filters && !filters.uuid }
   );
 
-  const { data: activeCountries } = useGetV2DashboardActiveCountries<any>(
-    { queryParams: queryParams },
-    { enabled: !!filters }
-  );
-
   const { searchTerm } = useDashboardContext();
 
   const dashboardProjectsQueryParams = useMemo(() => {
@@ -137,6 +128,13 @@ export const useDashboardData = (filters: any) => {
   const [dashboardProjectsLoaded, { data: dashboardProjectsData }] = useDashboardProjects({
     filter: dashboardProjectsQueryParams
   });
+
+  const activeCountries = useMemo(() => {
+    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData)) {
+      return [];
+    }
+    return groupProjectsByCountry(dashboardProjectsData as DashboardProjectsLightDto[]);
+  }, [dashboardProjectsData]);
 
   const calculatedTotals = useMemo(() => {
     if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData)) {
