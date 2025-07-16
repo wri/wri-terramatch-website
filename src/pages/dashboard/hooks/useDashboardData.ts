@@ -4,7 +4,6 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useDashboardProjects } from "@/connections/DashboardProjects";
-import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useFullProject } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
@@ -14,12 +13,11 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import {
   useGetV2DashboardActiveCountries,
   useGetV2DashboardJobsCreated,
-  useGetV2DashboardViewProjectUuid,
-  useGetV2DashboardVolunteersSurvivalRate
+  useGetV2DashboardViewProjectUuid
 } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
-import { createQueryParams } from "@/utils/dashboardUtils";
+import { calculateTotalsFromProjects, createQueryParams } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -86,17 +84,6 @@ export const useDashboardData = (filters: any) => {
 
   const { showLoader, hideLoader } = useLoading();
 
-  const [isDashboardHeaderLoaded, { data: totalSectionHeader }] = useTotalSectionHeader({
-    filter: {
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }
-  });
-
   const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
     { queryParams: queryParams },
     { enabled: !!filters && !filters.uuid }
@@ -150,6 +137,13 @@ export const useDashboardData = (filters: any) => {
   const [dashboardProjectsLoaded, { data: dashboardProjectsData }] = useDashboardProjects({
     filter: dashboardProjectsQueryParams
   });
+
+  const calculatedTotals = useMemo(() => {
+    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData)) {
+      return null;
+    }
+    return calculateTotalsFromProjects(dashboardProjectsData as DashboardProjectsLightDto[]);
+  }, [dashboardProjectsData]);
 
   const polygonsData = useMemo(() => {
     if (!allPolygonsData || allPolygonsData.length === 0) {
@@ -218,11 +212,6 @@ export const useDashboardData = (filters: any) => {
       )
     };
   }, [dashboardRestorationGoalData]);
-
-  const { data: dashboardVolunteersSurvivalRate, isLoading: isLoadingVolunteers } =
-    useGetV2DashboardVolunteersSurvivalRate<any>({
-      queryParams: queryParams
-    });
 
   const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
     filter: {
@@ -379,10 +368,10 @@ export const useDashboardData = (filters: any) => {
       if (!projectLoaded) showLoader();
       else hideLoader();
     } else {
-      if (!isDashboardHeaderLoaded) showLoader();
+      if (!dashboardProjectsLoaded) showLoader();
       else hideLoader();
     }
-  }, [isDashboardHeaderLoaded, projectLoaded, filters.uuid, showLoader, hideLoader]);
+  }, [dashboardProjectsLoaded, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
     if (filters.uuid && projectFullDto) {
@@ -406,30 +395,29 @@ export const useDashboardData = (filters: any) => {
         value: projectFullDto.treesPlantedCount ?? 0,
         totalValue: projectFullDto.treesGrownGoal ?? 0
       });
-    } else if (totalSectionHeader != null) {
-      console.log("setting dashboard header", totalSectionHeader);
+    } else if (calculatedTotals != null) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: totalSectionHeader.totalTreesRestored?.toLocaleString() ?? "-"
+          value: calculatedTotals.totalTreesRestored?.toLocaleString() ?? "-"
         },
         {
           ...prev[1],
-          value: totalSectionHeader?.totalHectaresRestored
-            ? `${totalSectionHeader?.totalHectaresRestored.toLocaleString()} ha`
+          value: calculatedTotals?.totalHectaresRestored
+            ? `${calculatedTotals?.totalHectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 })} ha`
             : "-"
         },
         {
           ...prev[2],
-          value: totalSectionHeader?.totalEntries.toLocaleString() ?? "-"
+          value: calculatedTotals?.totalJobsCreated.toLocaleString() ?? "-"
         }
       ]);
       setNumberTreesPlanted({
-        value: Number(totalSectionHeader?.totalTreesRestored),
-        totalValue: Number(totalSectionHeader?.totalTreesRestoredGoal)
+        value: Number(calculatedTotals?.totalTreesRestored),
+        totalValue: Number(calculatedTotals?.totalTreesRestoredGoal)
       });
     }
-  }, [totalSectionHeader, filters.uuid, projectFullDto]);
+  }, [calculatedTotals, filters.uuid, projectFullDto]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
@@ -481,14 +469,12 @@ export const useDashboardData = (filters: any) => {
     dashboardHeader,
     dashboardRestorationGoalData: combinedHectaresData,
     jobsCreatedData: combinedJobsData,
-    dashboardVolunteersSurvivalRate,
     numberTreesPlanted,
-    totalSectionHeader: totalSectionHeader,
+    totalSectionHeader: calculatedTotals,
     hectaresUnderRestoration: finalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingX: isDashboardHectareRestorationLoaded ?? (filters.uuid && isLoadingProjectHectares),
-    isLoadingVolunteers,
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
     projectFullDto,
     projectLoaded,

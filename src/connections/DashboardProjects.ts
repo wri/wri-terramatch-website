@@ -8,7 +8,6 @@ import {
 import ApiSlice from "@/store/apiSlice";
 import { Filter } from "@/types/connection";
 
-// Extend the query params to include pagination parameters
 type ExtendedDashboardQueryParams = DashboardEntityIndexQueryParams & {
   ["page[size]"]?: number;
   ["page[number]"]?: number;

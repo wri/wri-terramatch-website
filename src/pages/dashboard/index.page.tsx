@@ -17,12 +17,7 @@ import { CountriesProps, useDashboardContext } from "@/context/dashboard.provide
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import {
-  formatCohortDisplay,
-  formatLabelsVolunteers,
-  parseDataToObjetive,
-  parseHectaresUnderRestorationData
-} from "@/utils/dashboardUtils";
+import { formatCohortDisplay, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -127,17 +122,6 @@ const parseJobCreatedByType = (data: any, type: string) => {
   return { type, chartData, total: data.totalJobsCreated, maxValue };
 };
 
-const parseVolunteersByType = (data: any, type: string) => {
-  if (!data) return { type, chartData: [] };
-  const firstvalue = type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth";
-  const secondValue = type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth";
-  const chartData = [
-    { name: formatLabelsVolunteers(firstvalue), value: data[`${firstvalue}_volunteers`] },
-    { name: formatLabelsVolunteers(secondValue), value: data[`${secondValue}_volunteers`] }
-  ];
-  return { type, chartData, total: data.total_volunteers };
-};
-
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
@@ -149,14 +133,12 @@ const Dashboard = () => {
     dashboardHeader,
     dashboardRestorationGoalData,
     jobsCreatedData,
-    dashboardVolunteersSurvivalRate,
     totalSectionHeader,
     hectaresUnderRestoration,
     numberTreesPlanted,
     isLoadingJobsCreated,
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
-    isLoadingVolunteers,
     projectLoaded,
     projectFullDto,
     coverImage,
@@ -382,15 +364,6 @@ const Dashboard = () => {
   const jobsCreatedByAgeData = useMemo(
     () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age),
     [jobsCreatedData]
-  );
-
-  const volunteersCreatedByGenderData = useMemo(
-    () => parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.gender),
-    [dashboardVolunteersSurvivalRate]
-  );
-  const volunteersCreatedByAgeData = useMemo(
-    () => parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.age),
-    [dashboardVolunteersSurvivalRate]
   );
 
   const projectCounts = useMemo(
@@ -672,40 +645,6 @@ const Dashboard = () => {
               isLoading={isLoadingJobsCreated}
             />
           </div>
-          <div className="hidden">
-            <SecDashboard
-              title={t("Total Volunteers")}
-              data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
-              tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-            />
-          </div>
-
-          <div className="hidden w-full grid-cols-2 gap-12">
-            {/* add grid and remove hidden*/}
-            <SecDashboard
-              title={t("Volunteers Created by Gender")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={volunteersCreatedByGenderData}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-            <SecDashboard
-              title={t("Volunteers Created by Age")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={volunteersCreatedByAgeData}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-          </div>
         </PageCard>
       </ContentDashboardtWrapper>
       <ContentOverview
@@ -723,7 +662,7 @@ const Dashboard = () => {
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
           projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.totalHectaresRestored ?? 0,
-          projectFullDto ? projectFullDto.totalSites : dashboardVolunteersSurvivalRate?.number_of_sites ?? 0,
+          projectFullDto ? projectFullDto.totalSites : totalSectionHeader?.totalSites ?? 0,
           hectaresUnderRestoration
         )}
         textTooltipTable={tooltipText}

@@ -1,6 +1,9 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
-import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
+import {
+  DashboardProjectsLightDto,
+  TreeRestorationGoalDto
+} from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DataPoint = {
@@ -385,11 +388,22 @@ export const parseHectaresUnderRestorationData = (
   numberOfSites: number,
   hectaresUnderRestoration: HectaresUnderRestoration | undefined
 ): HectaresUnderRestorationData => {
-  if (totalHectaresRestored === undefined || numberOfSites === undefined || !hectaresUnderRestoration) {
+  if (totalHectaresRestored === undefined || numberOfSites === undefined) {
     return {
       totalSection: {
         totalHectaresRestored: 0,
         numberOfSites: 0
+      },
+      restorationStrategiesRepresented: [],
+      graphicTargetLandUseTypes: []
+    };
+  }
+
+  if (!hectaresUnderRestoration) {
+    return {
+      totalSection: {
+        totalHectaresRestored: Number((totalHectaresRestored ?? 0).toFixed(0)),
+        numberOfSites: numberOfSites ?? 0
       },
       restorationStrategiesRepresented: [],
       graphicTargetLandUseTypes: []
@@ -680,3 +694,48 @@ export function parseTreeCoverData(
     };
   });
 }
+
+export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[]) => {
+  if (!projects || projects.length === 0) {
+    return {
+      totalTreesRestored: 0,
+      totalHectaresRestored: 0,
+      totalJobsCreated: 0,
+      totalTreesRestoredGoal: 0,
+      totalEnterpriseCount: 0,
+      totalNonProfitCount: 0,
+      totalSites: 0
+    };
+  }
+
+  return projects.reduce(
+    (acc, project) => {
+      acc.totalTreesRestored += project.treesPlantedCount || 0;
+
+      acc.totalHectaresRestored += project.totalHectaresRestoredSum || 0;
+
+      acc.totalJobsCreated += project.totalJobsCreated || 0;
+
+      acc.totalTreesRestoredGoal += project.treesGrownGoal || 0;
+
+      acc.totalSites += project.totalSites || 0;
+
+      if (project.organisationType === "for-profit-organization") {
+        acc.totalEnterpriseCount += 1;
+      } else if (project.organisationType === "non-profit-organization") {
+        acc.totalNonProfitCount += 1;
+      }
+
+      return acc;
+    },
+    {
+      totalTreesRestored: 0,
+      totalHectaresRestored: 0,
+      totalJobsCreated: 0,
+      totalTreesRestoredGoal: 0,
+      totalEnterpriseCount: 0,
+      totalNonProfitCount: 0,
+      totalSites: 0
+    }
+  );
+};
