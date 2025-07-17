@@ -17,12 +17,24 @@ import {
 } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
+import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, createQueryParams } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
+
+const DEFAULT_COHORT: string[] = ["terrafund", "terrafund-landscapes"];
+const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [
+  "non-profit-organization",
+  "for-profit-organization"
+];
+const DEFAULT_PROGRAMME_TYPES: ("terrafund" | "terrafund-landscapes" | "enterprises")[] = [
+  "terrafund",
+  "terrafund-landscapes",
+  "enterprises"
+];
 
 export const useDashboardData = (filters: any) => {
   const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
@@ -97,7 +109,7 @@ export const useDashboardData = (filters: any) => {
   const { searchTerm } = useDashboardContext();
 
   const dashboardProjectsQueryParams = useMemo(() => {
-    const params: any = {};
+    const params: HookFilters<typeof useDashboardProjects> = {};
 
     if (filters?.country?.country_slug?.trim() !== "") {
       params.country = filters.country.country_slug;
@@ -110,19 +122,19 @@ export const useDashboardData = (filters: any) => {
     if (filters?.cohort && filters.cohort.length > 0) {
       params.cohort = filters.cohort;
     } else {
-      params.cohort = ["terrafund", "terrafund-landscapes"];
+      params.cohort = DEFAULT_COHORT;
     }
 
     if (filters?.organizations?.length === 1) {
       params["organisationType[]"] = filters.organizations;
     } else {
-      params["organisationType[]"] = ["non-profit-organization", "for-profit-organization"];
+      params["organisationType[]"] = DEFAULT_ORGANIZATION_TYPES;
     }
 
     if (filters?.frameworks?.length > 0) {
       params["programmesType[]"] = filters.frameworks;
     } else {
-      params["programmesType[]"] = ["terrafund", "terrafund-landscapes", "enterprises"];
+      params["programmesType[]"] = DEFAULT_PROGRAMME_TYPES;
     }
 
     return params;
@@ -138,8 +150,46 @@ export const useDashboardData = (filters: any) => {
     filter: dashboardProjectsQueryParams
   });
 
+  const treeRestorationGoalFilter = useMemo(
+    () => ({
+      "programmesType[]": filters.programmes,
+      country: filters.country.country_slug,
+      "organisationType[]": filters.organizations,
+      landscapes: convertNamesToCodes(filters.landscapes),
+      cohort: filters.cohort,
+      projectUuid: filters.uuid
+    }),
+    [
+      filters.programmes,
+      filters.country.country_slug,
+      filters.organizations,
+      filters.landscapes,
+      filters.cohort,
+      filters.uuid
+    ]
+  );
+
+  const hectareRestorationFilter = useMemo(
+    () => ({
+      "programmesType[]": filters.programmes,
+      country: filters.country.country_slug,
+      "organisationType[]": filters.organizations,
+      landscapes: convertNamesToCodes(filters.landscapes),
+      cohort: filters.cohort,
+      projectUuid: filters.uuid
+    }),
+    [
+      filters.programmes,
+      filters.country.country_slug,
+      filters.organizations,
+      filters.landscapes,
+      filters.cohort,
+      filters.uuid
+    ]
+  );
+
   const calculatedTotals = useMemo(() => {
-    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData)) {
+    if (!Array.isArray(dashboardProjectsData)) {
       return null;
     }
     return calculateTotalsFromProjects(dashboardProjectsData as DashboardProjectsLightDto[]);
@@ -178,14 +228,7 @@ export const useDashboardData = (filters: any) => {
   }, [allPolygonsData]);
 
   const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
-    filter: {
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }
+    filter: treeRestorationGoalFilter
   });
 
   const transformedTreeRestorationGoalData = useMemo(() => {
@@ -214,14 +257,7 @@ export const useDashboardData = (filters: any) => {
   }, [dashboardRestorationGoalData]);
 
   const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
-    filter: {
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }
+    filter: hectareRestorationFilter
   });
 
   const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
@@ -232,8 +268,7 @@ export const useDashboardData = (filters: any) => {
   });
 
   const dashboardProjects = useMemo((): DashboardProjectsLightDto[] => {
-    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData) || dashboardProjectsData.length === 0)
-      return [];
+    if (!Array.isArray(dashboardProjectsData) || dashboardProjectsData.length === 0) return [];
 
     return dashboardProjectsData as DashboardProjectsLightDto[];
   }, [dashboardProjectsData]);

@@ -83,7 +83,7 @@ export interface GraphicLegendProps {
 }
 
 const mapActiveProjects = (projects: DashboardProjectsLightDto[], excludeUUID?: string) => {
-  return projects ? projects.filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID) : [];
+  return projects ? projects.filter((item: { uuid: string }) => excludeUUID == null || item.uuid !== excludeUUID) : [];
 };
 
 const getOrganizationByUuid = (projects: any[], uuid: string) => {

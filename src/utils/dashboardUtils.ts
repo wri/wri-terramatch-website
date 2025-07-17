@@ -399,7 +399,7 @@ export const parseHectaresUnderRestorationData = (
     };
   }
 
-  if (!hectaresUnderRestoration) {
+  if (hectaresUnderRestoration == null) {
     return {
       totalSection: {
         totalHectaresRestored: Number((totalHectaresRestored ?? 0).toFixed(0)),
@@ -710,15 +710,15 @@ export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[
 
   return projects.reduce(
     (acc, project) => {
-      acc.totalTreesRestored += project.treesPlantedCount || 0;
+      acc.totalTreesRestored += project.treesPlantedCount ?? 0;
 
-      acc.totalHectaresRestored += project.totalHectaresRestoredSum || 0;
+      acc.totalHectaresRestored += project.totalHectaresRestoredSum ?? 0;
 
-      acc.totalJobsCreated += project.totalJobsCreated || 0;
+      acc.totalJobsCreated += project.totalJobsCreated ?? 0;
 
-      acc.totalTreesRestoredGoal += project.treesGrownGoal || 0;
+      acc.totalTreesRestoredGoal += project.treesGrownGoal ?? 0;
 
-      acc.totalSites += project.totalSites || 0;
+      acc.totalSites += project.totalSites ?? 0;
 
       if (project.organisationType === "for-profit-organization") {
         acc.totalEnterpriseCount += 1;
