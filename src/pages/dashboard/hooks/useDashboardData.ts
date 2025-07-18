@@ -268,14 +268,12 @@ export const useDashboardData = (filters: any) => {
     });
 
   const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
-    filter: {
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }
+    "programmesType[]": filters.programmes,
+    country: filters.country.country_slug,
+    "organisationType[]": filters.organizations,
+    landscapes: convertNamesToCodes(filters.landscapes),
+    cohort: filters.cohort,
+    projectUuid: filters.uuid
   });
 
   const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
