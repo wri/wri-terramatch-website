@@ -56,6 +56,7 @@ import { PolygonHandler } from "./MapControls/PolygonHandler";
 import PolygonModifier from "./MapControls/PolygonModifier";
 import ProcessBulkPolygonsControl from "./MapControls/ProcessBulkPolygonsControl";
 import { StyleControl } from "./MapControls/StyleControl";
+import TrashButton from "./MapControls/TrashButton";
 import { MapStyle } from "./MapControls/types";
 import ViewImageCarousel from "./MapControls/ViewImageCarousel";
 import { ZoomControl } from "./MapControls/ZoomControl";
@@ -649,6 +650,7 @@ export const MapContainer = ({
         <ControlGroup position="top-right" className="top-21">
           <ZoomControl map={map.current} />
         </ControlGroup>
+
         <When condition={!!record?.uuid && validationType === "bulkValidation"}>
           <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
             <CheckPolygonControl
@@ -704,6 +706,11 @@ export const MapContainer = ({
             <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
           </button>
         </ControlGroup>
+        <When condition={polygonFromMap?.isOpen}>
+          <ControlGroup position="top-right" className="top-[249px]">
+            <TrashButton onClick={mapFunctions?.handleTrashDelete} />
+          </ControlGroup>
+        </When>
         <When condition={!formMap && showViewGallery}>
           <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
             <When condition={showImagesButton}>

@@ -38,6 +38,16 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
   };
+
+  const handleTrashDelete = () => {
+    if (draw?.current) {
+      const trashButton = document.querySelector(".mapbox-gl-draw_trash") as HTMLButtonElement;
+      if (trashButton) {
+        trashButton.click();
+      }
+    }
+  };
+
   const initMap = (isDashboard?: boolean) => {
     if (map.current) return;
 
@@ -55,7 +65,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
         point: false,
         line_string: false,
         polygon: false,
-        trash: false,
+        trash: true, // Re-enable trash control for built-in functionality
         combine_features: false,
         uncombine_features: false
       }
@@ -111,6 +121,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     setChangeStyle,
     changeStyle,
     mapLoaded,
-    setMapLoaded
+    setMapLoaded,
+    handleTrashDelete
   };
 };
