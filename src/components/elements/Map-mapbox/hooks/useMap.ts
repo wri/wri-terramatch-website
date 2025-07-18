@@ -40,9 +40,9 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   };
 
   const handleTrashDelete = () => {
-    if (draw?.current) {
-      const trashButton = document.querySelector(".mapbox-gl-draw_trash") as HTMLButtonElement;
-      if (trashButton) {
+    if (draw?.current !== null) {
+      const trashButton = document.querySelector(".mapbox-gl-draw_trash") as HTMLButtonElement | null;
+      if (trashButton !== null) {
         trashButton.click();
       }
     }

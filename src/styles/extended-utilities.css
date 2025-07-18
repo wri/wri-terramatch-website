@@ -732,10 +732,6 @@
 .mapboxgl-map {
   border-radius: 10px;
 }
-
-.mapbox-gl-draw_trash {
-  display: none !important;
-}
 .one-line-text {
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -753,4 +749,8 @@
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.mapbox-gl-draw_trash {
+  display: none !important;
 }
