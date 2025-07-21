@@ -2,13 +2,19 @@ import { useT } from "@transifex/react";
 
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
+import FinancialExchangeSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialExchangeSection";
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import Text from "@/components/elements/Text/Text";
 import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import CardFinancial from "@/pages/organization/[id]/components/financial/components/cardFinancial";
-import { calculateFinancialRatioStats, formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
+import {
+  calculateFinancialRatioStats,
+  formatDescriptionData,
+  formatDocumentData,
+  formatExchangeData
+} from "@/utils/financialReport";
 
 import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
 import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
@@ -150,6 +156,12 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
             {t("Descriptions of Financials per Year")}
           </Text>
           <FinancialDescriptionsSection items={formatDescriptionData(report?.financial_collection)} />
+        </div>
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Exchange Rate by Year")}
+          </Text>
+          <FinancialExchangeSection items={formatExchangeData(report?.financial_collection)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
