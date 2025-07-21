@@ -124,6 +124,10 @@ export type TotalJobsCreatedDto = {
 };
 
 export type DashboardProjectsLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   country: string | null;
   frameworkKey: string | null;
@@ -140,6 +144,10 @@ export type DashboardProjectsLightDto = {
 };
 
 export type DashboardProjectsFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   country: string | null;
   frameworkKey: string | null;
@@ -153,6 +161,9 @@ export type DashboardProjectsFullDto = {
   treesGrownGoal: number | null;
   totalSites: number;
   totalJobsCreated: number | null;
+  cohort: string[] | null;
+  objectives: string | null;
+  landTenureProjectArea: string[] | null;
 };
 
 export type HectareRestorationDto = {

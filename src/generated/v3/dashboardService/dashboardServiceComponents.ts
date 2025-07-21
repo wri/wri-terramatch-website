@@ -12,7 +12,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -83,7 +83,7 @@ export type GetTreeRestorationGoalQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -137,7 +137,7 @@ export type GetTotalJobsCreatedQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -215,7 +215,7 @@ export type DashboardEntityIndexQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -239,6 +239,30 @@ export type DashboardEntityIndexResponse = {
      * @example dashboardProjects
      */
     resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
   };
   data?: {
     /**
@@ -250,7 +274,7 @@ export type DashboardEntityIndexResponse = {
      */
     id?: string;
     attributes?: Schemas.DashboardProjectsLightDto;
-  };
+  }[];
 };
 
 export type DashboardEntityIndexVariables = {
@@ -269,41 +293,70 @@ export type DashboardEntityGetPathParams = {
   /**
    * Entity UUID
    */
-  uuid: void;
+  uuid: string;
   /**
    * Dashboard entity type
    */
   entity: "dashboardProjects";
 };
 
-export type DashboardEntityGetError = Fetcher.ErrorWrapper<undefined>;
-
-export type DashboardEntityGetResponse = {
-  meta?: {
+export type DashboardEntityGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
     /**
-     * @example dashboardProjects
+     * @example 404
      */
-    resourceType?: string;
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
   };
-  data?: {
-    /**
-     * @example dashboardProjects
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DashboardProjectsFullDto;
-  };
-};
+}>;
 
 export type DashboardEntityGetVariables = {
   pathParams: DashboardEntityGetPathParams;
 };
 
 export const dashboardEntityGet = new V3ApiEndpoint<
-  DashboardEntityGetResponse,
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsFullDto;
+      };
+    },
   DashboardEntityGetError,
   DashboardEntityGetVariables,
   {}
@@ -314,7 +367,7 @@ export type GetHectaresRestorationQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */

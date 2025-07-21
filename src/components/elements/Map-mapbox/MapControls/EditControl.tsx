@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { useContext } from "react";
 import { When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -7,32 +7,37 @@ import { useOnMount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
+import { MapEditingContext } from "../Map";
 
 const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: any; onCancel?: any }) => {
   const t = useT();
-  const [isEditing, setIsEditing] = React.useState(false);
   const { selectedPolyVersion } = useMapAreaContext();
+  const { isEditing, setIsEditing } = useContext(MapEditingContext);
+
   useOnMount(() => {
     return () => {
       onCancel();
     };
   });
+
   const handleSaveButton = () => {
     onSave();
     setIsEditing(false);
   };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    onClick();
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    onCancel();
+  };
   return (
     <When condition={!selectedPolyVersion?.uuid}>
       <div className="flex w-[160px] flex-col items-center gap-1">
-        <Button
-          id="buttonEditPolygon"
-          variant="white"
-          className="w-full py-2"
-          onClick={() => {
-            setIsEditing(true);
-            onClick();
-          }}
-        >
+        <Button id="buttonEditPolygon" variant="white" className="w-full py-2" onClick={handleEditClick}>
           <Text variant="text-12-bold" className="leading-[normal] text-black">
             {t("Edit Polygon")}
           </Text>
@@ -44,14 +49,7 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
                 {t("Save")}
               </Text>
             </Button>
-            <Button
-              variant="sky-page-admin"
-              className="w-full"
-              onClick={() => {
-                setIsEditing(false);
-                onCancel();
-              }}
-            >
+            <Button variant="sky-page-admin" className="w-full" onClick={handleCancelClick}>
               <Text variant="text-12-bold" className="leading-[normal]">
                 {t("Cancel")}
               </Text>
