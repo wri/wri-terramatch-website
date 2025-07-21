@@ -208,6 +208,7 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  console.log(props);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -249,6 +250,8 @@ export const MapContainer = ({
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }
   );
+
+  console.log(entityData, polygonFromMap);
 
   useOnMount(() => {
     initMap(!!isDashboard);
@@ -550,6 +553,21 @@ export const MapContainer = ({
     }
   };
 
+  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
+    console.log(polygonFromMap, polygonFromMap, polygonBbox, map.current, selectedPolyVersion, draw.current);
+    console.log(draw.current.getAll());
+    /* const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
+      queryParams: { uuid: polygonUuid }
+    }); */
+    const blob = new Blob([JSON.stringify(draw.current.getAll())], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${polygon_name}.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
   const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
@@ -634,6 +652,15 @@ export const MapContainer = ({
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
+        <ControlGroup position="top-right">
+          <button
+            type="button"
+            className="shadow-lg absolute top-4 right-4 z-10 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200"
+            onClick={() => downloadGeoJsonPolygon("", "polygons")}
+          >
+            <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" /> Download Polygons
+          </button>
+        </ControlGroup>
         <When condition={hasControls}>
           <When condition={polygonFromMap?.isOpen && !formMap}>
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
