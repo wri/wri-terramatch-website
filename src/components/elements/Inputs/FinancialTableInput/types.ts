@@ -64,7 +64,7 @@ export type FinancialRow = {
 export const profitAnalysisColumnsMap = ["year", "revenue", "expenses", "profit"];
 export const nonProfitAnalysisColumnsMap = ["year", "budget"];
 export const currentRatioColumnsMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-export const documentationColumnsMap = ["year", "documentation", "exchange_rate", "description"];
+export const documentationColumnsMap = ["year", "description", "exchange_rate", "documentation"];
 
 export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }: UseDebouncedChangeProps<T>) {
   const debouncedFn = useMemo(() => debounce(onDebouncedChange, delay), [onDebouncedChange, delay]);
