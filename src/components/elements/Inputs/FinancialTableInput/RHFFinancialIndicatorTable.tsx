@@ -712,7 +712,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         accessorKey: "description",
         enableSorting: false,
         meta: {
-          width: "30%"
+          style: { width: "60%", minWidth: "300px" }
         },
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
           const visibleCells = row.getVisibleCells();
@@ -753,7 +753,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           return (
             <TextArea
               name={`row-${row.index}-${columnKey}`}
-              className="h-fit min-h-min hover:border-primary hover:shadow-input"
+              className="hover:border-primary hover:shadow-input"
               placeholder="Add description here"
               rows={2}
               value={tempValue}
