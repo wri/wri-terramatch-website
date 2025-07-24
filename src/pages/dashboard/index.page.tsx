@@ -323,29 +323,28 @@ const Dashboard = () => {
     [setFilters]
   );
 
-  const DATA_ACTIVE_PROGRAMME = useMemo(
-    () =>
-      Array.isArray(activeCountries?.data)
-        ? activeCountries?.data.map(
-            (item: {
-              country: string;
-              country_slug: string;
-              number_of_projects: number;
-              total_trees_planted: number;
-              total_jobs_created: number;
-              hectares_restored: number;
-            }) => ({
-              country_slug: item.country_slug,
-              country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
-              project: item.number_of_projects.toLocaleString(),
-              treesPlanted: item.total_trees_planted.toLocaleString(),
-              restorationHectares: item.hectares_restored.toLocaleString(),
-              jobsCreated: item.total_jobs_created.toLocaleString()
-            })
-          )
-        : [],
-    [activeCountries?.data]
-  );
+  const DATA_ACTIVE_PROGRAMME = useMemo(() => {
+    if (!Array.isArray(activeCountries)) return [];
+    const data = activeCountries.map(
+      (item: {
+        country: string;
+        numberOfProjects: number;
+        totalTreesPlanted: number;
+        totalJobsCreated: number;
+        hectaresRestored: number;
+      }) => ({
+        uuid: item.country,
+        country: `${
+          countryChoices?.find(choice => choice.id === item.country)?.name ?? item.country
+        }_/flags/${item.country.toLowerCase()}.svg`,
+        project: item.numberOfProjects.toLocaleString(),
+        treesPlanted: item.totalTreesPlanted.toLocaleString(),
+        restorationHectares: item.hectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 }),
+        jobsCreated: item.totalJobsCreated.toLocaleString()
+      })
+    );
+    return data.sort((a, b) => a.country.localeCompare(b.country));
+  }, [activeCountries, countryChoices]);
 
   const projectsInCountry = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
   const otherProjectsInCountry = useMemo(
