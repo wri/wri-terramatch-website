@@ -22,6 +22,7 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
 import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
@@ -70,7 +71,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const activeCountries = useMemo(() => {
     if (!activeProjects || !gadmCountries || !gadmCountries.length) return [];
 
-    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country_slug))].filter(
+    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country))].filter(
       Boolean
     ) as string[];
     const countries = uniqueCountrySlugs
@@ -95,17 +96,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     return countries.sort((a, b) => a.data.label.localeCompare(b.data.label));
   }, [activeProjects, gadmCountries]);
 
-  const optionMenu = activeProjects
-    ? activeProjects?.map((item, index: number) => ({
-        id: String(index),
-        country: item?.project_country || item?.country_slug || "",
-        organization: item?.organisation || "",
-        project: item?.name || "",
-        programme: item?.programme || "",
-        uuid: item?.uuid || "",
-        country_slug: item?.country_slug || ""
-      }))
-    : [];
+  const optionMenu = activeProjects || [];
 
   const organizationOptions = [
     {
@@ -548,46 +539,40 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
                   disabled={searchTerm.length < 3 || !optionMenu.length}
                   isDefaultOpen={true}
-                  menu={optionMenu.map(
-                    (option: {
-                      id: string;
-                      country: string;
-                      organization: string;
-                      project: string;
-                      programme: string;
-                      uuid: string;
-                      country_slug: string;
-                    }) => ({
-                      id: option.id,
-                      render: () => (
-                        <span
-                          className="leading-[normal] tracking-[normal]"
-                          onClick={async () => {
-                            showLoader();
-                            setFilters(prevValues => ({
-                              ...prevValues,
-                              uuid: option.uuid as string,
-                              country:
-                                activeCountries?.find(country => country.country_slug === option?.country_slug) ||
-                                prevValues.country
-                            }));
-                            router.push({
-                              pathname: "/dashboard",
-                              query: { ...filters, country: option?.country_slug, uuid: option.uuid as string }
-                            });
-                            hideLoader();
-                          }}
-                        >
-                          <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                            {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                          </Text>
-                          <Text variant="text-12-light" className="text-darkCustom" as="span">
-                            {t(option.project)},&nbsp;{t(option.programme)}
-                          </Text>
-                        </span>
-                      )
-                    })
-                  )}
+                  menu={optionMenu.map((option: DashboardProjectsLightDto, index: number) => ({
+                    id: String(index),
+                    render: () => (
+                      <span
+                        className="leading-[normal] tracking-[normal]"
+                        onClick={async () => {
+                          showLoader();
+                          setFilters(prevValues => ({
+                            ...prevValues,
+                            uuid: option.uuid,
+                            country:
+                              activeCountries?.find(country => country.country_slug === option.country) ||
+                              prevValues.country
+                          }));
+                          router.push({
+                            pathname: "/dashboard",
+                            query: {
+                              ...filters,
+                              country: option.country ?? "",
+                              uuid: option.uuid
+                            }
+                          });
+                          hideLoader();
+                        }}
+                      >
+                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                          {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom" as="span">
+                          {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}
+                        </Text>
+                      </span>
+                    )
+                  }))}
                 >
                   <When condition={!isMobile}>
                     <BlurContainer className="lg:min-w-[287px]">

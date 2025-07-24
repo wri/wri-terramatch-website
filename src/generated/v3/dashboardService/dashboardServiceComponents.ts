@@ -12,7 +12,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -83,7 +83,7 @@ export type GetTreeRestorationGoalQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -137,7 +137,7 @@ export type GetTotalJobsCreatedQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -203,12 +203,171 @@ export const getTotalJobsCreated = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/totalJobsCreated", "GET");
 
+export type DashboardEntityIndexPathParams = {
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects";
+};
+
+export type DashboardEntityIndexQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+};
+
+export type DashboardEntityIndexError = Fetcher.ErrorWrapper<undefined>;
+
+export type DashboardEntityIndexResponse = {
+  meta?: {
+    /**
+     * @example dashboardProjects
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
+  };
+  data?: {
+    /**
+     * @example dashboardProjects
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardProjectsLightDto;
+  }[];
+};
+
+export type DashboardEntityIndexVariables = {
+  pathParams: DashboardEntityIndexPathParams;
+  queryParams?: DashboardEntityIndexQueryParams;
+};
+
+export const dashboardEntityIndex = new V3ApiEndpoint<
+  DashboardEntityIndexResponse,
+  DashboardEntityIndexError,
+  DashboardEntityIndexVariables,
+  {}
+>("/dashboard/v3/{entity}", "GET");
+
+export type DashboardEntityGetPathParams = {
+  /**
+   * Entity UUID
+   */
+  uuid: string;
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects";
+};
+
+export type DashboardEntityGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type DashboardEntityGetVariables = {
+  pathParams: DashboardEntityGetPathParams;
+};
+
+export const dashboardEntityGet = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsFullDto;
+      };
+    },
+  DashboardEntityGetError,
+  DashboardEntityGetVariables,
+  {}
+>("/dashboard/v3/{entity}/{uuid}", "GET");
+
 export type GetHectaresRestorationQueryParams = {
   country?: string;
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -261,5 +420,6 @@ export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
   treeRestorationGoal: { getTreeRestorationGoal },
   totalJobsCreated: { getTotalJobsCreated },
+  dashboardEntities: { dashboardEntityIndex, dashboardEntityGet },
   hectaresRestoration: { getHectaresRestoration }
 };
