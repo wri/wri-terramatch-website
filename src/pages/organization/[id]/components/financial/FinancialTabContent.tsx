@@ -5,6 +5,7 @@ import { When } from "react-if";
 
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
+import FinancialExchangeSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialExchangeSection";
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
@@ -19,7 +20,12 @@ import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
-import { calculateFinancialRatioStats, formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
+import {
+  calculateFinancialRatioStats,
+  formatDescriptionData,
+  formatDocumentData,
+  formatExchangeData
+} from "@/utils/financialReport";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
@@ -215,6 +221,12 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             {t("Descriptions of Financials per Year")}
           </Text>
           <FinancialDescriptionsSection items={formatDescriptionData(financialData)} />
+        </div>
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Exchange Rate by Year")}
+          </Text>
+          <FinancialExchangeSection items={formatExchangeData(financialData)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">

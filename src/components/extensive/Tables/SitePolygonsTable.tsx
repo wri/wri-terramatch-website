@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { TableVariant } from "@/components/elements/Table/TableVariants";
-import { SitePolygonIndexConnectionProps, useSitePolygons } from "@/connections/SitePolygons";
+import { Indicator, sitePolygonsConnection } from "@/connections/SitePolygons";
 import { processIndicatorData } from "@/utils/MonitoredIndicatorUtils";
 
 export interface SitePolygonsTableProps {
-  entityName: string;
+  entityName: "projects" | "sites";
   entityUuid: string;
   searchTerm: string;
-  presentIndicator: SitePolygonIndexConnectionProps["presentIndicator"];
+  presentIndicator: Indicator;
   TABLE_COLUMNS_MAPPING: Record<string, any>;
   variant?: TableVariant;
 }
@@ -22,38 +22,19 @@ const SitePolygonsTable = ({
   TABLE_COLUMNS_MAPPING,
   variant
 }: SitePolygonsTableProps) => {
-  const initPageSize = 5;
-  const [queryParams, setQueryParams] = useState<any>({
-    per_page: initPageSize,
-    page: 1
-  });
-  const [tableMeta, setTableMeta] = useState<any>();
-  const [isLoaded, { sitePolygons, total }] = useSitePolygons({
-    entityName,
-    entityUuid,
-    search: searchTerm,
-    pageSize: queryParams.per_page,
-    pageNumber: queryParams.page,
-    presentIndicator: presentIndicator
-  });
-
-  useEffect(() => {
-    setTableMeta({
-      pageSize: queryParams.per_page,
-      last_page: total != null && total > +queryParams.per_page ? Math.ceil(total / +queryParams.per_page) : 1
-    });
-  }, [total, queryParams]);
-  const columns = presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : [];
-
+  const dataProcessor = useMemo(() => processIndicatorData(presentIndicator), [presentIndicator]);
   return (
-    <ServerSideTable
-      meta={tableMeta}
-      data={sitePolygons ? processIndicatorData(sitePolygons, presentIndicator ?? "") : []}
-      onQueryParamChange={setQueryParams}
-      columns={columns}
+    <ConnectionTable
+      connection={sitePolygonsConnection}
+      connectionProps={{
+        entityName,
+        entityUuid,
+        filter: { "presentIndicator[]": [presentIndicator], search: searchTerm }
+      }}
       variant={variant}
-      isLoading={!isLoaded}
-      defaultPageSize={initPageSize}
+      columns={presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : []}
+      defaultPageSize={5}
+      dataProcessor={dataProcessor}
     />
   );
 };

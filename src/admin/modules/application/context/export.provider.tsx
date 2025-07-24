@@ -4,7 +4,7 @@ import { useNotify } from "react-admin";
 import { fetchGetV2AdminFormsUUIDExport } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
+import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
 
 type ExportType = {
   loading: boolean;
@@ -41,9 +41,13 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
     try {
       setLoading(true);
       const res = await fn();
-      const blob = await downloadFileBlob(res, fileName);
+      if (res?.url) {
+        await downloadPresignedUrl(res.url, fileName);
+      } else {
+        await downloadFileBlob(res, fileName);
+      }
       setLoading(false);
-      return blob;
+      return res;
     } catch (err: any) {
       setLoading(false);
       setError(err.message);

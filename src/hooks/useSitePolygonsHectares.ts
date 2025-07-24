@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { SitePolygonIndexConnectionProps, useAllSitePolygons } from "@/connections/SitePolygons";
+import { PolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export interface HectaresData {
-  restoration_strategies_represented: Record<string, number>;
-  target_land_use_types_represented: Record<string, number>;
+  restorationStrategiesRepresented: Record<string, number>;
+  targetLandUseTypesRepresented: Record<string, number>;
 }
 
 export interface UseSitePolygonsHectaresResult {
@@ -15,7 +15,7 @@ export interface UseSitePolygonsHectaresResult {
   allPolygonsData: SitePolygonLightDto[];
 }
 
-const APPROVED_STATUS: SitePolygonIndexConnectionProps["polygonStatus"] = ["approved"];
+const APPROVED_STATUS: PolygonStatus[] = ["approved"];
 
 export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePolygonsHectaresResult => {
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +25,14 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
     error: fetchError
   } = useAllSitePolygons({
     entityName: "projects",
-    entityUuid: projectUuid ?? "",
-    enabled: !!projectUuid,
-    polygonStatus: APPROVED_STATUS
+    entityUuid: projectUuid ?? undefined,
+    enabled: projectUuid != null,
+    filter: { "polygonStatus[]": APPROVED_STATUS }
   });
 
   const transformPolygonsToHectaresData = useCallback((polygons: SitePolygonLightDto[]): HectaresData => {
-    const restoration_strategies_represented: Record<string, number> = {};
-    const target_land_use_types_represented: Record<string, number> = {};
+    const restorationStrategiesRepresented: Record<string, number> = {};
+    const targetLandUseTypesRepresented: Record<string, number> = {};
 
     polygons.forEach(polygon => {
       if (!polygon?.indicators || !Array.isArray(polygon.indicators)) return;
@@ -42,8 +42,8 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
           Object.entries(indicator.value).forEach(([strategy, hectares]) => {
             const numericValue = Number(hectares);
             if (!isNaN(numericValue) && numericValue > 0) {
-              restoration_strategies_represented[strategy] =
-                (restoration_strategies_represented[strategy] ?? 0) + numericValue;
+              restorationStrategiesRepresented[strategy] =
+                (restorationStrategiesRepresented[strategy] ?? 0) + numericValue;
             }
           });
         }
@@ -52,8 +52,7 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
           Object.entries(indicator.value).forEach(([landUse, hectares]) => {
             const numericValue = Number(hectares);
             if (!isNaN(numericValue) && numericValue > 0) {
-              target_land_use_types_represented[landUse] =
-                (target_land_use_types_represented[landUse] ?? 0) + numericValue;
+              targetLandUseTypesRepresented[landUse] = (targetLandUseTypesRepresented[landUse] ?? 0) + numericValue;
             }
           });
         }
@@ -61,8 +60,8 @@ export const useSitePolygonsHectares = (projectUuid: string | null): UseSitePoly
     });
 
     return {
-      restoration_strategies_represented,
-      target_land_use_types_represented
+      restorationStrategiesRepresented,
+      targetLandUseTypesRepresented
     };
   }, []);
 

@@ -26,8 +26,8 @@ export function usePopupData(event: any) {
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [projectLoaded, { entity: projectFullDto }] = useFullProject({
-    uuid: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
+  const [projectLoaded, { data: projectFullDto }] = useFullProject({
+    id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
   });
 
   const createProjectDataFromEntity = (projectFullDto: any) => {

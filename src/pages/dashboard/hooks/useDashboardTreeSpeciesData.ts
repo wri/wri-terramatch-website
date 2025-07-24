@@ -1,7 +1,9 @@
-import { isEmpty } from "lodash";
+import { flatten, isEmpty } from "lodash";
 import { useMemo } from "react";
 
 import { useSiteReportIndex } from "@/connections/Entity";
+import { selectTreeSpecies } from "@/connections/EntityAssociation";
+import { TreeSpeciesDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
@@ -34,7 +36,7 @@ export const useDashboardTreeSpeciesData = (
   treesGrownGoal: number | null | undefined,
   organisationType: string | null | undefined
 ) => {
-  const [connectionLoaded, { fetchFailure, entities, included }] = useSiteReportIndex({
+  const [connectionLoaded, { loadFailure, data }] = useSiteReportIndex({
     pageNumber: 1,
     sortField: "dueAt",
     sortDirection: "ASC",
@@ -43,26 +45,26 @@ export const useDashboardTreeSpeciesData = (
     enabled: !isEmpty(projectUuid)
   });
 
-  useValueChanged(fetchFailure, () => {
-    if (fetchFailure != null) {
-      Log.error("Error fetching site reports with tree species:", fetchFailure);
+  useValueChanged(loadFailure, () => {
+    if (loadFailure != null) {
+      Log.error("Error fetching site reports with tree species:", loadFailure);
     }
   });
 
   const treeSpeciesData = useMemo(() => {
-    if (entities == null || entities.length === 0) {
+    if (data == null || data.length === 0) {
       return DEFAULT_TREE_SPECIES_DATA;
     }
 
     const reportsByUuid = new Map();
-    entities.forEach(({ uuid, dueAt }) => {
+    data.forEach(({ uuid, dueAt }) => {
       reportsByUuid.set(uuid, {
         dueAt: dueAt
       });
     });
 
     const allDueDates = new Set<string>();
-    entities.forEach(({ dueAt }) => {
+    data.forEach(({ dueAt }) => {
       if (dueAt != null) {
         const dueDate = new Date(dueAt);
         const periodKey = dueDate.toISOString().split("T")[0];
@@ -83,16 +85,15 @@ export const useDashboardTreeSpeciesData = (
       treesByPeriod.set(date, { total: 0, forProfit: 0, nonProfit: 0 });
     });
 
-    included
-      ?.filter(({ type, attributes: { collection } }) => type === "treeSpecies" && collection === "tree-planted")
-      .forEach(species => {
-        const speciesAmount = Number(species.attributes?.amount || 0);
-        if (speciesAmount <= 0) return;
+    const treeSpecies = flatten(
+      data.map(({ uuid }) => selectTreeSpecies({ entity: "siteReports", uuid }).data).filter(trees => trees != null)
+    ) as TreeSpeciesDto[];
 
-        const entityUuid = species.attributes?.entityUuid;
-        if (!entityUuid) {
-          return;
-        }
+    treeSpecies
+      .filter(({ collection }) => collection === "tree-planted")
+      .forEach(({ amount, entityUuid }) => {
+        const speciesAmount = Number(amount ?? 0);
+        if (speciesAmount <= 0 || entityUuid == null) return;
 
         const reportData = reportsByUuid.get(entityUuid);
         if (!reportData || !reportData.dueAt) {
@@ -158,11 +159,11 @@ export const useDashboardTreeSpeciesData = (
       treesUnderRestorationActualForProfit: treesUnderRestorationActualForProfit,
       treesUnderRestorationActualNonProfit: treesUnderRestorationActualNonProfit
     };
-  }, [entities, included, treesGrownGoal, organisationType]);
+  }, [data, treesGrownGoal, organisationType]);
 
   return {
     treeSpeciesData,
     isLoading: !connectionLoaded,
-    error: fetchFailure == null ? undefined : new Error(`Failed to fetch site reports: ${fetchFailure.message}`)
+    error: loadFailure == null ? undefined : new Error(`Failed to fetch site reports: ${loadFailure.message}`)
   };
 };

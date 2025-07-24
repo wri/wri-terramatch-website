@@ -1,3 +1,13 @@
+import { isEmpty } from "lodash";
+
+import { Indicator } from "@/connections/SitePolygons";
+import {
+  IndicatorHectaresDto,
+  IndicatorTreeCoverDto,
+  IndicatorTreeCoverLossDto,
+  SitePolygonLightDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
+
 type EcoRegionCategory = "australasian" | "afrotropical" | "paleartic" | "neotropical";
 
 const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
@@ -105,7 +115,7 @@ export const formatDescriptionIndicator = (
   baseText?: string
 ) => {
   const validItems = Object.entries(items)
-    .filter(([key, value]) => value != undefined && value != null && !Number.isNaN(value))
+    .filter(([, value]) => value != null && !Number.isNaN(value))
     .map(
       ([key, value]) =>
         `<b>${key}</b> with <b>${value} ha </b>${
@@ -124,7 +134,8 @@ export const formatDescriptionIndicator = (
   return formattedItems;
 };
 
-const formattedValue = (value: number, decimals: number) => (value === 0 ? "0" : value?.toFixed(decimals));
+const formattedValue = (value: number | null | undefined, decimals: number) =>
+  value == null || value === 0 ? "0" : value?.toFixed(decimals);
 
 const getEcoRegionCategory = (region: string): EcoRegionCategory | null => {
   for (const category in categoriesFromEcoRegion) {
@@ -135,18 +146,18 @@ const getEcoRegionCategory = (region: string): EcoRegionCategory | null => {
   return null;
 };
 
-export const processIndicatorData = (apiResponse: any[], presentIndicator: string) => {
-  if (!apiResponse || !Array.isArray(apiResponse)) {
+export const processIndicatorData = (presentIndicator: Indicator) => (polygons: SitePolygonLightDto[]) => {
+  if (isEmpty(polygons)) {
     return [];
   }
 
-  const response = apiResponse
+  return polygons
     .map(sitePolygon => {
       const indicator = sitePolygon?.indicators?.find(
         (ind: { indicatorSlug: string }) => ind.indicatorSlug === presentIndicator
       );
 
-      if (!indicator) return null;
+      if (indicator == null) return null;
 
       const commonFields = {
         poly_name: sitePolygon.name,
@@ -154,65 +165,64 @@ export const processIndicatorData = (apiResponse: any[], presentIndicator: strin
         status: sitePolygon.status,
         plantstart: formatDate(sitePolygon.plantStart),
         site_id: sitePolygon.siteId,
-        poly_id: sitePolygon.id,
+        poly_id: sitePolygon.polygonUuid,
         siteName: sitePolygon.siteName
       };
 
       switch (presentIndicator) {
-        case "treeCover":
+        case "treeCover": {
+          const treeCover = indicator as IndicatorTreeCoverDto;
           return {
             ...commonFields,
-            yearOfAnalysis: indicator.yearOfAnalysis,
-            percentCover: indicator.percentCover,
-            projectPhase: indicator.projectPhase,
-            plusMinusPercent: indicator.plusMinusPercent
+            yearOfAnalysis: treeCover.yearOfAnalysis,
+            percentCover: treeCover.percentCover,
+            projectPhase: treeCover.projectPhase,
+            plusMinusPercent: treeCover.plusMinusPercent
           };
+        }
 
         case "treeCoverLoss":
-        case "treeCoverLossFires":
-          return {
-            ...commonFields,
-            site_name: sitePolygon.siteName || sitePolygon.site_name,
-            data: {
-              "2010": formattedValue(indicator.value?.["2010"], 3),
-              "2011": formattedValue(indicator.value?.["2011"], 3),
-              "2012": formattedValue(indicator.value?.["2012"], 3),
-              "2013": formattedValue(indicator.value?.["2013"], 3),
-              "2014": formattedValue(indicator.value?.["2014"], 3),
-              "2015": formattedValue(indicator.value?.["2015"], 3),
-              "2016": formattedValue(indicator.value?.["2016"], 3),
-              "2017": formattedValue(indicator.value?.["2017"], 3),
-              "2018": formattedValue(indicator.value?.["2018"], 3),
-              "2019": formattedValue(indicator.value?.["2019"], 3),
-              "2020": formattedValue(indicator.value?.["2020"], 3),
-              "2021": formattedValue(indicator.value?.["2021"], 3),
-              "2022": formattedValue(indicator.value?.["2022"], 3),
-              "2023": formattedValue(indicator.value?.["2023"], 3),
-              "2024": formattedValue(indicator.value?.["2024"], 3),
-              "2025": formattedValue(indicator.value?.["2025"], 3)
-            },
-            created_at: indicator.created_at
-          };
-
-        case "restorationByStrategy":
+        case "treeCoverLossFires": {
+          const treeCoverLoss = indicator as IndicatorTreeCoverLossDto;
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            base_line: indicator.baseline,
             data: {
-              tree_planting: indicator.value?.["tree-planting"]
-                ? formattedValue(indicator.value?.["tree-planting"], 3)
-                : 0,
-              assisted_natural_regeneration: indicator.value?.["assisted-natural-regeneration"]
-                ? formattedValue(indicator.value?.["assisted-natural-regeneration"], 3)
-                : 0,
-              direct_seeding: indicator.value?.["direct-seeding"]
-                ? formattedValue(indicator.value?.["direct-seeding"], 3)
-                : 0
+              "2010": formattedValue(treeCoverLoss.value?.["2010"], 3),
+              "2011": formattedValue(treeCoverLoss.value?.["2011"], 3),
+              "2012": formattedValue(treeCoverLoss.value?.["2012"], 3),
+              "2013": formattedValue(treeCoverLoss.value?.["2013"], 3),
+              "2014": formattedValue(treeCoverLoss.value?.["2014"], 3),
+              "2015": formattedValue(treeCoverLoss.value?.["2015"], 3),
+              "2016": formattedValue(treeCoverLoss.value?.["2016"], 3),
+              "2017": formattedValue(treeCoverLoss.value?.["2017"], 3),
+              "2018": formattedValue(treeCoverLoss.value?.["2018"], 3),
+              "2019": formattedValue(treeCoverLoss.value?.["2019"], 3),
+              "2020": formattedValue(treeCoverLoss.value?.["2020"], 3),
+              "2021": formattedValue(treeCoverLoss.value?.["2021"], 3),
+              "2022": formattedValue(treeCoverLoss.value?.["2022"], 3),
+              "2023": formattedValue(treeCoverLoss.value?.["2023"], 3),
+              "2024": formattedValue(treeCoverLoss.value?.["2024"], 3),
+              "2025": formattedValue(treeCoverLoss.value?.["2025"], 3)
             }
           };
+        }
+
+        case "restorationByStrategy": {
+          const hectares = indicator as IndicatorHectaresDto;
+          return {
+            ...commonFields,
+            site_name: sitePolygon.siteName,
+            data: {
+              tree_planting: formattedValue(hectares.value?.["tree-planting"], 3),
+              assisted_natural_regeneration: formattedValue(hectares.value?.["assisted-natural-regeneration"], 3),
+              direct_seeding: formattedValue(hectares.value?.["direct-seeding"], 3)
+            }
+          };
+        }
 
         case "restorationByEcoRegion": {
+          const hectares = indicator as IndicatorHectaresDto;
           const data: Record<EcoRegionCategory, string | null> = {
             australasian: null,
             afrotropical: null,
@@ -220,45 +230,43 @@ export const processIndicatorData = (apiResponse: any[], presentIndicator: strin
             neotropical: null
           };
 
-          for (const region in indicator.value) {
+          for (const region in hectares.value) {
             const category = getEcoRegionCategory(region);
 
             if (category) {
-              data[category] = formattedValue(indicator.value[region], 3);
+              data[category] = formattedValue(hectares.value[region], 3);
             }
           }
 
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            base_line: indicator.baseline,
             data: data
           };
         }
 
-        case "restorationByLandUse":
+        case "restorationByLandUse": {
+          const hectares = indicator as IndicatorHectaresDto;
           return {
             ...commonFields,
             site_name: sitePolygon.siteName,
-            base_line: indicator.baseline,
             data: {
-              agroforest: indicator.value?.agroforest ? formattedValue(indicator.value?.agroforest, 3) : 0,
-              natural_forest: indicator.value?.natural_forest ? formattedValue(indicator.value?.natural_forest, 3) : 0,
-              mangrove: indicator.value?.mangrove ? formattedValue(indicator.value?.mangrove, 3) : 0
+              agroforest: formattedValue(hectares.value?.agroforest, 3),
+              natural_forest: formattedValue(hectares.value?.["natural-forest"], 3),
+              mangrove: formattedValue(hectares.value?.mangrove, 3)
             }
           };
+        }
 
         default:
           return commonFields;
       }
     })
-    .filter(Boolean);
-
-  return response;
+    .filter(row => row != null);
 };
 
-const formatDate = (dateString: string | number | Date) => {
-  if (!dateString) return "";
+const formatDate = (dateString?: null | string | number | Date) => {
+  if (dateString == null) return "";
   const date = new Date(dateString);
   return date.toLocaleDateString();
 };

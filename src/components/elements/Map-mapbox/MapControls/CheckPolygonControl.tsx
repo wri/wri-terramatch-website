@@ -6,6 +6,7 @@ import { When } from "react-if";
 import {
   ESTIMATED_AREA_CRITERIA_ID,
   OVERLAPPING_CRITERIA_ID,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -64,7 +65,11 @@ const getTransformedData = (
     const matchingPolygon = Array.isArray(sitePolygonData)
       ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
       : null;
-    const excludedFromValidationCriterias = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID];
+    const excludedFromValidationCriterias = [
+      ESTIMATED_AREA_CRITERIA_ID,
+      WITHIN_COUNTRY_CRITERIA_ID,
+      PLANT_START_DATE_CRITERIA_ID
+    ];
     const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
     const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
     let isValid = false;

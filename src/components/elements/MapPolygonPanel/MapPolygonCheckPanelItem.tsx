@@ -50,9 +50,7 @@ const MapPolygonCheckPanelItem = ({
 
   const { map } = mapFunctions;
 
-  const [, { bbox }] = useBoundingBox({
-    polygonUuid: uuid
-  });
+  const bbox = useBoundingBox({ polygonUuid: uuid });
 
   const flyToPolygonBounds = async () => {
     if (!map.current || !bbox) {

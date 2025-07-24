@@ -1,5 +1,5 @@
 import { Card, Typography } from "@mui/material";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -21,19 +21,12 @@ const DocumentTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { getReadableEntityName } = useGetReadableEntityName();
   const { format } = useDate();
 
-  const queryParams = useMemo(
-    () => ({
-      "page[number]": 1,
-      "page[size]": 100,
-      fileType: "documents"
-    }),
-    []
-  );
-
-  const [, { associations: mediaList }] = useMedias({
+  const [, { data: mediaList }] = useMedias({
     entity: resource as SupportedEntity,
     uuid: ctx?.record?.uuid,
-    queryParams
+    pageNumber: 1,
+    pageSize: 100,
+    filter: { fileType: "documents" }
   });
 
   return (

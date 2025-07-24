@@ -25046,6 +25046,71 @@ export const useGetV2FinancialReportsExport = <TData = Record<string, any>>(
   );
 };
 
+export type PostV2OrganisationsUUIDInvitePathParams = {
+  uuid: string;
+};
+
+export type PostV2OrganisationsUUIDInviteError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2OrganisationsUUIDInviteResponse = {
+  id?: number;
+  uuid?: string;
+  organisation_id?: number;
+  email_address?: string;
+  /**
+   * @format datetime
+   */
+  accepted_at?: string;
+  /**
+   * @format datetime
+   */
+  created_at?: string;
+};
+
+export type PostV2OrganisationsUUIDInviteRequestBody = {
+  email_address?: string;
+};
+
+export type PostV2OrganisationsUUIDInviteVariables = {
+  body?: PostV2OrganisationsUUIDInviteRequestBody;
+  pathParams: PostV2OrganisationsUUIDInvitePathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2OrganisationsUUIDInvite = (
+  variables: PostV2OrganisationsUUIDInviteVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2OrganisationsUUIDInviteResponse,
+    PostV2OrganisationsUUIDInviteError,
+    PostV2OrganisationsUUIDInviteRequestBody,
+    {},
+    {},
+    PostV2OrganisationsUUIDInvitePathParams
+  >({ url: "/v2/organisations/{uuid}/invite", method: "post", ...variables, signal });
+
+export const usePostV2OrganisationsUUIDInvite = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2OrganisationsUUIDInviteResponse,
+      PostV2OrganisationsUUIDInviteError,
+      PostV2OrganisationsUUIDInviteVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2OrganisationsUUIDInviteResponse,
+    PostV2OrganisationsUUIDInviteError,
+    PostV2OrganisationsUUIDInviteVariables
+  >(
+    (variables: PostV2OrganisationsUUIDInviteVariables) =>
+      fetchPostV2OrganisationsUUIDInvite({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";

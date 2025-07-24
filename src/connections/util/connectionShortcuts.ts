@@ -1,15 +1,17 @@
 import { useConnection } from "@/hooks/useConnection";
-import ApiSlice from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection, OptionalProps } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
+
+type PropsParamType<PropsType extends OptionalProps> = undefined extends PropsType ? [] : [props: PropsType];
 
 /**
  * Generates a hook for using this specific connection.
  */
 export const connectionHook =
   <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
-  (props: TProps | Record<any, never> = {}) =>
-    useConnection(connection, props);
+  (...args: PropsParamType<TProps>) =>
+    useConnection(connection, args[0]);
 
 /**
  * Generates an async loader for this specific connection. Awaiting on the loader will not return
@@ -17,8 +19,8 @@ export const connectionHook =
  */
 export const connectionLoader =
   <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
-  (props: TProps | Record<any, never> = {}) =>
-    loadConnection(connection, props);
+  (...args: PropsParamType<TProps>) =>
+    loadConnection(connection, args[0]);
 
 /**
  * Generates a synchronous selector for this specific connection. Ignores loaded state and simply
@@ -29,7 +31,12 @@ export const connectionLoader =
  */
 export const connectionSelector =
   <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
-  (props: TProps | Record<any, never> = {}) => {
+  (...args: PropsParamType<TProps>) => {
     const state = (connection.getState ?? ApiSlice.getState)(ApiSlice.redux.getState()) as State;
-    connection.selector(state, props);
+    return connection.selector(state, args[0] as TProps);
   };
+
+export const selectConnection =
+  <S, P extends OptionalProps>(connection: Connection<S, P>, props: P) =>
+  (state: ApiDataStore) =>
+    connection.selector(state, props);

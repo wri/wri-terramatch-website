@@ -1339,19 +1339,19 @@ export type ProjectUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
   /**
    * Update the isTest flag.
    */
-  isTest: boolean | null;
+  isTest?: boolean;
 };
 
 export type ProjectUpdateData = {
@@ -1367,15 +1367,15 @@ export type SiteUpdateAttributes = {
   /**
    * Request to change to the status of the given site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
 };
 
 export type SiteUpdateData = {
@@ -1391,15 +1391,15 @@ export type EntityUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
 };
 
 export type NurseryUpdateData = {
@@ -1415,19 +1415,19 @@ export type ReportUpdateAttributes = {
   /**
    * Request to change to the status of the given report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
   /**
    * Update the nothingToReport flag.
    */
-  nothingToReport: boolean | null;
+  nothingToReport?: boolean;
 };
 
 export type ProjectReportUpdateData = {

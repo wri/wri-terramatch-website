@@ -7,14 +7,15 @@ import { ConnectionTable } from "@/components/elements/ServerSideTable/Connectio
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { TaskIndexConnection, taskIndexConnection } from "@/connections/Task";
+import { taskIndexConnection } from "@/connections/Task";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { Selected } from "@/types/connection";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
-  onFetch?: (data: TaskIndexConnection) => void;
+  onFetch?: (data: Selected<typeof taskIndexConnection>) => void;
   alwaysShowPagination?: boolean;
 }
 
@@ -82,8 +83,6 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
     <ConnectionTable
       connection={taskIndexConnection}
       connectionProps={{ filter: { projectUuid: projectUUID } }}
-      dataProp="tasks"
-      totalProp="indexTotal"
       onFetch={onFetch}
       variant={VARIANT_TABLE_BORDER_ALL}
       initialTableState={{ sorting: [{ id: "dueAt", desc: true }] }}

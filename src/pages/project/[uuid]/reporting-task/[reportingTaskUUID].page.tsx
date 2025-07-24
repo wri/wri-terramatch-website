@@ -119,13 +119,13 @@ const ReportingTaskPage = () => {
   const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const [, { task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
-    uuid: reportingTaskUUID
+  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
+    id: reportingTaskUUID
   });
-  const [, { entity: projectReport }] = useLightProjectReport({ uuid: projectReportUuid });
-  const [, { entities: siteReports }] = useLightSiteReportList({ uuids: siteReportUuids });
-  const [, { entities: nurseryReports }] = useLightNurseryReportList({ uuids: nurseryReportUuids });
-  const [projectLoaded, { entity: project }] = useFullProject({ uuid: projectUUID });
+  const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
+  const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });
+  const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids });
+  const [projectLoaded, { data: project }] = useFullProject({ id: projectUUID });
 
   const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
     onSuccess: result => {

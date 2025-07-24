@@ -22,7 +22,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
@@ -53,11 +53,11 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     () => singularEntityNameToPlural(resource as SingularEntityName) as SupportedEntity,
     [resource]
   );
-  const [, { entityIsUpdating, update }] = useFullEntity(v3Resource, record.uuid);
+  const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
   // This will be a quick cache get in that case, instead of another server round trip.
-  useUpdateComplete(entityIsUpdating, refetch);
+  useRequestComplete(isUpdating, refetch);
 
   const dialogTitle = (() => {
     let name;
@@ -172,22 +172,17 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <When condition={status !== "reminder"}>
-            <Button variant="contained" type="submit" disabled={entityIsUpdating}>
-              <When condition={entityIsUpdating}>
-                <CircularProgress size={18} sx={{ marginRight: 1 }} />
-              </When>
-              Update Status
-            </Button>
-          </When>
-          <When condition={status === "reminder"}>
+          {status === "reminder" ? (
             <Button variant="contained" type="submit" disabled={isLoadingReminder}>
-              <When condition={isLoadingReminder}>
-                <CircularProgress size={18} sx={{ marginRight: 1 }} />
-              </When>
+              {isLoadingReminder && <CircularProgress size={18} sx={{ marginRight: 1 }} />}
               Send Reminder
             </Button>
-          </When>
+          ) : (
+            <Button variant="contained" type="submit" disabled={isUpdating}>
+              {isUpdating && <CircularProgress size={18} sx={{ marginRight: 1 }} />}
+              Update Status
+            </Button>
+          )}
         </DialogActions>
       </Form>
     </Dialog>

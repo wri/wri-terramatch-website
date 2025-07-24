@@ -1,8 +1,7 @@
 import { Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import { FC, useRef } from "react";
-import React from "react";
+import React, { FC, useRef } from "react";
 import { Show, ShowButton, useShowContext } from "react-admin";
 
 import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
@@ -28,7 +27,7 @@ import {
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
 
 const ReadableStatus: { [index: string]: string } = {
@@ -87,34 +86,24 @@ const ReportRow: FC<ReportRowProps> = ({ report, typeLabel, parentName, resource
 };
 
 const ProjectReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightProjectReport({ uuid });
-  if (entity == null) return null;
+  const [, { data }] = useLightProjectReport({ id: uuid });
+  if (data == null) return null;
   return (
-    <ReportRow
-      report={entity}
-      typeLabel="Project Report"
-      parentName={entity.projectName ?? ""}
-      resource="projectReport"
-    />
+    <ReportRow report={data} typeLabel="Project Report" parentName={data.projectName ?? ""} resource="projectReport" />
   );
 };
 
 const SiteReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightSiteReport({ uuid });
-  if (entity == null) return null;
-  return <ReportRow report={entity} typeLabel="Site Report" parentName={entity.siteName ?? ""} resource="siteReport" />;
+  const [, { data }] = useLightSiteReport({ id: uuid });
+  if (data == null) return null;
+  return <ReportRow report={data} typeLabel="Site Report" parentName={data.siteName ?? ""} resource="siteReport" />;
 };
 
 const NurseryReportRow: FC<{ uuid: string }> = ({ uuid }) => {
-  const [, { entity }] = useLightNurseryReport({ uuid });
-  if (entity == null) return null;
+  const [, { data }] = useLightNurseryReport({ id: uuid });
+  if (data == null) return null;
   return (
-    <ReportRow
-      report={entity}
-      typeLabel="Nursery Report"
-      parentName={entity.nurseryName ?? ""}
-      resource="nurseryReport"
-    />
+    <ReportRow report={data} typeLabel="Nursery Report" parentName={data.nurseryName ?? ""} resource="nurseryReport" />
   );
 };
 
@@ -131,12 +120,14 @@ function ShowReports() {
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
-  const [, { bulkApproveReports, taskIsUpdating, taskUpdateFailure }] = useTask({ uuid: task?.uuid });
+  const [, { update: updateTask, isUpdating: taskIsUpdating, updateFailure: taskUpdateFailure }] = useTask({
+    id: task?.uuid
+  });
 
   const siteReportUuids = task?.siteReportUuids ?? [];
   const nurseryReportUuids = task?.nurseryReportUuids ?? [];
-  const [, { entities: siteReports = [] }] = useLightSiteReportList({ uuids: siteReportUuids });
-  const [, { entities: nurseryReports = [] }] = useLightNurseryReportList({ uuids: nurseryReportUuids });
+  const [, { data: siteReports = [] }] = useLightSiteReportList({ ids: siteReportUuids });
+  const [, { data: nurseryReports = [] }] = useLightNurseryReportList({ ids: nurseryReportUuids });
 
   const selectableReports: SelectedItem[] = React.useMemo(() => {
     const reports: SelectedItem[] = [];
@@ -190,7 +181,7 @@ function ShowReports() {
             closeModal(ModalId.APPROVE_POLYGONS);
             openModalHandlerBulkConfirm(currentSelectedReports);
           },
-          disabled: selectableReports.length > 0 ? false : true
+          disabled: selectableReports.length <= 0
         }}
         secondaryButtonProps={{
           className: "px-8 py-3",
@@ -235,15 +226,19 @@ function ShowReports() {
           const nurseryReportUuids = currentSelectedReports
             .filter(report => report.type === "Nursery")
             .map(report => report.id);
-          if (bulkApproveReports) {
-            bulkApproveReports(text ?? "", siteReportUuids, nurseryReportUuids);
+          if (updateTask != null) {
+            updateTask({
+              feedback: text ?? "",
+              siteReportNothingToReportUuids: siteReportUuids,
+              nurseryReportNothingToReportUuids: nurseryReportUuids
+            });
           }
         }}
       />
     );
   };
 
-  useUpdateComplete(taskIsUpdating, () => {
+  useRequestComplete(taskIsUpdating, () => {
     if (taskUpdateFailure == null) {
       openNotification("success", "Reports approved successfully", "");
       closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);

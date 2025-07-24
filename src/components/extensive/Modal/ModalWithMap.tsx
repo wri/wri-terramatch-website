@@ -46,9 +46,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   const [initialPolygonData, setInitialPolygonData] = useState<any>();
   const t = useT();
 
-  const [, { bbox: polygonBbox }] = useBoundingBox({
-    polygonUuid: polygonSelected
-  });
+  const polygonBbox = useBoundingBox({ polygonUuid: polygonSelected });
 
   useEffect(() => {
     const getPolygonData = async () => {

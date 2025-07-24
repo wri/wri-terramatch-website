@@ -17,10 +17,10 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
 
-  const [, { data: impactStories, fetchFailure }] = useImpactStories({
+  const [isLoaded, { data: impactStories }] = useImpactStories({
     filter: {
-      ...(searchTerm ? { search: searchTerm } : {}),
-      ...(currentCategory ? { category: currentCategory, status: "published" } : {})
+      ...(searchTerm != null ? { search: searchTerm } : {}),
+      ...(currentCategory != null ? { category: currentCategory, status: "published" } : {})
     }
   });
 
@@ -53,15 +53,13 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       twitter_url: story.organization?.twitter_url
     })) || [];
 
-  const isLoading = !impactStories && !fetchFailure;
-
   const tabItems = [
     {
       key: "view-all",
       title: t("View all"),
       body: (
         <div className="w-full">
-          {isLoading ? (
+          {!isLoaded ? (
             <div className="flex h-48 items-center justify-center">
               <span className="text-gray-500">{t("Loading...")}</span>
             </div>
@@ -80,7 +78,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       title: t(category.title),
       body: (
         <div className="w-full">
-          {isLoading ? (
+          {!isLoaded ? (
             <div className="flex h-48 items-center justify-center">
               <span className="text-gray-500">{t("Loading...")}</span>
             </div>

@@ -1,6 +1,6 @@
 import { AuthProvider, UserIdentity } from "react-admin";
 
-import { loadLogin } from "@/connections/Login";
+import { selectLogin } from "@/connections/Login";
 import { loadMyUser } from "@/connections/User";
 import { logout } from "@/generated/v3/utils";
 import Log from "@/utils/log";
@@ -24,8 +24,8 @@ export const authProvider: AuthProvider = {
 
   // remove local credentials
   logout: async () => {
-    const { isLoggedIn } = await loadLogin();
-    if (isLoggedIn) logout();
+    const { data } = selectLogin({});
+    if (data != null) logout();
   },
 
   getIdentity: async () => {
