@@ -335,7 +335,7 @@ const Dashboard = () => {
       }) => ({
         uuid: item.country,
         country: `${
-          countryChoices?.find(choice => choice.id === item.country)?.name || item.country
+          countryChoices?.find(choice => choice.id === item.country)?.name ?? item.country
         }_/flags/${item.country.toLowerCase()}.svg`,
         project: item.numberOfProjects.toLocaleString(),
         treesPlanted: item.totalTreesPlanted.toLocaleString(),
@@ -343,11 +343,7 @@ const Dashboard = () => {
         jobsCreated: item.totalJobsCreated.toLocaleString()
       })
     );
-    return data.sort((a, b) => {
-      if (a.country < b.country) return -1;
-      if (a.country > b.country) return 1;
-      return 0;
-    });
+    return data.sort((a, b) => a.country.localeCompare(b.country));
   }, [activeCountries, countryChoices]);
 
   const projectsInCountry = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);

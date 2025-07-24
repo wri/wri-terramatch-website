@@ -282,16 +282,16 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: (row.uuid || "") as string,
+                  uuid: (row.uuid ?? "") as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
               if (row.uuid) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: (row.uuid || "") as string
+                  uuid: (row.uuid ?? "") as string
                 }));
               }
               return;
@@ -462,7 +462,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                   ...prevValues,
                   uuid: row.uuid as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
@@ -573,7 +573,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                   ...prevValues,
                   uuid: row.uuid as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) || prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 

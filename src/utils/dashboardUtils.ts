@@ -743,14 +743,14 @@ export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[
 };
 
 export const groupProjectsByCountry = (projects: DashboardProjectsLightDto[]) => {
-  if (!projects || projects.length === 0) {
+  if (projects == null || projects.length === 0) {
     return [];
   }
 
   const countryGroups = projects.reduce(
     (acc, project) => {
       const country = project.country;
-      if (!country) return acc;
+      if (country == null) return acc;
 
       if (!acc[country]) {
         acc[country] = {
@@ -763,9 +763,9 @@ export const groupProjectsByCountry = (projects: DashboardProjectsLightDto[]) =>
       }
 
       acc[country].numberOfProjects += 1;
-      acc[country].totalTreesPlanted += project.treesPlantedCount || 0;
-      acc[country].totalJobsCreated += project.totalJobsCreated || 0;
-      acc[country].hectaresRestored += project.totalHectaresRestoredSum || 0;
+      acc[country].totalTreesPlanted += project.treesPlantedCount ?? 0;
+      acc[country].totalJobsCreated += project.totalJobsCreated ?? 0;
+      acc[country].hectaresRestored += project.totalHectaresRestoredSum ?? 0;
 
       return acc;
     },

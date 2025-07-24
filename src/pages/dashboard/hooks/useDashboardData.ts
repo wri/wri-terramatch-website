@@ -141,7 +141,7 @@ export const useDashboardData = (filters: any) => {
   });
 
   const activeCountries = useMemo(() => {
-    if (!dashboardProjectsData || !Array.isArray(dashboardProjectsData)) {
+    if (dashboardProjectsData == null || !Array.isArray(dashboardProjectsData)) {
       return [];
     }
     return groupProjectsByCountry(dashboardProjectsData as DashboardProjectsLightDto[]);
@@ -253,8 +253,9 @@ export const useDashboardData = (filters: any) => {
     };
   }, [dashboardRestorationGoalData]);
 
-  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] =
-    useHectareRestoration(hectareRestorationFilter);
+  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
+    filter: hectareRestorationFilter
+  });
 
   const [projectLoaded, { data: singleDashboardProject }] = useDashboardProject({
     id: filters?.uuid ?? null
