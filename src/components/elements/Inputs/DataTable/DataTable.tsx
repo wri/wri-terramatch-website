@@ -32,6 +32,8 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   onChange?: (values: any) => void;
   generateUuids?: boolean;
   additionalValues?: any;
+  hasPagination?: boolean;
+  invertSelectPagination?: boolean;
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
@@ -52,6 +54,8 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     generateUuids = false,
     additionalValues = {},
     modalEditTitle,
+    hasPagination = false,
+    invertSelectPagination = false,
     ...inputWrapperProps
   } = props;
 
@@ -163,7 +167,13 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         </Button>
 
         <When condition={value.length > 0}>
-          <Table columns={headers} data={value.map((v, index) => ({ ...v, index }))} className="mt-8" />
+          <Table
+            columns={headers}
+            data={value.map((v, index) => ({ ...v, index }))}
+            className="mt-8"
+            hasPagination={hasPagination}
+            invertSelectPagination={invertSelectPagination}
+          />
         </When>
       </div>
     </InputWrapper>
