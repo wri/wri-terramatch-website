@@ -27,7 +27,6 @@ const hasValidParams = ({
 
 const hectareRestorationConnection = v3Resource("hectareRestoration", getHectaresRestoration)
   .singleByFilter<HectareRestorationDto, GetHectaresRestorationQueryParams>()
-  .enabledProp()
   .refetch((props, variablesFactory) => {
     const variables = variablesFactory(props);
     if (variables != null) {
