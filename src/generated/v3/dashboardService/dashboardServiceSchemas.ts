@@ -123,6 +123,11 @@ export type TotalJobsCreatedDto = {
   totalYouth: number;
 };
 
+export type HectareRestorationDto = {
+  restorationStrategiesRepresented: Record<string, any>;
+  targetLandUseTypesRepresented: Record<string, any>;
+};
+
 export type DashboardProjectsLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -141,6 +146,7 @@ export type DashboardProjectsLightDto = {
   treesGrownGoal: number | null;
   totalSites: number;
   totalJobsCreated: number | null;
+  hasAccess: boolean;
 };
 
 export type DashboardProjectsFullDto = {
@@ -161,12 +167,17 @@ export type DashboardProjectsFullDto = {
   treesGrownGoal: number | null;
   totalSites: number;
   totalJobsCreated: number | null;
+  hasAccess: boolean;
   cohort: string[] | null;
   objectives: string | null;
   landTenureProjectArea: string[] | null;
 };
 
-export type HectareRestorationDto = {
-  restorationStrategiesRepresented: Record<string, any>;
-  targetLandUseTypesRepresented: Record<string, any>;
+export type DashboardSitePolygonsLightDto = {
+  id: number;
+  uuid: string;
+  status: string;
+  lat: number | null;
+  long: number | null;
+  name: string | null;
 };

@@ -4,7 +4,6 @@ import {
   DashboardProjectsLightDto,
   TreeRestorationGoalDto
 } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DataPoint = {
   time: string;
@@ -489,10 +488,13 @@ export const parseHectaresUnderRestorationData = (
   };
 };
 
-export const parseDataToObjetive = (projectFullDto?: ProjectFullDto): Objetive => {
-  const objetiveText = projectFullDto?.objectives || "No Objective";
-  const landTenure = projectFullDto?.landTenureProjectArea
-    ? projectFullDto?.landTenureProjectArea.join(", ")
+export const parseDataToObjetive = (projectData?: {
+  objectives?: string | null;
+  landTenureProjectArea?: string[] | null;
+}): Objetive => {
+  const objetiveText = projectData?.objectives || "No Objective";
+  const landTenure = projectData?.landTenureProjectArea
+    ? projectData?.landTenureProjectArea.join(", ")
     : "Under Review";
   return {
     objetiveText,

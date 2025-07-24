@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useDashboardProjects } from "@/connections/DashboardEntity";
+import { useDashboardProject, useDashboardProjects } from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
-import { useFullProject } from "@/connections/Entity";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -257,7 +256,10 @@ export const useDashboardData = (filters: any) => {
   const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] =
     useHectareRestoration(hectareRestorationFilter);
 
-  const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
+  const [projectLoaded, { data: singleDashboardProject }] = useDashboardProject({
+    id: filters?.uuid ?? null
+  });
+
   const [, { data: coverImage }] = useMedia({
     entity: "projects",
     uuid: filters?.uuid ?? null,
@@ -290,7 +292,11 @@ export const useDashboardData = (filters: any) => {
 
   const projectBbox = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
   const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
-    useDashboardTreeSpeciesData(filters.uuid, projectFullDto?.treesGrownGoal, projectFullDto?.organisationType);
+    useDashboardTreeSpeciesData(
+      filters.uuid,
+      singleDashboardProject?.treesGrownGoal,
+      singleDashboardProject?.organisationType
+    );
 
   const combinedHectaresData = useMemo(() => {
     if (filters.uuid && projectTreeSpeciesData) {
@@ -406,26 +412,30 @@ export const useDashboardData = (filters: any) => {
   }, [dashboardProjectsLoaded, projectLoaded, filters.uuid, showLoader, hideLoader]);
 
   useEffect(() => {
-    if (filters.uuid && projectFullDto) {
+    if (filters.uuid && singleDashboardProject) {
       setDashboardHeader(prev => [
         {
           ...prev[0],
-          value: projectFullDto.treesPlantedCount ? projectFullDto.treesPlantedCount.toLocaleString() : "-"
+          value: singleDashboardProject.treesPlantedCount
+            ? singleDashboardProject.treesPlantedCount.toLocaleString()
+            : "-"
         },
         {
           ...prev[1],
-          value: projectFullDto.totalHectaresRestoredSum
-            ? `${projectFullDto.totalHectaresRestoredSum.toFixed(0).toLocaleString()} ha`
+          value: singleDashboardProject.totalHectaresRestoredSum
+            ? `${singleDashboardProject.totalHectaresRestoredSum.toFixed(0).toLocaleString()} ha`
             : "-"
         },
         {
           ...prev[2],
-          value: projectFullDto.totalJobsCreated ? projectFullDto.totalJobsCreated.toLocaleString() : "-"
+          value: singleDashboardProject.totalJobsCreated
+            ? singleDashboardProject.totalJobsCreated.toLocaleString()
+            : "-"
         }
       ]);
       setNumberTreesPlanted({
-        value: projectFullDto.treesPlantedCount ?? 0,
-        totalValue: projectFullDto.treesGrownGoal ?? 0
+        value: singleDashboardProject.treesPlantedCount ?? 0,
+        totalValue: singleDashboardProject.treesGrownGoal ?? 0
       });
     } else if (calculatedTotals != null) {
       setDashboardHeader(prev => [
@@ -449,7 +459,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: Number(calculatedTotals?.totalTreesRestoredGoal)
       });
     }
-  }, [calculatedTotals, filters.uuid, projectFullDto]);
+  }, [calculatedTotals, filters.uuid, singleDashboardProject]);
 
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
@@ -508,7 +518,7 @@ export const useDashboardData = (filters: any) => {
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
     isLoadingX: isDashboardHectareRestorationLoaded ?? (filters.uuid && isLoadingProjectHectares),
     isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
-    projectFullDto,
+    singleDashboardProject,
     projectLoaded,
     coverImage,
     topProject: topProjectsTable,
