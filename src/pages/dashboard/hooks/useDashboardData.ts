@@ -254,8 +254,9 @@ export const useDashboardData = (filters: any) => {
     };
   }, [dashboardRestorationGoalData]);
 
-  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] =
-    useHectareRestoration(hectareRestorationFilter);
+  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
+    filter: hectareRestorationFilter
+  });
 
   const [projectLoaded, { data: projectFullDto }] = useFullProject({ id: filters?.uuid! });
   const [, { data: coverImage }] = useMedia({
