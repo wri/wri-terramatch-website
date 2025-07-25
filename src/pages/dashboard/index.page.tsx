@@ -140,7 +140,7 @@ const Dashboard = () => {
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
     projectLoaded,
-    projectFullDto,
+    singleDashboardProject,
     coverImage,
     topProject,
     centroidsDataProjects,
@@ -157,10 +157,10 @@ const Dashboard = () => {
   } = useDashboardData(filters);
 
   const cohortArray = useMemo(() => {
-    const cohort = projectFullDto?.cohort;
+    const cohort = singleDashboardProject?.cohort;
     if (!cohort) return null;
     if (Array.isArray(cohort)) return cohort;
-  }, [projectFullDto?.cohort]);
+  }, [singleDashboardProject?.cohort]);
 
   const cohortDisplayName = useMemo(() => formatCohortDisplay(cohortArray), [cohortArray]);
 
@@ -385,9 +385,9 @@ const Dashboard = () => {
   }, [t, filters.country.id, projectsInCountry, transformedStories]);
 
   const countryData = useMemo(() => {
-    if (!projectFullDto?.country || !countryChoices?.length) return undefined;
+    if (!singleDashboardProject?.country || !countryChoices?.length) return undefined;
 
-    const gadmCountry = countryChoices.find(country => country.id === projectFullDto?.country);
+    const gadmCountry = countryChoices.find(country => country.id === singleDashboardProject?.country);
     if (!gadmCountry) return undefined;
 
     const countrySlug = gadmCountry.id;
@@ -399,7 +399,7 @@ const Dashboard = () => {
       },
       id: gadmCountry.id
     };
-  }, [projectFullDto?.country, countryChoices]);
+  }, [singleDashboardProject?.country, countryChoices]);
 
   const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
     return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
@@ -447,7 +447,7 @@ const Dashboard = () => {
             <DashboardBreadcrumbs
               cohort={cohortArray}
               countryData={countryData as CountriesProps}
-              projectName={projectFullDto?.name}
+              projectName={singleDashboardProject?.name}
               className="pt-0"
               textVariant="text-14"
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -507,7 +507,7 @@ const Dashboard = () => {
                 </Else>
               </If>
               <div>
-                <Text variant="text-20-bold">{t(projectFullDto?.name)}</Text>
+                <Text variant="text-20-bold">{t(singleDashboardProject?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
                   {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
@@ -516,7 +516,9 @@ const Dashboard = () => {
                   {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Type: ${ORGANIZATIONS_TYPES[projectFullDto?.organisationType as keyof typeof ORGANIZATIONS_TYPES]}`
+                    `Type: ${
+                      ORGANIZATIONS_TYPES[singleDashboardProject?.organisationType as keyof typeof ORGANIZATIONS_TYPES]
+                    }`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(`Cohort: ${cohortDisplayName}`)}
@@ -527,7 +529,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(projectFullDto)}
+              data={parseDataToObjetive(singleDashboardProject)}
               variantTitle="text-18-semibold"
             />
           </PageCard>
@@ -660,8 +662,10 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.totalHectaresRestored ?? 0,
-          projectFullDto ? projectFullDto.totalSites : totalSectionHeader?.totalSites ?? 0,
+          singleDashboardProject
+            ? singleDashboardProject.totalHectaresRestoredSum
+            : totalSectionHeader?.totalHectaresRestored ?? 0,
+          singleDashboardProject ? singleDashboardProject.totalSites : totalSectionHeader?.totalSites ?? 0,
           hectaresUnderRestoration
         )}
         textTooltipTable={tooltipText}

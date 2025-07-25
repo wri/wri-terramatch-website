@@ -26,6 +26,7 @@ export type GetTotalSectionHeadersQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type GetTotalSectionHeadersError = Fetcher.ErrorWrapper<undefined>;
@@ -97,6 +98,7 @@ export type GetTreeRestorationGoalQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type GetTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
@@ -151,6 +153,7 @@ export type GetTotalJobsCreatedQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type GetTotalJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
@@ -203,11 +206,66 @@ export const getTotalJobsCreated = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/totalJobsCreated", "GET");
 
+export type GetHectaresRestorationQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  polygonStatus?: string[];
+};
+
+export type GetHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetHectaresRestorationResponse = {
+  meta?: {
+    /**
+     * @example hectareRestoration
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example hectareRestoration
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.HectareRestorationDto;
+  };
+};
+
+export type GetHectaresRestorationVariables = {
+  queryParams?: GetHectaresRestorationQueryParams;
+};
+
+export const getHectaresRestoration = new V3ApiEndpoint<
+  GetHectaresRestorationResponse,
+  GetHectaresRestorationError,
+  GetHectaresRestorationVariables,
+  {}
+>("/dashboard/v3/hectaresRestoration", "GET");
+
 export type DashboardEntityIndexPathParams = {
   /**
    * Dashboard entity type
    */
-  entity: "dashboardProjects";
+  entity: "dashboardProjects" | "dashboardSitePolygons" | "dashboardImpactStories";
 };
 
 export type DashboardEntityIndexQueryParams = {
@@ -229,6 +287,7 @@ export type DashboardEntityIndexQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type DashboardEntityIndexError = Fetcher.ErrorWrapper<undefined>;
@@ -297,7 +356,7 @@ export type DashboardEntityGetPathParams = {
   /**
    * Dashboard entity type
    */
-  entity: "dashboardProjects";
+  entity: "dashboardProjects" | "dashboardSitePolygons" | "dashboardImpactStories";
 };
 
 export type DashboardEntityGetError = Fetcher.ErrorWrapper<{
@@ -362,7 +421,7 @@ export const dashboardEntityGet = new V3ApiEndpoint<
   {}
 >("/dashboard/v3/{entity}/{uuid}", "GET");
 
-export type GetHectaresRestorationQueryParams = {
+export type GetDashboardProjectsQueryParams = {
   country?: string;
   /**
    * Filter results by programmes
@@ -381,45 +440,86 @@ export type GetHectaresRestorationQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
-export type GetHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+export type GetDashboardProjectsError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetHectaresRestorationResponse = {
+export type GetDashboardProjectsResponse = {
   meta?: {
     /**
-     * @example hectareRestoration
+     * @example dashboardProjects
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example hectareRestoration
+     * @example dashboardProjects
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.HectareRestorationDto;
+    attributes?: Schemas.DashboardProjectsLightDto;
   };
 };
 
-export type GetHectaresRestorationVariables = {
-  queryParams?: GetHectaresRestorationQueryParams;
+export type GetDashboardProjectsVariables = {
+  queryParams?: GetDashboardProjectsQueryParams;
 };
 
-export const getHectaresRestoration = new V3ApiEndpoint<
-  GetHectaresRestorationResponse,
-  GetHectaresRestorationError,
-  GetHectaresRestorationVariables,
+export const getDashboardProjects = new V3ApiEndpoint<
+  GetDashboardProjectsResponse,
+  GetDashboardProjectsError,
+  GetDashboardProjectsVariables,
   {}
->("/dashboard/v3/hectaresRestoration", "GET");
+>("/dashboard/v3/dashboardProjects", "GET");
+
+export type GetDashboardSitePolygonsQueryParams = {
+  polygonStatus: string[];
+  projectUuid: string;
+};
+
+export type GetDashboardSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetDashboardSitePolygonsResponse = {
+  meta?: {
+    /**
+     * @example dashboardSitepolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example dashboardSitepolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardSitePolygonsLightDto;
+  };
+};
+
+export type GetDashboardSitePolygonsVariables = {
+  queryParams: GetDashboardSitePolygonsQueryParams;
+};
+
+export const getDashboardSitePolygons = new V3ApiEndpoint<
+  GetDashboardSitePolygonsResponse,
+  GetDashboardSitePolygonsError,
+  GetDashboardSitePolygonsVariables,
+  {}
+>("/dashboard/v3/dashboardSitepolygons", "GET");
 
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
   treeRestorationGoal: { getTreeRestorationGoal },
   totalJobsCreated: { getTotalJobsCreated },
+  hectaresRestoration: { getHectaresRestoration },
   dashboardEntities: { dashboardEntityIndex, dashboardEntityGet },
-  hectaresRestoration: { getHectaresRestoration }
+  dashboardProjects: { getDashboardProjects },
+  dashboardSitePolygons: { getDashboardSitePolygons }
 };
