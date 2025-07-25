@@ -3,11 +3,14 @@ import { connectionHook } from "@/connections/util/connectionShortcuts";
 import {
   dashboardEntityGet,
   dashboardEntityIndex,
-  DashboardEntityIndexQueryParams
+  DashboardEntityIndexQueryParams,
+  getDashboardSitePolygons,
+  GetDashboardSitePolygonsQueryParams
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import {
   DashboardProjectsFullDto,
-  DashboardProjectsLightDto
+  DashboardProjectsLightDto,
+  DashboardSitePolygonsLightDto
 } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
@@ -28,5 +31,15 @@ const dashboardProjectConnection = v3Resource("dashboardProjects", dashboardEnti
   })
   .buildConnection();
 
+const dashboardSitePolygonsConnection = v3Resource("dashboardSitepolygons", getDashboardSitePolygons)
+  .index<DashboardSitePolygonsLightDto>(() => ({
+    queryParams: { polygonStatus: [], projectUuid: "" }
+  }))
+  .filter<GetDashboardSitePolygonsQueryParams>()
+  .enabledProp()
+  .refetch(() => ApiSlice.pruneIndex("dashboardSitepolygons", ""))
+  .buildConnection();
+
 export const useDashboardProjects = connectionHook(dashboardProjectsConnection);
 export const useDashboardProject = connectionHook(dashboardProjectConnection);
+export const useDashboardSitePolygons = connectionHook(dashboardSitePolygonsConnection);
