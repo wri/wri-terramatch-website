@@ -1,14 +1,19 @@
 import Script from "next/script";
 import React from "react";
 
+import { useMyOrg } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
+
 interface DashboardAnalyticsWrapperProps {
   children: React.ReactNode;
 }
 
 const DashboardAnalyticsWrapper = ({ children }: DashboardAnalyticsWrapperProps) => {
+  const [, { user }] = useMyUser();
+  const [, { organisation }] = useMyOrg();
+
   return (
     <>
-      {/* Hotjar Script */}
       <Script id="hotjar" strategy="afterInteractive">
         {`
           (function(h,o,t,j,a,r){
@@ -21,6 +26,21 @@ const DashboardAnalyticsWrapper = ({ children }: DashboardAnalyticsWrapperProps)
           })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
         `}
       </Script>
+
+      {user && (
+        <Script id="hotjar-identify" strategy="afterInteractive">
+          {`
+            var userId = '${user.uuid ?? ""}' || null;
+            window.hj('identify', userId, {
+              'first_name': '${user.firstName ?? ""}',
+              'last_name': '${user.lastName ?? ""}',
+              'role': '${user.primaryRole ?? ""}',
+              'email_address': '${user.emailAddress ?? ""}',
+              'organisation_name': '${organisation?.name ?? ""}'
+            });
+          `}
+        </Script>
+      )}
 
       {/* Google Analytics Script */}
       <Script src="https://www.googletagmanager.com/gtag/js?id=G-2K60BYCCPY" strategy="afterInteractive" />
