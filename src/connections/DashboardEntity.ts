@@ -8,6 +8,7 @@ import {
   GetDashboardSitePolygonsQueryParams
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import {
+  DashboardImpactStoryLightDto,
   DashboardProjectsFullDto,
   DashboardProjectsLightDto,
   DashboardSitePolygonsLightDto
@@ -40,6 +41,15 @@ const dashboardSitePolygonsConnection = v3Resource("dashboardSitepolygons", getD
   .refetch(() => ApiSlice.pruneIndex("dashboardSitepolygons", ""))
   .buildConnection();
 
+const dashboardImpactStoriesConnection = v3Resource("dashboardImpactStories", dashboardEntityIndex)
+  .index<DashboardImpactStoryLightDto>(() => ({
+    pathParams: { entity: "dashboardImpactStories" }
+  }))
+  .filter<DashboardEntityIndexQueryParams>()
+  .refetch(() => ApiSlice.pruneIndex("dashboardImpactStories", ""))
+  .buildConnection();
+
 export const useDashboardProjects = connectionHook(dashboardProjectsConnection);
 export const useDashboardProject = connectionHook(dashboardProjectConnection);
 export const useDashboardSitePolygons = connectionHook(dashboardSitePolygonsConnection);
+export const useDashboardImpactStories = connectionHook(dashboardImpactStoriesConnection);

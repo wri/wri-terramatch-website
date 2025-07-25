@@ -2,11 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
+import {
+  useDashboardImpactStories,
+  useDashboardProject,
+  useDashboardProjects,
+  useDashboardSitePolygons
+} from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useMedia } from "@/connections/EntityAssociation";
-import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardJobsCreated, useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
@@ -449,11 +453,12 @@ export const useDashboardData = (filters: any) => {
     }
   }, [generalBbox, centroidsDataProjects]);
 
-  const [isLoaded, { data: impactStories }] = useImpactStories({
+  const [isLoaded, { data: impactStories }] = useDashboardImpactStories({
     filter: {
-      status: "published",
       country: filters.country?.country_slug,
-      "organisationType[]": filters.organizations ? filters.organizations : [],
+      "organisationType[]": filters.organizations?.length ? filters.organizations : DEFAULT_ORGANIZATION_TYPES,
+      cohort: filters.cohort?.length ? filters.cohort : DEFAULT_COHORT,
+      "programmesType[]": filters.frameworks?.length ? filters.frameworks : DEFAULT_PROGRAMME_TYPES,
       projectUuid: filters.uuid
     }
   });
@@ -464,21 +469,21 @@ export const useDashboardData = (filters: any) => {
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: story?.content ?? "",
+        content: "", // content field will be added later
         category: story.category,
-        thumbnail: story.thumbnail?.url ?? "",
+        thumbnail: story.thumbnail ?? "",
         organization: {
-          name: story.organization?.name ?? "",
+          name: story.organisation?.name ?? "",
           category: story.category,
           country:
-            story.organization?.countries?.length > 0
-              ? story.organization.countries.map((c: any) => c.label).join(", ")
+            story.organisation?.countries?.length > 0
+              ? story.organisation.countries.map((c: any) => c.label).join(", ")
               : "No country",
-          countries_data: story.organization?.countries ?? [],
-          facebook_url: story.organization?.facebook_url ?? "",
-          instagram_url: story.organization?.instagram_url ?? "",
-          linkedin_url: story.organization?.linkedin_url ?? "",
-          twitter_url: story.organization?.twitter_url ?? ""
+          countries_data: story.organisation?.countries ?? [],
+          facebook_url: story.organisation?.facebook_url ?? "",
+          instagram_url: story.organisation?.instagram_url ?? "",
+          linkedin_url: story.organisation?.linkedin_url ?? "",
+          twitter_url: story.organisation?.twitter_url ?? ""
         },
         status: story.status
       })) || [],

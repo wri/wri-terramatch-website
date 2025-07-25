@@ -149,6 +149,16 @@ export type DashboardProjectsLightDto = {
   hasAccess: boolean;
 };
 
+export type DashboardImpactStoryLightDto = {
+  uuid: string;
+  title: string;
+  date: string;
+  category: string[];
+  thumbnail: string | null;
+  organisation: Record<string, any>;
+  status: string;
+};
+
 export type DashboardProjectsFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
