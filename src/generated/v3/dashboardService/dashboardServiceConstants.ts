@@ -4,7 +4,10 @@ import {
   DelayedJobDto,
   TreeRestorationGoalDto,
   TotalJobsCreatedDto,
-  HectareRestorationDto
+  HectareRestorationDto,
+  DashboardProjectsLightDto,
+  DashboardProjectsFullDto,
+  DashboardSitePolygonsLightDto
 } from "./dashboardServiceSchemas";
 
 export const DASHBOARD_SERVICE_RESOURCES = [
@@ -12,7 +15,9 @@ export const DASHBOARD_SERVICE_RESOURCES = [
   "delayedJobs",
   "treeRestorationGoals",
   "totalJobsCreated",
-  "hectareRestoration"
+  "hectareRestoration",
+  "dashboardProjects",
+  "dashboardSitepolygons"
 ] as const;
 
 export type DashboardServiceApiResources = {
@@ -21,4 +26,6 @@ export type DashboardServiceApiResources = {
   treeRestorationGoals: StoreResourceMap<TreeRestorationGoalDto>;
   totalJobsCreated: StoreResourceMap<TotalJobsCreatedDto>;
   hectareRestoration: StoreResourceMap<HectareRestorationDto>;
+  dashboardProjects: StoreResourceMap<DashboardProjectsLightDto | DashboardProjectsFullDto>;
+  dashboardSitepolygons: StoreResourceMap<DashboardSitePolygonsLightDto>;
 };

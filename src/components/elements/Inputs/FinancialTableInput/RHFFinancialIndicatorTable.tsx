@@ -574,7 +574,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Assets",
+        header: "Current Assets",
         accessorKey: "currentAssets",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -631,7 +631,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Liabilities",
+        header: "Current Liabilities",
         accessorKey: "currentLiabilities",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -708,50 +708,65 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         enableSorting: false
       },
       {
-        header: "Financial Documents",
-        accessorKey: "documentation",
+        header: "Description",
+        accessorKey: "description",
         enableSorting: false,
+        meta: {
+          style: { width: "60%", minWidth: "300px" }
+        },
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
           const visibleCells = row.getVisibleCells();
           const columnOrderIndex = visibleCells.findIndex(
             (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
           );
           const columnKey = documentationColumnsMap[columnOrderIndex];
-          const rowIndex = row.index;
 
-          const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
+          const [tempValue, setTempValue] = useState(documentationData?.[row.index]?.[columnKey] ?? "");
 
-          const handleSelectFile = async (file: File) => {
-            await onSelectFile(file, {
-              uuid: row.id
-            });
-            await onSelectFileWithContext(file, {
-              collection: "documentation",
-              year: row.original.year,
-              field: columnKey,
-              rowIndex
-            });
+          const hasFocus = useRef(false);
+
+          useEffect(() => {
+            if (!hasFocus.current) {
+              setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
+            }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+          }, [documentationData, row.index, columnKey]);
+
+          const handleFocus = () => {
+            hasFocus.current = true;
+          };
+
+          const handleBlur = () => {
+            hasFocus.current = false;
+            const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
+            if (tempValue !== previousValue) {
+              handleChange(
+                { value: tempValue, row: row.index, cell: columnOrderIndex },
+                setDocumentationData,
+                documentationColumnsMap
+              );
+              props.formHook?.reset(props.formHook?.getValues());
+              onChangeCapture?.();
+            }
           };
 
           return (
-            <FileInput
-              key={rowIndex}
-              files={files as Partial<UploadedFile>[]}
-              onDelete={file =>
-                handleDeleteFile(file, {
-                  collection: "documentation",
-                  year: row.original.year,
-                  field: columnKey,
-                  rowIndex: row.index
-                })
-              }
-              onChange={newFiles => newFiles.forEach(handleSelectFile)}
+            <TextArea
+              name={`row-${row.index}-${columnKey}`}
+              className="hover:border-primary hover:shadow-input"
+              placeholder="Add description here"
+              rows={2}
+              value={tempValue}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={e => setTempValue(e.target.value)}
+              data-sync-blur="documentation"
             />
           );
         }
       },
       {
-        header: "Exchange Rate Used",
+        header: "USD Exchange Rate",
         accessorKey: "exchange_rate",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -813,8 +828,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Description",
-        accessorKey: "description",
+        header: "Financial Documents",
+        accessorKey: "documentation",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
           const visibleCells = row.getVisibleCells();
@@ -822,47 +837,35 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
           );
           const columnKey = documentationColumnsMap[columnOrderIndex];
+          const rowIndex = row.index;
 
-          const [tempValue, setTempValue] = useState(documentationData?.[row.index]?.[columnKey] ?? "");
+          const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
 
-          const hasFocus = useRef(false);
-
-          useEffect(() => {
-            if (!hasFocus.current) {
-              setTempValue(documentationData?.[row.index]?.[columnKey] ?? "");
-            }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-          }, [documentationData, row.index, columnKey]);
-
-          const handleFocus = () => {
-            hasFocus.current = true;
-          };
-
-          const handleBlur = () => {
-            hasFocus.current = false;
-            const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
-            if (tempValue !== previousValue) {
-              handleChange(
-                { value: tempValue, row: row.index, cell: columnOrderIndex },
-                setDocumentationData,
-                documentationColumnsMap
-              );
-              props.formHook?.reset(props.formHook?.getValues());
-              onChangeCapture?.();
-            }
+          const handleSelectFile = async (file: File) => {
+            await onSelectFile(file, {
+              uuid: row.id
+            });
+            await onSelectFileWithContext(file, {
+              collection: "documentation",
+              year: row.original.year,
+              field: columnKey,
+              rowIndex
+            });
           };
 
           return (
-            <TextArea
-              name={`row-${row.index}-${columnKey}`}
-              className="h-fit min-h-min hover:border-primary hover:shadow-input"
-              placeholder="Add description here"
-              rows={2}
-              value={tempValue}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onChange={e => setTempValue(e.target.value)}
-              data-sync-blur="documentation"
+            <FileInput
+              key={rowIndex}
+              files={files as Partial<UploadedFile>[]}
+              onDelete={file =>
+                handleDeleteFile(file, {
+                  collection: "documentation",
+                  year: row.original.year,
+                  field: columnKey,
+                  rowIndex: row.index
+                })
+              }
+              onChange={newFiles => newFiles.forEach(handleSelectFile)}
             />
           );
         }

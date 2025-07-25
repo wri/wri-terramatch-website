@@ -127,3 +127,57 @@ export type HectareRestorationDto = {
   restorationStrategiesRepresented: Record<string, any>;
   targetLandUseTypesRepresented: Record<string, any>;
 };
+
+export type DashboardProjectsLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+  hasAccess: boolean;
+};
+
+export type DashboardProjectsFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+  hasAccess: boolean;
+  cohort: string[] | null;
+  objectives: string | null;
+  landTenureProjectArea: string[] | null;
+};
+
+export type DashboardSitePolygonsLightDto = {
+  id: number;
+  uuid: string;
+  status: string;
+  lat: number | null;
+  long: number | null;
+  name: string | null;
+};
