@@ -96,7 +96,7 @@ const FundingCard = (props: FundingCardProps) => {
         </Button>
         <Button
           as={Link}
-          variant={status === "inactive" ? "secondary-blue" : "sky"}
+          variant={status === "active" ? "sky" : "secondary-blue"}
           className="w-full flex-1"
           href={primaryLink}
           disabled={!primaryLink || status === "inactive" || status === "disabled" || status === "coming-soon"}
