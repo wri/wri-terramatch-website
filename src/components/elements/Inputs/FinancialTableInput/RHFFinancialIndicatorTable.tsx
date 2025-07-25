@@ -574,7 +574,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Assets",
+        header: "Current Assets",
         accessorKey: "currentAssets",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -631,7 +631,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Liabilities",
+        header: "Current Liabilities",
         accessorKey: "currentLiabilities",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
