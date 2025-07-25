@@ -19,22 +19,14 @@ const dashboardProjectsConnection = v3Resource("dashboardProjects", dashboardEnt
   .refetch(() => ApiSlice.pruneIndex("dashboardProjects", ""))
   .buildConnection();
 
-const createDashboardProjectGetConnection = <D extends DashboardProjectsFullDto | DashboardProjectsLightDto>(
-  requireFullEntity: boolean = true
-) => {
-  const pathParamsFactory = ({ id }: IdProp) =>
-    id == null ? undefined : { pathParams: { entity: "dashboardProjects" as const, uuid: id } };
-  const factory = requireFullEntity
-    ? v3Resource("dashboardProjects", dashboardEntityGet).singleFullResource<D>(pathParamsFactory)
-    : v3Resource("dashboardProjects", dashboardEntityGet).singleResource<D>(pathParamsFactory);
-  return factory
-    .refetch(({ id }) => {
-      if (id != null) ApiSlice.pruneCache("dashboardProjects", [id]);
-    })
-    .buildConnection();
-};
-
-const dashboardProjectConnection = createDashboardProjectGetConnection<DashboardProjectsFullDto>();
+const dashboardProjectConnection = v3Resource("dashboardProjects", dashboardEntityGet)
+  .singleFullResource<DashboardProjectsFullDto>(({ id }: IdProp) =>
+    id == null ? undefined : { pathParams: { entity: "dashboardProjects" as const, uuid: id } }
+  )
+  .refetch(({ id }) => {
+    if (id != null) ApiSlice.pruneCache("dashboardProjects", [id]);
+  })
+  .buildConnection();
 
 export const useDashboardProjects = connectionHook(dashboardProjectsConnection);
 export const useDashboardProject = connectionHook(dashboardProjectConnection);
