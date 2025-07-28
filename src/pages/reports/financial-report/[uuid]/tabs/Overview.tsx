@@ -92,7 +92,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
       {hasNetProfitData && (
         <Container className="mx-auto rounded-2xl p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
-            {t("Financial Documents")}
+            {t("Net Profit By Year")}
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
