@@ -34,9 +34,12 @@ const DashboardAnalyticsWrapper = ({ children }: DashboardAnalyticsWrapperProps)
             window.hj('identify', userId, {
               'first_name': '${user.firstName ?? ""}',
               'last_name': '${user.lastName ?? ""}',
+              'full_name': '${user.fullName ?? ""}',
               'role': '${user.primaryRole ?? ""}',
               'email_address': '${user.emailAddress ?? ""}',
-              'organisation_name': '${organisation?.name ?? ""}'
+              'locale': '${user.locale ?? ""}',
+              'organisation_name': '${organisation?.name ?? ""}',
+              'frameworks': ${JSON.stringify(user.frameworks?.map(f => f.slug) ?? [])}
             });
           `}
         </Script>
