@@ -120,6 +120,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   record?: any;
   showPopups?: boolean;
   showLegend?: boolean;
+  showDownloadPolygons?: boolean;
   mapFunctions?: any;
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
@@ -170,6 +171,7 @@ export const MapContainer = ({
   record,
   showPopups = false,
   showLegend = false,
+  showDownloadPolygons = false,
   mapFunctions,
   tooltipType = "view",
   polygonsExists = true,
@@ -698,21 +700,23 @@ export const MapContainer = ({
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
-        <ControlGroup position="top-right">
-          <button
-            type="button"
-            className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={downloadGeoJsonPolygon}
-            disabled={isDownloadingPolygons}
-          >
-            {isDownloadingPolygons ? (
-              <Icon name={IconNames.SPINNER} className="h-5 w-5 animate-spin lg:h-6 lg:w-6" />
-            ) : (
-              <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" />
-            )}
-            <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
-          </button>
-        </ControlGroup>
+        <When condition={showDownloadPolygons}>
+          <ControlGroup position="top-right">
+            <button
+              type="button"
+              className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={downloadGeoJsonPolygon}
+              disabled={isDownloadingPolygons}
+            >
+              {isDownloadingPolygons ? (
+                <Icon name={IconNames.SPINNER} className="h-5 w-5 animate-spin lg:h-6 lg:w-6" />
+              ) : (
+                <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" />
+              )}
+              <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
+            </button>
+          </ControlGroup>
+        </When>
         <When condition={hasControls}>
           <When condition={polygonFromMap?.isOpen && !formMap}>
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>

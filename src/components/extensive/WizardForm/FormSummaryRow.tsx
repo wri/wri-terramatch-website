@@ -186,6 +186,7 @@ export const getFormEntries = (
               showPopups={type === "sites"}
               showLegend={type === "sites"}
               mapFunctions={mapFunctions}
+              showDownloadPolygons={true}
             />
           )
         });
@@ -409,6 +410,7 @@ const getEntityPolygonData = (
 };
 
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
+  console.log("FormSummaryRow props", props);
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });
   return (
