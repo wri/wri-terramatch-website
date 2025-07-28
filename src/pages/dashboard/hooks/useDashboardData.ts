@@ -438,11 +438,7 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
       setGeneralBboxParsed(generalBbox as BBox);
-    } else if (
-      centroidsDataProjects != null &&
-      centroidsDataProjects.bbox != null &&
-      centroidsDataProjects.bbox.length > 0
-    ) {
+    } else if (centroidsDataProjects?.bbox != null && centroidsDataProjects.bbox.length > 0) {
       setGeneralBboxParsed(centroidsDataProjects.bbox as BBox);
     } else {
       setGeneralBboxParsed(undefined);
