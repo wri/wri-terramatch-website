@@ -186,6 +186,7 @@ export const getFormEntries = (
               showPopups={type === "sites"}
               showLegend={type === "sites"}
               mapFunctions={mapFunctions}
+              showDownloadPolygons={true}
             />
           )
         });
