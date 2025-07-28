@@ -553,15 +553,9 @@ export const MapContainer = ({
 
   const downloadGeoJsonPolygon = async () => {
     setIsDownloadingPolygons(true);
-
     try {
       let polygonsToDownload: string[] = [];
-
-      // Check if any polygons are selected via checkbox
-      if (selectedPolygonsInCheckbox && selectedPolygonsInCheckbox.length > 0) {
-        polygonsToDownload = selectedPolygonsInCheckbox;
-      } else if (polygonsData) {
-        // Fallback to all polygons from all statuses in polygonsData
+      if (polygonsData) {
         const allPolygons: string[] = [];
         Object.values(polygonsData).forEach(statusPolygons => {
           if (Array.isArray(statusPolygons)) {
@@ -575,21 +569,16 @@ export const MapContainer = ({
         openNotification("error", t("Error"), t("No polygons found to download."));
         return;
       }
-
-      // Fetch all polygon GeoJSON data
       const polygonPromises = polygonsToDownload.map(uuid =>
         fetchGetV2TerrafundPolygonGeojsonUuid({ pathParams: { uuid } })
       );
 
       const polygonResults = await Promise.all(polygonPromises);
 
-      // Create a combined FeatureCollection
       const features: any[] = [];
       polygonResults.forEach((result, index) => {
         if (result?.geojson?.coordinates) {
-          // Add each feature from the polygon's geojson
           result.geojson.coordinates.forEach((feature: any) => {
-            // Add the polygon UUID as a property for identification
             features.push({
               type: "Feature",
               geometry: {
@@ -616,7 +605,6 @@ export const MapContainer = ({
       link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
       link.click();
       URL.revokeObjectURL(url);
-
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
     } catch (error) {
       Log.error("Download error:", error);
