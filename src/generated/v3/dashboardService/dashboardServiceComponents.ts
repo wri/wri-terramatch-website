@@ -265,7 +265,7 @@ export type DashboardEntityIndexPathParams = {
   /**
    * Dashboard entity type
    */
-  entity: "dashboardProjects" | "dashboardSitePolygons" | "dashboardImpactStories";
+  entity: "dashboardProjects" | "dashboardSitepolygons" | "dashboardImpactStories";
 };
 
 export type DashboardEntityIndexQueryParams = {
@@ -397,7 +397,7 @@ export type DashboardEntityGetPathParams = {
   /**
    * Dashboard entity type
    */
-  entity: "dashboardProjects" | "dashboardSitePolygons" | "dashboardImpactStories";
+  entity: "dashboardProjects" | "dashboardSitepolygons" | "dashboardImpactStories";
 };
 
 export type DashboardEntityGetError = Fetcher.ErrorWrapper<{

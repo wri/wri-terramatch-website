@@ -465,23 +465,14 @@ export const useDashboardData = (filters: any) => {
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: "", // content field will be added later
-        category: story.category,
         thumbnail: story.thumbnail ?? "",
         organization: {
           name: story.organisation?.name ?? "",
-          category: story.category,
           country:
             story.organisation?.countries?.length > 0
               ? story.organisation.countries.map((c: any) => c.label).join(", ")
-              : "No country",
-          countries_data: story.organisation?.countries ?? [],
-          facebook_url: story.organisation?.facebook_url ?? "",
-          instagram_url: story.organisation?.instagram_url ?? "",
-          linkedin_url: story.organisation?.linkedin_url ?? "",
-          twitter_url: story.organisation?.twitter_url ?? ""
-        },
-        status: story.status
+              : "No country"
+        }
       })) || [],
     [impactStories]
   );

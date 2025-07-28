@@ -22,6 +22,7 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
+import { useGadmChoices } from "@/connections/Gadm";
 import { loadImpactStory } from "@/connections/ImpactStory";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -103,6 +104,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const router = useRouter();
   const { country } = router.query;
@@ -643,7 +645,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                       <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name}
                     </Text>
                     <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                      <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                      <Icon name={IconNames.PIN} className="h-4 w-4" />{" "}
+                      {(() => {
+                        const gadmCountry = countryChoices.find(country => country.id === item.organization.country);
+                        return gadmCountry ? gadmCountry.name : item.organization.country;
+                      })()}
                     </Text>
                   </div>
                 </button>
