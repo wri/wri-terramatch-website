@@ -195,6 +195,7 @@ export const MapContainer = ({
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
 
   const {
     polygonsData,
@@ -208,7 +209,6 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
-  console.log(props);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -250,8 +250,6 @@ export const MapContainer = ({
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }
   );
-
-  console.log(entityData, polygonFromMap);
 
   useOnMount(() => {
     initMap(!!isDashboard);
@@ -553,19 +551,79 @@ export const MapContainer = ({
     }
   };
 
-  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-    console.log(polygonFromMap, polygonFromMap, polygonBbox, map.current, selectedPolyVersion, draw.current);
-    console.log(draw.current.getAll());
-    /* const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
-      queryParams: { uuid: polygonUuid }
-    }); */
-    const blob = new Blob([JSON.stringify(draw.current.getAll())], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${polygon_name}.geojson`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const downloadGeoJsonPolygon = async () => {
+    setIsDownloadingPolygons(true);
+
+    try {
+      let polygonsToDownload: string[] = [];
+
+      // Check if any polygons are selected via checkbox
+      if (selectedPolygonsInCheckbox && selectedPolygonsInCheckbox.length > 0) {
+        polygonsToDownload = selectedPolygonsInCheckbox;
+      } else if (polygonsData) {
+        // Fallback to all polygons from all statuses in polygonsData
+        const allPolygons: string[] = [];
+        Object.values(polygonsData).forEach(statusPolygons => {
+          if (Array.isArray(statusPolygons)) {
+            allPolygons.push(...statusPolygons);
+          }
+        });
+        polygonsToDownload = allPolygons;
+      }
+
+      if (polygonsToDownload.length === 0) {
+        openNotification("error", t("Error"), t("No polygons found to download."));
+        return;
+      }
+
+      // Fetch all polygon GeoJSON data
+      const polygonPromises = polygonsToDownload.map(uuid =>
+        fetchGetV2TerrafundPolygonGeojsonUuid({ pathParams: { uuid } })
+      );
+
+      const polygonResults = await Promise.all(polygonPromises);
+
+      // Create a combined FeatureCollection
+      const features: any[] = [];
+      polygonResults.forEach((result, index) => {
+        if (result?.geojson?.coordinates) {
+          // Add each feature from the polygon's geojson
+          result.geojson.coordinates.forEach((feature: any) => {
+            // Add the polygon UUID as a property for identification
+            features.push({
+              type: "Feature",
+              geometry: {
+                type: "Polygon",
+                coordinates: [feature]
+              },
+              properties: {
+                polygon_uuid: polygonsToDownload[index]
+              }
+            });
+          });
+        }
+      });
+
+      const combinedGeojson = {
+        type: "FeatureCollection",
+        features: features
+      };
+
+      const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
+    } catch (error) {
+      Log.error("Download error:", error);
+      openNotification("error", t("Error"), t("Failed to download polygons. Please try again."));
+    } finally {
+      setIsDownloadingPolygons(false);
+    }
   };
 
   const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
@@ -655,10 +713,16 @@ export const MapContainer = ({
         <ControlGroup position="top-right">
           <button
             type="button"
-            className="shadow-lg absolute top-4 right-4 z-10 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200"
-            onClick={() => downloadGeoJsonPolygon("", "polygons")}
+            className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={downloadGeoJsonPolygon}
+            disabled={isDownloadingPolygons}
           >
-            <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" /> Download Polygons
+            {isDownloadingPolygons ? (
+              <Icon name={IconNames.SPINNER} className="h-5 w-5 animate-spin lg:h-6 lg:w-6" />
+            ) : (
+              <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" />
+            )}
+            <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
           </button>
         </ControlGroup>
         <When condition={hasControls}>
