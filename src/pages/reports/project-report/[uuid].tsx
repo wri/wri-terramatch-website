@@ -55,7 +55,7 @@ const ProjectReportDetailPage = () => {
               title: t("Gallery"),
               body: (
                 <GalleryTab
-                  modelName="project-reports"
+                  modelName="projectReports"
                   modelUUID={report.uuid}
                   modelTitle={t("Report")}
                   entityData={project}

@@ -80,7 +80,7 @@ const NurseryReportDetailPage = () => {
               <PageRow>
                 <PageColumn>
                   <EntityMapAndGalleryCard
-                    modelName="nursery-reports"
+                    modelName="nurseryReports"
                     modelUUID={nurseryReport?.uuid!}
                     entityData={nursery}
                     modelTitle={t("Nursery Report")}
