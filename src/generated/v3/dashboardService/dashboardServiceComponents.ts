@@ -545,7 +545,7 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          * @format uuid
          */
         id?: string;
-        attributes?: Schemas.DashboardImpactStoryLightDto;
+        attributes?: Schemas.DashboardImpactStoryFullDto;
       }[];
     },
   DashboardEntityGetError,

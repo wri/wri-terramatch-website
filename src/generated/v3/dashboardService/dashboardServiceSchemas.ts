@@ -150,6 +150,10 @@ export type DashboardProjectsLightDto = {
 };
 
 export type DashboardImpactStoryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   title: string;
   date: string;
@@ -181,6 +185,21 @@ export type DashboardProjectsFullDto = {
   cohort: string[] | null;
   objectives: string | null;
   landTenureProjectArea: string[] | null;
+};
+
+export type DashboardImpactStoryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  title: string;
+  date: string;
+  category: string[];
+  thumbnail: string | null;
+  organisation: Record<string, any>;
+  status: string;
+  content: string | null;
 };
 
 export type DashboardSitePolygonsLightDto = {

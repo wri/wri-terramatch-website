@@ -2,7 +2,7 @@ import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -22,13 +22,12 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
+import { useDashboardImpactStory } from "@/connections/DashboardEntity";
 import { useGadmChoices } from "@/connections/Gadm";
-import { loadImpactStory } from "@/connections/ImpactStory";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { ImpactStoryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -98,7 +97,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
-  const { showLoader, hideLoader } = useLoading();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
@@ -118,6 +116,56 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setProjectUUID(filters.uuid);
   });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
+  const [pendingStoryData, setPendingStoryData] = useState<any>(null);
+  const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && impactStory) {
+      const fullStory = impactStory as unknown as DashboardImpactStoryFullDto;
+      const parsedData = {
+        uuid: fullStory.uuid ?? "",
+        title: fullStory.title ?? "",
+        date: fullStory.date ?? "",
+        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        category: fullStory.category ?? [],
+        thumbnail: fullStory.thumbnail ?? "",
+        organization: {
+          name: fullStory.organisation?.name ?? "",
+          category: fullStory.category ?? pendingStoryData.category ?? [],
+          country:
+            fullStory.organisation?.countries && fullStory.organisation.countries.length > 0
+              ? fullStory.organisation.countries
+                  .map((c: any) => {
+                    const found = countryChoices.find(country => country.id === c.label);
+                    return found ? found.name : c.label;
+                  })
+                  .join(", ")
+              : "No country",
+          facebook_url: fullStory.organisation?.facebook_url ?? pendingStoryData.organization?.facebook_url ?? "",
+          instagram_url: fullStory.organisation?.instagram_url ?? pendingStoryData.organization?.instagram_url ?? "",
+          linkedin_url: fullStory.organisation?.linkedin_url ?? pendingStoryData.organization?.linkedin_url ?? "",
+          twitter_url: fullStory.organisation?.twitter_url ?? pendingStoryData.organization?.twitter_url ?? ""
+        },
+        status: fullStory.status ?? ""
+      };
+      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, impactStory, openModal, t, countryChoices]);
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && loadFailure) {
+      console.error("Error fetching story details:", loadFailure.message);
+      openModal(ModalId.MODAL_STORY, <ModalStory data={pendingStoryData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, loadFailure, openModal, t]);
+
   useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
@@ -328,43 +376,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = async (storyData: any) => {
-    try {
-      showLoader();
-      const { loadFailure, data: impactStory } = await loadImpactStory({ id: storyData.uuid });
-      if (loadFailure != null) {
-        throw new Error(`Failed to fetch story details: ${loadFailure.message}`);
-      }
-
-      const fullStory = impactStory as unknown as ImpactStoryFullDto;
-
-      const parsedData = {
-        uuid: fullStory.uuid ?? "",
-        title: fullStory.title ?? "",
-        date: fullStory.date ?? "",
-        content: fullStory.content ? JSON.parse(fullStory.content) : "",
-        category: fullStory.category ?? [],
-        thumbnail: fullStory.thumbnail?.[0]?.url ?? "",
-        organization: {
-          name: fullStory.organization?.name ?? "",
-          category: fullStory.category ?? storyData.category ?? [],
-          country:
-            fullStory.organization?.countries && fullStory.organization.countries.length > 0
-              ? fullStory.organization.countries.map((c: any) => c.label).join(", ")
-              : "No country",
-          facebook_url: fullStory.organization?.facebook_url ?? storyData.organization?.facebook_url ?? "",
-          instagram_url: fullStory.organization?.instagram_url ?? storyData.organization?.instagram_url ?? "",
-          linkedin_url: fullStory.organization?.linkedin_url ?? storyData.organization?.linkedin_url ?? "",
-          twitter_url: fullStory.organization?.twitter_url ?? storyData.organization?.twitter_url ?? ""
-        },
-        status: fullStory.status ?? ""
-      };
-      hideLoader();
-      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
-    } catch (error) {
-      console.error("Error fetching story details:", error);
-      openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
-    }
+  const ModalStoryOpen = (storyData: any) => {
+    setSelectedStoryId(storyData.uuid);
+    setPendingStoryData(storyData);
   };
 
   const columnMobile = (columns as any[]).filter(

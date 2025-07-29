@@ -8,6 +8,7 @@ import {
   GetDashboardSitePolygonsQueryParams
 } from "@/generated/v3/dashboardService/dashboardServiceComponents";
 import {
+  DashboardImpactStoryFullDto,
   DashboardImpactStoryLightDto,
   DashboardProjectsFullDto,
   DashboardProjectsLightDto,
@@ -49,7 +50,17 @@ const dashboardImpactStoriesConnection = v3Resource("dashboardImpactStories", da
   .refetch(() => ApiSlice.pruneIndex("dashboardImpactStories", ""))
   .buildConnection();
 
+const dashboardImpactStoryConnection = v3Resource("dashboardImpactStories", dashboardEntityGet)
+  .singleFullResource<DashboardImpactStoryFullDto>(({ id }: IdProp) =>
+    id == null ? undefined : { pathParams: { entity: "dashboardImpactStories" as const, uuid: id } }
+  )
+  .refetch(({ id }) => {
+    if (id != null) ApiSlice.pruneCache("dashboardImpactStories", [id]);
+  })
+  .buildConnection();
+
 export const useDashboardProjects = connectionHook(dashboardProjectsConnection);
 export const useDashboardProject = connectionHook(dashboardProjectConnection);
 export const useDashboardSitePolygons = connectionHook(dashboardSitePolygonsConnection);
 export const useDashboardImpactStories = connectionHook(dashboardImpactStoriesConnection);
+export const useDashboardImpactStory = connectionHook(dashboardImpactStoryConnection);

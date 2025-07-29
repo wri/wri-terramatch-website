@@ -8,6 +8,7 @@ import {
   DashboardProjectsLightDto,
   DashboardProjectsFullDto,
   DashboardImpactStoryLightDto,
+  DashboardImpactStoryFullDto,
   DashboardSitePolygonsLightDto
 } from "./dashboardServiceSchemas";
 
@@ -29,6 +30,6 @@ export type DashboardServiceApiResources = {
   totalJobsCreated: StoreResourceMap<TotalJobsCreatedDto>;
   hectareRestoration: StoreResourceMap<HectareRestorationDto>;
   dashboardProjects: StoreResourceMap<DashboardProjectsLightDto | DashboardProjectsFullDto>;
-  dashboardImpactStories: StoreResourceMap<DashboardImpactStoryLightDto>;
+  dashboardImpactStories: StoreResourceMap<DashboardImpactStoryLightDto | DashboardImpactStoryFullDto>;
   dashboardSitepolygons: StoreResourceMap<DashboardSitePolygonsLightDto>;
 };
