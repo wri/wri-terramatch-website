@@ -163,6 +163,18 @@ export type DashboardImpactStoryLightDto = {
   status: string;
 };
 
+export type DashboardSitePolygonsLightDto = {
+  id: number;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
+  status: string;
+  lat: number | null;
+  long: number | null;
+  name: string | null;
+};
+
 export type DashboardProjectsFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -200,13 +212,4 @@ export type DashboardImpactStoryFullDto = {
   organisation: Record<string, any>;
   status: string;
   content: string | null;
-};
-
-export type DashboardSitePolygonsLightDto = {
-  id: number;
-  uuid: string;
-  status: string;
-  lat: number | null;
-  long: number | null;
-  name: string | null;
 };

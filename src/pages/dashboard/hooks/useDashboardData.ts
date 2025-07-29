@@ -208,20 +208,20 @@ export const useDashboardData = (filters: any) => {
     const data: { [status: string]: string[] } = {};
 
     dashboardSitePolygonsData.forEach(polygon => {
-      if (polygon.lat != null && polygon.long != null && polygon.uuid != null && polygon.status != null) {
+      if (polygon.lat != null && polygon.long != null && polygon.polygonUuid != null && polygon.status != null) {
         centroids.push({
           lat: polygon.lat,
           long: polygon.long,
-          uuid: polygon.uuid,
+          uuid: polygon.polygonUuid,
           status: polygon.status
         });
       }
 
-      if (polygon.status != null && polygon.uuid != null) {
+      if (polygon.status != null && polygon.polygonUuid != null) {
         if (data[polygon.status] == null) {
           data[polygon.status] = [];
         }
-        data[polygon.status].push(polygon.uuid);
+        data[polygon.status].push(polygon.polygonUuid);
       }
     });
 

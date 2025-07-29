@@ -383,6 +383,49 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DashboardImpactStoryLightDto;
       }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
+      }[];
     },
   DashboardEntityIndexError,
   DashboardEntityIndexVariables,
@@ -546,6 +589,49 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DashboardImpactStoryFullDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
       }[];
     },
   DashboardEntityGetError,
