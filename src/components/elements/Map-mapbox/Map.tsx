@@ -120,6 +120,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   record?: any;
   showPopups?: boolean;
   showLegend?: boolean;
+  showDownloadPolygons?: boolean;
   mapFunctions?: any;
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonsDataResponse;
@@ -170,6 +171,7 @@ export const MapContainer = ({
   record,
   showPopups = false,
   showLegend = false,
+  showDownloadPolygons = false,
   mapFunctions,
   tooltipType = "view",
   polygonsExists = true,
@@ -195,6 +197,7 @@ export const MapContainer = ({
   const [viewImages, setViewImages] = useState(false);
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
 
   const {
     polygonsData,
@@ -631,9 +634,89 @@ export const MapContainer = ({
     }
   }, [polygonFromMap, polygonBbox, map]);
 
+  const downloadGeoJsonPolygon = async () => {
+    setIsDownloadingPolygons(true);
+    try {
+      let polygonsToDownload: string[] = [];
+      if (polygonsData) {
+        const allPolygons: string[] = [];
+        Object.values(polygonsData).forEach(statusPolygons => {
+          if (Array.isArray(statusPolygons)) {
+            allPolygons.push(...statusPolygons);
+          }
+        });
+        polygonsToDownload = allPolygons;
+      }
+
+      if (polygonsToDownload.length === 0) {
+        openNotification("error", t("Error"), t("No polygons found to download."));
+        return;
+      }
+      const polygonPromises = polygonsToDownload.map(uuid =>
+        fetchGetV2TerrafundPolygonGeojsonUuid({ pathParams: { uuid } })
+      );
+
+      const polygonResults = await Promise.all(polygonPromises);
+
+      const features: any[] = [];
+      polygonResults.forEach((result, index) => {
+        if (result?.geojson?.coordinates) {
+          result.geojson.coordinates.forEach((feature: any) => {
+            features.push({
+              type: "Feature",
+              geometry: {
+                type: "Polygon",
+                coordinates: [feature]
+              },
+              properties: {
+                polygon_uuid: polygonsToDownload[index]
+              }
+            });
+          });
+        }
+      });
+
+      const combinedGeojson = {
+        type: "FeatureCollection",
+        features: features
+      };
+
+      const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.click();
+      URL.revokeObjectURL(url);
+      openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
+    } catch (error) {
+      Log.error("Download error:", error);
+      openNotification("error", t("Error"), t("Failed to download polygons. Please try again."));
+    } finally {
+      setIsDownloadingPolygons(false);
+    }
+  };
+
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
+        <When condition={showDownloadPolygons}>
+          <ControlGroup position="top-right">
+            <button
+              type="button"
+              className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={downloadGeoJsonPolygon}
+              disabled={isDownloadingPolygons}
+            >
+              {isDownloadingPolygons ? (
+                <Icon name={IconNames.SPINNER} className="h-5 w-5 animate-spin lg:h-6 lg:w-6" />
+              ) : (
+                <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" />
+              )}
+              <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
+            </button>
+          </ControlGroup>
+        </When>
         <When condition={hasControls}>
           <When condition={polygonFromMap?.isOpen && !formMap}>
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
