@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useDashboardProject, useDashboardProjects } from "@/connections/DashboardEntity";
+import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useMedia } from "@/connections/EntityAssociation";
@@ -11,14 +11,12 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardJobsCreated, useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
-import { useSitePolygonsHectares } from "@/hooks/useSitePolygonsHectares";
 import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, createQueryParams, groupProjectsByCountry } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
 import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
-import { useDashboardTreeSpeciesData } from "./useDashboardTreeSpeciesData";
 
 const DEFAULT_COHORT: string[] = ["terrafund", "terrafund-landscapes"];
 const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [
@@ -83,11 +81,13 @@ export const useDashboardData = (filters: any) => {
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
 
-  const {
-    data: projectHectaresData,
-    isLoading: isLoadingProjectHectares,
-    allPolygonsData
-  } = useSitePolygonsHectares(filters.uuid);
+  const [, { data: dashboardSitePolygonsData }] = useDashboardSitePolygons({
+    filter: {
+      polygonStatus: ["approved"],
+      projectUuid: filters.uuid || ""
+    },
+    enabled: !!filters.uuid
+  });
 
   const { showLoader, hideLoader } = useLoading();
 
@@ -193,7 +193,7 @@ export const useDashboardData = (filters: any) => {
   }, [dashboardProjectsData]);
 
   const polygonsData = useMemo(() => {
-    if (!allPolygonsData || allPolygonsData.length === 0) {
+    if (dashboardSitePolygonsData == null || dashboardSitePolygonsData.length === 0) {
       return {
         centroids: [],
         data: {}
@@ -203,26 +203,26 @@ export const useDashboardData = (filters: any) => {
     const centroids: { lat: number; long: number; uuid: string; status: string }[] = [];
     const data: { [status: string]: string[] } = {};
 
-    allPolygonsData.forEach(polygon => {
-      if (polygon.lat && polygon.long && polygon.polygonUuid && polygon.status) {
+    dashboardSitePolygonsData.forEach(polygon => {
+      if (polygon.lat != null && polygon.long != null && polygon.uuid != null && polygon.status != null) {
         centroids.push({
           lat: polygon.lat,
           long: polygon.long,
-          uuid: polygon.polygonUuid,
+          uuid: polygon.uuid,
           status: polygon.status
         });
       }
 
-      if (polygon.status && polygon.polygonUuid) {
-        if (!data[polygon.status]) {
+      if (polygon.status != null && polygon.uuid != null) {
+        if (data[polygon.status] == null) {
           data[polygon.status] = [];
         }
-        data[polygon.status].push(polygon.polygonUuid);
+        data[polygon.status].push(polygon.uuid);
       }
     });
 
     return { centroids, data };
-  }, [allPolygonsData]);
+  }, [dashboardSitePolygonsData]);
 
   const [treeRestorationGoalLoaded, { data: dashboardRestorationGoalData }] = useTreeRestorationGoal({
     filter: treeRestorationGoalFilter
@@ -253,7 +253,7 @@ export const useDashboardData = (filters: any) => {
     };
   }, [dashboardRestorationGoalData]);
 
-  const [isDashboardHectareRestorationLoaded, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
+  const [isLoadingHectaresUnderRestoration, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
     filter: hectareRestorationFilter
   });
 
@@ -292,39 +292,12 @@ export const useDashboardData = (filters: any) => {
   }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
 
   const projectBbox = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
-  const { treeSpeciesData: projectTreeSpeciesData, isLoading: isLoadingProjectTreeSpecies } =
-    useDashboardTreeSpeciesData(
-      filters.uuid,
-      singleDashboardProject?.treesGrownGoal,
-      singleDashboardProject?.organisationType
-    );
-
-  const combinedHectaresData = useMemo(() => {
-    if (filters.uuid && projectTreeSpeciesData) {
-      return projectTreeSpeciesData;
-    } else {
-      return transformedTreeRestorationGoalData;
-    }
-  }, [filters.uuid, projectTreeSpeciesData, transformedTreeRestorationGoalData]);
-
-  const finalHectaresUnderRestoration = useMemo(() => {
-    if (filters.uuid && projectHectaresData) {
-      return projectHectaresData;
-    }
-    return generalHectaresUnderRestoration;
-  }, [filters.uuid, projectHectaresData, generalHectaresUnderRestoration]);
-
-  const finalIsLoadingHectaresUnderRestoration = useMemo(() => {
-    if (filters.uuid) {
-      return isLoadingProjectHectares;
-    }
-  }, [filters.uuid, isLoadingProjectHectares]);
 
   const centroidsDataProjects = useMemo(() => {
-    if (!dashboardProjects?.length) return { data: [], bbox: [] };
+    if (dashboardProjects == null || dashboardProjects.length === 0) return { data: [], bbox: [] };
 
     const projectsWithCoordinates = dashboardProjects.filter(project => {
-      if (!project) return false;
+      if (project == null) return false;
 
       const long = project.long;
       const lat = project.lat;
@@ -465,7 +438,7 @@ export const useDashboardData = (filters: any) => {
   useEffect(() => {
     if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
       setGeneralBboxParsed(generalBbox as BBox);
-    } else if (centroidsDataProjects?.bbox && centroidsDataProjects.bbox.length > 0) {
+    } else if (centroidsDataProjects?.bbox != null && centroidsDataProjects.bbox.length > 0) {
       setGeneralBboxParsed(centroidsDataProjects.bbox as BBox);
     } else {
       setGeneralBboxParsed(undefined);
@@ -510,15 +483,14 @@ export const useDashboardData = (filters: any) => {
 
   return {
     dashboardHeader,
-    dashboardRestorationGoalData: combinedHectaresData,
+    dashboardRestorationGoalData: transformedTreeRestorationGoalData,
     jobsCreatedData: combinedJobsData,
     numberTreesPlanted,
     totalSectionHeader: calculatedTotals,
-    hectaresUnderRestoration: finalHectaresUnderRestoration,
+    hectaresUnderRestoration: generalHectaresUnderRestoration,
     isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
-    isLoadingTreeRestorationGoal: treeRestorationGoalLoaded ?? (filters.uuid && isLoadingProjectTreeSpecies),
-    isLoadingX: isDashboardHectareRestorationLoaded ?? (filters.uuid && isLoadingProjectHectares),
-    isLoadingHectaresUnderRestoration: finalIsLoadingHectaresUnderRestoration,
+    isLoadingTreeRestorationGoal: treeRestorationGoalLoaded,
+    isLoadingHectaresUnderRestoration,
     singleDashboardProject,
     projectLoaded,
     coverImage,
