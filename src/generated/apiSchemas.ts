@@ -11091,6 +11091,7 @@ export type SitePolygon = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
+  planting_status?: string;
 };
 
 export type GeometryString = {
@@ -11140,6 +11141,7 @@ export type SitePolygonsDataResponse = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
+  planting_status?: string;
 }[];
 
 export type SitePolygonsBboxResponse = {
@@ -11533,6 +11535,7 @@ export type EntityTypeResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
+    planting_status?: string;
   }[];
 };
 
@@ -11590,6 +11593,7 @@ export type EntityPolygonResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
+    planting_status?: string;
   }[];
 };
 
@@ -11666,6 +11670,7 @@ export type PolygonChangeStatus = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
+  planting_status?: string;
 }[];
 
 export type PolygonChangeStatusUpdate = {
