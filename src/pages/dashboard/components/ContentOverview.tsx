@@ -473,13 +473,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              if (row?.country) {
+              if (row?.country && filters.country.id === 0) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid as string,
-                  country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
+                  uuid: "",
+                  country: {
+                    country_slug: row.uuid as string,
+                    id: 1,
+                    data: {
+                      label: row.country?.split("_")[0] ?? "",
+                      icon: `/flags/${(row.uuid as string).toLowerCase()}.svg`
+                    }
+                  }
                 }));
+                return;
               }
 
               if (row.uuid) {
