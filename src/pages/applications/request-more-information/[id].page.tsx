@@ -29,7 +29,8 @@ const RequestMoreInformationPage = () => {
   }>({
     pathParams: {
       uuid
-    }
+    },
+    queryParams: { lang: router.locale }
   });
 
   const { mutate: updateSubmission, isSuccess, isLoading } = usePatchV2FormsSubmissionsUUID({});
