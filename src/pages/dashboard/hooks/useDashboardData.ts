@@ -4,15 +4,16 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
+import { useJobsCreated } from "@/connections/DashboardJobsCreatedConnection";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useMedia } from "@/connections/EntityAssociation";
 import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardJobsCreated, useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
+import { useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { HookFilters } from "@/types/connection";
-import { calculateTotalsFromProjects, createQueryParams, groupProjectsByCountry } from "@/utils/dashboardUtils";
+import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
@@ -56,19 +57,6 @@ export const useDashboardData = (filters: any) => {
     landscapes: convertNamesToCodes(filters.landscapes),
     country: filters.country.country_slug
   });
-  const [updateFilters, setUpdateFilters] = useState<any>({});
-  useEffect(() => {
-    const parsedFilters = {
-      programmes: filters.programmes,
-      country: filters.country.country_slug,
-      organisationType: filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    };
-    setUpdateFilters(parsedFilters);
-  }, [filters]);
-  const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
   const { data: isUserAllowed } = useGetV2DashboardViewProjectUuid<any>(
     {
       pathParams: { uuid: filters.uuid }
@@ -91,10 +79,28 @@ export const useDashboardData = (filters: any) => {
 
   const { showLoader, hideLoader } = useLoading();
 
-  const { data: jobsCreatedData, isLoading: isLoadingJobsCreated } = useGetV2DashboardJobsCreated<any>(
-    { queryParams: queryParams },
-    { enabled: !!filters && !filters.uuid }
+  const dashboardV3Filter = useMemo(
+    () => ({
+      "programmesType[]": filters.programmes,
+      country: filters.country.country_slug,
+      "organisationType[]": filters.organizations,
+      landscapes: convertNamesToCodes(filters.landscapes),
+      cohort: filters.cohort,
+      projectUuid: filters.uuid
+    }),
+    [
+      filters.programmes,
+      filters.country.country_slug,
+      filters.organizations,
+      filters.landscapes,
+      filters.cohort,
+      filters.uuid
+    ]
   );
+
+  const [isLoadingJobsCreated, { data: jobsCreatedData }] = useJobsCreated({
+    filter: dashboardV3Filter
+  });
 
   const { searchTerm } = useDashboardContext();
 
@@ -148,25 +154,6 @@ export const useDashboardData = (filters: any) => {
   }, [dashboardProjectsData]);
 
   const treeRestorationGoalFilter = useMemo(
-    () => ({
-      "programmesType[]": filters.programmes,
-      country: filters.country.country_slug,
-      "organisationType[]": filters.organizations,
-      landscapes: convertNamesToCodes(filters.landscapes),
-      cohort: filters.cohort,
-      projectUuid: filters.uuid
-    }),
-    [
-      filters.programmes,
-      filters.country.country_slug,
-      filters.organizations,
-      filters.landscapes,
-      filters.cohort,
-      filters.uuid
-    ]
-  );
-
-  const hectareRestorationFilter = useMemo(
     () => ({
       "programmesType[]": filters.programmes,
       country: filters.country.country_slug,
@@ -254,7 +241,7 @@ export const useDashboardData = (filters: any) => {
   }, [dashboardRestorationGoalData]);
 
   const [isLoadingHectaresUnderRestoration, { data: generalHectaresUnderRestoration }] = useHectareRestoration({
-    filter: hectareRestorationFilter
+    filter: dashboardV3Filter
   });
 
   const [projectLoaded, { data: singleDashboardProject }] = useDashboardProject({

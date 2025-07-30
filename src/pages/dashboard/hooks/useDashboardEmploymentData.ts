@@ -41,8 +41,8 @@ export const useDashboardEmploymentData = (projectUuid?: string) => {
     const rawEmploymentData =
       demographics.length === 0 ? DEFAULT_DEMOGRAPHIC_DATA : processDemographicData(demographics);
     return {
-      total_ft: rawEmploymentData.fullTimeJobs.total,
-      total_pt: rawEmploymentData.partTimeJobs.total,
+      totalFt: rawEmploymentData.fullTimeJobs.total,
+      totalPt: rawEmploymentData.partTimeJobs.total,
       total_ft_women: rawEmploymentData.fullTimeJobs.female,
       total_ft_men: rawEmploymentData.fullTimeJobs.male,
       total_ft_youth: rawEmploymentData.fullTimeJobs.youth,

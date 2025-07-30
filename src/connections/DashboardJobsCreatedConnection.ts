@@ -18,4 +18,4 @@ const jobsCreatedConnection = v3Resource("totalJobsCreated", getTotalJobsCreated
   })
   .buildConnection();
 
-export const useJobsCreatedConnection = connectionHook(jobsCreatedConnection);
+export const useJobsCreated = connectionHook(jobsCreatedConnection);
