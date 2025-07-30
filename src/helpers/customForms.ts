@@ -170,7 +170,16 @@ export const apiQuestionsToFormFields = (
   sortBy(questions, "order")
     .map((question, index, array) => {
       const feedbackRequired = feedback_fields?.includes(question.uuid);
-      return apiFormQuestionToFormField(question, t, index, array, entity, framework, feedbackRequired);
+      return apiFormQuestionToFormField(
+        question,
+        t,
+        index,
+        array,
+        entity,
+        framework,
+        feedbackRequired,
+        feedback_fields
+      );
     })
     .filter(field => !!field) as FormField[];
 
@@ -194,7 +203,8 @@ export const apiFormQuestionToFormField = (
   questions: FormQuestionRead[],
   entity?: Entity,
   framework?: Framework,
-  feedbackRequired?: boolean
+  feedbackRequired?: boolean,
+  feedback_fields?: string[]
 ): FormField | null => {
   const validation = getFieldValidation(question, t, framework ?? Framework.UNDEFINED);
   const required = question.validation?.required || false;
@@ -569,7 +579,7 @@ export const apiFormQuestionToFormField = (
           required,
           id: question.uuid,
           inputId: question.uuid,
-          fields: apiQuestionsToFormFields(question.children, t, entity, framework)
+          fields: apiQuestionsToFormFields(question.children, t, entity, framework, feedback_fields)
         }
       };
 
