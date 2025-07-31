@@ -66,3 +66,30 @@ export const dropdownOptionsTree = [
     value: "full"
   }
 ];
+
+export const dropdownOptionsPlantingStatus = [
+  {
+    title: "No Restoration Expected",
+    value: "no-restoration-expected"
+  },
+  {
+    title: "Not Started",
+    value: "not-started"
+  },
+  {
+    title: "In Progress",
+    value: "in-progress"
+  },
+  {
+    title: "Disturbed",
+    value: "disturbed"
+  },
+  {
+    title: "Replacement Planting",
+    value: "replacement-planting"
+  },
+  {
+    title: "Completed",
+    value: "completed"
+  }
+];
