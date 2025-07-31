@@ -17,6 +17,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -895,6 +896,48 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
         minute: "numeric"
       })
     : "Unknown";
+};
+
+// New utility functions for SitePolygonFullDto
+export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undefined) {
+  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonFullDto) => {
+    if (data.status && data.polygonUuid !== null) {
+      if (!acc[data.status]) {
+        acc[data.status] = [];
+      }
+      acc[data.status].push(data.polygonUuid);
+    }
+    return acc;
+  }, {});
+}
+
+export const countStatusesV3 = (sitePolygonData: SitePolygonFullDto[]): DataPolygonOverview => {
+  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
+
+  const statusCountMap: Record<string, number> = {};
+
+  sitePolygonData.forEach(item => {
+    let statusKey = item.status?.toLowerCase();
+
+    if (statusKey) {
+      if (statusKey === "needs-more-information") {
+        statusKey = "Needs Info";
+      } else {
+        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
+      }
+
+      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
+    }
+  });
+
+  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
+    status,
+    count
+  }));
+
+  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+
+  return orderedData;
 };
 
 export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {

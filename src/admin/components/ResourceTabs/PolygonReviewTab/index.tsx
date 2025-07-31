@@ -13,9 +13,9 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
-  countStatuses,
+  countStatusesV3,
   downloadSiteGeoJsonPolygons,
-  parsePolygonData,
+  parsePolygonDataV3,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
@@ -44,7 +44,8 @@ import {
   fetchPostV2TerrafundUploadShapefile,
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
@@ -121,11 +122,10 @@ const ContentForApproval = ({
   recordName: string;
 }) => (
   <>
-    <Text variant="text-12-light" as="p" className="text-center">
-      Are you sure you want to approve the following polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>{recordName}</b>?
-    </Text>
-    <div className="ml-6">
+    <div>
+      <Text variant="text-14-bold" as="p">
+        {recordName}
+      </Text>
       <ul style={{ listStyleType: "circle" }}>
         {polygonsForApprovals?.map(polygon => (
           <li key={polygon.id}>
@@ -198,41 +198,61 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch();
   });
 
-  const parseText = (text: string) => {
-    return text
-      .split(",")
-      .map(segment => {
-        return segment
-          .trim()
-          .split("-")
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-      })
-      .join(", ");
+  // Simple transformation for MapContainer compatibility
+  const transformForMapContainer = (data: SitePolygonFullDto[]) => {
+    return data.map(polygon => ({
+      id: undefined,
+      uuid: polygon.polygonUuid ?? undefined,
+      primary_uuid: undefined,
+      project_id: polygon.projectId ?? undefined,
+      proj_name: polygon.projectShortName ?? undefined,
+      org_name: undefined,
+      poly_id: polygon.polygonUuid ?? undefined,
+      poly_name: polygon.name ?? undefined,
+      site_id: polygon.siteId ?? undefined,
+      site_name: polygon.siteName ?? undefined,
+      plantstart: polygon.plantStart ?? undefined,
+      practice: polygon.practice ?? undefined,
+      target_sys: polygon.targetSys ?? undefined,
+      distr: polygon.distr ?? undefined,
+      num_trees: polygon.numTrees ?? undefined,
+      calc_area: polygon.calcArea ?? undefined,
+      created_by: undefined,
+      last_modified_by: undefined,
+      deleted_at: undefined,
+      created_at: undefined,
+      updated_at: undefined,
+      status: polygon.status,
+      source: polygon.source ?? undefined,
+      country: undefined,
+      is_active: undefined,
+      version_name: polygon.versionName ?? undefined,
+      validation_status: polygon.validationStatus ? true : false
+    }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data?.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": parseText(data?.practice ?? ""),
-    "target-land-use-system": parseText(data?.target_sys ?? ""),
-    "tree-distribution": parseText(data?.distr ?? ""),
-    "planting-start-date": data?.plantstart ?? "",
-    source: parseText(data?.source ?? ""),
-    uuid: data?.poly_id,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
+  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index) => ({
+    "polygon-name": data?.name ?? `Unnamed Polygon`,
+    "restoration-practice": data?.practice ?? "",
+    "target-land-use-system": data?.targetSys ?? "",
+    "tree-distribution": data?.distr ?? "",
+    "planting-start-date": data?.plantStart ?? "",
+    source: data?.source ?? "",
+    uuid: data?.polygonUuid,
+    ellipse: index === ((sitePolygonData ?? []) as SitePolygonFullDto[]).length - 1
   }));
 
-  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygon, index: number) => ({
+  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
-    label: data.poly_name ?? `Unnamed Polygon`,
-    uuid: data.poly_id,
-    validationStatus: data.validation_status ?? "notChecked"
+    label: data.name ?? `Unnamed Polygon`,
+    uuid: data.polygonUuid,
+    validationStatus: data.validationStatus ?? "notChecked"
   }));
 
-  const polygonDataMap = parsePolygonData(sitePolygonData);
+  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
 
-  const dataPolygonOverview = countStatuses(sitePolygonData);
+  const dataPolygonOverview = countStatusesV3(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -708,7 +728,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showLegend
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
-                sitePolygonData={sitePolygonData}
+                sitePolygonData={transformForMapContainer(sitePolygonData)}
                 modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}

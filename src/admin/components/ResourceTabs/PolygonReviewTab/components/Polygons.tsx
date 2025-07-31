@@ -78,6 +78,7 @@ const Polygons = (props: IPolygonProps) => {
     setSelectedPolygonsInCheckbox,
     selectedPolygonsInCheckbox,
     setValidFilter,
+    validFilter,
     validationData,
     setValidationData,
     validationDataTimestamp,
@@ -334,7 +335,7 @@ const Polygons = (props: IPolygonProps) => {
             { title: t("Passed"), value: "passed" }
           ]}
           defaultValue={["all"]}
-          value={["all"]}
+          value={[validFilter || "all"]}
           onChange={(value: OptionValue[]) => {
             setValidFilter(value[0] as string);
           }}
