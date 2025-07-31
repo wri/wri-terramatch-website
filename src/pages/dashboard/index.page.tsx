@@ -463,7 +463,7 @@ const Dashboard = () => {
           </div>
         </When>
         <BlurContainer
-          isBlur={!isUserAllowed}
+          isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
           textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
           logout={logout}
         >
@@ -547,7 +547,7 @@ const Dashboard = () => {
           classNameSubTitle="mt-4"
           gap={8}
           subtitleMore={true}
-          isUserAllowed={isUserAllowed}
+          isUserAllowed={isUserAllowed?.allowed}
           title={t("TREES RESTORED")}
           widthTooltip="w-52 lg:w-64"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
@@ -565,7 +565,7 @@ const Dashboard = () => {
             data={numberTreesPlanted}
             dataForChart={dashboardRestorationGoalData}
             chartType={CHART_TYPES.treesPlantedBarChart}
-            isUserAllowed={isUserAllowed}
+            isUserAllowed={isUserAllowed?.allowed}
           />
           <SecDashboard
             title={t("Number of Trees Planted by Year")}
@@ -577,7 +577,7 @@ const Dashboard = () => {
             dataForChart={dashboardRestorationGoalData}
             chartType={CHART_TYPES.multiLineChart}
             tooltip={t(NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP)}
-            isUserAllowed={isUserAllowed}
+            isUserAllowed={isUserAllowed?.allowed}
             isLoading={isLoadingTreeRestorationGoal}
           />
           <When condition={!filters.uuid}>
@@ -588,7 +588,7 @@ const Dashboard = () => {
               data={topProject}
               isTableProject={true}
               tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
-              isUserAllowed={isUserAllowed}
+              isUserAllowed={isUserAllowed?.allowed}
             />
           </When>
         </PageCard>
@@ -596,7 +596,7 @@ const Dashboard = () => {
           className="border-0 px-4 py-6 mobile:order-4 mobile:px-0 mobile:py-4"
           classNameSubTitle="mt-4"
           gap={8}
-          isUserAllowed={isUserAllowed}
+          isUserAllowed={isUserAllowed?.allowed}
           title={t("JOBS CREATED")}
           variantSubTitle="text-14-light"
           subtitleMore={true}
@@ -619,7 +619,7 @@ const Dashboard = () => {
               data={{ value: jobsCreatedData?.total_pt }}
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
-              isUserAllowed={isUserAllowed}
+              isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
               title={t("New Full-Time Jobs")}
@@ -627,7 +627,7 @@ const Dashboard = () => {
               className="pl-12 mobile:pl-0 mobile:pt-4"
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
-              isUserAllowed={isUserAllowed}
+              isUserAllowed={isUserAllowed?.allowed}
             />
           </div>
           <div className="grid w-full grid-cols-2 mobile:grid-cols-1 mobile:gap-10">
@@ -639,7 +639,7 @@ const Dashboard = () => {
               classNameHeader="pl-[50px] mobile:pl-0"
               classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               tooltip={t(JOBS_CREATED_BY_GENDER_TOOLTIP)}
-              isUserAllowed={isUserAllowed}
+              isUserAllowed={isUserAllowed?.allowed}
               isLoading={isLoadingJobsCreated}
             />
             <SecDashboard
@@ -650,7 +650,7 @@ const Dashboard = () => {
               classNameHeader="pl-[50px] mobile:pl-0"
               classNameBody="w-full place-content-center !justify-center flex-col gap-5"
               tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
-              isUserAllowed={isUserAllowed}
+              isUserAllowed={isUserAllowed?.allowed}
               isLoading={isLoadingJobsCreated}
             />
           </div>
@@ -677,7 +677,7 @@ const Dashboard = () => {
           hectaresUnderRestoration
         )}
         textTooltipTable={tooltipText}
-        isUserAllowed={isUserAllowed}
+        isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
         bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
