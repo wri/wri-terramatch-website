@@ -13,7 +13,7 @@ import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGo
 import { useMedia } from "@/connections/EntityAssociation";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardJobsCreated } from "@/generated/apiComponents";
+import { useGetV2DashboardJobsCreated, useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, createQueryParams, groupProjectsByCountry } from "@/utils/dashboardUtils";
@@ -73,6 +73,14 @@ export const useDashboardData = (filters: any) => {
     setUpdateFilters(parsedFilters);
   }, [filters]);
   const queryParams: any = useMemo(() => createQueryParams(updateFilters), [updateFilters]);
+  const { data: isUserAllowed } = useGetV2DashboardViewProjectUuid<any>(
+    {
+      pathParams: { uuid: filters.uuid }
+    },
+    {
+      enabled: !!filters.uuid
+    }
+  );
 
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
@@ -468,15 +476,6 @@ export const useDashboardData = (filters: any) => {
       })) || [],
     [impactStories]
   );
-
-  const isUserAllowed = useMemo(() => {
-    if (!filters.uuid) {
-      return undefined;
-    }
-    return {
-      allowed: singleDashboardProject?.hasAccess ?? false
-    };
-  }, [filters.uuid, singleDashboardProject?.hasAccess]);
 
   return {
     dashboardHeader,
