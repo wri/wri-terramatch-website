@@ -305,6 +305,26 @@ export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
 
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+  planting_status?: string;
+};
+
 export type GetV2AdminFormsBody = {
   /**
    * search term to use on the collection
@@ -386,25 +406,6 @@ export type PutV2GeometryBody = {
       };
     }[];
   };
-};
-
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
 };
 
 export type PostV2FprojectPipelineBody = {
