@@ -95,7 +95,9 @@ const PolygonReviewAside: FC<{
   mapFunctions: any;
   totalPolygons?: number;
   siteUuid?: string;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid }) => {
+  isLoading?: boolean;
+  progress?: number;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid, isLoading }) => {
   switch (type) {
     case "sites":
       return (
@@ -107,6 +109,7 @@ const PolygonReviewAside: FC<{
           refresh={refresh}
           totalPolygons={totalPolygons}
           siteUuid={siteUuid}
+          isLoading={isLoading}
         />
       );
     default:
@@ -170,6 +173,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch,
     loading,
     total,
+    progress,
     updateSingleSitePolygonData
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
   const onSave = (geojson: any, record: any) => {
@@ -818,7 +822,9 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
-              siteUuid={record?.uuid ?? ""}
+              siteUuid={record?.uuid}
+              isLoading={loading && sitePolygonData.length === 0}
+              progress={progress}
             />
           </Grid>
         </Grid>
