@@ -99,11 +99,25 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
   const { formData: formResponse } = useEntityForm(resourceName, record.id);
 
-  const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: { label: string }[] }) =>
-    section.form_questions.map((question: any) => ({
-      title: question.label ?? "",
-      value: question.uuid ?? ""
-    }))
+  // Helper function to recursively extract all questions including follow-up questions
+  const extractAllQuestions = (questions: any[]): any[] => {
+    return questions.flatMap((question: any) => {
+      const currentQuestion = {
+        title: question.label ?? "",
+        value: question.uuid ?? ""
+      };
+
+      // If the question has children (follow-up questions), include them too
+      if (question.children && Array.isArray(question.children)) {
+        return [currentQuestion, ...extractAllQuestions(question.children)];
+      }
+
+      return [currentQuestion];
+    });
+  };
+
+  const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: any[] }) =>
+    extractAllQuestions(section.form_questions)
   );
 
   const feedbackChoices = useMemo(() => optionToChoices(questions ?? []), [questions]);
