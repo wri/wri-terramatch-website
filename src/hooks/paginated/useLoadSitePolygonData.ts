@@ -10,7 +10,6 @@ interface LoadSitePolygonsDataHook {
   data: SitePolygonFullDto[];
   loading: boolean;
   total: number;
-  progress: number;
   refetch: () => void;
   updateSingleSitePolygonData: (poly_id: string, updatedData: SitePolygonFullDto) => void;
   polygonCriteriaMap: Record<string, unknown>;
@@ -53,7 +52,6 @@ const useLoadSitePolygonsData = (
   const {
     data: sitePolygonsData,
     isLoading,
-    progress,
     total,
     refetch,
     updateSinglePolygon
@@ -64,16 +62,12 @@ const useLoadSitePolygonsData = (
     filter
   });
 
-  // Restore polygonCriteriaMap state with proper typing
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
 
-  // Optimistic update function - now synchronous and properly typed
   const updateSingleSitePolygonData = (old_id: string, updatedData: SitePolygonFullDto) => {
     try {
       updateSinglePolygon(old_id, updatedData);
     } catch (error) {
-      console.error("Failed to update polygon:", error);
-      // Optionally trigger refetch on error
       refetch();
     }
   };
@@ -82,7 +76,6 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     loading: isLoading,
     total,
-    progress,
     refetch,
     polygonCriteriaMap,
     setPolygonCriteriaMap,
