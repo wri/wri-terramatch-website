@@ -254,7 +254,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           <When
             condition={
               //@ts-ignore
-              !!currentSubmission?.feedback_fields
+              !!currentSubmission?.translated_feedback_fields
             }
           >
             <div className="mt-6 flex flex-col gap-2">
@@ -262,7 +262,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
               <Text variant="text-heading-100">
                 {
                   //@ts-ignore
-                  currentSubmission?.feedback_fields?.join(", ")
+                  currentSubmission?.translated_feedback_fields?.join(", ")
                 }
               </Text>
             </div>
