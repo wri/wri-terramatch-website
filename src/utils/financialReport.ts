@@ -87,15 +87,13 @@ export const formatLargeNumber = (value: number, currency: string = ""): string 
   const absValue = Math.abs(value);
 
   if (absValue >= 1000000) {
-    const millions = absValue / 1000000;
+    const millions = value / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
-    const sign = value < 0 ? "-" : "";
-    return `${currency}${sign}${formatted}M`;
+    return `${currency}${formatted}M`;
   } else if (absValue >= 1000) {
-    const thousands = absValue / 1000;
+    const thousands = value / 1000;
     const formatted = thousands.toFixed(1).replace(/\.0$/, "");
-    const sign = value < 0 ? "-" : "";
-    return `${currency}${sign}${formatted}K`;
+    return `${currency}${formatted}K`;
   } else {
     return `${currency}${value.toLocaleString()}`;
   }
@@ -105,18 +103,36 @@ export const formatYAxisNumber = (value: number, currency: string = ""): string 
   if (value === 0) return `${currency}0`;
 
   const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
 
   if (absValue >= 1000000) {
     const millions = absValue / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
-    const sign = value < 0 ? "-" : "";
     return `${currency}${sign}${formatted}M`;
   } else if (absValue >= 1000) {
     const thousands = absValue / 1000;
     const formatted = thousands.toFixed(1).replace(/\.0$/, "");
-    const sign = value < 0 ? "-" : "";
     return `${currency}${sign}${formatted}K`;
   } else {
     return `${currency}${value.toLocaleString()}`;
+  }
+};
+
+export const formatProfitValue = (value: number, currency: string) => {
+  if (value === 0) return `${currency}0`;
+
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+
+  if (absValue >= 1000000) {
+    const millions = absValue / 1000000;
+    const formatted = millions.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currency}${formatted}M`;
+  } else if (absValue >= 1000) {
+    const thousands = absValue / 1000;
+    const formatted = thousands.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currency}${formatted}K`;
+  } else {
+    return `${sign}${currency}${absValue.toLocaleString()}`;
   }
 };

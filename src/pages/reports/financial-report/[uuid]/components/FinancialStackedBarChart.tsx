@@ -15,7 +15,7 @@ import {
   YAxis
 } from "recharts";
 
-import { currencyInput, formatYAxisNumber } from "@/utils/financialReport";
+import { currencyInput, formatProfitValue, formatYAxisNumber } from "@/utils/financialReport";
 
 type FinancialStackedBarChartProps = {
   uuid: string;
@@ -48,8 +48,8 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
         return {
           year: parseInt(year),
           revenue,
-          expenses: Math.abs(expenses), // Expenses como valor absoluto (positivo)
-          profit: profit, // Mantener el signo original del profit
+          expenses: -Math.abs(expenses),
+          profit,
           revenueForLabels: revenue
         };
       });
@@ -67,7 +67,10 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
     const range = Math.max(maxValue - minValue, Math.abs(maxValue), Math.abs(minValue));
     const padding = range * 0.2;
 
-    const paddedMin = Math.min(Math.floor(minValue - padding), -Math.abs(maxValue) * 0.3);
+    const hasExpenses = chartData.some(item => item.expenses < 0);
+    const paddedMin = hasExpenses
+      ? Math.floor(minValue - padding)
+      : Math.min(Math.floor(minValue - padding), -Math.abs(maxValue) * 0.3);
     const paddedMax = Math.ceil(maxValue + padding);
 
     const finalMin = Math.min(paddedMin, -Math.abs(paddedMax) * 0.2);
@@ -86,11 +89,14 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
             let name = entry.name;
             let displayValue = value;
 
-            // Para expenses, revenue y profit, usar el valor tal como está
-            // (expenses ya es positivo, revenue y profit mantienen su signo)
-            displayValue = value;
+            if (name === "expenses") {
+              displayValue = Math.abs(value);
+            }
 
-            const formattedValue = formatYAxisNumber(displayValue, currencySymbol);
+            let formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol);
+            if (name == "Profit") {
+              formattedValue = formatProfitValue(displayValue, currencySymbol);
+            }
 
             return (
               <p key={index} style={{ color: entry.color }} className="capitalize">
@@ -158,7 +164,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
   const renderExpenseLabel = (props: any) => {
     const { x, y, width, value } = props;
 
-    if (value > 0) {
+    if (value < 0) {
       return (
         <text
           x={x + width / 2}
@@ -169,7 +175,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
           fontWeight="500"
           dominantBaseline="hanging"
         >
-          {formatYAxisNumber(value, currencySymbol)}
+          {formatYAxisNumber(Math.abs(value), currencySymbol)}
         </text>
       );
     }
@@ -182,7 +188,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
 
     const lineY = y + height;
 
-    if (value > 0) {
+    if (value < 0) {
       return (
         <line x1={x} y1={lineY} x2={x + width} y2={lineY} stroke="#ffffff" strokeWidth={4} strokeLinecap="round" />
       );
