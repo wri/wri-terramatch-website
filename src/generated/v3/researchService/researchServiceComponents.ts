@@ -336,19 +336,6 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
       };
     }
   | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
       status: 404;
       payload: {
         /**

@@ -5,7 +5,7 @@ import List from "@/components/extensive/List/List";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Text from "../Text/Text";
 import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
@@ -37,7 +37,7 @@ const validationLabels: any = {
 };
 
 const parseData = (
-  sitePolygonData: SitePolygonsDataResponse,
+  sitePolygonData: SitePolygonFullDto[],
   currentValidationSite: CheckedPolygon[],
   validationLabels: any
 ) => {
@@ -47,12 +47,12 @@ const parseData = (
   });
 
   return sitePolygonData.map(site => {
-    const validation = validationMap.get(site.poly_id);
+    const validation = validationMap.get(site.polygonUuid);
     const polygonValidation =
       validation?.nonValidCriteria.map((criteria: any) => validationLabels[criteria.criteria_id]) ?? [];
     return {
-      uuid: site.poly_id,
-      title: site.poly_name ?? "Unnamed Polygon",
+      uuid: site.polygonUuid,
+      title: site.name ?? "Unnamed Polygon",
       valid: validation ? validation.valid : false,
       isChecked: validation ? validation.checked : false,
       ...(polygonValidation.length > 0 && { polygonValidation })

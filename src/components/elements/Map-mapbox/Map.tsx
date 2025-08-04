@@ -35,6 +35,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -565,6 +566,40 @@ export const MapContainer = ({
   const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
   const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
 
+  // momentary parser function to transform v2 SitePolygon data to v3 SitePolygonFullDto
+  const parseV2ToV3PolygonData = (v2Polygon: any): SitePolygonFullDto | null => {
+    if (!v2Polygon) {
+      return null;
+    }
+
+    return {
+      lightResource: false,
+      name: v2Polygon.poly_name ?? null,
+      status: (v2Polygon.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+      siteId: v2Polygon.site_id ?? null,
+      polygonUuid: v2Polygon.poly_id ?? null,
+      projectId: v2Polygon.project_id ?? null,
+      projectShortName: v2Polygon.proj_name ?? null,
+      plantStart: v2Polygon.plantstart ?? null,
+      calcArea: v2Polygon.calc_area ?? null,
+      lat: v2Polygon.lat ?? null,
+      long: v2Polygon.long ?? null,
+      indicators: [],
+      siteName: v2Polygon.site_name ?? null,
+      versionName: v2Polygon.version_name ?? null,
+      plantingStatus: (v2Polygon.planting_status as any) ?? null,
+      geometry: null,
+      practice: v2Polygon.practice ?? null,
+      targetSys: v2Polygon.target_sys ?? null,
+      distr: v2Polygon.distr ?? null,
+      numTrees: v2Polygon.num_trees ?? null,
+      source: null,
+      validationStatus: null,
+      establishmentTreeSpecies: [],
+      reportingPeriods: []
+    } as SitePolygonFullDto;
+  };
+
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
       const geojson = draw.current.getAll();
@@ -586,7 +621,10 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                const v3PolygonData = parseV2ToV3PolygonData(polygonActive);
+                if (v3PolygonData) {
+                  await updateSingleSitePolygonData?.(selectedPolygon.uuid, v3PolygonData);
+                }
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);

@@ -157,7 +157,7 @@ const PolygonDrawer = ({
       validationStatus: null,
       establishmentTreeSpecies: [],
       reportingPeriods: []
-    };
+    } as SitePolygonFullDto;
   };
 
   const updatePolygonData = async (polygonId: string) => {

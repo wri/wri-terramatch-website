@@ -36,6 +36,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
 import { FileType, UploadedFile } from "@/types/common";
@@ -393,10 +394,47 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     );
   };
 
+  // Parser function to transform v2 SitePolygonsDataResponse to v3 SitePolygonFullDto[]
+  const parseV2ToV3PolygonData = (v2Data: SitePolygonsDataResponse | undefined): SitePolygonFullDto[] => {
+    if (!v2Data || !Array.isArray(v2Data)) {
+      return [];
+    }
+
+    return v2Data.map(
+      polygon =>
+        ({
+          lightResource: false,
+          name: polygon.poly_name ?? null,
+          status: (polygon.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+          siteId: polygon.site_id ?? null,
+          polygonUuid: polygon.poly_id ?? null,
+          projectId: polygon.project_id ?? null,
+          projectShortName: polygon.proj_name ?? null,
+          plantStart: polygon.plantstart ?? null,
+          calcArea: polygon.calc_area ?? null,
+          lat: null,
+          long: null,
+          indicators: [],
+          siteName: polygon.site_name ?? null,
+          versionName: polygon.version_name ?? null,
+          plantingStatus: (polygon.planting_status as any) ?? null,
+          geometry: null,
+          practice: polygon.practice ?? null,
+          targetSys: polygon.target_sys ?? null,
+          distr: polygon.distr ?? null,
+          numTrees: polygon.num_trees ?? null,
+          source: null,
+          validationStatus: null,
+          establishmentTreeSpecies: [],
+          reportingPeriods: []
+        } as SitePolygonFullDto)
+    );
+  };
+
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.SITE);
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider sitePolygonData={parseV2ToV3PolygonData(sitePolygonData)} reloadSiteData={refetch}>
       <PageBody>
         <PageRow>
           <PageCard
