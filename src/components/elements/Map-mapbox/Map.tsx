@@ -145,6 +145,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   setAlertTitle?: (value: string) => void;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
+  hasAccess?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -190,6 +191,7 @@ export const MapContainer = ({
   setAlertTitle,
   showViewGallery = true,
   legendPosition,
+  hasAccess,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -289,7 +291,12 @@ export const MapContainer = ({
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
         const zoomFilter = isDashboard ? 9 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard, polygonsCentroids);
+        let polygonsDataToUse = polygonsData;
+        if (isDashboard && projectUUID && hasAccess === false) {
+          polygonsDataToUse = {};
+        }
+
+        addSourcesToLayers(currentMap, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
         setChangeStyle(true);
         setSourcesAdded(true);
 
@@ -342,7 +349,9 @@ export const MapContainer = ({
     setFilters,
     setLoader,
     setPolygonFromMap,
-    tooltipType
+    tooltipType,
+    projectUUID,
+    hasAccess
   ]);
 
   useValueChanged(currentStyle, () => {

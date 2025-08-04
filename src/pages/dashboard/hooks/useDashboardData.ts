@@ -2,15 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
+import {
+  useDashboardImpactStories,
+  useDashboardProject,
+  useDashboardProjects,
+  useDashboardSitePolygons
+} from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useJobsCreated } from "@/connections/DashboardJobsCreatedConnection";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useMedia } from "@/connections/EntityAssociation";
-import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardViewProjectUuid } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/dashboardUtils";
@@ -57,14 +60,6 @@ export const useDashboardData = (filters: any) => {
     landscapes: convertNamesToCodes(filters.landscapes),
     country: filters.country.country_slug
   });
-  const { data: isUserAllowed } = useGetV2DashboardViewProjectUuid<any>(
-    {
-      pathParams: { uuid: filters.uuid }
-    },
-    {
-      enabled: !!filters.uuid
-    }
-  );
 
   const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
     useDashboardEmploymentData(filters.uuid);
@@ -191,20 +186,20 @@ export const useDashboardData = (filters: any) => {
     const data: { [status: string]: string[] } = {};
 
     dashboardSitePolygonsData.forEach(polygon => {
-      if (polygon.lat != null && polygon.long != null && polygon.uuid != null && polygon.status != null) {
+      if (polygon.lat != null && polygon.long != null && polygon.polygonUuid != null && polygon.status != null) {
         centroids.push({
           lat: polygon.lat,
           long: polygon.long,
-          uuid: polygon.uuid,
+          uuid: polygon.polygonUuid,
           status: polygon.status
         });
       }
 
-      if (polygon.status != null && polygon.uuid != null) {
+      if (polygon.status != null && polygon.polygonUuid != null) {
         if (data[polygon.status] == null) {
           data[polygon.status] = [];
         }
-        data[polygon.status].push(polygon.uuid);
+        data[polygon.status].push(polygon.polygonUuid);
       }
     });
 
@@ -432,11 +427,12 @@ export const useDashboardData = (filters: any) => {
     }
   }, [generalBbox, centroidsDataProjects]);
 
-  const [isLoaded, { data: impactStories }] = useImpactStories({
+  const [isLoaded, { data: impactStories }] = useDashboardImpactStories({
     filter: {
-      status: "published",
       country: filters.country?.country_slug,
-      "organisationType[]": filters.organizations ? filters.organizations : [],
+      "organisationType[]": filters.organizations?.length ? filters.organizations : DEFAULT_ORGANIZATION_TYPES,
+      cohort: filters.cohort?.length ? filters.cohort : DEFAULT_COHORT,
+      "programmesType[]": filters.frameworks?.length ? filters.frameworks : DEFAULT_PROGRAMME_TYPES,
       projectUuid: filters.uuid
     }
   });
@@ -447,26 +443,24 @@ export const useDashboardData = (filters: any) => {
         uuid: story.uuid,
         title: story.title,
         date: story.date,
-        content: story?.content ?? "",
-        category: story.category,
-        thumbnail: story.thumbnail?.url ?? "",
+        thumbnail: story.thumbnail ?? "",
         organization: {
-          name: story.organization?.name ?? "",
-          category: story.category,
+          name: story.organisation?.name ?? "",
           country:
-            story.organization?.countries?.length > 0
-              ? story.organization.countries.map((c: any) => c.label).join(", ")
-              : "No country",
-          countries_data: story.organization?.countries ?? [],
-          facebook_url: story.organization?.facebook_url ?? "",
-          instagram_url: story.organization?.instagram_url ?? "",
-          linkedin_url: story.organization?.linkedin_url ?? "",
-          twitter_url: story.organization?.twitter_url ?? ""
-        },
-        status: story.status
+            story.organisation?.countries?.length > 0
+              ? story.organisation.countries.map((c: any) => c.label).join(", ")
+              : "No country"
+        }
       })) || [],
     [impactStories]
   );
+
+  const isUserAllowed = useMemo(() => {
+    if (filters.uuid) {
+      return { allowed: singleDashboardProject?.hasAccess ?? false };
+    }
+    return undefined;
+  }, [filters.uuid, singleDashboardProject?.hasAccess]);
 
   return {
     dashboardHeader,

@@ -239,7 +239,15 @@ const Dashboard = () => {
                 const handleClick = () => {
                   setFilters(prevValues => ({
                     ...prevValues,
-                    uuid: uuid
+                    uuid: uuid,
+                    country: {
+                      country_slug: uuid,
+                      id: 1,
+                      data: {
+                        label: countryChoices?.find(choice => choice.id === uuid)?.name ?? uuid,
+                        icon: `/flags/${uuid.toLowerCase()}.svg`
+                      }
+                    }
                   }));
                 };
 
@@ -255,7 +263,7 @@ const Dashboard = () => {
             }
           ])
     ],
-    [isMobile, setFilters]
+    [isMobile, setFilters, countryChoices]
   );
 
   const COLUMN_ACTIVE_COUNTRY = useMemo(

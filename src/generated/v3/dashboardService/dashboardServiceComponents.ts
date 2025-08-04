@@ -292,57 +292,141 @@ export type DashboardEntityIndexQueryParams = {
 
 export type DashboardEntityIndexError = Fetcher.ErrorWrapper<undefined>;
 
-export type DashboardEntityIndexResponse = {
-  meta?: {
-    /**
-     * @example dashboardProjects
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-      /**
-       * The current page number.
-       */
-      pageNumber?: number;
-      /**
-       * The ordered set of resource IDs for this page of this index search.
-       */
-      ids?: string[];
-    }[];
-  };
-  data?: {
-    /**
-     * @example dashboardProjects
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DashboardProjectsLightDto;
-  }[];
-};
-
 export type DashboardEntityIndexVariables = {
   pathParams: DashboardEntityIndexPathParams;
   queryParams?: DashboardEntityIndexQueryParams;
 };
 
 export const dashboardEntityIndex = new V3ApiEndpoint<
-  DashboardEntityIndexResponse,
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardImpactStoryLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
+      }[];
+    },
   DashboardEntityIndexError,
   DashboardEntityIndexVariables,
   {}
@@ -384,6 +468,30 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          * @example dashboardProjects
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
       };
       data?: {
         /**
@@ -395,7 +503,7 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DashboardProjectsLightDto;
-      };
+      }[];
     }
   | {
       meta?: {
@@ -403,6 +511,30 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          * @example dashboardProjects
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
       };
       data?: {
         /**
@@ -414,7 +546,93 @@ export const dashboardEntityGet = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DashboardProjectsFullDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
       };
+      data?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardImpactStoryFullDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
+      }[];
     },
   DashboardEntityGetError,
   DashboardEntityGetVariables,

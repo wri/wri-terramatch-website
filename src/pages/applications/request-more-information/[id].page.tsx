@@ -29,7 +29,8 @@ const RequestMoreInformationPage = () => {
   }>({
     pathParams: {
       uuid
-    }
+    },
+    queryParams: { lang: router.locale }
   });
 
   const { mutate: updateSubmission, isSuccess, isLoading } = usePatchV2FormsSubmissionsUUID({});
@@ -54,7 +55,7 @@ const RequestMoreInformationPage = () => {
   const requestedInformationForm = getRequestedInformationForm(
     submission?.form ?? {},
     //@ts-ignore
-    submission?.feedback_fields ?? []
+    submission?.translated_feedback_fields ?? []
   );
   const framework = useFramework(submission?.form?.framework_key);
   const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, currentPitchEntity, framework) : [];
