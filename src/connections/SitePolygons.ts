@@ -9,6 +9,7 @@ import {
 import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
 import { PendingError } from "@/store/apiSlice";
+import ApiSlice from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -51,11 +52,14 @@ export const useAllSitePolygons = (
       setTotal(0);
 
       try {
-        // Clear cache if requested
         if (clearCache) {
-          // Clear the connection cache for this specific query
-          // This would need to be implemented based on your cache management system
-          // For now, we'll just refetch without cache
+          ApiSlice.pruneCache("sitePolygons");
+
+          const currentState = ApiSlice.currentState;
+          const sitePolygonsIndices = currentState.meta.indices.sitePolygons || {};
+          Object.keys(sitePolygonsIndices).forEach(indexKey => {
+            ApiSlice.pruneIndex("sitePolygons", indexKey);
+          });
         }
 
         const firstPageResponse = await loadConnection(sitePolygonsConnection, {
