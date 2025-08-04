@@ -2,6 +2,8 @@ import { cloneDeep } from "lodash";
 import { ReactNode, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
+import { authLogin } from "@/generated/v3/userService/userServiceComponents";
+import { resolveUrl } from "@/generated/v3/utils";
 import { INITIAL_STATE } from "@/store/apiSlice";
 import { __TEST_HYDRATE__, makeStore } from "@/store/store";
 
@@ -10,6 +12,7 @@ class StoreBuilder {
 
   addLogin(token: string) {
     this.store.logins[1] = { attributes: { token } };
+    this.store.meta.pending["POST"][resolveUrl(authLogin.url)] = { resourceIds: ["1"] };
     return this;
   }
 }

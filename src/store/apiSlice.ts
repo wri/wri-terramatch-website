@@ -20,25 +20,32 @@ import {
   RESEARCH_SERVICE_RESOURCES,
   ResearchServiceApiResources
 } from "@/generated/v3/researchService/researchServiceConstants";
+import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 
-export type PendingErrorState = {
+export type PendingError = {
   statusCode: number;
   message: string;
   error?: string;
 };
 
-export const isPendingErrorState = (error: unknown): error is PendingErrorState =>
-  error != null && isNumber((error as PendingErrorState).statusCode) && isString((error as PendingErrorState).message);
+export type CompletedCreation = { resourceIds: string[] };
 
-export type Pending = true | PendingErrorState;
+export const isPendingErrorState = (error: unknown): error is PendingError =>
+  error != null && isNumber((error as PendingError).statusCode) && isString((error as PendingError).message);
+
+export type Pending = boolean | PendingError | CompletedCreation;
 
 export const isInProgress = (pending?: Pending) => pending === true;
 
-export const isErrorState = (pending?: Pending): pending is PendingErrorState =>
-  pending != null && !isInProgress(pending);
+export const isErrorState = (pending?: Pending): pending is PendingError =>
+  pending != null && !isInProgress(pending) && (pending as PendingError).statusCode != null;
+
+export const isCompletedCreationState = (pending?: Pending): pending is CompletedCreation =>
+  pending != null && !isInProgress(pending) && (pending as CompletedCreation).resourceIds != null;
 
 const METHODS = ["GET", "DELETE", "POST", "PUT", "PATCH"] as const;
 export type Method = (typeof METHODS)[number];
@@ -50,17 +57,12 @@ export type ApiPendingStore = {
 export type ApiFilteredIndexCache = {
   ids: string[];
   total?: number;
-  included?: any[];
 };
 
-// This one is a map of resource -> queryString -> page number -> list of ids from that page.
-export type ApiIndexStore = {
-  [key in ResourceType]: Record<string, Record<number, ApiFilteredIndexCache>>;
-};
-
-type ApiDeletedStore = {
-  [key in ResourceType]: string[];
-};
+// Mapping of resource -> queryString -> page number -> list of ids from that page.
+export type ApiIndexStore = Record<ResourceType, Record<string, Record<number, ApiFilteredIndexCache>>>;
+// Mapping of ResourceType to an array of ids that have been deleted.
+type ApiDeletedStore = Record<ResourceType, string[]>;
 
 type AttributeValue = string | number | boolean;
 type Attributes = {
@@ -94,7 +96,7 @@ export const RESOURCES = [
   ...DASHBOARD_SERVICE_RESOURCES
 ] as const;
 
-type ApiResources = EntityServiceApiResources &
+export type ApiResources = EntityServiceApiResources &
   JobServiceApiResources &
   UserServiceApiResources &
   ResearchServiceApiResources &
@@ -116,7 +118,6 @@ export type IndexData = {
   total?: number;
   cursor?: string;
   pageNumber?: number;
-  included?: any[];
 };
 
 export type ResponseMeta = {
@@ -158,27 +159,22 @@ export type ApiDataStore = ApiResources & {
 };
 
 export const INITIAL_STATE = {
-  ...RESOURCES.reduce((acc: Partial<ApiResources>, resource) => {
-    acc[resource] = {};
-
-    if (resource === "logins" && typeof window !== "undefined") {
-      const accessToken = getAccessToken();
-      if (accessToken != null) {
-        // We only ever expect there to be at most one Login in the store, and we never inspect the ID
-        // so we can safely fake a login into the store when we have an authToken already set in a
-        // cookie on app bootup.
-        acc[resource]!["1"] = { attributes: { token: accessToken } };
-      }
-    }
-
-    return acc;
-  }, {}),
+  ...RESOURCES.reduce(
+    (acc: Partial<ApiResources>, resource) => ({
+      ...acc,
+      [resource]: {}
+    }),
+    {}
+  ),
 
   meta: {
-    pending: METHODS.reduce((acc: Partial<ApiPendingStore>, method) => {
-      acc[method] = {};
-      return acc;
-    }, {}) as ApiPendingStore,
+    pending: METHODS.reduce(
+      (acc: Partial<ApiPendingStore>, method) => ({
+        ...acc,
+        [method]: {}
+      }),
+      {}
+    ) as ApiPendingStore,
 
     indices: RESOURCES.reduce((acc, resource) => ({ ...acc, [resource]: {} }), {} as Partial<ApiIndexStore>),
 
@@ -189,13 +185,22 @@ export const INITIAL_STATE = {
   }
 } as ApiDataStore;
 
+const cachedAccessToken = typeof window === "undefined" ? null : getAccessToken();
+if (cachedAccessToken != null) {
+  // There can only ever be one login in the store, so if there is a cached auth token set it local
+  // storage, fake up a logins response and meta creation complete so the connection gets what it
+  // expects for an already logged in user.
+  INITIAL_STATE.logins["1"] = { attributes: { token: cachedAccessToken } };
+  INITIAL_STATE.meta.pending["POST"][resolveUrl(authLogin.url)] = { resourceIds: ["1"] };
+}
+
 type ApiFetchStartingProps = {
   url: string;
   method: Method;
 };
 
 type ApiFetchFailedProps = ApiFetchStartingProps & {
-  error: PendingErrorState;
+  error: PendingError;
 };
 
 type ApiFetchSucceededProps = ApiFetchStartingProps & {
@@ -209,6 +214,11 @@ type PruneCacheProps = {
   ids?: string[];
   // If searchQuery is specified, the search index meta cache is removed for this query.
   searchQuery?: string;
+};
+
+type ClearPendingProps = {
+  urlPrefix: string;
+  method: Method;
 };
 
 const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
@@ -225,6 +235,15 @@ const clearApiCache = (state: WritableDraft<ApiDataStore>) => {
   }
 
   delete state.meta.meUserId;
+};
+
+const clearPending = (state: WritableDraft<ApiDataStore>, action: PayloadAction<ClearPendingProps>) => {
+  const { urlPrefix, method } = action.payload;
+  for (const url of Object.keys(state.meta.pending[method])) {
+    if (url.startsWith(urlPrefix)) {
+      delete state.meta.pending[method][url];
+    }
+  }
 };
 
 const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<PruneCacheProps>) => {
@@ -267,7 +286,7 @@ export const apiSlice = createSlice({
 
     apiFetchFailed: (state, action: PayloadAction<ApiFetchFailedProps>) => {
       const { url, method, error } = action.payload;
-      state.meta.pending[method][url] = error;
+      state.meta.pending[method][url] = { ...error };
     },
 
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
@@ -278,7 +297,7 @@ export const apiSlice = createSlice({
         // re-fetch their data with the new login credentials.
         clearApiCache(state);
       } else {
-        delete state.meta.pending[method][url];
+        clearPending(state, apiSlice.actions.clearPending({ urlPrefix: url, method }));
       }
 
       if (isDeleteResponse(method, response)) {
@@ -293,6 +312,11 @@ export const apiSlice = createSlice({
       let { data, included } = response;
       if (!isArray(data)) data = [data!];
 
+      if (method === "POST") {
+        // If this was a creation request, stash the resulting IDs in the pending store.
+        state.meta.pending[method][url] = { resourceIds: data.map(({ id }) => id) };
+      }
+
       if (isIndexResponse(method, response)) {
         for (const indexMeta of response.meta.indices) {
           let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
@@ -300,8 +324,7 @@ export const apiSlice = createSlice({
 
           cache[indexMeta.pageNumber ?? 1] = {
             ids: indexMeta.ids,
-            total: indexMeta.total,
-            included: response.included
+            total: indexMeta.total
           };
         }
       }
@@ -352,6 +375,8 @@ export const apiSlice = createSlice({
         state.meta.meUserId = (response.data as JsonApiResource).id;
       }
     },
+
+    clearPending,
 
     pruneCache,
 
@@ -426,6 +451,10 @@ export default class ApiSlice {
 
   static pruneIndex(resource: ResourceType, searchQuery: string) {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, searchQuery }));
+  }
+
+  static clearPending(urlPrefix: string, method: Method) {
+    this.redux.dispatch(apiSlice.actions.clearPending({ urlPrefix, method }));
   }
 
   static clearApiCache() {

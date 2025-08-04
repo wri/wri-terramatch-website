@@ -14,9 +14,10 @@ import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { formatLabelsVolunteers, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import { formatCohortDisplay, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -81,26 +82,17 @@ export interface GraphicLegendProps {
   color: string;
 }
 
-const mapActiveProjects = (activeProjects: any[], excludeUUID?: string) => {
-  return activeProjects
-    ? activeProjects
-        .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
-        .map((item: any) => ({
-          uuid: item.uuid,
-          project: item.name,
-          treesPlanted: item.trees_under_restoration.toLocaleString(),
-          restorationHectares: item.hectares_under_restoration.toLocaleString(),
-          jobsCreated: item.jobs_created.toLocaleString(),
-          volunteers: item.volunteers.toLocaleString()
-        }))
-    : [];
+const mapActiveProjects = (projects: DashboardProjectsLightDto[], excludeUUID?: string) => {
+  return projects ? projects.filter((item: { uuid: string }) => excludeUUID == null || item.uuid !== excludeUUID) : [];
 };
 
-const getOrganizationByUuid = (activeProjects: any[], uuid: string) => {
-  const project = activeProjects
-    ? activeProjects.find((project: any) => project.uuid === uuid)
-    : "Unknown Organization";
-  return project?.organisation;
+const getOrganizationByUuid = (projects: any[], uuid: string) => {
+  if (!projects) return "Unknown Organization";
+
+  const project = projects.find((project: any) => project.uuid === uuid);
+  if (!project) return "Unknown Organization";
+
+  return project.organisationName || "Unknown Organization";
 };
 
 const parseJobCreatedByType = (data: any, type: string) => {
@@ -130,17 +122,6 @@ const parseJobCreatedByType = (data: any, type: string) => {
   return { type, chartData, total: data.totalJobsCreated, maxValue };
 };
 
-const parseVolunteersByType = (data: any, type: string) => {
-  if (!data) return { type, chartData: [] };
-  const firstvalue = type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth";
-  const secondValue = type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth";
-  const chartData = [
-    { name: formatLabelsVolunteers(firstvalue), value: data[`${firstvalue}_volunteers`] },
-    { name: formatLabelsVolunteers(secondValue), value: data[`${secondValue}_volunteers`] }
-  ];
-  return { type, chartData, total: data.total_volunteers };
-};
-
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
@@ -152,21 +133,20 @@ const Dashboard = () => {
     dashboardHeader,
     dashboardRestorationGoalData,
     jobsCreatedData,
-    dashboardVolunteersSurvivalRate,
     totalSectionHeader,
     hectaresUnderRestoration,
     numberTreesPlanted,
     isLoadingJobsCreated,
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
-    isLoadingVolunteers,
     projectLoaded,
-    projectFullDto,
+    singleDashboardProject,
     coverImage,
     topProject,
     centroidsDataProjects,
     activeCountries,
     activeProjects,
+    allAvailableProjects,
     polygonsData,
     projectBbox,
     isUserAllowed,
@@ -176,7 +156,13 @@ const Dashboard = () => {
     lastUpdatedAt
   } = useDashboardData(filters);
 
-  const cohortName = useMemo(() => projectFullDto?.cohort, [projectFullDto?.cohort]);
+  const cohortArray = useMemo(() => {
+    const cohort = singleDashboardProject?.cohort;
+    if (!cohort) return null;
+    if (Array.isArray(cohort)) return cohort;
+  }, [singleDashboardProject?.cohort]);
+
+  const cohortDisplayName = useMemo(() => formatCohortDisplay(cohortArray), [cohortArray]);
 
   const dataToggle = useMemo(
     () => [
@@ -253,7 +239,15 @@ const Dashboard = () => {
                 const handleClick = () => {
                   setFilters(prevValues => ({
                     ...prevValues,
-                    uuid: uuid
+                    uuid: uuid,
+                    country: {
+                      country_slug: uuid,
+                      id: 1,
+                      data: {
+                        label: countryChoices?.find(choice => choice.id === uuid)?.name ?? uuid,
+                        icon: `/flags/${uuid.toLowerCase()}.svg`
+                      }
+                    }
                   }));
                 };
 
@@ -269,14 +263,14 @@ const Dashboard = () => {
             }
           ])
     ],
-    [isMobile, setFilters]
+    [isMobile, setFilters, countryChoices]
   );
 
   const COLUMN_ACTIVE_COUNTRY = useMemo(
     () => [
       {
         header: "Project",
-        accessorKey: "project",
+        accessorKey: "name",
         enableSorting: false,
         cell: (props: any) => {
           const value = props.getValue().split("_");
@@ -285,23 +279,30 @@ const Dashboard = () => {
       },
       {
         header: "Trees Planted",
-        accessorKey: "treesPlanted",
-        enableSorting: false
+        accessorKey: "treesPlantedCount",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "Hectares",
-        accessorKey: "restorationHectares",
-        enableSorting: false
+        accessorKey: "totalHectaresRestoredSum",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "Jobs Created",
-        accessorKey: "jobsCreated",
-        enableSorting: false
-      },
-      {
-        header: "Volunteers",
-        accessorKey: "volunteers",
-        enableSorting: false
+        accessorKey: "totalJobsCreated",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
       },
       {
         header: "",
@@ -330,36 +331,34 @@ const Dashboard = () => {
     [setFilters]
   );
 
-  const DATA_ACTIVE_PROGRAMME = useMemo(
-    () =>
-      Array.isArray(activeCountries?.data)
-        ? activeCountries?.data.map(
-            (item: {
-              country: string;
-              country_slug: string;
-              number_of_projects: number;
-              total_trees_planted: number;
-              total_jobs_created: number;
-              hectares_restored: number;
-            }) => ({
-              country_slug: item.country_slug,
-              country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
-              project: item.number_of_projects.toLocaleString(),
-              treesPlanted: item.total_trees_planted.toLocaleString(),
-              restorationHectares: item.hectares_restored.toLocaleString(),
-              jobsCreated: item.total_jobs_created.toLocaleString()
-            })
-          )
-        : [],
-    [activeCountries?.data]
-  );
+  const DATA_ACTIVE_PROGRAMME = useMemo(() => {
+    if (!Array.isArray(activeCountries)) return [];
+    const data = activeCountries.map(
+      (item: {
+        country: string;
+        numberOfProjects: number;
+        totalTreesPlanted: number;
+        totalJobsCreated: number;
+        hectaresRestored: number;
+      }) => ({
+        uuid: item.country,
+        country: `${
+          countryChoices?.find(choice => choice.id === item.country)?.name ?? item.country
+        }_/flags/${item.country.toLowerCase()}.svg`,
+        project: item.numberOfProjects.toLocaleString(),
+        treesPlanted: item.totalTreesPlanted.toLocaleString(),
+        restorationHectares: item.hectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 }),
+        jobsCreated: item.totalJobsCreated.toLocaleString()
+      })
+    );
+    return data.sort((a, b) => a.country.localeCompare(b.country));
+  }, [activeCountries, countryChoices]);
 
-  const DATA_ACTIVE_COUNTRY = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
-  const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = useMemo(
-    () => mapActiveProjects(activeProjects, filters.uuid),
-    [activeProjects, filters.uuid]
+  const projectsInCountry = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
+  const otherProjectsInCountry = useMemo(
+    () => mapActiveProjects(allAvailableProjects, filters.uuid),
+    [allAvailableProjects, filters.uuid]
   );
-
   const organizationName = useMemo(
     () => getOrganizationByUuid(activeProjects, filters.uuid),
     [activeProjects, filters.uuid]
@@ -374,15 +373,6 @@ const Dashboard = () => {
     [jobsCreatedData]
   );
 
-  const volunteersCreatedByGenderData = useMemo(
-    () => parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.gender),
-    [dashboardVolunteersSurvivalRate]
-  );
-  const volunteersCreatedByAgeData = useMemo(
-    () => parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.age),
-    [dashboardVolunteersSurvivalRate]
-  );
-
   const projectCounts = useMemo(
     () => ({
       totalEnterpriseCount: totalSectionHeader?.totalEnterpriseCount ?? 0,
@@ -394,18 +384,18 @@ const Dashboard = () => {
   const tooltipText = useMemo(() => {
     if (filters.country.id === 0) {
       return t(ACTIVE_COUNTRIES_TOOLTIP);
-    } else if (DATA_ACTIVE_COUNTRY.length > 0) {
+    } else if (projectsInCountry.length > 0) {
       return t(ACTIVE_PROJECTS_TOOLTIP);
     } else if (transformedStories.length > 0) {
       return t(IMPACT_STORIES_TOOLTIP);
     }
     return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
-  }, [t, filters.country.id, DATA_ACTIVE_COUNTRY, transformedStories]);
+  }, [t, filters.country.id, projectsInCountry, transformedStories]);
 
   const countryData = useMemo(() => {
-    if (!projectFullDto?.country || !countryChoices?.length) return undefined;
+    if (!singleDashboardProject?.country || !countryChoices?.length) return undefined;
 
-    const gadmCountry = countryChoices.find(country => country.id === projectFullDto?.country);
+    const gadmCountry = countryChoices.find(country => country.id === singleDashboardProject?.country);
     if (!gadmCountry) return undefined;
 
     const countrySlug = gadmCountry.id;
@@ -417,7 +407,7 @@ const Dashboard = () => {
       },
       id: gadmCountry.id
     };
-  }, [projectFullDto?.country, countryChoices]);
+  }, [singleDashboardProject?.country, countryChoices]);
 
   const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
     return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
@@ -463,9 +453,9 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              cohort={cohortName}
+              cohort={cohortArray}
               countryData={countryData as CountriesProps}
-              projectName={projectFullDto?.name}
+              projectName={singleDashboardProject?.name}
               className="pt-0"
               textVariant="text-14"
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -525,7 +515,7 @@ const Dashboard = () => {
                 </Else>
               </If>
               <div>
-                <Text variant="text-20-bold">{t(projectFullDto?.name)}</Text>
+                <Text variant="text-20-bold">{t(singleDashboardProject?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
                   {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
@@ -534,10 +524,12 @@ const Dashboard = () => {
                   {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
-                    `Type: ${ORGANIZATIONS_TYPES[projectFullDto?.organisationType as keyof typeof ORGANIZATIONS_TYPES]}`
+                    `Type: ${
+                      ORGANIZATIONS_TYPES[singleDashboardProject?.organisationType as keyof typeof ORGANIZATIONS_TYPES]
+                    }`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Cohort: ${cohortName}`)}
+                  {t(`Cohort: ${cohortDisplayName}`)}
                 </Text>
               </div>
             </div>
@@ -545,7 +537,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(projectFullDto)}
+              data={parseDataToObjetive(singleDashboardProject)}
               variantTitle="text-18-semibold"
             />
           </PageCard>
@@ -662,49 +654,11 @@ const Dashboard = () => {
               isLoading={isLoadingJobsCreated}
             />
           </div>
-          <div className="hidden">
-            <SecDashboard
-              title={t("Total Volunteers")}
-              data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
-              tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-            />
-          </div>
-
-          <div className="hidden w-full grid-cols-2 gap-12">
-            {/* add grid and remove hidden*/}
-            <SecDashboard
-              title={t("Volunteers Created by Gender")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={volunteersCreatedByGenderData}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-            <SecDashboard
-              title={t("Volunteers Created by Age")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={volunteersCreatedByAgeData}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-          </div>
         </PageCard>
       </ContentDashboardtWrapper>
       <ContentOverview
         dataTable={
-          filters.country.id === 0
-            ? DATA_ACTIVE_PROGRAMME
-            : filters.uuid
-            ? DATA_ACTIVE_COUNTRY_WITHOUT_UUID
-            : DATA_ACTIVE_COUNTRY
+          filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
         }
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
@@ -716,8 +670,10 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          projectFullDto ? projectFullDto.totalHectaresRestoredSum : totalSectionHeader?.totalHectaresRestored ?? 0,
-          projectFullDto ? projectFullDto.totalSites : dashboardVolunteersSurvivalRate?.number_of_sites ?? 0,
+          singleDashboardProject
+            ? singleDashboardProject.totalHectaresRestoredSum
+            : totalSectionHeader?.totalHectaresRestored ?? 0,
+          singleDashboardProject ? singleDashboardProject.totalSites : totalSectionHeader?.totalSites ?? 0,
           hectaresUnderRestoration
         )}
         textTooltipTable={tooltipText}

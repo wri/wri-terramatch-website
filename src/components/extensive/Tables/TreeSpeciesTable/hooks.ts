@@ -60,8 +60,8 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   // It's a little unfortunate that we're pulling both of these when only one is used, but in a component that's
   // using this hook, these are almost certainly both getting pulled anyway, and this is simpler from a code
   // readability perspective.
-  const [, { associations: plants }] = usePlants({ entity, uuid: entityUuid, collection });
-  const [, { reportCounts }] = useTreeReportCounts({
+  const [, { data: plants }] = usePlants({ entity, uuid: entityUuid, collection });
+  const { reportCounts } = useTreeReportCounts({
     // If the entity in this component is not a valid TreeReportCountsEntity, the connection will
     // avoid issuing any API requests and will return undefined for reportCounts
     entity: entity as TreeReportCountsEntity,
@@ -79,8 +79,8 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
 };
 
 export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: AggregateTreeHookProps) => {
-  const [, { associations: plants }] = usePlants({ entity, uuid: entityUuid, collection });
-  const [, { reportCounts, establishmentTrees }] = useTreeReportCounts({
+  const [, { data: plants }] = usePlants({ entity, uuid: entityUuid, collection });
+  const { reportCounts, establishmentTrees } = useTreeReportCounts({
     entity: entity as TreeReportCountsEntity,
     uuid: entityUuid,
     collection
@@ -110,7 +110,7 @@ type TableDataProps = {
   plants: PlantData[];
 };
 export const useTableData = ({ entity, entityUuid, collection, tableType, plants }: TableDataProps) => {
-  const [loaded, { reportCounts, establishmentTrees }] = useTreeReportCounts({
+  const { isLoaded, reportCounts, establishmentTrees } = useTreeReportCounts({
     // If the entity in this component is not a valid TreeReportCountsEntity, the connection will
     // avoid issuing any API requests and will return undefined for reportCounts
     entity: entity as TreeReportCountsEntity,
@@ -119,7 +119,7 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
   });
 
   return useMemo(() => {
-    if (!loaded) return undefined;
+    if (!isLoaded) return undefined;
 
     const reportCountEntries = Object.entries(reportCounts ?? {});
     const getReportAmount = (name?: string | null) =>
@@ -174,5 +174,5 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
       });
 
     return orderBy([...entityPlants, ...reportPlants], ["goalCount", "treeCount"], ["desc", "desc"]);
-  }, [collection, entity, establishmentTrees, loaded, plants, reportCounts, tableType]);
+  }, [collection, entity, establishmentTrees, isLoaded, plants, reportCounts, tableType]);
 };

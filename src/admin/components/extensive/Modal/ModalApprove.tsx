@@ -4,6 +4,7 @@ import { twMerge as tw } from "tailwind-merge";
 
 import {
   ESTIMATED_AREA_CRITERIA_ID,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
@@ -87,7 +88,11 @@ const ModalApprove: FC<ModalApproveProps> = ({
       polygonList.map((polygon: any) => {
         const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
 
-        const excludedFromValidationCriterias = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID];
+        const excludedFromValidationCriterias = [
+          ESTIMATED_AREA_CRITERIA_ID,
+          WITHIN_COUNTRY_CRITERIA_ID,
+          PLANT_START_DATE_CRITERIA_ID
+        ];
 
         let failingCriterias: string[] = [];
         if (validationInfo?.nonValidCriteria) {

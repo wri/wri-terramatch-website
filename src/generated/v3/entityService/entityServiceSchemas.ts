@@ -106,7 +106,21 @@ export type MediaDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -371,7 +385,19 @@ export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "due" | "needs-more-information" | "awaiting-approval" | "approved" | null;
+  status?: "due" | "needs-more-information" | "awaiting-approval" | "approved";
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * UUIDs of site reports to mark as 'Nothing to report'
+   */
+  siteReportNothingToReportUuids?: string[];
+  /**
+   * UUIDs of nursery reports to mark as 'Nothing to report'
+   */
+  nurseryReportNothingToReportUuids?: string[];
 };
 
 export type TaskData = {
@@ -470,16 +496,85 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
-export type BoundingBoxDto = {
+export type DemographicEntryDto = {
+  type: string;
+  subtype: string;
+  name?: string;
+  amount: number;
+};
+
+export type DemographicDto = {
   /**
-   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
-   *
-   * @example -13.17273163
-   * @example -21.3169788
-   * @example 48.8126753
-   * @example 13.47775425
+   * The entity type this resource is associated with.
    */
-  bbox: number[];
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  type:
+    | "workdays"
+    | "restoration-partners"
+    | "jobs"
+    | "employees"
+    | "volunteers"
+    | "all-beneficiaries"
+    | "training-beneficiaries"
+    | "indirect-beneficiaries"
+    | "associates";
+  collection: string;
+  entries: DemographicEntryDto[];
+};
+
+export type DisturbanceDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  disturbanceDate: string | null;
+  collection: string | null;
+  type: string | null;
+  subtype: string | null;
+  intensity: string | null;
+  extent: string | null;
+  peopleAffected: number | null;
+  monetaryDamage: number | null;
+  description: string | null;
+  actionDescription: string | null;
+  propertyAffected: string | null;
 };
 
 export type ANRDto = {
@@ -727,7 +822,7 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
-  cohort: string | null;
+  cohort: string[] | null;
   continent: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
@@ -1061,6 +1156,9 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  treePlantingUpload: MediaDto[];
+  soilWaterConservationUpload: MediaDto[];
+  soilWaterConservationPhotos: MediaDto[];
 };
 
 export type NurseryReportFullDto = {
@@ -1241,19 +1339,19 @@ export type ProjectUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
   /**
    * Update the isTest flag.
    */
-  isTest: boolean | null;
+  isTest?: boolean;
 };
 
 export type ProjectUpdateData = {
@@ -1269,15 +1367,15 @@ export type SiteUpdateAttributes = {
   /**
    * Request to change to the status of the given site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
 };
 
 export type SiteUpdateData = {
@@ -1293,15 +1391,15 @@ export type EntityUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
 };
 
 export type NurseryUpdateData = {
@@ -1317,19 +1415,19 @@ export type ReportUpdateAttributes = {
   /**
    * Request to change to the status of the given report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
-  feedback: string | null;
+  feedback?: string;
   /**
    * The fields in the entity form that need attention from the PD
    */
-  feedbackFields: string[] | null;
+  feedbackFields?: string[];
   /**
    * Update the nothingToReport flag.
    */
-  nothingToReport: boolean | null;
+  nothingToReport?: boolean;
 };
 
 export type ProjectReportUpdateData = {
@@ -1367,13 +1465,6 @@ export type EntityUpdateBody = {
     | ProjectReportUpdateData
     | SiteReportUpdateData
     | NurseryReportUpdateData;
-};
-
-export type DemographicEntryDto = {
-  type: string;
-  subtype: string;
-  name?: string;
-  amount: number;
 };
 
 /**
@@ -1470,35 +1561,25 @@ export type DemographicCollections = {
   BENEFICIARIES_PROJECT_TRAINING: string[];
 };
 
-export type DemographicDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  type:
-    | "workdays"
-    | "restoration-partners"
-    | "jobs"
-    | "employees"
-    | "volunteers"
-    | "all-beneficiaries"
-    | "training-beneficiaries"
-    | "indirect-beneficiaries"
-    | "associates";
-  collection: string;
-  entries: DemographicEntryDto[];
-};
-
 export type SeedingDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1515,7 +1596,21 @@ export type TreeSpeciesDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1527,27 +1622,25 @@ export type TreeSpeciesDto = {
   collection: string | null;
 };
 
-export type DisturbanceDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  collection: string | null;
-  type: string | null;
-  intensity: string | null;
-  extent: string | null;
-  description: string | null;
-};
-
 export type InvasiveDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */
@@ -1560,7 +1653,21 @@ export type StrataDto = {
   /**
    * The entity type this resource is associated with.
    */
-  entityType: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
   /**
    * The entity UUID this resource is associated with.
    */

@@ -48,8 +48,8 @@ When adding a new **service** app to the v3 API:
 * In `constants.environment.ts, define the service URL for all ENVIRONMENTS.
 * In `openapi-codegen.config.ts`, add the new service name to the `SERVICES` object (e.g. `foo-service`). 
 * This will generate a new target, which needs to be added to `package.json`:
-  * Under scripts, add `"generate:fooService": "npm run generate:fooService"`
-  * Under the `"generate:services"` script, add the new service: `"generate:services": "npm run generate:userService && npm run generate:fooService`
+  * Under scripts, add `"generate:fooService": "yarn generate:fooService && yarn format src/generated/v3/fooService"`
+  * Under the `"generate:services"` script, add the new service: `"generate:services": "yarn generate:userService && yarn generate:fooService`
 * After running `yarn generate:fooService` the first time:
   * open the generated `fooServiceFetcher.ts` and modify it to match `userServiceFetcher.ts`. 
     * This file does not get regenerated after the first time, and so it can utilize the same utilities 

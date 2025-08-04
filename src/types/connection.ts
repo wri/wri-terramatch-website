@@ -1,3 +1,4 @@
+import { FilterProp } from "@/connections/util/apiConnectionFactory";
 import { ApiDataStore } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 
@@ -8,14 +9,49 @@ export type Selector<State, SelectedType, PropsType extends OptionalProps = unde
   props: PropsType
 ) => SelectedType;
 
+export type LoadedPredicate<SelectedType, PropsType extends OptionalProps = undefined> = (
+  selected: SelectedType,
+  props: PropsType
+) => boolean;
+
 export type Connection<SelectedType, PropsType extends OptionalProps = undefined, State = ApiDataStore> = {
   // If the `State` is not ApiDataStore, this method is required to provide the State from the overall redux store.
   // Note: this method must _not_ do any data mapping, it should simply select a subset of the AppStore and
   // return it.
   getState?: (store: AppStore) => State;
   selector: Selector<State, SelectedType, PropsType>;
-  isLoaded?: (selected: SelectedType, props: PropsType) => boolean;
+  isLoaded?: LoadedPredicate<SelectedType, PropsType>;
   load?: (selected: SelectedType, props: PropsType) => void;
 };
 
 export type Connected<SelectedType> = readonly [true, SelectedType] | readonly [false, Record<any, never>];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type Selected<T> = T extends Connection<infer Selected, infer Props, infer State> ? Selected : never;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type ConnectionProps<T> = T extends Connection<infer Selected, infer Props, infer State> ? Props : never;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type HookProps<T> = T extends (props: infer Props) => Connected<infer Selected> ? Props : never;
+export type HookFilters<T> = Filters<HookProps<T>>;
+export type Filters<T> = T extends FilterProp<infer Filters> ? Filters : never;
+
+export type PaginatedConnectionProps = {
+  pageSize?: number;
+  pageNumber?: number;
+  sortField?: string;
+  sortDirection?: "ASC" | "DESC";
+};
+
+export type PaginatedQueryParams = {
+  "page[number]"?: number;
+  "page[size]"?: number;
+  "sort[field]"?: string;
+  "sort[direction]"?: "ASC" | "DESC";
+};
+
+export type Filter<Query extends PaginatedQueryParams> = Omit<
+  Query,
+  "page[number]" | "page[after]" | "page[size]" | "sort[field]" | "sort[direction]" | "sideloads"
+>;

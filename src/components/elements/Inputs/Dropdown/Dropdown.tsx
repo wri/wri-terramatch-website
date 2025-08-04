@@ -2,7 +2,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, uniq } from "lodash";
-import React, { ChangeEvent, Fragment, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, Fragment, PropsWithChildren, useCallback, useMemo, useRef } from "react";
 import { ErrorOption, FieldError } from "react-hook-form";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -13,6 +13,7 @@ import InputDescription from "@/components/elements/Inputs/InputElements/InputDe
 import InputLabel from "@/components/elements/Inputs/InputElements/InputLabel";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue, TextVariants } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { formatOptionsList } from "@/utils/options";
@@ -47,12 +48,10 @@ export interface DropdownProps {
   hasOtherOptions?: boolean;
   optionsFilter?: string;
   feedbackRequired?: boolean;
-  onChangeConfirm?: boolean;
   showClear?: boolean;
   showLabelAsMultiple?: boolean;
   multipleText?: string;
   disableOptionTitles?: string[] | undefined;
-  setOnChangeConfirm?: (confirm: boolean) => void;
   onChange: (value: OptionValue[]) => void;
   onClear?: () => void;
   onInternalError?: (error: ErrorOption) => void;
@@ -61,20 +60,19 @@ export interface DropdownProps {
   titleContainerClassName?: string;
 }
 
-const otherKey = "other#value#key";
+const OTHER_KEY = "other#value#key";
 
 const getAllowedValues = (values: OptionValue[], options: Option[]) =>
   uniq(values.filter(v => options.find(o => o.value === v)).filter(v => !!v));
 
-const getDefaultDropDownValue = (values: OptionValue[], options: Option[], hasOtherOptions: boolean) => {
-  const defaultValue = getAllowedValues(values, options);
-  const defaultOtherValue = getDefaultOtherValue(values, options, hasOtherOptions);
-  if (defaultOtherValue) defaultValue.push(otherKey);
-  return defaultValue;
+const getSelected = (values: OptionValue[], options: Option[], otherSelected: boolean) => {
+  const selected = getAllowedValues(values, options);
+  if (otherSelected) selected.push(OTHER_KEY);
+  return selected;
 };
 
-const getDefaultOtherValue = (values: OptionValue[], options: Option[], hasOtherOptions: boolean) =>
-  (hasOtherOptions ? values.filter(v => !options.find(o => o.value === v))?.[0] : "") ?? "";
+const getOtherValue = (values: OptionValue[], options: Option[]) =>
+  values.find(v => options.find(({ value }) => v === value) == null) ?? "";
 
 const formatSelectedValues = (
   selected: OptionValue[],
@@ -95,41 +93,43 @@ const formatSelectedValues = (
   }
 };
 
+const useSelected = (
+  { value, defaultValue, options }: Pick<DropdownProps, "value" | "defaultValue" | "options">,
+  otherSelected: boolean
+) => {
+  // Use a string for the value so that selected is only recalculated if the content of the props value changes
+  const serializedValue = useMemo(() => JSON.stringify(value ?? defaultValue ?? []), [defaultValue, value]);
+  return useMemo(() => {
+    const deserializedValue = JSON.parse(serializedValue);
+    return {
+      selected: getSelected(deserializedValue, options, otherSelected),
+      otherValue: otherSelected ? getOtherValue(deserializedValue, options) : ""
+    };
+  }, [options, otherSelected, serializedValue]);
+};
+
 const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
   const t = useT();
   const { variant = VARIANT_DROPDOWN_DEFAULT, showClear, showSelectAll, onClear } = props;
-  const [selected, setSelected] = useState<OptionValue[]>(() =>
-    getDefaultDropDownValue(props.defaultValue ?? props.value ?? [], props.options, props.hasOtherOptions === true)
-  );
-  const [otherValue, setOtherValue] = useState<OptionValue>(() =>
-    getDefaultOtherValue(props.defaultValue ?? props.value ?? [], props.options, props.hasOtherOptions === true)
-  );
 
-  useEffect(() => {
-    setSelected(getDefaultDropDownValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
-    setOtherValue(getDefaultOtherValue(props.value ?? [], props.options ?? [], !!props.hasOtherOptions));
-  }, [props.value, props.options, props.hasOtherOptions]);
+  // Use a ref so setting it doesn't trigger a re-render, and the value is immediately changed when
+  // modified in onChange()
+  const otherSelected = useRef(
+    (props.hasOtherOptions ?? false) && !isEmpty(getOtherValue(props.value ?? [], props.options))
+  );
+  const { selected, otherValue } = useSelected(props, otherSelected.current);
 
   const onChange = useCallback(
     (value: OptionValue | OptionValue[], _otherValue?: string) => {
-      let otherStr = typeof _otherValue === "string" ? _otherValue : otherValue;
-      if (Array.isArray(value)) {
-        if (props.onChangeConfirm) {
-          setSelected(value);
-          if (props.setOnChangeConfirm) {
-            props.setOnChangeConfirm(false);
-          }
-        }
-        const allowedValues = getAllowedValues(value, props.options);
-        props.onChange(
-          props.hasOtherOptions && otherStr && value.includes(otherKey) ? [...allowedValues, otherStr] : allowedValues
-        );
-      } else if (value != null) {
-        const allowedValues = getAllowedValues([value], props.options);
-        setSelected([value]);
-        props.onChange(props.hasOtherOptions && otherStr && value === otherKey ? [otherStr] : allowedValues);
+      if (value == null) {
+        otherSelected.current = false;
+        props.onChange([]);
       } else {
-        setSelected([]);
+        value = toArray(value);
+        otherSelected.current = value.includes(OTHER_KEY);
+        const values = getAllowedValues(value, props.options);
+        if (otherSelected.current) values.push(_otherValue ?? otherValue);
+        props.onChange(values);
       }
     },
     [otherValue, props]
@@ -137,7 +137,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
 
   const onChangeOther = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setOtherValue(e.target.value);
       onChange(selected, e.target.value);
     },
     [onChange, selected]
@@ -148,7 +147,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     if (props.hasOtherOptions) {
       output.push({
         title: "Other",
-        value: otherKey
+        value: OTHER_KEY
       });
     }
     if (props.optionsFilter) {
@@ -157,16 +156,17 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     return output;
   }, [props.options, props.hasOtherOptions, props.optionsFilter]);
 
-  const otherIsSelected = useMemo(() => selected?.includes(otherKey), [selected]);
-  const internalError = useMemo(() => {
-    const error =
-      otherIsSelected && !otherValue
+  const internalError = useMemo(
+    () =>
+      otherSelected.current && isEmpty(otherValue)
         ? ({ type: "required", message: t("This field is required") } as FieldError)
-        : undefined;
-    props.onInternalError?.(error as ErrorOption);
-    return error;
+        : undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otherIsSelected, otherValue, t]);
+    [otherSelected.current, otherValue, t]
+  );
+  useValueChanged(internalError, () => {
+    props.onInternalError?.(internalError as ErrorOption);
+  });
 
   const verifyDisableOption = useCallback(
     (title: string) => props?.disableOptionTitles?.includes(title),
@@ -233,7 +233,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     className={variant.iconClearContainerClassName}
                     onClick={e => {
                       e.stopPropagation();
-                      setSelected([]);
+                      onChange([]);
                       onClear?.();
                     }}
                   >
@@ -290,7 +290,8 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             inputClassName={classNames(variant.optionCheckboxClassName, "checked:bg-dash")}
                             className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
                             checked={selected.length === options.length}
-                            onChange={() => {
+                            onChange={e => {
+                              e.stopPropagation();
                               if (selected.length === options.length) {
                                 onChange([]);
                               } else {
@@ -328,11 +329,6 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                             textClassName={variant.optionLabelClassName}
                             inputClassName={variant.optionCheckboxClassName}
                             className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
-                            onChange={() => {
-                              !isSelected
-                                ? setSelected([...selected, option.value])
-                                : setSelected(selected.filter(value => value !== option.value));
-                            }}
                           />
                         ) : (
                           <div className="flex items-center gap-2">
@@ -357,7 +353,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
           );
         }}
       </Listbox>
-      {otherIsSelected ? (
+      {otherSelected.current ? (
         <Input
           label={t("If other, please specify")}
           placeholder={t("Please specify")}

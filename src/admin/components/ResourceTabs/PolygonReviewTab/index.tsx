@@ -22,7 +22,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
+import { VARIANT_TABLE_SITE_POLYGON_REVIEW_WITH_SCROLL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -161,7 +161,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { openNotification } = useNotificationContext();
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const [, { bbox }] = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
+  const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
   const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
     Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
   const activeBbox = isValidBbox(bbox) ? bbox : undefined;
@@ -188,9 +188,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
 
-  const [, { associations: modelFilesData }] = useMedias({
+  const [, { data: modelFilesData }] = useMedias({
     entity: "sites",
-    uuid: record?.uuid ?? ""
+    uuid: record?.uuid,
+    enabled: record?.uuid != null
   });
 
   useValueChanged(validFilter, () => {
@@ -216,6 +217,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     "target-land-use-system": parseText(data?.target_sys ?? ""),
     "tree-distribution": parseText(data?.distr ?? ""),
     "planting-start-date": data?.plantstart ?? "",
+    "planting-status": parseText(data?.planting_status ?? ""),
     source: parseText(data?.source ?? ""),
     uuid: data?.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
@@ -693,6 +695,10 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
               <MapContainer
                 record={record}
+                entityData={{
+                  name: record?.name,
+                  project: record?.projectName ? { name: record.projectName } : undefined
+                }}
                 polygonsData={polygonDataMap}
                 bbox={activeBbox}
                 className="rounded-lg"
@@ -719,68 +725,75 @@ const PolygonReviewTab: FC<IProps> = props => {
                     and edit the attributes in the map above.
                   </Text>
                 </div>
-                <Table
-                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                  hasPagination={false}
-                  classNameWrapper="max-h-[560px]"
-                  initialTableState={{
-                    pagination: { pageSize: 10000000 }
-                  }}
-                  columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
-                    {
-                      header: "Restoration Practice",
-                      accessorKey: "restoration-practice",
-                      cell: props => {
-                        const placeholder = props.getValue() as string;
-                        return (
-                          <input
-                            placeholder={placeholder}
-                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
-                          />
-                        );
-                      },
-                      meta: { style: { width: "17.63%" } }
-                    },
-                    {
-                      header: "Target Land Use System",
-                      accessorKey: "target-land-use-system",
-                      meta: { style: { width: "20.63%" } }
-                    },
-                    {
-                      header: "Tree Distribution",
-                      accessorKey: "tree-distribution",
-                      meta: { style: { width: "15.63%" } }
-                    },
-                    {
-                      header: "Planting Start Date",
-                      accessorKey: "planting-start-date",
-                      meta: { style: { width: "17.63%" } }
-                    },
-                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
-                    {
-                      header: "",
-                      accessorKey: "ellipse",
-                      enableSorting: false,
-                      cell: props => (
-                        <Menu
-                          menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
-                          placement={
-                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
-                          }
-                        >
-                          <div className="rounded p-1 hover:bg-primary-200">
-                            <Icon
-                              name={IconNames.ELIPSES}
-                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                <div className="overflow-auto">
+                  <Table
+                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW_WITH_SCROLL}
+                    hasPagination={false}
+                    classNameWrapper="max-h-[560px]"
+                    initialTableState={{
+                      pagination: { pageSize: 10000000 }
+                    }}
+                    columns={[
+                      { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
+                      {
+                        header: "Restoration Practice",
+                        accessorKey: "restoration-practice",
+                        cell: props => {
+                          const placeholder = props.getValue() as string;
+                          return (
+                            <input
+                              placeholder={placeholder}
+                              className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
                             />
-                          </div>
-                        </Menu>
-                      )
-                    }
-                  ]}
-                  data={sitePolygonDataTable}
-                ></Table>
+                          );
+                        },
+                        meta: { style: { width: "17.63%" } }
+                      },
+                      {
+                        header: "Target Land Use System",
+                        accessorKey: "target-land-use-system",
+                        meta: { style: { width: "20.63%" } }
+                      },
+                      {
+                        header: "Tree Distribution",
+                        accessorKey: "tree-distribution",
+                        meta: { style: { width: "15.63%" } }
+                      },
+                      {
+                        header: "Planting Status",
+                        accessorKey: "planting-status",
+                        meta: { style: { width: "17.63%" } }
+                      },
+                      {
+                        header: "Planting Start Date",
+                        accessorKey: "planting-start-date",
+                        meta: { style: { width: "17.63%" } }
+                      },
+                      { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
+                      {
+                        header: "",
+                        accessorKey: "ellipse",
+                        enableSorting: false,
+                        cell: props => (
+                          <Menu
+                            menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
+                            placement={
+                              (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
+                            }
+                          >
+                            <div className="rounded p-1 hover:bg-primary-200">
+                              <Icon
+                                name={IconNames.ELIPSES}
+                                className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                              />
+                            </div>
+                          </Menu>
+                        )
+                      }
+                    ]}
+                    data={sitePolygonDataTable}
+                  ></Table>
+                </div>
               </div>
             </Stack>
           </Grid>

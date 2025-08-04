@@ -7,7 +7,6 @@ import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
@@ -19,11 +18,11 @@ import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { GetV2TypeEntityResponse, useDeleteV2FilesUUID, useGetV2TypeEntity } from "@/generated/apiComponents";
-import { EntityAssociationIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
+import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
 import ModalAddImages from "../Modal/ModalAddImages";
@@ -64,47 +63,47 @@ const EntityMapAndGalleryCard = ({
   if (modelTitle === "Site Report" || modelTitle === "Site") {
     entityUUID = modelUUID;
   }
-  const queryParams = useMemo(() => {
-    const params: EntityAssociationIndexQueryParams = {
-      "page[number]": pagination.page,
-      "page[size]": pagination.pageSize
-    };
+  const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      const queryFilter: HookFilters<typeof useMedias> = {};
 
-    if (filters.isPublic !== undefined) {
-      params.isPublic = filters.isPublic;
-    }
-    if (filters.modelType) {
-      params.modelType = filters.modelType;
-    }
-    params.search = searchString;
+      if (filters.isPublic !== undefined) {
+        queryFilter.isPublic = filters.isPublic;
+      }
+      if (filters.modelType) {
+        queryFilter.modelType = filters.modelType;
+      }
+      queryFilter.search = searchString;
 
-    if (isGeotagged !== null) {
-      params.isGeotagged = isGeotagged;
-    }
+      if (isGeotagged !== null) {
+        queryFilter.isGeotagged = isGeotagged;
+      }
 
-    if (filter) {
-      params.modelType = filter.value;
-    }
+      if (filter) {
+        queryFilter.modelType = filter.value;
+      }
 
-    params["sort[direction]"] = sortOrder;
-
-    return params;
-  }, [
-    filter,
-    filters.isPublic,
-    filters.modelType,
-    isGeotagged,
-    pagination.page,
-    pagination.pageSize,
-    searchString,
-    sortOrder
-  ]);
-
-  const [isLoaded, { associations: mediaList, indexTotal, refetch }] = useMedias({
-    entity: modelName as SupportedEntity,
-    uuid: entityUUID,
-    queryParams
-  });
+      return {
+        entity: modelName as SupportedEntity,
+        uuid: entityUUID,
+        pageNumber: pagination.page,
+        pageSize: pagination.pageSize,
+        sortDirection: sortOrder,
+        filter: queryFilter
+      };
+    }, [
+      entityUUID,
+      filter,
+      filters.isPublic,
+      filters.modelType,
+      isGeotagged,
+      modelName,
+      pagination.page,
+      pagination.pageSize,
+      searchString,
+      sortOrder
+    ])
+  );
 
   const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
     queryParams: {
@@ -113,12 +112,7 @@ const EntityMapAndGalleryCard = ({
     }
   });
 
-  const [, { bbox: bboxArray }] = useBoundingBox(
-    modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID }
-  );
-
-  const mapBbox = bboxArray?.length === 4 ? (bboxArray as BBox) : undefined;
-
+  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({

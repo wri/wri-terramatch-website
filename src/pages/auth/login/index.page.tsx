@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { login, useLogin } from "@/connections/Login";
+import { useLogin } from "@/connections/Login";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useSetInviteToken } from "@/hooks/useInviteToken";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -30,7 +30,7 @@ const LoginPage = () => {
   const t = useT();
   const router = useRouter();
   const { returnUrl } = router.query;
-  const [, { isLoggedIn, isLoggingIn, loginFailed }] = useLogin();
+  const [, { data: loginData, create: login, isCreating: isLoggingIn, createFailure: loginFailure }] = useLogin({});
   const { openToast } = useToastContext();
 
   const form = useForm<LoginFormDataType>({
@@ -39,7 +39,7 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    if (!isLoggedIn || !router.isReady) return;
+    if (loginData == null || !router.isReady) return;
 
     let redirectTarget: string | null = null;
 
@@ -59,17 +59,17 @@ const LoginPage = () => {
         router.push(redirectTarget as string);
       }, 100);
     }
-  }, [isLoggedIn, returnUrl, router, router.isReady]);
+  }, [loginData, returnUrl, router, router.isReady]);
 
-  useValueChanged(loginFailed, () => {
-    if (loginFailed) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
+  useValueChanged(loginFailure, () => {
+    if (loginFailure != null) openToast(t("Incorrect Email or Password"), ToastType.ERROR);
   });
 
-  const handleSave = (data: LoginFormDataType) => login(data.email, data.password);
+  const handleSave = (data: LoginFormDataType) => login({ emailAddress: data.email, password: data.password });
 
   return (
     <LoginLayout>
-      <LoginForm form={form} loading={isLoggingIn || isLoggedIn} handleSave={handleSave} />
+      <LoginForm form={form} loading={isLoggingIn || loginData != null} handleSave={handleSave} />
     </LoginLayout>
   );
 };

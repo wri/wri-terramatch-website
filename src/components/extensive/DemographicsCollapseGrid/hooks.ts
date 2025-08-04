@@ -105,7 +105,7 @@ export type CollectionsTotalProps = {
   collections: readonly string[];
 };
 export default function useCollectionsTotal({ entity, uuid, demographicType, collections }: CollectionsTotalProps) {
-  const [, { associations: demographics }] = useDemographics({ entity, uuid });
+  const [, { data: demographics }] = useDemographics({ entity, uuid });
   const { framework } = useFrameworkContext();
   return useMemo(() => {
     const apiType = kebabCase(demographicType);

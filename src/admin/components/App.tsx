@@ -155,6 +155,15 @@ const App = () => {
           options={{ label: "Nursery Reports" }}
           recordRepresentation={record => record?.title}
         />
+        <Resource
+          name={modules.financialReport.ResourceName}
+          list={modules.financialReport.List}
+          show={modules.financialReport.Show}
+          edit={modules.financialReport.Edit}
+          icon={() => <Icon className="h-8 w-6" name={IconNames.FINANCIAL_REPORTS} />}
+          options={{ label: "Financial Reports" }}
+          recordRepresentation={record => record?.title}
+        />
         {isAdmin && (
           <>
             <Resource name={modules.audit.ResourceName} />

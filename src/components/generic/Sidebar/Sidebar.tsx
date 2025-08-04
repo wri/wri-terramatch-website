@@ -25,7 +25,7 @@ interface NavItem {
 
 const Sidebar = () => {
   const router = useRouter();
-  const [, { isLoggedIn }] = useLogin();
+  const [, { data: login }] = useLogin({});
   const [, { setLocale }] = useMyUser();
   const t = useT();
 
@@ -195,7 +195,7 @@ const Sidebar = () => {
         className={classNames("flex flex-col items-center justify-center gap-4 pb-7", "mobile:flex-row mobile:pb-0")}
       >
         <LanguagesDropdown variant={VARIANT_LANGUAGES_DROPDOWN_SECONDARY} onChange={changeLanguageHandler} />
-        {!isMobile && <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={isLoggedIn} />}
+        {!isMobile && <MyAccountDropdown variant={VARIANT_MY_ACCOUNT_DROPDOWN_SECONDARY} isLoggedIn={login != null} />}
         {isMobile && (
           <button className="text-white" onClick={() => setIsOpen(!isOpen)}>
             <Icon name={isOpen ? IconNames.CLEAR_DASHBOARD : IconNames.IC_MENU} className={classNames("h-5 w-5")} />

@@ -39,6 +39,7 @@ interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
   isChildQuestion?: boolean;
   hideDescriptionInput?: boolean;
   children?: ReactElement;
+  formTitle?: string;
 }
 
 export const appendAdditionalFormQuestionFields = (originalList: V2GenericList[]): V2GenericList[] => {
@@ -56,6 +57,7 @@ export const QuestionArrayInput = ({
   hideDescriptionInput,
   isChildQuestion,
   children,
+  formTitle,
   ...arrayInputProps
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
@@ -439,6 +441,7 @@ export const QuestionArrayInput = ({
         question={previewQuestion}
         linkedFieldData={linkedFieldsData as any[]}
         onClose={() => setPreviewQuestion(undefined)}
+        formTitle={formTitle}
       />
     </div>
   );

@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./researchServiceFetcher";
-import { researchServiceFetch } from "./researchServiceFetcher";
 import type * as Schemas from "./researchServiceSchemas";
 
 export type SitePolygonsIndexQueryParams = {
@@ -35,15 +35,15 @@ export type SitePolygonsIndexQueryParams = {
   /**
    * Filter results by project short name(s)
    */
-  ["prprojectShortNames[]"]?: string[];
+  ["projectShortNames[]"]?: string[];
   /**
    * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
    */
   ["siteId[]"]?: string[];
   /**
-   * Filter results by project cohort. May not be used with projectId[] or siteId[]
+   * Filter results by project cohorts. May not be used with projectId[] or siteId[]
    */
-  projectCohort?: string;
+  ["projectCohort[]"]?: string[];
   /**
    * Filter results by project landscape. May not be used with projectId[] or siteId[]
    */
@@ -132,108 +132,105 @@ export type SitePolygonsIndexVariables = {
   queryParams?: SitePolygonsIndexQueryParams;
 };
 
-export const sitePolygonsIndex = (variables: SitePolygonsIndexVariables, signal?: AbortSignal) =>
-  researchServiceFetch<
-    | {
-        meta?: {
+export const sitePolygonsIndex = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example sitePolygons
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The cursor for the first record on this page.
+           */
+          cursor?: string;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonFullDto;
+        meta?: {
+          page?: {
             /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The cursor for the first record on this page.
+             * The cursor for this record.
              */
             cursor?: string;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
-          /**
-           * @example sitePolygons
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.SitePolygonFullDto;
-          meta?: {
-            page?: {
-              /**
-               * The cursor for this record.
-               */
-              cursor?: string;
-            };
           };
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example sitePolygons
-           */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
         };
-        data?: {
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example sitePolygons
+           * The resource type for this included index
            */
-          type?: string;
+          resource?: string;
           /**
-           * @format uuid
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          id?: string;
-          attributes?: Schemas.SitePolygonLightDto;
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      },
-    SitePolygonsIndexError,
-    undefined,
-    {},
-    SitePolygonsIndexQueryParams,
-    {}
-  >({ url: "/research/v3/sitePolygons", method: "get", ...variables, signal });
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      }[];
+    },
+  SitePolygonsIndexError,
+  SitePolygonsIndexVariables,
+  {}
+>("/research/v3/sitePolygons", "GET");
 
 export type BulkUpdateSitePolygonsError = Fetcher.ErrorWrapper<
   | {
@@ -286,12 +283,114 @@ export type BulkUpdateSitePolygonsVariables = {
  *        payload. If a new indicator is provided, it will be created in the DB. Indicators are keyed
  *        off of the combination of site polygon ID, indicatorSlug, and yearOfAnalysis.
  */
-export const bulkUpdateSitePolygons = (variables: BulkUpdateSitePolygonsVariables, signal?: AbortSignal) =>
-  researchServiceFetch<undefined, BulkUpdateSitePolygonsError, Schemas.SitePolygonBulkUpdateBodyDto, {}, {}, {}>({
-    url: "/research/v3/sitePolygons",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const bulkUpdateSitePolygons = new V3ApiEndpoint<
+  undefined,
+  BulkUpdateSitePolygonsError,
+  BulkUpdateSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "PATCH");
 
-export const operationsByTag = { sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons } };
+export type BoundingBoxGetQueryParams = {
+  /**
+   * UUID of a polygon to get its bounding box
+   */
+  polygonUuid?: string;
+  /**
+   * UUID of a site to get the bounding box of all its polygons
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get the bounding box of all its site polygons
+   */
+  projectUuid?: string;
+  /**
+   * UUID of a project pitch to get the bounding box of all its polygons
+   */
+  projectPitchUuid?: string;
+  /**
+   * Array of landscape slugs for combined bounding box (used with country)
+   */
+  landscapes?: string[];
+  /**
+   * Country code (3-letter ISO) to get its bounding box
+   */
+  country?: string;
+};
+
+export type BoundingBoxGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BoundingBoxGetResponse = {
+  meta?: {
+    /**
+     * @example boundingBoxes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example boundingBoxes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.BoundingBoxDto;
+  };
+};
+
+export type BoundingBoxGetVariables = {
+  queryParams?: BoundingBoxGetQueryParams;
+};
+
+export const boundingBoxGet = new V3ApiEndpoint<
+  BoundingBoxGetResponse,
+  BoundingBoxGetError,
+  BoundingBoxGetVariables,
+  {}
+>("/boundingBoxes/v3/get", "GET");
+
+export const operationsByTag = {
+  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
+  boundingBoxes: { boundingBoxGet }
+};

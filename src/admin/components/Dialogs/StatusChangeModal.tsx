@@ -19,14 +19,11 @@ import modules from "@/admin/modules";
 import { validateForm } from "@/admin/utils/forms";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  GetV2FormsENTITYUUIDResponse,
-  useGetV2FormsENTITYUUID,
-  usePostV2AdminENTITYUUIDReminder
-} from "@/generated/apiComponents";
+import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useUpdateComplete } from "@/hooks/useConnectionUpdate";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -56,11 +53,11 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     () => singularEntityNameToPlural(resource as SingularEntityName) as SupportedEntity,
     [resource]
   );
-  const [, { entityIsUpdating, update }] = useFullEntity(v3Resource, record.uuid);
+  const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
   // This will be a quick cache get in that case, instead of another server round trip.
-  useUpdateComplete(entityIsUpdating, refetch);
+  useRequestComplete(isUpdating, refetch);
 
   const dialogTitle = (() => {
     let name;
@@ -100,23 +97,27 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     }
   })();
 
-  const { data: formResponse } = useGetV2FormsENTITYUUID<{ data: GetV2FormsENTITYUUIDResponse }>(
-    {
-      pathParams: {
-        entity: resourceName,
-        uuid: record.id
-      }
-    },
-    {
-      enabled: !!record?.id
-    }
-  );
+  const { formData: formResponse } = useEntityForm(resourceName, record.id);
 
-  const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: { label: string }[] }) =>
-    section.form_questions.map((question: any) => ({
-      title: question.label ?? "",
-      value: question.uuid ?? ""
-    }))
+  // Helper function to recursively extract all questions including follow-up questions
+  const extractAllQuestions = (questions: any[]): any[] => {
+    return questions.flatMap((question: any) => {
+      const currentQuestion = {
+        title: question.label ?? "",
+        value: question.uuid ?? ""
+      };
+
+      // If the question has children (follow-up questions), include them too
+      if (question.children && Array.isArray(question.children)) {
+        return [currentQuestion, ...extractAllQuestions(question.children)];
+      }
+
+      return [currentQuestion];
+    });
+  };
+
+  const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: any[] }) =>
+    extractAllQuestions(section.form_questions)
   );
 
   const feedbackChoices = useMemo(() => optionToChoices(questions ?? []), [questions]);
@@ -185,22 +186,17 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <When condition={status !== "reminder"}>
-            <Button variant="contained" type="submit" disabled={entityIsUpdating}>
-              <When condition={entityIsUpdating}>
-                <CircularProgress size={18} sx={{ marginRight: 1 }} />
-              </When>
-              Update Status
-            </Button>
-          </When>
-          <When condition={status === "reminder"}>
+          {status === "reminder" ? (
             <Button variant="contained" type="submit" disabled={isLoadingReminder}>
-              <When condition={isLoadingReminder}>
-                <CircularProgress size={18} sx={{ marginRight: 1 }} />
-              </When>
+              {isLoadingReminder && <CircularProgress size={18} sx={{ marginRight: 1 }} />}
               Send Reminder
             </Button>
-          </When>
+          ) : (
+            <Button variant="contained" type="submit" disabled={isUpdating}>
+              {isUpdating && <CircularProgress size={18} sx={{ marginRight: 1 }} />}
+              Update Status
+            </Button>
+          )}
         </DialogActions>
       </Form>
     </Dialog>

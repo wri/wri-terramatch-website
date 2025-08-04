@@ -1,7 +1,9 @@
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
-import { TreeRestorationGoalDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  DashboardProjectsLightDto,
+  TreeRestorationGoalDto
+} from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 
 type DataPoint = {
   time: string;
@@ -45,8 +47,8 @@ interface Option {
 }
 
 interface HectaresUnderRestoration {
-  restoration_strategies_represented: Record<string, number>;
-  target_land_use_types_represented: Record<string, number>;
+  restorationStrategiesRepresented: Record<string, number>;
+  targetLandUseTypesRepresented: Record<string, number>;
 }
 
 interface ParsedDataItem {
@@ -383,13 +385,24 @@ const getRestorationStrategyOptions = {
 export const parseHectaresUnderRestorationData = (
   totalHectaresRestored: number,
   numberOfSites: number,
-  hectaresUnderRestoration: HectaresUnderRestoration
+  hectaresUnderRestoration: HectaresUnderRestoration | undefined
 ): HectaresUnderRestorationData => {
-  if (totalHectaresRestored === undefined || numberOfSites === undefined || !hectaresUnderRestoration) {
+  if (totalHectaresRestored === undefined || numberOfSites === undefined) {
     return {
       totalSection: {
         totalHectaresRestored: 0,
         numberOfSites: 0
+      },
+      restorationStrategiesRepresented: [],
+      graphicTargetLandUseTypes: []
+    };
+  }
+
+  if (hectaresUnderRestoration == null) {
+    return {
+      totalSection: {
+        totalHectaresRestored: Number((totalHectaresRestored ?? 0).toFixed(0)),
+        numberOfSites: numberOfSites ?? 0
       },
       restorationStrategiesRepresented: [],
       graphicTargetLandUseTypes: []
@@ -427,28 +440,28 @@ export const parseHectaresUnderRestorationData = (
     return option ? option.title : value;
   };
 
-  const noStrategyValue = hectaresUnderRestoration?.restoration_strategies_represented?.[""] || 0;
+  const noStrategyValue = hectaresUnderRestoration?.restorationStrategiesRepresented?.[""] || 0;
 
   const restorationStrategiesRepresented: ParsedDataItem[] = [
     {
       label: getRestorationStrategyOptions["direct-seeding"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["direct-seeding"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["direct-seeding"] || 0
     },
     {
       label: getRestorationStrategyOptions["assisted-natural-regeneration"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["assisted-natural-regeneration"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["assisted-natural-regeneration"] || 0
     },
     {
       label: getRestorationStrategyOptions["tree-planting"],
-      value: hectaresUnderRestoration?.restoration_strategies_represented?.["tree-planting"] || 0
+      value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["tree-planting"] || 0
     },
     {
       label: "Multiple Strategies",
-      value: Object.keys(hectaresUnderRestoration?.restoration_strategies_represented || {})
+      value: Object.keys(hectaresUnderRestoration?.restorationStrategiesRepresented || {})
         .filter(
           key => key !== "" && !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key)
         )
-        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restoration_strategies_represented?.[key] || 0), 0)
+        .reduce((sum, key) => sum + (hectaresUnderRestoration?.restorationStrategiesRepresented?.[key] || 0), 0)
     },
     {
       label: "No Strategy Identified",
@@ -456,16 +469,14 @@ export const parseHectaresUnderRestorationData = (
     }
   ].filter(item => item.value > 0);
 
-  const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.target_land_use_types_represented).map(
-    item => {
-      const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
-      return {
-        label: getLandUseTypeTitle(item.label),
-        value: adjustedValue,
-        valueText: formatValueText(adjustedValue)
-      };
-    }
-  );
+  const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.targetLandUseTypesRepresented).map(item => {
+    const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
+    return {
+      label: getLandUseTypeTitle(item.label),
+      value: adjustedValue,
+      valueText: formatValueText(adjustedValue)
+    };
+  });
 
   return {
     totalSection: {
@@ -477,10 +488,13 @@ export const parseHectaresUnderRestorationData = (
   };
 };
 
-export const parseDataToObjetive = (projectFullDto?: ProjectFullDto): Objetive => {
-  const objetiveText = projectFullDto?.objectives || "No Objective";
-  const landTenure = projectFullDto?.landTenureProjectArea
-    ? projectFullDto?.landTenureProjectArea.join(", ")
+export const parseDataToObjetive = (projectData?: {
+  objectives?: string | null;
+  landTenureProjectArea?: string[] | null;
+}): Objetive => {
+  const objetiveText = projectData?.objectives || "No Objective";
+  const landTenure = projectData?.landTenureProjectArea
+    ? projectData?.landTenureProjectArea.join(", ")
     : "Under Review";
   return {
     objetiveText,
@@ -496,6 +510,20 @@ export const getFrameworkName = (frameworks: any[], frameworkKey: string): strin
 
 export const getCohortName = (cohortKey: string): string | undefined => {
   return cohortNames[cohortKey as keyof typeof cohortNames];
+};
+
+export const getCohortNamesFromArray = (cohortKeys: string[]): string[] => {
+  return cohortKeys.map(key => getCohortName(key)).filter((name): name is string => name !== undefined);
+};
+
+export const getFirstCohortFromArray = (cohort: string[] | null | undefined): string => {
+  return cohort && cohort.length > 0 ? cohort[0] : "";
+};
+
+export const formatCohortDisplay = (cohort: string[] | null | undefined): string => {
+  if (!cohort || cohort.length === 0) return "";
+  if (cohort.length === 1) return getCohortName(cohort[0]) || cohort[0];
+  return getCohortNamesFromArray(cohort).join(", ");
 };
 
 export const isEmptyChartData = (chartType: string, data: any): boolean => {
@@ -668,3 +696,90 @@ export function parseTreeCoverData(
     };
   });
 }
+
+export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[]) => {
+  if (!projects || projects.length === 0) {
+    return {
+      totalTreesRestored: 0,
+      totalHectaresRestored: 0,
+      totalJobsCreated: 0,
+      totalTreesRestoredGoal: 0,
+      totalEnterpriseCount: 0,
+      totalNonProfitCount: 0,
+      totalSites: 0
+    };
+  }
+
+  return projects.reduce(
+    (acc, project) => {
+      acc.totalTreesRestored += project.treesPlantedCount ?? 0;
+
+      acc.totalHectaresRestored += project.totalHectaresRestoredSum ?? 0;
+
+      acc.totalJobsCreated += project.totalJobsCreated ?? 0;
+
+      acc.totalTreesRestoredGoal += project.treesGrownGoal ?? 0;
+
+      acc.totalSites += project.totalSites ?? 0;
+
+      if (project.organisationType === "for-profit-organization") {
+        acc.totalEnterpriseCount += 1;
+      } else if (project.organisationType === "non-profit-organization") {
+        acc.totalNonProfitCount += 1;
+      }
+
+      return acc;
+    },
+    {
+      totalTreesRestored: 0,
+      totalHectaresRestored: 0,
+      totalJobsCreated: 0,
+      totalTreesRestoredGoal: 0,
+      totalEnterpriseCount: 0,
+      totalNonProfitCount: 0,
+      totalSites: 0
+    }
+  );
+};
+
+export const groupProjectsByCountry = (projects: DashboardProjectsLightDto[]) => {
+  if (projects == null || projects.length === 0) {
+    return [];
+  }
+
+  const countryGroups = projects.reduce(
+    (acc, project) => {
+      const country = project.country;
+      if (country == null) return acc;
+
+      if (!acc[country]) {
+        acc[country] = {
+          country: country,
+          numberOfProjects: 0,
+          totalTreesPlanted: 0,
+          totalJobsCreated: 0,
+          hectaresRestored: 0
+        };
+      }
+
+      acc[country].numberOfProjects += 1;
+      acc[country].totalTreesPlanted += project.treesPlantedCount ?? 0;
+      acc[country].totalJobsCreated += project.totalJobsCreated ?? 0;
+      acc[country].hectaresRestored += project.totalHectaresRestoredSum ?? 0;
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        country: string;
+        numberOfProjects: number;
+        totalTreesPlanted: number;
+        totalJobsCreated: number;
+        hectaresRestored: number;
+      }
+    >
+  );
+
+  return Object.values(countryGroups).sort((a, b) => a.country.localeCompare(b.country));
+};

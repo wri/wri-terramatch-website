@@ -22,8 +22,10 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
+import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
@@ -69,7 +71,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const activeCountries = useMemo(() => {
     if (!activeProjects || !gadmCountries || !gadmCountries.length) return [];
 
-    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country_slug))].filter(
+    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country))].filter(
       Boolean
     ) as string[];
     const countries = uniqueCountrySlugs
@@ -94,29 +96,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     return countries.sort((a, b) => a.data.label.localeCompare(b.data.label));
   }, [activeProjects, gadmCountries]);
 
-  const optionMenu = activeProjects
-    ? activeProjects?.map(
-        (
-          item: {
-            project_country: string;
-            organisation: string;
-            name: string;
-            programme: string;
-            uuid: string;
-            country_slug: string;
-          },
-          index: number
-        ) => ({
-          id: index,
-          country: item?.project_country,
-          organization: item?.organisation,
-          project: item?.name,
-          programme: item?.programme,
-          uuid: item?.uuid,
-          country_slug: item?.country_slug
-        })
-      )
-    : [];
+  const optionMenu = activeProjects || [];
 
   const organizationOptions = [
     {
@@ -127,12 +107,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       title: t("Enterprise Organization"),
       value: "for-profit-organization"
     }
-  ];
-
-  const landscapeOption = [
-    { title: "Greater Rift Valley of Kenya", value: "Greater Rift Valley of Kenya" },
-    { title: "Ghana Cocoa Belt ", value: "Ghana Cocoa Belt" },
-    { title: "Lake Kivu & Rusizi River Basin ", value: "Lake Kivu & Rusizi River Basin" }
   ];
 
   const { data: frameworks } = useGetV2DashboardFrameworks({
@@ -158,7 +132,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         }
       },
       organizations: [],
-      cohort: "",
+      cohort: [],
       uuid: ""
     });
     setSearchTerm("");
@@ -180,7 +154,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     const query: any = {
       ...router.query,
       programmes: filters.programmes,
-      landscapes: filters.landscapes,
+      landscapes: convertNamesToCodes(filters.landscapes),
       country: filters.country?.country_slug || undefined,
       organizations: filters.organizations,
       cohort: filters.cohort,
@@ -223,7 +197,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
-      landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
+      landscapes: landscapes ? convertCodesToNames(Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
       country: country
         ? {
             country_slug: country as string,
@@ -235,7 +209,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           }
         : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
-      cohort: Array.isArray(cohort) ? cohort[0] : cohort ?? "",
+      cohort: Array.isArray(cohort) ? cohort : cohort ? [cohort] : [],
       uuid: (uuid as string) || ""
     };
 
@@ -298,7 +272,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     return [];
   }, [filters.country, activeCountries]);
 
-  const valueForCohort = useMemo(() => (filters.cohort ? [filters.cohort] : []), [filters.cohort]);
+  const valueForCohort = useMemo(
+    () => (filters.cohort && filters.cohort.length > 0 ? filters.cohort : []),
+    [filters.cohort]
+  );
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
@@ -436,7 +413,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 onClear={() => {
                   handleChange("landscapes", []);
                 }}
-                options={landscapeOption}
+                options={LANDSCAPE_OPTIONS}
                 optionClassName="hover:bg-grey-200"
                 containerClassName="z-[4] w-full"
               />
@@ -512,10 +489,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[2] w-full"
               />
               <ResponsiveDropdownContainer
-                key={`cohort-${filters.cohort || "empty"}`}
+                key={`cohort-${filters.cohort.join("-") || "empty"}`}
                 className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
+                showSelectAll
+                showLabelAsMultiple
                 showClear
                 prefix={
                   <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
@@ -523,22 +502,16 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   </Text>
                 }
                 inputVariant="text-14-semibold"
+                multiSelect
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
+                multipleText={t("Multiple Cohorts")}
                 value={valueForCohort}
                 onChange={(value: OptionValue[]) => {
-                  return setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: value[0] as string
-                  }));
+                  handleChange("cohort", value);
                 }}
                 onClear={() => {
-                  setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: ""
-                  }));
+                  handleChange("cohort", []);
                 }}
                 options={optionsCohort}
                 optionClassName="hover:bg-grey-200"
@@ -566,46 +539,40 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
                   disabled={searchTerm.length < 3 || !optionMenu.length}
                   isDefaultOpen={true}
-                  menu={optionMenu.map(
-                    (option: {
-                      id: number;
-                      country: string;
-                      organization: string;
-                      project: string;
-                      programme: string;
-                      uuid: string;
-                      country_slug: string;
-                    }) => ({
-                      id: option.id,
-                      render: () => (
-                        <span
-                          className="leading-[normal] tracking-[normal]"
-                          onClick={async () => {
-                            showLoader();
-                            setFilters(prevValues => ({
-                              ...prevValues,
-                              uuid: option.uuid as string,
-                              country:
-                                activeCountries?.find(country => country.country_slug === option?.country_slug) ||
-                                prevValues.country
-                            }));
-                            router.push({
-                              pathname: "/dashboard",
-                              query: { ...filters, country: option?.country_slug, uuid: option.uuid as string }
-                            });
-                            hideLoader();
-                          }}
-                        >
-                          <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                            {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                          </Text>
-                          <Text variant="text-12-light" className="text-darkCustom" as="span">
-                            {t(option.project)},&nbsp;{t(option.programme)}
-                          </Text>
-                        </span>
-                      )
-                    })
-                  )}
+                  menu={optionMenu.map((option: DashboardProjectsLightDto, index: number) => ({
+                    id: String(index),
+                    render: () => (
+                      <span
+                        className="leading-[normal] tracking-[normal]"
+                        onClick={async () => {
+                          showLoader();
+                          setFilters(prevValues => ({
+                            ...prevValues,
+                            uuid: option.uuid,
+                            country:
+                              activeCountries?.find(country => country.country_slug === option.country) ||
+                              prevValues.country
+                          }));
+                          router.push({
+                            pathname: "/dashboard",
+                            query: {
+                              ...filters,
+                              country: option.country ?? "",
+                              uuid: option.uuid
+                            }
+                          });
+                          hideLoader();
+                        }}
+                      >
+                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                          {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom" as="span">
+                          {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}
+                        </Text>
+                      </span>
+                    )
+                  }))}
                 >
                   <When condition={!isMobile}>
                     <BlurContainer className="lg:min-w-[287px]">

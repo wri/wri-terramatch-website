@@ -38,7 +38,9 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
   const { data: fundingProgrammesData, isLoading: fundingProgrammesLoading } = useGetV2AdminFundingProgramme({});
   const { data: stageData, isLoading: stagesLoading } = useGetV2FundingProgrammeStage({
     queryParams: {
-      per_page: 1000
+      per_page: 100,
+      // @ts-ignore
+      light: true
     }
   });
 
@@ -141,7 +143,9 @@ const ApplicationsExportModal = ({ handleClose, ...dialogProps }: ApplicationsEx
 
   const { data: stageData } = useGetV2FundingProgrammeStage({
     queryParams: {
-      per_page: 1000
+      per_page: 100,
+      // @ts-ignore
+      light: true
     }
   });
 

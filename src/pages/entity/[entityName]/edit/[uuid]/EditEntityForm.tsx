@@ -29,6 +29,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
+  const organisation = entity?.organisation;
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
@@ -61,8 +62,9 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   );
 
   const sourceData = useMemo(
-    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    [formData?.answers, formData?.update_request?.content]
+    () =>
+      defaults(entityName === "financial-reports" ? {} : formData?.update_request?.content ?? {}, formData?.answers),
+    [entityName, formData?.answers, formData?.update_request?.content]
   );
   const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
@@ -70,6 +72,8 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
+      : entityName === "financial-reports"
+      ? t("{orgName} Financial Report", { orgName: organisation?.name })
       : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
@@ -96,15 +100,17 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     };
   }, [formSteps, mode]);
 
+  const formSubmissionOrg = {
+    uuid: organisation?.uuid,
+    type: organisation?.type,
+    currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
+    start_month: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
+  };
+
   return (
     <EntityProvider entityUuid={entityUUID} entityName={entityName}>
       <WizardForm
-        formSubmissionOrg={{
-          uuid: entity?.organisation?.uuid,
-          type: entity?.organisation?.type,
-          currency: entity?.organisation?.currency,
-          start_month: entity?.organisation?.fin_start_month
-        }}
+        formSubmissionOrg={formSubmissionOrg}
         steps={formSteps!}
         errors={error}
         onBackFirstStep={router.back}

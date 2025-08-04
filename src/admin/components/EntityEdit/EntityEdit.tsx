@@ -9,9 +9,10 @@ import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import EntityProvider from "@/context/entity.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID, useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
+import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
   useGetCustomFormSteps,
@@ -29,10 +30,12 @@ export const EntityEdit = () => {
     [modules.project.ResourceName]: "projects",
     [modules.site.ResourceName]: "sites",
     [modules.nursery.ResourceName]: "nurseries",
+    [modules.financialReport.ResourceName]: "financial-reports",
 
     [modules.projectReport.ResourceName]: "project-reports",
     [modules.siteReport.ResourceName]: "site-reports",
-    [modules.nurseryReport.ResourceName]: "nursery-reports"
+    [modules.nurseryReport.ResourceName]: "nursery-reports",
+    [modules.financialReport.ResourceName]: "financial-reports"
   };
 
   const entityName = ResourceEntityMapping[resource] as EntityName;
@@ -40,11 +43,7 @@ export const EntityEdit = () => {
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
 
-  const {
-    data: formResponse,
-    isLoading,
-    isError: loadError
-  } = useGetV2FormsENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+  const { formData: formResponse, isLoading, loadError } = useEntityForm(entityName, entityUUID);
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
@@ -80,6 +79,15 @@ export const EntityEdit = () => {
     return title;
   }, [entityName, entityValue, title]);
 
+  const organisation = entityValue?.data?.organisation;
+
+  const formSubmissionOrg = {
+    uuid: organisation?.uuid,
+    type: organisation?.type,
+    currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
+    start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
+  };
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
@@ -104,12 +112,7 @@ export const EntityEdit = () => {
               }}
               roundedCorners
               hideSaveAndCloseButton
-              formSubmissionOrg={{
-                uuid: entityValue?.data?.organisation?.uuid,
-                type: entityValue?.data?.organisation?.type,
-                currency: entityValue?.data?.organisation?.currency,
-                start_month: entityValue?.data?.organisation?.fin_start_month
-              }}
+              formSubmissionOrg={formSubmissionOrg}
             />
           </EntityProvider>
         </FrameworkProvider>

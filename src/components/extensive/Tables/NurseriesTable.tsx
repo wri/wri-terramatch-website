@@ -10,19 +10,20 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { deleteNursery, EntityIndexConnection, indexNurseryConnection } from "@/connections/Entity";
+import { deleteNursery, indexNurseryConnection } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { Selected } from "@/types/connection";
 
 import { ModalId } from "../Modal/ModalConst";
 
 interface NurseriesTableProps {
   project: ProjectLightDto;
   hasAddButton?: boolean;
-  onFetch?: (data: EntityIndexConnection<NurseryLightDto>) => void;
+  onFetch?: (data: Selected<typeof indexNurseryConnection>) => void;
   alwaysShowPagination?: boolean;
 }
 
@@ -133,8 +134,6 @@ const NurseriesTable = ({
     <ConnectionTable
       connection={indexNurseryConnection}
       connectionProps={{ filter: { projectUuid: project.uuid } }}
-      dataProp="entities"
-      totalProp="indexTotal"
       onFetch={onFetch}
       columns={columns}
       columnFilters={[

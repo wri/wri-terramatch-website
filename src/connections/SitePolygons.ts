@@ -1,112 +1,114 @@
-import { Dictionary } from "lodash";
-import { createSelector } from "reselect";
+import { isEmpty } from "lodash";
+import { useEffect, useState } from "react";
 
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import {
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import {
-  sitePolygonsIndexFetchFailed,
-  sitePolygonsIndexIndexMeta
-} from "@/generated/v3/researchService/researchServiceSelectors";
-import { ApiDataStore, PendingErrorState } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { useStableProps } from "@/hooks/useStableProps";
+import { PendingError } from "@/store/apiSlice";
+import { ConnectionProps, Filter } from "@/types/connection";
+import { loadConnection } from "@/utils/loadConnection";
 
-export type SitePolygonIndexConnectionProps = {
-  entityName: string;
-  entityUuid: string;
-  search?: string;
-  pageSize?: number;
-  pageNumber?: number;
-  presentIndicator?:
-    | "treeCover"
-    | "treeCoverLoss"
-    | "treeCoverLossFires"
-    | "restorationByEcoRegion"
-    | "restorationByStrategy"
-    | "restorationByLandUse"
-    | "treeCount"
-    | "earlyTreeVerification"
-    | "fieldMonitoring"
-    | "msuCarbon";
-  enabled?: boolean;
-};
+export type Indicator = Required<SitePolygonsIndexQueryParams>["presentIndicator[]"] extends Array<infer T> ? T : never;
+export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatus[]"] extends Array<infer T>
+  ? T
+  : never;
 
-const ENTITY_QUERY_KEYS: Dictionary<keyof SitePolygonsIndexQueryParams> = {
-  projects: "projectId[]",
-  sites: "siteId[]"
-};
+export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsIndex)
+  .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
+  .pagination()
+  .enabledProp()
+  .filter<Omit<Filter<SitePolygonsIndexQueryParams>, "projectId[]" | "siteId[]">>()
+  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
+    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
+    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
+    return {};
+  })
+  .buildConnection();
 
-type EntityQueryKey = SitePolygonsIndexQueryParams["projectId[]"] | SitePolygonsIndexQueryParams["siteId[]"];
+const ALL_POLYGONS_PAGE_SIZE = 100;
 
-export type SitePolygonIndexConnection<SitePolygonLightDto> = {
-  sitePolygons?: SitePolygonLightDto[];
-  total?: number;
-  fetchFailure?: PendingErrorState | null;
-};
+export const useAllSitePolygons = (
+  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize">
+) => {
+  const [allPolygons, setAllPolygons] = useState<SitePolygonLightDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<PendingError | null>(null);
 
-const sitePolygonQueryParams = (props: SitePolygonIndexConnectionProps) => {
-  const queryKey = ENTITY_QUERY_KEYS[props.entityName];
-  const queryParams: SitePolygonsIndexQueryParams = {
-    "page[number]": props.pageNumber ?? 1,
-    "page[size]": props.pageSize ?? 10,
-    search: props.search,
-    lightResource: true
-  };
+  const stableProps = useStableProps(props);
 
-  if (queryKey != null) {
-    (queryParams[queryKey] as EntityQueryKey) = [props.entityUuid];
-  }
+  useEffect(() => {
+    if (!stableProps.enabled || isEmpty(stableProps.entityUuid)) {
+      setIsLoading(false);
+      setAllPolygons([]);
+      return;
+    }
 
-  if (props.presentIndicator) {
-    queryParams["presentIndicator[]"] = [props.presentIndicator];
-  }
+    const fetchAllPages = async () => {
+      setIsLoading(true);
+      setError(null);
+      setAllPolygons([]);
 
-  return { queryParams };
-};
+      try {
+        const firstPageResponse = await loadConnection(sitePolygonsConnection, {
+          ...stableProps,
+          pageSize: ALL_POLYGONS_PAGE_SIZE,
+          pageNumber: 1
+        });
 
-const indexIsLoaded = (
-  { sitePolygons, fetchFailure }: SitePolygonIndexConnection<SitePolygonLightDto>,
-  { enabled }: SitePolygonIndexConnectionProps
-) => enabled === false || sitePolygons != null || fetchFailure != null;
-
-const sitePolygonCacheKey = (props: SitePolygonIndexConnectionProps) =>
-  `${props.entityName}:${props.entityUuid}:${props.pageSize}:${props.pageNumber}:${props.presentIndicator}:${props.search}`;
-
-const sitePolygonsConnection: Connection<
-  SitePolygonIndexConnection<SitePolygonLightDto>,
-  SitePolygonIndexConnectionProps
-> = {
-  load: (connection, props) => {
-    if (!indexIsLoaded(connection, props)) sitePolygonsIndex(sitePolygonQueryParams(props));
-  },
-
-  isLoaded: indexIsLoaded,
-
-  selector: selectorCache(
-    props => sitePolygonCacheKey(props),
-    props =>
-      createSelector(
-        [
-          sitePolygonsIndexIndexMeta("sitePolygons", sitePolygonQueryParams(props)),
-          (store: ApiDataStore) => store.sitePolygons,
-          sitePolygonsIndexFetchFailed(sitePolygonQueryParams(props))
-        ],
-        (indexMeta, sitePolygonsStore, fetchFailure) => {
-          if (!indexMeta) return { fetchFailure };
-
-          const sitePolygons: SitePolygonLightDto[] = indexMeta.ids
-            .map(id => sitePolygonsStore[id]?.attributes)
-            .filter(Boolean);
-
-          return { sitePolygons, total: indexMeta?.total, fetchFailure };
+        if (firstPageResponse.loadFailure) {
+          throw firstPageResponse.loadFailure;
         }
-      )
-  )
-};
 
-export const useSitePolygons = connectionHook(sitePolygonsConnection);
-export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
+        const polygons = firstPageResponse.data ?? [];
+        const total = firstPageResponse.indexTotal ?? 0;
+
+        if (total === 0) {
+          setAllPolygons([]);
+          setIsLoading(false);
+          return;
+        }
+
+        const totalPages = Math.ceil(total / ALL_POLYGONS_PAGE_SIZE);
+
+        if (totalPages === 1) {
+          setAllPolygons(polygons);
+          setIsLoading(false);
+          return;
+        }
+
+        const remainingPageNumbers = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+        const pagePromises = remainingPageNumbers.map(pageNumber =>
+          loadConnection(sitePolygonsConnection, {
+            ...stableProps,
+            pageSize: ALL_POLYGONS_PAGE_SIZE,
+            pageNumber: pageNumber
+          })
+        );
+
+        const remainingPages = await Promise.all(pagePromises);
+
+        let allFetchedPolygons = [...polygons];
+        for (const page of remainingPages) {
+          if (page.loadFailure) {
+            throw page.loadFailure;
+          }
+          allFetchedPolygons.push(...(page.data ?? []));
+        }
+
+        setAllPolygons(allFetchedPolygons);
+      } catch (e: any) {
+        setError(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllPages();
+  }, [stableProps]);
+
+  return { data: allPolygons, isLoading, error };
+};

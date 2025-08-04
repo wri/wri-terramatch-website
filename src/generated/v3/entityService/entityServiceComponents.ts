@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./entityServiceFetcher";
-import { entityServiceFetch } from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
 export type ProjectPitchIndexQueryParams = {
@@ -109,15 +109,12 @@ export type ProjectPitchIndexVariables = {
   queryParams?: ProjectPitchIndexQueryParams;
 };
 
-export const projectPitchIndex = (variables: ProjectPitchIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    ProjectPitchIndexResponse,
-    ProjectPitchIndexError,
-    undefined,
-    {},
-    ProjectPitchIndexQueryParams,
-    {}
-  >({ url: "/entities/v3/projectPitches", method: "get", ...variables, signal });
+export const projectPitchIndex = new V3ApiEndpoint<
+  ProjectPitchIndexResponse,
+  ProjectPitchIndexError,
+  ProjectPitchIndexVariables,
+  {}
+>("/entities/v3/projectPitches", "GET");
 
 export type ProjectPitchGetPathParams = {
   /**
@@ -179,13 +176,12 @@ export type ProjectPitchGetVariables = {
   pathParams: ProjectPitchGetPathParams;
 };
 
-export const projectPitchGet = (variables: ProjectPitchGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<ProjectPitchGetResponse, ProjectPitchGetError, undefined, {}, {}, ProjectPitchGetPathParams>({
-    url: "/entities/v3/projectPitches/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const projectPitchGet = new V3ApiEndpoint<
+  ProjectPitchGetResponse,
+  ProjectPitchGetError,
+  ProjectPitchGetVariables,
+  {}
+>("/entities/v3/projectPitches/{uuid}", "GET");
 
 export type ImpactStoryIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -213,6 +209,14 @@ export type ImpactStoryIndexQueryParams = {
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
   category?: string;
+  title?: string;
+  status?: string;
+  /**
+   * @format date-time
+   */
+  createdAt?: string;
+  organisationUuid?: string;
+  uuid?: string;
 };
 
 export type ImpactStoryIndexError = Fetcher.ErrorWrapper<{
@@ -277,13 +281,12 @@ export type ImpactStoryIndexVariables = {
   queryParams?: ImpactStoryIndexQueryParams;
 };
 
-export const impactStoryIndex = (variables: ImpactStoryIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<ImpactStoryIndexResponse, ImpactStoryIndexError, undefined, {}, ImpactStoryIndexQueryParams, {}>({
-    url: "/entities/v3/impactStories",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const impactStoryIndex = new V3ApiEndpoint<
+  ImpactStoryIndexResponse,
+  ImpactStoryIndexError,
+  ImpactStoryIndexVariables,
+  {}
+>("/entities/v3/impactStories", "GET");
 
 export type ImpactStoryGetPathParams = {
   /**
@@ -345,13 +348,12 @@ export type ImpactStoryGetVariables = {
   pathParams: ImpactStoryGetPathParams;
 };
 
-export const impactStoryGet = (variables: ImpactStoryGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<ImpactStoryGetResponse, ImpactStoryGetError, undefined, {}, {}, ImpactStoryGetPathParams>({
-    url: "/entities/v3/impactStories/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const impactStoryGet = new V3ApiEndpoint<
+  ImpactStoryGetResponse,
+  ImpactStoryGetError,
+  ImpactStoryGetVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "GET");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -438,13 +440,10 @@ export type TaskIndexVariables = {
   queryParams?: TaskIndexQueryParams;
 };
 
-export const taskIndex = (variables: TaskIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskIndexResponse, TaskIndexError, undefined, {}, TaskIndexQueryParams, {}>({
-    url: "/entities/v3/tasks",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const taskIndex = new V3ApiEndpoint<TaskIndexResponse, TaskIndexError, TaskIndexVariables, {}>(
+  "/entities/v3/tasks",
+  "GET"
+);
 
 export type TaskGetPathParams = {
   /**
@@ -573,13 +572,10 @@ export type TaskGetVariables = {
   pathParams: TaskGetPathParams;
 };
 
-export const taskGet = (variables: TaskGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskGetResponse, TaskGetError, undefined, {}, {}, TaskGetPathParams>({
-    url: "/entities/v3/tasks/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const taskGet = new V3ApiEndpoint<TaskGetResponse, TaskGetError, TaskGetVariables, {}>(
+  "/entities/v3/tasks/{uuid}",
+  "GET"
+);
 
 export type TaskUpdatePathParams = {
   /**
@@ -709,13 +705,112 @@ export type TaskUpdateVariables = {
   pathParams: TaskUpdatePathParams;
 };
 
-export const taskUpdate = (variables: TaskUpdateVariables, signal?: AbortSignal) =>
-  entityServiceFetch<TaskUpdateResponse, TaskUpdateError, Schemas.TaskUpdateBody, {}, {}, TaskUpdatePathParams>({
-    url: "/entities/v3/tasks/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const taskUpdate = new V3ApiEndpoint<TaskUpdateResponse, TaskUpdateError, TaskUpdateVariables, {}>(
+  "/entities/v3/tasks/{uuid}",
+  "PATCH"
+);
+
+export type UploadFilePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+  /**
+   * Media collection to retrieve
+   */
+  collection: string;
+};
+
+export type UploadFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadFileResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export type UploadFileVariables = {
+  pathParams: UploadFilePathParams;
+};
+
+/**
+ * Upload a file to a media collection
+ */
+export const uploadFile = new V3ApiEndpoint<UploadFileResponse, UploadFileError, UploadFileVariables, {}>(
+  "/entities/v3/files/{entity}/{uuid}/{collection}",
+  "POST"
+);
 
 export type TreeScientificNamesSearchQueryParams = {
   search: string;
@@ -747,15 +842,12 @@ export type TreeScientificNamesSearchVariables = {
 /**
  * Search scientific names of tree species. Returns up to 10 entries.
  */
-export const treeScientificNamesSearch = (variables: TreeScientificNamesSearchVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    TreeScientificNamesSearchResponse,
-    TreeScientificNamesSearchError,
-    undefined,
-    {},
-    TreeScientificNamesSearchQueryParams,
-    {}
-  >({ url: "/trees/v3/scientificNames", method: "get", ...variables, signal });
+export const treeScientificNamesSearch = new V3ApiEndpoint<
+  TreeScientificNamesSearchResponse,
+  TreeScientificNamesSearchError,
+  TreeScientificNamesSearchVariables,
+  {}
+>("/trees/v3/scientificNames", "GET");
 
 export type EstablishmentTreesFindPathParams = {
   /**
@@ -818,15 +910,12 @@ export type EstablishmentTreesFindVariables = {
   pathParams: EstablishmentTreesFindPathParams;
 };
 
-export const establishmentTreesFind = (variables: EstablishmentTreesFindVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    EstablishmentTreesFindResponse,
-    EstablishmentTreesFindError,
-    undefined,
-    {},
-    {},
-    EstablishmentTreesFindPathParams
-  >({ url: "/trees/v3/establishments/{entity}/{uuid}", method: "get", ...variables, signal });
+export const establishmentTreesFind = new V3ApiEndpoint<
+  EstablishmentTreesFindResponse,
+  EstablishmentTreesFindError,
+  EstablishmentTreesFindVariables,
+  {}
+>("/trees/v3/establishments/{entity}/{uuid}", "GET");
 
 export type TreeReportCountsFindPathParams = {
   /**
@@ -889,40 +978,46 @@ export type TreeReportCountsFindVariables = {
   pathParams: TreeReportCountsFindPathParams;
 };
 
-export const treeReportCountsFind = (variables: TreeReportCountsFindVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    TreeReportCountsFindResponse,
-    TreeReportCountsFindError,
-    undefined,
-    {},
-    {},
-    TreeReportCountsFindPathParams
-  >({ url: "/trees/v3/reportCounts/{entity}/{uuid}", method: "get", ...variables, signal });
+export const treeReportCountsFind = new V3ApiEndpoint<
+  TreeReportCountsFindResponse,
+  TreeReportCountsFindError,
+  TreeReportCountsFindVariables,
+  {}
+>("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
 
-export type BoundingBoxGetQueryParams = {
+export type DemographicsIndexQueryParams = {
+  ["sort[field]"]?: string;
   /**
-   * UUID of a polygon to get its bounding box
+   * @default ASC
    */
-  polygonUuid?: string;
+  ["sort[direction]"]?: "ASC" | "DESC";
   /**
-   * UUID of a site to get the bounding box of all its polygons
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
    */
-  siteUuid?: string;
+  ["page[size]"]?: number;
   /**
-   * UUID of a project to get the bounding box of all its site polygons
+   * The page number to return. If page[number] is not provided, the first page is returned.
    */
-  projectUuid?: string;
+  ["page[number]"]?: number;
   /**
-   * Array of landscape slugs for combined bounding box (used with country)
+   * project uuid array
    */
-  landscapes?: string[];
+  projectUuid?: string[];
   /**
-   * Country code (3-letter ISO) to get its bounding box
+   * projectReport uuid array
    */
-  country?: string;
+  projectReportUuid?: string[];
+  /**
+   * siteReport uuid array
+   */
+  siteReportUuid?: string[];
 };
 
-export type BoundingBoxGetError = Fetcher.ErrorWrapper<
+export type DemographicsIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -932,19 +1027,6 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
         statusCode: number;
         /**
          * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
          */
         message: string;
       };
@@ -964,37 +1046,168 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type BoundingBoxGetResponse = {
+export type DemographicsIndexResponse = {
   meta?: {
     /**
-     * @example boundingBoxes
+     * @example demographics
      */
     resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
   };
   data?: {
     /**
-     * @example boundingBoxes
+     * @example demographics
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.BoundingBoxDto;
+    attributes?: Schemas.DemographicDto;
+  }[];
+};
+
+export type DemographicsIndexVariables = {
+  queryParams?: DemographicsIndexQueryParams;
+};
+
+export const demographicsIndex = new V3ApiEndpoint<
+  DemographicsIndexResponse,
+  DemographicsIndexError,
+  DemographicsIndexVariables,
+  {}
+>("/entities/v3/demographics", "GET");
+
+export type DisturbanceIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * siteReport uuid array
+   */
+  siteReportUuid?: string[];
+};
+
+export type DisturbanceIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DisturbanceIndexResponse = {
+  meta?: {
+    /**
+     * @example disturbances
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The ordered set of resource IDs for this page of this index search.
+       */
+      ids?: string[];
+    }[];
   };
+  data?: {
+    /**
+     * @example disturbances
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceDto;
+  }[];
 };
 
-export type BoundingBoxGetVariables = {
-  queryParams?: BoundingBoxGetQueryParams;
+export type DisturbanceIndexVariables = {
+  queryParams?: DisturbanceIndexQueryParams;
 };
 
-export const boundingBoxGet = (variables: BoundingBoxGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<BoundingBoxGetResponse, BoundingBoxGetError, undefined, {}, BoundingBoxGetQueryParams, {}>({
-    url: "/boundingBoxes/v3/get",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const disturbanceIndex = new V3ApiEndpoint<
+  DisturbanceIndexResponse,
+  DisturbanceIndexError,
+  DisturbanceIndexVariables,
+  {}
+>("/entities/v3/disturbances", "GET");
 
 export type EntityIndexPathParams = {
   /**
@@ -1026,6 +1239,8 @@ export type EntityIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
+  frameworkKey?: string[];
+  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
@@ -1033,7 +1248,7 @@ export type EntityIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
@@ -1072,272 +1287,269 @@ export type EntityIndexVariables = {
   queryParams?: EntityIndexQueryParams;
 };
 
-export const entityIndex = (variables: EntityIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    | {
-        meta?: {
+export const entityIndex = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example projects
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example projects
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example projects
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.ProjectLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      }
-    | {
-        meta?: {
+      };
+      data?: {
+        /**
+         * @example projects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example sites
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example sites
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example sites
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.SiteLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      }
-    | {
-        meta?: {
+      };
+      data?: {
+        /**
+         * @example sites
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseries
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example nurseries
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example nurseries
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.NurseryLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      }
-    | {
-        meta?: {
+      };
+      data?: {
+        /**
+         * @example nurseries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example projectReports
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example projectReports
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example projectReports
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.ProjectReportLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      }
-    | {
-        meta?: {
+      };
+      data?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseryReports
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example nurseryReports
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example nurseryReports
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.NurseryReportLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      }
-    | {
-        meta?: {
+      };
+      data?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example siteReports
+         */
+        resourceType?: string;
+        indices?: {
           /**
-           * @example siteReports
+           * The resource type for this included index
            */
-          resourceType?: string;
-          indices?: {
-            /**
-             * The resource type for this included index
-             */
-            resource?: string;
-            /**
-             * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-             */
-            requestPath?: string;
-            /**
-             * The total number of records available.
-             *
-             * @example 42
-             */
-            total?: number;
-            /**
-             * The current page number.
-             */
-            pageNumber?: number;
-            /**
-             * The ordered set of resource IDs for this page of this index search.
-             */
-            ids?: string[];
-          }[];
-        };
-        data?: {
+          resource?: string;
           /**
-           * @example siteReports
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
            */
-          type?: string;
+          requestPath?: string;
           /**
-           * @format uuid
+           * The total number of records available.
+           *
+           * @example 42
            */
-          id?: string;
-          attributes?: Schemas.SiteReportLightDto;
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
         }[];
-      },
-    EntityIndexError,
-    undefined,
-    {},
-    EntityIndexQueryParams,
-    EntityIndexPathParams
-  >({ url: "/entities/v3/{entity}", method: "get", ...variables, signal });
+      };
+      data?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }[];
+    },
+  EntityIndexError,
+  EntityIndexVariables,
+  {}
+>("/entities/v3/{entity}", "GET");
 
 export type EntityGetPathParams = {
   /**
@@ -1383,147 +1595,144 @@ export type EntityGetVariables = {
   pathParams: EntityGetPathParams;
 };
 
-export const entityGet = (variables: EntityGetVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    | {
-        meta?: {
-          /**
-           * @example projects
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example projects
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.ProjectFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example sites
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example sites
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.SiteFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example nurseries
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example nurseries
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.NurseryFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example nurseries
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example nurseries
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.NurseryFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example projectReports
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example projectReports
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.ProjectReportFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example nurseryReports
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example nurseryReports
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.NurseryReportFullDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example siteReports
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example siteReports
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.SiteReportFullDto;
-        };
-      },
-    EntityGetError,
-    undefined,
-    {},
-    {},
-    EntityGetPathParams
-  >({ url: "/entities/v3/{entity}/{uuid}", method: "get", ...variables, signal });
+export const entityGet = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example projects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example projects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sites
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sites
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example nurseries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example nurseries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example projectReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseryReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example siteReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportFullDto;
+      };
+    },
+  EntityGetError,
+  EntityGetVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}", "GET");
 
 export type EntityDeletePathParams = {
   /**
@@ -1579,13 +1788,10 @@ export type EntityDeleteVariables = {
   pathParams: EntityDeletePathParams;
 };
 
-export const entityDelete = (variables: EntityDeleteVariables, signal?: AbortSignal) =>
-  entityServiceFetch<EntityDeleteResponse, EntityDeleteError, undefined, {}, {}, EntityDeletePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
+export const entityDelete = new V3ApiEndpoint<EntityDeleteResponse, EntityDeleteError, EntityDeleteVariables, {}>(
+  "/entities/v3/{entity}/{uuid}",
+  "DELETE"
+);
 
 export type EntityUpdatePathParams = {
   /**
@@ -1645,13 +1851,10 @@ export type EntityUpdateVariables = {
   pathParams: EntityUpdatePathParams;
 };
 
-export const entityUpdate = (variables: EntityUpdateVariables, signal?: AbortSignal) =>
-  entityServiceFetch<undefined, EntityUpdateError, Schemas.EntityUpdateBody, {}, {}, EntityUpdatePathParams>({
-    url: "/entities/v3/{entity}/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, EntityUpdateVariables, {}>(
+  "/entities/v3/{entity}/{uuid}",
+  "PATCH"
+);
 
 export type EntityAssociationIndexPathParams = {
   /**
@@ -1691,6 +1894,8 @@ export type EntityAssociationIndexQueryParams = {
    * Search query used for filtering selectable options in autocomplete fields.
    */
   searchFilter?: string;
+  frameworkKey?: string[];
+  organisationUuid?: string;
   country?: string;
   status?: string;
   updateRequestStatus?: string;
@@ -1698,7 +1903,7 @@ export type EntityAssociationIndexQueryParams = {
   nurseryUuid?: string;
   siteUuid?: string;
   /**
-   * Filter by landscape names
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
    */
   landscape?: string[];
   /**
@@ -1770,154 +1975,153 @@ export type EntityAssociationIndexVariables = {
   queryParams?: EntityAssociationIndexQueryParams;
 };
 
-export const entityAssociationIndex = (variables: EntityAssociationIndexVariables, signal?: AbortSignal) =>
-  entityServiceFetch<
-    | {
-        meta?: {
-          /**
-           * @example demographics
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example demographics
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.DemographicDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example seedings
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example seedings
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.SeedingDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example treeSpecies
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example treeSpecies
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.TreeSpeciesDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example media
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example media
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.MediaDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example disturbances
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example disturbances
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.DisturbanceDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example invasives
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example invasives
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.InvasiveDto;
-        }[];
-      }
-    | {
-        meta?: {
-          /**
-           * @example stratas
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example stratas
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.StrataDto;
-        }[];
-      },
-    EntityAssociationIndexError,
-    undefined,
-    {},
-    EntityAssociationIndexQueryParams,
-    EntityAssociationIndexPathParams
-  >({ url: "/entities/v3/{entity}/{uuid}/{association}", method: "get", ...variables, signal });
+export const entityAssociationIndex = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example demographics
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example demographics
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DemographicDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example seedings
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example seedings
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SeedingDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example treeSpecies
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example treeSpecies
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TreeSpeciesDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example media
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example media
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbances
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example disturbances
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example invasives
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example invasives
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.InvasiveDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example stratas
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example stratas
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.StrataDto;
+      }[];
+    },
+  EntityAssociationIndexError,
+  EntityAssociationIndexVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/{association}", "GET");
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
+  fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
-  boundingBoxes: { boundingBoxGet },
+  demographics: { demographicsIndex },
+  disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex }
 };

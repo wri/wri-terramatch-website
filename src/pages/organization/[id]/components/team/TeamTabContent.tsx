@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { When } from "react-if";
 
+import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -18,6 +19,7 @@ import {
 import { V2PostOrganisationsApproveUserBody } from "@/generated/apiRequestBodies";
 import { UserRead } from "@/generated/apiSchemas";
 
+import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamMemberCard from "./TeamMemberCard";
 
 const TeamTabContent = () => {
@@ -100,6 +102,13 @@ const TeamTabContent = () => {
     );
   };
 
+  const handleInvite = () => {
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteTeamMemberModal organisationUUID={query.id as string} onSuccess={() => {}} />
+    );
+  };
+
   return (
     <Container className="py-15">
       <LoadingContainer loading={false}>
@@ -107,9 +116,13 @@ const TeamTabContent = () => {
 
         <When condition={!!approvedUsers?.data.length}>
           <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
-            <Text variant="text-heading-200">
-              {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
-            </Text>
+            <div className="flex items-center justify-between">
+              <Text variant="text-heading-200">
+                {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
+              </Text>
+              <Button onClick={handleInvite}>{t("add Team Member")}</Button>
+            </div>
+
             <List
               className="mt-10 grid grid-cols-4 gap-6"
               items={approvedUsers?.data ?? []}

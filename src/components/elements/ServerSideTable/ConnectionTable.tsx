@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   DEFAULT_PAGE_SIZE,
@@ -7,20 +7,22 @@ import {
   ServerSideTable,
   ServerSideTableProps
 } from "@/components/elements/ServerSideTable/ServerSideTable";
-import { PaginatedConnectionProps } from "@/connections/util/types";
+import { IndexConnection } from "@/connections/util/apiConnectionFactory";
 import { useConnection } from "@/hooks/useConnection";
-import { Connection } from "@/types/connection";
+import { Connection, PaginatedConnectionProps } from "@/types/connection";
 
-type ConnectionTableProps<TData, TSelected, TProps extends PaginatedConnectionProps, State> = Omit<
-  ServerSideTableProps<unknown>,
-  "meta" | "onQueryParamChange" | "data" | "isLoading" | "columns"
-> & {
+type ConnectionTableProps<
+  TData,
+  TSelected extends IndexConnection<TData>,
+  TProps extends PaginatedConnectionProps,
+  State,
+  TResult
+> = Omit<ServerSideTableProps<unknown>, "meta" | "onQueryParamChange" | "data" | "isLoading" | "columns"> & {
   connection: Connection<TSelected, TProps, State>;
   connectionProps?: Omit<TProps, keyof PaginatedConnectionProps>;
-  dataProp: keyof TSelected;
-  totalProp: keyof TSelected;
-  columns: ColumnDef<TData>[];
+  columns: ColumnDef<TResult>[];
   onFetch?: (connectedData: TSelected) => void;
+  dataProcessor?: (data: TData[]) => TResult[];
 };
 
 export const queryParamsToPaginatedConnectionProps = (params: QueryParams): PaginatedConnectionProps => {
@@ -44,14 +46,19 @@ export const usePaginatedConnectionProps = (initialPageSize = DEFAULT_PAGE_SIZE)
   return { paginatedConnectionProps, onQueryParamChange };
 };
 
-export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnectionProps, State>({
+export function ConnectionTable<
+  TData,
+  TSelected extends IndexConnection<TData>,
+  TProps extends PaginatedConnectionProps,
+  State,
+  TResult
+>({
   connection,
   connectionProps,
-  dataProp,
-  totalProp,
   onFetch,
+  dataProcessor,
   ...serverSideTableProps
-}: ConnectionTableProps<TData, TSelected, TProps, State>) {
+}: ConnectionTableProps<TData, TSelected, TProps, State, TResult>) {
   const { paginatedConnectionProps, onQueryParamChange } = usePaginatedConnectionProps();
   const [connectionLoaded, connected] = useConnection(connection, {
     ...connectionProps,
@@ -62,7 +69,13 @@ export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnec
     if (connectionLoaded) onFetch?.(connected as TSelected);
   }, [connected, connectionLoaded, onFetch]);
 
-  const indexTotal = connected?.[totalProp] as number | undefined;
+  const data = useMemo(() => {
+    if (connected?.data == null) return [] as TResult[];
+    if (dataProcessor == null) return connected.data as unknown as TResult[];
+    return dataProcessor(connected.data);
+  }, [connected.data, dataProcessor]);
+
+  const indexTotal = connected?.indexTotal;
   return (
     <ServerSideTable
       meta={{
@@ -72,7 +85,7 @@ export function ConnectionTable<TData, TSelected, TProps extends PaginatedConnec
             : 1
       }}
       isLoading={!connectionLoaded}
-      data={(connected?.[dataProp] ?? []) as TData[]}
+      data={data}
       onQueryParamChange={onQueryParamChange}
       {...serverSideTableProps}
     />

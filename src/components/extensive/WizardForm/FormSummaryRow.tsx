@@ -60,14 +60,45 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
   const { type, entity } = props;
-  const entityPolygonData = getEntityPolygonData(record, type, entity);
-  let bbox: any;
-  if (type === "sites") {
-    const [, { bbox: siteBbox }] = useBoundingBox({ siteUuid: record?.uuid });
-    bbox = siteBbox;
-  } else {
-    bbox = entityPolygonData?.bbox;
-  }
+
+  const uuid = entity?.entityUUID || record?.uuid;
+  const entityType = entity?.entityName || (type as EntityName);
+
+  const { data: sitePolygonData } = useGetV2SitesSitePolygon(
+    {
+      pathParams: {
+        site: uuid
+      }
+    },
+    {
+      enabled: entityType === "sites" && !!uuid
+    }
+  );
+
+  const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
+    {
+      queryParams: {
+        entityType: pluralEntityNameToSingular((entityType ?? "") as EntityName),
+        uuid: uuid ?? ""
+      }
+    },
+    {
+      enabled: (entityType === "projects" || entityType === "project-pitches") && !!uuid
+    }
+  );
+  const bboxParams =
+    type === "sites"
+      ? { siteUuid: record?.uuid }
+      : entityType === "projects"
+      ? { projectUuid: uuid }
+      : entityType === "project-pitches"
+      ? { projectPitchUuid: uuid }
+      : {};
+
+  const bbox = useBoundingBox(bboxParams);
+
+  const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonData);
+
   const mapFunctions = useMap();
 
   const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
@@ -155,6 +186,7 @@ export const getFormEntries = (
               showPopups={type === "sites"}
               showLegend={type === "sites"}
               mapFunctions={mapFunctions}
+              showDownloadPolygons={true}
             />
           )
         });
@@ -352,34 +384,31 @@ export const getFormEntries = (
 
   return outputArr;
 };
-const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
+
+// Make this a pure function that doesn't call hooks
+const getEntityPolygonData = (
+  record: any,
+  type?: EntityName,
+  entity?: Entity,
+  sitePolygonData?: any,
+  projectPolygonData?: any
+) => {
   if (!record && !entity) {
     return null;
   }
 
-  const uuid = entity?.entityUUID || record?.uuid;
   const entityType = entity?.entityName || (type as EntityName);
+
   if (entityType === "sites") {
-    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
-      pathParams: {
-        site: uuid
-      }
-    });
     return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
-      queryParams: {
-        entityType: pluralEntityNameToSingular(entityType) ?? "",
-        uuid: uuid ?? ""
-      }
-    });
     const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
-    const [, { bbox }] = useBoundingBox({ polygonUuid });
-    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid], bbox } : null;
+    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 
   return null;
 };
+
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });

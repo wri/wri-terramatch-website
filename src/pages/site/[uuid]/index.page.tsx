@@ -33,9 +33,7 @@ const SiteDetailPage = () => {
   const { loading } = useLoading();
   const siteUUID = router.query.uuid as string;
 
-  const [isLoaded, { entity: site, refetch }] = useFullSite({
-    uuid: siteUUID
-  });
+  const [isLoaded, { data: site, refetch }] = useFullSite({ id: siteUUID });
 
   return (
     (!isLoaded || site != null) && (

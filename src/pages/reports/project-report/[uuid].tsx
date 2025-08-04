@@ -26,10 +26,10 @@ const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
 
   const t = useT();
-  const [isLoaded, { entity: projectReport }] = useFullProjectReport({ uuid: uuid });
+  const [isLoaded, { data: projectReport }] = useFullProjectReport({ id: uuid });
 
-  const [, { entity: project }] = useFullProject({ uuid: projectReport?.projectUuid! });
-  const [, { task }] = useTask({ uuid: projectReport?.taskUuid! });
+  const [, { data: project }] = useFullProject({ id: projectReport?.projectUuid! });
+  const [, { data: task }] = useTask({ id: projectReport?.taskUuid! });
 
   const report = (projectReport ?? {}) as ProjectReportFullDto;
   const reportTitle = report?.reportTitle ?? t("Project Report");
@@ -55,7 +55,7 @@ const ProjectReportDetailPage = () => {
               title: t("Gallery"),
               body: (
                 <GalleryTab
-                  modelName="project-reports"
+                  modelName="projectReports"
                   modelUUID={report.uuid}
                   modelTitle={t("Report")}
                   entityData={project}

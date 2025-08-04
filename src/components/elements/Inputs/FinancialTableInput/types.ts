@@ -8,6 +8,7 @@ export type orgSubmission = {
   type: string;
   currency: string;
   start_month: string | number;
+  title?: string | null;
 };
 
 export type BaseYearlyData = {
@@ -63,7 +64,7 @@ export type FinancialRow = {
 export const profitAnalysisColumnsMap = ["year", "revenue", "expenses", "profit"];
 export const nonProfitAnalysisColumnsMap = ["year", "budget"];
 export const currentRatioColumnsMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-export const documentationColumnsMap = ["year", "documentation", "description"];
+export const documentationColumnsMap = ["year", "description", "exchange_rate", "documentation"];
 
 export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }: UseDebouncedChangeProps<T>) {
   const debouncedFn = useMemo(() => debounce(onDebouncedChange, delay), [onDebouncedChange, delay]);
@@ -163,7 +164,8 @@ export function formatFinancialData(
         uuid: row?.uuid ?? index,
         year,
         documentation: row.documentation,
-        description: row.description ?? ""
+        description: row.description ?? "",
+        exchange_rate: row.exchange_rate
       };
     })
   };

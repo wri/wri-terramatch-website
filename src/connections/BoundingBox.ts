@@ -1,78 +1,33 @@
-import { createSelector } from "reselect";
+import { isEmpty } from "lodash";
 
-import { boundingBoxGet } from "@/generated/v3/entityService/entityServiceComponents";
-import { BoundingBoxDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { boundingBoxGetFetchFailed } from "@/generated/v3/entityService/entityServiceSelectors";
-import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { boundingBoxGet, BoundingBoxGetQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
+import { BoundingBoxDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
 
-type BoundingBoxConnection = {
-  bbox?: BoundingBoxDto["bbox"];
-  boundingBoxFailed: boolean;
+const hasValidParams = ({
+  polygonUuid,
+  siteUuid,
+  projectUuid,
+  landscapes,
+  country,
+  projectPitchUuid
+}: BoundingBoxGetQueryParams = {}): boolean =>
+  !isEmpty(polygonUuid) ||
+  !isEmpty(siteUuid) ||
+  !isEmpty(projectUuid) ||
+  !isEmpty(landscapes) ||
+  !isEmpty(country) ||
+  !isEmpty(projectPitchUuid);
+
+const boundingBoxConnection = v3Resource("boundingBoxes", boundingBoxGet)
+  .singleByFilter<BoundingBoxDto, BoundingBoxGetQueryParams>()
+  .enabledProp()
+  .buildConnection();
+
+export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
+  const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });
+  const { bbox } = result[1].data ?? {};
+  return bbox as BBox | undefined;
 };
-
-type BoundingBoxProps = {
-  polygonUuid?: string;
-  siteUuid?: string;
-  projectUuid?: string;
-  landscapes?: string[];
-  country?: string;
-};
-
-const getBoundingBoxKey = (props: BoundingBoxProps): string => {
-  const { polygonUuid, siteUuid, projectUuid, country, landscapes } = props;
-  return [polygonUuid, siteUuid, projectUuid, country, landscapes?.join(",")].filter(Boolean).join(",");
-};
-
-const boundingBoxSelector = (props: BoundingBoxProps) => (store: ApiDataStore) => {
-  const key = getBoundingBoxKey(props);
-  return key == null ? undefined : store.boundingBoxes?.[key];
-};
-
-const boundingBoxLoadFailed = (props: BoundingBoxProps) => (store: ApiDataStore) => {
-  if (!hasValidParams(props)) return false;
-  return boundingBoxGetFetchFailed({ queryParams: getQueryParams(props) })(store) != null;
-};
-
-const hasValidParams = ({ polygonUuid, siteUuid, projectUuid, landscapes, country }: BoundingBoxProps): boolean =>
-  (polygonUuid != null && polygonUuid !== "") ||
-  (siteUuid != null && siteUuid !== "") ||
-  (projectUuid != null && projectUuid !== "") ||
-  (landscapes?.length ?? 0) > 0 ||
-  (country != null && country !== "");
-
-const getQueryParams = (props: BoundingBoxProps) => {
-  const { polygonUuid, siteUuid, projectUuid, landscapes, country } = props;
-
-  return {
-    polygonUuid,
-    siteUuid,
-    projectUuid,
-    landscapes,
-    country
-  };
-};
-
-const connectionIsLoaded = ({ bbox, boundingBoxFailed }: BoundingBoxConnection, props: BoundingBoxProps) =>
-  !hasValidParams(props) || bbox !== undefined || boundingBoxFailed;
-
-const boundingBoxConnection: Connection<BoundingBoxConnection, BoundingBoxProps> = {
-  load: (connection, props) => {
-    if (!connectionIsLoaded(connection, props) && hasValidParams(props)) {
-      boundingBoxGet({ queryParams: getQueryParams(props) });
-    }
-  },
-
-  isLoaded: connectionIsLoaded,
-
-  selector: selectorCache(getBoundingBoxKey, props =>
-    createSelector([boundingBoxSelector(props), boundingBoxLoadFailed(props)], (boundingBoxData, boundingBoxFailed) => {
-      const bbox = boundingBoxData?.attributes?.bbox;
-      return { bbox, boundingBoxFailed };
-    })
-  )
-};
-
-export const useBoundingBox = connectionHook(boundingBoxConnection);

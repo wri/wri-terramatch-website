@@ -17,7 +17,7 @@ const ImpactStoryLanding = () => {
   const uuid = router.query.uuid as string;
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const [isLoaded, { impactStory, requestFailed }] = useImpactStory({ uuid });
+  const [isLoaded, { data: impactStory, loadFailure }] = useImpactStory({ id: uuid });
 
   if (!isLoaded) {
     return (
@@ -27,7 +27,7 @@ const ImpactStoryLanding = () => {
     );
   }
 
-  if (requestFailed || !impactStory) {
+  if (loadFailure != null || impactStory == null) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Text variant="text-16">{t("Failed to load impact story")}</Text>

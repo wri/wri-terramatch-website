@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./dashboardServiceFetcher";
-import { dashboardServiceFetch } from "./dashboardServiceFetcher";
 import type * as Schemas from "./dashboardServiceSchemas";
 
 export type GetTotalSectionHeadersQueryParams = {
@@ -12,17 +12,21 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
-   * Filter results by landscapes
+   * Filter by cohorts
    */
-  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
   /**
    * Filter results by organisationType
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type GetTotalSectionHeadersError = Fetcher.ErrorWrapper<undefined>;
@@ -31,69 +35,70 @@ export type GetTotalSectionHeadersVariables = {
   queryParams?: GetTotalSectionHeadersQueryParams;
 };
 
-export const getTotalSectionHeaders = (variables: GetTotalSectionHeadersVariables, signal?: AbortSignal) =>
-  dashboardServiceFetch<
-    | {
-        meta?: {
-          /**
-           * @example totalSectionHeaders
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example totalSectionHeaders
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.TotalSectionHeaderDto;
-        };
-      }
-    | {
-        meta?: {
-          /**
-           * @example delayedJobs
-           */
-          resourceType?: string;
-        };
-        data?: {
-          /**
-           * @example delayedJobs
-           */
-          type?: string;
-          /**
-           * @format uuid
-           */
-          id?: string;
-          attributes?: Schemas.DelayedJobDto;
-        };
-      },
-    GetTotalSectionHeadersError,
-    undefined,
-    {},
-    GetTotalSectionHeadersQueryParams,
-    {}
-  >({ url: "/dashboard/v3/totalSectionHeaders", method: "get", ...variables, signal });
+export const getTotalSectionHeaders = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example totalSectionHeaders
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example totalSectionHeaders
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TotalSectionHeaderDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  GetTotalSectionHeadersError,
+  GetTotalSectionHeadersVariables,
+  {}
+>("/dashboard/v3/totalSectionHeaders", "GET");
 
 export type GetTreeRestorationGoalQueryParams = {
   country?: string;
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises")[];
-  cohort?: string;
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
-   * Filter results by landscapes
+   * Filter by cohorts
    */
-  landscapes?: ("Ghana Cocoa Belt" | "Greater Rift Valley of Kenya" | "Lake Kivu & Rusizi River Basin")[];
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
   /**
    * Filter results by organisationType
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
+  polygonStatus?: string[];
 };
 
 export type GetTreeRestorationGoalError = Fetcher.ErrorWrapper<undefined>;
@@ -122,17 +127,617 @@ export type GetTreeRestorationGoalVariables = {
   queryParams?: GetTreeRestorationGoalQueryParams;
 };
 
-export const getTreeRestorationGoal = (variables: GetTreeRestorationGoalVariables, signal?: AbortSignal) =>
-  dashboardServiceFetch<
-    GetTreeRestorationGoalResponse,
-    GetTreeRestorationGoalError,
-    undefined,
-    {},
-    GetTreeRestorationGoalQueryParams,
-    {}
-  >({ url: "/dashboard/v3/treeRestorationGoal", method: "get", ...variables, signal });
+export const getTreeRestorationGoal = new V3ApiEndpoint<
+  GetTreeRestorationGoalResponse,
+  GetTreeRestorationGoalError,
+  GetTreeRestorationGoalVariables,
+  {}
+>("/dashboard/v3/treeRestorationGoal", "GET");
+
+export type GetTotalJobsCreatedQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  polygonStatus?: string[];
+};
+
+export type GetTotalJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetTotalJobsCreatedVariables = {
+  queryParams?: GetTotalJobsCreatedQueryParams;
+};
+
+export const getTotalJobsCreated = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example totalJobsCreated
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example totalJobsCreated
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TotalJobsCreatedDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  GetTotalJobsCreatedError,
+  GetTotalJobsCreatedVariables,
+  {}
+>("/dashboard/v3/totalJobsCreated", "GET");
+
+export type GetHectaresRestorationQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  polygonStatus?: string[];
+};
+
+export type GetHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetHectaresRestorationResponse = {
+  meta?: {
+    /**
+     * @example hectareRestoration
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example hectareRestoration
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.HectareRestorationDto;
+  };
+};
+
+export type GetHectaresRestorationVariables = {
+  queryParams?: GetHectaresRestorationQueryParams;
+};
+
+export const getHectaresRestoration = new V3ApiEndpoint<
+  GetHectaresRestorationResponse,
+  GetHectaresRestorationError,
+  GetHectaresRestorationVariables,
+  {}
+>("/dashboard/v3/hectaresRestoration", "GET");
+
+export type DashboardEntityIndexPathParams = {
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects" | "dashboardSitepolygons" | "dashboardImpactStories";
+};
+
+export type DashboardEntityIndexQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  polygonStatus?: string[];
+};
+
+export type DashboardEntityIndexError = Fetcher.ErrorWrapper<undefined>;
+
+export type DashboardEntityIndexVariables = {
+  pathParams: DashboardEntityIndexPathParams;
+  queryParams?: DashboardEntityIndexQueryParams;
+};
+
+export const dashboardEntityIndex = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardImpactStoryLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
+      }[];
+    },
+  DashboardEntityIndexError,
+  DashboardEntityIndexVariables,
+  {}
+>("/dashboard/v3/{entity}", "GET");
+
+export type DashboardEntityGetPathParams = {
+  /**
+   * Entity UUID
+   */
+  uuid: string;
+  /**
+   * Dashboard entity type
+   */
+  entity: "dashboardProjects" | "dashboardSitepolygons" | "dashboardImpactStories";
+};
+
+export type DashboardEntityGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type DashboardEntityGetVariables = {
+  pathParams: DashboardEntityGetPathParams;
+};
+
+export const dashboardEntityGet = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardProjects
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardProjects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardProjectsFullDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardImpactStories
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardImpactStoryFullDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The ordered set of resource IDs for this page of this index search.
+           */
+          ids?: string[];
+        }[];
+      };
+      data?: {
+        /**
+         * @example dashboardSitepolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DashboardSitePolygonsLightDto;
+      }[];
+    },
+  DashboardEntityGetError,
+  DashboardEntityGetVariables,
+  {}
+>("/dashboard/v3/{entity}/{uuid}", "GET");
+
+export type GetDashboardProjectsQueryParams = {
+  country?: string;
+  /**
+   * Filter results by programmes
+   */
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * Filter results by landscapes using 3-letter codes: gcb (Ghana Cocoa Belt), grv (Greater Rift Valley of Kenya), ikr (Lake Kivu & Rusizi River Basin)
+   */
+  landscapes?: ("gcb" | "grv" | "ikr")[];
+  /**
+   * Filter results by organisationType
+   */
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  projectUuid?: string;
+  polygonStatus?: string[];
+};
+
+export type GetDashboardProjectsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetDashboardProjectsResponse = {
+  meta?: {
+    /**
+     * @example dashboardProjects
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example dashboardProjects
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardProjectsLightDto;
+  };
+};
+
+export type GetDashboardProjectsVariables = {
+  queryParams?: GetDashboardProjectsQueryParams;
+};
+
+export const getDashboardProjects = new V3ApiEndpoint<
+  GetDashboardProjectsResponse,
+  GetDashboardProjectsError,
+  GetDashboardProjectsVariables,
+  {}
+>("/dashboard/v3/dashboardProjects", "GET");
+
+export type GetDashboardSitePolygonsQueryParams = {
+  polygonStatus: string[];
+  projectUuid: string;
+};
+
+export type GetDashboardSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetDashboardSitePolygonsResponse = {
+  meta?: {
+    /**
+     * @example dashboardSitepolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example dashboardSitepolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DashboardSitePolygonsLightDto;
+  };
+};
+
+export type GetDashboardSitePolygonsVariables = {
+  queryParams: GetDashboardSitePolygonsQueryParams;
+};
+
+export const getDashboardSitePolygons = new V3ApiEndpoint<
+  GetDashboardSitePolygonsResponse,
+  GetDashboardSitePolygonsError,
+  GetDashboardSitePolygonsVariables,
+  {}
+>("/dashboard/v3/dashboardSitepolygons", "GET");
 
 export const operationsByTag = {
   totalSectionHeader: { getTotalSectionHeaders },
-  treeRestorationGoal: { getTreeRestorationGoal }
+  treeRestorationGoal: { getTreeRestorationGoal },
+  totalJobsCreated: { getTotalJobsCreated },
+  hectaresRestoration: { getHectaresRestoration },
+  dashboardEntities: { dashboardEntityIndex, dashboardEntityGet },
+  dashboardProjects: { getDashboardProjects },
+  dashboardSitePolygons: { getDashboardSitePolygons }
 };
