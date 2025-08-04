@@ -47,6 +47,7 @@ const FIELDS_TO_VALIDATE: Record<string, string> = {
   practice: "Restoration Practice",
   target_sys: "Target Land Use System",
   distr: "Tree Distribution",
+  planting_status: "Planting Status",
   num_trees: "Number of Trees"
 };
 
@@ -114,6 +115,7 @@ export const useMessageValidators = () => {
       if (!extraInfo) return [];
       try {
         const infoArray: ExtraInfoItem[] = JSON.parse(extraInfo);
+        console.log("infoArray", infoArray);
         return infoArray
           .map(info => {
             if (!info.exists) {
