@@ -73,6 +73,7 @@ interface ContentOverviewProps<TData> {
   };
   transformedStories: any;
   isLoading: boolean;
+  hasAccess?: boolean;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -90,7 +91,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     isUserAllowed = true,
     isLoadingHectaresUnderRestoration = false,
     transformedStories,
-    isLoading
+    isLoading,
+    hasAccess
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -284,6 +286,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
               projectUUID={projectUUID}
+              hasAccess={hasAccess}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
@@ -419,6 +422,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}
             projectUUID={projectUUID}
+            hasAccess={hasAccess}
           />
         </LoadingContainerOpacity>
         <When condition={!projectUUID}>

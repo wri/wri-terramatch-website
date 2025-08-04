@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   useDeleteV2FilesUUID,
@@ -115,6 +116,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [resetTable, setResetTable] = useState(0);
     const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
     const { openNotification } = useNotificationContext();
+    const { setCurrency } = useCurrencyContext();
+
     const initialForProfitAnalysisData = years?.map((item, index) => ({
       uuid: null,
       year: item,
@@ -165,6 +168,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [documentationData, setDocumentationData] = useState(
       !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
     );
+
+    useEffect(() => {
+      setCurrency(selectCurrency);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectCurrency]);
 
     const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
       onSuccess(data, variables) {
@@ -362,7 +370,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const forProfitAnalysisColumns = [
       {
-        header: "Year",
+        header: t("Year"),
         accessorKey: "year",
         enableSorting: false,
         meta: {
@@ -370,7 +378,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Revenue",
+        header: t("Revenue"),
         accessorKey: "revenue",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -426,7 +434,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Expenses",
+        header: t("Expenses"),
         accessorKey: "expenses",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -484,7 +492,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Net Profit",
+        header: t("Net Profit"),
         accessorKey: "profit",
         enableSorting: false,
         meta: {
@@ -566,7 +574,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const currentRadioColumns = [
       {
-        header: "Year",
+        header: t("Year"),
         accessorKey: "year",
         enableSorting: false,
         meta: {
@@ -574,7 +582,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Current Assets",
+        header: t("Current Assets"),
         accessorKey: "currentAssets",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -631,7 +639,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Current Liabilities",
+        header: t("Current Liabilities"),
         accessorKey: "currentLiabilities",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -689,7 +697,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Current Ratio",
+        header: t("Current Ratio"),
         accessorKey: "currentRatio",
         enableSorting: false,
         meta: {
@@ -703,12 +711,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const documentationColumns = [
       {
-        header: "Year",
+        header: t("Year"),
         accessorKey: "year",
         enableSorting: false
       },
       {
-        header: "Description",
+        header: t("Description"),
         accessorKey: "description",
         enableSorting: false,
         meta: {
@@ -766,7 +774,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "USD Exchange Rate",
+        header: t("USD Exchange Rate"),
         accessorKey: "exchange_rate",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -828,7 +836,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Financial Documents",
+        header: t("Financial Documents"),
         accessorKey: "documentation",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
