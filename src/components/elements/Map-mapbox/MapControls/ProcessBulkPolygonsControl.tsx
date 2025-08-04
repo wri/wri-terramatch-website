@@ -190,7 +190,7 @@ const ProcessBulkPolygonsControl = ({
     );
     const selectedUUIDs: string[] = sitePolygonData
       .filter((_, index) => initialSelection[index])
-      .map((polygon: SitePolygonFullDto) => polygon.polygonUuid || "");
+      .map((polygon: SitePolygonFullDto) => polygon.polygonUuid ?? "");
     if (type === "check") {
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Check Polygons");
