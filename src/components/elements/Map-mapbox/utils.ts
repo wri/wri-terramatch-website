@@ -901,8 +901,8 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
 // New utility functions for SitePolygonFullDto
 export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonFullDto) => {
-    if (data.status && data.polygonUuid !== null) {
-      if (!acc[data.status]) {
+    if (data.status != null && data.polygonUuid != null) {
+      if (acc[data.status] == null) {
         acc[data.status] = [];
       }
       acc[data.status].push(data.polygonUuid);

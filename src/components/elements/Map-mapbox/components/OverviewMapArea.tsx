@@ -155,9 +155,9 @@ const OverviewMapArea = ({
             (polygonsData?.map((item: SitePolygonFullDto) => ({
               ...item,
               title: item.name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.plantStart || "") }),
+              subtitle: t("Created {date}", { date: format(item.plantStart ?? "") }),
               validationStatus: item.validationStatus ?? "notChecked"
-            })) || []) as any[]
+            })) ?? []) as any[]
           }
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
@@ -186,9 +186,9 @@ const OverviewMapArea = ({
             (polygonsData?.map((item: SitePolygonFullDto) => ({
               ...item,
               title: item.name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.plantStart || "") }),
+              subtitle: t("Created {date}", { date: format(item.plantStart ?? "") }),
               validationStatus: item.validationStatus ?? "notChecked"
-            })) || []) as any[]
+            })) ?? []) as any[]
           }
           mapFunctions={mapFunctions}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"

@@ -56,7 +56,7 @@ export const useAllSitePolygons = (
           ApiSlice.pruneCache("sitePolygons");
 
           const currentState = ApiSlice.currentState;
-          const sitePolygonsIndices = currentState.meta.indices.sitePolygons || {};
+          const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};
           Object.keys(sitePolygonsIndices).forEach(indexKey => {
             ApiSlice.pruneIndex("sitePolygons", indexKey);
           });

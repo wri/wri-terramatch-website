@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Log from "@/utils/log";
 
 const VALID_ENTITY_TYPES = ["sites", "projects"] as const;
 const VALID_FILTER_ALL = "all" as const;
@@ -58,7 +59,7 @@ const useLoadSitePolygonsData = (
   } = useAllSitePolygons({
     entityName,
     entityUuid,
-    enabled: !!entityUuid,
+    enabled: entityUuid != null,
     filter
   });
 
@@ -68,6 +69,7 @@ const useLoadSitePolygonsData = (
     try {
       updateSinglePolygon(old_id, updatedData);
     } catch (error) {
+      Log.error("Failed to update single site polygon data", { old_id, error });
       refetch();
     }
   };
