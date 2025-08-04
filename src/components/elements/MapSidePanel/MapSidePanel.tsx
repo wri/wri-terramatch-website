@@ -1,11 +1,13 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
+import Pagination from "@/components/extensive/Pagination";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -55,8 +57,43 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
+
+  const filteredItems = useMemo(() => {
+    if (checkedValues.length === 0) {
+      return items;
+    }
+    return items.filter(item => checkedValues.includes(item.status));
+  }, [items, checkedValues]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPageItems = filteredItems.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [checkedValues]);
+
+  const handlePageChange = useCallback((pageIndex: number) => {
+    setCurrentPage(pageIndex + 1);
+  }, []);
+
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+  }, []);
 
   const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
 
@@ -209,6 +246,24 @@ const MapSidePanel = ({
           </div>
         </div>
       </div>
+      {filteredItems.length > 0 && (
+        <div className="mb-4">
+          <Pagination
+            variant={VARIANT_PAGINATION_DASHBOARD}
+            getCanNextPage={() => currentPage < totalPages}
+            getCanPreviousPage={() => currentPage > 1}
+            getPageCount={() => totalPages}
+            nextPage={() => setCurrentPage(prev => prev + 1)}
+            pageIndex={currentPage - 1}
+            previousPage={() => setCurrentPage(prev => prev - 1)}
+            setPageIndex={handlePageChange}
+            hasPageSizeSelector
+            defaultPageSize={pageSize}
+            setPageSize={handlePageSizeChange}
+            invertSelect
+          />
+        </div>
+      )}
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
@@ -218,7 +273,7 @@ const MapSidePanel = ({
         <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
           <List
             as={Fragment}
-            items={items}
+            items={currentPageItems}
             itemAs={Fragment}
             render={item => (
               <MapMenuPanelItem
