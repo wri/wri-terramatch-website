@@ -15,6 +15,8 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import Pagination from "@/components/extensive/Pagination";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -69,6 +71,9 @@ const Polygons = (props: IPolygonProps) => {
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false } = props;
   const { map } = mapFunctions;
@@ -92,6 +97,38 @@ const Polygons = (props: IPolygonProps) => {
   } = contextMapArea;
 
   const polygonMenu = useMemo(() => props.menu || [], [props.menu]);
+
+  const filteredPolygons = useMemo(() => {
+    if (!validFilter || validFilter === "all") {
+      return polygonMenu;
+    }
+
+    return polygonMenu.filter(polygon => {
+      const status = polygon.validationStatus;
+
+      if (validFilter === "not_checked") {
+        return !status || status === "" || status === "undefined" || status === "null" || status === "notChecked";
+      }
+
+      return status === validFilter;
+    });
+  }, [polygonMenu, validFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredPolygons.length / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPagePolygons = filteredPolygons.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [validFilter]);
+
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
@@ -167,6 +204,15 @@ const Polygons = (props: IPolygonProps) => {
     setIsFetchingValidationData,
     fetchValidationData
   ]);
+
+  const handlePageChange = useCallback((pageIndex: number) => {
+    setCurrentPage(pageIndex + 1);
+  }, []);
+
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+  }, []);
 
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
@@ -366,6 +412,36 @@ const Polygons = (props: IPolygonProps) => {
         </div>
       </div>
 
+      {filteredPolygons.length > 0 && (
+        <div className="mb-4">
+          <Pagination
+            variant={VARIANT_PAGINATION_DASHBOARD}
+            getCanNextPage={() => currentPage < totalPages}
+            getCanPreviousPage={() => currentPage > 1}
+            getPageCount={() => totalPages}
+            nextPage={() => setCurrentPage(prev => prev + 1)}
+            pageIndex={currentPage - 1}
+            previousPage={() => setCurrentPage(prev => prev - 1)}
+            setPageIndex={handlePageChange}
+            hasPageSizeSelector
+            defaultPageSize={pageSize}
+            setPageSize={handlePageSizeChange}
+            invertSelect
+          />
+        </div>
+      )}
+
+      {filteredPolygons.length > 0 && (
+        <div className="mb-2 flex items-center justify-between">
+          <Text variant="text-12" className="text-gray-600">
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredPolygons.length)} of {filteredPolygons.length} polygons
+          </Text>
+          <Text variant="text-12" className="text-gray-600">
+            Page {currentPage} of {totalPages}
+          </Text>
+        </div>
+      )}
+
       <div className="mb-4 flex items-center justify-between gap-2">
         <Dropdown
           options={validationOptions}
@@ -398,35 +474,51 @@ const Polygons = (props: IPolygonProps) => {
       </div>
 
       <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
-        {polygonMenu.map(item => (
-          <div key={item.id}>
-            <PolygonItem
-              uuid={item.uuid}
-              title={item.label}
-              status={item.status}
-              validationStatus={item.validationStatus}
-              isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
-              onCheckboxChange={handleCheckboxChange}
-              menu={
-                <Menu
-                  className="ml-auto"
-                  container={containerRef.current}
-                  menu={polygonMenuItems(item)}
-                  placement={MENU_PLACEMENT_LEFT_BOTTOM}
-                >
-                  <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-                </Menu>
-              }
-              isCollapsed={openCollapseAll}
-              siteId={siteUuid}
-            />
-          </div>
-        ))}
-
-        {!isLoading && polygonMenu.length === 0 && (
+        {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Text variant="text-14" className="text-gray-500">
+              Loading polygons...
+            </Text>
+          </div>
+        ) : currentPagePolygons.length > 0 ? (
+          currentPagePolygons.map(item => (
+            <div key={item.id}>
+              <PolygonItem
+                uuid={item.uuid}
+                title={item.label}
+                status={item.status}
+                validationStatus={item.validationStatus}
+                isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
+                onCheckboxChange={handleCheckboxChange}
+                menu={
+                  <Menu
+                    className="ml-auto"
+                    container={containerRef.current}
+                    menu={polygonMenuItems(item)}
+                    placement={MENU_PLACEMENT_LEFT_BOTTOM}
+                  >
+                    <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+                  </Menu>
+                }
+                isCollapsed={openCollapseAll}
+                siteId={siteUuid}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Text variant="text-14" className="text-gray-500 mb-2">
               No polygons found
+            </Text>
+            <Text variant="text-12" className="text-gray-400 text-center">
+              {filteredPolygons.length === 0 && polygonMenu.length > 0
+                ? `No polygons match the "${validFilter}" filter`
+                : polygonMenu.length === 0
+                ? "No polygons available"
+                : "No polygons on this page"}
+            </Text>
+            <Text variant="text-12" className="text-gray-400 mt-1">
+              Total: {polygonMenu.length} | Filtered: {filteredPolygons.length} | Page: {currentPage}/{totalPages}
             </Text>
           </div>
         )}
