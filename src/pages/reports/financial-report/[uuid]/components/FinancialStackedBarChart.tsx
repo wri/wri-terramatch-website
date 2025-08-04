@@ -15,7 +15,7 @@ import {
   YAxis
 } from "recharts";
 
-import { currencyInput, formatYAxisNumber } from "@/utils/financialReport";
+import { currencyInput, formatProfitValue, formatYAxisNumber } from "@/utils/financialReport";
 
 type FinancialStackedBarChartProps = {
   uuid: string;
@@ -93,7 +93,10 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBa
               displayValue = Math.abs(value);
             }
 
-            const formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol);
+            let formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol);
+            if (name == "Profit") {
+              formattedValue = formatProfitValue(displayValue, currencySymbol);
+            }
 
             return (
               <p key={index} style={{ color: entry.color }} className="capitalize">

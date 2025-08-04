@@ -7,7 +7,9 @@ import * as yup from "yup";
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
+import { useCurrencyContext } from "@/context/currency.provider";
 import { useDeleteV2FundingTypeUUID, usePatchV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
+import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -93,6 +95,7 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
   const [tableKey, setTableKey] = useState(0);
 
   const [, { organisationId }] = useMyOrg();
+  const { currency } = useCurrencyContext();
 
   const refreshTable = () => {
     setTableKey(prev => prev + 1);
@@ -137,11 +140,15 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     props?.formHook?.clearErrors(props.name);
   }, [props?.formHook, props.name]);
 
+  const formattedValue = value.map((item: any) => ({
+    ...item,
+    amount: currencyInput[currency] ? currencyInput[currency] + " " + item?.amount : item?.amount
+  }));
   return (
     <DataTable
       key={tableKey}
       {...props}
-      value={value || []}
+      value={formattedValue || []}
       handleCreate={data => {
         createTeamMember({
           body: {

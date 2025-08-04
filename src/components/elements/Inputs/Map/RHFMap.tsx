@@ -10,7 +10,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { Entity } from "@/types/common";
 
@@ -119,6 +119,44 @@ const RHFMap = ({
     onChangeCapture?.();
   };
 
+  // Parser function to transform project polygon data to SitePolygonFullDto[]
+  const parseProjectPolygonToSitePolygons = (projectPolygon: any): SitePolygonFullDto[] => {
+    if (!projectPolygon?.project_polygon) {
+      return [];
+    }
+
+    const projectPoly = projectPolygon.project_polygon;
+
+    return [
+      {
+        lightResource: false,
+        name: null,
+        status: "draft" as const,
+        siteId: null,
+        polygonUuid: projectPoly.poly_uuid ?? null,
+        projectId: projectPoly.entity_id?.toString() ?? null,
+        projectShortName: null,
+        plantStart: null,
+        calcArea: null,
+        lat: null,
+        long: null,
+        indicators: [],
+        siteName: null,
+        versionName: null,
+        plantingStatus: null,
+        geometry: null,
+        practice: null,
+        targetSys: null,
+        distr: null,
+        numTrees: null,
+        source: null,
+        validationStatus: null,
+        establishmentTreeSpecies: [],
+        reportingPeriods: []
+      } as SitePolygonFullDto
+    ];
+  };
+
   const onError = (hasError: boolean) => {
     if (hasError) {
       formHook.setError(inputWrapperProps.name, {
@@ -131,7 +169,7 @@ const RHFMap = ({
   };
   return (
     <SitePolygonDataProvider
-      sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
+      sitePolygonData={parseProjectPolygonToSitePolygons(projectPolygon)}
       reloadSiteData={reloadSiteDataWithBoundingBox}
     >
       <InputWrapper {...inputWrapperProps}>

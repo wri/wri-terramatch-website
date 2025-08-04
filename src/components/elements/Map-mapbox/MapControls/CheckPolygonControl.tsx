@@ -22,7 +22,8 @@ import {
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
@@ -58,12 +59,12 @@ interface TransformedData {
 const VALIDATION_CACHE_TIME = 5 * 60 * 1000;
 
 const getTransformedData = (
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonFullDto[] | undefined,
   currentValidationSite: CheckedPolygon[]
 ) => {
   return currentValidationSite.map((checkedPolygon, index) => {
     const matchingPolygon = Array.isArray(sitePolygonData)
-      ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
+      ? sitePolygonData.find((polygon: SitePolygonFullDto) => polygon.polygonUuid === checkedPolygon.uuid)
       : null;
     const excludedFromValidationCriterias = [
       ESTIMATED_AREA_CRITERIA_ID,
@@ -82,7 +83,7 @@ const getTransformedData = (
       id: index + 1,
       valid: checkedPolygon.checked && isValid,
       checked: checkedPolygon.checked,
-      label: matchingPolygon?.poly_name ?? null,
+      label: matchingPolygon?.name ?? null,
       showWarning:
         nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
         nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)

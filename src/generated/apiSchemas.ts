@@ -11165,6 +11165,7 @@ export type SitePolygonResponse = {
    */
   calc_area?: number;
   status?: string;
+  planting_status?: string;
 };
 
 export type SitePolygonCreateResponse = {
@@ -11735,6 +11736,7 @@ export type SitePolygonsLoadedDataResponse = {
   is_active?: boolean;
   is_present?: boolean;
   version_name?: string;
+  planting_status?: string;
 }[];
 
 export type SitePolygonLoaded = {
@@ -11780,6 +11782,7 @@ export type SitePolygonLoaded = {
   is_active?: boolean;
   is_present?: boolean;
   version_name?: string;
+  planting_status?: string;
 };
 
 export type ClippedPolygonResponse = {

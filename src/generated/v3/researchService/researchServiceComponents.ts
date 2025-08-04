@@ -29,6 +29,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   /**
+   * Filter results by validation status
+   */
+  ["validationStatus[]"]?: string[];
+  /**
    * Filter results by project UUID(s). May not be used with siteId[], projectCohort or landscape
    */
   ["projectId[]"]?: string[];
@@ -327,19 +331,6 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
         statusCode: number;
         /**
          * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
          */
         message: string;
       };

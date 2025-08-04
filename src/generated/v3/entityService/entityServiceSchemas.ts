@@ -659,6 +659,17 @@ export type ProjectLightDto = {
   name: string | null;
   shortName: string | null;
   /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
    * @format date-time
    */
   plantingStartDate: string | null;
@@ -793,6 +804,17 @@ export type ProjectFullDto = {
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   shortName: string | null;
+  /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * @format date-time
    */
@@ -952,6 +974,17 @@ export type SiteFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
+  /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -1024,6 +1057,17 @@ export type NurseryFullDto = {
   seedlingGrown: number | null;
   plantingContribution: string | null;
   oldModel: string | null;
+  /**
+   * Planting status for this nursery
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;

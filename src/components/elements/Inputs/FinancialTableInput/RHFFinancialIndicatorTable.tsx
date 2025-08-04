@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   useDeleteV2FilesUUID,
@@ -115,6 +116,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [resetTable, setResetTable] = useState(0);
     const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
     const { openNotification } = useNotificationContext();
+    const { setCurrency } = useCurrencyContext();
+
     const initialForProfitAnalysisData = years?.map((item, index) => ({
       uuid: null,
       year: item,
@@ -165,6 +168,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [documentationData, setDocumentationData] = useState(
       !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
     );
+
+    useEffect(() => {
+      setCurrency(selectCurrency);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectCurrency]);
 
     const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
       onSuccess(data, variables) {

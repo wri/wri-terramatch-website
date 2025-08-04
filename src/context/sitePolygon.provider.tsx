@@ -1,22 +1,22 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export type SitePolygonData = {
-  data: SitePolygonsDataResponse;
+  data: SitePolygonFullDto[];
 };
 
 type SitePolygonContextType = {
-  sitePolygonData: SitePolygonsDataResponse | undefined;
+  sitePolygonData: SitePolygonFullDto[] | undefined;
   reloadSiteData: () => void;
-  updateSingleSitePolygonData?: (poly_id: string, updatedData: any) => void;
+  updateSingleSitePolygonData?: (poly_id: string, updatedData: SitePolygonFullDto) => void;
 };
 
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
-  sitePolygonData: SitePolygonsDataResponse | undefined;
-  updateSingleSitePolygonData?: (poly_id: string, updatedData: any) => void;
+  sitePolygonData: SitePolygonFullDto[] | undefined;
+  updateSingleSitePolygonData?: (poly_id: string, updatedData: SitePolygonFullDto) => void;
   reloadSiteData: () => void;
   children: ReactNode;
 }> = ({ sitePolygonData, reloadSiteData, updateSingleSitePolygonData, children }) => {

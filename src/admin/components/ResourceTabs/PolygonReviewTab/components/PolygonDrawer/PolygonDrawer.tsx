@@ -26,6 +26,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -123,6 +124,42 @@ const PolygonDrawer = ({
     }
   );
 
+  // Momentary parser function to transform v2 API response to v3 SitePolygonFullDto, until we have a v3 API to update the polygon
+  const parseV2ToV3PolygonData = (v2Data: any): SitePolygonFullDto | null => {
+    if (!v2Data?.site_polygon) {
+      return null;
+    }
+
+    const v2Polygon = v2Data.site_polygon;
+
+    return {
+      lightResource: false,
+      name: v2Polygon.poly_name ?? null,
+      status: (v2Polygon.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+      siteId: v2Polygon.site_id ?? null,
+      polygonUuid: v2Polygon.uuid ?? null,
+      projectId: null,
+      projectShortName: null,
+      plantStart: v2Polygon.plantstart ?? null,
+      calcArea: v2Polygon.calc_area ?? null,
+      lat: null,
+      long: null,
+      indicators: [],
+      siteName: v2Polygon.site_name ?? null,
+      versionName: null,
+      plantingStatus: null,
+      geometry: null,
+      practice: v2Polygon.practice ?? null,
+      targetSys: v2Polygon.target_sys ?? null,
+      distr: v2Polygon.distr ?? null,
+      numTrees: v2Polygon.num_trees ?? null,
+      source: null,
+      validationStatus: null,
+      establishmentTreeSpecies: [],
+      reportingPeriods: []
+    } as SitePolygonFullDto;
+  };
+
   const updatePolygonData = async (polygonId: string) => {
     try {
       const updatedPolygonData = await fetchGetV2TerrafundPolygonUuid({
@@ -130,7 +167,12 @@ const PolygonDrawer = ({
       });
 
       if (updatedPolygonData?.site_polygon?.uuid) {
-        updateSingleSitePolygonData?.(updatedPolygonData.site_polygon.uuid, updatedPolygonData.site_polygon);
+        const v3PolygonData = parseV2ToV3PolygonData(updatedPolygonData);
+        if (v3PolygonData) {
+          updateSingleSitePolygonData?.(updatedPolygonData.site_polygon.uuid, v3PolygonData);
+        } else {
+          Log.warn("Failed to parse v2 polygon data to v3 structure");
+        }
       }
     } catch (error) {
       Log.error("Error fetching updated polygon data:", error);
