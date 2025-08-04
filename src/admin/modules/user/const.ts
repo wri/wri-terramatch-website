@@ -61,6 +61,13 @@ export const frameworkChoices = [
   }
 ];
 
+export const localeChoices = [
+  { id: "en-US", name: "English" },
+  { id: "es-MX", name: "Spanish" },
+  { id: "fr-FR", name: "French" },
+  { id: "pt-BR", name: "Portuguese" }
+];
+
 export const directFrameworkChoices = Object.values(Framework)
   .filter(slug => slug !== "undefined")
   .map(slug => ({ id: slug, name: slug }));
