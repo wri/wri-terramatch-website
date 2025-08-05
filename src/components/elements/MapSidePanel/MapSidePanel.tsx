@@ -10,6 +10,7 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -57,6 +58,7 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
+  const isAdmin = useIsAdmin();
 
   const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
 
@@ -240,6 +242,7 @@ const MapSidePanel = ({
                 poly_id={item.poly_id}
                 site_id={entityUuid}
                 validationStatus={item.validationStatus}
+                isAdmin={isAdmin}
               />
             )}
           />

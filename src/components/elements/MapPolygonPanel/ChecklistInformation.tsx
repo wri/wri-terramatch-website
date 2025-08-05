@@ -7,6 +7,7 @@ import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonRevie
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import Log from "@/utils/log";
 
@@ -34,6 +35,7 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
   const t = useT();
+  const isAdmin = useIsAdmin();
   const { getFormatedExtraInfo } = useMessageValidators();
 
   useEffect(() => {
@@ -53,8 +55,22 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
 
       const transformedData: ICriteriaCheckItem[] = Object.entries(validationLabels).map(([id, label]) => {
         const existingValidation = existingValidations.get(Number(id));
+
+        if (!isAdmin && Number(id) === 14 && existingValidation != null && !existingValidation.status) {
+          const extraInfo = JSON.parse(existingValidation.extra_info ?? "[]");
+          const hasOnlyPlantingStatusError =
+            Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
+
+          if (hasOnlyPlantingStatusError) {
+            return {
+              ...existingValidation,
+              status: true
+            };
+          }
+        }
+
         return (
-          existingValidation || {
+          existingValidation ?? {
             id: Number(id),
             date: null,
             status: true,
@@ -69,10 +85,10 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
     } else {
       setValidationStatus(false);
     }
-  }, [criteriaData]);
+  }, [criteriaData, isAdmin]);
 
   useEffect(() => {
-    if (polygonValidationData) {
+    if (polygonValidationData != null) {
       const failedValidationCounter = polygonValidationData.reduce((count, record) => {
         return record.status === false ? count + 1 : count;
       }, 0);
@@ -107,7 +123,7 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
                   />
                   {t(item.label)}
                 </Text>
-                {item.extra_info &&
+                {item.extra_info != null &&
                   getFormatedExtraInfo(item.extra_info, item.id).map(info => (
                     <div className="flex items-start gap-[6px] pl-6" key={`${info}-${item.id}`}>
                       <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">

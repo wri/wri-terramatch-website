@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
 interface IntersectionInfo {
@@ -53,11 +54,12 @@ const FIELDS_TO_VALIDATE: Record<string, string> = {
 
 export const useMessageValidators = () => {
   const t = useT();
+  const isAdmin = useIsAdmin();
 
   const getIntersectionMessages = useMemo(
     () =>
       (extraInfo: any): string[] => {
-        if (!extraInfo) return [];
+        if (extraInfo == null) return [];
         try {
           const infoArray: IntersectionInfo[] = JSON.parse(extraInfo);
           return infoArray.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
@@ -89,7 +91,7 @@ export const useMessageValidators = () => {
   const getTargetCountryMessage = useMemo(
     () =>
       (extraInfo: any): string[] => {
-        if (!extraInfo) return [];
+        if (extraInfo == null) return [];
 
         try {
           const infoObject = JSON.parse(extraInfo);
@@ -112,11 +114,17 @@ export const useMessageValidators = () => {
   );
   const getDataMessage = useMemo(
     () => (extraInfo: string | undefined) => {
-      if (!extraInfo) return [];
+      if (extraInfo == null) return [];
       try {
         const infoArray: ExtraInfoItem[] = JSON.parse(extraInfo);
         console.log("infoArray", infoArray);
         return infoArray
+          .filter(info => {
+            if (!isAdmin && info.field === "planting_status") {
+              return false;
+            }
+            return true;
+          })
           .map(info => {
             if (!info.exists) {
               return t("{field} is missing", { field: FIELDS_TO_VALIDATE[info.field] });
@@ -151,12 +159,12 @@ export const useMessageValidators = () => {
         return [t("Error parsing extra info.")];
       }
     },
-    [t]
+    [t, isAdmin]
   );
 
   const getProjectGoalMessage = useMemo(
     () => (extraInfo: string | undefined) => {
-      if (!extraInfo) return [];
+      if (extraInfo == null) return [];
       try {
         const infoArray: ProjectGoalInfo = JSON.parse(extraInfo);
         const {
@@ -205,7 +213,7 @@ export const useMessageValidators = () => {
 
   const getPlantStartDateMessage = useMemo(
     () => (extraInfo: string | undefined) => {
-      if (!extraInfo) return [];
+      if (extraInfo == null) return [];
       try {
         const info: PlantStartDateInfo = JSON.parse(extraInfo);
 
