@@ -86,7 +86,13 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
         defaultActiveIndex={activeIndex}
       />
       <div>
-        <Table columns={ColumnsTableFundingSources} data={tableData ?? []} variant={VARIANT_TABLE_DASHBOARD_LIST} />
+        <Table
+          columns={ColumnsTableFundingSources}
+          data={tableData ?? []}
+          variant={VARIANT_TABLE_DASHBOARD_LIST}
+          hasPagination={true}
+          invertSelectPagination={true}
+        />
       </div>
     </div>
   );

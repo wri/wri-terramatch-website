@@ -127,3 +127,89 @@ export type HectareRestorationDto = {
   restorationStrategiesRepresented: Record<string, any>;
   targetLandUseTypesRepresented: Record<string, any>;
 };
+
+export type DashboardProjectsLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+  hasAccess: boolean;
+};
+
+export type DashboardImpactStoryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  title: string;
+  date: string;
+  category: string[];
+  thumbnail: string | null;
+  organisation: Record<string, any>;
+  status: string;
+};
+
+export type DashboardSitePolygonsLightDto = {
+  id: number;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
+  status: string;
+  lat: number | null;
+  long: number | null;
+  name: string | null;
+};
+
+export type DashboardProjectsFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  country: string | null;
+  frameworkKey: string | null;
+  name: string | null;
+  treesPlantedCount: number | null;
+  totalHectaresRestoredSum: number;
+  lat: number | null;
+  long: number | null;
+  organisationName: string | null;
+  organisationType: string | null;
+  treesGrownGoal: number | null;
+  totalSites: number;
+  totalJobsCreated: number | null;
+  hasAccess: boolean;
+  cohort: string[] | null;
+  objectives: string | null;
+  landTenureProjectArea: string[] | null;
+};
+
+export type DashboardImpactStoryFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  title: string;
+  date: string;
+  category: string[];
+  thumbnail: string | null;
+  organisation: Record<string, any>;
+  status: string;
+  content: string | null;
+};

@@ -2,7 +2,7 @@ import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -22,12 +22,12 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
-import { loadImpactStory } from "@/connections/ImpactStory";
+import { useDashboardImpactStory } from "@/connections/DashboardEntity";
+import { useGadmChoices } from "@/connections/Gadm";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { ImpactStoryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -51,7 +51,7 @@ export const IMPACT_STORIES_TOOLTIP =
   "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
 
 interface RowData {
-  country_slug: undefined;
+  country: string | null;
   uuid: string;
 }
 
@@ -73,6 +73,7 @@ interface ContentOverviewProps<TData> {
   };
   transformedStories: any;
   isLoading: boolean;
+  hasAccess?: boolean;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -90,19 +91,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     isUserAllowed = true,
     isLoadingHectaresUnderRestoration = false,
     transformedStories,
-    isLoading
+    isLoading,
+    hasAccess
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
-  const { showLoader, hideLoader } = useLoading();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const router = useRouter();
   const { country } = router.query;
@@ -116,6 +118,56 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setProjectUUID(filters.uuid);
   });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
+  const [pendingStoryData, setPendingStoryData] = useState<any>(null);
+  const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && impactStory) {
+      const fullStory = impactStory as unknown as DashboardImpactStoryFullDto;
+      const parsedData = {
+        uuid: fullStory.uuid ?? "",
+        title: fullStory.title ?? "",
+        date: fullStory.date ?? "",
+        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        category: fullStory.category ?? [],
+        thumbnail: fullStory.thumbnail ?? "",
+        organization: {
+          name: fullStory.organisation?.name ?? "",
+          category: fullStory.category ?? pendingStoryData.category ?? [],
+          country:
+            fullStory.organisation?.countries && fullStory.organisation.countries.length > 0
+              ? fullStory.organisation.countries
+                  .map((c: any) => {
+                    const found = countryChoices.find(country => country.id === c.label);
+                    return found ? found.name : c.label;
+                  })
+                  .join(", ")
+              : "No country",
+          facebook_url: fullStory.organisation?.facebook_url ?? pendingStoryData.organization?.facebook_url ?? "",
+          instagram_url: fullStory.organisation?.instagram_url ?? pendingStoryData.organization?.instagram_url ?? "",
+          linkedin_url: fullStory.organisation?.linkedin_url ?? pendingStoryData.organization?.linkedin_url ?? "",
+          twitter_url: fullStory.organisation?.twitter_url ?? pendingStoryData.organization?.twitter_url ?? ""
+        },
+        status: fullStory.status ?? ""
+      };
+      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, impactStory, openModal, t, countryChoices]);
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && loadFailure) {
+      console.error("Error fetching story details:", loadFailure.message);
+      openModal(ModalId.MODAL_STORY, <ModalStory data={pendingStoryData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, loadFailure, openModal, t]);
+
   useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
@@ -234,6 +286,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
               projectUUID={projectUUID}
+              hasAccess={hasAccess}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
@@ -279,20 +332,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
               closeModal("modalExpand");
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid as string,
+                  uuid: (row.uuid ?? "") as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
               if (row.uuid) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid
+                  uuid: (row.uuid ?? "") as string
                 }));
               }
               return;
@@ -327,43 +379,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = async (storyData: any) => {
-    try {
-      showLoader();
-      const { loadFailure, data: impactStory } = await loadImpactStory({ id: storyData.uuid });
-      if (loadFailure != null) {
-        throw new Error(`Failed to fetch story details: ${loadFailure.message}`);
-      }
-
-      const fullStory = impactStory as unknown as ImpactStoryFullDto;
-
-      const parsedData = {
-        uuid: fullStory.uuid ?? "",
-        title: fullStory.title ?? "",
-        date: fullStory.date ?? "",
-        content: fullStory.content ? JSON.parse(fullStory.content) : "",
-        category: fullStory.category ?? [],
-        thumbnail: fullStory.thumbnail?.[0]?.url ?? "",
-        organization: {
-          name: fullStory.organization?.name ?? "",
-          category: fullStory.category ?? storyData.category ?? [],
-          country:
-            fullStory.organization?.countries && fullStory.organization.countries.length > 0
-              ? fullStory.organization.countries.map((c: any) => c.label).join(", ")
-              : "No country",
-          facebook_url: fullStory.organization?.facebook_url ?? storyData.organization?.facebook_url ?? "",
-          instagram_url: fullStory.organization?.instagram_url ?? storyData.organization?.instagram_url ?? "",
-          linkedin_url: fullStory.organization?.linkedin_url ?? storyData.organization?.linkedin_url ?? "",
-          twitter_url: fullStory.organization?.twitter_url ?? storyData.organization?.twitter_url ?? ""
-        },
-        status: fullStory.status ?? ""
-      };
-      hideLoader();
-      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
-    } catch (error) {
-      console.error("Error fetching story details:", error);
-      openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
-    }
+  const ModalStoryOpen = (storyData: any) => {
+    setSelectedStoryId(storyData.uuid);
+    setPendingStoryData(storyData);
   };
 
   const columnMobile = (columns as any[]).filter(
@@ -404,6 +422,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}
             projectUUID={projectUUID}
+            hasAccess={hasAccess}
           />
         </LoadingContainerOpacity>
         <When condition={!projectUUID}>
@@ -458,14 +477,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              if (row?.country_slug) {
+              if (row?.country && filters.country.id === 0) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid as string,
-                  country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                  uuid: "",
+                  country: {
+                    country_slug: row.uuid as string,
+                    id: 1,
+                    data: {
+                      label: row.country?.split("_")[0] ?? "",
+                      icon: `/flags/${(row.uuid as string).toLowerCase()}.svg`
+                    }
+                  }
                 }));
+                return;
               }
 
               if (row.uuid) {
@@ -570,13 +595,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
                   uuid: row.uuid as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
@@ -646,7 +670,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                       <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name}
                     </Text>
                     <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                      <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                      <Icon name={IconNames.PIN} className="h-4 w-4" />{" "}
+                      {(() => {
+                        const gadmCountry = countryChoices.find(country => country.id === item.organization.country);
+                        return gadmCountry ? gadmCountry.name : item.organization.country;
+                      })()}
                     </Text>
                   </div>
                 </button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useFullProject } from "@/connections/Entity";
+import { useDashboardProject } from "@/connections/DashboardEntity";
 import { LAYERS_NAMES } from "@/constants/layers";
 import {
   fetchGetV2DashboardPolygonDataUuid,
@@ -26,7 +26,7 @@ export function usePopupData(event: any) {
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [projectLoaded, { data: projectFullDto }] = useFullProject({
+  const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
     id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
   });
 
