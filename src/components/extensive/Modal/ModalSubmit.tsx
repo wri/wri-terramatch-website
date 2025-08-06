@@ -14,6 +14,7 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import CollapsibleRow from "./components/CollapsibleRow";
@@ -60,16 +61,26 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
   const { validationData } = useMapAreaContext();
+  const isAdmin = useIsAdmin();
+
+  const hasOnlyPlantingStatusError = (extraInfo: string) => {
+    try {
+      const parsed = JSON.parse(extraInfo);
+      return Array.isArray(parsed) && parsed.length === 1 && parsed[0].field === "planting_status";
+    } catch {
+      return false;
+    }
+  };
 
   useEffect(() => {
-    if (!polygonList) {
+    if (polygonList == null) {
       return;
     }
     setPolygonsSelected(polygonList.map((_: any) => false));
   }, [polygonList]);
 
   useEffect(() => {
-    if (!polygonList) {
+    if (polygonList == null) {
       return;
     }
 
@@ -86,27 +97,63 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         ];
 
         let failingCriterias: string[] = [];
-        if (validationInfo?.nonValidCriteria) {
+        if (validationInfo?.nonValidCriteria != null) {
           const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
           failingCriterias = nonValidCriteriasIds.filter((r: any) => !excludedFromValidationCriterias.includes(r));
         }
 
-        const checked =
-          polygon.validation_status === "passed" ||
-          polygon.validation_status === "partial" ||
-          polygon.validation_status === "failed";
+        let checked = false;
+        if (isAdmin) {
+          checked =
+            polygon.validation_status === "passed" ||
+            polygon.validation_status === "partial" ||
+            polygon.validation_status === "failed";
+        } else {
+          const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+          if (validationInfo?.nonValidCriteria != null) {
+            const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
 
-        return {
-          id: polygon.poly_id,
-          checked,
-          name: polygon.poly_name ?? "Unnamed Polygon",
-          failingCriterias,
-          status: polygon.status as StatusEnum,
-          validation_status: polygon.validation_status
-        };
+            const isOnlyPlantingStatusError =
+              nonValidCriteriasIds.length === 1 &&
+              nonValidCriteriasIds[0] === 14 &&
+              validationInfo.nonValidCriteria.some(
+                (r: any) => r.criteria_id === 14 && r.extra_info != null && hasOnlyPlantingStatusError(r.extra_info)
+              );
+
+            checked =
+              isOnlyPlantingStatusError ||
+              polygon.validation_status === "passed" ||
+              polygon.validation_status === "partial";
+
+            let finalValidationStatus = polygon.validation_status;
+            if (!isAdmin && polygon.validation_status === "failed" && isOnlyPlantingStatusError) {
+              finalValidationStatus = "passed";
+            }
+
+            return {
+              id: polygon.poly_id,
+              checked,
+              name: polygon.poly_name ?? "Unnamed Polygon",
+              failingCriterias,
+              status: polygon.status as StatusEnum,
+              validation_status: finalValidationStatus
+            };
+          } else {
+            checked = polygon.validation_status === "passed" || polygon.validation_status === "partial";
+
+            return {
+              id: polygon.poly_id,
+              checked,
+              name: polygon.poly_name ?? "Unnamed Polygon",
+              failingCriterias,
+              status: polygon.status as StatusEnum,
+              validation_status: polygon.validation_status
+            };
+          }
+        }
       })
     );
-  }, [polygonList, validationData]);
+  }, [polygonList, validationData, isAdmin]);
 
   const handleSelectAll = (isChecked: boolean) => {
     if (displayedPolygons) {

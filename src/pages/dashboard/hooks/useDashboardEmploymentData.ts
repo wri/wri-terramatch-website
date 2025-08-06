@@ -41,16 +41,16 @@ export const useDashboardEmploymentData = (projectUuid?: string) => {
     const rawEmploymentData =
       demographics.length === 0 ? DEFAULT_DEMOGRAPHIC_DATA : processDemographicData(demographics);
     return {
-      total_ft: rawEmploymentData.fullTimeJobs.total,
-      total_pt: rawEmploymentData.partTimeJobs.total,
-      total_ft_women: rawEmploymentData.fullTimeJobs.female,
-      total_ft_men: rawEmploymentData.fullTimeJobs.male,
-      total_ft_youth: rawEmploymentData.fullTimeJobs.youth,
-      total_ft_non_youth: rawEmploymentData.fullTimeJobs.nonYouth,
-      total_pt_women: rawEmploymentData.partTimeJobs.female,
-      total_pt_men: rawEmploymentData.partTimeJobs.male,
-      total_pt_youth: rawEmploymentData.partTimeJobs.youth,
-      total_pt_non_youth: rawEmploymentData.partTimeJobs.nonYouth,
+      totalFt: rawEmploymentData.fullTimeJobs.total,
+      totalPt: rawEmploymentData.partTimeJobs.total,
+      totalFtWomen: rawEmploymentData.fullTimeJobs.female,
+      totalFtMen: rawEmploymentData.fullTimeJobs.male,
+      totalFtYouth: rawEmploymentData.fullTimeJobs.youth,
+      totalFtNonYouth: rawEmploymentData.fullTimeJobs.nonYouth,
+      totalPtWomen: rawEmploymentData.partTimeJobs.female,
+      totalPtMen: rawEmploymentData.partTimeJobs.male,
+      totalPtYouth: rawEmploymentData.partTimeJobs.youth,
+      totalPtNonYouth: rawEmploymentData.partTimeJobs.nonYouth,
       totalJobsCreated: rawEmploymentData.fullTimeJobs.total + rawEmploymentData.partTimeJobs.total
     };
   }, [reports]);
