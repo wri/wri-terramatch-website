@@ -74,7 +74,7 @@ export const useDashboardData = (filters: any) => {
 
   const { showLoader, hideLoader } = useLoading();
 
-  const dashboardV3Filter = useMemo(
+  const dashboardV3Filter = useMemo<HookFilters<typeof useJobsCreated>>(
     () => ({
       "programmesType[]": filters.programmes,
       country: filters.country.country_slug,
