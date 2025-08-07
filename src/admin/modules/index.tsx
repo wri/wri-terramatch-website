@@ -15,6 +15,8 @@ import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/compo
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
+import { DisturbanceReportList } from "./disturbanceReport/DisturbanceReportList";
+import DisturbanceReportShow from "./disturbanceReport/DisturbanceReportShow";
 import { FinancialReportsList } from "./financialReports/components/FinancialReportsList";
 import FinancialReportsShow from "./financialReports/components/FinancialReportsShow";
 import FundingProgrammeCreate from "./fundingProgrammes/components/FundingProgrammeCreate";
@@ -175,6 +177,13 @@ const impactStories = {
   Edit: ImpactStoriesEdit
 };
 
+const disturbanceReport = {
+  ResourceName: "disturbanceReport",
+  List: DisturbanceReportList,
+  Show: DisturbanceReportShow,
+  Edit: EntityEdit
+};
+
 const modules = {
   user,
   organisation,
@@ -194,7 +203,8 @@ const modules = {
   financialReport,
   audit,
   validatePolygonFile,
-  impactStories
+  impactStories,
+  disturbanceReport
 };
 
 export default modules;

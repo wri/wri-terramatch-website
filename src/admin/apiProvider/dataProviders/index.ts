@@ -78,6 +78,9 @@ export const dataProvider = combineDataProviders(resource => {
     case modules.impactStories.ResourceName:
       return impactStoriesDataProvider;
 
+    case modules.disturbanceReport.ResourceName:
+      return siteDataProvider;
+
     default:
       throw new Error(`Unknown resource: ${resource}`);
   }
