@@ -2,11 +2,15 @@ import { FormProps } from "react-admin";
 import { UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import Input, { InputProps } from "@/components/elements/Inputs/Input/Input";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 import Accordion from "../../Accordion/Accordion";
 import Button from "../../Button/Button";
 import Dropdown from "../Dropdown/Dropdown";
+import RHFFileInput from "../FileInput/RHFFileInput";
 import InputWrapper from "../InputElements/InputWrapper";
+import TextArea from "../textArea/TextArea";
+
 export interface CollapseDisturbanceProps extends Omit<InputProps, "defaultValue">, UseControllerProps {
   fields: FormProps[];
   formHook: UseFormReturn;
@@ -93,9 +97,34 @@ const CollapseDisturbance = (props: CollapseDisturbanceProps) => {
               onChange={() => {}}
             />
             <div className="col-span-2 flex justify-end">
-              <Button variant="secondary-blue" className="border-none">
-                Add Site Affected
+              <Button variant="secondary-blue" className="-mr-2.5 border-none">
+                <p className="text-14-bold flex items-center gap-1 normal-case">
+                  <div className="flex h-4 w-4 items-center justify-center rounded bg-primary">
+                    <Icon name={IconNames.PLUS} className="h-2.5 w-2.5 text-white" />
+                  </div>
+                  Add Site Affected
+                </p>
               </Button>
+            </div>
+            <div className="col-span-2 w-full border-t border-black border-opacity-12" />
+            <div className="col-span-2 grid grid-cols-1 gap-x-10 gap-y-10">
+              <TextArea name="description" placeholder="Insert Description" label="Description" required rows={2} />
+              <TextArea
+                name="action_description"
+                placeholder="Insert Action Description"
+                label="Action Description"
+                required
+                rows={2}
+              />
+              <RHFFileInput
+                name="disturbance"
+                model="disturbance"
+                collection="disturbance"
+                uuid="disturbance"
+                formHook={props.formHook}
+                control={props.formHook.control}
+                onChangeCapture={props.onChangeCapture}
+              />
             </div>
           </div>
         </div>
