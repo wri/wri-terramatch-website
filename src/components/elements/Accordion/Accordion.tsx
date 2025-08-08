@@ -10,7 +10,7 @@ import Text from "../Text/Text";
 export interface AccordionProps extends PropsWithChildren {
   title: string;
   className?: string;
-  variant?: "default" | "secondary" | "drawer";
+  variant?: "default" | "secondary" | "drawer" | "tertiary";
   defaultOpen?: boolean;
   ctaButtonProps?: {
     text: string;
@@ -39,12 +39,16 @@ const Accordion = ({
           <Disclosure.Button
             className={classNames(`flex w-full items-center justify-between`, {
               "px-15 py-9": variant === "default",
-              "p-6 ": variant === "secondary"
+              "p-6 ": variant === "secondary",
+              "rounded-t-xl bg-black/5 p-4": variant === "tertiary",
+              "rounded-xl": variant === "tertiary" && !open
             })}
           >
             <Text
               variant={
-                variant === "secondary"
+                variant === "tertiary"
+                  ? "text-16-bold"
+                  : variant === "secondary"
                   ? "text-heading-500"
                   : variant === "drawer"
                   ? "text-16-bold"
@@ -68,7 +72,10 @@ const Accordion = ({
               <Icon
                 name={variant === "drawer" ? IconNames.CHEVRON_DOWN_PA : IconNames.CHEVRON_DOWN}
                 width={16}
-                className={`transform transition-all duration-300 ${open ? "rotate-180" : "rotate-0"}`}
+                className={classNames(
+                  `transform transition-all duration-300 ${open ? "rotate-180" : "rotate-0"}`,
+                  variant === "tertiary" && "text-primary"
+                )}
               />
             </div>
           </Disclosure.Button>

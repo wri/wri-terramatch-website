@@ -189,7 +189,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <>
               {props.label && (
                 <Listbox.Label as={Fragment}>
-                  <div className="flex items-baseline gap-1">
+                  <div className={tw("flex items-baseline gap-1", props.labelClassName)}>
                     <InputLabel
                       required={props.required}
                       feedbackRequired={props.feedbackRequired}
