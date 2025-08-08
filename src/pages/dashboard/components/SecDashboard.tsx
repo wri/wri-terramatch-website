@@ -105,7 +105,7 @@ const SecDashboard = ({
   };
 
   useOnMount(() => {
-    if (data?.tableData) {
+    if (data?.tableData && !isTableProject) {
       setToggleValue(1);
     }
   });
