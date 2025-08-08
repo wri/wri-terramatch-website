@@ -9,12 +9,14 @@ import ReportedDataAside from "./components/ReportedDataAside";
 const DisturbanceReportShow = () => (
   <Show
     actions={<ShowActions resourceName="site" />}
-    className="-mt-[50px] bg-neutral-100"
     aside={<ReportedDataAside />}
+    className="-mt-[50px] bg-neutral-100"
   >
     <RecordFrameworkProvider>
       <TabbedShowLayout>
-        <ReportedData />
+        <TabbedShowLayout.Tab label="Disturbance Report">
+          <ReportedData />
+        </TabbedShowLayout.Tab>
       </TabbedShowLayout>
     </RecordFrameworkProvider>
   </Show>

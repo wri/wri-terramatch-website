@@ -11,7 +11,7 @@ const ReportedData: FC = () => {
         <>
           <DisturbanceReport id={report.id} key={report.id} index={index} />
           <When condition={index !== DisturbanceReports.length - 1}>
-            <hr />
+            <hr className="border-[#EAEAEA]" />
           </When>
         </>
       ))}

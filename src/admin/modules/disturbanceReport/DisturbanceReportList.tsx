@@ -62,7 +62,7 @@ const DisturbanceReportDataGrid: FC = () => {
           return <CustomChipField label={title} />;
         }}
       />
-      <DateField source="dateOfIncident" label="Date of Incident" locales="en-GB" />
+      <DateField source="updatedAt" label="Date of Incident" locales="en-GB" />
       <FunctionField
         source="intensity"
         label="Intensity"
@@ -71,8 +71,8 @@ const DisturbanceReportDataGrid: FC = () => {
         }}
         sortable={false}
       />
-      <DateField source="lastUpdatedAt" label="Last Updated" locales="en-GB" />
-      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
+      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
+      <DateField source="updatedAt" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -93,7 +93,7 @@ export const DisturbanceReportList: FC = () => {
     />
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("sites", frameworkInputChoices);
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("site", frameworkInputChoices);
 
   return (
     <>

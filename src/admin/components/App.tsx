@@ -186,8 +186,10 @@ const App = () => {
         <Resource
           name={modules.disturbanceReport.ResourceName}
           list={modules.disturbanceReport.List}
+          show={modules.disturbanceReport.Show}
           icon={() => <Icon className="h-8 w-8" name={IconNames.DISTURBANCE_REPORT} />}
           options={{ label: "Disturbance Reports" }}
+          recordRepresentation={record => record?.name}
         />
       </Admin>
     </LoadingProvider>

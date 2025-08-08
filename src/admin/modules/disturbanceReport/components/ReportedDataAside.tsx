@@ -10,7 +10,7 @@ const ReportedDataAside = () => {
       <Box className="shadow-sm mb-4 rounded-lg bg-white">
         <Typography
           variant="h6"
-          className="text-gray-800 mb-4 border-b border-grey-200 px-4 py-5 text-lg font-semibold"
+          className="text-gray-800 mb-4 border-b border-[#EAEAEA] px-4 py-2 text-lg font-semibold"
         >
           Report Overview
         </Typography>
@@ -107,7 +107,7 @@ const ReportedDataAside = () => {
       <Box className="shadow-sm mb-4 rounded-lg bg-white">
         <Typography
           variant="h6"
-          className="text-gray-800 mb-4 border-b border-grey-200 px-4 py-5 text-lg font-semibold"
+          className="text-gray-800 mb-4 border-b border-[#EAEAEA] px-4 py-2 text-lg font-semibold"
         >
           Quick Actions
         </Typography>
@@ -128,7 +128,7 @@ const ReportedDataAside = () => {
       <Box className="shadow-sm rounded-lg bg-white">
         <Typography
           variant="h6"
-          className="text-gray-800 mb-4 border-b border-grey-200 px-4 py-5 text-lg font-semibold"
+          className="text-gray-800 mb-4 border-b border-[#EAEAEA] px-4 py-2 text-lg font-semibold"
         >
           High Level Metrics
         </Typography>
