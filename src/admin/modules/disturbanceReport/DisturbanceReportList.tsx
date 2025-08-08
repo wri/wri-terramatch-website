@@ -93,7 +93,7 @@ export const DisturbanceReportList: FC = () => {
     />
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("site", frameworkInputChoices);
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("sites", frameworkInputChoices);
 
   return (
     <>
