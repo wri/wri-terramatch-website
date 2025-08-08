@@ -143,7 +143,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           maintaining stable operating margins through aggressive cost-cutting measures.
         </Text>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         <Text variant="text-14-light" className="leading-none text-darkCustom-300">
           Download Media Assets
         </Text>
