@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { startCase } from "lodash";
-import { FormEvent, useCallback, useState } from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -34,6 +34,17 @@ const DemographicsRow = ({
 }: DemographicsRowProps) => {
   const [focused, setFocused] = useState(false);
   const t = useT();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = useCallback(() => {
+    if (inputRef.current) {
+      requestAnimationFrame(() => {
+        const input = inputRef.current!;
+        const length = input.value.length;
+        input.setSelectionRange(length, length);
+      });
+    }
+  }, []);
 
   const onAmountChange = useCallback(
     (event: FormEvent<HTMLInputElement>) => {
@@ -87,10 +98,12 @@ const DemographicsRow = ({
         </When>
         <When condition={onChange != null}>
           <input
+            ref={inputRef}
             value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
-            type={focused ? "number" : undefined}
+            type={focused ? "text" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            onClick={handleClick}
             onChange={onAmountChange}
             className="text-14-light hover:shadow-blue-border-input border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
           />
