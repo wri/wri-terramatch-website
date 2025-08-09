@@ -94,7 +94,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           },
           secondaryAction: {
             onClick: () => {
-              console.log("Contact Support email clicked");
+              window.location.href = "mailto:info@terramatch.org?subject=TerraMatch%20Application%20Support";
             },
             children: t("Contact Support")
           }
