@@ -171,8 +171,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     data: sitePolygonData,
     refetch,
     loading,
-    total,
-    updateSingleSitePolygonData
+    total
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
@@ -614,11 +613,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   return (
-    <SitePolygonDataProvider
-      sitePolygonData={sitePolygonData}
-      reloadSiteData={refetch}
-      updateSingleSitePolygonData={updateSingleSitePolygonData}
-    >
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>

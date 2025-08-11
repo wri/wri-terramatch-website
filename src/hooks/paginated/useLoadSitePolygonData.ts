@@ -54,8 +54,7 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     isLoading,
     total,
-    refetch,
-    updateSinglePolygon
+    refetch
   } = useAllSitePolygons({
     entityName,
     entityUuid,
@@ -67,7 +66,10 @@ const useLoadSitePolygonsData = (
 
   const updateSingleSitePolygonData = (old_id: string, updatedData: SitePolygonFullDto) => {
     try {
-      updateSinglePolygon(old_id, updatedData);
+      // Since V3 handles updates automatically through resource-based caching,
+      // we just need to clear the connection cache and let it re-fetch
+      // This will trigger a re-render with the updated data
+      refetch();
     } catch (error) {
       Log.error("Failed to update single site polygon data", { old_id, error });
       refetch();

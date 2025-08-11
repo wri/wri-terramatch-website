@@ -105,7 +105,7 @@ const defaultValue: MapAreaType = {
   setPolygonCriteriaMap: () => {},
   polygonData: [],
   setPolygonData: () => {},
-  validFilter: "",
+  validFilter: "all",
   setValidFilter: () => {},
   validationData: {},
   setValidationData: () => {},
@@ -134,7 +134,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
   const [polygonData, setPolygonData] = useState<any[]>([]);
-  const [validFilter, setValidFilter] = useState<string>("");
+  const [validFilter, setValidFilter] = useState<string>("all");
   const [validationData, setValidationData] = useState<Record<string, any>>({});
   const [validationDataTimestamp, setValidationDataTimestamp] = useState<number>(0);
   const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
