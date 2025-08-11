@@ -46,7 +46,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     modelType: undefined
   });
   const resource = entity ?? ctx.resource;
-  console.log(resource);
+
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const requestFilters: HookFilters<typeof useMedias> = {};
