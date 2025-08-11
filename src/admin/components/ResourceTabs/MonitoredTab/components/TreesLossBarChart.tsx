@@ -72,6 +72,7 @@ const TreeLossBarChart = ({ data, className = "" }: TreeLossBarChartProps) => {
             name="Tree cover loss"
             shape={(props: any) => <CustomBar {...props} />}
           />
+          <Bar dataKey="treeCover" stackId="a" fill="#4097A3" name="Tree cover" />
         </BarChart>
       </ResponsiveContainer>
     </div>

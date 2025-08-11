@@ -119,6 +119,11 @@ type YearlyData = {
   treeCoverLossFires: number;
 };
 
+type TreeCoverData = {
+  name: number;
+  treeCover: number;
+};
+
 export const cohortNames = {
   ppc: "PPC",
   terrafund: "TerraFund Top 100",
@@ -696,6 +701,23 @@ export function parseTreeCoverData(
     };
   });
 }
+
+export const parseTreeCoverDatas = (treeCoverData: PolygonIndicator[]): TreeCoverData[] => {
+  const years = Array.from(new Set(treeCoverData.flatMap(entry => (entry.data ? Object.keys(entry.data) : [])))).sort();
+
+  return years.map(year => {
+    const yearNumber = parseInt(year, 10);
+
+    const treeCoverSum = treeCoverData.reduce((sum, entry) => {
+      return sum + (entry.data?.[year] || 0);
+    }, 0);
+
+    return {
+      name: yearNumber,
+      treeCover: treeCoverSum
+    };
+  });
+};
 
 export const calculateTotalsFromProjects = (projects: DashboardProjectsLightDto[]) => {
   if (!projects || projects.length === 0) {

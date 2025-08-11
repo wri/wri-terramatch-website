@@ -78,6 +78,7 @@ interface MonitoredChartsProps {
   landUseData: any;
   record: RecordType;
   totalHectaresRestoredGoal: number;
+  parsedTreeCoverData: any[];
 }
 
 const MonitoredCharts = ({
@@ -88,7 +89,8 @@ const MonitoredCharts = ({
   strategiesData,
   landUseData,
   record,
-  totalHectaresRestoredGoal
+  totalHectaresRestoredGoal,
+  parsedTreeCoverData
 }: MonitoredChartsProps) => {
   const [hasNoData, setHasNoData] = useState(false);
 
@@ -98,6 +100,7 @@ const MonitoredCharts = ({
     }
     const noData = selected.some(chartId => {
       switch (chartId) {
+        case "0":
         case "1":
         case "2":
           return !parsedData?.length;
@@ -113,9 +116,16 @@ const MonitoredCharts = ({
     });
     setHasNoData(noData);
   }, [selected, parsedData, ecoRegionData, strategiesData, landUseData, isLoadingIndicator]);
-
+  console.log(parsedData);
+  console.log(parsedTreeCoverData);
   const renderChart = (chartId: React.Key) => {
     switch (chartId) {
+      case "0":
+        return (
+          <ChartContainer isLoading={isLoadingIndicator} hasNoData={!parsedData?.length}>
+            <TreeLossBarChart data={parsedTreeCoverData} className="flex flex-col" />
+          </ChartContainer>
+        );
       case "1":
       case "2":
         return (

@@ -99,6 +99,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
+  const [treeCoverData, setTreeCoverData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
   const [analysisToSlug, setAnalysisToSlug] = useState<any>({
@@ -149,6 +150,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     } else if (indicatorSlug === "treeCoverLossFires") {
       setTreeCoverLossFiresData(indicatorData || []);
       setTreeCoverLossData(complementaryData || []);
+    }
+    if (indicatorSlug === "treeCover") {
+      setTreeCoverData(indicatorData || []);
     }
   }, [indicatorData, complementaryData, indicatorSlug]);
 
@@ -297,6 +301,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     analysisToSlug,
     polygonMissingAnalysis,
     treeCoverLossData,
-    treeCoverLossFiresData
+    treeCoverLossFiresData,
+    treeCoverData
   };
 };

@@ -34,7 +34,8 @@ import {
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
   parsePolygonsIndicatorDataForStrategies,
-  parseTreeCoverData
+  parseTreeCoverData,
+  parseTreeCoverDatas
 } from "@/utils/dashboardUtils";
 import {
   calculatePercentage,
@@ -254,8 +255,14 @@ const DataCard = ({
 
   const basename = useBasename();
   const { record } = useShowContext();
-  const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
-    useMonitoredData(type, record.uuid);
+  const {
+    polygonsIndicator,
+    treeCoverLossData,
+    treeCoverLossFiresData,
+    isLoadingIndicator,
+    polygonOptions,
+    treeCoverData
+  } = useMonitoredData(type, record.uuid);
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
@@ -272,7 +279,14 @@ const DataCard = ({
       ? treeCoverLossFiresData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
       : treeCoverLossFiresData;
 
+  const filteredTreeCoverData =
+    selectedPolygonUuid !== "0"
+      ? treeCoverData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      : treeCoverData;
+
   const parsedData = parseTreeCoverData(filteredTreeCoverLossData, filteredTreeCoverLossFiresData);
+  const parsedTreeCoverData = parseTreeCoverDatas(filteredTreeCoverData);
+  console.log(parsedTreeCoverData);
 
   const sumTreeCoverData = parsedData.reduce(
     (acc, data) => {
@@ -493,6 +507,31 @@ const DataCard = ({
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
         {
+          accessorKey: "data.2010",
+          header: "2010",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2011",
+          header: "2011",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2012",
+          header: "2012",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2013",
+          header: "2013",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2014",
+          header: "2014",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
           accessorKey: "data.2015",
           header: "2015",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
@@ -540,6 +579,11 @@ const DataCard = ({
         {
           accessorKey: "data.2024",
           header: "2024",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2025",
+          header: "2025",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         }
       ]
@@ -984,6 +1028,7 @@ const DataCard = ({
                 landUseData={landUseData}
                 record={record}
                 totalHectaresRestoredGoal={totalHectaresRestoredGoal}
+                parsedTreeCoverData={parsedTreeCoverData}
               />
               <When condition={selected.includes("6")}>{noDataGraph}</When>
             </div>
