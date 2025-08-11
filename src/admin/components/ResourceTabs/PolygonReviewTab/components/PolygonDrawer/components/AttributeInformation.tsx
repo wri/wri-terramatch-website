@@ -24,7 +24,7 @@ import Log from "@/utils/log";
 
 const AttributeInformation = ({
   selectedPolygon,
-  updateSingleSitePolygonData,
+  sitePolygonRefresh,
   setSelectedPolygonData,
   setStatusSelectedPolygon,
   refetchPolygonVersions,
@@ -36,7 +36,7 @@ const AttributeInformation = ({
   setIsOpenPolygonDrawer
 }: {
   selectedPolygon: SitePolygonFullDto;
-  updateSingleSitePolygonData: (poly_id: string, updatedData: any) => void | undefined;
+  sitePolygonRefresh: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
@@ -130,9 +130,10 @@ const AttributeInformation = ({
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primaryUuid as string }
               })) as SitePolygonsDataResponse;
+              console.log("polygonVersionDataaaa", polygonVersionData);
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                sitePolygonRefresh();
               }
 
               setSelectedPolygonData(polygonActive);

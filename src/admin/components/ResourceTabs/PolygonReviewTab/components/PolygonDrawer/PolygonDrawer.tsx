@@ -401,7 +401,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  updateSingleSitePolygonData={() => {}}
+                  sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
