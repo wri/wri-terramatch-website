@@ -15,8 +15,6 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -72,7 +70,7 @@ const Polygons = (props: IPolygonProps) => {
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const pageSize = 20;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false } = props;
@@ -204,15 +202,6 @@ const Polygons = (props: IPolygonProps) => {
     setIsFetchingValidationData,
     fetchValidationData
   ]);
-
-  const handlePageChange = useCallback((pageIndex: number) => {
-    setCurrentPage(pageIndex + 1);
-  }, []);
-
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-  }, []);
 
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
@@ -397,8 +386,8 @@ const Polygons = (props: IPolygonProps) => {
           <div className="flex flex-col gap-1">
             <When condition={props.totalPolygons ?? 0 > 0}>
               <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
-                <span className="font-bold">{displayPolygonCount}</span> of{" "}
-                <span className="font-bold">{props.totalPolygons}</span> polygons loaded
+                <span className="font-bold">{displayPolygonCount.toLocaleString()}</span> of{" "}
+                <span className="font-bold">{(props.totalPolygons ?? 0).toLocaleString()}</span> polygons loaded
               </Text>
               <Box sx={{ width: "100%" }}>
                 <LinearProgress
@@ -413,32 +402,27 @@ const Polygons = (props: IPolygonProps) => {
       </div>
 
       {filteredPolygons.length > 0 && (
-        <div className="mb-4">
-          <Pagination
-            variant={VARIANT_PAGINATION_DASHBOARD}
-            getCanNextPage={() => currentPage < totalPages}
-            getCanPreviousPage={() => currentPage > 1}
-            getPageCount={() => totalPages}
-            nextPage={() => setCurrentPage(prev => prev + 1)}
-            pageIndex={currentPage - 1}
-            previousPage={() => setCurrentPage(prev => prev - 1)}
-            setPageIndex={handlePageChange}
-            hasPageSizeSelector
-            defaultPageSize={pageSize}
-            setPageSize={handlePageSizeChange}
-            invertSelect
-          />
-        </div>
-      )}
-
-      {filteredPolygons.length > 0 && (
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <Text variant="text-12" className="text-gray-600">
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredPolygons.length)} of {filteredPolygons.length} polygons
+            Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredPolygons.length).toLocaleString()}{" "}
+            of {filteredPolygons.length.toLocaleString()} polygons
           </Text>
-          <Text variant="text-12" className="text-gray-600">
-            Page {currentPage} of {totalPages}
-          </Text>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="border-gray-300 hover:bg-gray-50 flex h-6 w-6 items-center justify-center rounded border disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_LEFT} className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              className="border-gray-300 hover:bg-gray-50 flex h-6 w-6 items-center justify-center rounded border disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
+            </button>
+          </div>
         </div>
       )}
 

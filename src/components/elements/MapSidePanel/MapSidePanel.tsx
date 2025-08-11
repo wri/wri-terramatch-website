@@ -1,13 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -59,7 +57,7 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const pageSize = 20;
 
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
@@ -85,15 +83,6 @@ const MapSidePanel = ({
   useEffect(() => {
     setCurrentPage(1);
   }, [checkedValues]);
-
-  const handlePageChange = useCallback((pageIndex: number) => {
-    setCurrentPage(pageIndex + 1);
-  }, []);
-
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-  }, []);
 
   const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
 
@@ -247,21 +236,27 @@ const MapSidePanel = ({
         </div>
       </div>
       {filteredItems.length > 0 && (
-        <div className="mb-4">
-          <Pagination
-            variant={VARIANT_PAGINATION_DASHBOARD}
-            getCanNextPage={() => currentPage < totalPages}
-            getCanPreviousPage={() => currentPage > 1}
-            getPageCount={() => totalPages}
-            nextPage={() => setCurrentPage(prev => prev + 1)}
-            pageIndex={currentPage - 1}
-            previousPage={() => setCurrentPage(prev => prev - 1)}
-            setPageIndex={handlePageChange}
-            hasPageSizeSelector
-            defaultPageSize={pageSize}
-            setPageSize={handlePageSizeChange}
-            invertSelect
-          />
+        <div className="mb-4 flex items-center justify-between">
+          <Text variant="text-12" className="text-white">
+            Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredItems.length).toLocaleString()} of{" "}
+            {filteredItems.length.toLocaleString()} polygons
+          </Text>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_LEFT} className="h-3 w-3 text-white" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 text-white" />
+            </button>
+          </div>
         </div>
       )}
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
