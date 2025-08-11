@@ -22,6 +22,16 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: EntityName;
 }
 
+const formatEntityForUpload = (entity: string) => {
+  if (entity === "projectReports") {
+    return "project-reports";
+  }
+  if (entity === "siteReports") {
+    return "site-reports";
+  }
+  return entity;
+};
+
 const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const t = useT();
   const ctx = useShowContext();
@@ -36,7 +46,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     modelType: undefined
   });
   const resource = entity ?? ctx.resource;
-
+  console.log(resource);
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const requestFilters: HookFilters<typeof useMedias> = {};
@@ -104,7 +114,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        model={resource}
+        model={formatEntityForUpload(resource)}
         collection="media"
         entityData={ctx?.record}
         setErrorMessage={message => {
