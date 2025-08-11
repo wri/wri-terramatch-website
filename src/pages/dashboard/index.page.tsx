@@ -98,25 +98,25 @@ const getOrganizationByUuid = (projects: any[], uuid: string) => {
 const parseJobCreatedByType = (data: any, type: string) => {
   if (!data) return { type, chartData: [] };
 
-  const ptWomen = data.total_pt_women ?? 0;
-  const ptMen = data.total_pt_men ?? 0;
-  const ptYouth = data.total_pt_youth ?? 0;
-  const ptNonYouth = data.total_pt_non_youth ?? 0;
+  const ptWomen = data.totalPtWomen ?? 0;
+  const ptMen = data.totalPtMen ?? 0;
+  const ptYouth = data.totalPtYouth ?? 0;
+  const ptNonYouth = data.totalPtNonYouth ?? 0;
   const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
   const chartData = [
     {
       name: "Part-Time",
       [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
+        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
       [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
     },
     {
       name: "Full-Time",
       [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
+        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
       [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
     }
   ];
   return { type, chartData, total: data.totalJobsCreated, maxValue };
@@ -616,14 +616,14 @@ const Dashboard = () => {
           >
             <SecDashboard
               title={t("New Part-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_pt }}
+              data={{ value: jobsCreatedData?.totalPt }}
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
               title={t("New Full-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_ft }}
+              data={{ value: jobsCreatedData?.totalFt }}
               className="pl-12 mobile:pl-0 mobile:pt-4"
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}

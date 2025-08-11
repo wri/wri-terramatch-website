@@ -8,7 +8,6 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import {
-  dropdownOptionsPlantingStatus,
   dropdownOptionsRestoration,
   dropdownOptionsTarget,
   dropdownOptionsTree
@@ -49,7 +48,6 @@ const AttributeInformation = ({
 }) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
-  const [plantingStatus, setPlantingStatus] = useState<string[]>([]);
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
@@ -95,7 +93,6 @@ const AttributeInformation = ({
         })
       : [];
     setTreeDistribution(treeDistributionArray);
-    setPlantingStatus([selectedPolygon?.planting_status ?? ""]);
   }, [selectedPolygon]);
 
   useEffect(() => {
@@ -109,7 +106,6 @@ const AttributeInformation = ({
       const restorationPracticeToSend = restorationPractice.join(", ");
       const landUseSystemToSend = targetLandUseSystem.join(", ");
       const treeDistributionToSend = treeDistribution.join(", ");
-      const plantingStatusToSend = plantingStatus.join(", ");
       const updatedPolygonData = {
         poly_name: polygonName,
         plantstart: plantStartDate,
@@ -117,7 +113,6 @@ const AttributeInformation = ({
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
         num_trees: treesPlanted,
-        planting_status: plantingStatusToSend,
         adminUpdate: true
       };
       try {
@@ -206,15 +201,6 @@ const AttributeInformation = ({
         />
       </label>
       <When condition={!isLoadingVersions && !isLoadingDropdown}>
-        <Dropdown
-          label="Planting Status"
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          placeholder="Select Planting Status"
-          value={plantingStatus}
-          onChange={e => setPlantingStatus(e as string[])}
-          options={dropdownOptionsPlantingStatus}
-        />
         <Dropdown
           label="Restoration Practice"
           labelClassName="capitalize"

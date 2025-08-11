@@ -106,7 +106,7 @@ const SecDashboard = ({
 
   useOnMount(() => {
     if (data?.tableData) {
-      setToggleValue(1);
+      setToggleValue(0);
     }
   });
 

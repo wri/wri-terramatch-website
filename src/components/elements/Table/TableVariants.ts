@@ -111,20 +111,6 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };
 
-export const VARIANT_TABLE_SITE_POLYGON_REVIEW_WITH_SCROLL = {
-  table: "border-collapse",
-  name: "border-airtable",
-  tableWrapper: "border border-neutral-200 rounded-lg overflow-auto",
-  trHeader: "bg-neutral-150 sticky top-0 z-auto",
-  thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto",
-  tBody: "",
-  trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
-  thead: "bg-blueCustom-100",
-  paginationVariant: VARIANT_PAGINATION_DASHBOARD
-};
-
 export const VARIANT_TABLE_VERSION = {
   table: "border-collapse",
   name: "border-airtable",
