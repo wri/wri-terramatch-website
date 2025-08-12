@@ -6,6 +6,7 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import { parseSitePolygonsDataResponseToFullDto } from "@/components/elements/Map-mapbox/utils";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -173,15 +174,19 @@ const PolygonDrawer = ({
         pathParams: { uuid: selectedPolygon?.primaryUuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
-      setSelectedPolygonData(polygonActive);
-      setSelectedPolygonToDrawer?.({
-        id: selectedPolygonIndex as string,
-        status: polygonActive?.status as string,
-        label: polygonActive?.poly_name as string,
-        uuid: polygonActive?.poly_id as string
-      });
-      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
-      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      sitePolygonRefresh?.();
+      if (polygonActive) {
+        const polygonActiveFullDto = parseSitePolygonsDataResponseToFullDto(polygonActive);
+        setSelectedPolygonData(polygonActiveFullDto);
+        setSelectedPolygonToDrawer?.({
+          id: selectedPolygonIndex as string,
+          status: polygonActiveFullDto.status as string,
+          label: polygonActiveFullDto.name as string,
+          uuid: polygonActiveFullDto.polygonUuid as string
+        });
+        setPolygonFromMap({ isOpen: true, uuid: polygonActiveFullDto.polygonUuid ?? "" });
+        setStatusSelectedPolygon(polygonActiveFullDto.status ?? "");
+      }
       setIsLoadingDropdown(false);
       hideLoader();
     },

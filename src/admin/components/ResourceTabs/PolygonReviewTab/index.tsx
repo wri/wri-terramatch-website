@@ -204,7 +204,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     return data.map(polygon => ({
       id: undefined,
       uuid: polygon.polygonUuid ?? undefined,
-      primary_uuid: undefined,
+      primary_uuid: polygon.primaryUuid ?? undefined,
       project_id: polygon.projectId ?? undefined,
       proj_name: polygon.projectShortName ?? undefined,
       org_name: undefined,

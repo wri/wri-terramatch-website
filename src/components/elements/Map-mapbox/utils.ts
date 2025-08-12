@@ -911,6 +911,37 @@ export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undef
   }, {});
 }
 
+export function parseSitePolygonsDataResponseToFullDto(sitePolygonData: SitePolygon): SitePolygonFullDto {
+  return {
+    lightResource: false,
+    name: sitePolygonData.poly_name ?? null,
+    status: (sitePolygonData.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+    siteId: sitePolygonData.site_id ?? null,
+    polygonUuid: sitePolygonData.poly_id ?? null,
+    projectId: sitePolygonData.project_id ?? null,
+    projectShortName: sitePolygonData.proj_name ?? null,
+    plantStart: sitePolygonData.plantstart ?? null,
+    calcArea: sitePolygonData.calc_area ?? null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: sitePolygonData.site_name ?? null,
+    versionName: sitePolygonData.version_name ?? null,
+    plantingStatus: null,
+    geometry: null,
+    practice: sitePolygonData.practice ?? null,
+    targetSys: sitePolygonData.target_sys ?? null,
+    distr: sitePolygonData.distr ?? null,
+    numTrees: sitePolygonData.num_trees ?? null,
+    source: sitePolygonData.source ?? null,
+    validationStatus: sitePolygonData.validation_status?.toString() ?? null,
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: sitePolygonData.primary_uuid ?? null,
+    uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? ""
+  };
+}
+
 export const countStatusesV3 = (sitePolygonData: SitePolygonFullDto[]): DataPolygonOverview => {
   const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
 
