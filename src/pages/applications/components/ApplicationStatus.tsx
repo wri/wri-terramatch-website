@@ -49,7 +49,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
     pathParams: { accessCode: currentForm?.framework_key ? currentForm?.framework_key : "terrafund" }
   });
   //@ts-ignore
-  const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponsez;
+  const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
   //@ts-ignore
   const nextStage = stages?.find(s => s.uuid === currentSubmission?.next_stage_uuid);
 
