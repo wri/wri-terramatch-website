@@ -4,23 +4,24 @@ import { AnySchema } from "yup";
 
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import { RHFCoreTeamLeadersTableProps } from "@/components/elements/Inputs/DataTable/RHFCoreTeamLeadersTable";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { RHFLeadershipTeamTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { RHFLeadershipsTableProps } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { RHFOwnershipStakeTableProps } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { RHFSeedingProps } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { RHFStrataTableProps } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { RHFDemographicsTableProps } from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
 import { RHFDropdownProps } from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { RHFFileInputProps } from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import { RHFFinancialIndicatorsDataTableProps } from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import { RHFInputTableProps } from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { RHFMapProps } from "@/components/elements/Inputs/Map/RHFMap";
 import { RHFSelectProps } from "@/components/elements/Inputs/Select/RHFSelect";
 import { RHFSelectImageProps } from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
+import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAreaInput/StrategyAreaInput";
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
@@ -58,8 +59,7 @@ export enum FieldType {
   TreeSpecies = "treeSpecies",
   SeedingsTableInput = "seedingsTableInput",
   DataTable = "dataTable",
-  LeadershipTeamDataTable = "leadershipTeamDataTable",
-  CoreTeamLeadersDataTable = "coreTeamLeadersDataTable",
+  LeadershipsDataTable = "leadershipsDataTable",
   FundingTypeDataTable = "fundingTypeDataTable",
   StrataDataTable = "strataDataTable",
   DisturbanceDataTable = "disturbanceDataTable",
@@ -71,12 +71,17 @@ export enum FieldType {
   VolunteersTable = "volunteers",
   AllBeneficiariesTable = "allBeneficiaries",
   TrainingBeneficiariesTable = "trainingBeneficiaries",
+  IndirectBeneficiariesTable = "indirectBeneficiaries",
+  EmployeesTable = "employees",
+  AssociatesTable = "associates",
   InputTable = "inputTable",
   SelectImage = "selectImage",
   Map = "map",
   Conditional = "conditional",
   Boolean = "boolean",
-  OwnershipStakeDataTable = "OwnershipStakeDataTable"
+  OwnershipStakeDataTable = "OwnershipStakeDataTable",
+  StrategyAreaInput = "strategyAreaInput",
+  FinancialTableInput = "financialTableInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -84,6 +89,7 @@ export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
 export type FormField =
   | InputFormField
   | FieldTypeBuilder<FieldType.TextArea, TextAreaProps>
+  | FieldTypeBuilder<FieldType.StrategyAreaInput, StrategyAreaInputProps>
   | FieldTypeBuilder<
       FieldType.Dropdown,
       Omit<RHFDropdownProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
@@ -100,16 +106,12 @@ export type FormField =
     >
   | FieldTypeBuilder<FieldType.DataTable, Omit<RHFDataTableProps, "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<
-      FieldType.LeadershipTeamDataTable,
-      Omit<RHFLeadershipTeamTableProps, "onChangeCapture" | keyof UseControllerProps>
+      FieldType.LeadershipsDataTable,
+      Omit<RHFLeadershipsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
       FieldType.OwnershipStakeDataTable,
       Omit<RHFOwnershipStakeTableProps, "onChangeCapture" | keyof UseControllerProps>
-    >
-  | FieldTypeBuilder<
-      FieldType.CoreTeamLeadersDataTable,
-      Omit<RHFCoreTeamLeadersTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
       FieldType.FundingTypeDataTable,
@@ -147,6 +149,18 @@ export type FormField =
       Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
+      FieldType.IndirectBeneficiariesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.EmployeesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.AssociatesTable,
+      Omit<RHFDemographicsTableProps, "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
       FieldType.InputTable,
       Omit<RHFInputTableProps, "formHook" | "onChangeCapture" | "errors" | "error" | keyof UseControllerProps>
     >
@@ -156,4 +170,8 @@ export type FormField =
     >
   | FieldTypeBuilder<FieldType.Map, Omit<RHFMapProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<FieldType.Conditional, Omit<ConditionalInputProps, "formHook" | "onChangeCapture">>
-  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>;
+  | FieldTypeBuilder<FieldType.Boolean, Omit<BooleanInputProps, "formHook" | "onChangeCapture">>
+  | FieldTypeBuilder<
+      FieldType.FinancialTableInput,
+      Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+    >;

@@ -13,7 +13,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
 const GalleryTab = (props: EntityMapAndGalleryCardProps & { sharedDriveLink?: string }) => {
   const t = useT();
-
   return (
     <PageBody>
       <PageRow>

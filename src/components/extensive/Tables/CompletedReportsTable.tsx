@@ -1,73 +1,56 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { FC, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { GetV2ENTITYUUIDReportsResponse, useGetV2ENTITYUUIDReports } from "@/generated/apiComponents";
+import { indexNurseryReportConnection, indexSiteReportConnection } from "@/connections/Entity";
+import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { BaseModelNames } from "@/types/common";
 
 interface CompletedReportsTableProps {
-  modelName: BaseModelNames;
+  modelName: "nurseries" | "sites";
   modelUUID: string;
-  onFetch?: (data: GetV2ENTITYUUIDReportsResponse) => void;
 }
 
-const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedReportsTableProps) => {
+const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, modelUUID }) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState();
 
-  const { data: reports, isLoading } = useGetV2ENTITYUUIDReports(
-    {
-      pathParams: { entity: modelName, uuid: modelUUID },
-      queryParams: queryParams
-    },
-    {
-      keepPreviousData: true,
-      onSuccess: onFetch
-    }
-  );
-
-  return (
-    <ServerSideTable
-      meta={reports?.meta}
-      data={reports?.data || []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      columns={[
+  const columns = useMemo(
+    () =>
+      [
         {
-          accessorKey: "due_at",
+          accessorKey: "dueAt",
           header: t("Due date"),
           cell: props => {
             return format(props.getValue() as string);
           }
         },
         {
-          accessorKey: "submitted_at",
+          accessorKey: "submittedAt",
           header: t("Date submitted"),
           cell: props => {
             return format(props.getValue() as string);
           }
         },
         {
-          accessorKey: "report_title",
+          accessorKey: "reportTitle",
           header: t("Report Title"),
           enableSorting: false,
           cell: props => {
-            const report_title = props.getValue() as string;
-            const title = props.row.original.title;
+            const reportTitle = props.getValue() as string;
+            const title = modelName === "nurseries" ? (props.row.original as NurseryReportLightDto).title : undefined;
 
             return (
               <Text variant="text-14-light" className="whitespace-normal">
-                {report_title ?? title}
+                {reportTitle ?? title}
               </Text>
             );
           }
@@ -83,7 +66,7 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
           }
         },
         {
-          accessorKey: "update_request_status",
+          accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;
@@ -110,9 +93,31 @@ const CompletedReportsTable = ({ modelName, modelUUID, onFetch }: CompletedRepor
             </Button>
           )
         }
-      ]}
-    />
+      ] as ColumnDef<SiteReportLightDto | NurseryReportLightDto>[],
+    [format, modelName, t]
   );
+
+  if (modelName === "sites") {
+    return (
+      <ConnectionTable
+        connection={indexSiteReportConnection}
+        connectionProps={{ filter: { siteUuid: modelUUID } }}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        columns={columns as ColumnDef<SiteReportLightDto>[]}
+      />
+    );
+  } else if (modelName === "nurseries") {
+    return (
+      <ConnectionTable
+        connection={indexNurseryReportConnection}
+        connectionProps={{ filter: { nurseryUuid: modelUUID } }}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        columns={columns as ColumnDef<NurseryReportLightDto>[]}
+      />
+    );
+  } else {
+    throw new Error(`Invalid modelName: ${modelName}`);
+  }
 };
 
 export default CompletedReportsTable;

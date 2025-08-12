@@ -1,22 +1,29 @@
+import { useT } from "@transifex/react";
 import classnames from "classnames";
 import Link from "next/link";
 
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
+import Status from "@/components/elements/Status/Status";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
-import { Status } from "@/types/common";
+import { Status as PillStatuses } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
 export interface ActionTrackerCardRowProps {
   title: string;
   subtitle: string;
-  status: Status;
+  status: StatusEnum;
   statusText: string;
   ctaText: string;
   ctaLink: string;
+  updatedAt?: string;
+  updatedBy?: string;
   className?: string;
   onClick?: () => {};
 }
+
+const STATUS_PILL_STATUSES = ["edit", "error", "success", "awaiting", "warning", "restoration"] as const;
 
 const ActionTrackerCardRow = ({
   title,
@@ -26,8 +33,11 @@ const ActionTrackerCardRow = ({
   statusText,
   ctaLink,
   ctaText,
-  onClick
+  onClick,
+  updatedAt,
+  updatedBy
 }: ActionTrackerCardRowProps) => {
+  const t = useT();
   return (
     <Link
       href={ctaLink!}
@@ -40,12 +50,31 @@ const ActionTrackerCardRow = ({
           <Text variant="text-body-500" className="flex-1">
             {title}
           </Text>
-          <StatusPill status={status}>
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
+          {STATUS_PILL_STATUSES.includes(status as (typeof STATUS_PILL_STATUSES)[number]) ? (
+            <StatusPill status={status as PillStatuses}>
+              <Text variant="text-bold-caption-100">{t(statusText)}</Text>
+            </StatusPill>
+          ) : (
+            <Status
+              status={status}
+              variant="small"
+              className={classnames("w-fit", {
+                "bg-darkCustom-100/10": status === "draft"
+              })}
+              classNameText={classnames({
+                "text-grey-500": status === "draft"
+              })}
+            />
+          )}
         </div>
         <Text variant="text-body-300" containHtml>
           {subtitle}
+        </Text>
+        <Text variant="text-body-300" containHtml>
+          {updatedAt}
+        </Text>
+        <Text variant="text-body-300" containHtml>
+          {updatedBy}
         </Text>
       </div>
       <div className="flex w-full items-center justify-between rounded-b-md bg-primary-200 p-3 group-hover:bg-primary-400 group-hover:text-white wide:p-6">

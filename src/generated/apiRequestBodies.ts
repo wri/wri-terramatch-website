@@ -3,11 +3,6 @@
  *
  * @version 1.0.0
  */
-export type PutV2AdminUpdateRequestsUuidStatusBody = {
-  feedback?: string;
-  feedback_fields?: string[];
-};
-
 export type PatchAuthChangeBody = {
   token?: string;
   password?: string;
@@ -22,32 +17,140 @@ export type PatchV2AuthVerifyBody = {
   token?: string;
 };
 
+export type GetV2FundingProgrammeIDBody = {
+  id?: number;
+  uuid?: string;
+  name?: string;
+  description?: string;
+  location?: string;
+  read_more_url?: string;
+  framework_key?: string;
+  status?: string;
+  organisation_types?: string[];
+  stages?: {
+    id?: number;
+    uuid?: string;
+    status?: string;
+    deadline_at?: string;
+    readable_status?: string;
+    funding_programme_id?: number;
+    name?: string;
+    order?: number;
+    form?: {
+      id?: number;
+      uuid?: string;
+      type?: string;
+      version?: number;
+      title?: string;
+      subtitle?: string;
+      description?: string;
+      framework_key?: string;
+      duration?: string;
+      deadline_at?: string;
+      documentation?: string;
+      documentation_label?: string;
+      submission_message?: string;
+      published?: boolean;
+      stage_id?: string;
+      funding_programme_uuid?: string;
+      funding_programme_framework_key?: string;
+      options_other?: boolean;
+      form_sections?: {
+        order?: number;
+        form_id?: number;
+        form_questions?: {
+          id?: number;
+          uuid?: string;
+          form_section_id?: number;
+          label?: string;
+          validation?: string[];
+          parent_id?: string;
+          linked_field_key?: string;
+          children?: Record<string, any>[];
+          multichoice?: boolean;
+          order?: number;
+          options?: {
+            id?: number;
+            uuid?: string;
+            form_question_id?: number;
+            label?: string;
+            order?: number;
+            created_at?: string;
+            updated_at?: string;
+            deleted_at?: string;
+          }[];
+          table_headers?: {
+            id?: number;
+            uuid?: string;
+            form_question_id?: number;
+            label?: string;
+            order?: number;
+            created_at?: string;
+            updated_at?: string;
+            deleted_at?: string;
+          }[];
+          additional_text?: string;
+          additional_url?: string;
+          show_on_parent_condition?: boolean;
+          input_type?:
+            | "date"
+            | "text"
+            | "long-text"
+            | "select"
+            | "checkboxes"
+            | "radio"
+            | "number"
+            | "image"
+            | "file"
+            | "conditional";
+          created_at?: string;
+          updated_at?: string;
+          deleted_at?: string;
+        }[];
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      updated_by?: number;
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
+    };
+    deleted_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  }[];
+  organisations?: {
+    uuid?: string;
+    name?: string;
+  }[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  deleted_at?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type PostAuthResetBody = {
   email_address?: string;
   callback_url?: string;
-};
-
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  /**
-   * @format date
-   */
-  plantend?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
 };
 
 export type PostV2FormsEntityFormUuidBody = {
@@ -202,7 +305,7 @@ export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
 
-export type GetV2AdminNurseryReportsBody = {
+export type GetV2AdminFormsBody = {
   /**
    * search term to use on the collection
    */
@@ -233,135 +336,6 @@ export type PostV2AdminFundingProgrammeStageBody = {
   order?: number;
 };
 
-export type GetV2FundingProgrammeIDBody = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    forms?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
 export type PostV2GeometryValidateBody = {
   geometries?: {
     type?: "FeatureCollection";
@@ -373,10 +347,6 @@ export type PostV2GeometryValidateBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -403,10 +373,6 @@ export type PutV2GeometryBody = {
          * @format date
          */
         plantstart?: string;
-        /**
-         * @format date
-         */
-        plantend?: string;
         practice?: string;
         target_sys?: string;
         distr?: string;
@@ -422,6 +388,25 @@ export type PutV2GeometryBody = {
   };
 };
 
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
 export type PostV2FprojectPipelineBody = {
   /**
    * @format date
@@ -430,7 +415,7 @@ export type PostV2FprojectPipelineBody = {
   id?: number;
   submitted_by?: string;
   program?: string;
-  cohort?: string;
+  cohort?: string[];
   publish_for?: string;
   url?: string;
 };

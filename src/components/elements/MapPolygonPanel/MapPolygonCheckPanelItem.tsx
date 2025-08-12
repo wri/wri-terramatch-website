@@ -7,14 +7,11 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchDeleteV2TerrafundPolygonUuid,
-  fetchGetV2TerrafundGeojsonComplete,
-  fetchGetV2TerrafundPolygonBboxUuid
-} from "@/generated/apiComponents";
+import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 
 import Button from "../Button/Button";
 import { formatFileName } from "../Map-mapbox/utils";
@@ -53,13 +50,13 @@ const MapPolygonCheckPanelItem = ({
 
   const { map } = mapFunctions;
 
-  const flyToPolygonBounds = async (polygonUuid: string) => {
-    const bbox = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid: polygonUuid } });
-    const bounds: any = bbox.bbox;
-    if (!map.current) {
+  const bbox = useBoundingBox({ polygonUuid: uuid });
+
+  const flyToPolygonBounds = async () => {
+    if (!map.current || !bbox) {
       return;
     }
-    map.current.fitBounds(bounds, {
+    map.current.fitBounds(bbox, {
       padding: 100,
       linear: false
     });
@@ -115,7 +112,7 @@ const MapPolygonCheckPanelItem = ({
           &nbsp; {t("Zoom to")}
         </Text>
       ),
-      onClick: () => flyToPolygonBounds(uuid)
+      onClick: () => flyToPolygonBounds()
     },
     {
       id: "3",

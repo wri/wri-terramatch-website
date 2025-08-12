@@ -6,10 +6,11 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsUUID } from "@/generated/apiComponents";
+import { useGetV2FormsUUID, usePostV2FormsSubmissions } from "@/generated/apiComponents";
 import { FormRead } from "@/generated/apiSchemas";
 
-//Todo: To fetch form data and populate title, image, description and downloadLink when endpoint is ready
+import ApplicationsTable from "../cards/ApplicationsTable";
+
 const FormIntroPage = () => {
   const t = useT();
   const router = useRouter();
@@ -20,11 +21,19 @@ const FormIntroPage = () => {
     queryParams: { lang: router.locale }
   });
 
+  const { mutate: create, isLoading } = usePostV2FormsSubmissions({
+    onSuccess(data) {
+      // @ts-ignore
+      router.push(`/form/submission/${data.data.uuid}`);
+    }
+  });
+
   return (
     <BackgroundLayout>
       <ContentLayout>
         <LoadingContainer loading={!formData?.data}>
           <WizardFormIntro
+            variant="small"
             title={formData?.data.title!}
             //@ts-ignore
             imageSrc={formData?.data?.banner?.url}
@@ -37,9 +46,9 @@ const FormIntroPage = () => {
               target: "_blank"
             }}
             submitButtonProps={{
-              children: t("Continue"),
-              as: Link,
-              href: `/form/${formUUID}/pitch-select`
+              children: t("Start Application"),
+              onClick: () => create({ body: { form_uuid: formUUID } }),
+              disabled: isLoading
             }}
             backButtonProps={{
               children: t("Cancel"),
@@ -47,6 +56,7 @@ const FormIntroPage = () => {
               href: "/home"
             }}
           />
+          <ApplicationsTable fundingProgrammeUuid={formData?.data.funding_programme_uuid} />
         </LoadingContainer>
       </ContentLayout>
     </BackgroundLayout>

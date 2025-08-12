@@ -5,8 +5,9 @@ import { useRecordContext } from "react-admin";
 
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 
 interface MapFieldProps {
   source: string;
@@ -34,27 +35,19 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
     }
   );
 
-  useEffect(() => {
-    const setBbboxAndZoom = async () => {
-      if (projectPolygon?.project_polygon?.poly_uuid) {
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid }
-        });
-        const bounds: any = bbox.bbox;
-        setPolygonBbox(bounds);
-      }
-    };
+  const bbox = useBoundingBox({ projectPitchUuid: record?.uuid });
 
+  useEffect(() => {
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
       } else {
-        setBbboxAndZoom();
+        setPolygonBbox(bbox);
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
       }
     };
     getDataProjectPolygon();
-  }, [projectPolygon]);
+  }, [projectPolygon, bbox]);
 
   let projectBoundary: any;
   if (record) {

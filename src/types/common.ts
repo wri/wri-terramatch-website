@@ -241,19 +241,37 @@ export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "re
 
 export type EntityName = BaseModelNames | ReportsModelNames;
 export type BaseModelNames = "projects" | "sites" | "nurseries" | "project-pitches";
-export type ReportsModelNames = "project-reports" | "site-reports" | "nursery-reports";
+export type ReportsModelNames =
+  | "project-reports"
+  | "site-reports"
+  | "nursery-reports"
+  | "projectReports"
+  | "nurseryReports"
+  | "financial-reports"
+  | "siteReports";
 
 export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
 export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";
-export type SingularReportsModelNames = "project-report" | "site-report" | "nursery-report";
+export type SingularReportsModelNames =
+  | "project-report"
+  | "site-report"
+  | "nursery-report"
+  | "projectReport"
+  | "nurseryReport"
+  | "financialReport"
+  | "financial-report"
+  | "siteReport";
 
 export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>
   !name.endsWith("-report");
 export const isSingularReportModelName = (name: SingularEntityName): name is SingularReportsModelNames =>
   name.endsWith("-report");
+
+export const isSingularEntityName = (name: EntityName | SingularEntityName): name is SingularEntityName =>
+  !name.endsWith("s");
 
 export type Entity = {
   entityName: EntityName | SingularEntityName;

@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useStore } from "react-redux";
 
+import ApiSlice from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps } from "@/types/connection";
+
+import { useStableProps } from "./useStableProps";
 
 /**
  * Use a connection to efficiently depend on data in the Redux store.
@@ -11,44 +14,42 @@ import { Connected, Connection, OptionalProps } from "@/types/connection";
  * whole API state. This limits redraws of the component to the times that the connected state of
  * the Connection changes.
  */
-export function useConnection<TSelected, TProps extends OptionalProps = undefined>(
-  connection: Connection<TSelected, TProps>,
+export function useConnection<TSelected, TProps extends OptionalProps, State>(
+  connection: Connection<TSelected, TProps, State>,
   props: TProps | Record<any, never> = {}
 ): Connected<TSelected> {
-  const { selector, isLoaded, load } = connection;
+  const { getState, selector, isLoaded, load } = connection;
   const store = useStore<AppStore>();
 
+  const stableProps = useStableProps(props);
   const getConnected = useCallback(() => {
-    const connected = selector(store.getState().api, props);
-    const loadingDone = isLoaded == null || isLoaded(connected, props);
+    const state = (getState ?? ApiSlice.getState)(store.getState()) as State;
+    const connected = selector(state, stableProps);
+    const loadingDone = isLoaded == null || isLoaded(connected, stableProps);
     return { loadingDone, connected };
-  }, [store, isLoaded, props, selector]);
+  }, [getState, store, selector, stableProps, isLoaded]);
 
   const [connected, setConnected] = useState(() => {
     const { loadingDone, connected } = getConnected();
     return loadingDone ? connected : null;
   });
 
-  useEffect(
-    () => {
-      function checkState() {
-        const { loadingDone, connected: currentConnected } = getConnected();
-        if (load != null) load(currentConnected, props);
-        if (loadingDone) {
-          setConnected(currentConnected);
-        } else {
-          // In case something was loaded and then got unloaded via a redux store clear
-          if (connected != null) setConnected(null);
-        }
+  useEffect(() => {
+    function checkState() {
+      const { loadingDone, connected: currentConnected } = getConnected();
+      if (load != null) load(currentConnected, stableProps);
+      if (loadingDone) {
+        setConnected(currentConnected);
+      } else {
+        // In case something was loaded and then got unloaded via a redux store clear
+        setConnected(null);
       }
+    }
 
-      const subscription = store.subscribe(checkState);
-      checkState();
-      return subscription;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connection, ...Object.keys(props ?? [])]
-  );
+    const subscription = store.subscribe(checkState);
+    checkState();
+    return subscription;
+  }, [connection, getConnected, load, stableProps, store]);
 
   return connected == null ? [false, {}] : [true, connected];
 }

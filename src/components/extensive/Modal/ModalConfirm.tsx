@@ -93,13 +93,13 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         </When>
       </div>
       <div className="mt-4 flex w-full gap-4">
-        <Button variant="white-page-admin" className="w-full" onClick={onClose}>
+        <Button variant="white-page-admin" className="w-full py-3" onClick={onClose}>
           <Text variant="text-12-bold" className="capitalize">
             {t("Cancel")}
           </Text>
         </Button>
         <Button
-          className="w-full"
+          className="w-full py-3"
           onClick={() => {
             onClose();
             if (selectedOption === null && menu?.length > 0) {

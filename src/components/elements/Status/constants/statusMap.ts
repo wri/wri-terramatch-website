@@ -1,4 +1,5 @@
 export const STATUS_MAP: { [key: string]: string } = {
+  due: "Due",
   approved: "Approved",
   submitted: "Submitted",
   draft: "Draft",
@@ -6,7 +7,8 @@ export const STATUS_MAP: { [key: string]: string } = {
   "under-review": "Under Review",
   "needs-more-information": "Needs More Information",
   "restoration-in-progress": "Restoration in Progress",
-  "awaiting-approval": "Awaiting Approval"
+  "awaiting-approval": "Awaiting Approval",
+  "no-update": "No Update"
 };
 
 export enum StatusEnum {
@@ -25,5 +27,11 @@ export enum StatusEnum {
   // eslint-disable-next-line no-unused-vars
   RESTORATION_IN_PROGRESS = "restoration-in-progress",
   // eslint-disable-next-line no-unused-vars
-  AWAITING_APPROVAL = "awaiting-approval"
+  AWAITING_APPROVAL = "awaiting-approval",
+  // eslint-disable-next-line no-unused-vars
+  EDIT = "edit",
+  // eslint-disable-next-line no-unused-vars
+  ERROR = "error",
+  // eslint-disable-next-line no-unused-vars
+  WARNING = "warning"
 }

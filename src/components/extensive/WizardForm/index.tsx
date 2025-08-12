@@ -63,6 +63,7 @@ export interface WizardFormProps {
   initialStepIndex?: number;
   roundedCorners?: boolean;
   className?: string;
+  formSubmissionOrg?: any;
 }
 
 function WizardForm(props: WizardFormProps) {
@@ -103,8 +104,11 @@ function WizardForm(props: WizardFormProps) {
         //Disable auto step progress if disableAutoProgress was passed
         setSelectedStepIndex(n => n + 1);
       }
-      props.onChange?.(formHook.getValues());
+      let values = formHook.getValues();
+      values = { ...values };
+      props.onChange?.(values, true);
       props.onStepChange?.(data, selectedStep);
+      formHook.reset(values);
       formHook.clearErrors();
     } else {
       //Step changes on last step
@@ -114,7 +118,11 @@ function WizardForm(props: WizardFormProps) {
   };
 
   const onClickSaveAndClose = () => {
-    props.onChange?.(formHook.getValues(), true);
+    let values = formHook.getValues();
+    values = { ...values };
+
+    props.onChange?.(values, true);
+    formHook.reset(values);
     modal.openModal(
       ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
@@ -187,6 +195,7 @@ function WizardForm(props: WizardFormProps) {
           title={step.title}
           subtitle={step.subtitle}
           onChange={onChange}
+          formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
         ></FormStep>
         <FormFooter
           variant="sticky"
@@ -210,6 +219,7 @@ function WizardForm(props: WizardFormProps) {
                 ? props.nextButtonText ?? t("Save and continue")
                 : props.submitButtonText ?? t("Submit"),
             onClick: formHook.handleSubmit(onSubmitStep),
+            className: "py-3",
             disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
           }}
         />
@@ -249,7 +259,8 @@ function WizardForm(props: WizardFormProps) {
           submitButtonProps={{
             children: t("Submit"),
             onClick: formHook.handleSubmit(onSubmitStep),
-            disabled: props.submitButtonDisable
+            disabled: props.submitButtonDisable,
+            className: "py-3"
           }}
         />
       </div>

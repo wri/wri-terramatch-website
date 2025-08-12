@@ -12,19 +12,22 @@ import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import {
-  countriesChoices,
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
+  localeChoices,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
+import { useGadmChoices } from "@/connections/Gadm";
 
 import modules from "../..";
 import UserTitle from "./UserTitle";
 
 const UserEdit = () => {
   const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
+  const countryChoices = useGadmChoices({ level: 0 });
+
   const schemaObject: any = {
     first_name: yup.string().nullable().required(),
     last_name: yup.string().nullable().required(),
@@ -50,6 +53,7 @@ const UserEdit = () => {
         <TextInput source="email_address" label="Professional Email Address" fullWidth type="email" />
         <TextInput source="phone_number" label="Professional Phone Number" fullWidth type="tel" />
         <TextInput source="job_role" label="Job Title" fullWidth />
+        <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
         <ReferenceInput
           label="Organisation"
           source="organisation.uuid"
@@ -61,7 +65,7 @@ const UserEdit = () => {
 
         {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
-        <SelectInput source="country" label="Country" choices={countriesChoices} fullWidth />
+        <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
         <SelectArrayInput
           source="direct_frameworks"
           label="Direct Frameworks"

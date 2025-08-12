@@ -25,14 +25,14 @@ const RelatedApplicationsTable = ({ filters }: { filters?: FilterPayload }) => {
         <Card>
           <Datagrid bulkActionButtons={false} rowClick="show">
             <ReferenceField
-              source="funding_programme_uuid"
+              source="fundingProgrammeUuid"
               reference={modules.fundingProgramme.ResourceName}
               label="Funding Programme"
             >
               <TextField label="Name" source="name" />
             </ReferenceField>
             <ReferenceField
-              source="current_submission.stage.uuid"
+              source="currentSubmission.stage.uuid"
               reference={modules.stage.ResourceName}
               label="Stage"
               sortable={false}
@@ -41,7 +41,7 @@ const RelatedApplicationsTable = ({ filters }: { filters?: FilterPayload }) => {
             </ReferenceField>
             <FunctionField
               label="Status"
-              source="current_submission.status"
+              source="currentSubmission.status"
               render={(record: any) =>
                 statusChoices.find(status => status.id === record?.current_submission?.status)?.name ||
                 record?.current_submission?.status

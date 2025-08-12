@@ -13,11 +13,11 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
 
   const initialValues = useMemo(
     () => ({
-      content: currentData?.content ? JSON.parse(currentData.content) : "",
+      content: currentData?.content ?? "",
       title: currentData?.title || "",
       date: currentData?.date || "",
       thumbnail: currentData?.thumbnail,
-      categories: currentData?.category ? currentData.category : "",
+      categories: currentData?.category ? currentData.category : [],
       orgUuid: mode === "edit" ? currentData?.organization?.uuid : record?.organization?.uuid
     }),
     [
@@ -66,6 +66,14 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
     [setValue]
   );
 
+  const handleOrganizationChange = useCallback(
+    (value: string) => {
+      setValue("organization.uuid", value);
+      setValue("orgUuid", value);
+    },
+    [setValue]
+  );
+
   const handleStatusChange = useCallback(
     (status: "draft" | "published") => {
       setValue("status", status);
@@ -93,6 +101,7 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
       handleContentChange,
       handleTitleChange,
       handleDateChange,
+      handleOrganizationChange,
       handleStatusChange,
       handlePreview,
       handleDelete

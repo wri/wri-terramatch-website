@@ -1,12 +1,14 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -20,12 +22,12 @@ import ModalExpand from "@/components/extensive/Modal/ModalExpand";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
+import { useDashboardImpactStory } from "@/connections/DashboardEntity";
+import { useGadmChoices } from "@/connections/Gadm";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
-import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { fetchGetV2ImpactStoriesId } from "@/generated/apiComponents";
-import { DashboardGetProjectsData } from "@/generated/apiSchemas";
+import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
@@ -49,7 +51,7 @@ export const IMPACT_STORIES_TOOLTIP =
   "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
 
 interface RowData {
-  country_slug: undefined;
+  country: string | null;
   uuid: string;
 }
 
@@ -59,18 +61,19 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
-  polygonsData?: Record<string, string[]>;
+  polygonsData?: { data: Record<string, string[]>; centroids: any[] };
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   showImagesButton?: boolean;
   bbox?: BBox | undefined;
   isUserAllowed?: boolean;
   isLoadingHectaresUnderRestoration?: boolean;
   projectCounts?: {
-    total_enterprise_count: number;
-    total_non_profit_count: number;
+    totalEnterpriseCount: number;
+    totalNonProfitCount: number;
   };
   transformedStories: any;
   isLoading: boolean;
+  hasAccess?: boolean;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -88,21 +91,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     isUserAllowed = true,
     isLoadingHectaresUnderRestoration = false,
     transformedStories,
-    isLoading
+    isLoading,
+    hasAccess
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
-  const { showLoader, hideLoader } = useLoading();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
-
+  const router = useRouter();
+  const { country } = router.query;
   useValueChanged(filters.country, () => {
     setSelectedCountry(filters.country.country_slug);
   });
@@ -113,6 +118,56 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setProjectUUID(filters.uuid);
   });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
+  const [pendingStoryData, setPendingStoryData] = useState<any>(null);
+  const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && impactStory) {
+      const fullStory = impactStory as unknown as DashboardImpactStoryFullDto;
+      const parsedData = {
+        uuid: fullStory.uuid ?? "",
+        title: fullStory.title ?? "",
+        date: fullStory.date ?? "",
+        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        category: fullStory.category ?? [],
+        thumbnail: fullStory.thumbnail ?? "",
+        organization: {
+          name: fullStory.organisation?.name ?? "",
+          category: fullStory.category ?? pendingStoryData.category ?? [],
+          country:
+            fullStory.organisation?.countries && fullStory.organisation.countries.length > 0
+              ? fullStory.organisation.countries
+                  .map((c: any) => {
+                    const found = countryChoices.find(country => country.id === c.label);
+                    return found ? found.name : c.label;
+                  })
+                  .join(", ")
+              : "No country",
+          facebook_url: fullStory.organisation?.facebook_url ?? pendingStoryData.organization?.facebook_url ?? "",
+          instagram_url: fullStory.organisation?.instagram_url ?? pendingStoryData.organization?.instagram_url ?? "",
+          linkedin_url: fullStory.organisation?.linkedin_url ?? pendingStoryData.organization?.linkedin_url ?? "",
+          twitter_url: fullStory.organisation?.twitter_url ?? pendingStoryData.organization?.twitter_url ?? ""
+        },
+        status: fullStory.status ?? ""
+      };
+      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, impactStory, openModal, t, countryChoices]);
+
+  useEffect(() => {
+    if (selectedStoryId && pendingStoryData && loadFailure) {
+      console.error("Error fetching story details:", loadFailure.message);
+      openModal(ModalId.MODAL_STORY, <ModalStory data={pendingStoryData} preview={false} title={t("IMPACT STORY")} />);
+
+      setSelectedStoryId(undefined);
+      setPendingStoryData(null);
+    }
+  }, [selectedStoryId, pendingStoryData, loadFailure, openModal, t]);
+
   useValueChanged(initialBbox, () => {
     if (initialBbox) {
       setCurrentBbox(initialBbox);
@@ -223,31 +278,34 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               className="custom-popup-close-button !h-full"
               centroids={centroids}
               showPopups={true}
-              polygonsData={polygonsData as Record<string, string[]>}
+              polygonsData={polygonsData?.data as Record<string, string[]>}
+              polygonsCentroids={polygonsData?.centroids}
               showImagesButton={showImagesButton}
               bbox={dashboardBbox}
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
               projectUUID={projectUUID}
+              hasAccess={hasAccess}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
-
-          <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
-            <div className="flex gap-2">
-              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-              <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
-              </Text>
+          <When condition={!projectUUID}>
+            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+              <div className="flex gap-2">
+                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
+                <Text variant="text-12" className="text-darkCustom">
+                  {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
+                </Text>
+              </div>
+              <div className="flex items-center gap-2">
+                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
+                <Text variant="text-12" className="text-darkCustom">
+                  {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
+                </Text>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-              <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
-              </Text>
-            </div>
-          </div>
+          </When>
         </div>
       </ModalExpand>
     );
@@ -274,20 +332,19 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
               closeModal("modalExpand");
-              if (row?.country_slug) {
+              if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid as string,
+                  uuid: (row.uuid ?? "") as string,
                   country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country_slug) ||
-                    prevValues.country
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
               if (row.uuid) {
                 setFilters(prevValues => ({
                   ...prevValues,
-                  uuid: row.uuid
+                  uuid: (row.uuid ?? "") as string
                 }));
               }
               return;
@@ -322,41 +379,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     );
   };
 
-  const ModalStoryOpen = async (storyData: any) => {
-    try {
-      showLoader();
-      const response: any = await fetchGetV2ImpactStoriesId({
-        pathParams: {
-          id: storyData.uuid
-        }
-      });
-      const parsedData = {
-        uuid: response.data.uuid,
-        title: response.data.title,
-        date: response.data.date,
-        content: JSON.parse(response.data.content),
-        category: response.data.category,
-        thumbnail: response.data.thumbnail || "",
-        organization: {
-          name: response.data.organization?.name ?? "",
-          category: response.data.category,
-          country:
-            response.data.organization?.countries?.length > 0
-              ? response.data.organization.countries.map((c: any) => c.label).join(", ")
-              : "No country",
-          facebook_url: response.data.organization?.facebook_url ?? "",
-          instagram_url: response.data.organization?.instagram_url ?? "",
-          linkedin_url: response.data.organization?.linkedin_url ?? "",
-          twitter_url: response.data.organization?.twitter_url ?? ""
-        },
-        status: response.data.status
-      };
-      hideLoader();
-      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
-    } catch (error) {
-      console.error("Error fetching story details:", error);
-      openModal(ModalId.MODAL_STORY, <ModalStory data={storyData} preview={false} title={t("IMPACT STORY")} />);
-    }
+  const ModalStoryOpen = (storyData: any) => {
+    setSelectedStoryId(storyData.uuid);
+    setPendingStoryData(storyData);
   };
 
   const columnMobile = (columns as any[]).filter(
@@ -367,7 +392,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     <ContentDashboardtWrapper isLeftWrapper={false}>
       <div className="shadow-lg relative w-full rounded-lg border-4 border-white mobile:order-2">
         <Button
-          className="absolute right-5 top-6 z-10"
+          className="absolute right-5 top-6 z-10 mobile:hidden"
           variant="white-button-map"
           onClick={() => {
             ModalMap();
@@ -386,33 +411,103 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showLegend={false}
             mapFunctions={dashboardMapFunctions}
             isDashboard={"dashboard"}
-            className="custom-popup-close-button mobile:!h-[381px]"
+            className="custom-popup-close-button !h-[600px] mobile:!h-[381px]"
             centroids={centroids}
             showPopups={true}
-            polygonsData={polygonsData as Record<string, string[]>}
+            polygonsData={polygonsData?.data as Record<string, string[]>}
+            polygonsCentroids={polygonsData?.centroids}
             showImagesButton={showImagesButton}
             bbox={currentBbox}
             selectedCountry={selectedCountry}
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}
             projectUUID={projectUUID}
+            hasAccess={hasAccess}
           />
         </LoadingContainerOpacity>
-        <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
-          <div className="flex gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Non-Profit Projects ({count})", { count: projectCounts?.total_non_profit_count ?? 0 })}
-            </Text>
+        <When condition={!projectUUID}>
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
+            <div className="flex gap-2">
+              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
+              <Text variant="text-12" className="text-darkCustom">
+                {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
+              </Text>
+            </div>
+            <div className="flex items-center gap-2">
+              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
+              <Text variant="text-12" className="text-darkCustom">
+                {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
+              </Text>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-            <Text variant="text-12" className="text-darkCustom">
-              {t("Enterprise Projects ({count})", { count: projectCounts?.total_enterprise_count ?? 0 })}
-            </Text>
-          </div>
-        </div>
+        </When>
       </div>
+      <When condition={!country}>
+        <PageCard
+          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
+          classNameSubTitle="mt-4"
+          gap={6}
+          isUserAllowed={isUserAllowed}
+          subtitleMore={true}
+          title={t(titleTable)}
+          tooltip={textTooltipTable}
+          tooltipTrigger="click"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+          headerChildren={
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
+              </div>
+            </Button>
+          }
+        >
+          <Table
+            visibleRows={50}
+            columns={isMobile ? columnMobile : columns}
+            data={data}
+            classNameWrapper="mobile:px-0"
+            onRowClick={row => {
+              if (row?.country && filters.country.id === 0) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: "",
+                  country: {
+                    country_slug: row.uuid as string,
+                    id: 1,
+                    data: {
+                      label: row.country?.split("_")[0] ?? "",
+                      icon: `/flags/${(row.uuid as string).toLowerCase()}.svg`
+                    }
+                  }
+                }));
+                return;
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
+            }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
+        </PageCard>
+      </When>
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
@@ -449,7 +544,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         <SecDashboard
           title={t("Restoration Strategies Represented")}
           data={{}}
-          classNameBody="ml-[-40px] lg:ml-[-35px] mobile:mx-[-33px]"
+          classNameBody="ml-[-30px] lg:ml-[-24px] mobile:mx-[-33px] wide:ml-[-16px]"
           chartType={CHART_TYPES.simpleBarChart}
           dataForChart={dataHectaresUnderRestoration}
           tooltip={t(RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP)}
@@ -465,64 +560,66 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           isLoading={isLoadingHectaresUnderRestoration}
         />
       </PageCard>
-
-      <PageCard
-        className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
-        classNameSubTitle="mt-4"
-        gap={6}
-        isUserAllowed={isUserAllowed}
-        subtitleMore={true}
-        title={t(titleTable)}
-        tooltip={textTooltipTable}
-        tooltipTrigger="click"
-        iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
-        headerChildren={
-          <Button
-            variant="white-border"
-            onClick={() => {
-              ModalTable();
-            }}
-          >
-            <div className="flex items-center gap-1">
-              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-              {!isMobile && (
-                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                  {t("See All")}
-                </Text>
-              )}
-            </div>
-          </Button>
-        }
-      >
-        <Table
-          visibleRows={50}
-          columns={isMobile ? columnMobile : columns}
-          data={data}
-          classNameWrapper="mobile:px-0"
-          onRowClick={row => {
-            if (row?.country_slug) {
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid as string,
-                country:
-                  dashboardCountries?.find(country => country.country_slug === row?.country_slug) || prevValues.country
-              }));
-            }
-
-            if (row.uuid) {
-              setFilters(prevValues => ({
-                ...prevValues,
-                uuid: row.uuid
-              }));
-            }
-            return;
-          }}
-          classNameTableWrapper={
-            filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+      <When condition={!!country}>
+        <PageCard
+          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
+          classNameSubTitle="mt-4"
+          gap={6}
+          isUserAllowed={isUserAllowed}
+          subtitleMore={true}
+          title={t(titleTable)}
+          tooltip={textTooltipTable}
+          tooltipTrigger="click"
+          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+          headerChildren={
+            <Button
+              variant="white-border"
+              onClick={() => {
+                ModalTable();
+              }}
+            >
+              <div className="flex items-center gap-1">
+                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+                {!isMobile && (
+                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                    {t("See All")}
+                  </Text>
+                )}
+              </div>
+            </Button>
           }
-          variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
-        />
-      </PageCard>
+        >
+          <Table
+            visibleRows={50}
+            columns={isMobile ? columnMobile : columns}
+            data={data}
+            classNameWrapper="mobile:px-0"
+            onRowClick={row => {
+              if (row?.country) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid as string,
+                  country:
+                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
+                }));
+              }
+
+              if (row.uuid) {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  uuid: row.uuid
+                }));
+              }
+              return;
+            }}
+            classNameTableWrapper={
+              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+            }
+            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+          />
+        </PageCard>
+      </When>
+
       <PageCard
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"
         classNameSubTitle="mt-4"
@@ -573,7 +670,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                       <Icon name={IconNames.BRIEFCASE} className="h-4 w-4" /> {item.organization.name}
                     </Text>
                     <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
-                      <Icon name={IconNames.PIN} className="h-4 w-4" /> {item.organization.country}
+                      <Icon name={IconNames.PIN} className="h-4 w-4" />{" "}
+                      {(() => {
+                        const gadmCountry = countryChoices.find(country => country.id === item.organization.country);
+                        return gadmCountry ? gadmCountry.name : item.organization.country;
+                      })()}
                     </Text>
                   </div>
                 </button>

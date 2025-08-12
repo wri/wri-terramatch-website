@@ -91,7 +91,7 @@ export async function apiFetch<
           ...(await response.json())
         };
       } catch (e) {
-        Log.error("v1/2 API Fetch error", e);
+        Log.info("v1/2 API Fetch error", e);
         error = {
           statusCode: -1
         };
@@ -110,7 +110,7 @@ export async function apiFetch<
       return (await response.blob()) as unknown as TData;
     }
   } catch (e) {
-    Log.error("v1/2 API Fetch error", e);
+    Log.info("v1/2 API Fetch error", e);
     error = {
       statusCode: response?.status || -1,
       //@ts-ignore
@@ -163,13 +163,21 @@ async function loadJob(signal: AbortSignal | undefined, delayedJobId: string, re
     }
 
     return await response.json();
-  } catch (e) {
+  } catch (e: unknown) {
     Log.error("Delayed Job Fetch error", e);
-    error = {
-      statusCode: response?.status || -1,
-      //@ts-ignore
-      ...(e || {})
-    };
+
+    if (typeof e === "object" && e !== null) {
+      const errorMessage = (e as { message?: string }).message ?? "";
+      const statusCode = (e as { statusCode?: number }).statusCode ?? -1;
+
+      const isNetworkError = errorMessage.includes("network changed") || errorMessage.includes("Failed to fetch");
+
+      if ((isNetworkError || statusCode === -1) && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
+        return loadJob(signal, delayedJobId, retries - 1);
+      }
+    }
+
     throw error;
   }
 }
@@ -186,9 +194,9 @@ async function processDelayedJob<TData>(signal: AbortSignal | undefined, delayed
     jobResult = await loadJob(signal, delayedJobId)
   ) {
     const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
-    if (totalContent != null && processedContent != null) {
-      JobsSlice.setJobsProgress(totalContent, processedContent, progressMessage);
-    }
+    const effectiveTotalContent =
+      jobResult.data?.attributes?.status === "pending" && totalContent === null ? 1 : totalContent ?? 0;
+    JobsSlice.setJobsProgress(effectiveTotalContent, processedContent ?? 0, progressMessage);
 
     if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));

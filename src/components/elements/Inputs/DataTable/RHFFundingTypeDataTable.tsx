@@ -1,13 +1,15 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
-import { useDeleteV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
+import { useCurrencyContext } from "@/context/currency.provider";
+import { useDeleteV2FundingTypeUUID, usePatchV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
+import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -40,9 +42,12 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
       type: FieldType.Dropdown,
       validation: yup.string().required(),
       fieldProps: {
-        options: Array(10)
-          .fill(2014)
-          .map((item, index) => ({ title: `${item + index}`, value: `${item + index}` })),
+        options: Array(6)
+          .fill(0)
+          .map((_, index) => {
+            const year = new Date().getFullYear() - 5 + index;
+            return { title: `${year}`, value: year };
+          }),
         required: true
       }
     },
@@ -87,8 +92,14 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
   const t = useT();
   const { field } = useController(props);
   const value = field?.value || [];
+  const [tableKey, setTableKey] = useState(0);
 
   const [, { organisationId }] = useMyOrg();
+  const { currency } = useCurrencyContext();
+
+  const refreshTable = () => {
+    setTableKey(prev => prev + 1);
+  };
 
   const { mutate: createTeamMember } = usePostV2FundingType({
     onSuccess(data) {
@@ -107,10 +118,37 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     }
   });
 
+  const { mutate: updateTeamMember } = usePatchV2FundingTypeUUID({
+    onSuccess(data, variables) {
+      const _tmp = [...value];
+      //@ts-ignore
+      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
+
+      if (index !== -1) {
+        //@ts-ignore
+        _tmp[index] = data.data;
+        field.onChange(_tmp);
+        onChangeCapture?.();
+        props?.formHook?.reset(props?.formHook.getValues());
+        clearErrors();
+        refreshTable();
+      }
+    }
+  });
+
+  const clearErrors = useCallback(() => {
+    props?.formHook?.clearErrors(props.name);
+  }, [props?.formHook, props.name]);
+
+  const formattedValue = value.map((item: any) => ({
+    ...item,
+    amount: currencyInput[currency] ? currencyInput[currency] + " " + item?.amount : item?.amount
+  }));
   return (
     <DataTable
+      key={tableKey}
       {...props}
-      value={value || []}
+      value={formattedValue || []}
       handleCreate={data => {
         createTeamMember({
           body: {
@@ -124,9 +162,20 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
           removeTeamMember({ pathParams: { uuid } });
         }
       }}
+      handleUpdate={data => {
+        if (data.uuid) {
+          updateTeamMember({
+            pathParams: { uuid: data.uuid },
+            body: { ...data }
+          });
+        }
+      }}
       addButtonCaption={t("Add funding source")}
+      modalEditTitle={t("Update funding source")}
       tableColumns={getFundingTypeTableColumns(t)}
       fields={getFundingTypeFields(t)}
+      hasPagination={true}
+      invertSelectPagination={true}
     />
   );
 };

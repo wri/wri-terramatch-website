@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./userServiceFetcher";
-import { userServiceFetch } from "./userServiceFetcher";
 import type * as Schemas from "./userServiceSchemas";
 
 export type AuthLoginError = Fetcher.ErrorWrapper<{
@@ -26,7 +26,7 @@ export type AuthLoginResponse = {
     /**
      * @example logins
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -42,19 +42,16 @@ export type AuthLoginResponse = {
 };
 
 export type AuthLoginVariables = {
-  body: Schemas.LoginRequest;
+  body: Schemas.LoginBody;
 };
 
 /**
  * Receive a JWT Token in exchange for login credentials
  */
-export const authLogin = (variables: AuthLoginVariables, signal?: AbortSignal) =>
-  userServiceFetch<AuthLoginResponse, AuthLoginError, Schemas.LoginRequest, {}, {}, {}>({
-    url: "/auth/v3/logins",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const authLogin = new V3ApiEndpoint<AuthLoginResponse, AuthLoginError, AuthLoginVariables, {}>(
+  "/auth/v3/logins",
+  "POST"
+);
 
 export type UsersFindPathParams = {
   /**
@@ -99,7 +96,7 @@ export type UsersFindResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -147,13 +144,10 @@ export type UsersFindVariables = {
 /**
  * Fetch a user by UUID, or with the 'me' identifier
  */
-export const usersFind = (variables: UsersFindVariables, signal?: AbortSignal) =>
-  userServiceFetch<UsersFindResponse, UsersFindError, undefined, {}, {}, UsersFindPathParams>({
-    url: "/users/v3/users/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
+  "/users/v3/users/{uuid}",
+  "GET"
+);
 
 export type UserUpdatePathParams = {
   /**
@@ -209,7 +203,7 @@ export type UserUpdateResponse = {
     /**
      * @example users
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -251,20 +245,89 @@ export type UserUpdateResponse = {
 };
 
 export type UserUpdateVariables = {
-  body: Schemas.UserUpdateBodyDto;
+  body: Schemas.UserUpdateBody;
   pathParams: UserUpdatePathParams;
 };
 
 /**
  * Update a user by UUID
  */
-export const userUpdate = (variables: UserUpdateVariables, signal?: AbortSignal) =>
-  userServiceFetch<UserUpdateResponse, UserUpdateError, Schemas.UserUpdateBodyDto, {}, {}, UserUpdatePathParams>({
-    url: "/users/v3/users/{uuid}",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
+  "/users/v3/users/{uuid}",
+  "PATCH"
+);
+
+export type UserCreationError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type UserCreationResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserCreationVariables = {
+  body: Schemas.UserCreateBody;
+};
+
+/**
+ * Create a new user
+ */
+export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
+  "/users/v3/users",
+  "POST"
+);
 
 export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
   status: 400;
@@ -285,7 +348,7 @@ export type RequestPasswordResetResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -307,13 +370,12 @@ export type RequestPasswordResetVariables = {
 /**
  * Send password reset email with a token
  */
-export const requestPasswordReset = (variables: RequestPasswordResetVariables, signal?: AbortSignal) =>
-  userServiceFetch<RequestPasswordResetResponse, RequestPasswordResetError, Schemas.ResetPasswordRequest, {}, {}, {}>({
-    url: "/auth/v3/passwordResets",
-    method: "post",
-    ...variables,
-    signal
-  });
+export const requestPasswordReset = new V3ApiEndpoint<
+  RequestPasswordResetResponse,
+  RequestPasswordResetError,
+  RequestPasswordResetVariables,
+  {}
+>("/auth/v3/passwordResets", "POST");
 
 export type ResetPasswordPathParams = {
   token: string;
@@ -338,7 +400,7 @@ export type ResetPasswordResponse = {
     /**
      * @example passwordResets
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -361,18 +423,60 @@ export type ResetPasswordVariables = {
 /**
  * Reset password using the provided token
  */
-export const resetPassword = (variables: ResetPasswordVariables, signal?: AbortSignal) =>
-  userServiceFetch<
-    ResetPasswordResponse,
-    ResetPasswordError,
-    Schemas.ResetPasswordDto,
-    {},
-    {},
-    ResetPasswordPathParams
-  >({ url: "/auth/v3/passwordResets/{token}", method: "put", ...variables, signal });
+export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPasswordError, ResetPasswordVariables, {}>(
+  "/auth/v3/passwordResets/{token}",
+  "PUT"
+);
+
+export type VerifyUserError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type VerifyUserResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.VerificationUserResponseDto;
+  };
+};
+
+export type VerifyUserVariables = {
+  body: Schemas.VerificationUserRequest;
+};
+
+/**
+ * Receive a token to verify a user and return the verification status
+ */
+export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError, VerifyUserVariables, {}>(
+  "/auth/v3/verifications",
+  "POST"
+);
 
 export const operationsByTag = {
   login: { authLogin },
-  users: { usersFind, userUpdate },
-  resetPassword: { requestPasswordReset, resetPassword }
+  users: { usersFind, userUpdate, userCreation },
+  resetPassword: { requestPasswordReset, resetPassword },
+  verificationUser: { verifyUser }
 };

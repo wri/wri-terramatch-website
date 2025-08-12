@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -10,7 +11,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ProjectsUUIDSites } from "@/generated/apiComponents";
+import { useSiteIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
@@ -20,26 +21,18 @@ interface ProjectNurseriesTabProps {
 const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
 
-  const { data: sites, isLoading } = useGetV2ProjectsUUIDSites(
-    {
-      pathParams: { uuid: project.uuid }
-    },
-    {
-      keepPreviousData: true
-    }
-  );
+  const [isLoaded, { data: sites }] = useSiteIndex({
+    filter: { projectUuid: project.uuid },
+    pageSize: DEFAULT_PAGE_SIZE,
+    pageNumber: 1
+  });
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <LoadingContainer wrapInPaper loading={isLoading}>
-            <If
-              condition={
-                //@ts-ignore
-                sites?.meta?.unfiltered_total === 0
-              }
-            >
+          <LoadingContainer wrapInPaper loading={!isLoaded}>
+            <If condition={sites?.length === 0}>
               <Then>
                 <EmptyState
                   iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
@@ -49,14 +42,14 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
                   )}
                   ctaProps={{
                     as: Link,
-                    href: `/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`,
+                    href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
                     children: "Add Site"
                   }}
                 />
               </Then>
               <Else>
                 <PageCard title={t("Project Sites")}>
-                  <SitesTable project={project} />
+                  <SitesTable project={project} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>

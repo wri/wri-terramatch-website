@@ -13,7 +13,7 @@ import {
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
-import { userPrimaryRoleChoices } from "../const";
+import { localeChoices, userPrimaryRoleChoices } from "../const";
 
 export const UserShowAside = () => {
   const notify = useNotify();
@@ -54,24 +54,48 @@ export const UserShowAside = () => {
   });
 
   return (
-    <>
+    <div className="user-aside">
       <Aside title="User Review">
         <Grid container spacing={2} marginY={2}>
           <Grid item xs={6}>
-            <Typography variant="h6">First Name</Typography>
-            <TextField source="first_name" />
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              First Name
+            </Typography>
+            <TextField source="first_name" className="admin-text-16 !font-medium text-darkCustom" />
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">Last Name</Typography>
-            <TextField source="last_name" />
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              Last Name
+            </Typography>
+            <TextField source="last_name" className="admin-text-16 !font-medium text-darkCustom" />
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">Type</Typography>
-            <SelectField source="role" choices={userPrimaryRoleChoices} emptyText="Not Provided" />
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              Type
+            </Typography>
+            <SelectField
+              source="role"
+              choices={userPrimaryRoleChoices}
+              emptyText="Not Provided"
+              className="admin-text-16 !font-medium text-darkCustom"
+            />
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">Verified</Typography>
-            <BooleanField source="verified" />
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              Locale
+            </Typography>
+            <SelectField
+              source="locale"
+              choices={localeChoices}
+              emptyText="Not Provided"
+              className="admin-text-16 !font-medium text-darkCustom"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              Verified
+            </Typography>
+            <BooleanField source="verified" className="admin-text-16 !font-medium text-darkCustom" />
           </Grid>
         </Grid>
         <Divider />
@@ -79,6 +103,7 @@ export const UserShowAside = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="contained"
+              className="!rounded-lg !bg-primary"
               onClick={() =>
                 sendLoginDetails({
                   body: {
@@ -92,6 +117,7 @@ export const UserShowAside = () => {
             </Button>
             <Button
               variant="contained"
+              className="!rounded-lg !bg-primary"
               onClick={() =>
                 resendVerificationEmail({
                   body: {
@@ -104,11 +130,16 @@ export const UserShowAside = () => {
             >
               Resend Verification Email
             </Button>
-            <Button variant="contained" onClick={() => setShowVerifyEmailDialog(true)}>
+            <Button
+              variant="contained"
+              className="!rounded-lg !bg-primary"
+              onClick={() => setShowVerifyEmailDialog(true)}
+            >
               Verify Email
             </Button>
             <Button
               variant="contained"
+              className="!rounded-lg !bg-primary"
               onClick={() =>
                 sendPasswordReset({
                   body: {
@@ -120,7 +151,11 @@ export const UserShowAside = () => {
             >
               Send Reset Password Email
             </Button>
-            <Button variant="contained" onClick={() => setShowResetPasswordDialog(true)}>
+            <Button
+              variant="contained"
+              className="!rounded-lg !bg-primary"
+              onClick={() => setShowResetPasswordDialog(true)}
+            >
               Reset Password
             </Button>
           </Stack>
@@ -143,6 +178,6 @@ export const UserShowAside = () => {
         }}
         onDisAgree={() => setShowVerifyEmailDialog(false)}
       />
-    </>
+    </div>
   );
 };

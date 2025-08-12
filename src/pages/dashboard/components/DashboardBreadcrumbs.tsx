@@ -1,68 +1,81 @@
 import classNames from "classnames";
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { TextVariants } from "@/types/common";
+import { getCohortName } from "@/utils/dashboardUtils";
 
 interface DashboardBreadcrumbsProps {
   className?: string;
   clasNameText?: string;
   textVariant?: TextVariants;
-  framework: string;
-  countryId?: number;
-  countryName?: string;
-  countrySlug?: string;
-  projectName?: string;
+  cohort: string[] | null | undefined;
+  countryData?: CountriesProps;
+  projectName?: string | undefined | null;
 }
 
 const DashboardBreadcrumbs = ({
   className,
   clasNameText,
   textVariant,
-  framework,
-  countryId,
-  countryName,
-  countrySlug,
+  cohort,
+  countryData,
   projectName
 }: DashboardBreadcrumbsProps) => {
   const { setFilters } = useDashboardContext();
 
-  const links = [
-    {
-      title: framework,
-      onClick: () =>
-        setFilters(prevValues => ({
-          ...prevValues,
-          programme: "terrafund",
-          country: {
-            country_slug: "",
-            id: 0,
-            data: {
-              label: "",
-              icon: ""
-            }
-          },
-          uuid: ""
-        }))
-    },
-    countryName
-      ? {
-          title: countryName,
-          onClick: () =>
+  const cohortDisplayName = cohort && cohort.length > 0 ? getCohortName(cohort[0]) || cohort[0] : "";
+
+  const links = useMemo(
+    () =>
+      [
+        {
+          title: cohortDisplayName,
+          onClick: () => {
             setFilters(prevValues => ({
               ...prevValues,
+              cohort: cohort && cohort.length > 0 ? [cohort[0]] : [],
+              country: {
+                country_slug: "",
+                id: 0,
+                data: {
+                  label: "",
+                  icon: ""
+                }
+              },
               uuid: ""
-            }))
-        }
-      : null,
-    projectName
-      ? {
-          title: projectName
-        }
-      : null
-  ].filter(Boolean);
+            }));
+          }
+        },
+        countryData
+          ? {
+              title: countryData?.data?.label,
+              onClick: () => {
+                setFilters(prevValues => ({
+                  ...prevValues,
+                  country: {
+                    country_slug: countryData?.country_slug,
+                    id: countryData?.id ?? 0,
+                    data: {
+                      label: countryData?.data?.label,
+                      icon: countryData?.data?.icon
+                    }
+                  },
+                  uuid: ""
+                }));
+              }
+            }
+          : null,
+        projectName
+          ? {
+              title: projectName
+            }
+          : null
+      ].filter(Boolean),
+    [cohortDisplayName, countryData, projectName, setFilters, cohort]
+  );
 
   return (
     <div className={classNames(className, "flex items-center gap-3")}>
@@ -76,7 +89,8 @@ const DashboardBreadcrumbs = ({
                     variant={textVariant || "text-14-bold"}
                     className={classNames(
                       "text-darkCustom opacity-60 hover:text-primary hover:underline hover:opacity-100",
-                      "line-clamp-1",
+                      "text-nowrap",
+                      "w-max",
                       clasNameText
                     )}
                     title={item.title}
@@ -87,7 +101,7 @@ const DashboardBreadcrumbs = ({
               ) : (
                 <Text
                   variant={textVariant || "text-14-bold"}
-                  className={classNames("text-darkCustom", "line-clamp-1", clasNameText)}
+                  className={classNames("text-darkCustom", "text-nowrap", "line-clamp-1", clasNameText)}
                   title={item.title}
                 >
                   {item.title}

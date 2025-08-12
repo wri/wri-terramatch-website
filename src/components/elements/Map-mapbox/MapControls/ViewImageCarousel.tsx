@@ -1,9 +1,10 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useMemo, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalImageGallery, { TabImagesItem } from "@/components/extensive/Modal/ModalImageGallery";
-import { GetV2MODELUUIDFilesResponse } from "@/generated/apiComponents";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
@@ -11,17 +12,19 @@ import Text from "../../Text/Text";
 
 const ViewImageCarousel = ({
   modelFilesData,
-  imageGalleryRef
+  imageGalleryRef,
+  className
 }: {
-  modelFilesData: GetV2MODELUUIDFilesResponse["data"];
+  modelFilesData: MediaDto[];
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  className?: string;
 }) => {
   const t = useT();
   const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
-    const modelFilesGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
-    const modelFilesNonGeolocalized: GetV2MODELUUIDFilesResponse["data"] = [];
+    const modelFilesGeolocalized: MediaDto[] = [];
+    const modelFilesNonGeolocalized: MediaDto[] = [];
     modelFilesData?.forEach(modelFile => {
-      if (modelFile.location?.lat && modelFile.location?.lng) {
+      if (modelFile.lat && modelFile.lng) {
         modelFilesGeolocalized.push(modelFile);
       } else {
         modelFilesNonGeolocalized.push(modelFile);
@@ -31,24 +34,28 @@ const ViewImageCarousel = ({
       {
         id: "1",
         title: t("Non-Geotagged Images"),
-        images: modelFilesNonGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Not Geo-Referenced")
-        }))
+        images: modelFilesNonGeolocalized
+          .filter(({ url }) => url != null)
+          .map(modelFile => ({
+            id: modelFile.uuid,
+            src: modelFile.url!,
+            title: modelFile.fileName,
+            dateCreated: modelFile.createdAt,
+            geoTag: t("Not Geo-Referenced")
+          }))
       },
       {
         id: "2",
         title: t("GeoTagged Images"),
-        images: modelFilesGeolocalized.map(modelFile => ({
-          id: modelFile.uuid!,
-          src: modelFile.file_url!,
-          title: modelFile.file_name!,
-          dateCreated: modelFile.created_date!,
-          geoTag: t("Geo-Referenced")
-        }))
+        images: modelFilesGeolocalized
+          .filter(({ url }) => url != null)
+          .map(modelFile => ({
+            id: modelFile.uuid,
+            src: modelFile.url!,
+            title: modelFile.fileName,
+            dateCreated: modelFile.createdAt,
+            geoTag: t("Geo-Referenced")
+          }))
       }
     ];
   }, [modelFilesData, t]);
@@ -101,7 +108,11 @@ const ViewImageCarousel = ({
 
   return (
     <div className="relative">
-      <Button variant="white-button-map" className="flex items-center gap-2" onClick={() => scrollToElement()}>
+      <Button
+        variant="white-button-map"
+        className={classNames("flex items-center gap-2", className)}
+        onClick={() => scrollToElement()}
+      >
         <Icon name={IconNames.IMAGE_ICON} className="h-4 w-4" />
         <Text variant="text-12-bold"> {t("View Gallery")}</Text>
       </Button>

@@ -15,6 +15,7 @@ import ModalStory from "@/components/extensive/Modal/ModalStory";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useOnMount } from "@/hooks/useOnMount";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import modules from "../..";
 import { useImpactStoryForm } from "../hooks/useImpactStoryForm";
@@ -63,14 +64,21 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     handlers.handleDateChange(date);
   }, [handlers, title, date]);
 
+  useEffect(() => {
+    if (organizationUuid) {
+      handlers.handleOrganizationChange(organizationUuid);
+    }
+  }, [handlers, organizationUuid]);
+
   useOnMount(() => hideLoader);
+
   const handlePreviewClick = () => {
     const formValues = getValues();
     const previewData = {
       uuid: formValues.uuid ? formValues.uuid : formValues?.data?.uuid,
       title: formValues.title ? formValues.title : formValues?.data?.title,
       date: formValues.date ? formValues.date : formValues?.data?.date,
-      content: formValues.content ? JSON.parse(formValues.content) : JSON.parse(formValues.data?.content),
+      content: parseImpactStoryContent(formValues.content ? formValues.content : formValues.data?.content),
       category: formValues.category ? formValues.category : formValues.data?.category,
       thumbnail:
         formValues.thumbnail instanceof File ? URL.createObjectURL(formValues.thumbnail) : formValues.thumbnail || "",
@@ -103,6 +111,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
     openModal(ModalId.MODAL_STORY, <ModalStory data={previewData} preview={true} title={"IMPACT_STORY"} />);
   };
+
   const handleSave = async (status: "draft" | "published") => {
     const isValid = await trigger();
     if (!isValid) {
@@ -111,6 +120,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
     showLoader();
     handlers.handleStatusChange(status);
   };
+
   return (
     <div className="impact-story-form w-full">
       <Text variant="text-24-bold" className="leading-[normal] text-darkCustom">
@@ -133,6 +143,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
             label="Date"
             name="date"
             type="date"
+            lang="en-GB"
             value={date}
             labelClassName="capitalize text-14-bold"
             className="text-14-light"
@@ -149,6 +160,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
               label={false}
               placeholder="Select an organization"
               defaultValue={organizationUuid}
+              onChange={(value: any) => setOrganizationUuid(value)}
             />
           </ReferenceInput>
         </StyledReferenceInput>
@@ -195,7 +207,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
           <Text variant="text-14-bold" className="mb-2">
             Content
           </Text>
-          <QuillEditor value={initialValues.content} onChange={handlers.handleContentChange} />
+          <QuillEditor value={parseImpactStoryContent(initialValues.content)} onChange={handlers.handleContentChange} />
         </div>
 
         <div className="flex justify-between">

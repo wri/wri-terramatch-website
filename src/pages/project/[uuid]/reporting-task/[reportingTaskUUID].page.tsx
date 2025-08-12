@@ -21,15 +21,21 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import { CompletionStatusMapping } from "@/components/extensive/Tables/ReportingTasksTable";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullProject } from "@/connections/Entity";
+import {
+  useFullProject,
+  useLightNurseryReportList,
+  useLightProjectReport,
+  useLightSiteReportList
+} from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { usePutV2ENTITYUUIDNothingToReport } from "@/generated/apiComponents";
 import {
-  GetV2TasksUUIDReportsResponse,
-  useGetV2TasksUUID,
-  useGetV2TasksUUIDReports,
-  usePutV2ENTITYUUIDNothingToReport
-} from "@/generated/apiComponents";
+  NurseryReportLightDto,
+  ProjectReportLightDto,
+  SiteReportLightDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
@@ -45,34 +51,62 @@ const StatusMapping: { [index: string]: Status } = {
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
 
-type TaskReport = Required<GetV2TasksUUIDReportsResponse>["data"][number];
-
-const mapTaskReport = (format: ReturnType<typeof useDate>["format"]) => (report: TaskReport) => {
-  let completion_status = "started";
-  const { status: reportStatus, update_request_status: urStatus } = report;
-  // If there is no submitted update request in play, then the report status is the source of
-  // truth, otherwise update the UI in accordance with the active update request's status.
-  const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(urStatus!);
-  const status = hasSubmittedUpdateRequest ? urStatus : reportStatus;
-
-  if (status === "needs-more-information") {
-    completion_status = "needs-more-information";
-  } else if (report.nothing_to_report) {
-    completion_status = "nothing-to-report";
-  } else if (status === "awaiting-approval") {
-    completion_status = "awaiting-approval";
-  } else if (status === "approved") {
-    completion_status = "approved";
-  } else if (status === "due") {
-    completion_status = "not-started";
-  }
-
-  return {
-    ...report,
-    updated_at: completion_status !== "not-started" ? format(report.updated_at) : "N/A",
-    completion_status
-  };
+export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto) & {
+  completionStatus: string;
+  type: "site-report" | "nursery-report" | "project-report";
+  parentName: string;
 };
+
+export type TaskReports = {
+  mandatory: TaskReport[];
+  additional: TaskReport[];
+  outstandingMandatoryCount: number;
+  outstandingAdditionalCount: number;
+};
+
+const mapTaskReport =
+  (format: ReturnType<typeof useDate>["format"]) =>
+  (report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto): TaskReport => {
+    let completionStatus = "started";
+    const { status: reportStatus, updateRequestStatus } = report;
+    // If there is no submitted update request in play, then the report status is the source of
+    // truth, otherwise update the UI in accordance with the active update request's status.
+    const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(updateRequestStatus!);
+    const status = hasSubmittedUpdateRequest ? updateRequestStatus : reportStatus;
+
+    if (status === "needs-more-information") {
+      completionStatus = "needs-more-information";
+    } else if ((report as SiteReportLightDto | NurseryReportLightDto).nothingToReport) {
+      completionStatus = "nothing-to-report";
+    } else if (status === "awaiting-approval") {
+      completionStatus = "awaiting-approval";
+    } else if (status === "approved") {
+      completionStatus = "approved";
+    } else if (status === "due") {
+      completionStatus = "not-started";
+    }
+
+    const type =
+      (report as SiteReportLightDto).siteUuid != null
+        ? "site-report"
+        : (report as NurseryReportLightDto).nurseryUuid != null
+        ? "nursery-report"
+        : "project-report";
+    const parentName =
+      (report as SiteReportLightDto).siteUuid != null
+        ? (report as SiteReportLightDto).siteName
+        : (report as NurseryReportLightDto).nurseryUuid != null
+        ? (report as NurseryReportLightDto).nurseryName
+        : report.projectName;
+
+    return {
+      ...report,
+      updatedAt: completionStatus !== "not-started" ? format(report.updatedAt) : "N/A",
+      completionStatus,
+      type,
+      parentName: parentName ?? ""
+    };
+  };
 
 const ReportingTaskPage = () => {
   const t = useT();
@@ -85,11 +119,13 @@ const ReportingTaskPage = () => {
   const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const { data: reportingTaskData } = useGetV2TasksUUID({ pathParams: { uuid: reportingTaskUUID } });
-  const reportingTask = reportingTaskData?.data as any;
-
-  const { data: reportsData, isLoading } = useGetV2TasksUUIDReports({ pathParams: { uuid: reportingTaskUUID } });
-  const [projectLoaded, { entity: project }] = useFullProject({ uuid: projectUUID });
+  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
+    id: reportingTaskUUID
+  });
+  const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
+  const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });
+  const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids });
+  const [projectLoaded, { data: project }] = useFullProject({ id: projectUUID });
 
   const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
     onSuccess: result => {
@@ -106,29 +142,26 @@ const ReportingTaskPage = () => {
   });
 
   const reports = useMemo(() => {
-    const reports = (reportsData?.data ?? []).map(mapTaskReport(format));
-
-    const mandatory = reports?.filter(report => report.type === "project-report");
-    const additional = reports
-      ?.filter(report => report.type !== "project-report")
-      .filter((report: any) => {
-        for (const filter of filters) {
-          if (report?.[filter.filter.accessorKey] !== filter.value) {
-            return false;
-          }
+    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])].map(mapTaskReport(format)).filter(report => {
+      for (const filter of filters) {
+        const value = report[filter.filter.accessorKey as keyof TaskReport];
+        if (value !== filter.value) {
+          return false;
         }
-        return true;
-      });
+      }
+      return true;
+    });
 
     setReportsTableData(additional);
 
+    const mandatory = projectReport == null ? [] : [mapTaskReport(format)(projectReport)];
     return {
       mandatory,
       additional,
       outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
       outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
-    };
-  }, [filters, format, reportsData?.data]);
+    } as TaskReports;
+  }, [filters, format, nurseryReports, projectReport, siteReports]);
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
@@ -163,11 +196,11 @@ const ReportingTaskPage = () => {
 
   const tableColumns: ColumnDef<RowData>[] = [
     {
-      accessorKey: "parent_name",
+      accessorKey: "parentName",
       header: t("Report")
     },
     {
-      accessorKey: "completion_status",
+      accessorKey: "completionStatus",
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
@@ -189,18 +222,18 @@ const ReportingTaskPage = () => {
       }
     },
     {
-      accessorKey: "updated_at",
+      accessorKey: "updatedAt",
       header: t("Last Update")
     },
     {
-      accessorKey: "completion_status",
+      accessorKey: "completionStatus",
       id: "uuid",
       header: "",
       enableSorting: false,
       cell: props => {
-        const record = props.row.original as any;
+        const record = props.row.original as TaskReport;
         const { index } = props.row;
-        const { status, type, completion, uuid } = record;
+        const { status, type, completion, uuid, completionStatus } = record;
 
         const shouldShowButton =
           NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "project-report" || completion === 100);
@@ -217,27 +250,23 @@ const ReportingTaskPage = () => {
               </Button>
             ) : null}
             <Switch>
-              <Case
-                condition={
-                  record.completion_status === "not-started" || record.completion_status === "nothing-to-report"
-                }
-              >
-                <Button as={Link} href={`/entity/${record.type}s/create/framework?entity_uuid=${record.uuid}`}>
+              <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
+                <Button as={Link} href={`/entity/${type}s/create/framework?entity_uuid=${uuid}`}>
                   {t("Write report")}
                 </Button>
               </Case>
-              <Case condition={["approved", "awaiting-approval"].includes(record.completion_status)}>
-                <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
+              <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Completed Report")}
                 </Button>
               </Case>
-              <Case condition={record.completion_status === "needs-more-information"}>
-                <Button as={Link} href={`/reports/${record.type}/${record.uuid}`}>
+              <Case condition={completionStatus === "needs-more-information"}>
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Feedback")}
                 </Button>
               </Case>
               <Default>
-                <Button as={Link} href={`/entity/${record.type}s/edit/${record.uuid}`}>
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
                   {t("Continue report")}
                 </Button>
               </Default>
@@ -251,9 +280,9 @@ const ReportingTaskPage = () => {
   return (
     projectLoaded && (
       <FrameworkProvider frameworkKey={project?.frameworkKey}>
-        <LoadingContainer loading={isLoading}>
-          <ReportingTaskHeader {...{ project, reportingTask, reports }} />
-          <StatusBar status={StatusMapping?.[reportingTask?.status]} />
+        <LoadingContainer loading={task == null}>
+          <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
+          <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
           <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
             <PageSection>
               <PageCard title={t("Mandatory Project Report")}>
@@ -268,7 +297,7 @@ const ReportingTaskPage = () => {
                   onTableStateChange={state => setFilters(state.filters)}
                   hasPagination={true}
                   resetOnDataChange={false}
-                  initialTableState={{ pagination: { pageSize: 15 } }}
+                  initialTableState={{ pagination: { pageSize: 10 } }}
                   columnFilters={[
                     {
                       type: "dropDown",
@@ -288,7 +317,7 @@ const ReportingTaskPage = () => {
                     },
                     {
                       type: "dropDown",
-                      accessorKey: "completion_status",
+                      accessorKey: "completionStatus",
                       label: t("Report Status"),
                       options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
                         title: status.statusText,
@@ -296,6 +325,7 @@ const ReportingTaskPage = () => {
                       }))
                     }
                   ]}
+                  alwaysShowPagination
                 />
               </PageCard>
             </PageSection>

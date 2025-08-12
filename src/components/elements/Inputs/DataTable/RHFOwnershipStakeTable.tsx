@@ -1,13 +1,17 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
-import { useDeleteV2OwnershipStakeUUID, usePostV2OwnershipStake } from "@/generated/apiComponents";
+import {
+  useDeleteV2OwnershipStakeUUID,
+  usePatchV2OwnershipStakeUUID,
+  usePostV2OwnershipStake
+} from "@/generated/apiComponents";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -40,8 +44,13 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
   const t = useT();
   const { field } = useController(props);
   const value = field?.value || [];
+  const [tableKey, setTableKey] = useState(0);
 
   const [, { organisationId }] = useMyOrg();
+
+  const refreshTable = () => {
+    setTableKey(prev => prev + 1);
+  };
 
   const { mutate: createTeamMember } = usePostV2OwnershipStake({
     onSuccess(data) {
@@ -60,8 +69,31 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
     }
   });
 
+  const { mutate: updateTeamMember } = usePatchV2OwnershipStakeUUID({
+    onSuccess(data, variables) {
+      const _tmp = [...value];
+      //@ts-ignore
+      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
+
+      if (index !== -1) {
+        //@ts-ignore
+        _tmp[index] = data.data;
+        field.onChange(_tmp);
+        onChangeCapture?.();
+        props?.formHook?.reset(props?.formHook.getValues());
+        clearErrors();
+        refreshTable();
+      }
+    }
+  });
+
+  const clearErrors = useCallback(() => {
+    props?.formHook?.clearErrors(props.name);
+  }, [props?.formHook, props.name]);
+
   return (
     <DataTable
+      key={tableKey}
       {...props}
       value={value}
       handleCreate={data => {
@@ -77,7 +109,16 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
           removeTeamMember({ pathParams: { uuid } });
         }
       }}
+      handleUpdate={data => {
+        if (data.uuid) {
+          updateTeamMember({
+            pathParams: { uuid: data.uuid },
+            body: { ...data }
+          });
+        }
+      }}
       addButtonCaption={t("Add Ownership Stake")}
+      modalEditTitle={t("Update Ownership Stake")}
       tableColumns={getOwnershipTableColumns(t)}
       fields={[
         {

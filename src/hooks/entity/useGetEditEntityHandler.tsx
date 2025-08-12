@@ -53,11 +53,11 @@ export const useGetEditEntityHandler = ({
         ModalId.CONFIRM_EDIT,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("Are you sure you want to edit your {entityName}?", {
+          title={t("Continue working on draft {entityName} report?", {
             entityName: getReadableEntityName(entityName)
           })}
           content={t(
-            "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
+            'By clicking "Edit," you\'ll access your draft report. You can edit the report contents and either save the report as a draft again, or click to the end and press "Submit" to send it to your project manager for review.',
             { entityName: getReadableEntityName(entityName) }
           )}
           primaryButtonProps={{

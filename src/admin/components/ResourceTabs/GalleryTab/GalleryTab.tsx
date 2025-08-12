@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
@@ -10,10 +9,12 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Input
 import Text from "@/components/elements/Text/Text";
 import ModalAddImages from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteV2FilesUUID, useGetV2MODELUUIDFiles } from "@/generated/apiComponents";
+import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
+import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -21,14 +22,24 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: EntityName;
 }
 
+const formatEntityForUpload = (entity: string) => {
+  if (entity === "projectReports") {
+    return "project-reports";
+  }
+  if (entity === "siteReports") {
+    return "site-reports";
+  }
+  return entity;
+};
+
 const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const t = useT();
   const ctx = useShowContext();
-  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 6 });
   const [filter] = useState<string>("all");
   const [searchString, setSearchString] = useState<string>("");
-  const [isGeotagged, setIsGeotagged] = useState<number>(0);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [isGeotagged, setIsGeotagged] = useState<boolean | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const { openModal, closeModal } = useModalContext();
   const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
     isPublic: undefined,
@@ -36,43 +47,50 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   });
   const resource = entity ?? ctx.resource;
 
-  const queryParams: any = {
-    page: pagination.page,
-    per_page: pagination.pageSize,
-    "filter[file_type]": "media"
-  };
+  const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      const requestFilters: HookFilters<typeof useMedias> = {};
+      if (filter !== "all") {
+        requestFilters.isPublic = filter === "public";
+      } else {
+        requestFilters.isPublic = filters.isPublic;
+      }
+      if (filters.modelType) {
+        requestFilters.modelType = filters.modelType;
+      }
+      requestFilters.search = searchString;
 
-  if (filter !== "all") {
-    queryParams["filter[is_public]"] = filter === "public";
-  }
-  if (filters.isPublic !== undefined) {
-    queryParams["filter[is_public]"] = filters.isPublic;
-  }
-  if (filters.modelType) {
-    queryParams["filter[model_type]"] = filters.modelType;
-  }
-  queryParams["search"] = searchString;
-  queryParams["is_geotagged"] = isGeotagged;
-  queryParams["sort_order"] = sortOrder;
-  const { data, refetch, isLoading } = useGetV2MODELUUIDFiles(
-    {
-      // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
-      pathParams: { model: resource, uuid: ctx?.record?.uuid },
-      queryParams
-    },
-    {
-      enabled: !!ctx?.record?.uuid
-    }
+      if (isGeotagged !== null) {
+        requestFilters.isGeotagged = isGeotagged;
+      }
+
+      return {
+        entity: resource as SupportedEntity,
+        uuid: ctx?.record?.uuid,
+        pageNumber: pagination.page,
+        pageSize: pagination.pageSize,
+        sortDirection: sortOrder,
+        filter: requestFilters
+      };
+    }, [
+      ctx?.record?.uuid,
+      filter,
+      filters.isPublic,
+      filters.modelType,
+      isGeotagged,
+      pagination.page,
+      pagination.pageSize,
+      resource,
+      searchString,
+      sortOrder
+    ])
   );
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess() {
-      refetch();
+      refetch?.();
     }
   });
-  useEffect(() => {
-    refetch();
-  }, [filters, pagination, searchString, isGeotagged, sortOrder, refetch]);
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
@@ -92,11 +110,11 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            refetch();
+            refetch?.();
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        model={resource}
+        model={formatEntityForUpload(resource)}
         collection="media"
         entityData={ctx?.record}
         setErrorMessage={message => {
@@ -107,50 +125,36 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   };
 
   return (
-    <When condition={!ctx.isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
-        <div className="flex flex-col gap-8">
-          <div className="flex items-center justify-between">
-            <Text variant="text-24-bold">{t("All Images")}</Text>
-            <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
-              {t("UPLOAD IMAGES")}
-            </Button>
-          </div>
-          <ImageGallery
-            data={
-              data?.data?.map(file => ({
-                //@ts-ignore
-                uuid: file.uuid!,
-                fullImageUrl: file.file_url!,
-                thumbnailImageUrl: file.thumb_url!,
-                label: file.model_name!,
-                isPublic: file.is_public!,
-                isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
-                isCover: file.is_cover,
-                raw: file
-              })) || []
-            }
-            entity={resource}
-            entityData={ctx.record}
-            pageCount={data?.meta?.last_page || 1}
-            onGalleryStateChange={pagination => {
-              setPagination(pagination);
-            }}
-            onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
-            ItemComponent={ImageGalleryItem}
-            onChangeSearch={setSearchString}
-            onChangeGeotagged={setIsGeotagged}
-            reloadGalleryImages={refetch}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            setFilters={setFilters}
-            className="mt-3"
-            isAdmin={true}
-            isLoading={isLoading}
-          />
+    <TabbedShowLayout.Tab label={label ?? "Gallery"} {...rest}>
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <Text variant="text-24-bold">{t("All Images")}</Text>
+          <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
+            {t("UPLOAD IMAGES")}
+          </Button>
         </div>
-      </TabbedShowLayout.Tab>
-    </When>
+        <ImageGallery
+          data={mediaList!}
+          entity={resource}
+          entityData={ctx.record}
+          pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
+          onGalleryStateChange={pagination => {
+            setPagination(pagination);
+          }}
+          onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+          ItemComponent={ImageGalleryItem}
+          onChangeSearch={setSearchString}
+          onChangeGeotagged={setIsGeotagged}
+          reloadGalleryImages={refetch}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          setFilters={setFilters}
+          className="mt-3"
+          isAdmin={true}
+          isLoading={!isLoaded}
+        />
+      </div>
+    </TabbedShowLayout.Tab>
   );
 };
 

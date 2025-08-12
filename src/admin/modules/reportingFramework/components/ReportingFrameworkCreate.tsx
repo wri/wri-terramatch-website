@@ -54,6 +54,18 @@ export const ReportingFrameworkCreate: FC = () => {
             helperText="If this reporting framework doesn't require nurseries, please leave this section blank."
           />
         </ReferenceInput>
+        <ReferenceInput
+          source="financial_report_form_uuid"
+          reference={modules.form.ResourceName}
+          filter={{ type: "financial-report" }}
+        >
+          <AutocompleteInput
+            optionText="title"
+            label="Financial Reporting Form"
+            fullWidth
+            helperText="please leave this section blank."
+          />
+        </ReferenceInput>
       </SimpleForm>
     </Create>
   );

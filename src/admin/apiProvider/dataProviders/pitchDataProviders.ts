@@ -1,74 +1,54 @@
 import _ from "lodash";
 import { DataProvider } from "react-admin";
 
+import { keysToSnakeCase } from "@/admin/utils/forms";
+import { loadProjectPitch, loadProjectPitches } from "@/connections/ProjectPitch";
 import {
   DeleteV2ProjectPitchesUUIDError,
   fetchDeleteV2ProjectPitchesUUID,
-  fetchGetV2AdminProjectPitches,
   fetchGetV2AdminProjectPitchesExport,
-  fetchGetV2ProjectPitchesUUID,
   fetchPatchV2ProjectPitchesUUID,
-  GetV2AdminProjectPitchesError,
   GetV2AdminProjectPitchesExportError,
-  GetV2ProjectPitchesUUIDError,
   PatchV2ProjectPitchesUUIDError
 } from "@/generated/apiComponents";
 import { ProjectPitchRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
 export interface PitchDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
 }
 
-export const pitchesSortableList: string[] = [
-  "organisation_id",
-  "project_name",
-  "project_objectives",
-  "project_country",
-  "project_county_district",
-  "restoration_intervention_types",
-  "total_hectares",
-  "total_trees",
-  "capacity_building_needs",
-  "created_at",
-  "updated_at",
-  "deleted_at"
-];
-
-export const pitchDataProvider: PitchDataProvider = {
+export const pitchDataProvider: Partial<PitchDataProvider> = {
+  // @ts-expect-error until we can get the whole DataProvider on Project DTOs
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminProjectPitches({
-        queryParams: raListParamsToQueryParams(params, pitchesSortableList)
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminProjectPitchesError);
+    const connection = await loadProjectPitches(raConnectionProps(params));
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Project Pitch index fetch failed", connection.loadFailure);
     }
+    return {
+      data: connection.data?.map(pitch => ({ ...pitch, id: pitch.uuid })),
+      total: connection.indexTotal ?? 0
+    };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2ProjectPitchesUUID({
-        //@ts-ignore
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2ProjectPitchesUUIDError);
+  //@ts-ignore
+  async getOne(_, { id }) {
+    const { loadFailure, data: projectPitch } = await loadProjectPitch({ id });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Project Pitch get fetch failed", loadFailure);
     }
+
+    return { data: { ...projectPitch, id: projectPitch?.uuid } };
   },
 
   //@ts-ignore
   async update(__, params) {
     try {
       const response = await fetchPatchV2ProjectPitchesUUID({
-        body: _.pick<ProjectPitchRead, keyof ProjectPitchRead>(params.data, [
+        body: _.pick<ProjectPitchRead, keyof ProjectPitchRead>(keysToSnakeCase(params.data) as ProjectPitchRead, [
           "capacity_building_needs",
           "project_country",
           "project_county_district",
@@ -113,13 +93,13 @@ export const pitchDataProvider: PitchDataProvider = {
       throw getFormattedErrorForRA(err as DeleteV2ProjectPitchesUUIDError);
     }
   },
-  export() {
-    return fetchGetV2AdminProjectPitchesExport({})
-      .then((response: any) => {
-        downloadFileBlob(response, "Pitches.csv");
-      })
-      .catch(e => {
-        throw getFormattedErrorForRA(e as GetV2AdminProjectPitchesExportError);
-      });
+
+  async export() {
+    try {
+      const response = (await fetchGetV2AdminProjectPitchesExport({})) as Blob;
+      await downloadFileBlob(response, "Pitches.csv");
+    } catch (e) {
+      throw getFormattedErrorForRA(e as GetV2AdminProjectPitchesExportError);
+    }
   }
 };

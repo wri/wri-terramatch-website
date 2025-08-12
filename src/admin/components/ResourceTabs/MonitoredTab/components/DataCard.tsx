@@ -12,17 +12,15 @@ import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { VARIANT_DROPDOWN_SIMPLE } from "@/components/elements/Inputs/Dropdown/DropdownVariant";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import MapContainer from "@/components/elements/Map-mapbox/Map";
-import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_MONITORED } from "@/components/elements/Table/TableVariants";
 import FilterSearchBox from "@/components/elements/TableFilters/Inputs/FilterSearchBox";
 import { FILTER_SEARCH_MONITORING } from "@/components/elements/TableFilters/Inputs/FilterSearchBoxVariants";
 import Text from "@/components/elements/Text/Text";
 import Toggle, { TogglePropsItem } from "@/components/elements/Toggle/Toggle";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
-import TooltipMapMonitoring from "@/components/elements/TooltipMap/TooltipMapMonitoring";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import SitePolygonsTable from "@/components/extensive/Tables/SitePolygonsTable";
+import { Indicator } from "@/connections/SitePolygons";
 import {
   DEFAULT_POLYGONS_DATA,
   DEFAULT_POLYGONS_DATA_ECOREGIONS,
@@ -31,7 +29,7 @@ import {
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
-import { EntityName, OptionValue } from "@/types/common";
+import { OptionValue } from "@/types/common";
 import {
   parsePolygonsIndicatorDataForEcoRegion,
   parsePolygonsIndicatorDataForLandUse,
@@ -49,6 +47,7 @@ import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import MonitoredCharts from "./MonitoredCharts";
+import MonitoredDataMap from "./MonitoredDataMap";
 
 interface TableData {
   polygonName: string;
@@ -110,24 +109,26 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     header: "Plant Start Date",
     cell: (props: any) => {
       const value = props.getValue();
-      return value == "-" ? "-" : format(new Date(value), "dd/MM/yyyy");
+      if (!value || value === "-") return "-";
+      try {
+        return format(new Date(value), "dd/MM/yyyy");
+      } catch (e) {
+        return "-";
+      }
     },
     meta: { style: { width: "13.65%" } }
-  },
-  {
-    accessorKey: "base_line",
-    header: "Baseline",
-    cell: (props: any) => {
-      const value = props.getValue();
-      return format(new Date(value), "dd/MM/yyyy");
-    },
-    meta: { style: { width: "8.87%" } }
   }
 ];
 
 type CustomColumnDefInternal<TData> = ColumnDef<TData> & { type?: string };
 
 const DROPDOWN_OPTIONS = [
+  {
+    title: "Tree Cover",
+    value: "0",
+    slug: "treeCover",
+    description: "Tree cover"
+  },
   {
     title: "Tree Cover Loss",
     value: "1",
@@ -183,7 +184,7 @@ const toggleItems: TogglePropsItem[] = [
     )
   },
   {
-    key: "table",
+    key: "map",
     render: (
       <Text variant="text-14" className="py-0.5">
         Map
@@ -204,49 +205,6 @@ const noDataGraph = (
       <Tooltip content={"Tooltip"}>
         <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
       </Tooltip>
-    </div>
-  </div>
-);
-
-const indicatorDescription1 =
-  "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
-const indicatorDescription2 =
-  "The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in TerraFund’s MRV framework. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.";
-
-const noDataMap = (
-  <div className="absolute top-0 flex h-full w-full">
-    <div className="relative flex w-[23vw] flex-col gap-3 p-6">
-      <div className="absolute top-0 left-0 h-full w-full rounded-l-xl bg-white bg-opacity-20 backdrop-blur" />
-      <Text
-        variant={"text-14-semibold"}
-        className="z-10 w-fit border-b-2 border-white border-opacity-20 pb-1.5 text-white"
-      >
-        Indicator Description
-      </Text>
-      <div className="z-[5] flex min-h-0 flex-col gap-3 overflow-auto pr-1">
-        <Text variant={"text-14-light"} className="text-white" containHtml>
-          {indicatorDescription1}
-        </Text>
-        <Text variant={"text-14-light"} className="text-white" containHtml>
-          {indicatorDescription2}
-        </Text>
-      </div>
-    </div>
-    <div className="w-full p-6">
-      <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
-        <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
-        <Text variant={"text-32-semibold"} className="z-10 text-white">
-          No Data to Display
-        </Text>
-        <div className="flex items-center gap-1">
-          <Text variant={"text-14"} className="z-10 text-white">
-            RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
-          </Text>
-          <Tooltip content={"Tooltip"}>
-            <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
-          </Tooltip>
-        </div>
-      </div>
     </div>
   </div>
 );
@@ -288,16 +246,17 @@ const DataCard = ({
   type,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement> & {
-  type?: EntityName;
+  type: "projects" | "sites";
 }) => {
   const [tabActive, setTabActive] = useState(1);
   const [selected, setSelected] = useState<OptionValue[]>(["1"]);
   const [selectedPolygonUuid, setSelectedPolygonUuid] = useState<any>("0");
+
   const basename = useBasename();
-  const mapFunctions = useMap();
   const { record } = useShowContext();
   const { polygonsIndicator, treeCoverLossData, treeCoverLossFiresData, isLoadingIndicator, polygonOptions } =
-    useMonitoredData(type!, record.uuid);
+    useMonitoredData(type, record.uuid);
+
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
       ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
@@ -324,7 +283,7 @@ const DataCard = ({
     { treeCoverLoss: 0, treeCoverLossFires: 0 }
   );
 
-  const { setSearchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
+  const { setSearchTerm, searchTerm, setIndicatorSlug, indicatorSlug, setSelectPolygonFromMap, selectPolygonFromMap } =
     useMonitoredDataContext();
   const navigate = useNavigate();
   const { openNotification } = useNotificationContext();
@@ -357,6 +316,121 @@ const DataCard = ({
     }
   }, []);
 
+  const TABLE_COLUMNS_TREE_COVER: CustomColumnDefInternal<RowData>[] = [
+    {
+      id: "mainInfo",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, borderRightWidth: 0 } },
+      header: "",
+      columns: [
+        {
+          accessorKey: "poly_name",
+          header: "Polygon Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0", width: "11%" } }
+        },
+        {
+          accessorKey: "size",
+          header: "Size (ha)",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value ? Number(value).toFixed(1) : "-";
+          }
+        },
+        {
+          accessorKey: "siteName",
+          header: "Site Name",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        },
+        {
+          accessorKey: "status",
+          header: "Status",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } },
+          cell: (props: any) => (
+            <CustomChipField
+              label={props.getValue()}
+              classNameChipField="!text-[12px] font-medium lg:!text-xs wide:!text-sm"
+            />
+          )
+        },
+        {
+          accessorKey: "plantstart",
+          header: () => (
+            <>
+              Plant
+              <br />
+              Start Date
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        }
+      ]
+    },
+    {
+      id: "treeCoverAnalysis",
+      header: "Tree Cover Analysis",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, textAlign: "center" } },
+      columns: [
+        {
+          accessorKey: "yearOfAnalysis",
+          header: "Year of Analysis",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
+        },
+        {
+          accessorKey: "percentCover",
+          header: "Percent Cover",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? `${value.toFixed(1)}%` : "-";
+          }
+        },
+        {
+          accessorKey: "projectPhase",
+          header: "Project Phase",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? value.charAt(0).toUpperCase() + value.slice(1) : "-";
+          }
+        },
+        {
+          accessorKey: "plusMinusPercent",
+          header: () => (
+            <>
+              Plus/Minus
+              <br />
+              Percent
+            </>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } },
+          cell: (props: any) => {
+            const value = props.getValue();
+            return value !== undefined ? `±${value.toFixed(1)}%` : "-";
+          }
+        }
+      ]
+    },
+    {
+      id: "moreInfo",
+      header: " ",
+      meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0, width: "5%" } },
+      columns: [
+        {
+          accessorKey: "more",
+          header: "",
+          enableSorting: false,
+          cell: props => (
+            <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
+              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+                <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+              </button>
+            </div>
+          ),
+          meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0" } }
+        }
+      ]
+    }
+  ];
   const TABLE_COLUMNS_TREE_COVER_LOSS: CustomColumnDefInternal<RowData>[] = [
     {
       id: "mainInfo",
@@ -405,10 +479,44 @@ const DataCard = ({
     {
       id: "analysis2024",
       header: totalElemIndicator
-        ? `Analysis: ${format(new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!), "MMMM d, yyyy")}`
+        ? (() => {
+            try {
+              return `Analysis: ${format(
+                new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!),
+                "MMMM d, yyyy"
+              )}`;
+            } catch (e) {
+              return "Analysis:";
+            }
+          })()
         : "Analysis:",
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
+        {
+          accessorKey: "data.2010",
+          header: "2010",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2011",
+          header: "2011",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2012",
+          header: "2012",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2013",
+          header: "2013",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2014",
+          header: "2014",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
         {
           accessorKey: "data.2015",
           header: "2015",
@@ -457,6 +565,11 @@ const DataCard = ({
         {
           accessorKey: "data.2024",
           header: "2024",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2025",
+          header: "2025",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         }
       ]
@@ -628,6 +741,7 @@ const DataCard = ({
   ];
 
   const TABLE_COLUMNS_MAPPING: Record<string, any> = {
+    treeCover: TABLE_COLUMNS_TREE_COVER,
     treeCoverLoss: TABLE_COLUMNS_TREE_COVER_LOSS,
     treeCoverLossFires: TABLE_COLUMNS_TREE_COVER_LOSS,
     restorationByEcoRegion: TABLE_COLUMNS_HECTARES_ECO_REGION,
@@ -639,7 +753,7 @@ const DataCard = ({
     try {
       setExporting(true);
       const blob = await fetchGetV2IndicatorsEntityUuidSlugExport({
-        pathParams: { entity: type!, uuid: record.uuid, slug: indicatorSlug! }
+        pathParams: { entity: type, uuid: record.uuid, slug: indicatorSlug! }
       });
       downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
 
@@ -660,7 +774,13 @@ const DataCard = ({
   }, [selectPolygonFromMap, setSelectPolygonFromMap]);
 
   const dateRunIndicator = polygonsIndicator?.[polygonsIndicator.length - 1]
-    ? format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy")
+    ? (() => {
+        try {
+          return format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy");
+        } catch (e) {
+          return "";
+        }
+      })()
     : "";
   const sitePolygonsIndicator = getSiteValues(groupedBySiteUuidWithPolygons(polygonsIndicator));
   const sortedTreeCoverSiteValues = getSiteTreeCoverLossSumValues(sitePolygonsIndicator).sort((a, b) => {
@@ -734,9 +854,10 @@ const DataCard = ({
       : "";
 
   const monitoredDescriptionParams: Record<string, any> = {
+    treeCover: {},
     treeCoverLoss: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
@@ -748,7 +869,7 @@ const DataCard = ({
     },
     treeCoverLossFires: {
       "[organization_name]": record?.organisation?.name,
-      "[year_start]": 2015,
+      "[year_start]": 2010,
       "[year_end]": 2024,
       "[x_ha]": Math.round(sumTreeCoverData.treeCoverLossFires),
       "[xx_ha]": Math.round(sumTreeCoverData.treeCoverLoss),
@@ -825,7 +946,7 @@ const DataCard = ({
                 variant={VARIANT_DROPDOWN_SIMPLE}
                 inputVariant="text-18-semibold"
                 className="z-50"
-                defaultValue={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
+                value={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
                 optionsClassName="w-max z-50"
               />
             </div>
@@ -849,13 +970,13 @@ const DataCard = ({
           </div>
           <When condition={tabActive === 0}>
             <div className="relative w-full px-6 pb-6">
-              <Table
-                columns={TABLE_COLUMNS_MAPPING[indicatorSlug!]}
-                data={polygonsIndicator ?? []}
+              <SitePolygonsTable
+                entityName={type}
+                entityUuid={record.uuid}
+                searchTerm={searchTerm}
+                presentIndicator={indicatorSlug as Indicator}
+                TABLE_COLUMNS_MAPPING={TABLE_COLUMNS_MAPPING}
                 variant={VARIANT_TABLE_MONITORED}
-                classNameWrapper="!overflow-visible"
-                visibleRows={50}
-                border={1}
               />
             </div>
           </When>
@@ -898,21 +1019,7 @@ const DataCard = ({
             </div>
           </When>
           <When condition={tabActive === 2}>
-            <div className="relative h-[calc(100vh-295px)] w-full">
-              <div className="absolute left-1/2 top-6 z-10">
-                <TooltipMapMonitoring />
-              </div>
-              <MapContainer
-                className="!h-full"
-                mapFunctions={mapFunctions}
-                sitePolygonData={[]}
-                hasControls={!selected.includes("6")}
-                showLegend={!selected.includes("6")}
-                legendPosition="bottom-right"
-                showViewGallery={false}
-              />
-              <When condition={selected.includes("6")}>{noDataMap}</When>
-            </div>
+            <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} record={record} />
           </When>
         </div>
       </div>

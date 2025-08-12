@@ -3,8 +3,8 @@
  *
  * @version 1.0
  */
+import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./jobServiceFetcher";
-import { jobServiceFetch } from "./jobServiceFetcher";
 import type * as Schemas from "./jobServiceSchemas";
 
 export type ListDelayedJobsError = Fetcher.ErrorWrapper<{
@@ -26,7 +26,7 @@ export type ListDelayedJobsResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -38,18 +38,16 @@ export type ListDelayedJobsResponse = {
      */
     id?: string;
     attributes?: Schemas.DelayedJobDto;
-  };
+  }[];
 };
 
 /**
  * Retrieve a list of all delayed jobs.
  */
-export const listDelayedJobs = (signal?: AbortSignal) =>
-  jobServiceFetch<ListDelayedJobsResponse, ListDelayedJobsError, undefined, {}, {}, {}>({
-    url: "/jobs/v3/delayedJobs",
-    method: "get",
-    signal
-  });
+export const listDelayedJobs = new V3ApiEndpoint<ListDelayedJobsResponse, ListDelayedJobsError, {}, {}>(
+  "/jobs/v3/delayedJobs",
+  "GET"
+);
 
 export type DelayedJobsFindPathParams = {
   uuid: string;
@@ -89,7 +87,7 @@ export type DelayedJobsFindResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -111,13 +109,12 @@ export type DelayedJobsFindVariables = {
 /**
  * Get the current status and potentially payload or error from a delayed job.
  */
-export const delayedJobsFind = (variables: DelayedJobsFindVariables, signal?: AbortSignal) =>
-  jobServiceFetch<DelayedJobsFindResponse, DelayedJobsFindError, undefined, {}, {}, DelayedJobsFindPathParams>({
-    url: "/jobs/v3/delayedJobs/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
+export const delayedJobsFind = new V3ApiEndpoint<
+  DelayedJobsFindResponse,
+  DelayedJobsFindError,
+  DelayedJobsFindVariables,
+  {}
+>("/jobs/v3/delayedJobs/{uuid}", "GET");
 
 export type BulkUpdateJobsError = Fetcher.ErrorWrapper<
   | {
@@ -166,7 +163,7 @@ export type BulkUpdateJobsResponse = {
     /**
      * @example delayedJobs
      */
-    type?: string;
+    resourceType?: string;
   };
   data?: {
     /**
@@ -188,12 +185,11 @@ export type BulkUpdateJobsVariables = {
 /**
  * Accepts a JSON:API-compliant payload to bulk update jobs, allowing each job's isAcknowledged attribute to be set to true or false.
  */
-export const bulkUpdateJobs = (variables: BulkUpdateJobsVariables, signal?: AbortSignal) =>
-  jobServiceFetch<BulkUpdateJobsResponse, BulkUpdateJobsError, Schemas.DelayedJobBulkUpdateBodyDto, {}, {}, {}>({
-    url: "/jobs/v3/delayedJobs/bulk-update",
-    method: "patch",
-    ...variables,
-    signal
-  });
+export const bulkUpdateJobs = new V3ApiEndpoint<
+  BulkUpdateJobsResponse,
+  BulkUpdateJobsError,
+  BulkUpdateJobsVariables,
+  {}
+>("/jobs/v3/delayedJobs/bulk-update", "PATCH");
 
 export const operationsByTag = { delayedJobs: { listDelayedJobs, delayedJobsFind, bulkUpdateJobs } };

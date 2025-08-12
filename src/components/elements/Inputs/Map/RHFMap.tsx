@@ -4,12 +4,14 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonBboxUuid, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import ApiSlice from "@/store/apiSlice";
 import { Entity } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
@@ -38,13 +40,11 @@ const RHFMap = ({
       storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
     }
   };
-
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
     field: { onChange }
   } = useController(inputWrapperProps);
-  const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
   const { setSiteData } = useMapAreaContext();
@@ -53,6 +53,16 @@ const RHFMap = ({
   const refetchData = () => {
     reloadProjectPolygonData();
     mapFunctions?.onCancel(polygonDataMap);
+    if (entity?.entityName === "project-pitch" && entity?.entityUUID) {
+      ApiSlice.pruneCache("boundingBoxes", [entity.entityUUID]);
+    }
+  };
+
+  const reloadSiteDataWithBoundingBox = () => {
+    reloadProjectPolygonData();
+    if (entity?.entityName === "project-pitch" && entity?.entityUUID) {
+      ApiSlice.pruneCache("boundingBoxes", [entity.entityUUID]);
+    }
   };
 
   const {
@@ -73,24 +83,23 @@ const RHFMap = ({
     }
   );
 
-  useEffect(() => {
-    const setBbboxAndZoom = async () => {
-      if (projectPolygon?.project_polygon?.poly_uuid) {
-        const bbox = await fetchGetV2TerrafundPolygonBboxUuid({
-          pathParams: { uuid: projectPolygon.project_polygon?.poly_uuid ?? "" }
-        });
-        const bounds: any = bbox.bbox;
-        setPolygonBbox(bounds);
-      }
-    };
+  const bbox = useBoundingBox(
+    entity?.entityName == "project-pitch"
+      ? { projectPitchUuid: entity?.entityUUID }
+      : { polygonUuid: polygonFromMap?.uuid }
+  );
 
+  // Ensure bbox has exactly 4 elements for BBox type
+  const validBbox =
+    bbox && Array.isArray(bbox) && bbox.length === 4 ? (bbox as [number, number, number, number]) : undefined;
+
+  useEffect(() => {
     const getDataProjectPolygon = async () => {
       if (!projectPolygon?.project_polygon) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setBbboxAndZoom();
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
         setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
       }
@@ -123,12 +132,12 @@ const RHFMap = ({
   return (
     <SitePolygonDataProvider
       sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
-      reloadSiteData={reloadProjectPolygonData}
+      reloadSiteData={reloadSiteDataWithBoundingBox}
     >
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
           polygonsData={polygonDataMap}
-          bbox={polygonBbox}
+          bbox={validBbox}
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
           onGeojsonChange={_onChange}

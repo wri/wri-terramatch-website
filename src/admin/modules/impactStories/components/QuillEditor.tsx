@@ -53,6 +53,29 @@ class QuillEditor extends Component<QuillEditorProps> {
       if (this.props.value) {
         this.quill.root.innerHTML = this.props.value;
       }
+
+      const videoHandler = () => {
+        const range = this.quill.getSelection();
+        const value = prompt("Please enter the YouTube video URL:");
+
+        if (value) {
+          let videoId = "";
+          const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+          const match = value.match(regExp);
+
+          if (match && match[2].length === 11) {
+            videoId = match[2];
+            this.quill.insertEmbed(range.index, "video", `https://www.youtube.com/embed/${videoId}`);
+          } else {
+            this.quill.insertEmbed(range.index, "video", value);
+          }
+
+          this.quill.setSelection(range.index + 1);
+        }
+      };
+
+      const toolbar = this.quill.getModule("toolbar");
+      toolbar.addHandler("video", videoHandler);
     }
   }
 
@@ -85,6 +108,42 @@ class QuillEditor extends Component<QuillEditorProps> {
             top: 0;
             z-index: 2;
             background: white;
+          }
+          
+          /* Updated responsive CSS for video embeds */
+          .quill-editor-container .ql-editor iframe,
+          .quill-editor-container .ql-editor .ql-video {
+            width: 100% !important;
+            aspect-ratio: 16/9 !important;
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          
+          @supports not (aspect-ratio: 16/9) {
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video {
+              height: 0 !important;
+              padding-bottom: 56.25% !important;
+              position: relative !important;
+            }
+            
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video iframe {
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
+          
+          @media (min-width: 1500px) {
+            .quill-editor-container .ql-editor iframe,
+            .quill-editor-container .ql-editor .ql-video {
+              max-width: 75% !important;
+              margin: 0 auto !important;
+              display: block !important;
+            }
           }
         `}</style>
         <div ref={this.editorRef}></div>

@@ -8,6 +8,7 @@ import ConfirmationModal from "@/components/extensive/WizardForm/modals/Confirma
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { useGadmOptions } from "@/connections/Gadm";
 import { useModalContext } from "@/context/modal.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
@@ -26,9 +27,10 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const uuid = router.query.id as string;
   const t = useT();
   const { closeModal, openModal } = useModalContext();
+  const countryOptions = useGadmOptions({ level: 0 });
 
-  const defaultValues = useNormalizedFormDefaultValue(organization, getSteps(t, uuid));
-  const formSteps = getSteps(t, uuid);
+  const formSteps = getSteps(t, uuid, countryOptions ?? []);
+  const defaultValues = useNormalizedFormDefaultValue(organization, formSteps);
   const { mutateAsync: updateOrganization, error } = usePutV2OrganisationsUUID({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["v2", "organisations"] });

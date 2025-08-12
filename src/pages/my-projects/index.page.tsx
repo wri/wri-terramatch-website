@@ -7,6 +7,7 @@ import { Else, If, Then } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import ProjectCard from "@/components/elements/Cards/ProjectCard/ProjectCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
@@ -17,24 +18,16 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useProjectIndex } from "@/connections/Entity";
 import { useMyOrg } from "@/connections/Organisation";
-import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
 
 const MyProjectsPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
-  const { openToast } = useToastContext();
 
-  const [isLoaded, { entities: projects, refetch }] = useProjectIndex();
-
-  const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
-    onSuccess() {
-      refetch();
-      openToast(t("The project has been successfully deleted"));
-    },
-    onError() {
-      openToast(t("Something went wrong!"), ToastType.ERROR);
-    }
+  const [isLoaded, { data: projects }] = useProjectIndex({
+    sideloads: [
+      { entity: "sites", pageSize: DEFAULT_PAGE_SIZE },
+      { entity: "nurseries", pageSize: DEFAULT_PAGE_SIZE }
+    ]
   });
 
   const hasProjects = projects != null && projects.length > 0;
@@ -64,14 +57,7 @@ const MyProjectsPage = () => {
                     as={Fragment}
                     itemAs={Fragment}
                     items={projects}
-                    render={project => (
-                      <ProjectCard
-                        project={project}
-                        onDelete={uuid => {
-                          deleteProject({ pathParams: { uuid } });
-                        }}
-                      />
-                    )}
+                    render={project => <ProjectCard project={project} />}
                   />
                 </PageSection>
               ) : (

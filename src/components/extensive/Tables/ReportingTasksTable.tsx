@@ -1,17 +1,22 @@
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo } from "react";
 
-import { ServerSideTable } from "@/components/elements/ServerSideTable/ServerSideTable";
+import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
-import { useGetV2ProjectsUUIDTasks } from "@/generated/apiComponents";
+import { taskIndexConnection } from "@/connections/Task";
+import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { Selected } from "@/types/connection";
 
 interface ReportingTasksTableProps {
   projectUUID: string;
+  onFetch?: (data: Selected<typeof taskIndexConnection>) => void;
+  alwaysShowPagination?: boolean;
 }
 
 const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
@@ -20,33 +25,15 @@ const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
   return <p className="text-14-light whitespace-nowrap">{t("Project Report {window}", { window })}</p>;
 };
 
-const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
+const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = false }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [queryParams, setQueryParams] = useState();
 
-  const { data: reportingTasks, isLoading } = useGetV2ProjectsUUIDTasks(
-    {
-      pathParams: { uuid: projectUUID },
-      queryParams: queryParams
-    },
-    {
-      keepPreviousData: true,
-      enabled: queryParams != null
-    }
-  );
-
-  return (
-    <ServerSideTable
-      meta={reportingTasks?.meta}
-      data={reportingTasks?.data ?? []}
-      isLoading={isLoading}
-      onQueryParamChange={setQueryParams}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      initialTableState={{ sorting: [{ id: "due_at", desc: true }] }}
-      columns={[
+  const columns = useMemo(
+    () =>
+      [
         {
-          accessorKey: "due_at",
+          accessorKey: "dueAt",
           header: t("Due date"),
           cell: props => format(props.getValue() as string)
         },
@@ -60,13 +47,13 @@ const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
         },
         {
           id: "title",
-          accessorKey: "due_at",
+          accessorKey: "dueAt",
           header: t("Title"),
           enableSorting: false,
           cell: props => <ReportingWindow dueDate={props.getValue() as string} />
         },
         {
-          accessorKey: "completion_status",
+          accessorKey: "completionStatus",
           header: t("Completion Status"),
           enableSorting: false,
           cell: props => {
@@ -88,7 +75,19 @@ const ReportingTasksTable = ({ projectUUID }: ReportingTasksTableProps) => {
             />
           )
         }
-      ]}
+      ] as ColumnDef<TaskLightDto>[],
+    [format, projectUUID, t]
+  );
+
+  return (
+    <ConnectionTable
+      connection={taskIndexConnection}
+      connectionProps={{ filter: { projectUuid: projectUUID } }}
+      onFetch={onFetch}
+      variant={VARIANT_TABLE_BORDER_ALL}
+      initialTableState={{ sorting: [{ id: "dueAt", desc: true }] }}
+      columns={columns}
+      alwaysShowPagination={alwaysShowPagination}
     />
   );
 };

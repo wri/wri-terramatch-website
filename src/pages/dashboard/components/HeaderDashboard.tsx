@@ -2,9 +2,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { T, useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
+import { Choice } from "@/admin/types/common";
 import Button from "@/components/elements/Button/Button";
 import {
   VARIANT_DROPDOWN_COLLAPSE,
@@ -21,8 +22,10 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
+import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
@@ -37,7 +40,7 @@ interface HeaderDashboardProps {
   isProjectPage?: boolean;
   isHomepage?: boolean;
   isImpactStoryPage?: boolean;
-  dashboardCountries: CountriesProps[];
+  gadmCountries: Choice[];
   defaultSelectedCountry: CountriesProps | undefined;
   setSelectedCountry: (country?: CountriesProps) => void;
 }
@@ -49,14 +52,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     isProjectPage,
     isHomepage,
     isImpactStoryPage,
-    dashboardCountries,
+    gadmCountries,
     setSelectedCountry
   } = props;
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, setDashboardCountries, lastUpdatedAt } =
-    useDashboardContext();
+  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, lastUpdatedAt } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -66,29 +68,35 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     { title: "Landscapes", value: "terrafund-landscapes" }
   ];
 
-  const optionMenu = activeProjects
-    ? activeProjects?.map(
-        (
-          item: {
-            project_country: string;
-            organisation: string;
-            name: string;
-            programme: string;
-            uuid: string;
-            country_slug: string;
-          },
-          index: number
-        ) => ({
-          id: index,
-          country: item?.project_country,
-          organization: item?.organisation,
-          project: item?.name,
-          programme: item?.programme,
-          uuid: item?.uuid,
-          country_slug: item?.country_slug
-        })
-      )
-    : [];
+  const activeCountries = useMemo(() => {
+    if (!activeProjects || !gadmCountries || !gadmCountries.length) return [];
+
+    const uniqueCountrySlugs = [...new Set(activeProjects.map((project: any) => project.country))].filter(
+      Boolean
+    ) as string[];
+    const countries = uniqueCountrySlugs
+      .map(slug => {
+        const gadmCountry = gadmCountries.find(country => {
+          return String(country.id).toLowerCase() === slug.toLowerCase();
+        });
+
+        if (!gadmCountry) return null;
+
+        return {
+          country_slug: slug,
+          id: gadmCountry.id,
+          data: {
+            label: gadmCountry.name,
+            icon: `/flags/${slug.toLowerCase()}.svg`
+          }
+        } as CountriesProps;
+      })
+      .filter((country): country is CountriesProps => country !== null);
+
+    return countries.sort((a, b) => a.data.label.localeCompare(b.data.label));
+  }, [activeProjects, gadmCountries]);
+
+  const optionMenu = activeProjects || [];
 
   const organizationOptions = [
     {
@@ -99,12 +107,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       title: t("Enterprise Organization"),
       value: "for-profit-organization"
     }
-  ];
-
-  const landscapeOption = [
-    { title: "Greater Rift Valley of Kenya", value: "Greater Rift Valley of Kenya" },
-    { title: "Ghana Cocoa Belt ", value: "Ghana Cocoa Belt" },
-    { title: "Lake Kivu & Rusizi River Basin ", value: "Lake Kivu & Rusizi River Basin" }
   ];
 
   const { data: frameworks } = useGetV2DashboardFrameworks({
@@ -130,17 +132,29 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
         }
       },
       organizations: [],
-      cohort: "",
+      cohort: [],
       uuid: ""
     });
     setSearchTerm("");
   };
 
+  const isFirstRender = useRef(true);
+  const isUpdatingRef = useRef(false);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (isUpdatingRef.current) {
+      return;
+    }
+
     const query: any = {
       ...router.query,
       programmes: filters.programmes,
-      landscapes: filters.landscapes,
+      landscapes: convertNamesToCodes(filters.landscapes),
       country: filters.country?.country_slug || undefined,
       organizations: filters.organizations,
       cohort: filters.cohort,
@@ -149,18 +163,24 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     Object.keys(query).forEach(key => !query[key]?.length && delete query[key]);
 
-    const currentQuery = JSON.stringify(router.query);
-    const newQuery = JSON.stringify(query);
+    const currentQueryString = JSON.stringify(router.query);
+    const newQueryString = JSON.stringify(query);
 
-    if (currentQuery !== newQuery) {
-      router.push(
-        {
-          pathname: router.pathname,
-          query: query
-        },
-        undefined,
-        { shallow: true }
-      );
+    if (currentQueryString !== newQueryString) {
+      isUpdatingRef.current = true;
+
+      router
+        .push(
+          {
+            pathname: router.pathname,
+            query: query
+          },
+          undefined,
+          { shallow: true }
+        )
+        .finally(() => {
+          isUpdatingRef.current = false;
+        });
     }
   }, [
     router,
@@ -173,14 +193,23 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   ]);
 
   useOnMount(() => {
-    setDashboardCountries(dashboardCountries);
     const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
+
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
-      landscapes: landscapes ? (Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
-      country: country ? dashboardCountries.find(c => c.country_slug === country) || filters.country : filters.country,
+      landscapes: landscapes ? convertCodesToNames(Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
+      country: country
+        ? {
+            country_slug: country as string,
+            id: 1,
+            data: {
+              label: gadmCountries.find(c => c.id === country)?.name || "",
+              icon: `/flags/${country.toString().toLowerCase()}.svg`
+            }
+          }
+        : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
-      cohort: Array.isArray(cohort) ? cohort[0] : cohort ?? "",
+      cohort: Array.isArray(cohort) ? cohort : cohort ? [cohort] : [],
       uuid: (uuid as string) || ""
     };
 
@@ -196,7 +225,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   const handleChangeCountry = (value: OptionValue[]) => {
-    const selectedCountry = dashboardCountries?.find((country: CountriesProps) => country.id === value[0]);
+    const selectedCountry = activeCountries?.find((country: CountriesProps) => country.id === value[0]);
 
     if (selectedCountry) {
       setSelectedCountry(selectedCountry);
@@ -221,6 +250,33 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     }
   };
 
+  const valueForCountry = useMemo(() => {
+    if (!filters.country?.id || filters.country.id === 0) {
+      return [];
+    }
+
+    const countryExists = activeCountries.some(country => String(country.id) === String(filters.country?.id));
+
+    if (countryExists) {
+      return [filters.country.id];
+    }
+
+    if (filters.country.country_slug) {
+      const matchingCountry = activeCountries.find(country => country.country_slug === filters.country.country_slug);
+
+      if (matchingCountry) {
+        return [matchingCountry.id];
+      }
+    }
+
+    return [];
+  }, [filters.country, activeCountries]);
+
+  const valueForCohort = useMemo(
+    () => (filters.cohort && filters.cohort.length > 0 ? filters.cohort : []),
+    [filters.cohort]
+  );
+
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
       return <T _str="Project Insights" _tags="dash" />;
@@ -235,6 +291,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       return <T _str="Impact Story" _tags="dash" />;
     }
     return <T _str="TerraMatch Dashboards" _tags="dash" />;
+  };
+
+  const isValidDate = (value: string | undefined): boolean => {
+    return value != null && !isNaN(new Date(value).getTime());
   };
 
   return (
@@ -266,11 +326,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
-        <Text variant="text-16" className="absolute top-3 right-3 text-white ">
-          {t("Last Updated on {date}", {
-            date: lastUpdatedAt ? new Date(lastUpdatedAt).toISOString().split("T")[0] : ""
-          })}
-        </Text>
+        <When condition={!isHomepage}>
+          <Text variant="text-16" className="absolute top-3 right-3 text-white">
+            {t("Last Updated on {date}", {
+              date: isValidDate(lastUpdatedAt) ? new Date(String(lastUpdatedAt))?.toISOString().split("T")[0] : ""
+            })}
+          </Text>
+        </When>
         <When condition={!isProjectInsightsPage && !isHomepage}>
           <div className="hidden w-full items-center gap-2 mobile:flex">
             <When condition={router.pathname !== "/dashboard"}>
@@ -351,11 +413,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 onClear={() => {
                   handleChange("landscapes", []);
                 }}
-                options={landscapeOption}
+                options={LANDSCAPE_OPTIONS}
                 optionClassName="hover:bg-grey-200"
                 containerClassName="z-[4] w-full"
               />
               <ResponsiveDropdownContainer
+                key={`country-${filters.country?.id || "empty"}-${valueForCountry.join("-")}`}
                 className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
@@ -368,7 +431,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 inputVariant="text-14-semibold"
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
-                value={filters.country?.id ? [filters.country.id] : undefined}
+                value={valueForCountry}
                 onChange={value => {
                   handleChangeCountry(value);
                 }}
@@ -387,7 +450,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     }
                   }));
                 }}
-                options={dashboardCountries.map((country: CountriesProps) => ({
+                options={activeCountries.map((country: CountriesProps) => ({
                   title: country.data.label,
                   value: country.id,
                   prefix: (
@@ -426,9 +489,12 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 containerClassName="z-[2] w-full"
               />
               <ResponsiveDropdownContainer
+                key={`cohort-${filters.cohort.join("-") || "empty"}`}
                 className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                 disabled={isProjectPage}
                 isMobile={isMobile}
+                showSelectAll
+                showLabelAsMultiple
                 showClear
                 prefix={
                   <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
@@ -436,22 +502,16 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   </Text>
                 }
                 inputVariant="text-14-semibold"
+                multiSelect
                 variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
                 placeholder={t("All Data")}
-                value={filters.cohort ? [filters.cohort] : []}
+                multipleText={t("Multiple Cohorts")}
+                value={valueForCohort}
                 onChange={(value: OptionValue[]) => {
-                  return setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: value[0] as string
-                  }));
+                  handleChange("cohort", value);
                 }}
                 onClear={() => {
-                  setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    cohort: ""
-                  }));
+                  handleChange("cohort", []);
                 }}
                 options={optionsCohort}
                 optionClassName="hover:bg-grey-200"
@@ -479,46 +539,40 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
                   disabled={searchTerm.length < 3 || !optionMenu.length}
                   isDefaultOpen={true}
-                  menu={optionMenu.map(
-                    (option: {
-                      id: number;
-                      country: string;
-                      organization: string;
-                      project: string;
-                      programme: string;
-                      uuid: string;
-                      country_slug: string;
-                    }) => ({
-                      id: option.id,
-                      render: () => (
-                        <span
-                          className="leading-[normal] tracking-[normal]"
-                          onClick={async () => {
-                            showLoader();
-                            setFilters(prevValues => ({
-                              ...prevValues,
-                              uuid: option.uuid as string,
-                              country:
-                                dashboardCountries?.find(country => country.country_slug === option?.country_slug) ||
-                                prevValues.country
-                            }));
-                            router.push({
-                              pathname: "/dashboard",
-                              query: { ...filters, country: option?.country_slug, uuid: option.uuid as string }
-                            });
-                            hideLoader();
-                          }}
-                        >
-                          <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                            {t(option.country)},&nbsp;{t(option.organization)},&nbsp;
-                          </Text>
-                          <Text variant="text-12-light" className="text-darkCustom" as="span">
-                            {t(option.project)},&nbsp;{t(option.programme)}
-                          </Text>
-                        </span>
-                      )
-                    })
-                  )}
+                  menu={optionMenu.map((option: DashboardProjectsLightDto, index: number) => ({
+                    id: String(index),
+                    render: () => (
+                      <span
+                        className="leading-[normal] tracking-[normal]"
+                        onClick={async () => {
+                          showLoader();
+                          setFilters(prevValues => ({
+                            ...prevValues,
+                            uuid: option.uuid,
+                            country:
+                              activeCountries?.find(country => country.country_slug === option.country) ||
+                              prevValues.country
+                          }));
+                          router.push({
+                            pathname: "/dashboard",
+                            query: {
+                              ...filters,
+                              country: option.country ?? "",
+                              uuid: option.uuid
+                            }
+                          });
+                          hideLoader();
+                        }}
+                      >
+                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                          {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom" as="span">
+                          {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}
+                        </Text>
+                      </span>
+                    )
+                  }))}
                 >
                   <When condition={!isMobile}>
                     <BlurContainer className="lg:min-w-[287px]">

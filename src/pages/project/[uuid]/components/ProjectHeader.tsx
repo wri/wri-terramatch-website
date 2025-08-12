@@ -9,15 +9,17 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { deleteProject } from "@/connections/Entity";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDeleteV2ProjectsUUID } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
+import Log from "@/utils/log";
 
 interface ProjectHeaderProps {
-  project: any;
+  project: ProjectFullDto;
 }
 
 const ProjectHeader = ({ project }: ProjectHeaderProps) => {
@@ -30,18 +32,8 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
-    entityStatus: project.status,
-    updateRequestStatus: project.update_request_status
-  });
-
-  const { mutate: deleteProject } = useDeleteV2ProjectsUUID({
-    onSuccess() {
-      router.push("/my-projects");
-      openToast(t("The project has been successfully deleted"));
-    },
-    onError() {
-      openToast(t("Something went wrong!"), ToastType.ERROR);
-    }
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
 
   const onDeleteProject = () => {
@@ -55,9 +47,16 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            deleteProject({ pathParams: { uuid: project.uuid } });
+          onClick: async () => {
             closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
+            try {
+              await deleteProject(project.uuid);
+              router.push("/my-projects");
+              openToast(t("The project has been successfully deleted."));
+            } catch (failure) {
+              Log.error("Project delete failed", failure);
+              openToast(t("Something went wrong"), ToastType.ERROR);
+            }
           }
         }}
         secondaryButtonProps={{
@@ -68,13 +67,13 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
     );
   };
 
-  const subtitles = [`${t("Organisation")}: ${project.organisation?.name}`, useFrameworkTitle()];
+  const subtitles = [`${t("Organisation")}: ${project?.organisationName}`, useFrameworkTitle()];
 
   return (
-    <PageHeader className="h-[203px]" title={project.name} subtitles={subtitles} hasBackButton={false}>
+    <PageHeader className="h-[203px]" title={project.name ?? ""} subtitles={subtitles} hasBackButton={false}>
       <If condition={project.status === "started"}>
         <Then>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:flex-col">
             <Button variant="secondary" onClick={() => onDeleteProject()}>
               {t("Delete")}
             </Button>
@@ -84,7 +83,7 @@ const ProjectHeader = ({ project }: ProjectHeaderProps) => {
           </div>
         </Then>
         <Else>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:flex-col">
             <Button variant="secondary" onClick={handleExport}>
               {t("Export")}
               <InlineLoader loading={exportLoader} />

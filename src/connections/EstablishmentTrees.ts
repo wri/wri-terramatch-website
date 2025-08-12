@@ -1,66 +1,36 @@
-import { createSelector } from "reselect";
-
-import {
-  establishmentTreesFind,
-  EstablishmentTreesFindPathParams
-} from "@/generated/v3/entityService/entityServiceComponents";
-import { establishmentTreesFindFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
+import { establishmentTreesFind } from "@/generated/v3/entityService/entityServiceComponents";
+import { TreeEntityTypes } from "@/generated/v3/entityService/entityServiceConstants";
 import { EstablishmentsTreesDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { connectionHook } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { useConnection } from "@/hooks/useConnection";
 
-type EstablishmentTreesConnection = {
-  establishmentTrees?: EstablishmentsTreesDto["establishmentTrees"][string];
-  previousPlantingCounts?: Exclude<EstablishmentsTreesDto["previousPlantingCounts"], null>[string];
+import { v3Resource } from "./util/apiConnectionFactory";
 
-  establishmentTreesLoadFailed: boolean;
+export type EstablishmentEntity = (typeof TreeEntityTypes.ESTABLISHMENT_ENTITIES)[number];
+
+type EstablishmentTreesProps = {
+  entity?: EstablishmentEntity;
+  uuid?: string;
 };
 
-type EstablishmentTreesProps = Partial<EstablishmentTreesFindPathParams> & {
-  collection?: string;
-};
-
-export type EstablishmentEntityType = EstablishmentTreesFindPathParams["entity"] | undefined;
-const establishmentTreesSelector =
-  (entity: EstablishmentEntityType, uuid: string | undefined) => (store: ApiDataStore) =>
-    entity == null || uuid == null ? undefined : store.establishmentTrees?.[`${entity}|${uuid}`];
-const establishmentTreesLoadFailed =
-  (entity: EstablishmentEntityType, uuid: string | undefined) => (store: ApiDataStore) =>
-    entity == null || uuid == null
-      ? false
-      : establishmentTreesFindFetchFailed({ pathParams: { entity, uuid } })(store) != null;
-
-const connectionIsLoaded = (
-  { establishmentTrees, establishmentTreesLoadFailed }: EstablishmentTreesConnection,
-  { entity, uuid, collection }: EstablishmentTreesProps
-) => collection == null || entity == null || uuid == null || establishmentTrees != null || establishmentTreesLoadFailed;
-
-const establishmentTreesConnection: Connection<EstablishmentTreesConnection, EstablishmentTreesProps> = {
-  load: (connection, props) => {
-    if (!connectionIsLoaded(connection, props)) {
-      establishmentTreesFind({ pathParams: { entity: props.entity!, uuid: props.uuid! } });
-    }
-  },
-
-  isLoaded: connectionIsLoaded,
-
-  selector: selectorCache(
-    ({ entity, uuid, collection }) => `${entity}|${uuid}|${collection}`,
-    ({ entity, uuid, collection }) =>
-      createSelector(
-        [establishmentTreesSelector(entity, uuid), establishmentTreesLoadFailed(entity, uuid)],
-        (treesDto, establishmentTreesLoadFailed) => {
-          const loadComplete = treesDto?.attributes?.establishmentTrees != null;
-          const establishmentTrees =
-            collection == null || !loadComplete ? undefined : treesDto.attributes.establishmentTrees[collection] ?? [];
-          const previousPlantingCounts =
-            collection == null || !loadComplete ? undefined : treesDto.attributes.previousPlantingCounts?.[collection];
-          return { establishmentTrees, previousPlantingCounts, establishmentTreesLoadFailed };
-        }
-      )
+const establishmentTreesConnection = v3Resource("establishmentTrees", establishmentTreesFind)
+  .singleByCustomId<EstablishmentsTreesDto, EstablishmentTreesProps>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    ({ entity, uuid }) => `${entity}|${uuid}`
   )
-};
+  .enabledProp()
+  .buildConnection();
 
-export const useEstablishmentTrees = connectionHook(establishmentTreesConnection);
+export const useEstablishmentTrees = ({
+  entity,
+  uuid,
+  collection
+}: EstablishmentTreesProps & { collection?: string }) => {
+  const enabled =
+    collection != null && entity != null && uuid != null && TreeEntityTypes.ESTABLISHMENT_ENTITIES.includes(entity);
+  const [isLoaded, { data }] = useConnection(establishmentTreesConnection, { entity, uuid, enabled });
+  return {
+    isLoaded,
+    establishmentTrees: collection == null ? undefined : data?.establishmentTrees?.[collection],
+    previousPlantingCounts: collection == null ? undefined : data?.previousPlantingCounts?.[collection]
+  };
+};

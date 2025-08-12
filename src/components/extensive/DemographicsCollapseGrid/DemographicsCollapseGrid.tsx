@@ -20,7 +20,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
 
   const onSectionChange = useCallback(
     (type: string, sectionEntries: DemographicEntryDto[]) => {
-      onChange?.([...entries.filter(({ type: demographicType }) => demographicType !== type), ...sectionEntries]);
+      onChange?.([...entries.filter(({ type: entryType }) => entryType !== type), ...sectionEntries]);
     },
     [onChange, entries]
   );
@@ -77,7 +77,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
               <DemographicsSection
                 key={entryType}
                 demographicType={type}
-                onChange={onChange == null ? undefined : entries => onSectionChange(type, entries)}
+                onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
                 entries={byType[entryType] ?? []}
                 {...{ entryType, variant }}
               />

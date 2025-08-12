@@ -1,5 +1,89 @@
-export class DemographicCollections {
-  public static readonly WORKDAYS_PROJECT = [
+import { StoreResourceMap } from "@/store/apiSlice";
+import {
+  ProjectPitchDto,
+  ImpactStoryLightDto,
+  ImpactStoryFullDto,
+  TaskLightDto,
+  TaskFullDto,
+  ProjectReportLightDto,
+  ProjectReportFullDto,
+  SiteReportLightDto,
+  SiteReportFullDto,
+  NurseryReportLightDto,
+  NurseryReportFullDto,
+  MediaDto,
+  ScientificNameDto,
+  EstablishmentsTreesDto,
+  TreeReportCountsDto,
+  DemographicDto,
+  DisturbanceDto,
+  ProjectLightDto,
+  ProjectFullDto,
+  SiteLightDto,
+  SiteFullDto,
+  NurseryLightDto,
+  NurseryFullDto,
+  SeedingDto,
+  TreeSpeciesDto,
+  InvasiveDto,
+  StrataDto
+} from "./entityServiceSchemas";
+
+export const ENTITY_SERVICE_RESOURCES = [
+  "projectPitches",
+  "impactStories",
+  "tasks",
+  "projectReports",
+  "siteReports",
+  "nurseryReports",
+  "media",
+  "treeSpeciesScientificNames",
+  "establishmentTrees",
+  "treeReportCounts",
+  "demographics",
+  "disturbances",
+  "projects",
+  "sites",
+  "nurseries",
+  "seedings",
+  "treeSpecies",
+  "invasives",
+  "stratas"
+] as const;
+
+export type EntityServiceApiResources = {
+  projectPitches: StoreResourceMap<ProjectPitchDto>;
+  impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
+  tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
+  projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
+  siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
+  nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  media: StoreResourceMap<MediaDto>;
+  treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
+  establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
+  treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  demographics: StoreResourceMap<DemographicDto>;
+  disturbances: StoreResourceMap<DisturbanceDto>;
+  projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
+  sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
+  nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
+  seedings: StoreResourceMap<SeedingDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
+  invasives: StoreResourceMap<InvasiveDto>;
+  stratas: StoreResourceMap<StrataDto>;
+};
+
+export const TreeEntityTypes = {
+  ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
+  REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
+} as const;
+
+export const SupportedEntities = {
+  ENTITY_TYPES: ["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const
+} as const;
+
+export const DemographicCollections = {
+  WORKDAYS_PROJECT: [
     "paid-project-management",
     "volunteer-project-management",
     "paid-nursery-operations",
@@ -8,17 +92,17 @@ export class DemographicCollections {
     "volunteer-other-activities",
     "direct",
     "convergence"
-  ] as const;
-  public static readonly WORKDAYS_PROJECT_PPC = [
+  ] as const,
+  WORKDAYS_PROJECT_PPC: [
     "paid-project-management",
     "volunteer-project-management",
     "paid-nursery-operations",
     "volunteer-nursery-operations",
     "paid-other-activities",
     "volunteer-other-activities"
-  ] as const;
-  public static readonly WORKDAYS_PROJECT_OTHER = "paid-other-activities" as const;
-  public static readonly WORKDAYS_SITE = [
+  ] as const,
+  WORKDAYS_PROJECT_OTHER: "paid-other-activities" as const,
+  WORKDAYS_SITE: [
     "paid-site-establishment",
     "volunteer-site-establishment",
     "paid-planting",
@@ -29,9 +113,9 @@ export class DemographicCollections {
     "volunteer-site-monitoring",
     "paid-other-activities",
     "volunteer-other-activities"
-  ] as const;
-  public static readonly WORKDAYS_SITE_OTHER = "paid-other-activities" as const;
-  public static readonly RESTORATION_PARTNERS_PROJECT = [
+  ] as const,
+  WORKDAYS_SITE_OTHER: "paid-other-activities" as const,
+  RESTORATION_PARTNERS_PROJECT: [
     "direct-income",
     "indirect-income",
     "direct-benefits",
@@ -52,10 +136,10 @@ export class DemographicCollections {
     "indirect-productivity",
     "direct-other",
     "indirect-other"
-  ] as const;
-  public static readonly RESTORATION_PARTNERS_PROJECT_OTHER = "direct-other" as const;
-  public static readonly JOBS_PROJECT = ["full-time", "part-time"] as const;
-  public static readonly VOLUNTEERS_PROJECT = ["volunteer"] as const;
-  public static readonly BENEFICIARIES_PROJECT_ALL = ["all"] as const;
-  public static readonly BENEFICIARIES_PROJECT_TRAINING = ["training"] as const;
-}
+  ] as const,
+  RESTORATION_PARTNERS_PROJECT_OTHER: "direct-other" as const,
+  JOBS_PROJECT: ["all", "full-time", "full-time-clt", "part-time", "part-time-clt"] as const,
+  VOLUNTEERS_PROJECT: ["volunteer"] as const,
+  BENEFICIARIES_PROJECT_ALL: ["all"] as const,
+  BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
+} as const;

@@ -9,7 +9,7 @@ import ProjectsCard from "./cards/ProjectsCard";
 import ReportsCard from "./cards/ReportsCard";
 
 const PROJECT_TARGETABLE_TYPES = ["Project", "Site", "Nursery"];
-const REPORT_TARGETABLE_TYPES = ["ProjectReport", "SiteReport", "NurseryReport"];
+const REPORT_TARGETABLE_TYPES = ["ProjectReport", "SiteReport", "NurseryReport", "FinancialReport"];
 
 const ActionTracker = () => {
   // Queries
@@ -22,7 +22,7 @@ const ActionTracker = () => {
     }
   });
 
-  const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({});
+  const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({}, { retry: false });
 
   const reportActions = useMemo(
     () =>

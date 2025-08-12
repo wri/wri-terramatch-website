@@ -2,7 +2,6 @@ import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
-import { LngLatBoundsLike } from "mapbox-gl";
 import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
@@ -10,7 +9,6 @@ import { Else, If, Then } from "react-if";
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
@@ -32,6 +30,8 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { useMedias } from "@/connections/EntityAssociation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -39,22 +39,14 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import {
   fetchDeleteV2TerrafundPolygonUuid,
-  fetchGetV2TerrafundPolygonBboxUuid,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
-  fetchPutV2SitePolygonStatusBulk,
-  GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles,
-  useGetV2SitesSiteBbox
+  fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
-import {
-  PolygonBboxResponse,
-  SitePolygon,
-  SitePolygonsDataResponse,
-  SitePolygonsLoadedDataResponse
-} from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import { SitePolygon, SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -101,7 +93,8 @@ const PolygonReviewAside: FC<{
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons }) => {
+  siteUuid?: string;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid }) => {
   switch (type) {
     case "sites":
       return (
@@ -112,6 +105,7 @@ const PolygonReviewAside: FC<{
           mapFunctions={mapFunctions}
           refresh={refresh}
           totalPolygons={totalPolygons}
+          siteUuid={siteUuid}
         />
       );
     default:
@@ -154,12 +148,11 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     setSelectedPolygonsInCheckbox,
-    setPolygonCriteriaMap,
     setPolygonData,
-    polygonCriteriaMap: polygonsCriteriaData,
     polygonData: polygonList,
     shouldRefetchValidation,
-    setShouldRefetchValidation
+    setShouldRefetchValidation,
+    validFilter
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -167,58 +160,43 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
 
+  const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
+  const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
+  const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
+    Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
+  const activeBbox = isValidBbox(bbox) ? bbox : undefined;
+  const {
+    data: sitePolygonData,
+    refetch,
+    loading,
+    total,
+    updateSingleSitePolygonData
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
 
-  const flyToPolygonBounds = useCallback(
-    async (uuid: string) => {
-      const bbox: PolygonBboxResponse = await fetchGetV2TerrafundPolygonBboxUuid({ pathParams: { uuid } });
-      const bboxArray = bbox?.bbox;
-      const { map } = mapFunctions;
-      if (bboxArray && map?.current) {
-        const bounds: LngLatBoundsLike = [
-          [bboxArray[0], bboxArray[1]],
-          [bboxArray[2], bboxArray[3]]
-        ];
-        map.current.fitBounds(bounds, {
-          padding: 100,
-          linear: false
-        });
-      } else {
-        Log.error("Bounding box is not in the expected format");
-      }
-    },
-    [mapFunctions]
-  );
+  const flyToPolygonBounds = useCallback(async (uuid: string) => {
+    setCurrentPolygonUuid(uuid);
+  }, []);
 
   useEffect(() => {
     if (selectPolygonFromMap?.uuid) {
       setPolygonFromMap(selectPolygonFromMap);
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
-  }, [flyToPolygonBounds, polygonList, selectPolygonFromMap]);
+  }, [flyToPolygonBounds, selectPolygonFromMap]);
 
-  const {
-    data: sitePolygonData,
-    refetch,
-    polygonCriteriaMap,
-    loading,
-    total
-  } = useLoadCriteriaSite(record.uuid, "sites");
-
-  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    pathParams: { model: "sites", uuid: record.uuid }
+  const [, { data: modelFilesData }] = useMedias({
+    entity: "sites",
+    uuid: record?.uuid,
+    enabled: record?.uuid != null
   });
 
-  const { data: sitePolygonBbox, refetch: refetchSiteBbox } = useGetV2SitesSiteBbox({
-    pathParams: {
-      site: record.uuid
-    }
+  useValueChanged(validFilter, () => {
+    refetch();
   });
-
-  const siteBbox = sitePolygonBbox?.bbox as BBox;
 
   const parseText = (text: string) => {
     return text
@@ -234,13 +212,13 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": parseText(data.practice ?? ""),
-    "target-land-use-system": parseText(data.target_sys ?? ""),
-    "tree-distribution": parseText(data.distr ?? ""),
-    "planting-start-date": data.plantstart,
-    source: parseText(data.source ?? ""),
-    uuid: data.poly_id,
+    "polygon-name": data?.poly_name ?? `Unnamed Polygon`,
+    "restoration-practice": parseText(data?.practice ?? ""),
+    "target-land-use-system": parseText(data?.target_sys ?? ""),
+    "tree-distribution": parseText(data?.distr ?? ""),
+    "planting-start-date": data?.plantstart ?? "",
+    source: parseText(data?.source ?? ""),
+    uuid: data?.poly_id,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
   }));
 
@@ -248,7 +226,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     id: (index + 1).toString(),
     status: data.status,
     label: data.poly_name ?? `Unnamed Polygon`,
-    uuid: data.poly_id
+    uuid: data.poly_id,
+    validationStatus: data.validation_status ?? "notChecked"
   }));
 
   const polygonDataMap = parsePolygonData(sitePolygonData);
@@ -308,10 +287,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [loading, setPolygonData, sitePolygonData]);
 
   useEffect(() => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-  }, [polygonCriteriaMap, setPolygonCriteriaMap]);
-
-  useEffect(() => {
     if (shouldRefetchValidation) {
       refetch();
       setShouldRefetchValidation(false);
@@ -322,7 +297,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     closeModal(ModalId.ADD_POLYGON);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
-      const site_uuid = record.uuid;
+      const site_uuid = record?.uuid;
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
@@ -353,7 +328,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       }
       refetch();
-      refetchSiteBbox();
       setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
     } catch (error) {
@@ -395,7 +369,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       ModalId.ADD_POLYGON,
       <ModalAdd
         title="Add Polygons"
-        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record.name}.`}
+        descriptionInput={`Drag and drop a GeoJSON, Shapefile, or KML for your site ${record?.name ?? ""}.`}
         descriptionList={
           <div className="mt-9 flex">
             <Text variant="text-12-bold">TerraMatch upload limits:&nbsp;</Text>
@@ -448,7 +422,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalAdd
         title="Upload Images"
         variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${record.name}.`}
+        descriptionInput={`Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site ${
+          record?.name ?? ""
+        }.`}
         descriptionList={
           <Text variant="text-12-bold" className="mt-9 ">
             Uploaded Files
@@ -505,7 +481,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         btnDownload={true}
         btnDownloadProps={{
           onClick: () => {
-            downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
+            downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
           }
         }}
       />
@@ -526,7 +502,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: (polygons: unknown) => {
             closeModal(ModalId.APPROVE_POLYGONS);
-            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record.name);
+            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record?.name ?? "");
           }
         }}
         secondaryButtonText="Cancel"
@@ -535,7 +511,6 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "white-page-admin",
           onClick: () => closeModal(ModalId.APPROVE_POLYGONS)
         }}
-        polygonsCriteriaData={polygonsCriteriaData}
         polygonList={polygonList}
       />
     );
@@ -617,7 +592,11 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider
+      sitePolygonData={sitePolygonData}
+      reloadSiteData={refetch}
+      updateSingleSitePolygonData={updateSingleSitePolygonData}
+    >
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>
@@ -646,10 +625,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                     <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                       Polygon Overview
                       <ToolTip
-                        title={""}
-                        content={
-                          "This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the “Check Polygon” and “Approve Polygon” features below to validate and approve the remaining polygons."
-                        }
+                        title=""
+                        content={`This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the 'Check Polygon' and 'Approve Polygon' features below to validate and approve the remaining polygons.`}
                         width="w-72 lg:w-80"
                         trigger="click"
                       >
@@ -696,7 +673,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       }}
                       onClick={() => {
                         setSelectedPolygonsInCheckbox([]);
-                        downloadSiteGeoJsonPolygons(record.uuid, record?.name ?? "sitePolygons");
+                        downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
                       }}
                     >
                       Download
@@ -717,8 +694,12 @@ const PolygonReviewTab: FC<IProps> = props => {
               </div>
               <MapContainer
                 record={record}
+                entityData={{
+                  name: record?.name,
+                  project: record?.projectName ? { name: record.projectName } : undefined
+                }}
                 polygonsData={polygonDataMap}
-                bbox={siteBbox}
+                bbox={activeBbox}
                 className="rounded-lg"
                 status={true}
                 setPolygonFromMap={setPolygonFromMap}
@@ -728,7 +709,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
                 sitePolygonData={sitePolygonData}
-                modelFilesData={modelFilesData?.data}
+                modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}
                 setAlertTitle={props.setAlertTitle}
@@ -817,6 +798,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
+              siteUuid={record?.uuid ?? ""}
             />
           </Grid>
         </Grid>

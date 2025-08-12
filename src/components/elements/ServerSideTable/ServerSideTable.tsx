@@ -21,17 +21,27 @@ export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "on
   meta: any;
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: any) => void;
+  defaultPageSize?: number;
+  alwaysShowPagination?: boolean;
 }
+
+export type QueryParams = {
+  sort?: string;
+  page?: number;
+  per_page?: number;
+};
+
+export const DEFAULT_PAGE_SIZE = 5;
 
 export function ServerSideTable<TData extends RowData>({
   onTableStateChange,
   onQueryParamChange,
   variant,
+  defaultPageSize = DEFAULT_PAGE_SIZE,
   children,
+  alwaysShowPagination = false,
   ...props
 }: ServerSideTableProps<TData>) {
-  const defaultPageSize = 5;
-
   const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
   const [filters, setFilter] = useState<FilterValue[]>([]);
   const [page, setPage] = useState(1);
@@ -45,7 +55,7 @@ export function ServerSideTable<TData extends RowData>({
   }, [page, pageSize, filters, sorting, onQueryParamChange, onTableStateChange]);
 
   return (
-    <>
+    <div className="mobile:overflow-auto">
       <Table<TData>
         {...props}
         serverSideData
@@ -53,28 +63,33 @@ export function ServerSideTable<TData extends RowData>({
           setSorting(state.sorting);
           setFilter(state.filters);
         }}
+        classNameWrapper="!overflow-visible"
         variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
+        alwaysShowPagination={alwaysShowPagination}
       >
         {children}
       </Table>
-      {props.meta?.last_page > 1 && (
-        <Pagination
-          variant={VARIANT_PAGINATION_DASHBOARD}
-          getCanNextPage={() => page < props.meta?.last_page!}
-          getCanPreviousPage={() => page > 1}
-          getPageCount={() => props.meta?.last_page || 1}
-          nextPage={() => setPage(page => page + 1)}
-          pageIndex={page - 1}
-          previousPage={() => setPage(page => page - 1)}
-          setPageIndex={index => setPage(index + 1)}
-          hasPageSizeSelector
-          defaultPageSize={defaultPageSize}
-          setPageSize={size => {
-            setPage(1);
-            setPageSize(size);
-          }}
-        />
+      {(props.meta?.last_page > 1 || alwaysShowPagination) && (
+        <div className="relative z-20 pt-4">
+          <Pagination
+            variant={VARIANT_PAGINATION_DASHBOARD}
+            getCanNextPage={() => page < props.meta?.last_page!}
+            getCanPreviousPage={() => page > 1}
+            getPageCount={() => props.meta?.last_page || 1}
+            nextPage={() => setPage(page => page + 1)}
+            pageIndex={page - 1}
+            previousPage={() => setPage(page => page - 1)}
+            setPageIndex={index => setPage(index + 1)}
+            hasPageSizeSelector
+            defaultPageSize={pageSize}
+            setPageSize={size => {
+              setPage(1);
+              setPageSize(size);
+            }}
+            invertSelect
+          />
+        </div>
       )}
-    </>
+    </div>
   );
 }

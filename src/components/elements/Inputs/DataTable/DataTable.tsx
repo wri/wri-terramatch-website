@@ -24,6 +24,7 @@ declare module "@tanstack/react-table" {
 
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
+  modalEditTitle?: string;
   fields: FormField[];
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
@@ -31,9 +32,12 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   onChange?: (values: any) => void;
   generateUuids?: boolean;
   additionalValues?: any;
+  hasPagination?: boolean;
+  invertSelectPagination?: boolean;
 
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
+  handleUpdate?: (value: any) => void;
 }
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
@@ -46,8 +50,12 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     onChange,
     handleCreate,
     handleDelete,
+    handleUpdate,
     generateUuids = false,
     additionalValues = {},
+    modalEditTitle,
+    hasPagination = false,
+    invertSelectPagination = false,
     ...inputWrapperProps
   } = props;
 
@@ -55,6 +63,22 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     openModal(
       ModalId.FORM_MODAL,
       <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
+    );
+  };
+
+  const openFormUpdateModalHandler = (props: any) => {
+    const rowValues = props.row.original;
+    openModal(
+      ModalId.FORM_MODAL,
+      <FormModal
+        title={modalEditTitle}
+        fields={fields}
+        defaultValues={rowValues}
+        onSubmit={updatedValues => {
+          handleUpdate?.({ ...rowValues, ...updatedValues });
+          closeModal(ModalId.FORM_MODAL);
+        }}
+      />
     );
   };
 
@@ -100,6 +124,20 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
 
         return header;
       }),
+      ...(handleUpdate
+        ? [
+            {
+              id: "update",
+              accessorKey: "uuid",
+              header: "",
+              cell: props => (
+                <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
+              ),
+              meta: { align: "right" },
+              enableSorting: false
+            } as ColumnDef<TData>
+          ]
+        : []),
       {
         id: "delete",
         accessorKey: "uuid",
@@ -129,7 +167,13 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         </Button>
 
         <When condition={value.length > 0}>
-          <Table columns={headers} data={value.map((v, index) => ({ ...v, index }))} className="mt-8" />
+          <Table
+            columns={headers}
+            data={value.map((v, index) => ({ ...v, index }))}
+            className="mt-8"
+            hasPagination={hasPagination}
+            invertSelectPagination={invertSelectPagination}
+          />
         </When>
       </div>
     </InputWrapper>

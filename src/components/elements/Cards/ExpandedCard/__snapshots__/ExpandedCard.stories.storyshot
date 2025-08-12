@@ -12,7 +12,7 @@ exports[`Storyshots Components/Elements/Cards/ExpandedCard Default 1`] = `
     </p>
   </div>
   <div
-    className="border-t border-neutral-100 px-5 py-6"
+    className="border-t border-neutral-100 px-5 py-6 mobile:px-2"
   >
     <p>
       Body

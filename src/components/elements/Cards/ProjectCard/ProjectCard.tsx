@@ -16,17 +16,22 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
+import { deleteProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
+import { Status } from "@/types/common";
+import Log from "@/utils/log";
+
+import { StatusEnum } from "../../Status/constants/statusMap";
 
 export interface ProjectCardProps
   extends PropsWithChildren,
     DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   project: ProjectLightDto;
-  onDelete: (uuid: string) => void;
 }
 
 const FrameworkName = () => {
@@ -38,13 +43,14 @@ const FrameworkName = () => {
   );
 };
 
-const ProjectCard = ({ project, onDelete, title, children, className, ...rest }: ProjectCardProps) => {
+const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCardProps) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const { openToast } = useToastContext();
   const status = getEntityCombinedStatus(project);
   const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
-  const [siteCount, setSiteCount] = useState();
-  const [nurseriesCount, setNurseriesCount] = useState();
+  const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
+  const [siteCount, setSiteCount] = useState<number | undefined>();
 
   const onDeleteProject = () => {
     openModal(
@@ -57,9 +63,15 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
         )}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => {
-            onDelete(project.uuid);
+          onClick: async () => {
             closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
+            try {
+              await deleteProject(project.uuid);
+              openToast(t("The project has been successfully deleted"));
+            } catch (failure) {
+              Log.error("Project delete failed", failure);
+              openToast(t("Something went wrong!"), ToastType.ERROR);
+            }
           }
         }}
         secondaryButtonProps={{
@@ -73,13 +85,13 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
   return (
     <FrameworkProvider frameworkKey={project.frameworkKey}>
       <Paper {...rest} className={classNames(className, "p-0")}>
-        <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6">
+        <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6 mobile:flex-col mobile:px-3">
           <div className="flex flex-1 flex-col gap-2">
             <Text variant="text-bold-headline-800">{project.name}</Text>
             {statusProps && (
               <div className="flex">
                 <Text variant="text-bold-subtitle-500">{t("Status")}:&#160;</Text>
-                <StatusPill status={statusProps.status!} className="w-fit-content">
+                <StatusPill status={statusProps.status as unknown as Status} className="w-fit-content">
                   <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
                 </StatusPill>
               </div>
@@ -93,8 +105,8 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
               <Text variant="text-light-subtitle-400">{project.organisationName}</Text>
             </div>
           </div>
-          <div className="flex gap-4">
-            <If condition={statusProps?.status === "edit"}>
+          <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
+            <If condition={statusProps?.status === StatusEnum.EDIT}>
               <Then>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
@@ -115,8 +127,8 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
             </If>
           </div>
         </div>
-        <When condition={statusProps?.status !== "edit"}>
-          <div className="space-y-6 p-8">
+        <When condition={statusProps?.status !== StatusEnum.EDIT}>
+          <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={
                 <>
@@ -133,7 +145,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/sites/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Site")}
                   </Button>
@@ -144,10 +156,8 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                 <SitesTable
                   project={project}
                   hasAddButton={false}
-                  onFetch={data =>
-                    //@ts-expect-error
-                    typeof data.meta?.unfiltered_total === "number" && setSiteCount(data.meta?.unfiltered_total)
-                  }
+                  onFetch={data => setSiteCount(data?.indexTotal)}
+                  alwaysShowPagination
                 />
               )}
             </ExpandedCard>
@@ -170,7 +180,7 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                   </div>
                   <Button
                     as={Link}
-                    href={`/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`}
+                    href={`/entity/nurseries/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`}
                   >
                     {t("Add Nursery")}
                   </Button>
@@ -181,10 +191,8 @@ const ProjectCard = ({ project, onDelete, title, children, className, ...rest }:
                 <NurseriesTable
                   project={project}
                   hasAddButton={false}
-                  onFetch={data =>
-                    //@ts-expect-error
-                    typeof data.meta?.unfiltered_total === "number" && setNurseriesCount(data.meta?.unfiltered_total)
-                  }
+                  onFetch={data => setNurseriesCount(data?.indexTotal)}
+                  alwaysShowPagination
                 />
               )}
             </ExpandedCard>

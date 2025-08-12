@@ -40,12 +40,12 @@ export function useApiContext<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
 >(_queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">): ApiContext {
-  const [, { token }] = useLogin();
+  const [, { data: login }] = useLogin({});
 
   return {
     fetcherOptions: {
       headers: {
-        Authorization: token ? `Bearer ${token}` : undefined
+        Authorization: login?.token != null ? `Bearer ${login.token}` : undefined
       }
     },
     queryOptions: {},

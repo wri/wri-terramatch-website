@@ -1,6 +1,6 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { Fragment, ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useEffect, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -8,9 +8,12 @@ import {
   BooleanInput,
   FormDataConsumer,
   FormDataConsumerRenderParams,
+  maxValue,
   minLength,
+  minValue,
   NumberInput,
   required,
+  SelectArrayInput,
   TextInput,
   useInput
 } from "react-admin";
@@ -36,6 +39,7 @@ interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
   isChildQuestion?: boolean;
   hideDescriptionInput?: boolean;
   children?: ReactElement;
+  formTitle?: string;
 }
 
 export const appendAdditionalFormQuestionFields = (originalList: V2GenericList[]): V2GenericList[] => {
@@ -53,15 +57,17 @@ export const QuestionArrayInput = ({
   hideDescriptionInput,
   isChildQuestion,
   children,
+  formTitle,
   ...arrayInputProps
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
   const linkedFieldChoices = linkedFieldsData?.map(item => ({ id: item.uuid, name: item.name } as Choice)) || [];
+  const selectRef = useRef<HTMLDivElement | null>(null);
 
   const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
 
   return (
-    <>
+    <div ref={selectRef}>
       <ArrayInput {...arrayInputProps}>
         <AccordionFormIterator
           accordionSummaryTitle={(index, fields) =>
@@ -88,7 +94,6 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
-
           <TextInput
             source="label"
             label="Question Text"
@@ -96,6 +101,71 @@ export const QuestionArrayInput = ({
             fullWidth
             validate={required()}
           />
+
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              const field = getFieldByUUID(scopedFormData.linked_field_key);
+              return field?.input_type == "financialIndicators" ? (
+                <>
+                  <SelectArrayInput
+                    source={getSource("years")}
+                    label="Years multi-select"
+                    helperText="Select one or more years"
+                    choices={Array(6)
+                      .fill(0)
+                      .map((_, index) => {
+                        const year = new Date().getFullYear() - 5 + index;
+                        return { id: year, name: year };
+                      })}
+                    fullWidth
+                    validate={required()}
+                    options={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
+                          }
+                        }
+                      }
+                    }}
+                  />
+                  <SelectArrayInput
+                    source={getSource("collection")}
+                    label="Select Collections"
+                    helperText="Select one or more collections"
+                    choices={[
+                      { id: "profit", name: "Net Profit" },
+                      { id: "budget", name: "Budget" },
+                      { id: "current-ratio", name: "Ratio" }
+                    ]}
+                    fullWidth
+                    validate={required()}
+                    options={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
+                          }
+                        }
+                      }
+                    }}
+                    parse={(value: string[] | undefined) => (value ? JSON.stringify(value) : "[]")}
+                    format={(value: string | undefined) => {
+                      try {
+                        return value ? JSON.parse(value) : [];
+                      } catch {
+                        return [];
+                      }
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
+
           {!hideDescriptionInput && (
             <RichTextInput
               source="description"
@@ -118,13 +188,29 @@ export const QuestionArrayInput = ({
                   <NumberInput
                     source={getSource("min_character_limit")}
                     label="Minimum Character Limit"
-                    defaultValue={90000}
+                    defaultValue={0}
+                    validate={[minValue(0)]}
                   />
                   <NumberInput
                     source={getSource("max_character_limit")}
                     label="Maximum Character Limit"
                     defaultValue={90000}
+                    validate={[maxValue(90000)]}
                   />
+                </>
+              ) : (
+                <></>
+              );
+            }}
+          </FormDataConsumer>
+          <FormDataConsumer>
+            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+              if (!scopedFormData || !getSource) return null;
+              return scopedFormData.linked_field_key == "pro-pit-long-proposed" ||
+                scopedFormData.linked_field_key == "pro-pit-lat-proposed" ? (
+                <>
+                  <NumberInput source={getSource("min_number_limit")} label="Minimum Number Limit" />
+                  <NumberInput source={getSource("max_number_limit")} label="Maximum Number Limit" />
                 </>
               ) : (
                 <></>
@@ -137,7 +223,6 @@ export const QuestionArrayInput = ({
             helperText="Please keep this option on if you want to make this question required. When this option is enabled, project developers will be obligated to provide an answer to the question before they can submit the form."
             defaultValue={false}
           />
-
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (!scopedFormData || !getSource) return null;
@@ -243,6 +328,7 @@ export const QuestionArrayInput = ({
                     </QuestionArrayInput>
                   );
 
+                case "strategy-area":
                 case "select":
                 case "select-image":
                 case "workdays":
@@ -355,7 +441,8 @@ export const QuestionArrayInput = ({
         question={previewQuestion}
         linkedFieldData={linkedFieldsData as any[]}
         onClose={() => setPreviewQuestion(undefined)}
+        formTitle={formTitle}
       />
-    </>
+    </div>
   );
 };

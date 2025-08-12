@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
@@ -5,7 +6,7 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export type DemographicEntity = "project-reports" | "site-reports";
+export type DemographicEntity = "projectReports" | "siteReports";
 
 export type Status = "complete" | "not-started" | "in-progress";
 
@@ -45,53 +46,73 @@ type DemographicLabelProperties = {
   rowLabelPlural: string;
 };
 
-const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = {
-  workdays: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Workday",
-    rowLabelPlural: "Workdays"
-  },
-  restorationPartners: {
-    sectionLabel: "Total Restoration",
-    rowLabelSingular: "Partner",
-    rowLabelPlural: "Partners"
-  },
-  jobs: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Job",
-    rowLabelPlural: "Jobs"
-  },
-  volunteers: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Volunteer",
-    rowLabelPlural: "Volunteers"
-  },
-  allBeneficiaries: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  trainingBeneficiaries: {
-    sectionLabel: "Total Training",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  }
-};
-
 export const useDemographicLabels = (type: DemographicType) => {
+  const t = useT();
+
+  const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = useMemo(
+    () => ({
+      workdays: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Workday"),
+        rowLabelPlural: t("Workdays")
+      },
+      restorationPartners: {
+        sectionLabel: t("Total Restoration"),
+        rowLabelSingular: t("Partner"),
+        rowLabelPlural: t("Partners")
+      },
+      jobs: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Job"),
+        rowLabelPlural: t("Jobs")
+      },
+      employees: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Employee"),
+        rowLabelPlural: t("Employees")
+      },
+      volunteers: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Volunteer"),
+        rowLabelPlural: t("Volunteers")
+      },
+      allBeneficiaries: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      trainingBeneficiaries: {
+        sectionLabel: t("Total Training"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      indirectBeneficiaries: {
+        sectionLabel: t("Total Indirect"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      associates: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Associate"),
+        rowLabelPlural: t("Associates")
+      }
+    }),
+    [t]
+  );
+
   const { framework } = useFrameworkContext();
   return useMemo(() => {
     const props = DEMOGRAPHIC_LABELS[type];
     if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
       return {
         ...props,
-        rowLabelSingular: "Partner",
-        rowLabelPlural: "Partners"
+        rowLabelSingular: t("Partner"),
+        rowLabelPlural: t("Partners")
       } as DemographicLabelProperties;
     }
 
     return props;
-  }, [framework, type]);
+  }, [framework, type, DEMOGRAPHIC_LABELS, t]);
 };
 
 export interface DemographicsCollapseGridProps {
@@ -148,6 +169,19 @@ const HBF_FARMERS: Dictionary<string> = {
   marginalized: "Marginalized"
 };
 
+const RACES: Dictionary<string> = {
+  "black-or-pardo": "Black or Pardo",
+  "white-or-amarelo": "White or Amarelo",
+  indigenous: "Indigenous",
+  unknown: "Unknown"
+};
+
+const TRADITIONAL_COMMUNITIES: Dictionary<string> = {
+  member: "Member",
+  "non-member": "Non-member",
+  unknown: "Unknown"
+};
+
 type TypeMapValue = {
   title: string;
   typeMap: Dictionary<string>;
@@ -157,7 +191,7 @@ type TypeMapValue = {
   addNameLabel?: string;
 };
 
-const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
+const BASE_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
     typeMap: GENDERS,
@@ -167,7 +201,11 @@ const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
     title: "Age",
     typeMap: AGES,
     balanced: true
-  },
+  }
+};
+
+const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...BASE_DEMOGRAPHIC_TYPE_MAP,
   ethnicity: {
     title: "Ethnicity",
     typeMap: ETHNICITIES,
@@ -211,8 +249,31 @@ const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   ...HBF_DEMOGRAPHIC_TYPE_MAP,
   age: {
     title: "Age",
-    typeMap: JOBS_AGES,
+    typeMap: HBF_AGES,
     balanced: false
+  }
+};
+
+const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...BASE_DEMOGRAPHIC_TYPE_MAP,
+  "traditional-community": {
+    title: "Traditional Community",
+    typeMap: TRADITIONAL_COMMUNITIES,
+    balanced: true
+  }
+};
+
+const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...BASE_DEMOGRAPHIC_TYPE_MAP,
+  race: {
+    title: "Race",
+    typeMap: RACES,
+    balanced: true
+  },
+  "traditional-community": {
+    title: "Traditional Community",
+    typeMap: TRADITIONAL_COMMUNITIES,
+    balanced: true
   }
 };
 
@@ -238,7 +299,7 @@ const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
     typeMap: GENDERS,
@@ -246,9 +307,13 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   },
   age: {
     title: "Age",
-    typeMap: JOBS_AGES,
+    typeMap: HBF_AGES,
     balanced: false
-  },
+  }
+};
+
+const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
   farmer: {
     title: "Farmer",
     typeMap: HBF_FARMERS,
@@ -261,19 +326,52 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-export const getTypeMap = (type: DemographicType, framework: Framework) => {
-  const isHbf = framework === Framework.HBF;
+const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
+  "traditional-community": {
+    title: "Traditional Community",
+    typeMap: TRADITIONAL_COMMUNITIES,
+    balanced: true
+  }
+};
 
-  if (["jobs", "volunteers"].includes(type)) {
-    return isHbf ? HBF_JOBS_DEMOGRAPHICS_TYPE_MAP : JOBS_DEMOGRAPHICS_TYPE_MAP;
+export const getTypeMap = (type: DemographicType, framework: Framework) => {
+  if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
+    switch (framework) {
+      case Framework.HBF:
+        return HBF_JOBS_DEMOGRAPHICS_TYPE_MAP;
+      case Framework.FF:
+        return type === "volunteers" ? FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP : FF_JOBS_DEMOGRAPHICS_TYPE_MAP;
+      default:
+        return JOBS_DEMOGRAPHICS_TYPE_MAP;
+    }
   } else if (type.endsWith("Beneficiaries")) {
     if (type === "trainingBeneficiaries") {
-      return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+      switch (framework) {
+        case Framework.HBF:
+          return HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+        case Framework.FF:
+          return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+        default:
+          return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
+      }
     } else {
-      return isHbf ? HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP : BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+      switch (framework) {
+        case Framework.HBF:
+          return HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+        case Framework.FF:
+          return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+        default:
+          return BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
+      }
     }
   } else {
-    return isHbf ? HBF_DEMOGRAPHIC_TYPE_MAP : DEMOGRAPHIC_TYPE_MAP;
+    switch (framework) {
+      case Framework.HBF:
+        return HBF_DEMOGRAPHIC_TYPE_MAP;
+      default:
+        return DEMOGRAPHIC_TYPE_MAP;
+    }
   }
 };
 

@@ -12,13 +12,15 @@ import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Container from "@/components/generic/Layout/Container";
 import { useProjectIndex } from "@/connections/Entity";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmOptions } from "@/connections/Gadm";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Status } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 const ProjectsTabContent = () => {
   const t = useT();
-  const [, { entities: projects }] = useProjectIndex();
+  const [, { data: projects }] = useProjectIndex({});
+  const countryOptions = useGadmOptions({ level: 0 });
 
   return (
     <Container className="px-8 py-15">
@@ -40,7 +42,7 @@ const ProjectsTabContent = () => {
                 {
                   header: t("Location"),
                   accessorKey: "country",
-                  cell: props => `${formatOptionsList(getCountriesOptions(t), props.getValue() as string)}`
+                  cell: props => `${formatOptionsList(countryOptions ?? [], props.getValue() as string)}`
                 },
                 {
                   accessorKey: "status",
@@ -50,7 +52,7 @@ const ProjectsTabContent = () => {
                     if (!statusProps) return null;
 
                     return (
-                      <StatusPill status={statusProps.status!} className="w-fit">
+                      <StatusPill status={statusProps.status! as unknown as Status} className="w-fit">
                         <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
                       </StatusPill>
                     );

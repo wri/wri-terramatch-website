@@ -4,9 +4,7 @@ import { useState } from "react";
 import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_IMPACT_STORY } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
-import { useGetV2ImpactStories } from "@/generated/apiComponents";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import { createQueryParams } from "@/utils/dashboardUtils";
+import { useImpactStories } from "@/connections/ImpactStory";
 
 import CardImpactStory from "./CardImpactStory";
 
@@ -18,26 +16,20 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<number>(0);
   const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
-  const [queryString, setQueryString] = useState("");
 
-  const updateQueryString = () => {
-    const finalFilters = {
-      status: ["published"],
-      category: currentCategory ? [currentCategory] : "",
-      search: searchTerm
-    };
-
-    setQueryString(createQueryParams(finalFilters));
-  };
-
-  useValueChanged(currentCategory, updateQueryString);
-  useValueChanged(searchTerm, updateQueryString);
-
-  const { data: impactStoriesResponse, isLoading } = useGetV2ImpactStories({
-    queryParams: queryString as any
+  const [isLoaded, { data: impactStories }] = useImpactStories({
+    filter: {
+      ...(searchTerm != null ? { search: searchTerm } : {}),
+      ...(currentCategory != null ? { category: currentCategory, status: "published" } : {})
+    }
   });
+
+  const filteredStories = currentCategory
+    ? impactStories?.filter((story: any) => story.category && story.category.includes(currentCategory))
+    : impactStories;
+
   const transformedStories =
-    impactStoriesResponse?.data?.map((story: any) => ({
+    filteredStories?.map((story: any) => ({
       uuid: story.uuid,
       title: story.title,
       country:
@@ -67,7 +59,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       title: t("View all"),
       body: (
         <div className="w-full">
-          {isLoading ? (
+          {!isLoaded ? (
             <div className="flex h-48 items-center justify-center">
               <span className="text-gray-500">{t("Loading...")}</span>
             </div>
@@ -86,7 +78,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       title: t(category.title),
       body: (
         <div className="w-full">
-          {isLoading ? (
+          {!isLoaded ? (
             <div className="flex h-48 items-center justify-center">
               <span className="text-gray-500">{t("Loading...")}</span>
             </div>

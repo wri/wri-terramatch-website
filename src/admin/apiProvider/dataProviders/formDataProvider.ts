@@ -122,7 +122,7 @@ export const formDataProvider: FormDataProvider = {
   async getList(_, params) {
     try {
       const response = await fetchGetV2AdminForms({
-        queryParams: raListParamsToQueryParams(params, [])
+        queryParams: raListParamsToQueryParams(params, [], [], [], { light: true })
       });
 
       return apiListResponseToRAListResult(response);

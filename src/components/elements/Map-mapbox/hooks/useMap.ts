@@ -11,7 +11,7 @@ import type { ControlType } from "../Map.d";
 import { MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
-const INITIAL_ZOOM = 2.0;
+const INITIAL_ZOOM = 2.4;
 
 export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { record } = useShowContext();
@@ -38,6 +38,16 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     const geojson = convertToGeoJSON(featureCollection);
     onSave?.(geojson, record);
   };
+
+  const handleTrashDelete = () => {
+    if (draw?.current !== null) {
+      const trashButton = document.querySelector(".mapbox-gl-draw_trash") as HTMLButtonElement | null;
+      if (trashButton !== null) {
+        trashButton.click();
+      }
+    }
+  };
+
   const initMap = (isDashboard?: boolean) => {
     if (map.current) return;
 
@@ -46,7 +56,8 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       style: isDashboard ? MapStyle.Street : MapStyle.Satellite,
       zoom: zoom,
       minZoom: 2.0,
-      accessToken: mapboxToken
+      accessToken: mapboxToken,
+      center: [21.496, 5.456]
     });
 
     draw.current = new MapboxDraw({
@@ -54,7 +65,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
         point: false,
         line_string: false,
         polygon: false,
-        trash: false,
+        trash: true, // Re-enable trash control for built-in functionality
         combine_features: false,
         uncombine_features: false
       }
@@ -110,6 +121,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     setChangeStyle,
     changeStyle,
     mapLoaded,
-    setMapLoaded
+    setMapLoaded,
+    handleTrashDelete
   };
 };

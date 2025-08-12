@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import {
-  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   OVERLAPPING_CRITERIA_ID,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -55,6 +55,8 @@ interface TransformedData {
   showWarning: boolean;
 }
 
+const VALIDATION_CACHE_TIME = 5 * 60 * 1000;
+
 const getTransformedData = (
   sitePolygonData: SitePolygonsDataResponse | undefined,
   currentValidationSite: CheckedPolygon[]
@@ -64,9 +66,9 @@ const getTransformedData = (
       ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
       : null;
     const excludedFromValidationCriterias = [
-      COMPLETED_DATA_CRITERIA_ID,
       ESTIMATED_AREA_CRITERIA_ID,
-      WITHIN_COUNTRY_CRITERIA_ID
+      WITHIN_COUNTRY_CRITERIA_ID,
+      PLANT_START_DATE_CRITERIA_ID
     ];
     const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
     const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
@@ -82,7 +84,6 @@ const getTransformedData = (
       checked: checkedPolygon.checked,
       label: matchingPolygon?.poly_name ?? null,
       showWarning:
-        nonValidCriteriasIds?.includes(COMPLETED_DATA_CRITERIA_ID) ||
         nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
         nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
     };
@@ -100,11 +101,25 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { hideLoader } = useLoading();
-  const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
-    useMapAreaContext();
+  const {
+    setShouldRefetchValidation,
+    setShouldRefetchPolygonData,
+    setSelectedPolygonsInCheckbox,
+    validationData,
+    setValidationData,
+    validationDataTimestamp,
+    setValidationDataTimestamp,
+    setIsFetchingValidationData
+  } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
+
+  const shouldFetchValidationData = useCallback(() => {
+    const now = Date.now();
+    return !validationData[siteUuid ?? ""] || now - validationDataTimestamp > VALIDATION_CACHE_TIME;
+  }, [siteUuid, validationData, validationDataTimestamp]);
+
   const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
     CheckedPolygon[]
   >(
@@ -114,7 +129,18 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       }
     },
     {
-      enabled: !!siteUuid
+      enabled: !!siteUuid && shouldFetchValidationData(),
+      staleTime: VALIDATION_CACHE_TIME,
+      onSuccess: data => {
+        if (data && siteUuid) {
+          setValidationData((prev: Record<string, any>) => ({
+            ...prev,
+            [siteUuid]: data
+          }));
+          setValidationDataTimestamp(Date.now());
+          setIsFetchingValidationData(false);
+        }
+      }
     }
   );
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
@@ -174,8 +200,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     }
   });
 
-  const checkHasOverlaps = (currentValidationSite: CheckedPolygon[]) => {
-    for (const record of currentValidationSite) {
+  const checkHasOverlaps = (validationData: CheckedPolygon[]) => {
+    for (const record of validationData) {
       for (const criteria of record.nonValidCriteria) {
         if (criteria.criteria_id === OVERLAPPING_CRITERIA_ID && criteria.valid === 0) {
           return true;
@@ -223,15 +249,30 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   };
 
   useEffect(() => {
-    if (currentValidationSite) {
-      setHasOverlaps(checkHasOverlaps(currentValidationSite));
-      const transformedData = getTransformedData(sitePolygonData, currentValidationSite);
+    const getCurrentValidationData = () => {
+      if (currentValidationSite) {
+        return currentValidationSite;
+      }
+
+      if (siteUuid && validationData[siteUuid]) {
+        return validationData[siteUuid];
+      }
+
+      return [];
+    };
+
+    const validationDataToUse = getCurrentValidationData();
+
+    if (validationDataToUse.length > 0) {
+      setHasOverlaps(checkHasOverlaps(validationDataToUse));
+      const transformedData = getTransformedData(sitePolygonData, validationDataToUse);
       setSitePolygonCheckData(transformedData);
     }
-  }, [currentValidationSite, sitePolygonData]);
+  }, [currentValidationSite, sitePolygonData, validationData, siteUuid]);
 
   useValueChanged(sitePolygonData, () => {
-    if (sitePolygonData) {
+    if (sitePolygonData && siteUuid) {
+      setValidationDataTimestamp(0);
       reloadSitePolygonValidation();
     }
   });

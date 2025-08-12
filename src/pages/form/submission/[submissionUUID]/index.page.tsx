@@ -4,13 +4,10 @@ import { useRouter } from "next/router";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import {
-  useGetV2FormsSubmissionsUUID,
-  usePatchV2FormsSubmissionsUUID,
-  usePutV2FormsSubmissionsSubmitUUID
-} from "@/generated/apiComponents";
-import { FormSubmissionRead } from "@/generated/apiSchemas";
+import FrameworkProvider, { useFramework } from "@/context/framework.provider";
+import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
+import { useFormSubmission } from "@/hooks/useFormGet";
 import {
   useGetCustomFormSteps,
   useNormalizedFormDefaultValue
@@ -21,12 +18,7 @@ const SubmissionPage = () => {
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { data: formData, isLoading } = useGetV2FormsSubmissionsUUID<{ data: FormSubmissionRead }>(
-    { pathParams: { uuid: submissionUUID }, queryParams: { lang: router.locale } },
-    {
-      enabled: !!submissionUUID
-    }
-  );
+  const { isLoading, formData } = useFormSubmission(submissionUUID);
 
   const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
 
@@ -36,48 +28,54 @@ const SubmissionPage = () => {
     }
   });
 
-  const formSteps = useGetCustomFormSteps(formData?.data?.form, {
-    entityName: "project-pitch",
-    entityUUID: formData?.data?.project_pitch_uuid ?? ""
-  });
+  const framework = useFramework(formData?.data?.form?.framework_key);
+  const formSteps = useGetCustomFormSteps(
+    formData?.data?.form,
+    { entityName: "project-pitch", entityUUID: formData?.data?.project_pitch_uuid ?? "" },
+    framework
+  );
   //@ts-ignore
   const defaultValues = useNormalizedFormDefaultValue(formData?.data?.answers, formSteps);
 
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
-        <WizardForm
-          steps={formSteps!}
-          errors={error}
-          onBackFirstStep={router.back}
-          onCloseForm={() => router.push("/home")}
-          onChange={data =>
-            updateSubmission({
-              pathParams: { uuid: submissionUUID },
-              body: { answers: normalizedFormData(data, formSteps!) }
-            })
-          }
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitFormSubmission({
-              pathParams: {
-                uuid: submissionUUID
-              }
-            })
-          }
-          submitButtonDisable={isSubmitting}
-          defaultValues={defaultValues}
-          title={formData?.data.form?.title}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          summaryOptions={{
-            title: t("Review Application Details"),
-            downloadButtonText: t("Download Application")
-          }}
-          roundedCorners
-        />
+        <FrameworkProvider frameworkKey={framework}>
+          <WizardForm
+            steps={formSteps!}
+            errors={error}
+            onBackFirstStep={router.back}
+            onCloseForm={() => router.push("/home")}
+            onChange={data =>
+              updateSubmission({
+                pathParams: { uuid: submissionUUID },
+                body: { answers: normalizedFormData(data, formSteps!) }
+              })
+            }
+            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+            onSubmit={() =>
+              submitFormSubmission({
+                pathParams: {
+                  uuid: submissionUUID
+                }
+              })
+            }
+            submitButtonDisable={isSubmitting}
+            defaultValues={defaultValues}
+            title={formData?.data.form?.title}
+            tabOptions={{
+              markDone: true,
+              disableFutureTabs: true
+            }}
+            summaryOptions={{
+              title: t("Review Application Details"),
+              downloadButtonText: t("Download Application")
+            }}
+            roundedCorners
+            //@ts-ignore
+            formSubmissionOrg={formData?.data?.organisation_attributes}
+          />
+        </FrameworkProvider>
       </LoadingContainer>
     </BackgroundLayout>
   );

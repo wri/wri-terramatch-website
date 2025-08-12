@@ -1,11 +1,11 @@
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import { useGetV2DisturbancesENTITYUUID } from "@/generated/apiComponents";
+import { useDisturbances } from "@/connections/EntityAssociation";
 
+export type DisturbanceEntity = "projectReports" | "siteReports" | "sites" | "projects";
 export interface DisturbancesTableProps {
-  modelName: string;
+  modelName: DisturbanceEntity;
   modelUUID: string;
-  collection?: string;
   visibleRows?: number;
   headerName?: string;
 }
@@ -13,25 +13,10 @@ export interface DisturbancesTableProps {
 const DisturbancesTablePD = ({
   modelName,
   modelUUID,
-  collection,
   visibleRows = 5,
   headerName = "Disturbance Type"
 }: DisturbancesTableProps) => {
-  const queryParams: any = {};
-
-  if (collection) {
-    queryParams["filter[collection]"] = collection;
-  }
-
-  const { data: disturbances } = useGetV2DisturbancesENTITYUUID(
-    {
-      queryParams,
-      pathParams: { entity: modelName, uuid: modelUUID }
-    },
-    {
-      enabled: !!modelUUID
-    }
-  );
+  const [, { data: disturbances }] = useDisturbances({ entity: modelName, uuid: modelUUID });
 
   const processDisturbanceData = (rows: any[]) => {
     if (!rows) return [];
@@ -44,7 +29,7 @@ const DisturbancesTablePD = ({
     }));
   };
 
-  const tableData = disturbances?.data ? processDisturbanceData(disturbances.data) : [];
+  const tableData = processDisturbanceData(disturbances ?? []);
 
   const rowDisturbanceType = {
     accessorKey: "name",
@@ -88,10 +73,10 @@ const DisturbancesTablePD = ({
 
   const getColumns = () => {
     const finalColumns = [rowDisturbanceType];
-    if (disturbances?.data?.[0]?.intensity) {
+    if (disturbances?.[0]?.intensity) {
       finalColumns.push(columnIntensity);
     }
-    if (disturbances?.data?.[0]?.extent) {
+    if (disturbances?.[0]?.extent) {
       finalColumns.push(columnExtent);
     }
     finalColumns.push(columnDescription);

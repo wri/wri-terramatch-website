@@ -1,4 +1,3 @@
-import { getCountriesOptions } from "@/constants/options/countries";
 import { Framework } from "@/context/framework.provider";
 
 export const frameworkAdminPrimaryRoleChoices = [
@@ -51,11 +50,6 @@ export const userPrimaryRoleChoices = [
   }
 ];
 
-export const countriesChoices = getCountriesOptions().map(item => ({
-  id: item.value,
-  name: item.title
-}));
-
 export const frameworkChoices = [
   {
     id: "ppc",
@@ -65,6 +59,13 @@ export const frameworkChoices = [
     id: "terrafund",
     name: "TerraFund"
   }
+];
+
+export const localeChoices = [
+  { id: "en-US", name: "English" },
+  { id: "es-MX", name: "Spanish" },
+  { id: "fr-FR", name: "French" },
+  { id: "pt-BR", name: "Portuguese" }
 ];
 
 export const directFrameworkChoices = Object.values(Framework)

@@ -1,187 +1,227 @@
-import { createSelector } from "reselect";
-
+import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  entityDelete,
   entityGet,
   EntityGetPathParams,
   entityIndex,
-  EntityIndexQueryParams
+  EntityIndexQueryParams,
+  EntityIndexVariables,
+  entityUpdate,
+  EntityUpdateVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { entityGetFetchFailed, entityIndexFetchFailed } from "@/generated/v3/entityService/entityServicePredicates";
+import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
+  NurseryFullDto,
+  NurseryLightDto,
+  NurseryReportFullDto,
+  NurseryReportLightDto,
+  NurseryReportUpdateData,
+  NurseryUpdateData,
   ProjectFullDto,
   ProjectLightDto,
+  ProjectReportFullDto,
+  ProjectReportLightDto,
+  ProjectReportUpdateData,
+  ProjectUpdateData,
   SiteFullDto,
-  SiteLightDto
+  SiteLightDto,
+  SiteReportFullDto,
+  SiteReportLightDto,
+  SiteReportUpdateData,
+  SiteUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getStableQuery } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, indexMetaSelector, PendingErrorState, StoreResourceMap } from "@/store/apiSlice";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
-import { Connection } from "@/types/connection";
-import { connectionHook, connectionLoader } from "@/utils/connectionShortcuts";
-import { selectorCache } from "@/utils/selectorCache";
+import { Filter, PaginatedConnectionProps } from "@/types/connection";
 
-export type EntityFullDto = ProjectFullDto | SiteFullDto;
-export type EntityLightDto = ProjectLightDto | SiteLightDto;
+export type EntityFullDto =
+  | ProjectFullDto
+  | SiteFullDto
+  | NurseryFullDto
+  | ProjectReportFullDto
+  | NurseryReportFullDto
+  | SiteReportFullDto;
+export type EntityLightDto =
+  | ProjectLightDto
+  | SiteLightDto
+  | NurseryLightDto
+  | ProjectReportLightDto
+  | NurseryReportLightDto
+  | SiteReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
 
-type EntityConnection<T extends EntityDtoType> = {
-  entity?: T;
-  fetchFailure?: PendingErrorState | null;
-  refetch: () => void;
-};
+export type EntityUpdateData =
+  | ProjectUpdateData
+  | SiteUpdateData
+  | NurseryUpdateData
+  | ProjectReportUpdateData
+  | SiteReportUpdateData
+  | NurseryReportUpdateData;
 
-type EntityConnectionProps = {
-  uuid: string;
-};
-
-export type EntityIndexConnection<T extends EntityDtoType> = {
-  entities?: T[];
-  indexTotal?: number;
-  fetchFailure?: PendingErrorState | null;
-  refetch: () => void;
-};
-
-type EntityIndexFilterKey = keyof Omit<
-  EntityIndexQueryParams,
-  "page[size]" | "page[number]" | "sort[field]" | "sort[direction]"
->;
-export type EntityIndexConnectionProps = {
-  pageSize?: number;
-  pageNumber?: number;
-  sortField?: string;
-  sortDirection?: "ASC" | "DESC";
-  filter?: Record<EntityIndexFilterKey, string>;
-};
+export type EntityIndexConnectionProps = PaginatedConnectionProps &
+  FilterProp<Filter<EntityIndexQueryParams>> &
+  EnabledProp &
+  SideloadsProp<EntityIndexQueryParams["sideloads"]>;
 
 export type SupportedEntity = EntityGetPathParams["entity"];
 
-const entitySelector =
-  <T extends EntityDtoType>(entityName: SupportedEntity) =>
-  (store: ApiDataStore) =>
-    store[entityName] as StoreResourceMap<T>;
+const specificEntityParams = (entity: SupportedEntity, uuid?: string) => ({ pathParams: { entity, uuid: uuid ?? "" } });
 
-const entityGetParams = (entity: SupportedEntity, uuid: string) => ({ pathParams: { entity, uuid } });
-const entityIndexQuery = (props?: EntityIndexConnectionProps) => {
-  const queryParams = { "page[number]": props?.pageNumber, "page[size]": props?.pageSize } as EntityIndexQueryParams;
-  if (props?.sortField != null) {
-    queryParams["sort[field]"] = props.sortField;
-    queryParams["sort[direction]"] = props.sortDirection ?? "ASC";
-  }
-  if (props?.filter != null) {
-    for (const [key, value] of Object.entries(props.filter)) {
-      queryParams[key as EntityIndexFilterKey] = value;
-    }
-  }
-  return queryParams;
+const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpdateData>(
+  entity: U["type"],
+  requireFullEntity: boolean = true
+) => {
+  const pathParamsFactory = ({ id }: IdProp) => (id == null ? undefined : { pathParams: { entity, uuid: id } });
+  const factory = requireFullEntity
+    ? v3Resource(entity, entityGet).singleFullResource<D>(pathParamsFactory)
+    : v3Resource(entity, entityGet).singleResource<D>(pathParamsFactory);
+  return factory
+    .isDeleted()
+    .refetch(({ id }) => {
+      if (id != null) ApiSlice.pruneCache(entity, [id]);
+    })
+    .update<U["attributes"], EntityUpdateVariables>(entityUpdate)
+    .buildConnection();
 };
-const entityIndexParams = (entity: SupportedEntity, props?: EntityIndexConnectionProps) => ({
-  pathParams: { entity },
-  queryParams: entityIndexQuery(props)
-});
 
-const entityIsLoaded =
-  (requireFullEntity: boolean) =>
-  <T extends EntityDtoType>({ entity, fetchFailure }: EntityConnection<T>, { uuid }: EntityConnectionProps) => {
-    if (uuid == null || fetchFailure != null) return true;
-    if (entity == null) return false;
-    return !requireFullEntity || !entity.lightResource;
-  };
+const createEntityIndexConnection = <T extends EntityLightDto>(entity: SupportedEntity) =>
+  v3Resource(entity, entityIndex)
+    .index<T>(() => ({ pathParams: { entity } } as EntityIndexVariables))
+    .pagination()
+    .filter<Filter<EntityIndexQueryParams>>()
+    .sideloads()
+    .enabledProp()
+    .refetch(() => ApiSlice.pruneIndex(entity, ""))
+    .buildConnection();
 
-const createGetEntityConnection = <T extends EntityDtoType>(
-  entityName: SupportedEntity,
-  requireFullEntity: boolean
-): Connection<EntityConnection<T>, EntityConnectionProps> => ({
-  load: (connection, props) => {
-    if (!entityIsLoaded(requireFullEntity)(connection, props)) entityGet(entityGetParams(entityName, props.uuid));
-  },
-
-  isLoaded: entityIsLoaded(requireFullEntity),
-
-  selector: selectorCache(
-    ({ uuid }) => uuid,
-    ({ uuid }) =>
-      createSelector(
-        [entitySelector(entityName), entityGetFetchFailed(entityGetParams(entityName, uuid))],
-        (entities, failure) => ({
-          entity: entities[uuid]?.attributes as T,
-          fetchFailure: failure ?? undefined,
-          refetch: () => {
-            if (uuid != null) ApiSlice.pruneCache(entityName, [uuid]);
-          }
-        })
-      )
-  )
-});
-
-const indexIsLoaded = <T extends EntityDtoType>({ entities, fetchFailure }: EntityIndexConnection<T>) =>
-  entities != null || fetchFailure != null;
-
-const indexCacheKey = (props: EntityIndexConnectionProps) => getStableQuery(entityIndexQuery(props));
-
-const createEntityIndexConnection = <T extends EntityDtoType>(
-  entityName: SupportedEntity
-): Connection<EntityIndexConnection<T>, EntityIndexConnectionProps> => ({
-  load: (connection, props) => {
-    if (!indexIsLoaded(connection)) entityIndex(entityIndexParams(entityName, props));
-  },
-
-  isLoaded: indexIsLoaded,
-
-  selector: selectorCache(
-    props => indexCacheKey(props),
-    props =>
-      createSelector(
-        [
-          indexMetaSelector(entityName, entityIndexParams(entityName, props)),
-          entitySelector(entityName),
-          entityIndexFetchFailed(entityIndexParams(entityName, props))
-        ],
-        (indexMeta, entitiesStore, fetchFailure) => {
-          // For now, we don't have filter support, so all search queries should be ""
-          const refetch = () => ApiSlice.pruneIndex(entityName, "");
-          if (indexMeta == null) return { refetch, fetchFailure };
-
-          const entities = [] as T[];
-          for (const id of indexMeta.ids) {
-            // If we're missing any of the entities we're supposed to have, return nothing so the
-            // index endpoint is queried again.
-            if (entitiesStore[id] == null) return { refetch, fetchFailure };
-            entities.push(entitiesStore[id].attributes as T);
-          }
-
-          return { entities, indexTotal: indexMeta.page?.total, refetch, fetchFailure };
-        }
-      )
-  )
-});
+const createEntityDeleter = (entity: SupportedEntity) =>
+  deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
 
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
-  SUPPORTED_ENTITIES.includes(entity as SupportedEntity);
+  SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
 
 export const pruneEntityCache = (entity: EntityName, uuid: string) => {
-  // TEMPORARY check while we transition all entities to v3. Once that's done, SupportedEntity and
-  // EntityName will be equivalent and this prune call will be valid for all entities. At that time,
-  // this function may no longer be needed as well.
   if (entityIsSupported(entity)) {
     ApiSlice.pruneCache(entity, [uuid]);
   }
 };
 
-// TEMPORARY while we transition all entities to v3. When adding a new entity to this connection,
-// please update this array.
-const SUPPORTED_ENTITIES: SupportedEntity[] = ["projects"];
-
 // The "light" version of entity connections will return the full DTO if it's what's cached in the store. However,
 // the type of the entity will use the Light DTO. For the "full" version of the entity connection, if the version that's
 // currently cached is the "light" version, it will issue a request to the server to get the full version.
-const fullProjectConnection = createGetEntityConnection<ProjectFullDto>("projects", true);
+
+// Projects
+const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectUpdateData>("projects");
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
-const lightProjectConnection = createGetEntityConnection<ProjectLightDto>("projects", false);
-export const loadLightProject = connectionLoader(lightProjectConnection);
-export const useLightProject = connectionHook(lightProjectConnection);
+export const deleteProject = createEntityDeleter("projects");
 
-// For indexes, we only support the light dto
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+
+// Sites
+const fullSiteConnection = createEntityGetConnection<SiteFullDto, EntityUpdateData>("sites");
+export const loadFullSite = connectionLoader(fullSiteConnection);
+export const useFullSite = connectionHook(fullSiteConnection);
+export const deleteSite = createEntityDeleter("sites");
+export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
+export const loadSiteIndex = connectionLoader(indexSiteConnection);
+export const useSiteIndex = connectionHook(indexSiteConnection);
+
+// Nurseries
+const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
+export const loadFullNursery = connectionLoader(fullNurseryConnection);
+export const useFullNursery = connectionHook(fullNurseryConnection);
+export const deleteNursery = createEntityDeleter("nurseries");
+export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
+export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
+export const useNurseryIndex = connectionHook(indexNurseryConnection);
+
+// Project Reports
+const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
+export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
+export const useProjectReportIndex = connectionHook(indexProjectReportConnection);
+const fullProjectReportConnection = createEntityGetConnection<ProjectReportFullDto, ProjectReportUpdateData>(
+  "projectReports"
+);
+const lightProjectReportConnection = createEntityGetConnection<ProjectReportLightDto, ProjectReportUpdateData>(
+  "projectReports",
+  false
+);
+export const loadFullProjectReport = connectionLoader(fullProjectReportConnection);
+export const loadLightProjectReport = connectionLoader(lightProjectReportConnection);
+export const useFullProjectReport = connectionHook(fullProjectReportConnection);
+export const useLightProjectReport = connectionHook(lightProjectReportConnection);
+export const deleteProjectReport = createEntityDeleter("projectReports");
+
+// Site Reports
+export const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
+export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
+export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
+const fullSiteReportConnection = createEntityGetConnection<SiteReportFullDto, SiteReportUpdateData>("siteReports");
+const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, SiteReportUpdateData>(
+  "siteReports",
+  false
+);
+export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
+export const useFullSiteReport = connectionHook(fullSiteReportConnection);
+export const useLightSiteReport = connectionHook(lightSiteReportConnection);
+const siteReportListConnection = v3Resource("siteReports").list<SiteReportLightDto>().buildConnection();
+/**
+ * Delivers the cached light DTOs for site reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightSiteReportList = connectionHook(siteReportListConnection);
+export const loadLightSiteReportList = connectionLoader(siteReportListConnection);
+export const deleteSiteReport = createEntityDeleter("siteReports");
+
+// Nursery Reports
+export const indexNurseryReportConnection = createEntityIndexConnection<NurseryReportLightDto>("nurseryReports");
+export const loadNurseryReportIndex = connectionLoader(indexNurseryReportConnection);
+const fullNurseryReportConnection = createEntityGetConnection<NurseryReportFullDto, NurseryReportUpdateData>(
+  "nurseryReports"
+);
+const lightNurseryReportConnection = createEntityGetConnection<NurseryReportLightDto, NurseryReportUpdateData>(
+  "nurseryReports",
+  false
+);
+export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
+export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
+export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
+const nurseryReportListConnection = v3Resource("nurseryReports").list<NurseryReportLightDto>().buildConnection();
+/**
+ * Delivers the cached light DTOs for nursery reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightNurseryReportList = connectionHook(nurseryReportListConnection);
+export const loadLightNurseryReportList = connectionLoader(nurseryReportListConnection);
+export const deleteNurseryReport = createEntityDeleter("nurseryReports");
+
+/**
+ * Get the full entity connection in a component that is shared amongst entity types. It's technically
+ * against the rules of hooks to use control logic to select hooks, but each of these hooks has the
+ * same number of dependencies internally (they're all different versions of the same hook), so we're
+ * skirting the rules in a safe way here. That being said, please don't use this if you're expecting
+ * the entity value to change within the lifecycle of a mounted component.
+ */
+export const useFullEntity = (entity: SupportedEntity, id: string) => {
+  switch (entity) {
+    case "projects":
+      return useFullProject({ id });
+    case "sites":
+      return useFullSite({ id });
+    case "nurseries":
+      return useFullNursery({ id });
+    case "projectReports":
+      return useFullProjectReport({ id });
+    case "siteReports":
+      return useFullSiteReport({ id });
+    case "nurseryReports":
+      return useFullNurseryReport({ id });
+    default:
+      throw new Error(`Unsupported entity type [${entity}]`);
+  }
+};

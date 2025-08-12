@@ -185,6 +185,7 @@ module.exports = {
         600: "#797A7B",
         700: "#868686",
         720: "#94A3A8",
+        735: "#CECECE",
         730: "#B8C3C6",
         740: "#E0E0E0",
         750: "#E6EAEB",
@@ -203,6 +204,7 @@ module.exports = {
       },
       green: {
         DEFAULT: "#72D961",
+        600: "#7BBD31",
         500: "#198E2B",
         400: "#1BA631",
         200: "#0b463e",
@@ -237,6 +239,7 @@ module.exports = {
       none: "0 0 #0000",
       "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
       monitored: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      input: "0 0 0 3px #047CD740",
       "item-monitored": "rgba(3, 102, 214, 0.3) 0px 0px 0px 3px",
       table: "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
       dashboard: "rgba(0, 0, 0, 0.35) 0px 5px 15px",

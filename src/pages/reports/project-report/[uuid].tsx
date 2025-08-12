@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullProject } from "@/connections/Entity";
+import { useFullProject, useFullProjectReport } from "@/connections/Entity";
+import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useGetV2ENTITYUUID, useGetV2TasksUUID } from "@/generated/apiComponents";
+import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectReportBreadcrumbs from "@/pages/reports/project-report/components/ProjectReportBreadcrumbs";
@@ -25,37 +26,21 @@ const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
 
   const t = useT();
-  const { data, isLoading } = useGetV2ENTITYUUID(
-    {
-      pathParams: { entity: "project-reports", uuid }
-    },
-    {
-      enabled: !!uuid
-    }
-  );
+  const [isLoaded, { data: projectReport }] = useFullProjectReport({ id: uuid });
 
-  const [, { entity: project }] = useFullProject({ uuid: data?.data?.project?.uuid });
+  const [, { data: project }] = useFullProject({ id: projectReport?.projectUuid! });
+  const [, { data: task }] = useTask({ id: projectReport?.taskUuid! });
 
-  const { data: reportingTaskData } = useGetV2TasksUUID(
-    {
-      pathParams: { uuid: data?.data?.task_uuid }
-    },
-    {
-      enabled: !!data?.data?.task_uuid
-    }
-  );
-
-  const reportingTask = reportingTaskData?.data as any;
-  const report = data?.data ?? {};
-  const reportTitle = report.report_title ?? report.title ?? t("Project Report");
+  const report = (projectReport ?? {}) as ProjectReportFullDto;
+  const reportTitle = report?.reportTitle ?? t("Project Report");
 
   return (
-    <FrameworkProvider frameworkKey={report.framework_key}>
-      <LoadingContainer loading={isLoading}>
+    <FrameworkProvider frameworkKey={report?.frameworkKey}>
+      <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>
         </Head>
-        <ProjectReportBreadcrumbs title={reportTitle} report={report} task={reportingTask} />
+        <ProjectReportBreadcrumbs title={reportTitle} report={report} task={task} />
         <ProjectReportHeader report={report} title={reportTitle} />
         <StatusBar entityName="project-reports" entity={report} />
         <SecondaryTabs
@@ -63,21 +48,21 @@ const ProjectReportDetailPage = () => {
             {
               key: "report-data",
               title: t("Report Data"),
-              body: <ReportDataTab report={report} dueAt={reportingTask?.due_at} />
+              body: <ReportDataTab report={report} dueAt={task?.dueAt} />
             },
             {
               key: "gallery",
               title: t("Gallery"),
               body: (
                 <GalleryTab
-                  modelName="project-reports"
+                  modelName="projectReports"
                   modelUUID={report.uuid}
                   modelTitle={t("Report")}
                   entityData={project}
                   emptyStateContent={t(
                     "Your gallery is currently empty. Add images by using the 'Edit' button on this report."
                   )}
-                  sharedDriveLink={report?.shared_drive_link}
+                  sharedDriveLink={report?.sharedDriveLink!}
                 />
               )
             },
@@ -98,12 +83,12 @@ const ProjectReportDetailPage = () => {
             {
               key: "site-reports",
               title: t("Site reports"),
-              body: <SiteReportsTab taskUuid={report.task_uuid} />
+              body: <SiteReportsTab taskUuid={projectReport?.taskUuid!} />
             },
             {
               key: "nursery-reports",
               title: t("Nursery reports"),
-              body: <NurseryReportsTab taskUuid={report.task_uuid} />,
+              body: <NurseryReportsTab taskUuid={projectReport?.taskUuid!} />,
               hide: [Framework.PPC]
             },
             {

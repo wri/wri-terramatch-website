@@ -18,9 +18,9 @@ import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeR
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
 import { Framework } from "@/context/framework.provider";
-import { useGetV2FormsENTITYUUID } from "@/generated/apiComponents";
 import { getCustomFormSteps } from "@/helpers/customForms";
-import { EntityName, SingularEntityName } from "@/types/common";
+import { useEntityForm } from "@/hooks/useFormGet";
+import { Entity, EntityName, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
 
@@ -35,15 +35,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const t = useT();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
-  // Current values
-  const { data: currentValues, refetch } = useGetV2FormsENTITYUUID(
-    {
-      pathParams: { entity: entity, uuid: ctx?.record?.uuid }
-    },
-    {
-      enabled: !!ctx?.record?.uuid
-    }
-  );
+  const { formData: currentValues, refetch } = useEntityForm(entity, ctx?.record?.uuid);
 
   // @ts-ignore
   const changeRequest = currentValues?.data?.update_request;
@@ -60,7 +52,11 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
     () => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)),
     [form, framework, t]
   );
-  const formChanges = useFormChanges(current, changes, formSteps ?? []);
+  const entityDef = useMemo(
+    () => ({ entityName: entity, entityUUID: ctx?.record?.uuid ?? "" } as Entity),
+    [ctx?.record?.uuid, entity]
+  );
+  const formChanges = useFormChanges(current, changes, formSteps ?? [], entityDef);
   const numFieldsAffected = useMemo(
     () =>
       formChanges.reduce((sum, stepChange) => {
@@ -186,7 +182,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           uuid={changeRequest?.uuid}
           handleClose={() => {
             setStatusToChangeTo(undefined);
-            refetch();
+            refetch?.();
           }}
           form={form}
         />

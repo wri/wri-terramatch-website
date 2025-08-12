@@ -7,26 +7,22 @@ import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2MODELUUIDFilesResponse,
-  GetV2TypeEntityResponse,
-  useDeleteV2FilesUUID,
-  useGetV2MODELUUIDFiles,
-  useGetV2TypeEntity
-} from "@/generated/apiComponents";
+import { GetV2TypeEntityResponse, useDeleteV2FilesUUID, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
+import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
 import ModalAddImages from "../Modal/ModalAddImages";
@@ -54,8 +50,8 @@ const EntityMapAndGalleryCard = ({
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [filter, setFilter] = useState<{ key: string; value: string }>();
   const [searchString, setSearchString] = useState<string>("");
-  const [isGeotagged, setIsGeotagged] = useState<number>(0);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [isGeotagged, setIsGeotagged] = useState<boolean | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
     isPublic: undefined,
     modelType: undefined
@@ -63,45 +59,65 @@ const EntityMapAndGalleryCard = ({
   const mapFunctions = useMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  const projectUUID = router.query.uuid as string;
-  const queryParams: any = {
-    page: pagination.page,
-    per_page: pagination.pageSize,
-    "filter[file_type]": "media"
-  };
-  if (filter) {
-    queryParams[filter?.key] = filter?.value;
+  let entityUUID = router.query.uuid as string;
+  if (modelTitle === "Site Report" || modelTitle === "Site") {
+    entityUUID = modelUUID;
   }
+  const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      const queryFilter: HookFilters<typeof useMedias> = {};
 
-  if (filters.isPublic !== undefined) {
-    queryParams["filter[is_public]"] = filters.isPublic;
-  }
-  if (filters.modelType) {
-    queryParams["filter[model_type]"] = filters.modelType;
-  }
-  queryParams["search"] = searchString;
-  queryParams["is_geotagged"] = isGeotagged;
-  queryParams["sort_order"] = sortOrder;
+      if (filters.isPublic !== undefined) {
+        queryFilter.isPublic = filters.isPublic;
+      }
+      if (filters.modelType) {
+        queryFilter.modelType = filters.modelType;
+      }
+      queryFilter.search = searchString;
+
+      if (isGeotagged !== null) {
+        queryFilter.isGeotagged = isGeotagged;
+      }
+
+      if (filter) {
+        queryFilter.modelType = filter.value;
+      }
+
+      return {
+        entity: modelName as SupportedEntity,
+        uuid: entityUUID,
+        pageNumber: pagination.page,
+        pageSize: pagination.pageSize,
+        sortDirection: sortOrder,
+        filter: queryFilter
+      };
+    }, [
+      entityUUID,
+      filter,
+      filters.isPublic,
+      filters.modelType,
+      isGeotagged,
+      modelName,
+      pagination.page,
+      pagination.pageSize,
+      searchString,
+      sortOrder
+    ])
+  );
 
   const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
     queryParams: {
-      uuid: projectUUID,
+      uuid: entityUUID,
       type: modelName
     }
   });
 
-  const mapBbox = sitePolygonData?.bbox as BBox;
-
+  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
-  const { data, refetch, isLoading } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    // Currently only projects, sites, nurseries, projectReports, nurseryReports and siteReports are set up
-    pathParams: { model: modelName, uuid: modelUUID },
-    queryParams
-  });
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess() {
-      refetch();
+      refetch?.();
     }
   });
 
@@ -137,7 +153,7 @@ const EntityMapAndGalleryCard = ({
 
   useValueChanged(shouldRefetchMediaData, () => {
     if (shouldRefetchMediaData) {
-      refetch();
+      refetch?.();
       setShouldRefetchMediaData(false);
     }
   });
@@ -160,7 +176,7 @@ const EntityMapAndGalleryCard = ({
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            refetch();
+            refetch?.();
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
@@ -188,17 +204,12 @@ const EntityMapAndGalleryCard = ({
           showLegend
           hasControls
           showPopups
-          modelFilesData={data?.data}
+          modelFilesData={mediaList}
           entityData={entityData}
           imageGalleryRef={imageGalleryRef}
         />
       </PageCard>
-      <If
-        condition={
-          //@ts-expect-error
-          data?.meta.unfiltered_total === 0
-        }
-      >
+      <If condition={indexTotal === 0}>
         <Then>
           <EmptyState
             title={t("Image Gallery is Empty")}
@@ -213,22 +224,10 @@ const EntityMapAndGalleryCard = ({
               headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
             >
               <ImageGallery
-                data={
-                  data?.data?.map(file => ({
-                    //@ts-ignore
-                    uuid: file.uuid!,
-                    fullImageUrl: file.file_url!,
-                    thumbnailImageUrl: file.thumb_url!,
-                    label: file.model_name!,
-                    isPublic: file.is_public!,
-                    isGeotagged: file?.location?.lat !== 0 && file?.location?.lng !== 0,
-                    isCover: file.is_cover,
-                    raw: file
-                  })) || []
-                }
+                data={mediaList ?? []}
                 entity={modelName}
                 entityData={entityData}
-                pageCount={data?.meta?.last_page || 1}
+                pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
                 onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
                 onGalleryStateChange={(pagination, filter) => {
                   setPagination(pagination);
@@ -241,7 +240,7 @@ const EntityMapAndGalleryCard = ({
                 sortOrder={sortOrder}
                 setSortOrder={setSortOrder}
                 setFilters={setFilters}
-                isLoading={isLoading}
+                isLoading={!isLoaded}
               />
             </PageCard>
           </div>

@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { DetailedHTMLProps, Fragment, HTMLAttributes } from "react";
-import { If, Then, When } from "react-if";
 
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
@@ -21,14 +20,14 @@ interface NavbarContentProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivEle
 }
 
 const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
-  const [, { isLoggedIn }] = useLogin();
+  const [, { data: login }] = useLogin({});
   const router = useRouter();
   const t = useT();
   const [, { setLocale }] = useMyUser();
   const [, myOrg] = useMyOrg();
   const { private: privateNavItems, public: publicNavItems } = getNavbarItems(t, myOrg);
 
-  const navItems = (isLoggedIn ? privateNavItems : publicNavItems).filter(item => item.visibility);
+  const navItems = (login != null ? privateNavItems : publicNavItems).filter(item => item.visibility);
 
   const { linksDisabled } = useNavbarContext();
 
@@ -67,19 +66,14 @@ const NavbarContent = ({ handleClose, ...rest }: NavbarContentProps) => {
           </NavbarItem>
         )}
       />
-      <When condition={navItems.length > 0}>
-        <div className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block" />
-      </When>
-      <If condition={!isLoggedIn}>
-        <Then>
-          <NavbarItem href="/auth/login" iconName={IconNames.LOGIN} onClick={handleClose}>
-            {t("Sign in")}
-          </NavbarItem>
-        </Then>
-      </If>
-      <If condition={isLoggedIn}>
-        <MyAccountDropdown isLoggedIn={isLoggedIn} />
-      </If>
+      {navItems.length === 0 ? undefined : <div className="hidden h-4 w-[1px] bg-neutral-500 sm:mx-2 sm:block" />}
+      {login == null ? (
+        <NavbarItem href="/auth/login" iconName={IconNames.LOGIN} onClick={handleClose}>
+          {t("Sign in")}
+        </NavbarItem>
+      ) : (
+        <MyAccountDropdown isLoggedIn={true} />
+      )}
       <LanguagesDropdown onChange={changeLanguageHandler} className="hidden sm:block" />
     </div>
   );

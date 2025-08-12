@@ -12,9 +12,18 @@ export type LoginDto = {
   token: string;
 };
 
-export type LoginRequest = {
+export type LoginAttributes = {
   emailAddress: string;
   password: string;
+};
+
+export type LoginData = {
+  type: "logins";
+  attributes: LoginAttributes;
+};
+
+export type LoginBody = {
+  data: LoginData;
 };
 
 export type UserFramework = {
@@ -61,7 +70,7 @@ export type UserUpdateAttributes = {
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
 };
 
-export type UserUpdate = {
+export type UserData = {
   type: "users";
   /**
    * @format uuid
@@ -70,8 +79,30 @@ export type UserUpdate = {
   attributes: UserUpdateAttributes;
 };
 
-export type UserUpdateBodyDto = {
-  data: UserUpdate;
+export type UserUpdateBody = {
+  data: UserData;
+};
+
+export type UserCreateAttributes = {
+  firstName: string;
+  lastName: string;
+  password: string;
+  emailAddress: string;
+  phoneNumber: string;
+  jobRole: string;
+  role: string;
+  country: string;
+  program: string;
+  callbackUrl: string;
+};
+
+export type UserCreateData = {
+  type: "users";
+  attributes: UserCreateAttributes;
+};
+
+export type UserCreateBody = {
+  data: UserCreateData;
 };
 
 export type ResetPasswordResponseDto = {
@@ -89,3 +120,11 @@ export type ResetPasswordRequest = {
 };
 
 export type ResetPasswordDto = {};
+
+export type VerificationUserResponseDto = {
+  verified: boolean;
+};
+
+export type VerificationUserRequest = {
+  token: string;
+};

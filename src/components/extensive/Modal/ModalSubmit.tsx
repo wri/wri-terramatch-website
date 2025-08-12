@@ -4,8 +4,8 @@ import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import {
-  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
@@ -13,6 +13,8 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import CollapsibleRow from "./components/CollapsibleRow";
@@ -26,7 +28,9 @@ export interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
   status: StatusEnum | undefined;
+  validation_status?: string | null;
 }
+
 export interface ModalSubmitProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
@@ -34,7 +38,6 @@ export interface ModalSubmitProps extends ModalProps {
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
-  polygonsCriteriaData?: any;
   polygonList?: any;
 }
 
@@ -51,80 +54,106 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   status,
   onClose,
   site,
-  polygonsCriteriaData,
   polygonList,
   ...rest
 }) => {
   const t = useT();
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-  const [criteriaDataParsed, setCriteriaDataParsed] = useState<any>(null);
-  useEffect(() => {
-    if (!polygonList || !polygonsCriteriaData) {
-      return;
+  const { validationData } = useMapAreaContext();
+  const isAdmin = useIsAdmin();
+
+  const hasOnlyPlantingStatusError = (extraInfo: string) => {
+    try {
+      const parsed = JSON.parse(extraInfo);
+      return Array.isArray(parsed) && parsed.length === 1 && parsed[0].field === "planting_status";
+    } catch {
+      return false;
     }
+  };
 
-    const parsedData = polygonList.reduce((acc: Record<string, any>, polygon: any) => {
-      const criteria = polygonsCriteriaData[polygon.poly_id];
-      const polygonId = polygon.poly_id;
-      let isValid = true;
-      const nonValidCriteria: any[] = [];
-      const { criteria_list } = criteria;
-
-      if (!criteria_list || criteria_list.length === 0) {
-        isValid = false;
-      } else {
-        criteria_list.forEach((criteria: any) => {
-          if (criteria.valid === 0) {
-            isValid = false;
-            nonValidCriteria.push(criteria);
-          }
-        });
-      }
-
-      const checked = Array.isArray(criteria_list) && criteria_list.length > 0;
-
-      acc[polygonId] = {
-        polygonId,
-        isValid,
-        nonValidCriteria,
-        checked
-      };
-
-      return acc;
-    }, {});
-
-    setCriteriaDataParsed(parsedData);
-    setPolygonsSelected(polygonList.map((_: any) => false));
-  }, [polygonsCriteriaData, polygonList]);
   useEffect(() => {
-    if (!polygonList || !criteriaDataParsed) {
+    if (polygonList == null) {
       return;
     }
     setPolygonsSelected(polygonList.map((_: any) => false));
+  }, [polygonList]);
+
+  useEffect(() => {
+    if (polygonList == null) {
+      return;
+    }
+
+    setPolygonsSelected(polygonList.map((_: any) => false));
+
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const criteria = criteriaDataParsed[polygon.poly_id];
-        const excludedFromValidationCriterias = [
-          COMPLETED_DATA_CRITERIA_ID,
-          ESTIMATED_AREA_CRITERIA_ID,
-          WITHIN_COUNTRY_CRITERIA_ID
-        ];
-        const nonValidCriteriasIds = criteria?.nonValidCriteria?.map((r: any) => r.criteria_id);
-        const failingCriterias = nonValidCriteriasIds?.filter((r: any) => !excludedFromValidationCriterias.includes(r));
-        const status = polygon.status;
+        const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
 
-        let returnObject = {
-          id: polygon.poly_id,
-          checked: criteria?.checked,
-          name: polygon.poly_name ?? "Unnamed Polygon",
-          failingCriterias,
-          status: status as StatusEnum
-        };
-        return returnObject;
+        const excludedFromValidationCriterias = [
+          ESTIMATED_AREA_CRITERIA_ID,
+          WITHIN_COUNTRY_CRITERIA_ID,
+          PLANT_START_DATE_CRITERIA_ID
+        ];
+
+        let failingCriterias: string[] = [];
+        if (validationInfo?.nonValidCriteria != null) {
+          const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
+          failingCriterias = nonValidCriteriasIds.filter((r: any) => !excludedFromValidationCriterias.includes(r));
+        }
+
+        let checked = false;
+        if (isAdmin) {
+          checked =
+            polygon.validation_status === "passed" ||
+            polygon.validation_status === "partial" ||
+            polygon.validation_status === "failed";
+        } else {
+          const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+          if (validationInfo?.nonValidCriteria != null) {
+            const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
+
+            const isOnlyPlantingStatusError =
+              nonValidCriteriasIds.length === 1 &&
+              nonValidCriteriasIds[0] === 14 &&
+              validationInfo.nonValidCriteria.some(
+                (r: any) => r.criteria_id === 14 && r.extra_info != null && hasOnlyPlantingStatusError(r.extra_info)
+              );
+
+            checked =
+              isOnlyPlantingStatusError ||
+              polygon.validation_status === "passed" ||
+              polygon.validation_status === "partial";
+
+            let finalValidationStatus = polygon.validation_status;
+            if (!isAdmin && polygon.validation_status === "failed" && isOnlyPlantingStatusError) {
+              finalValidationStatus = "passed";
+            }
+
+            return {
+              id: polygon.poly_id,
+              checked,
+              name: polygon.poly_name ?? "Unnamed Polygon",
+              failingCriterias,
+              status: polygon.status as StatusEnum,
+              validation_status: finalValidationStatus
+            };
+          } else {
+            checked = polygon.validation_status === "passed" || polygon.validation_status === "partial";
+
+            return {
+              id: polygon.poly_id,
+              checked,
+              name: polygon.poly_name ?? "Unnamed Polygon",
+              failingCriterias,
+              status: polygon.status as StatusEnum,
+              validation_status: polygon.validation_status
+            };
+          }
+        }
       })
     );
-  }, [polygonList, criteriaDataParsed]);
+  }, [polygonList, validationData, isAdmin]);
 
   const handleSelectAll = (isChecked: boolean) => {
     if (displayedPolygons) {
@@ -140,6 +169,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
       setPolygonsSelected(newSelected as boolean[]);
     }
   };
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -200,7 +230,6 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
               item={polygon}
               polygonsSelected={polygonsSelected}
               setPolygonsSelected={setPolygonsSelected}
-              criteriaData={polygon.id ? polygonsCriteriaData[polygon.id] : []}
             />
           ))}
         </div>

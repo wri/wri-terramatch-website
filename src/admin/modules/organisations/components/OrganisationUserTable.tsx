@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
+import { useShowContext } from "react-admin";
 import { useParams } from "react-router-dom";
 
 import Menu from "@/components/elements/Menu/Menu";
@@ -30,6 +31,8 @@ const statusMap: { [key: string]: string } = {
 
 const OrganisationUserTable = () => {
   const { id } = useParams<"id">();
+  const ctx = useShowContext();
+  const orgId = ctx?.record.organisation ? ctx?.record.organisation?.uuid : (id as string);
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
@@ -40,7 +43,7 @@ const OrganisationUserTable = () => {
     isLoading
   } = useGetV2AdminUsersUsersOrganisationListUUID({
     pathParams: {
-      uuid: id as string
+      uuid: orgId
     }
   }) as any;
 
@@ -109,7 +112,7 @@ const OrganisationUserTable = () => {
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
             const actionBody = {
-              organisation_uuid: id as string,
+              organisation_uuid: orgId,
               user_uuid: userUuid
             } as V2PostOrganisationsApproveUserBody;
 

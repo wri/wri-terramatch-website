@@ -7,6 +7,7 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useGadmChoices } from "@/connections/Gadm";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { getFrameworkName } from "@/utils/dashboardUtils";
 
@@ -52,7 +53,7 @@ const ProjectList = () => {
         if (isMobile) {
           return (
             <div className="flex items-start gap-2">
-              <img src={country.image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
+              <img src={country.image} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <div>
                 <Text variant="text-14-light">{project}</Text>
                 <Text variant="text-14-light" className=" text-neutral-650">
@@ -85,7 +86,7 @@ const ProjectList = () => {
               const { label, image } = props.getValue();
               return (
                 <div className="flex items-center gap-2">
-                  <img src={image} alt="flas" className="h-6 w-10 min-w-[40px] object-cover" />
+                  <img src={image} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
                   <Text variant="text-14-light">{label}</Text>
                 </div>
               );
@@ -127,36 +128,29 @@ const ProjectList = () => {
   const router = useRouter();
   const { filters, setFilters, dashboardCountries, frameworks } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const DATA_TABLE_PROJECT_LIST = activeProjects
     ? activeProjects
-        .map(
-          (item: {
-            uuid: string;
-            name: string;
-            organisation: string;
-            programme: string;
-            country_slug: string;
-            project_country: string;
-            trees_under_restoration: number;
-            hectares_under_restoration: number;
-            jobs_created: number;
-          }) => ({
+        .map((item: any) => {
+          return {
             uuid: item.uuid,
-            project: item?.name,
-            organization: item?.organisation,
-            programme: getFrameworkName(frameworks, item?.programme),
+            project: item.name,
+            organization: item.organisationName,
+            programme: getFrameworkName(frameworks, item.frameworkKey),
             country: {
-              country_slug: item?.country_slug,
-              label: item?.project_country,
-              image: `/flags/${item?.country_slug?.toLowerCase()}.svg`
+              country_slug: item.country,
+              label: countryChoices.find(country => country.id === item.country)?.name,
+              image: `/flags/${item.country?.toLowerCase()}.svg`
             },
-            treesPlanted: item.trees_under_restoration.toLocaleString(),
-            restorationHectares: item.hectares_under_restoration.toLocaleString(),
-            jobsCreated: item.jobs_created.toLocaleString()
-          })
+            treesPlanted: (item.treesPlantedCount || 0).toLocaleString(),
+            restorationHectares: (item.totalHectaresRestoredSum || 0).toLocaleString(),
+            jobsCreated: (item.totalJobsCreated || 0).toLocaleString()
+          };
+        })
+        .sort(
+          (a: { organization: string }, b: { organization: any }) => a.organization?.localeCompare(b.organization) || 0
         )
-        .sort((a: { organization: string }, b: { organization: any }) => a.organization.localeCompare(b.organization))
     : [];
 
   return (

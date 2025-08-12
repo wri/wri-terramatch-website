@@ -10,16 +10,15 @@ type QuickActionsProps = {
   type: EntityName;
 };
 
-const QuickActions: FC<QuickActionsProps> = ({ type }) => {
+const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
 
   const getReportsPath = (view: keyof typeof modules) => {
     if (!record) return;
-
     const queryParams = new URLSearchParams({
       displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.project.uuid }),
+      filter: JSON.stringify({ project_uuid: record.projectUuid }),
       order: "ASC",
       page: "1",
       perPage: "10",
@@ -42,14 +41,22 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
           <Button
             variant="outlined"
             component={Link}
-            to={createPath({ resource: modules.task.ResourceName, type: "show", id: record.task_uuid })}
+            to={createPath({
+              resource: modules.task.ResourceName,
+              type: "show",
+              id: record?.taskUuid! ?? record?.task_uuid!
+            })}
             fullWidth
             label="View Task"
           />
           <Button
             variant="outlined"
             component={Link}
-            to={createPath({ resource: modules.project.ResourceName, type: "show", id: record.project.uuid })}
+            to={createPath({
+              resource: modules.project.ResourceName,
+              type: "show",
+              id: record?.projectUuid
+            })}
             fullWidth
             label="Back To Project"
           />
@@ -57,7 +64,7 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
             <Button
               variant="outlined"
               component={Link}
-              to={createPath({ resource: modules.site.ResourceName, type: "show", id: record?.site?.uuid })}
+              to={createPath({ resource: modules.site.ResourceName, type: "show", id: record?.siteUuid })}
               fullWidth
               label="Back To Site"
             />
@@ -66,7 +73,7 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
             <Button
               variant="outlined"
               component={Link}
-              to={createPath({ resource: modules.nursery.ResourceName, type: "show", id: record?.nursery?.uuid })}
+              to={createPath({ resource: modules.nursery.ResourceName, type: "show", id: record?.nurseryUuid })}
               fullWidth
               label="Back To Nursery"
             />
@@ -86,4 +93,4 @@ const QuickActions: FC<QuickActionsProps> = ({ type }) => {
   );
 };
 
-export default QuickActions;
+export default ReportQuickActions;

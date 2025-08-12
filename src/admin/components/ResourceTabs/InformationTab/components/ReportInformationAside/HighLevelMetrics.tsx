@@ -31,7 +31,7 @@ const COLLECTIONS: Record<TotalsType, CollectionValue> = {
     demographicType: "workdays"
   },
   jobs: {
-    projectReport: DemographicCollections.JOBS_PROJECT,
+    projectReport: ["all", "full-time", "part-time"],
     siteReport: undefined,
     demographicType: "jobs"
   },
@@ -59,7 +59,7 @@ function withTotalsShow<T extends CollectionsProps>(WrappedComponent: ComponentT
     const { totalsType, ...rest } = props;
     const { resource } = useShowContext();
     const collections = COLLECTIONS[totalsType]?.[resource as DemographicResource];
-    const entity = (resource === "projectReport" ? "project-reports" : "site-reports") as DemographicEntity;
+    const entity: DemographicEntity = resource === "projectReport" ? "projectReports" : "siteReports";
     const demographicType = COLLECTIONS[totalsType]?.demographicType;
 
     return collections == null || entity == null ? null : (
@@ -113,7 +113,17 @@ const HighLevelMetrics: FC = () => {
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
           <ContextCondition frameworksHide={ALL_TF}>
-            <DemographicsTotalField label="Total Number of Workdays Created" sx={inlineLabelSx} totalsType="workdays" />
+            {record.taskTotalWorkdays == null ? (
+              <DemographicsTotalField
+                label="Total Number of Workdays Created"
+                sx={inlineLabelSx}
+                totalsType="workdays"
+              />
+            ) : (
+              <Labeled label="Total Number Of Workdays Created" sx={inlineLabelSx}>
+                <NumberField source="taskTotalWorkdays" />
+              </Labeled>
+            )}
             <DemographicsTotalField
               label={`Total Number of Paid ${workdaysType} Workdays Created`}
               sx={inlineLabelSx}
@@ -130,7 +140,7 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
             <NumberField
-              source={record.trees_planted_count ? "trees_planted_count" : "total_trees_planted_count"}
+              source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
               emptyText="0"
             />
           </Labeled>
@@ -138,7 +148,7 @@ const HighLevelMetrics: FC = () => {
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
                 <NumberField
-                  source={record.seeds_planted_count ? "seeds_planted_count" : "total_seeds_planted_count"}
+                  source={record.seedsPlantedCount ? "seedsPlantedCount" : "totalSeedsPlantedCount"}
                   emptyText="0"
                 />
               </Labeled>
@@ -148,7 +158,7 @@ const HighLevelMetrics: FC = () => {
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx}>
                 <NumberField
-                  source={resource === "projectReport" ? "regenerated_trees_count" : "num_trees_regenerating"}
+                  source={resource === "projectReport" ? "regeneratedTreesCount" : "numTreesRegenerating"}
                   emptyText="0"
                 />
               </Labeled>
@@ -157,7 +167,7 @@ const HighLevelMetrics: FC = () => {
           <ContextCondition frameworksShow={ALL_TF}>
             <When condition={resource !== "siteReport"}>
               <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
-                <NumberField source="seedlings_grown" emptyText="0" />
+                <NumberField source="seedlingsGrown" emptyText="0" />
               </Labeled>
             </When>
           </ContextCondition>

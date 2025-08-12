@@ -113,6 +113,7 @@ export enum IconNames {
   ELIPSES = "elipses",
   AIRTABLE = "airtable",
   REPORTS = "reports",
+  FINANCIAL_REPORTS = "financial-reports",
   NURSERIES = "nurseries",
   SITES = "sites",
   PROJECTS = "projects",
@@ -237,7 +238,9 @@ export enum IconNames {
   CHECK = "check",
   IC_MENU = "ic-menu",
   CHECK_LANGUAGES = "check-laguages",
-  NO_CHECK_LANGUAGES = "no-check-laguages"
+  NO_CHECK_LANGUAGES = "no-check-laguages",
+  ARROW = "arrow",
+  FILE = "file"
 }
 
 export interface IconProps {

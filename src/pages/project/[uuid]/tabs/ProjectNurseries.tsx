@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Else, If, Then } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -10,7 +11,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ProjectsUUIDNurseries } from "@/generated/apiComponents";
+import { useNurseryIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface ProjectNurseriesTabProps {
@@ -19,18 +20,18 @@ interface ProjectNurseriesTabProps {
 
 const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
   const t = useT();
-  const { data: nurseries, isLoading } = useGetV2ProjectsUUIDNurseries(
-    {
-      pathParams: { uuid: project.uuid }
-    },
-    { keepPreviousData: true }
-  );
+
+  const [isLoaded, { data: nurseries }] = useNurseryIndex({
+    filter: { projectUuid: project.uuid },
+    pageSize: DEFAULT_PAGE_SIZE,
+    pageNumber: 1
+  });
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <LoadingContainer wrapInPaper loading={isLoading}>
+          <LoadingContainer wrapInPaper loading={!isLoaded}>
             <If
               condition={
                 //@ts-ignore
@@ -46,7 +47,7 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
                   )}
                   ctaProps={{
                     as: Link,
-                    href: `/entity/nurseries/create/${project.frameworkUuid}?parent_name=projects&parent_uuid=${project.uuid}`,
+                    href: `/entity/nurseries/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
                     children: "Add Nursery"
                   }}
                 />
@@ -58,7 +59,7 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
                     "This table displays all the nurseries associated with this project. You can use it to keep track of your nursery approvals."
                   )}
                 >
-                  <NurseriesTable project={project} />
+                  <NurseriesTable project={project} alwaysShowPagination />
                 </PageCard>
               </Else>
             </If>

@@ -1,3 +1,7 @@
+.RaLayout-contentWithSidebar {
+  @apply mobile:!overflow-auto mobile:!h-16;
+}
+
 .search-page-admin>div:first-of-type {
   @apply flex flex-row-reverse bg-white rounded-lg;
 }
@@ -98,11 +102,11 @@
 }
 
 .RaLayout-content {
-  @apply !bg-neutral-100 !p-8;
+  @apply !bg-neutral-100 !pt-8 !px-8 !pb-4;
 }
 
 .RaList-main > span {
-  @apply mt-4;
+  @apply mt-[74px];
 }
 
 .RaList-main div {
@@ -390,6 +394,34 @@
 }
 
 
+.user-aside h5{
+  @apply font-semibold text-md lg:text-lg wide:text-xl !font-primary ;
+}
+
+.user-aside .MuiDivider-root{
+  @apply !my-2
+}
+
+.admin-text-14{
+  @apply !text-sm lg:!text-base wide:!text-md;
+}
+
+.admin-text-16{
+  @apply !text-base lg:!text-md wide:!text-lg;
+}
+
+.grid-user-show .RaSimpleShowLayout-stack{
+  @apply grid grid-cols-3 gap-6;
+}
+
+.grid-user-show .MuiTypography-body2{
+  @apply !font-primary !font-medium !text-darkCustom !text-sm lg:!text-base wide:!text-md;
+}
+
+.grid-user-show .MuiTypography-body1{
+  @apply !font-primary !font-medium !text-darkCustom/60 !text-sm lg:!text-base wide:!text-md;
+}
+
 @media (min-width: 1900px) {
   .RaSidebar-paperAnchorDockedLeft{
     width: 265px !important;
@@ -401,3 +433,4 @@
     width: 287px !important;
   }
 }
+

@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -9,26 +9,36 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { getLeadershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipTeamTable";
+import { getLeadershipsTableColumns } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import {
+  currentRatioColumnsMap,
+  documentationColumnsMap,
+  formatFinancialData,
+  nonProfitAnalysisColumnsMap,
+  profitAnalysisColumnsMap
+} from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { getPolygonBbox, getSiteBbox, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
+import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
 import { FieldType, FormStepSchema } from "./types";
-import { getAnswer, getFormattedAnswer } from "./utils";
+import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -38,7 +48,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   entity?: Entity;
 }
 
-export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
+type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
 
 export interface FormEntry {
   title?: string;
@@ -50,23 +60,61 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   const { record } = useShowContext();
   const { type, entity } = props;
-  const entityPolygonData = getEntityPolygonData(record, type, entity);
-  let bbox: any;
-  if (type === "sites") {
-    bbox = getSiteBbox(record);
-  } else {
-    bbox = getPolygonBbox(entityPolygonData?.[FORM_POLYGONS]?.[0]);
-  }
+
+  const uuid = entity?.entityUUID || record?.uuid;
+  const entityType = entity?.entityName || (type as EntityName);
+
+  const { data: sitePolygonData } = useGetV2SitesSitePolygon(
+    {
+      pathParams: {
+        site: uuid
+      }
+    },
+    {
+      enabled: entityType === "sites" && !!uuid
+    }
+  );
+
+  const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
+    {
+      queryParams: {
+        entityType: pluralEntityNameToSingular((entityType ?? "") as EntityName),
+        uuid: uuid ?? ""
+      }
+    },
+    {
+      enabled: (entityType === "projects" || entityType === "project-pitches") && !!uuid
+    }
+  );
+  const bboxParams =
+    type === "sites"
+      ? { siteUuid: record?.uuid }
+      : entityType === "projects"
+      ? { projectUuid: uuid }
+      : entityType === "project-pitches"
+      ? { projectPitchUuid: uuid }
+      : {};
+
+  const bbox = useBoundingBox(bboxParams);
+
+  const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonData);
+
   const mapFunctions = useMap();
-  return useMemo<any[]>(
-    () => getFormEntries(props, t, entityPolygonData, bbox, mapFunctions),
+
+  const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
+  useEffect(() => {
+    loadExternalAnswerSources(props.step.fields, props.values).finally(() => setExternalSourcesLoaded(true));
+  }, [props.step.fields, props.values]);
+
+  return useMemo(
+    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props, t, entityPolygonData, bbox]
+    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
 };
 
 export const getFormEntries = (
-  { step, values, nullText, type }: GetFormEntriesProps,
+  { step, values, nullText, type, entity }: GetFormEntriesProps,
   t: typeof useT,
   entityPolygonData?: any,
   bbox?: any,
@@ -78,21 +126,32 @@ export const getFormEntries = (
     switch (f.type) {
       case FieldType.TreeSpecies:
       case FieldType.SeedingsTableInput: {
-        //If it was tree species
-        const value = getAnswer(f, values) as TreeSpeciesValue[] | null;
+        const value = (getAnswer(f, values) ?? []) as TreeSpeciesValue[];
+        const collection = f.type === FieldType.SeedingsTableInput ? "seeds" : value[0]?.collection;
+        const plants = value.map(
+          ({ name, amount, taxon_id }) =>
+            ({
+              name,
+              amount,
+              // ?? null is important here for the isEqual check in useFormChanges. The v3 API always
+              // returns null, so if taxon_id is undefined here, we want it to be explicitly null
+              // for comparison.
+              taxonId: taxon_id ?? null
+            } as PlantData)
+        );
+        const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
+        const tableType = !f.fieldProps.withNumbers ? "noCount" : undefined;
         outputArr.push({
-          title: t("Total {label}", { label: f.label ?? "" }),
+          title: f.label,
           type: f.type,
-          value: value?.length ?? nullText ?? t("Answer Not Provided")
+          value: (
+            <TreeSpeciesTable
+              {...{ plants, collection, tableType }}
+              entity={supportedEntity}
+              entityUuid={entity?.entityUUID}
+            />
+          )
         });
-        if (f.fieldProps.withNumbers) {
-          //If tree species included numbers
-          outputArr.push({
-            title: t("Total {label} Count", { label: f.label ?? "" }),
-            type: f.type,
-            value: value?.reduce((t, v) => t + (v.amount || 0), 0) ?? nullText ?? t("Answer Not Provided")
-          });
-        }
         break;
       }
 
@@ -101,7 +160,10 @@ export const getFormEntries = (
       case FieldType.JobsTable:
       case FieldType.VolunteersTable:
       case FieldType.AllBeneficiariesTable:
-      case FieldType.TrainingBeneficiariesTable: {
+      case FieldType.TrainingBeneficiariesTable:
+      case FieldType.IndirectBeneficiariesTable:
+      case FieldType.EmployeesTable:
+      case FieldType.AssociatesTable: {
         const entries = (values[f.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
           title: f.label,
@@ -124,9 +186,119 @@ export const getFormEntries = (
               showPopups={type === "sites"}
               showLegend={type === "sites"}
               mapFunctions={mapFunctions}
+              showDownloadPolygons={true}
             />
           )
         });
+        break;
+      }
+
+      case FieldType.FinancialTableInput: {
+        const entries = values[f.name];
+        if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
+        const years = f.fieldProps.years;
+        const collections = f.fieldProps.model;
+        const columnMaps: Record<string, string[]> = {
+          profitAnalysisData: profitAnalysisColumnsMap,
+          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
+          currentRatioData: currentRatioColumnsMap,
+          documentationData: documentationColumnsMap
+        };
+
+        const profitCollections = ["revenue", "expenses", "profit"];
+        const nonProfitCollections = ["budget"];
+        const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
+
+        const presentCollections = new Set(entries?.map((entry: any) => entry.collection));
+        const selectedCollections = new Set(JSON.parse(collections || "[]"));
+
+        const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
+        const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
+
+        if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
+          delete columnMaps.profitAnalysisData;
+        }
+
+        if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
+          delete columnMaps.nonProfitAnalysisData;
+        }
+
+        if (!isGroupPresent(ratioCollections) || !isCollectionPresent(ratioCollections)) {
+          delete columnMaps.currentRatioData;
+        }
+
+        const formatted = formatFinancialData(entries, years, "", "");
+        const sections = [
+          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
+          { title: t("Current Ratio"), key: "currentRatioData" },
+          { title: t("Documentation"), key: "documentationData" }
+        ];
+
+        const isEmptyValue = (val: any) => {
+          if (val === undefined || val === null) return true;
+          if (typeof val === "string") {
+            return val.trim() === "" || val?.trim() === "-";
+          }
+          return false;
+        };
+        const value = sections
+          .map(section => {
+            const data = formatted[section.key as keyof typeof formatted] as Record<string, any>[];
+            const columns = columnMaps[section.key as keyof typeof columnMaps];
+            if (!Array.isArray(data) || !data || data?.length === 0) return "";
+
+            const filteredRows = data?.filter((row: Record<string, any>) => {
+              if (!columns) return null;
+              const valuesToCheck = columns.filter(c => c !== "year").map(col => row[col]);
+              return valuesToCheck.some(val => !isEmptyValue(val));
+            });
+
+            if (filteredRows.length === 0) return "";
+
+            const rowsHtml = filteredRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  if (col === "documentation") {
+                    if (Array.isArray(row[col]) && row[col].length > 0) {
+                      return row[col]
+                        .map((document: any) => {
+                          if (document.url) {
+                            return `<a href="${
+                              document.url
+                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                              document.file_name ?? ""
+                            }</a>`;
+                          }
+                          return "";
+                        })
+                        .filter((link: any) => link !== "")
+                        .join(", ");
+                    }
+                    return "";
+                  }
+
+                  if (col === "year") {
+                    return isEmptyValue(row[col]) ? "-" : String(row[col]);
+                  }
+                  return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                });
+                return cellValues.join(", ");
+              })
+              .join("<br/>");
+
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+          })
+          .filter(Boolean)
+          .join("");
+
+        const output = {
+          title: f.label,
+          type: f.type,
+          value: value || t("Answer Not Provided")
+        };
+
+        outputArr.push(output);
         break;
       }
 
@@ -141,7 +313,7 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.LeadershipTeamDataTable:
+      case FieldType.LeadershipsDataTable:
       case FieldType.OwnershipStakeDataTable:
       case FieldType.FundingTypeDataTable:
       case FieldType.StrataDataTable:
@@ -150,7 +322,7 @@ export const getFormEntries = (
       case FieldType.SeedingsDataTable: {
         let headers: AccessorKeyColumnDef<any>[] = [];
 
-        if (f.type === FieldType.LeadershipTeamDataTable) headers = getLeadershipTableColumns(t);
+        if (f.type === FieldType.LeadershipsDataTable) headers = getLeadershipsTableColumns(t);
         else if (f.type === FieldType.OwnershipStakeDataTable) headers = getOwnershipTableColumns(t);
         else if (f.type === FieldType.FundingTypeDataTable) headers = getFundingTypeTableColumns(t);
         else if (f.type === FieldType.StrataDataTable) headers = getStrataTableColumns(t);
@@ -191,7 +363,8 @@ export const getFormEntries = (
             step: {
               ...step,
               fields: f.fieldProps.fields.filter(child => child.condition === values[f.name])
-            }
+            },
+            entity
           },
           t
         );
@@ -211,32 +384,31 @@ export const getFormEntries = (
 
   return outputArr;
 };
-const getEntityPolygonData = (record: any, type?: EntityName, entity?: Entity) => {
+
+// Make this a pure function that doesn't call hooks
+const getEntityPolygonData = (
+  record: any,
+  type?: EntityName,
+  entity?: Entity,
+  sitePolygonData?: any,
+  projectPolygonData?: any
+) => {
   if (!record && !entity) {
     return null;
   }
 
-  const uuid = entity?.entityUUID || record?.uuid;
   const entityType = entity?.entityName || (type as EntityName);
+
   if (entityType === "sites") {
-    const { data: sitePolygonData } = useGetV2SitesSitePolygon({
-      pathParams: {
-        site: uuid
-      }
-    });
     return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon({
-      queryParams: {
-        entityType: pluralEntityNameToSingular(entityType) ?? "",
-        uuid: uuid ?? ""
-      }
-    });
-    return projectPolygonData ? { [FORM_POLYGONS]: [projectPolygonData?.project_polygon?.poly_uuid] } : null;
+    const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
+    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 
   return null;
 };
+
 const FormSummaryRow = ({ step, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const entries = useGetFormEntries({ step, ...props });

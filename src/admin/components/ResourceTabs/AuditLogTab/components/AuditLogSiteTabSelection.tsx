@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -21,33 +22,34 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   entityLevel,
   existNurseries = false
 }) => {
+  const t = useT();
   const tabNames = useMemo(() => {
     const doesNotHaveNurseries = framework === null || ["ppc", "hbf"].includes(framework);
     if (entityLevel == AuditLogButtonStates.SITE_REPORT) {
       return [
-        { index: 4, name: "Project Report Status" },
-        { index: 5, name: "Site Report Status" }
+        { index: 4, name: t("Project Report") },
+        { index: 5, name: t("Site Report") }
       ];
     }
     if (entityLevel == AuditLogButtonStates.NURSERY_REPORT) {
       return [
-        { index: 4, name: "Project Report Status" },
-        { index: 6, name: "Nursery Report Status" }
+        { index: 4, name: t("Project Report") },
+        { index: 6, name: t("Nursery Report") }
       ];
     }
     if (isReport) {
-      let tabsReport = ["Project Report", "Site Report"];
+      let tabsReport = [t("Project Report"), t("Site Report")];
       if (!doesNotHaveNurseries && existNurseries) {
-        tabsReport.push("Nursery Report");
+        tabsReport.push(t("Nursery Report"));
       }
       return tabsReport;
     }
-    let tabs = ["Project Status", "Site Status", "Polygon Status"];
+    let tabs = [t("Project Status"), t("Site Status"), t("Polygon Status")];
     if (!doesNotHaveNurseries && AuditLogButtonStates.PROJECT == entityLevel && existNurseries) {
-      tabs.push("Nursery Status");
+      tabs.push(t("Nursery Status"));
     }
     return tabs;
-  }, [framework, isReport, entityLevel, existNurseries]);
+  }, [framework, isReport, entityLevel, existNurseries, t]);
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       {tabNames.map((tab: any, index) => {

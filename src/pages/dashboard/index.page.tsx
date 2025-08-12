@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { T, useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -10,17 +10,14 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import { logout } from "@/connections/Login";
+import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
 import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
-import { useDashboardContext } from "@/context/dashboard.provider";
+import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
+import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
+import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import {
-  formatLabelsVolunteers,
-  getFrameworkName,
-  parseDataToObjetive,
-  parseHectaresUnderRestorationData
-} from "@/utils/dashboardUtils";
+import { formatCohortDisplay, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -85,51 +82,108 @@ export interface GraphicLegendProps {
   color: string;
 }
 
+const mapActiveProjects = (projects: DashboardProjectsLightDto[], excludeUUID?: string) => {
+  return projects ? projects.filter((item: { uuid: string }) => excludeUUID == null || item.uuid !== excludeUUID) : [];
+};
+
+const getOrganizationByUuid = (projects: any[], uuid: string) => {
+  if (!projects) return "Unknown Organization";
+
+  const project = projects.find((project: any) => project.uuid === uuid);
+  if (!project) return "Unknown Organization";
+
+  return project.organisationName || "Unknown Organization";
+};
+
+const parseJobCreatedByType = (data: any, type: string) => {
+  if (!data) return { type, chartData: [] };
+
+  const ptWomen = data.totalPtWomen ?? 0;
+  const ptMen = data.totalPtMen ?? 0;
+  const ptYouth = data.totalPtYouth ?? 0;
+  const ptNonYouth = data.totalPtNonYouth ?? 0;
+  const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
+  const chartData = [
+    {
+      name: "Part-Time",
+      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
+        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
+      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
+        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
+    },
+    {
+      name: "Full-Time",
+      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
+        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
+      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
+        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
+    }
+  ];
+  return { type, chartData, total: data.totalJobsCreated, maxValue };
+};
+
 const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, frameworks, setLastUpdatedAt } = useDashboardContext();
+  const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
+  const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
     dashboardHeader,
     dashboardRestorationGoalData,
     jobsCreatedData,
-    dashboardVolunteersSurvivalRate,
     totalSectionHeader,
     hectaresUnderRestoration,
     numberTreesPlanted,
     isLoadingJobsCreated,
     isLoadingHectaresUnderRestoration,
     isLoadingTreeRestorationGoal,
-    isLoadingVolunteers,
-    dashboardProjectDetails,
-    isLoadingProjectDetails = false,
+    projectLoaded,
+    singleDashboardProject,
+    coverImage,
     topProject,
-    refetchTotalSectionHeader,
     centroidsDataProjects,
     activeCountries,
     activeProjects,
+    allAvailableProjects,
     polygonsData,
     projectBbox,
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories
+    isLoadingImpactStories,
+    lastUpdatedAt
   } = useDashboardData(filters);
 
-  const dataToggle = [
-    { tooltip: { key: "Absolute", render: <T _str="Absolute" _tags="dash" /> } },
-    { tooltip: { key: "Relative", render: <T _str="Relative" _tags="dash" /> } }
-  ];
-  const dataToggleGraphic = [
-    { tooltip: { key: "Table", render: <T _str="Table" _tags="dash" /> } },
-    { tooltip: { key: "Graph", render: <T _str="Graph" _tags="dash" /> } }
-  ];
+  const cohortArray = useMemo(() => {
+    const cohort = singleDashboardProject?.cohort;
+    if (!cohort) return null;
+    if (Array.isArray(cohort)) return cohort;
+  }, [singleDashboardProject?.cohort]);
+
+  const cohortDisplayName = useMemo(() => formatCohortDisplay(cohortArray), [cohortArray]);
+
+  const dataToggle = useMemo(
+    () => [
+      { tooltip: { key: "Absolute", render: <T _str="Absolute" _tags="dash" /> } },
+      { tooltip: { key: "Relative", render: <T _str="Relative" _tags="dash" /> } }
+    ],
+    []
+  );
+
+  const dataToggleGraphic = useMemo(
+    () => [
+      { tooltip: { key: "Table", render: <T _str="Table" _tags="dash" /> } },
+      { tooltip: { key: "Graph", render: <T _str="Graph" _tags="dash" /> } }
+    ],
+    []
+  );
 
   useEffect(() => {
-    setLastUpdatedAt?.(totalSectionHeader?.last_updated_at);
-  }, [setLastUpdatedAt, totalSectionHeader]);
+    setLastUpdatedAt?.(lastUpdatedAt ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {
@@ -137,220 +191,228 @@ const Dashboard = () => {
     }
   });
 
-  useValueChanged(filters, refetchTotalSectionHeader);
-
-  const COLUMN_ACTIVE_PROGRAMME = [
-    {
-      header: "Country",
-      cell: (props: any) => {
-        const value = props.getValue().split("_");
-        return (
-          <div className="flex items-center gap-2">
-            <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
-            <Text variant="text-14">{value[0]}</Text>
-          </div>
-        );
+  const COLUMN_ACTIVE_PROGRAMME = useMemo(
+    () => [
+      {
+        header: "Country",
+        cell: (props: any) => {
+          const value = props.getValue().split("_");
+          return (
+            <div className="flex items-center gap-2">
+              <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
+              <Text variant="text-14">{value[0]}</Text>
+            </div>
+          );
+        },
+        accessorKey: "country",
+        enableSorting: false
       },
-      accessorKey: "country",
-      enableSorting: false
-    },
-    {
-      header: "Projects",
-      accessorKey: "project",
-      enableSorting: false
-    },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted",
-      enableSorting: false
-    },
-    {
-      header: "Hectares",
-      accessorKey: "restorationHectares",
-      enableSorting: false
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated",
-      enableSorting: false
-    },
-    ...(!isMobile
-      ? []
-      : [
-          {
-            header: "",
-            accessorKey: "link",
-            enableSorting: false,
-            cell: ({ row }: { row: { original: { uuid: string } } }) => {
-              const uuid = row.original.uuid;
-              const handleClick = () => {
-                setFilters(prevValues => ({
-                  ...prevValues,
-                  uuid: uuid
-                }));
-              };
+      {
+        header: "Projects",
+        accessorKey: "project",
+        enableSorting: false
+      },
+      {
+        header: "Trees Planted",
+        accessorKey: "treesPlanted",
+        enableSorting: false
+      },
+      {
+        header: "Hectares",
+        accessorKey: "restorationHectares",
+        enableSorting: false
+      },
+      {
+        header: "Jobs Created",
+        accessorKey: "jobsCreated",
+        enableSorting: false
+      },
+      ...(!isMobile
+        ? []
+        : [
+            {
+              header: "",
+              accessorKey: "link",
+              enableSorting: false,
+              cell: ({ row }: { row: { original: { uuid: string } } }) => {
+                const uuid = row.original.uuid;
+                const handleClick = () => {
+                  setFilters(prevValues => ({
+                    ...prevValues,
+                    uuid: uuid,
+                    country: {
+                      country_slug: uuid,
+                      id: 1,
+                      data: {
+                        label: countryChoices?.find(choice => choice.id === uuid)?.name ?? uuid,
+                        icon: `/flags/${uuid.toLowerCase()}.svg`
+                      }
+                    }
+                  }));
+                };
 
-              return (
-                <button onClick={handleClick}>
-                  <Icon
-                    name={IconNames.IC_ARROW_COLLAPSE}
-                    className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary"
-                  />
-                </button>
-              );
+                return (
+                  <button onClick={handleClick}>
+                    <Icon
+                      name={IconNames.IC_ARROW_COLLAPSE}
+                      className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary"
+                    />
+                  </button>
+                );
+              }
             }
-          }
-        ])
-  ];
+          ])
+    ],
+    [isMobile, setFilters, countryChoices]
+  );
 
-  const COLUMN_ACTIVE_COUNTRY = [
-    {
-      header: "Project",
-      accessorKey: "project",
-      enableSorting: false,
-      cell: (props: any) => {
-        const value = props.getValue().split("_");
-        return <span className="two-line-text text-14-light">{value}</span>;
-      }
-    },
-    {
-      header: "Trees Planted",
-      accessorKey: "treesPlanted",
-      enableSorting: false
-    },
-    {
-      header: "Hectares",
-      accessorKey: "restorationHectares",
-      enableSorting: false
-    },
-    {
-      header: "Jobs Created",
-      accessorKey: "jobsCreated",
-      enableSorting: false
-    },
-    {
-      header: "Volunteers",
-      accessorKey: "volunteers",
-      enableSorting: false
-    },
-    {
-      header: "",
-      accessorKey: "link",
-      enableSorting: false,
-      cell: ({ row }: { row: { original: { uuid: string } } }) => {
-        const uuid = row.original.uuid;
-        const handleClick = () => {
-          setFilters(prevValues => ({
-            ...prevValues,
-            uuid: uuid
-          }));
-        };
-
-        return (
-          <button onClick={handleClick}>
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </button>
-        );
-      }
-    }
-  ];
-
-  const DATA_ACTIVE_PROGRAMME = Array.isArray(activeCountries?.data)
-    ? activeCountries?.data.map(
-        (item: {
-          country: string;
-          country_slug: string;
-          number_of_projects: number;
-          total_trees_planted: number;
-          total_jobs_created: number;
-          hectares_restored: number;
-        }) => ({
-          country_slug: item.country_slug,
-          country: `${item.country}_/flags/${item.country_slug.toLowerCase()}.svg`,
-          project: item.number_of_projects.toLocaleString(),
-          treesPlanted: item.total_trees_planted.toLocaleString(),
-          restorationHectares: item.hectares_restored.toLocaleString(),
-          jobsCreated: item.total_jobs_created.toLocaleString()
-        })
-      )
-    : [];
-
-  const mapActiveProjects = (excludeUUID?: string) => {
-    return activeProjects
-      ? activeProjects
-          .filter((item: { uuid: string }) => !excludeUUID || item.uuid !== excludeUUID)
-          .map((item: any) => ({
-            uuid: item.uuid,
-            project: item.name,
-            treesPlanted: item.trees_under_restoration.toLocaleString(),
-            restorationHectares: item.hectares_under_restoration.toLocaleString(),
-            jobsCreated: item.jobs_created.toLocaleString(),
-            volunteers: item.volunteers.toLocaleString()
-          }))
-      : [];
-  };
-
-  const DATA_ACTIVE_COUNTRY = mapActiveProjects();
-  const DATA_ACTIVE_COUNTRY_WITHOUT_UUID = mapActiveProjects(filters.uuid);
-
-  const getOrganizationByUuid = (uuid: string) => {
-    const project = activeProjects
-      ? activeProjects.find((project: any) => project.uuid === uuid)
-      : "Unknown Organization";
-    return project?.organisation;
-  };
-
-  const parseJobCreatedByType = (data: any, type: string) => {
-    if (!data) return { type, chartData: [] };
-
-    const ptWomen = data.total_pt_women || 0;
-    const ptMen = data.total_pt_men || 0;
-    const ptYouth = data.total_pt_youth || 0;
-    const ptNonYouth = data.total_pt_non_youth || 0;
-    const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
-    const chartData = [
+  const COLUMN_ACTIVE_COUNTRY = useMemo(
+    () => [
       {
-        name: "Part-Time",
-        [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-          data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
-        [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-          data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+        header: "Project",
+        accessorKey: "name",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue().split("_");
+          return <span className="two-line-text text-14-light">{value}</span>;
+        }
       },
       {
-        name: "Full-Time",
-        [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-          data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
-        [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-          data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
+        header: "Trees Planted",
+        accessorKey: "treesPlantedCount",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
+      },
+      {
+        header: "Hectares",
+        accessorKey: "totalHectaresRestoredSum",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
+      },
+      {
+        header: "Jobs Created",
+        accessorKey: "totalJobsCreated",
+        enableSorting: false,
+        cell: (props: any) => {
+          const value = props.getValue();
+          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
+        }
+      },
+      {
+        header: "",
+        accessorKey: "link",
+        enableSorting: false,
+        cell: ({ row }: { row: { original: { uuid: string } } }) => {
+          const uuid = row.original.uuid;
+          const handleClick = () => {
+            setFilters(prevValues => ({
+              ...prevValues,
+              uuid: uuid
+            }));
+          };
+
+          return (
+            <button onClick={handleClick}>
+              <Icon
+                name={IconNames.IC_ARROW_COLLAPSE}
+                className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary"
+              />
+            </button>
+          );
+        }
       }
-    ];
-    return { type, chartData, total: data.totalJobsCreated, maxValue };
+    ],
+    [setFilters]
+  );
+
+  const DATA_ACTIVE_PROGRAMME = useMemo(() => {
+    if (!Array.isArray(activeCountries)) return [];
+    const data = activeCountries.map(
+      (item: {
+        country: string;
+        numberOfProjects: number;
+        totalTreesPlanted: number;
+        totalJobsCreated: number;
+        hectaresRestored: number;
+      }) => ({
+        uuid: item.country,
+        country: `${
+          countryChoices?.find(choice => choice.id === item.country)?.name ?? item.country
+        }_/flags/${item.country.toLowerCase()}.svg`,
+        project: item.numberOfProjects.toLocaleString(),
+        treesPlanted: item.totalTreesPlanted.toLocaleString(),
+        restorationHectares: item.hectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 }),
+        jobsCreated: item.totalJobsCreated.toLocaleString()
+      })
+    );
+    return data.sort((a, b) => a.country.localeCompare(b.country));
+  }, [activeCountries, countryChoices]);
+
+  const projectsInCountry = useMemo(() => mapActiveProjects(activeProjects), [activeProjects]);
+  const otherProjectsInCountry = useMemo(
+    () => mapActiveProjects(allAvailableProjects, filters.uuid),
+    [allAvailableProjects, filters.uuid]
+  );
+  const organizationName = useMemo(
+    () => getOrganizationByUuid(activeProjects, filters.uuid),
+    [activeProjects, filters.uuid]
+  );
+
+  const jobsCreatedByGenderData = useMemo(
+    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender),
+    [jobsCreatedData]
+  );
+  const jobsCreatedByAgeData = useMemo(
+    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age),
+    [jobsCreatedData]
+  );
+
+  const projectCounts = useMemo(
+    () => ({
+      totalEnterpriseCount: totalSectionHeader?.totalEnterpriseCount ?? 0,
+      totalNonProfitCount: totalSectionHeader?.totalNonProfitCount ?? 0
+    }),
+    [totalSectionHeader]
+  );
+
+  const tooltipText = useMemo(() => {
+    if (filters.country.id === 0) {
+      return t(ACTIVE_COUNTRIES_TOOLTIP);
+    } else if (projectsInCountry.length > 0) {
+      return t(ACTIVE_PROJECTS_TOOLTIP);
+    } else if (transformedStories.length > 0) {
+      return t(IMPACT_STORIES_TOOLTIP);
+    }
+    return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
+  }, [t, filters.country.id, projectsInCountry, transformedStories]);
+
+  const countryData = useMemo(() => {
+    if (!singleDashboardProject?.country || !countryChoices?.length) return undefined;
+
+    const gadmCountry = countryChoices.find(country => country.id === singleDashboardProject?.country);
+    if (!gadmCountry) return undefined;
+
+    const countrySlug = gadmCountry.id;
+    return {
+      country_slug: countrySlug,
+      data: {
+        label: gadmCountry.name,
+        icon: `/flags/${String(countrySlug).toLowerCase()}.svg`
+      },
+      id: gadmCountry.id
+    };
+  }, [singleDashboardProject?.country, countryChoices]);
+
+  const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
+    return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
   };
 
-  const parseVolunteersByType = (data: any, type: string) => {
-    if (!data) return { type, chartData: [] };
-    const firstvalue = type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth";
-    const secondValue = type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth";
-    const chartData = [
-      { name: formatLabelsVolunteers(firstvalue), value: data[`${firstvalue}_volunteers`] },
-      { name: formatLabelsVolunteers(secondValue), value: data[`${secondValue}_volunteers`] }
-    ];
-    return { type, chartData, total: data.total_volunteers };
-  };
-  const projectCounts = {
-    total_enterprise_count: totalSectionHeader?.total_enterprise_count,
-    total_non_profit_count: totalSectionHeader?.total_non_profit_count
-  };
-  const getTooltipText = () => {
-    if (filters.country.id === 0) {
-      return ACTIVE_COUNTRIES_TOOLTIP;
-    } else if (DATA_ACTIVE_COUNTRY.length > 0) {
-      return ACTIVE_PROJECTS_TOOLTIP;
-    } else if (transformedStories.length > 0) {
-      return IMPACT_STORIES_TOOLTIP;
-    }
-    return NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS;
-  };
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
@@ -363,7 +425,10 @@ const Dashboard = () => {
             <When condition={filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid}>
               <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
               <Text variant="text-24-semibold" className="text-black">
-                {t(filters.country?.data.label)}
+                {t(
+                  countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
+                    filters.country?.data.label
+                )}
               </Text>
             </When>
 
@@ -388,11 +453,9 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <div>
             <DashboardBreadcrumbs
-              framework={getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework) || ""}
-              countryId={dashboardProjectDetails?.data?.country_id}
-              countryName={dashboardProjectDetails?.data?.country}
-              countrySlug={dashboardProjectDetails?.data?.country_slug}
-              projectName={dashboardProjectDetails?.data?.name}
+              cohort={cohortArray}
+              countryData={countryData as CountriesProps}
+              projectName={singleDashboardProject?.name}
               className="pt-0"
               textVariant="text-14"
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
@@ -437,7 +500,7 @@ const Dashboard = () => {
         <When condition={filters.uuid}>
           <PageCard className="border-0 px-4 py-6" gap={8}>
             <div className="flex items-center">
-              <If condition={isLoadingProjectDetails}>
+              <If condition={!projectLoaded}>
                 <Then>
                   <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
                     <Text variant="text-20-bold">{t("Loading...")}</Text>
@@ -445,30 +508,28 @@ const Dashboard = () => {
                 </Then>
                 <Else>
                   <img
-                    src={dashboardProjectDetails?.data?.cover_image?.thumbnail ?? "/images/_AJL2963.jpg"}
-                    alt="tree"
+                    src={coverImage?.thumbUrl ?? "/images/_AJL2963.jpg"}
+                    alt="project cover"
                     className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
                   />
                 </Else>
               </If>
               <div>
-                <Text variant="text-20-bold">{t(dashboardProjectDetails?.data?.name)}</Text>
+                <Text variant="text-20-bold">{t(singleDashboardProject?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
-                  {t(`Operations: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Operations: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Registration: ${dashboardProjectDetails?.data?.country}`)}
+                  {t(`Registration: ${countryData?.data?.label}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Organization: ${getOrganizationByUuid(filters.uuid)}`)}
+                  {t(`Organization: ${organizationName}`)}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
                   {t(
                     `Type: ${
-                      ORGANIZATIONS_TYPES[
-                        dashboardProjectDetails?.data?.organisation as keyof typeof ORGANIZATIONS_TYPES
-                      ]
+                      ORGANIZATIONS_TYPES[singleDashboardProject?.organisationType as keyof typeof ORGANIZATIONS_TYPES]
                     }`
                   )}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Programme: ${getFrameworkName(frameworks, dashboardProjectDetails?.data?.framework)}`)}
+                  {t(`Cohort: ${cohortDisplayName}`)}
                 </Text>
               </div>
             </div>
@@ -476,7 +537,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(dashboardProjectDetails?.data)}
+              data={parseDataToObjetive(singleDashboardProject)}
               variantTitle="text-18-semibold"
             />
           </PageCard>
@@ -555,14 +616,14 @@ const Dashboard = () => {
           >
             <SecDashboard
               title={t("New Part-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_pt }}
+              data={{ value: jobsCreatedData?.totalPt }}
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
               title={t("New Full-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_ft }}
+              data={{ value: jobsCreatedData?.totalFt }}
               className="pl-12 mobile:pl-0 mobile:pt-4"
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
@@ -573,7 +634,7 @@ const Dashboard = () => {
             <SecDashboard
               title={t("Jobs Created by Gender")}
               data={{}}
-              dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender)}
+              dataForChart={jobsCreatedByGenderData}
               chartType="groupedBarChart"
               classNameHeader="pl-[50px] mobile:pl-0"
               classNameBody="w-full place-content-center !justify-center flex-col gap-5"
@@ -584,7 +645,7 @@ const Dashboard = () => {
             <SecDashboard
               title={t("Jobs Created by Age")}
               data={{}}
-              dataForChart={parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age)}
+              dataForChart={jobsCreatedByAgeData}
               chartType="groupedBarChart"
               classNameHeader="pl-[50px] mobile:pl-0"
               classNameBody="w-full place-content-center !justify-center flex-col gap-5"
@@ -593,49 +654,11 @@ const Dashboard = () => {
               isLoading={isLoadingJobsCreated}
             />
           </div>
-          <div className="hidden">
-            <SecDashboard
-              title={t("Total Volunteers")}
-              data={{ value: dashboardVolunteersSurvivalRate?.total_volunteers }}
-              tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-            />
-          </div>
-
-          <div className="hidden w-full grid-cols-2 gap-12">
-            {/* add grid and remove hidden*/}
-            <SecDashboard
-              title={t("Volunteers Created by Gender")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.gender)}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-            <SecDashboard
-              title={t("Volunteers Created by Age")}
-              data={{}}
-              chartType={CHART_TYPES.doughnutChart}
-              dataForChart={parseVolunteersByType(dashboardVolunteersSurvivalRate, JOBS_CREATED_CHART_TYPE.age)}
-              classNameHeader="!justify-center"
-              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
-              tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
-              isUserAllowed={isUserAllowed?.allowed}
-              isLoading={isLoadingVolunteers}
-            />
-          </div>
         </PageCard>
       </ContentDashboardtWrapper>
       <ContentOverview
         dataTable={
-          filters.country.id === 0
-            ? DATA_ACTIVE_PROGRAMME
-            : filters.uuid
-            ? DATA_ACTIVE_COUNTRY_WITHOUT_UUID
-            : DATA_ACTIVE_COUNTRY
+          filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
         }
         centroids={centroidsDataProjects}
         columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
@@ -647,15 +670,17 @@ const Dashboard = () => {
             : "ACTIVE PROJECTS"
         )}
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
-          totalSectionHeader,
-          dashboardVolunteersSurvivalRate,
+          singleDashboardProject
+            ? singleDashboardProject.totalHectaresRestoredSum
+            : totalSectionHeader?.totalHectaresRestored ?? 0,
+          singleDashboardProject ? singleDashboardProject.totalSites : totalSectionHeader?.totalSites ?? 0,
           hectaresUnderRestoration
         )}
-        textTooltipTable={t(getTooltipText())}
+        textTooltipTable={tooltipText}
         isUserAllowed={isUserAllowed?.allowed}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
-        bbox={filters.uuid ? projectBbox : currentBbox}
+        bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
         projectCounts={projectCounts}
         transformedStories={transformedStories}
         isLoading={isLoadingImpactStories}

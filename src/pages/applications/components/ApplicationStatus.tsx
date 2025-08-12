@@ -35,7 +35,9 @@ interface StatusProps {
 }
 
 const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
-  const currentSubmission = application?.current_submission;
+  const currentSubmission = (application?.form_submissions ?? []).find(
+    ({ uuid }) => uuid === application?.current_submission_uuid
+  );
   //@ts-ignore
   const stages = application?.funding_programme?.stages?.data as StageRead[];
   const fundingProgrammeStatus = application?.funding_programme?.status;
@@ -46,6 +48,8 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
   const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
+    // TODO: using the framework key as an access code here is really confusing and needs to be updated.
+    // Will be related to some general application cleanup that Ben is getting set up in an epic.
     pathParams: { accessCode: currentForm?.framework_key ? currentForm?.framework_key : "terrafund" }
   });
   //@ts-ignore
@@ -205,7 +209,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             primaryAction: {
               children: t("Set up monitoring project"),
               as: Link,
-              href: `/entity/projects/create/${terrafundReportingFramework.uuid}?parent_name=application&parent_uuid=${application.uuid}`
+              href: `/entity/projects/create/${terrafundReportingFramework.slug}?parent_name=application&parent_uuid=${application.uuid}`
             },
             secondaryAction: {
               children: t("Learn More"),
@@ -250,7 +254,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           <When
             condition={
               //@ts-ignore
-              !!currentSubmission?.feedback_fields
+              !!currentSubmission?.translated_feedback_fields
             }
           >
             <div className="mt-6 flex flex-col gap-2">
@@ -258,7 +262,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
               <Text variant="text-heading-100">
                 {
                   //@ts-ignore
-                  currentSubmission?.feedback_fields?.join(", ")
+                  currentSubmission?.translated_feedback_fields?.join(", ")
                 }
               </Text>
             </div>

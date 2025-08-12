@@ -6,11 +6,14 @@ import { When } from "react-if";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
 import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
 const SiteOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approve" | "moreinfo" | "restoration-in-progress" | undefined>();
+  const [statusModal, setStatusModal] = useState<
+    "approved" | "needs-more-information" | "restoration-in-progress" | undefined
+  >();
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
 
   const { record } = useShowContext();
@@ -26,7 +29,7 @@ const SiteOverview: FC = () => {
     fetchCheckPolygons();
   }, [record]);
 
-  const isPPC = record.framework_key === "ppc";
+  const isPPC = record.frameworkKey === "ppc";
 
   return (
     <>
@@ -42,14 +45,14 @@ const SiteOverview: FC = () => {
 
           <When condition={isPPC}>
             <Labeled label="ID" className="label-field-aside">
-              <TextField source="ppc_external_id" />
+              <TextField source="ppcExternalId" />
             </Labeled>
           </When>
 
           <Grid spacing={2} marginBottom={2} container>
             <Grid xs={6} item>
               <Labeled label="Framework" className="label-field-aside">
-                <FrameworkField />
+                <FrameworkField prop="frameworkKey" />
               </Labeled>
             </Grid>
 
@@ -71,13 +74,13 @@ const SiteOverview: FC = () => {
 
             <Grid xs={6} item>
               <Labeled label="Status" className="label-field-aside">
-                <TextField source="readable_status" />
+                <ReadableStatusField prop="status" />
               </Labeled>
             </Grid>
 
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
-                <TextField source="readable_update_request_status" />
+                <ReadableStatusField prop="updateRequestStatus" />
               </Labeled>
             </Grid>
           </Grid>
@@ -86,7 +89,7 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("moreinfo")}
+              onClick={() => setStatusModal("needs-more-information")}
             >
               Request More Info
             </Button>
@@ -100,8 +103,8 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               startIcon={<Check />}
-              disabled={record?.status === "approved" || checkPolygons}
-              onClick={() => setStatusModal("approve")}
+              disabled={record?.status === "approved" || !checkPolygons}
+              onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>

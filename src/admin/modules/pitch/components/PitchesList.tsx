@@ -18,31 +18,32 @@ import { PitchDataProvider } from "@/admin/apiProvider/dataProviders/pitchDataPr
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
+import { Choice } from "@/admin/types/common";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-const filters = [
+const filters = (countryChoices: Choice[]) => [
   <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
   <SelectInput
     key="i"
     label="Intervention Type"
     className="select-page-admin"
-    source="restoration_intervention_types"
+    source="restorationInterventionTypes"
     choices={optionToChoices(getRestorationInterventionTypeOptions())}
   />,
   <SelectInput
     key="c"
     label="Project country"
     className="select-page-admin"
-    source="project_country"
-    choices={optionToChoices(getCountriesOptions())}
+    source="projectCountry"
+    choices={countryChoices}
   />
 ];
 
@@ -58,11 +59,12 @@ const tableMenu = [
 ];
 
 const ApplicationDataGrid = () => {
+  const countryChoices = useGadmChoices({ level: 0 });
   return (
     <Datagrid rowClick={"show"}>
-      <TextField source="project_name" label="Project Name" sortable />
+      <TextField source="projectName" label="Project Name" sortable />
       <ReferenceField
-        source="organisation_id"
+        source="organisationId"
         label="Organization"
         reference={modules.organisation.ResourceName}
         link="show"
@@ -70,12 +72,12 @@ const ApplicationDataGrid = () => {
         <TextField source="name" />
       </ReferenceField>
       <SimpleChipFieldArray
-        source="restoration_intervention_types"
+        source="restorationInterventionTypes"
         label="Restoration Intervention Types"
         choices={optionToChoices(getRestorationInterventionTypeOptions())}
       />
-      <SelectField source="project_country" label="Countries" choices={optionToChoices(getCountriesOptions())} />
-      <DateField source="created_at" label="Date Added" locales="en-GB" />
+      <SelectField source="projectCountry" label="Countries" choices={countryChoices} />
+      <DateField source="createdAt" label="Date Added" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -85,6 +87,7 @@ const ApplicationDataGrid = () => {
 
 export const PitchesList = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const pitchDataProvider = useDataProvider<PitchDataProvider>();
 
@@ -102,7 +105,7 @@ export const PitchesList = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActions onExport={handleExport} />} filters={filters(countryChoices)}>
         <ApplicationDataGrid />
       </List>
 

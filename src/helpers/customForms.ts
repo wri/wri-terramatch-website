@@ -6,9 +6,7 @@ import * as yup from "yup";
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { getCountriesOptions } from "@/constants/options/countries";
 import { getMonthOptions } from "@/constants/options/months";
-import { getCountriesStatesOptions } from "@/constants/options/states";
 import { Framework } from "@/context/framework.provider";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { Entity, Option } from "@/types/common";
@@ -27,7 +25,13 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "number") {
-        values[field.name] = Number(values[field.name]);
+        const fieldValue = values[field.name];
+        const isEmpty = fieldValue === undefined || fieldValue === null;
+        if (isEmpty && field.fieldProps.min < 0) {
+          values[field.name] = fieldValue;
+        } else {
+          values[field.name] = Number(fieldValue);
+        }
       }
       break;
     }
@@ -60,8 +64,16 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   return values;
 };
 
-export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[], isMigrated?: boolean): T {
+export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
+  if (typeof values === "string") {
+    try {
+      values = JSON.parse(values);
+    } catch (e) {
+      console.warn("Failed to parse values as JSON:", e);
+      return {};
+    }
+  }
 
   delete values.uuid;
   delete values.updated_at;
@@ -70,14 +82,14 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   for (const step of steps) {
     for (const field of step.fields) {
-      normalizedFieldDefaultValue(values, field, isMigrated);
+      normalizedFieldDefaultValue(values, field);
     }
   }
 
   return values;
 }
 
-export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField, isMigrated?: boolean): T {
+export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField): T {
   switch (field.type) {
     case FieldType.Input: {
       if (field.fieldProps.type === "date") {
@@ -102,8 +114,8 @@ export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormFie
     }
 
     case FieldType.Conditional: {
-      if (isMigrated && typeof values[field.name] !== "boolean") values[field.name] = true;
-      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f, isMigrated));
+      if (typeof values[field.name] !== "boolean") values[field.name] = true;
+      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f));
       break;
     }
 
@@ -158,9 +170,31 @@ export const apiQuestionsToFormFields = (
   sortBy(questions, "order")
     .map((question, index, array) => {
       const feedbackRequired = feedback_fields?.includes(question.uuid);
-      return apiFormQuestionToFormField(question, t, index, array, entity, framework, feedbackRequired);
+      return apiFormQuestionToFormField(
+        question,
+        t,
+        index,
+        array,
+        entity,
+        framework,
+        feedbackRequired,
+        feedback_fields
+      );
     })
     .filter(field => !!field) as FormField[];
+
+// If a select field with the key's linked field shows up, use the value's linked field question
+// to filter the options.
+const SELECT_FILTER_QUESTION = {
+  "org-hq-state": "org-hq-country",
+  "org-states": "org-countries",
+  "org-level-1-past-restoration": "org-level-0-past-restoration",
+  "org-level-2-past-restoration": "org-level-1-past-restoration",
+  "pro-pit-states": "pro-pit-country",
+  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
+  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
+  "pro-states": "pro-country"
+};
 
 export const apiFormQuestionToFormField = (
   question: FormQuestionRead,
@@ -169,7 +203,8 @@ export const apiFormQuestionToFormField = (
   questions: FormQuestionRead[],
   entity?: Entity,
   framework?: Framework,
-  feedbackRequired?: boolean
+  feedbackRequired?: boolean,
+  feedback_fields?: string[]
 ): FormField | null => {
   const validation = getFieldValidation(question, t, framework ?? Framework.UNDEFINED);
   const required = question.validation?.required || false;
@@ -184,6 +219,8 @@ export const apiFormQuestionToFormField = (
     parent_id: question.parent_id,
     min_character_limit: question.min_character_limit,
     max_character_limit: question.max_character_limit,
+    min_number_limit: question.min_number_limit,
+    max_number_limit: question.max_number_limit,
     feedbackRequired
   };
 
@@ -195,7 +232,35 @@ export const apiFormQuestionToFormField = (
     case "week":
     case "search":
     case "month":
-    case "number":
+    case "number": {
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            max: question.max_number_limit,
+            min: question.min_number_limit,
+            type: question.input_type,
+            allowNegative: true
+          }
+        };
+      } else {
+        return {
+          ...sharedProps,
+          type: FieldType.Input,
+
+          fieldProps: {
+            required,
+            type: question.input_type
+          }
+        };
+      }
+    }
     case "password":
     case "color":
     case "date":
@@ -245,26 +310,25 @@ export const apiFormQuestionToFormField = (
        * We need a more robust solution than hardcoded linked_field_key
        */
       let optionsFilterFieldName: string | undefined;
-      if (question.linked_field_key === "org-hq-state") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "org-hq-country")?.uuid;
-      } else if (question.linked_field_key === "org-states") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "org-countries")?.uuid;
-      } else if (question.linked_field_key === "pro-pit-states") {
-        optionsFilterFieldName = questions.find(q => q.linked_field_key === "pro-pit-country")?.uuid;
+      const filterQuestion = SELECT_FILTER_QUESTION[question.linked_field_key];
+      if (filterQuestion != null) {
+        optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
       }
 
-      return {
-        ...sharedProps,
-        type: FieldType.Dropdown,
-
-        fieldProps: {
-          required,
-          multiSelect: question.multichoice,
-          options: getOptions(question, t),
-          hasOtherOptions: question.options_other,
-          optionsFilterFieldName
-        }
+      const fieldProps = {
+        required,
+        multiSelect: question.multichoice,
+        hasOtherOptions: question.options_other,
+        optionsFilterFieldName
       };
+
+      if (question.options_list?.startsWith("gadm-level-")) {
+        fieldProps.apiOptionsSource = question.options_list;
+      } else {
+        fieldProps.options = getOptions(question, t);
+      }
+
+      return { ...sharedProps, type: FieldType.Dropdown, fieldProps };
     }
     case "checkboxes":
     case "radio":
@@ -338,14 +402,15 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "leadershipTeam": {
+    case "leaderships": {
       return {
         ...sharedProps,
-        type: FieldType.LeadershipTeamDataTable,
+        type: FieldType.LeadershipsDataTable,
 
         fieldProps: {
           required,
-          addButtonCaption: question.add_button_text
+          addButtonCaption: question.add_button_text,
+          collection: question.collection
         }
       };
     }
@@ -358,6 +423,20 @@ export const apiFormQuestionToFormField = (
         fieldProps: {
           required,
           addButtonCaption: question.add_button_text
+        }
+      };
+    }
+
+    case "financialIndicators": {
+      return {
+        ...sharedProps,
+        type: FieldType.FinancialTableInput,
+
+        fieldProps: {
+          required,
+          addButtonCaption: question.add_button_text,
+          years: question?.years,
+          model: question?.collection!
         }
       };
     }
@@ -431,18 +510,6 @@ export const apiFormQuestionToFormField = (
       }
     }
 
-    case "coreTeamLeaders": {
-      return {
-        ...sharedProps,
-        type: FieldType.CoreTeamLeadersDataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text
-        }
-      };
-    }
-
     case "fundingType": {
       return {
         ...sharedProps,
@@ -458,9 +525,12 @@ export const apiFormQuestionToFormField = (
     case "workdays":
     case "restorationPartners":
     case "jobs":
+    case "employees":
     case "volunteers":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries":
+    case "associates": {
       return {
         ...sharedProps,
         type: question.input_type,
@@ -509,7 +579,7 @@ export const apiFormQuestionToFormField = (
           required,
           id: question.uuid,
           inputId: question.uuid,
-          fields: apiQuestionsToFormFields(question.children, t, entity, framework)
+          fields: apiQuestionsToFormFields(question.children, t, entity, framework, feedback_fields)
         }
       };
 
@@ -524,6 +594,27 @@ export const apiFormQuestionToFormField = (
           inputId: question.uuid
         }
       };
+
+    case "strategy-area": {
+      let optionsFilterFieldName: string | undefined;
+      const filterQuestion = SELECT_FILTER_QUESTION[question.linked_field_key];
+      if (filterQuestion != null) {
+        optionsFilterFieldName = questions.find(({ linked_field_key }) => linked_field_key === filterQuestion)?.uuid;
+      }
+
+      return {
+        ...sharedProps,
+        type: FieldType.StrategyAreaInput,
+
+        fieldProps: {
+          required,
+          options: getOptions(question, t),
+          hasOtherOptions: question.options_other,
+          optionsFilterFieldName,
+          collection: question.linked_field_key
+        }
+      };
+    }
 
     default:
       return null;
@@ -544,16 +635,8 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   }
 
   switch (question.options_list) {
-    case "countries":
-      options = getCountriesOptions(t);
-      break;
-
     case "months":
       options = getMonthOptions(t);
-      break;
-
-    case "states":
-      options = getCountriesStatesOptions(t);
       break;
   }
 
@@ -567,6 +650,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
   const min = question.validation?.min;
   const limitMin = question.min_character_limit;
   const limitMax = question.max_character_limit;
+  const limitMinNumber = question.min_number_limit;
+  const limitMaxNumber = question.max_number_limit;
 
   switch (question.input_type) {
     case "text":
@@ -586,12 +671,12 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
-      if (limitMin)
+      if (limitMin && question.input_type == "long-text")
         validation = validation.min(
           limitMin,
           t(`Your answer does not meet the minimum required characters ${limitMin} for this field.`)
         );
-      if (limitMax)
+      if (limitMax && question.input_type == "long-text")
         validation = validation.max(
           limitMax,
           t(
@@ -608,6 +693,51 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       if (isNumber(min)) validation = validation.min(min);
       if (max) validation = validation.max(max);
       if (required) validation = validation.required();
+      if (
+        question.linked_field_key === "pro-pit-lat-proposed" ||
+        question.linked_field_key === "pro-pit-long-proposed"
+      ) {
+        validation = yup
+          .number()
+          .transform((value, originalValue) => {
+            return originalValue === "" || originalValue == null ? undefined : value;
+          })
+          .test("coordinates-validation", function (value) {
+            if (value === undefined || value === null || value === "") return true;
+
+            if (limitMinNumber !== undefined && value < limitMinNumber) {
+              return this.createError({
+                message: `Must be greater than or equal to ${limitMinNumber}`
+              });
+            }
+
+            if (limitMaxNumber !== undefined && value > limitMaxNumber) {
+              return this.createError({
+                message: `Must be less than or equal to ${limitMaxNumber}`
+              });
+            }
+
+            if (question.linked_field_key === "pro-pit-lat-proposed" && (value < -90 || value > 90)) {
+              return this.createError({
+                message: "Latitude must be between -90 and 90 degrees"
+              });
+            }
+
+            if (question.linked_field_key === "pro-pit-long-proposed" && (value < -180 || value > 180)) {
+              return this.createError({
+                message: "Longitude must be between -180 and 180 degrees"
+              });
+            }
+
+            if (!/^-?\d+(\.\d{1,2})?$/.test(Number(value).toString())) {
+              return this.createError({
+                message: "Maximum 2 decimal places are allowed"
+              });
+            }
+
+            return true;
+          });
+      }
 
       return validation;
     }
@@ -624,7 +754,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
     case "checkboxes":
     case "dataTable":
-    case "leadershipTeam":
+    case "leaderships":
+    case "financialIndicators":
     case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":
@@ -652,8 +783,11 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "restorationPartners":
     case "jobs":
     case "volunteers":
+    case "employees":
     case "allBeneficiaries":
-    case "trainingBeneficiaries": {
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries":
+    case "associates": {
       validation = yup
         .array()
         .min(0)
@@ -761,6 +895,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
     case "tableInput":
     case "mapInput": {
+      if (question.linked_field_key == "pro-pit-proj-boundary") return;
+
       validation = yup.object();
       if (required) validation = validation.required();
 
@@ -771,6 +907,50 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "boolean": {
       validation = yup.boolean();
       if (required) validation = validation.required();
+
+      return validation;
+    }
+
+    case "strategy-area": {
+      validation = yup.string().test("total-percentage", function (value) {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (!Array.isArray(parsed)) return true;
+
+          const hasValues = parsed.some((item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return percentage > 0;
+          });
+
+          if (!hasValues) return true;
+
+          const total = parsed.reduce((sum: number, item: { [key: string]: number }) => {
+            const percentage = Object.values(item)[0];
+            return sum + percentage;
+          }, 0);
+
+          if (total > 100) {
+            return this.createError({
+              message: "Your total exceeds 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          if (total < 100) {
+            return this.createError({
+              message: "Your total is under 100%. Please adjust your percentages to equal 100 and then save & continue."
+            });
+          }
+
+          return true;
+        } catch {
+          return this.createError({ message: "There was a problem validating this field." });
+        }
+      });
+
+      if (required) {
+        validation = validation.required("This field is required");
+      }
 
       return validation;
     }

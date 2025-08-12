@@ -1,9 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import {
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem,
+  PLANT_START_DATE_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
+} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -11,11 +16,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
-  isValidCriteriaData,
-  parseValidationData
-} from "@/helpers/polygonValidation";
+import { parseValidationDataFromContext } from "@/helpers/polygonValidation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -37,6 +38,8 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   poly_name?: string;
   primary_uuid?: string;
   isCollapsed?: boolean;
+  validationStatus?: string;
+  isAdmin?: boolean;
 }
 
 const MapMenuPanelItem = ({
@@ -45,6 +48,7 @@ const MapMenuPanelItem = ({
   subtitle,
   status,
   poly_id = "",
+  site_id,
   primary_uuid,
   isSelected,
   setClickedButton,
@@ -52,28 +56,72 @@ const MapMenuPanelItem = ({
   refContainer,
   type,
   isCollapsed,
+  validationStatus,
+  isAdmin,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
+  const { isMonitoring, validationData } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [validationStatus, setValidationStatus] = useState<boolean | undefined>(undefined);
-  const [showWarning, setShowWarning] = useState(false);
+  const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
-  useEffect(() => {
-    const criteriaDataPolygon = polygonMap[poly_id];
-    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
-      setValidationStatus(isValidCriteriaData(criteriaDataPolygon));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaDataPolygon));
-    } else {
-      setValidationStatus(undefined);
+  const getPolygonValidationFromContext = useCallback(() => {
+    if (site_id != null && validationData[site_id] != null) {
+      return validationData[site_id].find((item: any) => item.uuid === poly_id);
     }
-  }, [poly_id, polygonMap, setValidationStatus]);
+    return null;
+  }, [site_id, validationData, poly_id]);
+
+  useEffect(() => {
+    const polygonValidation = getPolygonValidationFromContext();
+
+    if (polygonValidation != null) {
+      const parsedData = parseValidationDataFromContext(polygonValidation);
+
+      if (!isAdmin) {
+        const updatedData = parsedData.map(item => {
+          if (Number(item.id) === 14 && !item.status && item.extra_info != null) {
+            const extraInfo = JSON.parse(item.extra_info);
+            const hasOnlyPlantingStatusError =
+              Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
+
+            if (hasOnlyPlantingStatusError) {
+              return {
+                ...item,
+                status: true
+              };
+            }
+          }
+          return item;
+        });
+        setPolygonValidationData(updatedData);
+
+        if (validationStatus === "failed") {
+          const hasOnlyPlantingStatusError = updatedData.every(item => (Number(item.id) === 14 ? item.status : true));
+          if (hasOnlyPlantingStatusError) {
+            setAdjustedValidationStatus("passed");
+          }
+        }
+      } else {
+        setPolygonValidationData(parsedData);
+        setAdjustedValidationStatus(validationStatus);
+      }
+
+      setShowWarning(
+        polygonValidation.nonValidCriteria?.some(
+          (criteria: any) =>
+            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
+            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
+            criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID
+        )
+      );
+    }
+  }, [poly_id, polygonMap, site_id, uuid, validationData, getPolygonValidationFromContext, isAdmin, validationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -239,17 +287,17 @@ const MapMenuPanelItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={validationStatus == undefined}>
+            <When condition={adjustedValidationStatus === "notChecked"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 {t("Not Checked")}
               </Text>
             </When>
-            <When condition={validationStatus}>
+            <When condition={adjustedValidationStatus === "passed" || adjustedValidationStatus === "partial"}>
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
-                  "text-green": validationStatus,
+                  "text-green": adjustedValidationStatus === "passed",
                   "text-yellow-700": showWarning
                 })}
               >
@@ -260,7 +308,7 @@ const MapMenuPanelItem = ({
                 {t("Passed")}
               </Text>
             </When>
-            <When condition={validationStatus === false}>
+            <When condition={adjustedValidationStatus === "failed"}>
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 {t("Failed")}
@@ -270,7 +318,7 @@ const MapMenuPanelItem = ({
         </div>
       </div>
       <When condition={openCollapse}>
-        <When condition={validationStatus}>
+        <When condition={adjustedValidationStatus === "partial"}>
           <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
             {t(
               "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."

@@ -1,7 +1,7 @@
 import {
-  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
+  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
@@ -19,6 +19,24 @@ export const parseValidationData = (criteriaData: any) => {
   return transformedData;
 };
 
+export const parseValidationDataFromContext = (polygonValidation: any) => {
+  if (!polygonValidation?.nonValidCriteria) {
+    return [];
+  }
+
+  const transformedData: ICriteriaCheckItem[] = polygonValidation.nonValidCriteria.map((criteria: any) => {
+    return {
+      id: criteria.criteria_id,
+      date: criteria.latest_created_at,
+      status: false, // Non-valid criteria are always false
+      label: validationLabels[criteria.criteria_id],
+      extra_info: criteria.extra_info
+    };
+  });
+
+  return transformedData;
+};
+
 export const isValidCriteriaData = (criteriaData: any) => {
   if (!criteriaData?.criteria_list?.length) {
     return true;
@@ -26,8 +44,8 @@ export const isValidCriteriaData = (criteriaData: any) => {
   return !criteriaData.criteria_list.some(
     (criteria: any) =>
       criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-      criteria.criteria_id !== COMPLETED_DATA_CRITERIA_ID &&
       criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
+      criteria.criteria_id !== PLANT_START_DATE_CRITERIA_ID &&
       criteria.valid !== 1
   );
 };
@@ -40,16 +58,16 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
   return criteriaData.criteria_list.some(
     (criteria: any) =>
       (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
-        criteria.criteria_id === COMPLETED_DATA_CRITERIA_ID ||
-        criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID) &&
+        criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
+        criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID) &&
       criteria.valid === 0
   );
 };
 
 export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem) => {
   return (
-    +item.id === COMPLETED_DATA_CRITERIA_ID ||
     +item.id === ESTIMATED_AREA_CRITERIA_ID ||
-    +item.id === WITHIN_COUNTRY_CRITERIA_ID
+    +item.id === WITHIN_COUNTRY_CRITERIA_ID ||
+    +item.id === PLANT_START_DATE_CRITERIA_ID
   );
 };

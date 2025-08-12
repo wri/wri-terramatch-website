@@ -5,21 +5,15 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import MapSidePanel from "@/components/elements/MapSidePanel/MapSidePanel";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2DashboardCountryCountry,
-  fetchGetV2DashboardGetBboxProject,
-  fetchGetV2SitesSiteBbox,
-  GetV2MODELUUIDFilesResponse,
-  useGetV2MODELUUIDFiles
-} from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import useLoadCriteriaSite from "@/hooks/paginated/useLoadCriteriaSite";
+import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { createQueryParams } from "@/utils/dashboardUtils";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
 import { parsePolygonData, storePolygon } from "../utils";
@@ -70,15 +64,25 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const { data: modelFilesData } = useGetV2MODELUUIDFiles<GetV2MODELUUIDFilesResponse>({
-    pathParams: { model: type, uuid: entityModel?.uuid }
+  const [, { data: modelFilesData }] = useMedias({
+    entity: type as SupportedEntity,
+    uuid: entityModel?.uuid
   });
+
   const {
     data: polygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadCriteriaSite(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+
+  const modelBbox = useBoundingBox(
+    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+  );
+
+  const countryBbox = useBoundingBox(
+    type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
+  );
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -87,51 +91,17 @@ const OverviewMapArea = ({
       return;
     }
     if (polygonsData.length > 0) {
-      callEntityBbox();
-    } else {
-      callCountryBBox();
+      if (modelBbox) {
+        setEntityBbox(modelBbox as BBox);
+      }
+    } else if (countryBbox) {
+      setEntityBbox(countryBbox as BBox);
     }
   });
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedValues, sortOrder]);
-  const callEntityBbox = async () => {
-    if (type === "sites") {
-      const siteBbox = await fetchGetV2SitesSiteBbox({ pathParams: { site: entityModel.uuid } });
-      if (Array.isArray(siteBbox.bbox) && siteBbox.bbox.length > 1) {
-        const bboxFormat = siteBbox.bbox as BBox;
-        setEntityBbox(bboxFormat);
-      }
-    } else {
-      const projectBbox = await fetchGetV2DashboardGetBboxProject({
-        queryParams: createQueryParams({ projectUuid: entityModel.uuid }) as any
-      });
-      if (Array.isArray(projectBbox.bbox) && projectBbox.bbox.length > 1) {
-        const bboxFormat = projectBbox.bbox as BBox;
-        setEntityBbox(bboxFormat);
-      }
-    }
-  };
-
-  const callCountryBBox = async () => {
-    let currentCountry = entityModel?.country;
-    if (type === "sites") {
-      currentCountry = entityModel?.project?.country;
-    }
-    const countryBbox = await fetchGetV2DashboardCountryCountry({
-      pathParams: { country: currentCountry }
-    });
-    if (Array.isArray(countryBbox.bbox) && countryBbox.bbox.length > 1) {
-      const bboxFormat = countryBbox.bbox[1] as unknown as BBox;
-      setEntityBbox(bboxFormat);
-    }
-  };
-  useEffect(() => {
-    if (entityBbox !== null) {
-      setShouldRefetchPolygonData(false);
-    }
-  }, [entityBbox, polygonsData, setShouldRefetchPolygonData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
@@ -179,12 +149,13 @@ const OverviewMapArea = ({
     <>
       {isMonitoring ? (
         <MapPolygonPanel
-          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -205,15 +176,17 @@ const OverviewMapArea = ({
           polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
+          entityUuid={entityModel?.uuid}
         />
       ) : (
         <MapSidePanel
-          title={t(type === "sites" ? "Site Polygons" : "Polygons")}
+          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
             (polygonsData?.map(item => ({
               ...item,
               title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) })
+              subtitle: t("Created {date}", { date: format(item.created_at) }),
+              validationStatus: item.validation_status ?? "notChecked"
             })) || []) as any[]
           }
           mapFunctions={mapFunctions}
@@ -224,6 +197,7 @@ const OverviewMapArea = ({
           setSortOrder={setSortOrder}
           type={type}
           recallEntityData={refetch}
+          entityUuid={entityModel?.uuid}
         />
       )}
       <MapContainer
@@ -242,7 +216,7 @@ const OverviewMapArea = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
-        modelFilesData={modelFilesData?.data}
+        modelFilesData={modelFilesData}
         pdView={true}
       />
     </>

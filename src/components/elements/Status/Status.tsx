@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -14,32 +15,35 @@ export interface StatusProps {
   status: StatusEnum;
   textVariant?: TextVariants;
   variant?: "default" | "small";
+  classNameText?: string;
 }
 
 const Status = (props: StatusProps) => {
-  const { className, status, textVariant = "text-12-semibold", variant = "default" } = props;
+  const t = useT();
+
+  const { className, status, textVariant = "text-12-semibold", variant = "default", classNameText } = props;
 
   const convertStatusToReadableStatus = (status: string): string => {
     const statusMap: { [key: string]: string } = {
-      approved: "Approved",
-      submitted: "Submitted",
-      draft: "Draft",
-      started: "Started",
-      "under-review": "Under Review",
-      "needs-more-information": "Needs More Information",
-      "restoration-in-progress": "Restoration in Progress",
-      "awaiting-approval": "Awaiting Approval"
+      approved: t("Approved"),
+      submitted: t("Submitted"),
+      draft: t("Draft"),
+      started: t("Started"),
+      "under-review": t("Under Review"),
+      "needs-more-information": t("Needs More Information"),
+      "restoration-in-progress": t("Restoration in Progress"),
+      "awaiting-approval": t("Awaiting Approval")
     };
 
     const statusMapSmall: { [key: string]: string } = {
-      approved: "Approved",
-      submitted: "Submitted",
-      draft: "Draft",
-      started: "Started",
-      "under-review": "Under Review",
-      "needs-more-information": "Needs Info",
-      "restoration-in-progress": "Restoration in Progress",
-      "awaiting-approval": "Awaiting Approval"
+      approved: t("Approved"),
+      submitted: t("Submitted"),
+      draft: t("Draft"),
+      started: t("Started"),
+      "under-review": t("Under Review"),
+      "needs-more-information": t("Needs Info"),
+      "restoration-in-progress": t("Restoration in Progress"),
+      "awaiting-approval": t("Awaiting Approval")
     };
 
     return variant == "small" ? statusMapSmall[status] ?? "" : statusMap[status] ?? "";
@@ -49,7 +53,11 @@ const Status = (props: StatusProps) => {
     <div className={tw("flex items-center justify-center rounded-xl py-1 px-[6px]", COLOR_BG_MAP[status], className)}>
       <Text
         variant={textVariant}
-        className={`flex w-fit items-center justify-center gap-[6px] text-center ${COLOR_TEXT_MAP[status]}`}
+        className={tw(
+          "flex w-fit items-center justify-center gap-[6px] text-center",
+          COLOR_TEXT_MAP[status],
+          classNameText
+        )}
       >
         <When condition={status === "approved"}>
           <div className="h-4 w-4">

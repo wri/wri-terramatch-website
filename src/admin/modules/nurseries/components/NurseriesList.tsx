@@ -26,7 +26,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getCountriesOptions } from "@/constants/options/countries";
+import { useGadmChoices } from "@/connections/Gadm";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
@@ -59,37 +59,37 @@ const NurseryDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Nursery Name" />
       <FunctionField
-        source="readable_status"
+        source="status"
         label="Status"
         sortable={false}
-        render={(record: any) => <CustomChipField label={record.readable_status} />}
+        render={(record: any) => <CustomChipField label={record.status} />}
       />
       <FunctionField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         render={(record: any) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.update_request_status
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
       <SelectField
-        source="update_request_status"
+        source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
         choices={optionToChoices(getChangeRequestStatusOptions())}
       />
-      <TextField source="project.name" label="Project Name" />
-      <TextField source="organisation.name" label="Organization" />
-      <DateField source="start_date" label="Establishment" locales="en-GB" />
+      <TextField source="projectName" label="Project Name" />
+      <TextField source="organisationName" label="Organization" />
+      <DateField source="startDate" label="Establishment" locales="en-GB" />
       <FunctionField
-        source="framework_key"
+        source="frameworkKey"
         label="Framework"
         render={(record: any) =>
-          frameworkInputChoices.find((framework: any) => framework.id === record?.framework_key)?.name ??
-          record?.framework_key
+          frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
+          record?.frameworkKey
         }
         sortable={false}
       />
@@ -102,6 +102,7 @@ const NurseryDataGrid: FC = () => {
 
 export const NurseriesList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -109,25 +110,27 @@ export const NurseriesList: FC = () => {
       key="country"
       label="Country"
       source="country"
-      choices={optionToChoices(getCountriesOptions())}
+      choices={countryChoices}
       className="select-page-admin"
     />,
     <ReferenceInput
       key="organisation"
-      source="organisation_uuid"
+      source="organisationUuid"
       reference={modules.organisation.ResourceName}
       label="Organization"
       sort={{
         field: "name",
-        order: "ASC"
+        order: "DESC"
       }}
+      perPage={1000}
+      filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
     </ReferenceInput>,
     <SelectInput
-      key="framework_key"
+      key="frameworkKey"
       label="Framework"
-      source="framework_key"
+      source="frameworkKey"
       choices={frameworkInputChoices}
       className="select-page-admin"
     />,
@@ -139,23 +142,29 @@ export const NurseriesList: FC = () => {
       className="select-page-admin"
     />,
     <SelectInput
-      key="update_request_status"
+      key="updateRequestStatus"
       label="Change Request Status"
-      source="update_request_status"
+      source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />,
     <ReferenceInput
       key="project"
-      source="project_uuid"
+      source="projectUuid"
       reference={modules.project.ResourceName}
       label="Project"
       sort={{
         field: "name",
         order: "ASC"
       }}
+      perPage={100}
     >
-      <AutocompleteInput optionText="name" label="Project" className="select-page-admin" />
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        className="select-page-admin"
+        filterToQuery={searchText => ({ searchFilter: searchText })}
+      />
     </ReferenceInput>
   ];
 

@@ -44,7 +44,7 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
                   aria-expanded={false}
                   className="flex items-center justify-between p-2"
                   data-headlessui-state=""
-                  id="headlessui-popover-button-:r3m:"
+                  id="headlessui-popover-button-:r3l:"
                   onClick={[Function]}
                   onKeyDown={[Function]}
                   onKeyUp={[Function]}
@@ -207,7 +207,7 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
                 aria-expanded={false}
                 className="flex items-center justify-between p-2"
                 data-headlessui-state=""
-                id="headlessui-popover-button-:r3r:"
+                id="headlessui-popover-button-:r3q:"
                 onClick={[Function]}
                 onKeyDown={[Function]}
                 onKeyUp={[Function]}
@@ -275,7 +275,7 @@ exports[`Storyshots Components/Generic/Layouts/MainLayout Default 1`] = `
       </section>
     </header>
     <main
-      className="flex flex-[1_1_0] flex-col undefined"
+      className="flex flex-[1_1_0] flex-col mobile:overflow-auto undefined"
     >
       <div
         className="h-[400px] "
