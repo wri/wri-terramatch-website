@@ -1178,3 +1178,38 @@ export const setMapStyle = (
     setCurrentStyle(style);
   }
 };
+
+export type ValidationRecordV3 = {
+  uuid: string;
+  valid: boolean;
+  checked: boolean;
+  nonValidCriteria: Array<{ criteria_id: number }>;
+};
+
+export function parseValidationDataV3(
+  sitePolygonData: SitePolygonFullDto[] | undefined,
+  currentValidationSite: ValidationRecordV3[],
+  validationLabels: Record<number, string>
+) {
+  const validationMap = new Map<string, ValidationRecordV3>();
+  currentValidationSite.forEach(validation => {
+    if (validation?.uuid != null) {
+      validationMap.set(validation.uuid, validation);
+    }
+  });
+
+  return (sitePolygonData ?? []).map(site => {
+    const polyUuid = site.polygonUuid ?? "";
+    const validation = validationMap.get(polyUuid);
+    const polygonValidation =
+      validation?.nonValidCriteria?.map(c => validationLabels[c.criteria_id] ?? null).filter(v => v != null) ?? [];
+
+    return {
+      uuid: polyUuid,
+      title: site.name ?? "Unnamed Polygon",
+      valid: validation ? validation.valid : false,
+      isChecked: validation ? validation.checked : false,
+      ...(polygonValidation.length > 0 ? { polygonValidation } : {})
+    };
+  });
+}
