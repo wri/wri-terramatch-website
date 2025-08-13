@@ -53,7 +53,7 @@ export const useGetEditEntityHandler = ({
         ModalId.CONFIRM_EDIT,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("Continue working on draft {entityName} report?", {
+          title={t("Continue working on draft report?", {
             entityName: getReadableEntityName(entityName)
           })}
           content={t(
