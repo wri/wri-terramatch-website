@@ -121,6 +121,23 @@ export type TotalJobsCreatedDto = {
   totalPtYouth: number;
   totalWomen: number;
   totalYouth: number;
+  totalNonBinary: number;
+  totalFtNonBinary: number;
+  totalPtNonBinary: number;
+  totalOthersGender: number;
+  totalFtOthersGender: number;
+  totalPtOthersGender: number;
+  totalOthersAge: number;
+  totalPtOthersAge: number;
+  totalFtOthersAge: number;
+  totalVolunteers: number;
+  volunteerMen: number;
+  volunteerWomen: number;
+  volunteerNonBinary: number;
+  volunteerOthers: number;
+  volunteerYouth: number;
+  volunteerNonYouth: number;
+  volunteerAgeOthers: number;
 };
 
 export type HectareRestorationDto = {

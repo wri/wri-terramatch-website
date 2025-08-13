@@ -70,7 +70,7 @@ const MapPolygonCheckPanelItem = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    const polygonName = siteData?.find(polygon => polygon.poly_id === uuid)?.poly_name ?? "polygon";
+    const polygonName = siteData?.find(polygon => polygon.polygonUuid === uuid)?.name ?? "polygon";
     link.download = `${formatFileName(polygonName)}.geojson`;
     link.click();
     URL.revokeObjectURL(url);

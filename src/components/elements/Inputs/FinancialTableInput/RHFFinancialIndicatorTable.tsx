@@ -506,7 +506,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const nonProfitAnalysisColumns = [
       {
-        header: "Year",
+        header: t("Year"),
         accessorKey: "year",
         enableSorting: false,
         meta: {
@@ -514,7 +514,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Budget",
+        header: t("Budget"),
         accessorKey: "budget",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {

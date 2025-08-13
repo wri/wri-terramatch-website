@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
+import type { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import Component from "./MapPolygonPanel";
@@ -13,73 +14,174 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const items = [
+const items: SitePolygonFullDto[] = [
   {
     uuid: "1",
-    title: "Puerto Princesa Subterranean River National Park Forest Corridor",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "Puerto Princesa Subterranean River National Park Forest Corridor",
+    status: "approved",
+    siteId: null,
+    polygonUuid: "poly-1",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "2",
-    title: "A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "A medium sized project site to see how it looks with 2 lines",
+    status: "submitted",
+    siteId: null,
+    polygonUuid: "poly-2",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "3",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "A shorter project site",
+    status: "draft",
+    siteId: null,
+    polygonUuid: "poly-3",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "4",
-    title:
-      "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
+    status: "needs-more-information",
+    siteId: null,
+    polygonUuid: "poly-4",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "5",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "A shorter project site",
+    status: "approved",
+    siteId: null,
+    polygonUuid: "poly-5",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "6",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "success",
-    refContainer: null,
-    setClickedButton: () => {},
-    onCheckboxChange: () => {},
-    type: "sites",
-    isCollapsed: false
+    lightResource: false,
+    name: "A shorter project site",
+    status: "approved",
+    siteId: null,
+    polygonUuid: "poly-6",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   }
 ];
 
@@ -90,7 +192,10 @@ export const Default: Story = {
     return (
       <div className="bg-back-map bg-cover">
         <div className="bg-[#ffffff26] p-4">
-          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
+          <Component
+            {...args}
+            items={items.filter(item => (query != null ? (item.name ?? "").includes(query) : true))}
+          />
         </div>
       </div>
     );
@@ -108,7 +213,10 @@ export const OpenPolygonCheck: Story = {
     return (
       <div className="bg-back-map bg-cover">
         <div className="bg-[#ffffff26] p-4">
-          <Component {...args} items={items.filter(item => (query ? item.title.includes(query) : item))} />
+          <Component
+            {...args}
+            items={items.filter(item => (query != null ? (item.name ?? "").includes(query) : true))}
+          />
         </div>
       </div>
     );

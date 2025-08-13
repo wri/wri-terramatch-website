@@ -21,6 +21,8 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
       "Full-Time": t("Full-Time"),
       Women: t("Women"),
       Men: t("Men"),
+      "Non-Binary": t("Non-Binary"),
+      Other: t("Other"),
       "Non-Youth": t("Non-Youth"),
       Youth: t("Youth")
     };
@@ -55,7 +57,7 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
   }, [chartData, mappingLabels]);
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={350}>
       <BarChart data={transformedChartData}>
         <CartesianGrid vertical={false} stroke="#E1E4E9" />
         <XAxis tickLine={false} axisLine={false} dataKey="name" tick={props => <CustomXAxisTick {...props} />} />
@@ -65,16 +67,20 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
           cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
         />
         <Legend content={<CustomLegend totals={transformedTotals} totalJobs={total} />} />
-        <Bar
-          dataKey={type === "gender" ? t("Women") : t("Youth")}
-          fill="#7BBD31"
-          shape={(props: any) => <CustomBar {...props} />}
-        />
-        <Bar
-          dataKey={type === "gender" ? t("Men") : t("Non-Youth")}
-          fill="#27A9E0"
-          shape={(props: any) => <CustomBar {...props} />}
-        />
+        {type === "gender" ? (
+          <>
+            <Bar dataKey={t("Women")} fill="#70B52B" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Men")} fill="#239FDC" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Non-Binary")} fill="#065327" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Other")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
+          </>
+        ) : (
+          <>
+            <Bar dataKey={t("Youth")} fill="#70B52B" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Non-Youth")} fill="#239FDC" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Other")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
+          </>
+        )}
       </BarChart>
     </ResponsiveContainer>
   );

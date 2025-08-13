@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import Log from "@/utils/log";
+import type { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Component from "./MapSidePanel";
 
@@ -20,7 +20,7 @@ export const Default: Story = {
     return (
       <Component
         {...args}
-        items={items.filter(item => (query ? item.title.includes(query) : item))}
+        items={items.filter(item => (query != null ? (item.name ?? "").includes(query) : true))}
         onSearch={setQuery}
         title="Project Sites"
       />
@@ -31,72 +31,89 @@ export const Default: Story = {
   }
 };
 
-const items = [
+const items: SitePolygonFullDto[] = [
   {
     uuid: "1",
-    title: "Puerto Princesa Subterranean River National Park Forest Corridor",
-    subtitle: "Created 03/12/21",
+    lightResource: false,
+    name: "Puerto Princesa Subterranean River National Park Forest Corridor",
     status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
+    siteId: null,
+    polygonUuid: "poly-1",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "2",
-    title: "A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
+    lightResource: false,
+    name: "A medium sized project site to see how it looks with 2 lines",
     status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
+    siteId: null,
+    polygonUuid: "poly-2",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   },
   {
     uuid: "3",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
+    lightResource: false,
+    name: "A shorter project site",
     status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
-  },
-  {
-    uuid: "4",
-    title:
-      "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
-    subtitle: "Created 03/12/21",
-    status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
-  },
-  {
-    uuid: "5",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
-  },
-  {
-    uuid: "6",
-    title: "A shorter project site",
-    subtitle: "Created 03/12/21",
-    status: "submitted",
-    setClickedButton: Log.info,
-    onCheckboxChange: () => {},
-    refContainer: null,
-    type: "sites",
-    isCollapsed: false
+    siteId: null,
+    polygonUuid: "poly-3",
+    projectId: null,
+    projectShortName: null,
+    plantStart: "2021-03-12T00:00:00Z",
+    calcArea: null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: null,
+    versionName: null,
+    plantingStatus: null,
+    geometry: null,
+    practice: null,
+    targetSys: null,
+    distr: null,
+    numTrees: null,
+    source: null,
+    validationStatus: "notChecked",
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: null
   }
 ];

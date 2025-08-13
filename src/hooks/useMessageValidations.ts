@@ -117,7 +117,6 @@ export const useMessageValidators = () => {
       if (extraInfo == null) return [];
       try {
         const infoArray: ExtraInfoItem[] = JSON.parse(extraInfo);
-        console.log("infoArray", infoArray);
         return infoArray
           .filter(info => {
             if (!isAdmin && info.field === "planting_status") {
