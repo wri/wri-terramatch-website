@@ -222,6 +222,7 @@ const MapSidePanel = ({
             as={Fragment}
             items={items}
             itemAs={Fragment}
+            uniqueId="uuid"
             render={item => (
               <MapMenuPanelItem
                 key={item.uuid}
