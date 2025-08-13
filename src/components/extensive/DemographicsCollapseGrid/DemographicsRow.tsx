@@ -37,7 +37,7 @@ const DemographicsRow = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = useCallback(() => {
-    if (inputRef.current) {
+    if (inputRef.current != null) {
       requestAnimationFrame(() => {
         const input = inputRef.current!;
         const length = input.value.length;
