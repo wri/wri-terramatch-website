@@ -9,7 +9,7 @@ import { pruneEntityCache } from "@/connections/Entity";
 import EntityProvider from "@/context/entity.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport } from "@/helpers/entity";
+import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -98,15 +98,6 @@ const mockFormSteps: FormStepSchema[] = [
             }
           ]
         }
-      },
-      {
-        id: "details",
-        name: "details",
-        label: "Any other details you would like to share about disturbances?",
-        placeholder: "Input here...",
-        condition: true,
-        is_parent_conditional_default: false,
-        type: "textArea"
       }
     ]
   }
@@ -118,7 +109,6 @@ const DisturbanceForm = () => {
   const organisation = mockEntity?.organisation;
 
   const mode = router.query.mode as string | undefined;
-  const isReport = isEntityReport(mockEntityName);
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(mockEntityName, mockEntityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
@@ -139,12 +129,7 @@ const DisturbanceForm = () => {
   const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
   const reportingWindow = useReportingWindow(mockEntity?.due_at);
-  const formTitle =
-    mockEntityName === "site-reports"
-      ? t("{siteName} Site Report", { siteName: mockEntity.site.name })
-      : mockEntityName === "financial-reports"
-      ? t("{orgName} Financial Report", { orgName: organisation?.name })
-      : `${mockFormData.form?.title} ${isReport ? reportingWindow : ""}`;
+
   const formSubtitle =
     mockEntityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -204,7 +189,7 @@ const DisturbanceForm = () => {
         }
         submitButtonDisable={isSubmitting}
         defaultValues={defaultValues}
-        title={formTitle}
+        title={`Disturbance Report for {Project Name}`}
         subtitle={formSubtitle}
         tabOptions={{
           markDone: true,

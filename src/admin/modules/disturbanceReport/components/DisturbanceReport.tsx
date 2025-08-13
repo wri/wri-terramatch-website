@@ -13,7 +13,7 @@ interface DisturbanceReportProps {
 }
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
-  const { id, index } = props;
+  const { index } = props;
 
   const columns = [
     {
@@ -41,9 +41,6 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       <div className="flex flex-col gap-4">
         <Text variant="text-20-bold" className="leading-none">
           Disturbance Report {index + 1}
-        </Text>
-        <Text variant="text-20-bold" className="leading-none">
-          Disturbance Report [{id}]
         </Text>
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
           <div className="flex flex-col gap-2">
@@ -106,14 +103,6 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             </Text>
             <Text variant="text-14" className="leading-none text-blueCustom-900">
               $50,000
-            </Text>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Replanting Decision
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              Yes
             </Text>
           </div>
         </div>
