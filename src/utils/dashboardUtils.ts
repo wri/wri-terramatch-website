@@ -323,10 +323,16 @@ export const calculatePercentage = (value: number, total: number): number => {
 
 export const calculateTotals = (data: GroupedBarChartData): { [key: string]: number } => {
   return data.chartData.reduce((acc, item) => {
-    const key1 = data.type === "gender" ? "Women" : "Youth";
-    const key2 = data.type === "gender" ? "Men" : "Non-Youth";
-    acc[key1] = (acc[key1] || 0) + (item[key1] as number);
-    acc[key2] = (acc[key2] || 0) + (item[key2] as number);
+    if (data.type === "gender") {
+      acc["Women"] = (acc["Women"] || 0) + (item["Women"] as number);
+      acc["Men"] = (acc["Men"] || 0) + (item["Men"] as number);
+      acc["Non-Binary"] = (acc["Non-Binary"] || 0) + (item["Non-Binary"] as number);
+      acc["Other"] = (acc["Other"] || 0) + (item["Other"] as number);
+    } else {
+      acc["Youth"] = (acc["Youth"] || 0) + (item["Youth"] as number);
+      acc["Non-Youth"] = (acc["Non-Youth"] || 0) + (item["Non-Youth"] as number);
+      acc["Other"] = (acc["Other"] || 0) + (item["Other"] as number);
+    }
     return acc;
   }, {} as { [key: string]: number });
 };

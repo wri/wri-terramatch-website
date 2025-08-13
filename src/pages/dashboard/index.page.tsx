@@ -98,28 +98,63 @@ const getOrganizationByUuid = (projects: any[], uuid: string) => {
 const parseJobCreatedByType = (data: any, type: string) => {
   if (!data) return { type, chartData: [] };
 
-  const ptWomen = data.totalPtWomen ?? 0;
-  const ptMen = data.totalPtMen ?? 0;
-  const ptYouth = data.totalPtYouth ?? 0;
-  const ptNonYouth = data.totalPtNonYouth ?? 0;
-  const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
-  const chartData = [
-    {
-      name: "Part-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
-    },
-    {
-      name: "Full-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
-    }
-  ];
-  return { type, chartData, total: data.totalJobsCreated, maxValue };
+  if (type === JOBS_CREATED_CHART_TYPE.gender) {
+    const ptWomen = data.totalPtWomen ?? 0;
+    const ptMen = data.totalPtMen ?? 0;
+    const ptNonBinary = data.totalPtNonBinary ?? 0;
+    const ptOthersGender = data.totalPtOthersGender ?? 0;
+    const ftWomen = data.totalFtWomen ?? 0;
+    const ftMen = data.totalFtMen ?? 0;
+    const ftNonBinary = data.totalFtNonBinary ?? 0;
+    const ftOthersGender = data.totalFtOthersGender ?? 0;
+
+    const maxValue = Math.max(ptWomen, ptMen, ptNonBinary, ptOthersGender, ftWomen, ftMen, ftNonBinary, ftOthersGender);
+
+    const chartData = [
+      {
+        name: "Part-Time",
+        Women: ptWomen,
+        Men: ptMen,
+        "Non-Binary": ptNonBinary,
+        Other: ptOthersGender
+      },
+      {
+        name: "Full-Time",
+        Women: ftWomen,
+        Men: ftMen,
+        "Non-Binary": ftNonBinary,
+        Other: ftOthersGender
+      }
+    ];
+
+    return { type, chartData, total: data.totalJobsCreated, maxValue };
+  } else {
+    const ptYouth = data.totalPtYouth ?? 0;
+    const ptNonYouth = data.totalPtNonYouth ?? 0;
+    const ptOthersAge = data.totalPtOthersAge ?? 0;
+    const ftYouth = data.totalFtYouth ?? 0;
+    const ftNonYouth = data.totalFtNonYouth ?? 0;
+    const ftOthersAge = data.totalFtOthersAge ?? 0;
+
+    const maxValue = Math.max(ptYouth, ptNonYouth, ptOthersAge, ftYouth, ftNonYouth, ftOthersAge);
+
+    const chartData = [
+      {
+        name: "Part-Time",
+        Youth: ptYouth,
+        "Non-Youth": ptNonYouth,
+        Other: ptOthersAge
+      },
+      {
+        name: "Full-Time",
+        Youth: ftYouth,
+        "Non-Youth": ftNonYouth,
+        Other: ftOthersAge
+      }
+    ];
+
+    return { type, chartData, total: data.totalJobsCreated, maxValue };
+  }
 };
 
 const Dashboard = () => {
