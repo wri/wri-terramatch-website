@@ -20,7 +20,6 @@ import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/das
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
-import { useDashboardEmploymentData } from "./useDashboardEmploymentData";
 
 const DEFAULT_COHORT: string[] = ["terrafund", "terrafund-landscapes"];
 const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [
@@ -60,9 +59,6 @@ export const useDashboardData = (filters: any) => {
     landscapes: convertNamesToCodes(filters.landscapes),
     country: filters.country.country_slug
   });
-
-  const { formattedJobsData: projectEmploymentData, isLoading: isLoadingProjectEmployment } =
-    useDashboardEmploymentData(filters.uuid);
 
   const [, { data: dashboardSitePolygonsData }] = useDashboardSitePolygons({
     filter: {
@@ -266,13 +262,6 @@ export const useDashboardData = (filters: any) => {
     );
   }, [dashboardProjects, searchTerm]);
 
-  const combinedJobsData = useMemo(() => {
-    if (filters.uuid && projectEmploymentData) {
-      return projectEmploymentData;
-    }
-    return jobsCreatedData;
-  }, [filters.uuid, projectEmploymentData, jobsCreatedData]);
-
   const projectBbox = useBoundingBox(filters.uuid ? { projectUuid: filters.uuid } : {});
 
   const centroidsDataProjects = useMemo(() => {
@@ -465,11 +454,11 @@ export const useDashboardData = (filters: any) => {
   return {
     dashboardHeader,
     dashboardRestorationGoalData: transformedTreeRestorationGoalData,
-    jobsCreatedData: combinedJobsData,
+    jobsCreatedData,
     numberTreesPlanted,
     totalSectionHeader: calculatedTotals,
     hectaresUnderRestoration: generalHectaresUnderRestoration,
-    isLoadingJobsCreated: isLoadingJobsCreated || (filters.uuid && isLoadingProjectEmployment),
+    isLoadingJobsCreated: isLoadingJobsCreated,
     isLoadingTreeRestorationGoal: treeRestorationGoalLoaded,
     isLoadingHectaresUnderRestoration,
     singleDashboardProject,
