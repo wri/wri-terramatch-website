@@ -11,12 +11,13 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { parsePolygonData, storePolygon } from "../utils";
+import { parsePolygonDataV3, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -125,7 +126,7 @@ const OverviewMapArea = ({
   });
   useEffect(() => {
     if (polygonsData?.length > 0) {
-      const dataMap = parsePolygonData(polygonsData);
+      const dataMap = parsePolygonDataV3(polygonsData);
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({
@@ -151,12 +152,12 @@ const OverviewMapArea = ({
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
-            (polygonsData?.map(item => ({
+            (polygonsData?.map((item: SitePolygonFullDto) => ({
               ...item,
-              title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) }),
-              validationStatus: item.validation_status ?? "notChecked"
-            })) || []) as any[]
+              title: item.name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.plantStart ?? "") }),
+              validationStatus: item.validationStatus ?? "notChecked"
+            })) ?? []) as any[]
           }
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
@@ -182,12 +183,12 @@ const OverviewMapArea = ({
         <MapSidePanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={
-            (polygonsData?.map(item => ({
+            (polygonsData?.map((item: SitePolygonFullDto) => ({
               ...item,
-              title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) }),
-              validationStatus: item.validation_status ?? "notChecked"
-            })) || []) as any[]
+              title: item.name ?? t("Unnamed Polygon"),
+              subtitle: t("Created {date}", { date: format(item.plantStart ?? "") }),
+              validationStatus: item.validationStatus ?? "notChecked"
+            })) ?? []) as any[]
           }
           mapFunctions={mapFunctions}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"

@@ -220,7 +220,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { updateSingleSitePolygonData } = context ?? {};
+  const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -579,6 +579,7 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
+              console.log("sitepolygons", sitePolygonData, "polygondfrommap", polygonFromMap);
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
@@ -586,7 +587,7 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                reloadSiteData?.();
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);

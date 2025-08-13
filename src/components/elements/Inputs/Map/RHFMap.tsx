@@ -10,7 +10,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { Entity } from "@/types/common";
 
@@ -130,10 +129,7 @@ const RHFMap = ({
     }
   };
   return (
-    <SitePolygonDataProvider
-      sitePolygonData={projectPolygon?.project_polygon as SitePolygonsDataResponse}
-      reloadSiteData={reloadSiteDataWithBoundingBox}
-    >
+    <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
           polygonsData={polygonDataMap}
