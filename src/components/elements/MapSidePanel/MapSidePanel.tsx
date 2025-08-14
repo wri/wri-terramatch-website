@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -13,6 +13,7 @@ import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete }
 import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -34,6 +35,8 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   recallEntityData?: any;
   entityUuid?: string;
 }
+
+const PAGE_SIZE = 20;
 
 const MapSidePanel = ({
   title,
@@ -60,13 +63,6 @@ const MapSidePanel = ({
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
-
-  const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
-  const { map } = mapFunctions;
-  const isAdmin = useIsAdmin();
-
   const filteredItems = useMemo(() => {
     if (checkedValues.length === 0) {
       return items;
@@ -74,20 +70,15 @@ const MapSidePanel = ({
     return items.filter(item => checkedValues.includes(item.status));
   }, [items, checkedValues]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentPageItems = filteredItems.slice(startIndex, endIndex);
+  const { currentPage, setCurrentPage, totalPages, startIndex, endIndex, currentPageItems } = usePolygonsPagination(
+    filteredItems,
+    PAGE_SIZE,
+    [checkedValues]
+  );
 
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [checkedValues]);
+  const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
+  const { map } = mapFunctions;
+  const isAdmin = useIsAdmin();
 
   const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.polygonUuid ?? "" });
 

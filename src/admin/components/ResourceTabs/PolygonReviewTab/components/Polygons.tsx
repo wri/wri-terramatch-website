@@ -1,5 +1,6 @@
 import { Box, LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
+import isEmpty from "lodash/isEmpty";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
@@ -24,6 +25,7 @@ import {
   fetchGetV2TerrafundGeojsonComplete,
   useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
+import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -62,6 +64,10 @@ const VALIDATION_STATUS_OPTIONS = [
   { title: "Passed", value: "passed" }
 ];
 
+const INVALID_STATUSES = ["undefined", "null", "notChecked"];
+
+const PAGE_SIZE = 20;
+
 const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
@@ -69,9 +75,6 @@ const Polygons = (props: IPolygonProps) => {
   const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false } = props;
@@ -98,35 +101,28 @@ const Polygons = (props: IPolygonProps) => {
   const polygonMenu = useMemo(() => props.menu || [], [props.menu]);
 
   const filteredPolygons = useMemo(() => {
-    if (!validFilter || validFilter === "all") {
+    if (validFilter == null || validFilter === "all") {
       return polygonMenu;
     }
-
     return polygonMenu.filter(polygon => {
       const status = polygon.validationStatus;
-
       if (validFilter === "not_checked") {
-        return !status || status === "" || status === "undefined" || status === "null" || status === "notChecked";
+        return isEmpty(status) || INVALID_STATUSES.includes(status as string);
       }
-
       return status === validFilter;
     });
   }, [polygonMenu, validFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredPolygons.length / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentPagePolygons = filteredPolygons.slice(startIndex, endIndex);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    startIndex,
+    endIndex,
+    currentPageItems: currentPagePolygons
+  } = usePolygonsPagination(filteredPolygons, PAGE_SIZE, [validFilter]);
 
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [validFilter]);
+  // pagination handled by usePagination
 
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
