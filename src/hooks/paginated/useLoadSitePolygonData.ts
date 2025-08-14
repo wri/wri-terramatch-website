@@ -21,7 +21,8 @@ const useLoadSitePolygonsData = (
   entityUuid: string,
   entityType: string,
   statuses: string | null = null,
-  sortOrder: string = "created_at",
+  sortField: string = "createdAt",
+  sortDirection: "ASC" | "DESC" = "ASC",
   validFilter: string = ""
 ): LoadSitePolygonsDataHook => {
   // Validate entity type
@@ -59,7 +60,9 @@ const useLoadSitePolygonsData = (
     entityName,
     entityUuid,
     enabled: entityUuid != null,
-    filter
+    filter,
+    sortField,
+    sortDirection
   });
 
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
