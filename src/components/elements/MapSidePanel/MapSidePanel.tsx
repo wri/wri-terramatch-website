@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -13,6 +13,7 @@ import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete }
 import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -59,6 +60,19 @@ const MapSidePanel = ({
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
+
+  const filteredItems = useMemo(() => {
+    if (checkedValues.length === 0) {
+      return items;
+    }
+    return items.filter(item => checkedValues.includes(item.status));
+  }, [items, checkedValues]);
+
+  const { currentPage, setCurrentPage, totalPages, startIndex, endIndex, currentPageItems } = usePolygonsPagination(
+    filteredItems,
+    [checkedValues]
+  );
+
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
   const isAdmin = useIsAdmin();
@@ -211,6 +225,30 @@ const MapSidePanel = ({
           </div>
         </div>
       </div>
+      {filteredItems.length > 0 && (
+        <div className="mb-4 flex items-center justify-between">
+          <Text variant="text-12" className="text-white">
+            Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredItems.length).toLocaleString()} of{" "}
+            {filteredItems.length.toLocaleString()} polygons
+          </Text>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_LEFT} className="h-3 w-3 text-white" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 text-white" />
+            </button>
+          </div>
+        </div>
+      )}
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
@@ -220,7 +258,7 @@ const MapSidePanel = ({
         <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
           <List
             as={Fragment}
-            items={items}
+            items={currentPageItems}
             itemAs={Fragment}
             uniqueId="uuid"
             render={item => (
