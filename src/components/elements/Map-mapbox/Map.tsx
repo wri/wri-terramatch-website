@@ -694,8 +694,9 @@ export const MapContainer = ({
       const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const nameFile = record?.organisation?.name || "polygons";
       link.href = url;
-      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.download = `${_.replace(nameFile, /\s+/g, "")}-${new Date().toISOString().slice(0, 10)}.geojson`;
       link.click();
       URL.revokeObjectURL(url);
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
