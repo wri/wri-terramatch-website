@@ -31,6 +31,9 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  sortField: string;
+  sortDirection: "ASC" | "DESC";
+  setSortDirection: React.Dispatch<React.SetStateAction<"ASC" | "DESC">>;
   type: string;
   recallEntityData?: any;
   entityUuid?: string;
@@ -47,6 +50,9 @@ const MapSidePanel = ({
   checkedValues,
   onCheckboxChange,
   setSortOrder,
+  sortField,
+  sortDirection,
+  setSortDirection,
   type,
   recallEntityData,
   entityUuid,
@@ -150,25 +156,67 @@ const MapSidePanel = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("poly_name")}>
-          Name
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("name")}>
+            Name
+          </Text>
+          {sortField === "name" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     },
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("status")}>
-          Status
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("status")}>
+            Status
+          </Text>
+          {sortField === "status" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     },
     {
       id: "3",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("created_at")}>
-          Date Created
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("createdAt")}>
+            Date Created
+          </Text>
+          {sortField === "createdAt" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     }
   ];

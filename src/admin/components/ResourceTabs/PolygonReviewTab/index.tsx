@@ -172,7 +172,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch,
     loading,
     total
-  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };

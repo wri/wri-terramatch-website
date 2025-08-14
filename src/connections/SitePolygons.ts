@@ -33,7 +33,10 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
   .buildConnection();
 
 export const useAllSitePolygons = (
-  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize">
+  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
+    sortField?: string;
+    sortDirection?: "ASC" | "DESC";
+  }
 ) => {
   const [allPolygons, setAllPolygons] = useState<SitePolygonFullDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +68,9 @@ export const useAllSitePolygons = (
         const firstPageResponse = await loadConnection(sitePolygonsConnection, {
           ...stableProps,
           pageSize: ALL_POLYGONS_PAGE_SIZE,
-          pageNumber: 1
+          pageNumber: 1,
+          sortField: stableProps.sortField,
+          sortDirection: stableProps.sortDirection ?? "ASC"
         });
 
         if (firstPageResponse.loadFailure) {
@@ -97,7 +102,9 @@ export const useAllSitePolygons = (
           loadConnection(sitePolygonsConnection, {
             ...stableProps,
             pageSize: ALL_POLYGONS_PAGE_SIZE,
-            pageNumber: pageNumber
+            pageNumber: pageNumber,
+            sortField: stableProps.sortField,
+            sortDirection: stableProps.sortDirection ?? "ASC"
           })
         );
 

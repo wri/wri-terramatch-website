@@ -39,7 +39,8 @@ const OverviewMapArea = ({
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [stateViewPanel, setStateViewPanel] = useState(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState<string>("created_at");
+  const [sortField, setSortField] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
@@ -53,7 +54,8 @@ const OverviewMapArea = ({
     setPolygonCriteriaMap,
     setPolygonData,
     shouldRefetchValidation,
-    setShouldRefetchValidation
+    setShouldRefetchValidation,
+    validFilter
   } = useMapAreaContext();
   const handleRefetchPolygon = () => {
     setShouldRefetchPolygonData(true);
@@ -73,7 +75,7 @@ const OverviewMapArea = ({
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortOrder);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
 
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -100,7 +102,7 @@ const OverviewMapArea = ({
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedValues, sortOrder]);
+  }, [checkedValues, sortField, sortDirection, validFilter]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
@@ -156,7 +158,10 @@ const OverviewMapArea = ({
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
-          setSortOrder={setSortOrder}
+          setSortOrder={setSortField}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
           type={type}
           onSelectItem={() => {}}
           onLoadMore={() => {}}
@@ -179,7 +184,10 @@ const OverviewMapArea = ({
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
-          setSortOrder={setSortOrder}
+          setSortOrder={setSortField}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
           type={type}
           recallEntityData={refetch}
           entityUuid={entityModel?.uuid}
