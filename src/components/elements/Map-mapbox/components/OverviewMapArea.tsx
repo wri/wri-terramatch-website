@@ -11,12 +11,12 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
-import { useDate } from "@/hooks/useDate";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { parsePolygonData, storePolygon } from "../utils";
+import { parsePolygonDataV3, storePolygon } from "../utils";
 
 interface EntityAreaProps {
   entityModel: any;
@@ -34,7 +34,6 @@ const OverviewMapArea = ({
   refetchPolygonVersions
 }: EntityAreaProps) => {
   const t = useT();
-  const { format } = useDate();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
@@ -125,7 +124,7 @@ const OverviewMapArea = ({
   });
   useEffect(() => {
     if (polygonsData?.length > 0) {
-      const dataMap = parsePolygonData(polygonsData);
+      const dataMap = parsePolygonDataV3(polygonsData);
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({
@@ -150,14 +149,7 @@ const OverviewMapArea = ({
       {isMonitoring ? (
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-          items={
-            (polygonsData?.map(item => ({
-              ...item,
-              title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) }),
-              validationStatus: item.validation_status ?? "notChecked"
-            })) || []) as any[]
-          }
+          items={(polygonsData ?? []) as SitePolygonFullDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
@@ -181,14 +173,7 @@ const OverviewMapArea = ({
       ) : (
         <MapSidePanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-          items={
-            (polygonsData?.map(item => ({
-              ...item,
-              title: item.poly_name ?? t("Unnamed Polygon"),
-              subtitle: t("Created {date}", { date: format(item.created_at) }),
-              validationStatus: item.validation_status ?? "notChecked"
-            })) || []) as any[]
-          }
+          items={(polygonsData ?? []) as SitePolygonFullDto[]}
           mapFunctions={mapFunctions}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}

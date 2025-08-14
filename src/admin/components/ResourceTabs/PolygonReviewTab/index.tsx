@@ -13,16 +13,16 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
-  countStatuses,
+  countStatusesV3,
   downloadSiteGeoJsonPolygons,
-  parsePolygonData,
+  parsePolygonDataV3,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_SITE_POLYGON_REVIEW_WITH_SCROLL } from "@/components/elements/Table/TableVariants";
+import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -44,7 +44,8 @@ import {
   fetchPostV2TerrafundUploadShapefile,
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
@@ -94,7 +95,8 @@ const PolygonReviewAside: FC<{
   mapFunctions: any;
   totalPolygons?: number;
   siteUuid?: string;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid }) => {
+  isLoading?: boolean;
+}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid, isLoading }) => {
   switch (type) {
     case "sites":
       return (
@@ -106,6 +108,7 @@ const PolygonReviewAside: FC<{
           refresh={refresh}
           totalPolygons={totalPolygons}
           siteUuid={siteUuid}
+          isLoading={isLoading}
         />
       );
     default:
@@ -121,11 +124,10 @@ const ContentForApproval = ({
   recordName: string;
 }) => (
   <>
-    <Text variant="text-12-light" as="p" className="text-center">
-      Are you sure you want to approve the following polygons for&nbsp;
-      <b style={{ fontSize: "inherit" }}>{recordName}</b>?
-    </Text>
-    <div className="ml-6">
+    <div>
+      <Text variant="text-14-bold" as="p">
+        {recordName}
+      </Text>
       <ul style={{ listStyleType: "circle" }}>
         {polygonsForApprovals?.map(polygon => (
           <li key={polygon.id}>
@@ -169,8 +171,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     data: sitePolygonData,
     refetch,
     loading,
-    total,
-    updateSingleSitePolygonData
+    total
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
@@ -198,42 +199,61 @@ const PolygonReviewTab: FC<IProps> = props => {
     refetch();
   });
 
-  const parseText = (text: string) => {
-    return text
-      .split(",")
-      .map(segment => {
-        return segment
-          .trim()
-          .split("-")
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-      })
-      .join(", ");
+  // Simple transformation for MapContainer compatibility
+  const transformForMapContainer = (data: SitePolygonFullDto[]) => {
+    return data.map(polygon => ({
+      id: undefined,
+      uuid: polygon.polygonUuid ?? undefined,
+      primary_uuid: polygon.primaryUuid ?? undefined,
+      project_id: polygon.projectId ?? undefined,
+      proj_name: polygon.projectShortName ?? undefined,
+      org_name: undefined,
+      poly_id: polygon.polygonUuid ?? undefined,
+      poly_name: polygon.name ?? undefined,
+      site_id: polygon.siteId ?? undefined,
+      site_name: polygon.siteName ?? undefined,
+      plantstart: polygon.plantStart ?? undefined,
+      practice: polygon.practice ?? undefined,
+      target_sys: polygon.targetSys ?? undefined,
+      distr: polygon.distr ?? undefined,
+      num_trees: polygon.numTrees ?? undefined,
+      calc_area: polygon.calcArea ?? undefined,
+      created_by: undefined,
+      last_modified_by: undefined,
+      deleted_at: undefined,
+      created_at: undefined,
+      updated_at: undefined,
+      status: polygon.status,
+      source: polygon.source ?? undefined,
+      country: undefined,
+      is_active: undefined,
+      version_name: polygon.versionName ?? undefined,
+      validation_status: polygon.validationStatus ? true : false
+    }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygon, index) => ({
-    "polygon-name": data?.poly_name ?? `Unnamed Polygon`,
-    "restoration-practice": parseText(data?.practice ?? ""),
-    "target-land-use-system": parseText(data?.target_sys ?? ""),
-    "tree-distribution": parseText(data?.distr ?? ""),
-    "planting-start-date": data?.plantstart ?? "",
-    "planting-status": parseText(data?.planting_status ?? ""),
-    source: parseText(data?.source ?? ""),
-    uuid: data?.poly_id,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygon[]).length - 1
+  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index) => ({
+    "polygon-name": data?.name ?? `Unnamed Polygon`,
+    "restoration-practice": data?.practice ?? "",
+    "target-land-use-system": data?.targetSys ?? "",
+    "tree-distribution": data?.distr ?? "",
+    "planting-start-date": data?.plantStart ?? "",
+    source: data?.source ?? "",
+    uuid: data?.polygonUuid,
+    ellipse: index === ((sitePolygonData ?? []) as SitePolygonFullDto[]).length - 1
   }));
 
-  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygon, index: number) => ({
+  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
-    label: data.poly_name ?? `Unnamed Polygon`,
-    uuid: data.poly_id,
-    validationStatus: data.validation_status ?? "notChecked"
+    label: data.name ?? `Unnamed Polygon`,
+    uuid: data.polygonUuid,
+    validationStatus: data.validationStatus ?? "notChecked"
   }));
 
-  const polygonDataMap = parsePolygonData(sitePolygonData);
+  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
 
-  const dataPolygonOverview = countStatuses(sitePolygonData);
+  const dataPolygonOverview = countStatusesV3(sitePolygonData);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -593,11 +613,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   ];
 
   return (
-    <SitePolygonDataProvider
-      sitePolygonData={sitePolygonData}
-      reloadSiteData={refetch}
-      updateSingleSitePolygonData={updateSingleSitePolygonData}
-    >
+    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>
@@ -709,7 +725,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showLegend
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
-                sitePolygonData={sitePolygonData}
+                sitePolygonData={transformForMapContainer(sitePolygonData)}
                 modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}
@@ -725,75 +741,68 @@ const PolygonReviewTab: FC<IProps> = props => {
                     and edit the attributes in the map above.
                   </Text>
                 </div>
-                <div className="overflow-auto">
-                  <Table
-                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW_WITH_SCROLL}
-                    hasPagination={false}
-                    classNameWrapper="max-h-[560px]"
-                    initialTableState={{
-                      pagination: { pageSize: 10000000 }
-                    }}
-                    columns={[
-                      { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
-                      {
-                        header: "Restoration Practice",
-                        accessorKey: "restoration-practice",
-                        cell: props => {
-                          const placeholder = props.getValue() as string;
-                          return (
-                            <input
-                              placeholder={placeholder}
-                              className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
+                <Table
+                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                  hasPagination={false}
+                  classNameWrapper="max-h-[560px]"
+                  initialTableState={{
+                    pagination: { pageSize: 10000000 }
+                  }}
+                  columns={[
+                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
+                    {
+                      header: "Restoration Practice",
+                      accessorKey: "restoration-practice",
+                      cell: props => {
+                        const placeholder = props.getValue() as string;
+                        return (
+                          <input
+                            placeholder={placeholder}
+                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
+                          />
+                        );
+                      },
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    {
+                      header: "Target Land Use System",
+                      accessorKey: "target-land-use-system",
+                      meta: { style: { width: "20.63%" } }
+                    },
+                    {
+                      header: "Tree Distribution",
+                      accessorKey: "tree-distribution",
+                      meta: { style: { width: "15.63%" } }
+                    },
+                    {
+                      header: "Planting Start Date",
+                      accessorKey: "planting-start-date",
+                      meta: { style: { width: "17.63%" } }
+                    },
+                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
+                    {
+                      header: "",
+                      accessorKey: "ellipse",
+                      enableSorting: false,
+                      cell: props => (
+                        <Menu
+                          menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
+                          placement={
+                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
+                          }
+                        >
+                          <div className="rounded p-1 hover:bg-primary-200">
+                            <Icon
+                              name={IconNames.ELIPSES}
+                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
                             />
-                          );
-                        },
-                        meta: { style: { width: "17.63%" } }
-                      },
-                      {
-                        header: "Target Land Use System",
-                        accessorKey: "target-land-use-system",
-                        meta: { style: { width: "20.63%" } }
-                      },
-                      {
-                        header: "Tree Distribution",
-                        accessorKey: "tree-distribution",
-                        meta: { style: { width: "15.63%" } }
-                      },
-                      {
-                        header: "Planting Status",
-                        accessorKey: "planting-status",
-                        meta: { style: { width: "17.63%" } }
-                      },
-                      {
-                        header: "Planting Start Date",
-                        accessorKey: "planting-start-date",
-                        meta: { style: { width: "17.63%" } }
-                      },
-                      { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
-                      {
-                        header: "",
-                        accessorKey: "ellipse",
-                        enableSorting: false,
-                        cell: props => (
-                          <Menu
-                            menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
-                            placement={
-                              (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
-                            }
-                          >
-                            <div className="rounded p-1 hover:bg-primary-200">
-                              <Icon
-                                name={IconNames.ELIPSES}
-                                className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
-                              />
-                            </div>
-                          </Menu>
-                        )
-                      }
-                    ]}
-                    data={sitePolygonDataTable}
-                  ></Table>
-                </div>
+                          </div>
+                        </Menu>
+                      )
+                    }
+                  ]}
+                  data={sitePolygonDataTable}
+                ></Table>
               </div>
             </Stack>
           </Grid>
@@ -806,7 +815,8 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
-              siteUuid={record?.uuid ?? ""}
+              siteUuid={record?.uuid}
+              isLoading={loading && sitePolygonData.length === 0}
             />
           </Grid>
         </Grid>

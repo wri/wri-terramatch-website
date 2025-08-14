@@ -158,11 +158,33 @@ export type SitePolygonFullDto = {
    * The name of the associated Site.
    */
   siteName: string | null;
+  versionName: string | null;
+  /**
+   * Planting status for this site polygon
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   geometry: Record<string, any> | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
   numTrees: number | null;
+  /**
+   * Source of the site polygon
+   */
+  source: string | null;
+  /**
+   * Validation status of the site polygon
+   *
+   * @maxLength 255
+   */
+  validationStatus: string | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
    */
@@ -171,6 +193,14 @@ export type SitePolygonFullDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
 };
 
 export type SitePolygonLightDto = {
@@ -218,6 +248,18 @@ export type SitePolygonLightDto = {
    * The name of the associated Site.
    */
   siteName: string | null;
+  versionName: string | null;
+  /**
+   * Planting status for this site polygon
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
 };
 
 export type SitePolygonUpdateAttributes = {

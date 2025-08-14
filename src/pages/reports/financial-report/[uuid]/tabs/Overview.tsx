@@ -168,7 +168,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection data={report?.funding_types} />
+        <FundingSourcesSection data={report?.funding_types} currency={report?.currency} />
       </Container>
     </Container>
   );
