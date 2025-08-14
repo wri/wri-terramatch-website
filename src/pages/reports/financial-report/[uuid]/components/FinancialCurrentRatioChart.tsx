@@ -25,6 +25,8 @@ type FinancialCurrentRatioChartProps = {
   documentation?: any[];
 };
 
+const BASE = 1;
+
 const FinancialCurrentRatioChart = ({
   data,
   currency
@@ -125,7 +127,7 @@ const FinancialCurrentRatioChart = ({
               <span style={{ color: "#6b7280", fontSize: "13px" }}>Current Ratio</span>
               <span
                 className="font-semibold"
-                style={{ color: value >= base ? "#2196F3" : "#E35151", fontSize: "16px" }}
+                style={{ color: value >= BASE ? "#2196F3" : "#E35151", fontSize: "16px" }}
               >
                 {value.toFixed(2)}
               </span>
@@ -171,30 +173,21 @@ const FinancialCurrentRatioChart = ({
 
   const CustomDot = (props: any) => {
     const { cx, cy, payload } = props;
-    const color = payload.currentRatio >= base ? "#2196F3" : "#E35151";
+    const color = payload.currentRatio >= BASE ? "#2196F3" : "#E35151";
     return <circle cx={cx} cy={cy} r={8} fill={color} stroke="#ffffff" strokeWidth={3} filter="url(#dotShadow)" />;
   };
 
   const CustomActiveDot = (props: any) => {
     const { cx, cy, payload } = props;
-    const color = payload.currentRatio >= base ? "#2196F3" : "#E35151";
+    const color = payload.currentRatio >= BASE ? "#2196F3" : "#E35151";
     return <circle cx={cx} cy={cy} r={8} fill={color} stroke="#ffffff" strokeWidth={3} filter="url(#dotShadow)" />;
   };
-
-  // Average of last years
-  const base = useMemo(() => {
-    const valid = chartData.filter((d: any) => typeof d.currentRatio === "number");
-    if (valid.length === 0) return 0;
-    const lastFive = valid.slice(-5);
-    const avg = lastFive.reduce((s: number, d: any) => s + (d.currentRatio || 0), 0) / lastFive.length;
-    return Math.round(avg * 100) / 100;
-  }, [chartData]);
 
   const yDomain = useMemo(() => {
     if (chartData.length === 0) return [0, 1];
     const values = chartData.map((d: any) => d.currentRatio);
-    let min = Math.min(...values, base);
-    let max = Math.max(...values, base);
+    let min = Math.min(...values, BASE);
+    let max = Math.max(...values, BASE);
 
     if (min === max) {
       min = min - 1;
@@ -205,20 +198,20 @@ const FinancialCurrentRatioChart = ({
     const maxRounded = Math.ceil(max);
 
     return [minRounded, maxRounded];
-  }, [chartData, base]);
+  }, [chartData]);
 
   const gradientOffset = useMemo(() => {
     const [min, max] = yDomain as [number, number];
     if (max === min) return 0;
-    return (max - base) / (max - min);
-  }, [yDomain, base]);
+    return (max - BASE) / (max - min);
+  }, [yDomain]);
 
   const gradientOffsetLine = useMemo(() => {
     const [min, max] = yDomain as [number, number];
     if (max === min) return 0.5;
-    const off = (max - base) / (max - min);
+    const off = (max - BASE) / (max - min);
     return Math.max(0, Math.min(1, off));
-  }, [yDomain, base]);
+  }, [yDomain]);
 
   const yTicks = useMemo(() => {
     const [min, max] = yDomain as [number, number];
@@ -278,7 +271,14 @@ const FinancialCurrentRatioChart = ({
                 }}
               >
                 <li style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <div style={{ width: "16px", height: "16px", backgroundColor: "#2196F3", borderRadius: "2px" }} />
+                  <div
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      background: "linear-gradient(90deg, #2196F3 0%, #E35151 100%)",
+                      borderRadius: "2px"
+                    }}
+                  />
                   <span className="capitalize" style={{ color: "#000000" }}>
                     Current Ratio
                   </span>
@@ -310,14 +310,14 @@ const FinancialCurrentRatioChart = ({
             </filter>
           </defs>
 
-          <ReferenceLine y={base} stroke="#9CA3AF" strokeDasharray="4 4" />
+          <ReferenceLine y={BASE} stroke="#9CA3AF" strokeDasharray="4 4" />
 
           <Area
             type="linear"
             dataKey="currentRatio"
             fill="url(#crSplit)"
             stroke="none"
-            baseValue={base}
+            baseValue={BASE}
             isAnimationActive={false}
           />
 
