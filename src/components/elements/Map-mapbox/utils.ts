@@ -901,14 +901,45 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
 // New utility functions for SitePolygonFullDto
 export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonFullDto) => {
-    if (data.status && data.polygonUuid !== null) {
-      if (!acc[data.status]) {
+    if (data.status != null && data.polygonUuid != null) {
+      if (acc[data.status] == null) {
         acc[data.status] = [];
       }
       acc[data.status].push(data.polygonUuid);
     }
     return acc;
   }, {});
+}
+
+export function parseSitePolygonsDataResponseToFullDto(sitePolygonData: SitePolygon): SitePolygonFullDto {
+  return {
+    lightResource: false,
+    name: sitePolygonData.poly_name ?? null,
+    status: (sitePolygonData.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+    siteId: sitePolygonData.site_id ?? null,
+    polygonUuid: sitePolygonData.poly_id ?? null,
+    projectId: sitePolygonData.project_id ?? null,
+    projectShortName: sitePolygonData.proj_name ?? null,
+    plantStart: sitePolygonData.plantstart ?? null,
+    calcArea: sitePolygonData.calc_area ?? null,
+    lat: null,
+    long: null,
+    indicators: [],
+    siteName: sitePolygonData.site_name ?? null,
+    versionName: sitePolygonData.version_name ?? null,
+    plantingStatus: null,
+    geometry: null,
+    practice: sitePolygonData.practice ?? null,
+    targetSys: sitePolygonData.target_sys ?? null,
+    distr: sitePolygonData.distr ?? null,
+    numTrees: sitePolygonData.num_trees ?? null,
+    source: sitePolygonData.source ?? null,
+    validationStatus: sitePolygonData.validation_status?.toString() ?? null,
+    establishmentTreeSpecies: [],
+    reportingPeriods: [],
+    primaryUuid: sitePolygonData.primary_uuid ?? null,
+    uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? ""
+  };
 }
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonFullDto[]): DataPolygonOverview => {
@@ -1147,3 +1178,38 @@ export const setMapStyle = (
     setCurrentStyle(style);
   }
 };
+
+export type ValidationRecordV3 = {
+  uuid: string;
+  valid: boolean;
+  checked: boolean;
+  nonValidCriteria: Array<{ criteria_id: number }>;
+};
+
+export function parseValidationDataV3(
+  sitePolygonData: SitePolygonFullDto[] | undefined,
+  currentValidationSite: ValidationRecordV3[],
+  validationLabels: Record<number, string>
+) {
+  const validationMap = new Map<string, ValidationRecordV3>();
+  currentValidationSite.forEach(validation => {
+    if (validation?.uuid != null) {
+      validationMap.set(validation.uuid, validation);
+    }
+  });
+
+  return (sitePolygonData ?? []).map(site => {
+    const polyUuid = site.polygonUuid ?? "";
+    const validation = validationMap.get(polyUuid);
+    const polygonValidation =
+      validation?.nonValidCriteria?.map(c => validationLabels[c.criteria_id] ?? null).filter(v => v != null) ?? [];
+
+    return {
+      uuid: polyUuid,
+      title: site.name ?? "Unnamed Polygon",
+      valid: validation ? validation.valid : false,
+      isChecked: validation ? validation.checked : false,
+      ...(polygonValidation.length > 0 ? { polygonValidation } : {})
+    };
+  });
+}

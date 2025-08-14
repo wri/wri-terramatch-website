@@ -193,6 +193,14 @@ export type SitePolygonFullDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
 };
 
 export type SitePolygonLightDto = {

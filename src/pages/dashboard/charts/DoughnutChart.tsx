@@ -11,7 +11,7 @@ const DoughnutChart: React.FC<{ data: ChartDataVolunteers }> = ({ data }) => {
   const totals = calculateTotalsVolunteers(chartData);
 
   return (
-    <div className="h-[330px] w-full">
+    <div className="h-[360px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie data={chartData} cx="50%" cy="50%" innerRadius={85} outerRadius={120} fill="#8884d8" dataKey="value">

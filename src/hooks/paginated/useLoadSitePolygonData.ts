@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Log from "@/utils/log";
 
 const VALID_ENTITY_TYPES = ["sites", "projects"] as const;
 const VALID_FILTER_ALL = "all" as const;
@@ -53,12 +54,11 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     isLoading,
     total,
-    refetch,
-    updateSinglePolygon
+    refetch
   } = useAllSitePolygons({
     entityName,
     entityUuid,
-    enabled: !!entityUuid,
+    enabled: entityUuid != null,
     filter
   });
 
@@ -66,8 +66,12 @@ const useLoadSitePolygonsData = (
 
   const updateSingleSitePolygonData = (old_id: string, updatedData: SitePolygonFullDto) => {
     try {
-      updateSinglePolygon(old_id, updatedData);
+      // Since V3 handles updates automatically through resource-based caching,
+      // we just need to clear the connection cache and let it re-fetch
+      // This will trigger a re-render with the updated data
+      refetch();
     } catch (error) {
+      Log.error("Failed to update single site polygon data", { old_id, error });
       refetch();
     }
   };

@@ -9,21 +9,18 @@ export type SitePolygonData = {
 type SitePolygonContextType = {
   sitePolygonData: SitePolygonFullDto[] | undefined;
   reloadSiteData: () => void;
-  updateSingleSitePolygonData?: (poly_id: string, updatedData: SitePolygonFullDto) => void;
 };
 
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
   sitePolygonData: SitePolygonFullDto[] | undefined;
-  updateSingleSitePolygonData?: (poly_id: string, updatedData: SitePolygonFullDto) => void;
   reloadSiteData: () => void;
   children: ReactNode;
-}> = ({ sitePolygonData, reloadSiteData, updateSingleSitePolygonData, children }) => {
+}> = ({ sitePolygonData, reloadSiteData, children }) => {
   const contextValue: SitePolygonContextType = {
     sitePolygonData,
-    reloadSiteData,
-    updateSingleSitePolygonData
+    reloadSiteData
   };
 
   return <SitePolygonDataContext.Provider value={contextValue}>{children}</SitePolygonDataContext.Provider>;

@@ -25,6 +25,7 @@ import {
   useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
 import { OptionValue } from "@/types/common";
+import Log from "@/utils/log";
 
 import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
 import PolygonItem from "./PolygonItem";
@@ -148,7 +149,7 @@ const Polygons = (props: IPolygonProps) => {
         setIsFetchingValidationData(false);
       },
       onError: error => {
-        console.error("Failed to fetch validation data:", error);
+        Log.error("Failed to fetch validation data:", error);
         setIsFetchingValidationData(false);
       }
     }
@@ -216,7 +217,7 @@ const Polygons = (props: IPolygonProps) => {
       link.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to download polygon:", error);
+      Log.error("Failed to download polygon:", error);
     }
   }, []);
 
@@ -233,7 +234,7 @@ const Polygons = (props: IPolygonProps) => {
           closeModal(ModalId.CONFIRM_POLYGON_DELETION);
         }
       } catch (error) {
-        console.error("Failed to delete polygon:", error);
+        Log.error("Failed to delete polygon:", error);
       }
     },
     [reloadSiteData, closeModal]
@@ -430,7 +431,7 @@ const Polygons = (props: IPolygonProps) => {
         <Dropdown
           options={validationOptions}
           defaultValue={["all"]}
-          value={[validFilter || "all"]}
+          value={[validFilter ?? "all"]}
           onChange={(value: OptionValue[]) => {
             setValidFilter(value[0] as string);
           }}

@@ -56,7 +56,7 @@ export const useAllSitePolygons = (
           ApiSlice.pruneCache("sitePolygons");
 
           const currentState = ApiSlice.currentState;
-          const sitePolygonsIndices = currentState.meta.indices.sitePolygons || {};
+          const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};
           Object.keys(sitePolygonsIndices).forEach(indexKey => {
             ApiSlice.pruneIndex("sitePolygons", indexKey);
           });
@@ -126,12 +126,6 @@ export const useAllSitePolygons = (
     fetchAllPages(true);
   }, [fetchAllPages]);
 
-  const updateSinglePolygon = useCallback((polygonUuid: string, updatedData: SitePolygonFullDto) => {
-    setAllPolygons((prevData: SitePolygonFullDto[]) =>
-      prevData.map((item: SitePolygonFullDto) => (item.polygonUuid === polygonUuid ? updatedData : item))
-    );
-  }, []);
-
   useEffect(() => {
     if (!stableProps.enabled || isEmpty(stableProps.entityUuid)) {
       setIsLoading(false);
@@ -150,7 +144,6 @@ export const useAllSitePolygons = (
     error,
     progress,
     total,
-    refetch,
-    updateSinglePolygon
+    refetch
   };
 };

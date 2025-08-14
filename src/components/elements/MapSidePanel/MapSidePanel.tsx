@@ -10,16 +10,19 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useDate } from "@/hooks/useDate";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
-import MapMenuPanelItem, { MapMenuPanelItemProps } from "../MapPolygonPanel/MapMenuPanelItem";
+import MapMenuPanelItem from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapMenuPanelItemProps[];
+  items: SitePolygonFullDto[];
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -49,8 +52,9 @@ const MapSidePanel = ({
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
+  const { format } = useDate();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<MapMenuPanelItemProps>();
+  const [selected, setSelected] = useState<SitePolygonFullDto>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
@@ -61,6 +65,7 @@ const MapSidePanel = ({
 
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
+  const isAdmin = useIsAdmin();
 
   const filteredItems = useMemo(() => {
     if (checkedValues.length === 0) {
@@ -84,10 +89,10 @@ const MapSidePanel = ({
     setCurrentPage(1);
   }, [checkedValues]);
 
-  const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
+  const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.polygonUuid ?? "" });
 
   const flyToPolygonBounds = async () => {
-    if (!map.current || !selectedPolygonBbox) {
+    if (!map.current || selectedPolygonBbox == null) {
       return;
     }
     map.current.fitBounds(selectedPolygonBbox, {
@@ -119,24 +124,21 @@ const MapSidePanel = ({
 
   useEffect(() => {
     if (clickedButton === "site") {
-      const siteUrl = `/site/${selected?.site_id}`;
+      const siteUrl = `/site/${entityUuid}`;
       window.open(siteUrl, "_blank");
       setClickedButton("");
     } else if (clickedButton === "zoomTo") {
       flyToPolygonBounds();
       setClickedButton("");
     } else if (clickedButton === "download") {
-      downloadGeoJsonPolygon(
-        selected?.poly_id ?? "",
-        selected?.poly_name ? formatStringName(selected.poly_name) : "polygon"
-      );
+      downloadGeoJsonPolygon(selected?.polygonUuid ?? "", selected?.name ? formatStringName(selected.name) : "polygon");
       setClickedButton("");
     } else if (clickedButton === "delete") {
-      deletePolygon(selected?.poly_id ?? "");
+      deletePolygon(selected?.polygonUuid ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
-      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.primary_uuid ?? "" });
-      if (selected?.poly_id) {
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
       setClickedButton("");
@@ -262,7 +264,7 @@ const MapSidePanel = ({
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
-            {emptyText || t("No result")}
+            {emptyText ?? t("No result")}
           </Text>
         )}
         <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
@@ -270,12 +272,13 @@ const MapSidePanel = ({
             as={Fragment}
             items={currentPageItems}
             itemAs={Fragment}
+            uniqueId="uuid"
             render={item => (
               <MapMenuPanelItem
                 key={item.uuid}
                 uuid={item.uuid}
-                title={item.title}
-                subtitle={item.subtitle}
+                title={item.name ?? t("Unnamed Polygon")}
+                subtitle={t("Created {date}", { date: format(item.plantStart ?? "") })}
                 status={item.status}
                 onClick={() => {
                   setSelected(item);
@@ -287,9 +290,10 @@ const MapSidePanel = ({
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
                 type={type}
-                poly_id={item.poly_id}
+                poly_id={item.polygonUuid ?? ""}
                 site_id={entityUuid}
-                validationStatus={item.validationStatus}
+                validationStatus={item.validationStatus ?? "notChecked"}
+                isAdmin={isAdmin}
               />
             )}
           />

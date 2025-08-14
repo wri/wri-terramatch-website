@@ -13,7 +13,7 @@ import {
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
-import { userPrimaryRoleChoices } from "../const";
+import { localeChoices, userPrimaryRoleChoices } from "../const";
 
 export const UserShowAside = () => {
   const notify = useNotify();
@@ -76,6 +76,17 @@ export const UserShowAside = () => {
             <SelectField
               source="role"
               choices={userPrimaryRoleChoices}
+              emptyText="Not Provided"
+              className="admin-text-16 !font-medium text-darkCustom"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
+              Locale
+            </Typography>
+            <SelectField
+              source="locale"
+              choices={localeChoices}
               emptyText="Not Provided"
               className="admin-text-16 !font-medium text-darkCustom"
             />

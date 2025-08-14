@@ -145,6 +145,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   setAlertTitle?: (value: string) => void;
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
+  hasAccess?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -190,6 +191,7 @@ export const MapContainer = ({
   setAlertTitle,
   showViewGallery = true,
   legendPosition,
+  hasAccess,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -218,7 +220,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { updateSingleSitePolygonData } = context ?? {};
+  const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -289,7 +291,12 @@ export const MapContainer = ({
       const currentMap = map.current as mapboxgl.Map;
       const setupMap = () => {
         const zoomFilter = isDashboard ? 9 : undefined;
-        addSourcesToLayers(currentMap, polygonsData, centroids, zoomFilter, isDashboard, polygonsCentroids);
+        let polygonsDataToUse = polygonsData;
+        if (isDashboard && projectUUID && hasAccess === false) {
+          polygonsDataToUse = {};
+        }
+
+        addSourcesToLayers(currentMap, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
         setChangeStyle(true);
         setSourcesAdded(true);
 
@@ -342,7 +349,9 @@ export const MapContainer = ({
     setFilters,
     setLoader,
     setPolygonFromMap,
-    tooltipType
+    tooltipType,
+    projectUUID,
+    hasAccess
   ]);
 
   useValueChanged(currentStyle, () => {
@@ -570,6 +579,7 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
+              console.log("sitepolygons", sitePolygonData, "polygondfrommap", polygonFromMap);
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
@@ -577,7 +587,7 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                reloadSiteData?.();
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);

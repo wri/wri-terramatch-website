@@ -2,6 +2,7 @@ import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboar
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import {
   DashboardProjectsLightDto,
+  TotalJobsCreatedDto,
   TreeRestorationGoalDto
 } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 
@@ -40,6 +41,72 @@ export interface ChartDataVolunteers {
   type: string;
   total: number;
 }
+
+export const parseJobCreatedByType = (
+  data: TotalJobsCreatedDto | undefined,
+  type: "gender" | "age"
+): GroupedBarChartData => {
+  if (!data) return { type, chartData: [], total: 0, maxValue: 0 };
+
+  if (type === "gender") {
+    const ptWomen = data.totalPtWomen ?? 0;
+    const ptMen = data.totalPtMen ?? 0;
+    const ptNonBinary = data.totalPtNonBinary ?? 0;
+    const ptOthersGender = (data as any).totalPtOthersGender ?? 0;
+    const ftWomen = data.totalFtWomen ?? 0;
+    const ftMen = data.totalFtMen ?? 0;
+    const ftNonBinary = data.totalFtNonBinary ?? 0;
+    const ftOthersGender = (data as any).totalFtOthersGender ?? 0;
+
+    const maxValue = Math.max(ptWomen, ptMen, ptNonBinary, ptOthersGender, ftWomen, ftMen, ftNonBinary, ftOthersGender);
+
+    const chartData = [
+      { name: "Part-Time", Women: ptWomen, Men: ptMen, "Non-Binary": ptNonBinary, Other: ptOthersGender },
+      { name: "Full-Time", Women: ftWomen, Men: ftMen, "Non-Binary": ftNonBinary, Other: ftOthersGender }
+    ];
+
+    return { type, chartData, total: data.totalJobsCreated, maxValue };
+  }
+
+  const ptYouth = data.totalPtYouth ?? 0;
+  const ptNonYouth = data.totalPtNonYouth ?? 0;
+  const ptOthersAge = (data as any).totalPtOthersAge ?? 0;
+  const ftYouth = data.totalFtYouth ?? 0;
+  const ftNonYouth = data.totalFtNonYouth ?? 0;
+  const ftOthersAge = (data as any).totalFtOthersAge ?? 0;
+
+  const maxValue = Math.max(ptYouth, ptNonYouth, ptOthersAge, ftYouth, ftNonYouth, ftOthersAge);
+  const chartData = [
+    { name: "Part-Time", Youth: ptYouth, "Non-Youth": ptNonYouth, Other: ptOthersAge },
+    { name: "Full-Time", Youth: ftYouth, "Non-Youth": ftNonYouth, Other: ftOthersAge }
+  ];
+  return { type, chartData, total: data.totalJobsCreated, maxValue };
+};
+
+export const parseVolunteersByType = (
+  data: TotalJobsCreatedDto | undefined,
+  type: "gender" | "age"
+): ChartDataVolunteers => {
+  if (!data) return { chartData: [], type, total: 0 };
+
+  if (type === "gender") {
+    const chartData: ChartDataItem[] = [
+      { name: "Women", value: (data as any).volunteerWomen ?? 0 },
+      { name: "Men", value: (data as any).volunteerMen ?? 0 },
+      { name: "Non-Binary", value: (data as any).volunteerNonBinary ?? 0 },
+      { name: "Other", value: (data as any).volunteerOthers ?? 0 }
+    ];
+    const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
+    return { type, chartData, total };
+  }
+  const chartData: ChartDataItem[] = [
+    { name: "Youth", value: (data as any).volunteerYouth ?? 0 },
+    { name: "Non-Youth", value: (data as any).volunteerNonYouth ?? 0 },
+    { name: "Other", value: (data as any).volunteerAgeOthers ?? 0 }
+  ];
+  const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
+  return { type, chartData, total };
+};
 
 interface Option {
   title: string;
@@ -323,10 +390,16 @@ export const calculatePercentage = (value: number, total: number): number => {
 
 export const calculateTotals = (data: GroupedBarChartData): { [key: string]: number } => {
   return data.chartData.reduce((acc, item) => {
-    const key1 = data.type === "gender" ? "Women" : "Youth";
-    const key2 = data.type === "gender" ? "Men" : "Non-Youth";
-    acc[key1] = (acc[key1] || 0) + (item[key1] as number);
-    acc[key2] = (acc[key2] || 0) + (item[key2] as number);
+    if (data.type === "gender") {
+      acc["Women"] = (acc["Women"] || 0) + (item["Women"] as number);
+      acc["Men"] = (acc["Men"] || 0) + (item["Men"] as number);
+      acc["Non-Binary"] = (acc["Non-Binary"] || 0) + (item["Non-Binary"] as number);
+      acc["Other"] = (acc["Other"] || 0) + (item["Other"] as number);
+    } else {
+      acc["Youth"] = (acc["Youth"] || 0) + (item["Youth"] as number);
+      acc["Non-Youth"] = (acc["Non-Youth"] || 0) + (item["Non-Youth"] as number);
+      acc["Other"] = (acc["Other"] || 0) + (item["Other"] as number);
+    }
     return acc;
   }, {} as { [key: string]: number });
 };
@@ -342,7 +415,7 @@ export const formatLabelsVolunteers = (value: string): string => {
   return formattedValues[value] || value;
 };
 
-export const COLORS_VOLUNTEERS = ["#7BBD31", "#27A9E0"];
+export const COLORS_VOLUNTEERS = ["#70B52B", "#239FDC", "#065327", "#09354D"];
 
 export const getBarColorRestoration = (name: string) => {
   if (name.includes("Tree Planting")) return "#7BBD31";

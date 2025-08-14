@@ -45,6 +45,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["siteId[]"]?: string[];
   /**
+   * Filter results by polygon UUID(s)
+   */
+  ["polygonUuid[]"]?: string[];
+  /**
    * Filter results by project cohorts. May not be used with projectId[] or siteId[]
    */
   ["projectCohort[]"]?: string[];
@@ -331,19 +335,6 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
         statusCode: number;
         /**
          * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
          */
         message: string;
       };
