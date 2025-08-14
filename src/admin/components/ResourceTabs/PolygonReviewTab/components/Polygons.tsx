@@ -120,8 +120,6 @@ const Polygons = (props: IPolygonProps) => {
     currentPageItems: currentPagePolygons
   } = usePolygonsPagination(filteredPolygons, [validFilter]);
 
-  // pagination handled by usePagination
-
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
