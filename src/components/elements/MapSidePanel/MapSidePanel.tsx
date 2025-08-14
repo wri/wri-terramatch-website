@@ -36,8 +36,6 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   entityUuid?: string;
 }
 
-const PAGE_SIZE = 20;
-
 const MapSidePanel = ({
   title,
   items = [],
@@ -72,7 +70,6 @@ const MapSidePanel = ({
 
   const { currentPage, setCurrentPage, totalPages, startIndex, endIndex, currentPageItems } = usePolygonsPagination(
     filteredItems,
-    PAGE_SIZE,
     [checkedValues]
   );
 

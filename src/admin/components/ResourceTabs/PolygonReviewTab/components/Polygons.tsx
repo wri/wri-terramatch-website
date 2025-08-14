@@ -66,8 +66,6 @@ const VALIDATION_STATUS_OPTIONS = [
 
 const INVALID_STATUSES = ["undefined", "null", "notChecked"];
 
-const PAGE_SIZE = 20;
-
 const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
@@ -120,7 +118,7 @@ const Polygons = (props: IPolygonProps) => {
     startIndex,
     endIndex,
     currentPageItems: currentPagePolygons
-  } = usePolygonsPagination(filteredPolygons, PAGE_SIZE, [validFilter]);
+  } = usePolygonsPagination(filteredPolygons, [validFilter]);
 
   // pagination handled by usePagination
 
