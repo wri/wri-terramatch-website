@@ -7,35 +7,19 @@
 import { DataProvider, Identifier } from "react-admin";
 
 import {
-  DeleteV2AdminFormsSubmissionsUUIDError,
+  DeleteV2AdminFormsApplicationsUUIDError,
   fetchDeleteV2AdminFormsApplicationsUUID,
   fetchGetV2AdminFormsApplications,
   fetchGetV2AdminFormsApplicationsUUID,
-  fetchGetV2AdminFormsSubmissionsExport,
   fetchPatchV2AdminFormsSubmissionsUUIDStatus,
-  GetV2AdminFormsSubmissionsError,
-  GetV2AdminFormsSubmissionsExportError,
+  GetV2AdminFormsApplicationsError,
+  GetV2AdminFormsApplicationsUUIDError,
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
-import { apiFetch } from "@/generated/apiFetcher";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
-import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-export const fetchGetV2AdminFormsUUIDExport = (
-  variables: {
-    pathParams: { uuid: string };
-  },
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2AdminFormsSubmissionsExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/forms/submissions/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
 
 export const applicationSortableList: string[] = [
   "organisation_name",
@@ -83,7 +67,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
         data: result.data?.map((item: FormSubmissionRead) => normalizeApplicationObject(item))
       };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsSubmissionsError);
+      throw getFormattedErrorForRA(err as GetV2AdminFormsApplicationsError);
     }
   },
 
@@ -107,7 +91,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
       };
       return { data };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsSubmissionsError);
+      throw getFormattedErrorForRA(err as GetV2AdminFormsApplicationsUUIDError);
     }
   },
 
@@ -130,7 +114,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
       });
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsSubmissionsUUIDError);
+      throw getFormattedErrorForRA(err as DeleteV2AdminFormsApplicationsUUIDError);
     }
   },
 
@@ -144,7 +128,7 @@ export const applicationDataProvider: ApplicationDataProvider = {
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsSubmissionsUUIDError);
+      throw getFormattedErrorForRA(err as DeleteV2AdminFormsApplicationsUUIDError);
     }
   },
 
@@ -164,15 +148,5 @@ export const applicationDataProvider: ApplicationDataProvider = {
     } catch (err) {
       throw getFormattedErrorForRA(err as PatchV2AdminFormsSubmissionsUUIDStatusError);
     }
-  },
-
-  export() {
-    return fetchGetV2AdminFormsSubmissionsExport({})
-      .then((response: any) => {
-        downloadFileBlob(response, "Applications.csv");
-      })
-      .catch(e => {
-        throw getFormattedErrorForRA(e as GetV2AdminFormsSubmissionsExportError);
-      });
   }
 };
