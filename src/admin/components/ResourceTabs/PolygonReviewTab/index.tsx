@@ -96,7 +96,19 @@ const PolygonReviewAside: FC<{
   totalPolygons?: number;
   siteUuid?: string;
   isLoading?: boolean;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid, isLoading }) => {
+  progress?: number;
+}> = ({
+  type,
+  data,
+  polygonFromMap,
+  setPolygonFromMap,
+  refresh,
+  mapFunctions,
+  totalPolygons,
+  siteUuid,
+  isLoading,
+  progress
+}) => {
   switch (type) {
     case "sites":
       return (
@@ -107,6 +119,7 @@ const PolygonReviewAside: FC<{
           mapFunctions={mapFunctions}
           refresh={refresh}
           totalPolygons={totalPolygons}
+          progress={progress}
           siteUuid={siteUuid}
           isLoading={isLoading}
         />
@@ -171,7 +184,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     data: sitePolygonData,
     refetch,
     loading,
-    total
+    total,
+    progress
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
@@ -815,6 +829,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
+              progress={progress}
               siteUuid={record?.uuid}
               isLoading={loading && sitePolygonData.length === 0}
             />

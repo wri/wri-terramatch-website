@@ -11,6 +11,7 @@ interface LoadSitePolygonsDataHook {
   data: SitePolygonFullDto[];
   loading: boolean;
   total: number;
+  progress: number;
   refetch: () => void;
   updateSingleSitePolygonData: (poly_id: string, updatedData: SitePolygonFullDto) => void;
   polygonCriteriaMap: Record<string, unknown>;
@@ -55,6 +56,7 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     isLoading,
     total,
+    progress,
     refetch
   } = useAllSitePolygons({
     entityName,
@@ -83,6 +85,7 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     loading: isLoading,
     total,
+    progress,
     refetch,
     polygonCriteriaMap,
     setPolygonCriteriaMap,
