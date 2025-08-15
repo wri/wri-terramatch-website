@@ -1,11 +1,12 @@
 import { useT } from "@transifex/react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
+import { parseValidationDataV3 } from "@/components/elements/Map-mapbox/utils";
 import List from "@/components/extensive/List/List";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Text from "../Text/Text";
 import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
@@ -22,7 +23,7 @@ interface CheckedPolygon {
   uuid: string;
   valid: boolean;
   checked: boolean;
-  nonValidCriteria: Array<object>;
+  nonValidCriteria: Array<{ criteria_id: number }>;
 }
 
 const validationLabels: any = {
@@ -34,30 +35,6 @@ const validationLabels: any = {
   10: "Polygon Type",
   12: "No Within Total Area Expected",
   14: "No Data Completed"
-};
-
-const parseData = (
-  sitePolygonData: SitePolygonsDataResponse,
-  currentValidationSite: CheckedPolygon[],
-  validationLabels: any
-) => {
-  const validationMap = new Map();
-  currentValidationSite.forEach(validation => {
-    validationMap.set(validation.uuid, validation);
-  });
-
-  return sitePolygonData.map(site => {
-    const validation = validationMap.get(site.poly_id);
-    const polygonValidation =
-      validation?.nonValidCriteria.map((criteria: any) => validationLabels[criteria.criteria_id]) ?? [];
-    return {
-      uuid: site.poly_id,
-      title: site.poly_name ?? "Unnamed Polygon",
-      valid: validation ? validation.valid : false,
-      isChecked: validation ? validation.checked : false,
-      ...(polygonValidation.length > 0 && { polygonValidation })
-    };
-  });
 };
 
 const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }: MapPolygonCheckPanelProps) => {
@@ -82,8 +59,8 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
 
   useEffect(() => {
     if (currentValidationSite) {
-      const sitePolygonData = context?.sitePolygonData ?? [];
-      const data = parseData(sitePolygonData, currentValidationSite, validationLabels);
+      const sitePolygonData = context?.sitePolygonData as SitePolygonFullDto[] | undefined;
+      const data = parseValidationDataV3(sitePolygonData, currentValidationSite, validationLabels);
       setPolygonsValidationData(data);
     }
   }, [context?.sitePolygonData, currentValidationSite]);

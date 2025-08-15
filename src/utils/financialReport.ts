@@ -116,3 +116,22 @@ export const formatYAxisNumber = (value: number, currency: string = ""): string 
     return `${currency}${value.toLocaleString()}`;
   }
 };
+
+export const formatProfitValue = (value: number, currency: string) => {
+  if (value === 0) return `${currency}0`;
+
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+
+  if (absValue >= 1000000) {
+    const millions = absValue / 1000000;
+    const formatted = millions.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currency}${formatted}M`;
+  } else if (absValue >= 1000) {
+    const thousands = absValue / 1000;
+    const formatted = thousands.toFixed(1).replace(/\.0$/, "");
+    return `${sign}${currency}${formatted}K`;
+  } else {
+    return `${sign}${currency}${absValue.toLocaleString()}`;
+  }
+};

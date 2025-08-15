@@ -122,7 +122,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
               <Text variant="text-24-bold" className="mb-2">
                 {t("Current Ratio by Year")}
               </Text>
-              <FinancialCurrentRatioChart data={report?.financial_collection} />
+              <FinancialCurrentRatioChart data={report?.financial_collection} currency={report?.currency} />
             </div>
             <div className="flex h-full flex-col justify-center">
               <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
@@ -168,7 +168,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection data={report?.funding_types} />
+        <FundingSourcesSection data={report?.funding_types} currency={report?.currency} />
       </Container>
     </Container>
   );

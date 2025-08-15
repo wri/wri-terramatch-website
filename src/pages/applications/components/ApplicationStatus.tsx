@@ -11,10 +11,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
-import { useToastContext } from "@/context/toast.provider";
 import {
-  GetV2ReportingFrameworksAccessCodeACCESSCODEResponse,
-  useDeleteV2FormsSubmissionsUUID,
   useGetV2ReportingFrameworksAccessCodeACCESSCODE,
   usePostV2FormsSubmissionsUUIDNextStage
 } from "@/generated/apiComponents";
@@ -46,7 +43,6 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const router = useRouter();
   const uuid = router.query.id as string;
   const { openModal, closeModal } = useModalContext();
-  const { openToast } = useToastContext();
   const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
     // TODO: using the framework key as an access code here is really confusing and needs to be updated.
     // Will be related to some general application cleanup that Ben is getting set up in an epic.
@@ -54,33 +50,13 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   });
   //@ts-ignore
   const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
-
-  const currentStage = stages?.find(s => s.uuid === currentSubmission?.form?.stage_id);
   //@ts-ignore
   const nextStage = stages?.find(s => s.uuid === currentSubmission?.next_stage_uuid);
-  const isFirstStage = application?.form_submissions?.length === 1;
 
   const { mutate: submitToNextStage, isLoading } = usePostV2FormsSubmissionsUUIDNextStage({
     onSuccess(data, variables, context) {
       // @ts-expect-error
       router.push(`/form/submission/${data?.data?.uuid}/intro`);
-    }
-  });
-
-  const { mutate: deleteFormSubmission } = useDeleteV2FormsSubmissionsUUID({
-    onSuccess() {
-      openToast(t("Deleted Draft"));
-      if (isFirstStage) {
-        router.replace("/home");
-      } else {
-        window.location.reload();
-      }
-
-      closeModal(ModalId.CONFIRM_DELETE);
-    },
-    onError() {
-      openToast(t("Error Deleting Draft"));
-      router.replace("/home");
     }
   });
 
@@ -90,7 +66,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         return {
           title: t("Status: Draft"),
           subtitle: t(
-            `This application is currently in draft status. To continue completing your application, please click the "Continue Application" button below. If you wish, you can delete the application by selecting the "Delete Draft" option.`
+            `This application is currently in draft status. To continue completing your application, please click the "Continue Application" button below. If you need help with your application, reach out to TerraMatch support by emailing info@terramatch.org or clicking the "Contact Support" button below.`
           ),
           color: undefined,
           icon: IconNames.EDIT_CIRCLE,
@@ -118,36 +94,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           },
           secondaryAction: {
             onClick: () => {
-              openModal(
-                ModalId.CONFIRM_DELETE,
-                <Modal
-                  title={t("Are you sure you want to delete this {stageName} draft?", {
-                    stageName: currentStage?.name
-                  })}
-                  content={
-                    isFirstStage
-                      ? t(
-                          "When you delete this draft, the form application and all its associated data will be permanently removed. Please be aware that this action cannot be undone."
-                        )
-                      : t(
-                          `Please note that this action will permanently remove all data associated with this draft, and it cannot be undone. However, your previous application submissions for the previous stages will remain intact. If you proceed with the deletion, you will need to provide {stageName} information again from scratch.`,
-                          { stageName: currentStage?.name }
-                        )
-                  }
-                  primaryButtonProps={{
-                    children: "Delete Draft",
-                    onClick: () => {
-                      currentSubmission.uuid && deleteFormSubmission({ pathParams: { uuid: currentSubmission.uuid } });
-                    }
-                  }}
-                  secondaryButtonProps={{
-                    children: "Cancel",
-                    onClick: () => closeModal(ModalId.CONFIRM_DELETE)
-                  }}
-                />
-              );
+              window.location.href = "mailto:info@terramatch.org?subject=TerraMatch%20Application%20Support";
             },
-            children: t("Delete Draft")
+            children: t("Contact Support")
           }
         };
 
