@@ -96,26 +96,22 @@ export const useAllSitePolygons = (
         }
 
         const totalPages = Math.ceil(totalCount / ALL_POLYGONS_PAGE_SIZE);
-        const remainingPageNumbers = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+        let allFetchedPolygons = [...polygons];
 
-        const pagePromises = remainingPageNumbers.map(pageNumber =>
-          loadConnection(sitePolygonsConnection, {
+        for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+          const pageResponse = await loadConnection(sitePolygonsConnection, {
             ...stableProps,
             pageSize: ALL_POLYGONS_PAGE_SIZE,
             pageNumber: pageNumber,
             sortField: stableProps.sortField,
             sortDirection: stableProps.sortDirection ?? "ASC"
-          })
-        );
+          });
 
-        const remainingPages = await Promise.all(pagePromises);
-
-        let allFetchedPolygons = [...polygons];
-        for (const page of remainingPages) {
-          if (page.loadFailure) {
-            throw page.loadFailure;
+          if (pageResponse.loadFailure) {
+            throw pageResponse.loadFailure;
           }
-          allFetchedPolygons.push(...(page.data ?? []));
+
+          allFetchedPolygons.push(...(pageResponse.data ?? []));
           setProgress(Math.min(allFetchedPolygons.length, totalCount));
         }
 
