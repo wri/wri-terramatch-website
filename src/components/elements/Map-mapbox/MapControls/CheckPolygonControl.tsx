@@ -23,7 +23,7 @@ import {
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
@@ -59,7 +59,7 @@ interface TransformedData {
 const VALIDATION_CACHE_TIME = 5 * 60 * 1000;
 
 const getTransformedData = (
-  sitePolygonData: SitePolygonFullDto[] | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   currentValidationSite: CheckedPolygon[]
 ) => {
   return currentValidationSite.map((checkedPolygon, index) => {

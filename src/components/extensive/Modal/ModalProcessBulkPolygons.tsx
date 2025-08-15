@@ -10,7 +10,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
@@ -19,7 +19,7 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
-  sitePolygonData: SitePolygonFullDto[];
+  sitePolygonData: SitePolygonLightDto[];
   selectedPolygonsInCheckbox: string[];
   refetch?: () => void;
   onClick?: (currentSelectedUuids: any) => void;
@@ -65,7 +65,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
       );
       setCurrentSelectedUuids(selectedPolygonsInCheckbox);
       setPolygonsSelected(initialSelection);
-      const polygonsData = sitePolygonData.map((polygon: SitePolygonFullDto) => {
+      const polygonsData = sitePolygonData.map((polygon: SitePolygonLightDto) => {
         const polygonValidationStatus =
           polygon.validationStatus === undefined ? null : String(polygon.validationStatus);
 

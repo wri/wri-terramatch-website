@@ -6,7 +6,7 @@ import List from "@/components/extensive/List/List";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useGetV2TerrafundValidationSite } from "@/generated/apiComponents";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Text from "../Text/Text";
 import { MapMenuPanelItemProps } from "./MapMenuPanelItem";
@@ -59,7 +59,7 @@ const MapPolygonCheckPanel = ({ emptyText, onLoadMore, selected, mapFunctions }:
 
   useEffect(() => {
     if (currentValidationSite) {
-      const sitePolygonData = context?.sitePolygonData as SitePolygonFullDto[] | undefined;
+      const sitePolygonData = context?.sitePolygonData as SitePolygonLightDto[] | undefined;
       const data = parseValidationDataV3(sitePolygonData, currentValidationSite, validationLabels);
       setPolygonsValidationData(data);
     }

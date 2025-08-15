@@ -6,7 +6,7 @@ import {
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
 import { PendingError } from "@/store/apiSlice";
 import ApiSlice from "@/store/apiSlice";
@@ -21,7 +21,7 @@ export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatu
   : never;
 
 export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsIndex)
-  .index<SitePolygonFullDto>(() => ({ queryParams: { lightResource: false } }))
+  .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .enabledProp()
   .filter<Omit<Filter<SitePolygonsIndexQueryParams>, "projectId[]" | "siteId[]">>()
@@ -38,7 +38,7 @@ export const useAllSitePolygons = (
     sortDirection?: "ASC" | "DESC";
   }
 ) => {
-  const [allPolygons, setAllPolygons] = useState<SitePolygonFullDto[]>([]);
+  const [allPolygons, setAllPolygons] = useState<SitePolygonLightDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<PendingError | null>(null);
   const [progress, setProgress] = useState<number>(0);

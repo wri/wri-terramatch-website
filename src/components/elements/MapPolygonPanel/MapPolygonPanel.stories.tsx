@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import type { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import Component from "./MapPolygonPanel";
@@ -14,7 +14,7 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const items: SitePolygonFullDto[] = [
+const items: SitePolygonLightDto[] = [
   {
     uuid: "1",
     lightResource: false,

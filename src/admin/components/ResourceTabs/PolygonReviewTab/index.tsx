@@ -1,6 +1,7 @@
 import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import Menu from "@mui/material/Menu";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
@@ -18,7 +19,6 @@ import {
   parsePolygonDataV3,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
-import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
@@ -45,7 +45,7 @@ import {
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
@@ -214,7 +214,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   });
 
   // Simple transformation for MapContainer compatibility
-  const transformForMapContainer = (data: SitePolygonFullDto[]) => {
+  const transformForMapContainer = (data: SitePolygonLightDto[]) => {
     return data.map(polygon => ({
       id: undefined,
       uuid: polygon.polygonUuid ?? undefined,
@@ -246,7 +246,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index) => ({
+  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index) => ({
     "polygon-name": data?.name ?? `Unnamed Polygon`,
     "restoration-practice": data?.practice ?? "",
     "target-land-use-system": data?.targetSys ?? "",
@@ -254,10 +254,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     "planting-start-date": data?.plantStart ?? "",
     source: data?.source ?? "",
     uuid: data?.polygonUuid,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygonFullDto[]).length - 1
+    ellipse: index === ((sitePolygonData ?? []) as SitePolygonLightDto[]).length - 1
   }));
 
-  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index: number) => ({
+  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
     label: data.name ?? `Unnamed Polygon`,
