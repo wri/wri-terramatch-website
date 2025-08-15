@@ -28,8 +28,5 @@ export const SitePolygonDataProvider: React.FC<{
 
 export const useSitePolygonData = () => {
   const context = useContext(SitePolygonDataContext);
-  if (context === undefined) {
-    throw new Error("useSitePolygonData must be used within a SitePolygonDataProvider");
-  }
   return context;
 };
