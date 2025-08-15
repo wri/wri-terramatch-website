@@ -66,7 +66,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         return {
           title: t("Status: Draft"),
           subtitle: t(
-            `This application is currently in draft status. To continue completing your application, please click the "Continue Application" button below. If you need help with your application, reach out to TerraMatch support by emailing info@terramatch.org or clicking the "Contact Support" button below.`
+            `This application is currently in draft status. To continue your application, please click the "Continue Application" button below. If you need help with your application, reach out to TerraMatch support, info@terramatch.org, or click the "Contact Support" button below.`
           ),
           color: undefined,
           icon: IconNames.EDIT_CIRCLE,
