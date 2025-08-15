@@ -1,7 +1,6 @@
 import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import Menu from "@mui/material/Menu";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
@@ -19,6 +18,7 @@ import {
   parsePolygonDataV3,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
+import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
