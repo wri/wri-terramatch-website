@@ -52,6 +52,7 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
+  progress?: number;
   siteUuid?: string;
   isLoading?: boolean;
 }
@@ -75,7 +76,7 @@ const Polygons = (props: IPolygonProps) => {
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false } = props;
+  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false, progress } = props;
   const { map } = mapFunctions;
 
   const { openModal, closeModal } = useModalContext();
@@ -379,13 +380,13 @@ const Polygons = (props: IPolygonProps) => {
           <div className="flex flex-col gap-1">
             <When condition={props.totalPolygons ?? 0 > 0}>
               <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
-                <span className="font-bold">{displayPolygonCount.toLocaleString()}</span> of{" "}
+                <span className="font-bold">{(progress ?? displayPolygonCount).toLocaleString()}</span> of{" "}
                 <span className="font-bold">{(props.totalPolygons ?? 0).toLocaleString()}</span> polygons loaded
               </Text>
               <Box sx={{ width: "100%" }}>
                 <LinearProgress
-                  variant="determinate"
-                  value={(displayPolygonCount / (props.totalPolygons ?? 1)) * 100}
+                  variant={progress != null && progress < (props.totalPolygons ?? 0) ? "indeterminate" : "determinate"}
+                  value={((progress ?? displayPolygonCount) / (props.totalPolygons ?? 1)) * 100}
                   sx={{ borderRadius: 5 }}
                 />
               </Box>

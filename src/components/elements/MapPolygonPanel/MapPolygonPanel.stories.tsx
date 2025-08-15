@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import type { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import Component from "./MapPolygonPanel";
@@ -14,10 +14,10 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const items: SitePolygonFullDto[] = [
+const items: SitePolygonLightDto[] = [
   {
     uuid: "1",
-    lightResource: false,
+    lightResource: true,
     name: "Puerto Princesa Subterranean River National Park Forest Corridor",
     status: "approved",
     siteId: null,
@@ -32,20 +32,17 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   },
   {
     uuid: "2",
-    lightResource: false,
+    lightResource: true,
     name: "A medium sized project site to see how it looks with 2 lines",
     status: "submitted",
     siteId: null,
@@ -60,20 +57,17 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   },
   {
     uuid: "3",
-    lightResource: false,
+    lightResource: true,
     name: "A shorter project site",
     status: "draft",
     siteId: null,
@@ -88,20 +82,17 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   },
   {
     uuid: "4",
-    lightResource: false,
+    lightResource: true,
     name: "Very long name A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines A medium sized project site to see how it looks with 2 lines",
     status: "needs-more-information",
     siteId: null,
@@ -116,20 +107,17 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   },
   {
     uuid: "5",
-    lightResource: false,
+    lightResource: true,
     name: "A shorter project site",
     status: "approved",
     siteId: null,
@@ -144,20 +132,17 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   },
   {
     uuid: "6",
-    lightResource: false,
+    lightResource: true,
     name: "A shorter project site",
     status: "approved",
     siteId: null,
@@ -172,15 +157,12 @@ const items: SitePolygonFullDto[] = [
     siteName: null,
     versionName: null,
     plantingStatus: null,
-    geometry: null,
     practice: null,
     targetSys: null,
     distr: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
     primaryUuid: null
   }
 ];

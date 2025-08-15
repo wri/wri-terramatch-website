@@ -10,7 +10,7 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
@@ -23,7 +23,7 @@ import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: SitePolygonFullDto[];
+  items: SitePolygonLightDto[];
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -61,7 +61,7 @@ const MapSidePanel = ({
   const t = useT();
   const { format } = useDate();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<SitePolygonFullDto>();
+  const [selected, setSelected] = useState<SitePolygonLightDto>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");

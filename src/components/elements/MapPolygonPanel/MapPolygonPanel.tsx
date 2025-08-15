@@ -4,15 +4,15 @@ import { Else, If, Then } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: SitePolygonFullDto[];
-  onSelectItem: (item: SitePolygonFullDto) => void;
+  items: SitePolygonLightDto[];
+  onSelectItem: (item: SitePolygonLightDto) => void;
   onLoadMore: () => void;
   emptyText?: string;
   tabEditPolygon: string;

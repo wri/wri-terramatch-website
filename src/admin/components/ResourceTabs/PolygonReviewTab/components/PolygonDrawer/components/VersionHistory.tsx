@@ -23,7 +23,7 @@ import {
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { FileType, UploadedFile } from "@/types/common";
 
 const VersionHistory = ({
@@ -45,9 +45,9 @@ const VersionHistory = ({
   polygonFromMap,
   wrapperRef
 }: {
-  selectedPolygon: SitePolygonFullDto;
+  selectedPolygon: SitePolygonLightDto;
   setSelectPolygonVersion: any;
-  selectPolygonVersion: SitePolygonFullDto | undefined;
+  selectPolygonVersion: SitePolygonLightDto | undefined;
   refreshPolygonList?: () => void;
   refreshSiteData?: () => void;
   setSelectedPolygonData?: any;

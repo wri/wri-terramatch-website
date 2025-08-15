@@ -11,7 +11,7 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -151,7 +151,7 @@ const OverviewMapArea = ({
       {isMonitoring ? (
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-          items={(polygonsData ?? []) as SitePolygonFullDto[]}
+          items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
@@ -178,7 +178,7 @@ const OverviewMapArea = ({
       ) : (
         <MapSidePanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-          items={(polygonsData ?? []) as SitePolygonFullDto[]}
+          items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           className="absolute z-20 flex h-[500px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
           emptyText={t("No polygons are available.")}
