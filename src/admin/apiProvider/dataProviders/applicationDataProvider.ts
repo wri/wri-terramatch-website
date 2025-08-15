@@ -14,27 +14,12 @@ import {
   fetchPatchV2AdminFormsSubmissionsUUIDStatus,
   GetV2AdminFormsApplicationsError,
   GetV2AdminFormsApplicationsUUIDError,
-  GetV2AdminFormsSubmissionsExportError,
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
-import { apiFetch } from "@/generated/apiFetcher";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-export const fetchGetV2AdminFormsUUIDExport = (
-  variables: {
-    pathParams: { uuid: string };
-  },
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2AdminFormsSubmissionsExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/forms/submissions/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
 
 export const applicationSortableList: string[] = [
   "organisation_name",

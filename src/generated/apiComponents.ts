@@ -9644,6 +9644,51 @@ export const useDeleteV2ProjectPitchesUUID = (
   );
 };
 
+export type GetV2AdminFormsSubmissionsUUIDExportPathParams = {
+  uuid: string;
+};
+
+export type GetV2AdminFormsSubmissionsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2AdminFormsSubmissionsUUIDExportVariables = {
+  pathParams: GetV2AdminFormsSubmissionsUUIDExportPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2AdminFormsSubmissionsUUIDExport = (
+  variables: GetV2AdminFormsSubmissionsUUIDExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    Record<string, any>,
+    GetV2AdminFormsSubmissionsUUIDExportError,
+    undefined,
+    {},
+    {},
+    GetV2AdminFormsSubmissionsUUIDExportPathParams
+  >({ url: "/v2/admin/forms/submissions/{uuid}/export", method: "get", ...variables, signal });
+
+export const useGetV2AdminFormsSubmissionsUUIDExport = <TData = Record<string, any>>(
+  variables: GetV2AdminFormsSubmissionsUUIDExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2AdminFormsSubmissionsUUIDExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2AdminFormsSubmissionsUUIDExportError, TData>(
+    queryKeyFn({
+      path: "/v2/admin/forms/submissions/{UUID}/export",
+      operationId: "getV2AdminFormsSubmissionsUUIDExport",
+      variables
+    }),
+    ({ signal }) => fetchGetV2AdminFormsSubmissionsUUIDExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type GetV2FormsUUIDPathParams = {
   uuid: string;
 };
@@ -15020,43 +15065,6 @@ export const usePostAuthLogin = (
   return reactQuery.useMutation<PostAuthLoginResponse, PostAuthLoginError, PostAuthLoginVariables>(
     (variables: PostAuthLoginVariables) => fetchPostAuthLogin({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2AdminFormsSubmissionsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsSubmissionsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsSubmissionsExport = (
-  variables: GetV2AdminFormsSubmissionsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2AdminFormsSubmissionsExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/forms/submissions/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminFormsSubmissionsExport = <TData = Record<string, any>>(
-  variables: GetV2AdminFormsSubmissionsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2AdminFormsSubmissionsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2AdminFormsSubmissionsExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/submissions/export",
-      operationId: "getV2AdminFormsSubmissionsExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsSubmissionsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -24029,6 +24037,11 @@ export type QueryOperation =
       variables: GetV2AdminProjectPitchesExportVariables;
     }
   | {
+      path: "/v2/admin/forms/submissions/{UUID}/export";
+      operationId: "getV2AdminFormsSubmissionsUUIDExport";
+      variables: GetV2AdminFormsSubmissionsUUIDExportVariables;
+    }
+  | {
       path: "/v2/forms/{UUID}";
       operationId: "getV2FormsUUID";
       variables: GetV2FormsUUIDVariables;
@@ -24107,11 +24120,6 @@ export type QueryOperation =
       path: "/auth/me";
       operationId: "getAuthMe";
       variables: GetAuthMeVariables;
-    }
-  | {
-      path: "/v2/admin/forms/submissions/export";
-      operationId: "getV2AdminFormsSubmissionsExport";
-      variables: GetV2AdminFormsSubmissionsExportVariables;
     }
   | {
       path: "/v2/forms/option-labels";
