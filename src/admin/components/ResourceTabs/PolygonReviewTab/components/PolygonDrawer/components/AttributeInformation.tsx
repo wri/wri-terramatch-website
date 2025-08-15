@@ -132,7 +132,6 @@ const AttributeInformation = ({
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primaryUuid as string }
               })) as SitePolygonsDataResponse;
-              console.log("polygonVersionDataaaa", polygonVersionData);
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon.uuid) {
                 sitePolygonRefresh();

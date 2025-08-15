@@ -197,7 +197,6 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    console.log("polygonSelected", polygonSelected);
     if (checkPolygonValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
