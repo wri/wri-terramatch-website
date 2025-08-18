@@ -30,6 +30,22 @@ export const useGetEditEntityHandler = ({
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { getReadableEntityName } = useGetReadableEntityName();
+  let editTitle = t("Are you sure you want to edit your {entityName}?", {
+    entityName: getReadableEntityName(entityName)
+  });
+  let editContent = t(
+    "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
+    {
+      entityName: getReadableEntityName(entityName)
+    }
+  );
+
+  if (entityStatus === "approved" && updateRequestStatus === "draft") {
+    editTitle = t("Continue working on draft report?");
+    editContent = t(
+      'By clicking "Edit," you\'ll access your draft report. You can edit the report contents and either save the report as a draft again, or click to the end and press "Submit" to send it to your project manager for review.'
+    );
+  }
 
   const handleEdit = () => {
     if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
@@ -53,13 +69,8 @@ export const useGetEditEntityHandler = ({
         ModalId.CONFIRM_EDIT,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("Are you sure you want to edit your {entityName}?", {
-            entityName: getReadableEntityName(entityName)
-          })}
-          content={t(
-            "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
-            { entityName: getReadableEntityName(entityName) }
-          )}
+          title={editTitle}
+          content={editContent}
           primaryButtonProps={{
             children: t("Edit"),
             onClick: () => {
