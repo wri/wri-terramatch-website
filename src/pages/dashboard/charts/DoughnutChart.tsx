@@ -10,13 +10,26 @@ const DoughnutChart: React.FC<{ data: ChartDataVolunteers }> = ({ data }) => {
   const { chartData, total } = data;
   const totals = calculateTotalsVolunteers(chartData);
 
+  const getColorForEntry = (entryName: string, index: number) => {
+    const colorMap: { [key: string]: string } = {
+      Women: COLORS_VOLUNTEERS[0],
+      Men: COLORS_VOLUNTEERS[1],
+      "Non-Binary": COLORS_VOLUNTEERS[2],
+      Unknown: COLORS_VOLUNTEERS[3],
+      Youth: COLORS_VOLUNTEERS[0],
+      "Non-Youth": COLORS_VOLUNTEERS[1]
+    };
+
+    return colorMap[entryName] || COLORS_VOLUNTEERS[index % COLORS_VOLUNTEERS.length];
+  };
+
   return (
-    <div className="h-[360px] w-full">
+    <div className="h-[305px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={chartData} cx="50%" cy="50%" innerRadius={85} outerRadius={120} fill="#8884d8" dataKey="value">
+          <Pie data={chartData} cx="50%" cy="50%" innerRadius={65} outerRadius={90} fill="#8884d8" dataKey="value">
             {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS_VOLUNTEERS[index % COLORS_VOLUNTEERS.length]} />
+              <Cell key={`cell-${index}`} fill={getColorForEntry(entry.name, index)} />
             ))}
           </Pie>
           <Tooltip content={props => <CustomTooltip {...props} total={total} />} />
