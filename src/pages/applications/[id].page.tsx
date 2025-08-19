@@ -48,7 +48,7 @@ const ApplicationPage = () => {
           <div className="m-auto flex max-w-[82vw] flex-col gap-15 py-15">
             <ApplicationStatus application={application!} />
             <ApplicationTimeline application={application} />
-            <ApplicationOverview submissions={application?.form_submissions} />
+            <ApplicationOverview submissions={application?.form_submissions} organisation={application?.organisation} />
           </div>
         </LoadingContainer>
       </div>
