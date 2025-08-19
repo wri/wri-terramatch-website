@@ -40,7 +40,7 @@ export const useGetEditEntityHandler = ({
     }
   );
 
-  if (entityStatus === "approved" && updateRequestStatus === "draft") {
+  if (entityStatus === "started") {
     editTitle = t("Continue working on draft report?");
     editContent = t(
       'By clicking "Edit," you\'ll access your draft report. You can edit the report contents and either save the report as a draft again, or click to the end and press "Submit" to send it to your project manager for review.'
