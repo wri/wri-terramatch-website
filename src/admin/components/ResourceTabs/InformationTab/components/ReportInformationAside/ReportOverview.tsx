@@ -26,20 +26,24 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               <TextField source={parent.source} />
             </Labeled>
           )}
-          <Labeled label="Project">
-            <TextField source="projectName" />
-          </Labeled>
+          {record?.projectName && (
+            <Labeled label="Project">
+              <TextField source="projectName" />
+            </Labeled>
+          )}
 
           <Labeled label="Organisation">
             <TextField source="organisationName" />
           </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
-            <Grid xs={4} item>
-              <Labeled label="Framework">
-                <FrameworkField prop="frameworkKey" />
-              </Labeled>
-            </Grid>
+            {record?.frameworkKey && (
+              <Grid xs={4} item>
+                <Labeled label="Framework">
+                  <FrameworkField prop="frameworkKey" />
+                </Labeled>
+              </Grid>
+            )}
 
             <Grid xs={4} item>
               <Labeled label="Status">
@@ -53,11 +57,13 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               </Labeled>
             </Grid>
 
-            <Grid xs={4} item>
-              <Labeled label="Due Date">
-                <DateField source="dueAt" label="Due Date" locales="en-GB" />
-              </Labeled>
-            </Grid>
+            {record?.dueAt && (
+              <Grid xs={4} item>
+                <Labeled label="Due Date">
+                  <DateField source="dueAt" label="Due Date" locales="en-GB" />
+                </Labeled>
+              </Grid>
+            )}
           </Grid>
 
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
