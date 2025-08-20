@@ -11,9 +11,10 @@ import { Entity } from "@/types/common";
 
 interface ApplicationOverviewProps {
   submissions?: FormSubmissionRead[];
+  organisation?: any;
 }
 
-const ApplicationOverview = ({ submissions }: ApplicationOverviewProps) => {
+const ApplicationOverview = ({ submissions, organisation }: ApplicationOverviewProps) => {
   const t = useT();
 
   return (
@@ -27,7 +28,7 @@ const ApplicationOverview = ({ submissions }: ApplicationOverviewProps) => {
         onChangeSelected={() => {}}
         tabItems={
           submissions?.map(sub => ({
-            body: <Item submission={sub} />,
+            body: <Item submission={sub} organisation={organisation} />,
             title: sub.form?.title ?? ""
           })) || []
         }
@@ -36,7 +37,7 @@ const ApplicationOverview = ({ submissions }: ApplicationOverviewProps) => {
   );
 };
 
-const Item = ({ submission }: { submission?: FormSubmissionRead }) => {
+const Item = ({ submission, organisation }: { submission?: FormSubmissionRead; organisation: any }) => {
   const currentPitchEntity: Entity = {
     entityName: "project-pitches",
     entityUUID: submission?.project_pitch_uuid ?? ""
@@ -47,7 +48,7 @@ const Item = ({ submission }: { submission?: FormSubmissionRead }) => {
   return (
     <FrameworkProvider frameworkKey={framework}>
       <div className="flex flex-col gap-6 bg-white p-8">
-        <FormSummary steps={formSteps!} values={values} entity={currentPitchEntity} />
+        <FormSummary steps={formSteps!} values={values} entity={currentPitchEntity} organisation={organisation} />
       </div>
     </FrameworkProvider>
   );

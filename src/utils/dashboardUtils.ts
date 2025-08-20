@@ -93,8 +93,8 @@ export const parseVolunteersByType = (
     const chartData: ChartDataItem[] = [
       { name: "Women", value: (data as any).volunteerWomen ?? 0 },
       { name: "Men", value: (data as any).volunteerMen ?? 0 },
-      { name: "Non-Binary", value: (data as any).volunteerNonBinary ?? 0 },
-      { name: "Other", value: (data as any).volunteerOthers ?? 0 }
+      { name: "Unknown", value: (data as any).volunteerOthers ?? 0 },
+      { name: "Non-Binary", value: (data as any).volunteerNonBinary ?? 0 }
     ];
     const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
     return { type, chartData, total };
@@ -102,7 +102,7 @@ export const parseVolunteersByType = (
   const chartData: ChartDataItem[] = [
     { name: "Youth", value: (data as any).volunteerYouth ?? 0 },
     { name: "Non-Youth", value: (data as any).volunteerNonYouth ?? 0 },
-    { name: "Other", value: (data as any).volunteerAgeOthers ?? 0 }
+    { name: "Unknown", value: (data as any).volunteerAgeOthers ?? 0 }
   ];
   const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
   return { type, chartData, total };

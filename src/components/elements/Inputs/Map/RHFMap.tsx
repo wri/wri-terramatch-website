@@ -42,7 +42,7 @@ const RHFMap = ({
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
-    field: { onChange }
+    field: { onChange, value }
   } = useController(inputWrapperProps);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
@@ -106,6 +106,29 @@ const RHFMap = ({
 
     getDataProjectPolygon();
   }, [projectPolygon, isRefetching, setSelectPolygonFromMap]);
+
+  useEffect(() => {
+    const apiPolyUuid = projectPolygon?.project_polygon?.poly_uuid;
+    const fieldName = inputWrapperProps.name;
+
+    if (apiPolyUuid != null) {
+      let shouldUpdate = false;
+      if (value == null) {
+        shouldUpdate = true;
+      } else if (typeof value === "object" && (value as any)?.poly_uuid !== apiPolyUuid) {
+        shouldUpdate = true;
+      }
+
+      if (shouldUpdate) {
+        formHook.setValue(fieldName, { poly_uuid: apiPolyUuid }, { shouldValidate: true, shouldDirty: true });
+      }
+    } else {
+      if (value != null) {
+        formHook.setValue(fieldName, null, { shouldValidate: true, shouldDirty: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectPolygon?.project_polygon?.poly_uuid]);
 
   useEffect(() => {
     if (entity) {

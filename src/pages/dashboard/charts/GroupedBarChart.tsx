@@ -22,7 +22,7 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
       Women: t("Women"),
       Men: t("Men"),
       "Non-Binary": t("Non-Binary"),
-      Other: t("Other"),
+      Other: t("Unknown"),
       "Non-Youth": t("Non-Youth"),
       Youth: t("Youth")
     };
@@ -71,14 +71,14 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
           <>
             <Bar dataKey={t("Women")} fill="#70B52B" shape={(props: any) => <CustomBar {...props} />} />
             <Bar dataKey={t("Men")} fill="#239FDC" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Unknown")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
             <Bar dataKey={t("Non-Binary")} fill="#065327" shape={(props: any) => <CustomBar {...props} />} />
-            <Bar dataKey={t("Other")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
           </>
         ) : (
           <>
             <Bar dataKey={t("Youth")} fill="#70B52B" shape={(props: any) => <CustomBar {...props} />} />
             <Bar dataKey={t("Non-Youth")} fill="#239FDC" shape={(props: any) => <CustomBar {...props} />} />
-            <Bar dataKey={t("Other")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
+            <Bar dataKey={t("Unknown")} fill="#09354D" shape={(props: any) => <CustomBar {...props} />} />
           </>
         )}
       </BarChart>
