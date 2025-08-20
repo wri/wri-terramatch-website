@@ -6,6 +6,7 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
+import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/Map-mapbox/utils";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -15,7 +16,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  fetchGetV2TerrafundPolygonUuid,
   fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
@@ -26,6 +26,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -80,22 +81,21 @@ const PolygonDrawer = ({
   polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
-  const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygon>();
+  const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
-  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygon>();
+  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
-  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygon>;
+  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygonLightDto>;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const updateSingleSitePolygonData = context?.updateSingleSitePolygonData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
-  const selectedPolygon = sitePolygonData?.find((item: SitePolygon) => item?.poly_id === polygonSelected);
+  const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, setPolygonCriteriaMap } =
     contextMapArea;
   const { showLoader, hideLoader } = useLoading();
@@ -123,21 +123,6 @@ const PolygonDrawer = ({
     }
   );
 
-  const updatePolygonData = async (polygonId: string) => {
-    try {
-      const updatedPolygonData = await fetchGetV2TerrafundPolygonUuid({
-        pathParams: { uuid: polygonId }
-      });
-
-      if (updatedPolygonData?.site_polygon?.uuid) {
-        updateSingleSitePolygonData?.(updatedPolygonData.site_polygon.uuid, updatedPolygonData.site_polygon);
-      }
-    } catch (error) {
-      Log.error("Error fetching updated polygon data:", error);
-      openNotification("warning", t("Warning"), t("Updated polygon data could not be retrieved."));
-    }
-  };
-
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: async (data: any) => {
       setCheckPolygonValidation(false);
@@ -147,7 +132,7 @@ const PolygonDrawer = ({
       }));
 
       if (data.polygon_id) {
-        await updatePolygonData(data.polygon_id);
+        context?.reloadSiteData?.();
       }
 
       refetchValidationCriteria();
@@ -182,22 +167,26 @@ const PolygonDrawer = ({
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
-      if (!selectedPolygon?.primary_uuid) {
+      if (!selectedPolygon?.primaryUuid) {
         return;
       }
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+        pathParams: { uuid: selectedPolygon?.primaryUuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
-      setSelectedPolygonData(polygonActive);
-      setSelectedPolygonToDrawer?.({
-        id: selectedPolygonIndex as string,
-        status: polygonActive?.status as string,
-        label: polygonActive?.poly_name as string,
-        uuid: polygonActive?.poly_id as string
-      });
-      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
-      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      sitePolygonRefresh?.();
+      if (polygonActive) {
+        const polygonActiveLightDto = parseSitePolygonsDataResponseToLightDto(polygonActive);
+        setSelectedPolygonData(polygonActiveLightDto);
+        setSelectedPolygonToDrawer?.({
+          id: selectedPolygonIndex as string,
+          status: polygonActiveLightDto.status as string,
+          label: polygonActiveLightDto.name as string,
+          uuid: polygonActiveLightDto.polygonUuid as string
+        });
+        setPolygonFromMap({ isOpen: true, uuid: polygonActiveLightDto.polygonUuid ?? "" });
+        setStatusSelectedPolygon(polygonActiveLightDto.status ?? "");
+      }
       setIsLoadingDropdown(false);
       hideLoader();
     },
@@ -236,11 +225,11 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
-      const PolygonData = sitePolygonData.find((data: SitePolygon) => data.poly_id === polygonSelected);
-      setSelectedPolygonData(PolygonData ?? {});
+      const PolygonData = sitePolygonData.find((data: SitePolygonLightDto) => data.polygonUuid === polygonSelected);
+      setSelectedPolygonData(PolygonData ?? undefined);
       setStatusSelectedPolygon(PolygonData?.status ?? "");
     } else {
-      setSelectedPolygonData({});
+      setSelectedPolygonData(undefined);
       setStatusSelectedPolygon("");
     }
   }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
@@ -285,10 +274,10 @@ const PolygonDrawer = ({
     isLoading: isLoadingVersions
   } = useGetV2SitePolygonUuidVersions(
     {
-      pathParams: { uuid: (selectPolygonVersion?.primary_uuid ?? selectedPolygonData?.primary_uuid) as string }
+      pathParams: { uuid: (selectPolygonVersion?.primaryUuid ?? selectedPolygonData?.primaryUuid) as string }
     },
     {
-      enabled: !!selectPolygonVersion?.primary_uuid || !!selectedPolygonData?.primary_uuid || !!polygonFromMap?.uuid
+      enabled: !!selectPolygonVersion?.primaryUuid || !!selectedPolygonData?.primaryUuid || !!polygonFromMap?.uuid
     }
   );
 
@@ -319,7 +308,7 @@ const PolygonDrawer = ({
 
   const auditData = {
     entity: "site-polygon",
-    entity_uuid: selectedPolygon?.poly_id as string
+    entity_uuid: selectedPolygon?.polygonUuid as string
   };
 
   const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
@@ -332,10 +321,10 @@ const PolygonDrawer = ({
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
       <div>
-        <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.id}`}</Text>
+        <Text variant={"text-12-light"}>{`Polygon ID: ${selectedPolygonData?.polygonUuid}`}</Text>
         <div className="flex items-baseline gap-2">
           <Text variant={"text-20-bold"} className="flex items-center gap-1 break-all">
-            {selectedPolygonData?.poly_name ?? "Unnamed Polygon"}
+            {selectedPolygonData?.name ?? "Unnamed Polygon"}
           </Text>
           <div className={`h-4 w-4 min-w-[16px] rounded-full ${statusColor[statusSelectedPolygon]}`} />
         </div>
@@ -367,7 +356,7 @@ const PolygonDrawer = ({
             </div>
             <StatusDisplay
               titleStatus="Polygon"
-              name={selectedPolygon?.poly_name}
+              name={selectedPolygon?.name}
               refresh={refresh}
               record={selectedPolygon}
               mutate={mutateSitePolygons}
@@ -416,7 +405,7 @@ const PolygonDrawer = ({
               {selectedPolygonData && (
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  updateSingleSitePolygonData={updateSingleSitePolygonData ?? (() => {})}
+                  sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
                   isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}

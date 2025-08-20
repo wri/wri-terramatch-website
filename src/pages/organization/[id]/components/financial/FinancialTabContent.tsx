@@ -187,7 +187,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               <Text variant="text-24-bold" className="mb-2">
                 {t("Current Ratio by Year")}
               </Text>
-              <FinancialCurrentRatioChart data={financialData} />
+              <FinancialCurrentRatioChart data={financialData} currency={organization?.currency} />
             </div>
             <div className="flex h-full flex-col justify-center">
               <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">

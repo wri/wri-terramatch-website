@@ -12,12 +12,18 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
+import { CHART_TYPES, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { formatCohortDisplay, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import {
+  formatCohortDisplay,
+  parseDataToObjetive,
+  parseHectaresUnderRestorationData,
+  parseJobCreatedByType,
+  parseVolunteersByType
+} from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -93,33 +99,6 @@ const getOrganizationByUuid = (projects: any[], uuid: string) => {
   if (!project) return "Unknown Organization";
 
   return project.organisationName || "Unknown Organization";
-};
-
-const parseJobCreatedByType = (data: any, type: string) => {
-  if (!data) return { type, chartData: [] };
-
-  const ptWomen = data.totalPtWomen ?? 0;
-  const ptMen = data.totalPtMen ?? 0;
-  const ptYouth = data.totalPtYouth ?? 0;
-  const ptNonYouth = data.totalPtNonYouth ?? 0;
-  const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
-  const chartData = [
-    {
-      name: "Part-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`totalPt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
-    },
-    {
-      name: "Full-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`totalFt${type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "NonYouth"}`]
-    }
-  ];
-  return { type, chartData, total: data.totalJobsCreated, maxValue };
 };
 
 const Dashboard = () => {
@@ -364,14 +343,11 @@ const Dashboard = () => {
     [activeProjects, filters.uuid]
   );
 
-  const jobsCreatedByGenderData = useMemo(
-    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender),
-    [jobsCreatedData]
-  );
-  const jobsCreatedByAgeData = useMemo(
-    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age),
-    [jobsCreatedData]
-  );
+  const jobsCreatedByGenderData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "gender"), [jobsCreatedData]);
+  const jobsCreatedByAgeData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "age"), [jobsCreatedData]);
+
+  const volunteersByGenderData = useMemo(() => parseVolunteersByType(jobsCreatedData, "gender"), [jobsCreatedData]);
+  const volunteersByAgeData = useMemo(() => parseVolunteersByType(jobsCreatedData, "age"), [jobsCreatedData]);
 
   const projectCounts = useMemo(
     () => ({
@@ -652,6 +628,37 @@ const Dashboard = () => {
               tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
               isLoading={isLoadingJobsCreated}
+            />
+          </div>
+
+          <SecDashboard
+            title={t("Total Volunteers")}
+            data={{ value: jobsCreatedData?.totalVolunteers }}
+            tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
+            isUserAllowed={isUserAllowed?.allowed}
+          />
+          <div className="grid w-full grid-cols-2 gap-12">
+            <SecDashboard
+              title={t("Volunteers Created by Gender")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={volunteersByGenderData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={false}
+            />
+            <SecDashboard
+              title={t("Volunteers Created by Age")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={volunteersByAgeData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={false}
             />
           </div>
         </PageCard>

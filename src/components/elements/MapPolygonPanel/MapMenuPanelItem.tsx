@@ -82,7 +82,6 @@ const MapMenuPanelItem = ({
 
     if (polygonValidation != null) {
       const parsedData = parseValidationDataFromContext(polygonValidation);
-
       if (!isAdmin) {
         const updatedData = parsedData.map(item => {
           if (Number(item.id) === 14 && !item.status && item.extra_info != null) {
@@ -100,8 +99,7 @@ const MapMenuPanelItem = ({
           return item;
         });
         setPolygonValidationData(updatedData);
-
-        if (validationStatus === "failed") {
+        if (validationStatus === "failed" && updatedData.length > 0) {
           const hasOnlyPlantingStatusError = updatedData.every(item => (Number(item.id) === 14 ? item.status : true));
           if (hasOnlyPlantingStatusError) {
             setAdjustedValidationStatus("passed");

@@ -220,7 +220,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { updateSingleSitePolygonData } = context ?? {};
+  const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -586,7 +586,7 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                reloadSiteData?.();
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
@@ -693,8 +693,9 @@ export const MapContainer = ({
       const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const nameFile = record?.organisation?.name || "polygons";
       link.href = url;
-      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.download = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.geojson`;
       link.click();
       URL.revokeObjectURL(url);
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));

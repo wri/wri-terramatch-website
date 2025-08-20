@@ -23,6 +23,7 @@ import {
   usePutV2SitePolygonUuidMakeActive
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { FileType, UploadedFile } from "@/types/common";
 
 const VersionHistory = ({
@@ -44,9 +45,9 @@ const VersionHistory = ({
   polygonFromMap,
   wrapperRef
 }: {
-  selectedPolygon: SitePolygon;
+  selectedPolygon: SitePolygonLightDto;
   setSelectPolygonVersion: any;
-  selectPolygonVersion: SitePolygon | undefined;
+  selectPolygonVersion: SitePolygonLightDto | undefined;
   refreshPolygonList?: () => void;
   refreshSiteData?: () => void;
   setSelectedPolygonData?: any;
@@ -116,7 +117,7 @@ const VersionHistory = ({
       }
     }
     try {
-      const polygonSelectedPrimaryUuid = selectPolygonVersion?.primary_uuid ?? selectedPolygon.primary_uuid;
+      const polygonSelectedPrimaryUuid = selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
 
       await Promise.all(uploadPromises);
       await refetch();
@@ -167,7 +168,7 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refetch();
       const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon.primary_uuid as string }
+        pathParams: { uuid: selectedPolygon.primaryUuid as string }
       })) as SitePolygonsDataResponse;
       const polygonActive = response?.find(item => item.is_active);
       setSelectedPolygonData(polygonActive);
@@ -216,7 +217,7 @@ const VersionHistory = ({
 
   const makeActivePolygon = async () => {
     const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
-    const polygonUuid = selectPolygonVersion?.poly_id ?? selectedPolygon.poly_id;
+    const polygonUuid = selectPolygonVersion?.polygonUuid ?? selectedPolygon.polygonUuid;
     const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
     if (!versionActive?.is_active) {
       await mutateMakeActive({
@@ -239,7 +240,7 @@ const VersionHistory = ({
 
   const deletePolygonVersion = async () => {
     await mutateDeletePolygonVersion({
-      pathParams: { uuid: (selectPolygonVersion?.poly_id ?? selectedPolygon.poly_id) as string }
+      pathParams: { uuid: (selectPolygonVersion?.polygonUuid ?? selectedPolygon.polygonUuid) as string }
     });
   };
 
@@ -332,8 +333,8 @@ const VersionHistory = ({
                   className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
                   onClick={() =>
                     downloadGeoJsonPolygon(
-                      selectPolygonVersion?.poly_id ?? "",
-                      selectPolygonVersion?.poly_name ? formatStringName(selectPolygonVersion.poly_name) : "polygon"
+                      selectPolygonVersion?.polygonUuid ?? "",
+                      selectPolygonVersion?.name ? formatStringName(selectPolygonVersion.name) : "polygon"
                     )
                   }
                 >
