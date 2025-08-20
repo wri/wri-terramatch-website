@@ -12,10 +12,10 @@ import {
   SelectInput,
   ShowButton,
   TextField,
-  useDataProvider,
   useRecordContext
 } from "react-admin";
 
+import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
@@ -25,10 +25,11 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getFinancialReportStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import { fetchGetV2FinancialReportsExport, GetV2FinancialReportsExportError } from "@/generated/apiComponents";
+import { FinancialReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
-import { V2FinancialLiteReportRead } from "../../../../generated/apiSchemas";
-import { FinancialReportsDataProvider } from "../../../apiProvider/dataProviders/financialReportDataProvider";
 import modules from "../..";
 
 const FinancialReportsDataGrid: FC = () => {
@@ -48,20 +49,20 @@ const FinancialReportsDataGrid: FC = () => {
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
-      <TextField source="name" label="Organization" sortable={false} />
+      <TextField source="organisationName" label="Organization" sortable={false} />
       <FunctionField
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: V2FinancialLiteReportRead) => {
+        render={(record?: FinancialReportLightDto) => {
           const { title } =
             getFinancialReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
-      <TextField source="year_of_report" label="Year of Report" />
-      <DateField source="updated_at" label="Last Updated" locales="en-GB" />
-      <DateField source="submitted_at" label="Date Submitted" locales="en-GB" />
+      <TextField source="yearOfReport" label="Year of Report" />
+      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
+      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -72,12 +73,16 @@ const FinancialReportsDataGrid: FC = () => {
 export const FinancialReportsList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
 
-  const financialReportsDataProvider = useDataProvider<FinancialReportsDataProvider>();
-
-  const handleExport = () => {
+  const handleExport = async () => {
     setExporting(true);
-
-    financialReportsDataProvider.export(modules.financialReport.ResourceName).finally(() => setExporting(false));
+    try {
+      const response = (await fetchGetV2FinancialReportsExport({})) as Blob;
+      await downloadFileBlob(response, "FinancialReports.csv");
+    } catch (e) {
+      throw getFormattedErrorForRA(e as GetV2FinancialReportsExportError);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const filters = [
