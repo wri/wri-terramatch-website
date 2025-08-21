@@ -58,9 +58,10 @@ export interface FormEntry {
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
-  const { record } = useShowContext();
+  let { record } = useShowContext();
   const { type, entity } = props;
 
+  record = { organisation: props.organisation, ...record };
   const uuid = entity?.entityUUID || record?.uuid;
   const entityType = entity?.entityName || (type as EntityName);
 

@@ -88,7 +88,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
 
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+        const validationInfo = validationData?.[polygon.polygonUuid] ?? validationData?.[polygon.uuid];
 
         const excludedFromValidationCriterias = [
           ESTIMATED_AREA_CRITERIA_ID,
@@ -105,11 +105,11 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         let checked = false;
         if (isAdmin) {
           checked =
-            polygon.validation_status === "passed" ||
-            polygon.validation_status === "partial" ||
-            polygon.validation_status === "failed";
+            polygon.validationStatus === "passed" ||
+            polygon.validationStatus === "partial" ||
+            polygon.validationStatus === "failed";
         } else {
-          const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+          const validationInfo = validationData?.[polygon.polygonUuid] ?? validationData?.[polygon.uuid];
           if (validationInfo?.nonValidCriteria != null) {
             const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
 
@@ -122,32 +122,32 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
 
             checked =
               isOnlyPlantingStatusError ||
-              polygon.validation_status === "passed" ||
-              polygon.validation_status === "partial";
+              polygon.validationStatus === "passed" ||
+              polygon.validationStatus === "partial";
 
-            let finalValidationStatus = polygon.validation_status;
-            if (!isAdmin && polygon.validation_status === "failed" && isOnlyPlantingStatusError) {
+            let finalValidationStatus = polygon.validationStatus;
+            if (!isAdmin && polygon.validationStatus === "failed" && isOnlyPlantingStatusError) {
               finalValidationStatus = "passed";
             }
 
             return {
-              id: polygon.poly_id,
+              id: polygon.polygonUuid,
               checked,
-              name: polygon.poly_name ?? "Unnamed Polygon",
+              name: polygon.name ?? "Unnamed Polygon",
               failingCriterias,
               status: polygon.status as StatusEnum,
               validation_status: finalValidationStatus
             };
           } else {
-            checked = polygon.validation_status === "passed" || polygon.validation_status === "partial";
+            checked = polygon.validationStatus === "passed" || polygon.validationStatus === "partial";
 
             return {
-              id: polygon.poly_id,
+              id: polygon.polygonUuid,
               checked,
-              name: polygon.poly_name ?? "Unnamed Polygon",
+              name: polygon.name ?? "Unnamed Polygon",
               failingCriterias,
               status: polygon.status as StatusEnum,
-              validation_status: polygon.validation_status
+              validation_status: polygon.validationStatus
             };
           }
         }
