@@ -4,9 +4,10 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type FinancialReportHeaderProps = {
-  financialReport?: any;
+  financialReport?: FinancialReportFullDto;
 };
 
 const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) => {
@@ -18,7 +19,7 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
     <PageHeader
       className="h-[203px]"
       title={"Financial Report"}
-      subtitles={[financialReport?.created_at ? new Date(financialReport?.created_at).toLocaleDateString() : ""]}
+      subtitles={[financialReport?.createdAt ? new Date(financialReport?.createdAt).toLocaleDateString() : ""]}
       hasBackButton={false}
     >
       <div className="flex gap-4">

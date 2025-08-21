@@ -1,9 +1,11 @@
 import { useT } from "@transifex/react";
 
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
+import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Status } from "@/types/common";
 
 interface FinancialReportStatusBarProps {
-  financialReport: any;
+  financialReport: FinancialReportFullDto;
 }
 
 const FinancialReportStatusBar = ({ financialReport }: FinancialReportStatusBarProps) => {
@@ -28,7 +30,7 @@ const FinancialReportStatusBar = ({ financialReport }: FinancialReportStatusBarP
     return statusConfigMapping[status]?.title ?? statusConfigMapping.started?.title;
   };
 
-  return <StatusBar title={getStatusConfig(reportStatus)} status={reportStatus} />;
+  return <StatusBar title={getStatusConfig(reportStatus)} status={reportStatus as Status} />;
 };
 
 export default FinancialReportStatusBar;
