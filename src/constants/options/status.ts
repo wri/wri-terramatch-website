@@ -28,7 +28,8 @@ export const getFinancialReportStatusOptions = (t: typeof useT | Function = (t: 
     {
       value: "submitted",
       title: t("Submitted")
-    }
+    },
+    ...getReportStatusOptions(t)
   ] as Option[];
 
 export const getTaskStatusOptions = (t: typeof useT | Function = (t: string) => t) =>

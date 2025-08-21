@@ -21,7 +21,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
         </Typography>
 
         <Stack gap={3}>
-          {parent && (
+          {parent && parent.label !== "Financial Report" && (
             <Labeled label={parent.label}>
               <TextField source={parent.source} />
             </Labeled>
