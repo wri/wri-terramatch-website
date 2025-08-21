@@ -1443,6 +1443,38 @@ export type FinancialIndicatorDto = {
   documentation: MediaDto[] | null;
 };
 
+export type FundingTypeDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  source: string | null;
+  amount: number | null;
+  year: number | null;
+  type: string | null;
+  organisationName: string | null;
+  organisationUuid: string | null;
+};
+
 export type FinancialReportFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1498,6 +1530,7 @@ export type FinancialReportFullDto = {
    * The associated organisation status
    */
   organisationStatus: string | null;
+  fundingTypes: FundingTypeDto[] | null;
 };
 
 export type ProjectUpdateAttributes = {
@@ -1622,72 +1655,6 @@ export type NurseryReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
-export type FinancialReportUpdateAttributes = {
-  /**
-   * Request to change to the status of the given entity
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
-   * Update the feedback
-   */
-  feedback?: string;
-  /**
-   * Update the feedback fields
-   */
-  feedbackFields?: string[];
-  /**
-   * Update the title of the financial report
-   */
-  title?: string;
-  /**
-   * Update the year of the report
-   */
-  yearOfReport?: number;
-  /**
-   * Update the due date
-   *
-   * @format date-time
-   */
-  dueAt?: string;
-  /**
-   * Update the submitted date
-   *
-   * @format date-time
-   */
-  submittedAt?: string;
-  /**
-   * Update the approved date
-   *
-   * @format date-time
-   */
-  approvedAt?: string;
-  /**
-   * Update the completion percentage
-   */
-  completion?: number;
-  /**
-   * Update the answers
-   */
-  answers?: Record<string, any>;
-  /**
-   * Update the financial start month
-   */
-  finStartMonth?: number;
-  /**
-   * Update the currency
-   */
-  currency?: string;
-};
-
-export type FinancialReportUpdateData = {
-  type: "financialReports";
-  /**
-   * @format uuid
-   */
-  id: string;
-  attributes: FinancialReportUpdateAttributes;
-};
-
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1695,8 +1662,7 @@ export type EntityUpdateBody = {
     | NurseryUpdateData
     | ProjectReportUpdateData
     | SiteReportUpdateData
-    | NurseryReportUpdateData
-    | FinancialReportUpdateData;
+    | NurseryReportUpdateData;
 };
 
 /**
