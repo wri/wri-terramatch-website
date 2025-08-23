@@ -123,7 +123,7 @@ export const UserList = () => {
       </Stack>
 
       <List
-        actions={<ListActionsCreateFilter canCreateUser={isFrameworkAdmin} onExport={handleExport} />}
+        actions={<ListActionsCreateFilter canCreate={isFrameworkAdmin} onExport={handleExport} />}
         filters={filters}
       >
         <UserDataGrid />
