@@ -61,15 +61,7 @@ const OrganisationCreate: FC = () => {
         <TextInput source="hqZipcode" label="HQ Zipcode" fullWidth />
         <SelectInput source="hqCountry" label="HQ Country" choices={countryChoices} fullWidth />
         <TextInput source="phone" label="Phone" fullWidth />
-        <SelectArrayInput
-          source="countries"
-          label="Countries"
-          choices={countryChoices}
-          fullWidth
-          onChange={event => {
-            console.log("countries select", event.target.value);
-          }}
-        />
+        <SelectArrayInput source="countries" label="Countries" choices={countryChoices} fullWidth />
         <ReferenceInput
           source="fundingProgrammeUuid"
           reference={modules.fundingProgramme.ResourceName}
