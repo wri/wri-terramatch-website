@@ -369,7 +369,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
                 }
 
                 const create = (attributes: CreateAttributes<TVariables>) => {
-                  if (createFailure != null) {
+                  if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(endpoint!.url, variables), endpoint!.method);
                   }
                   endpoint!.fetch({ ...variables, body: { data: { type: resource, attributes } } });
