@@ -6,10 +6,9 @@ import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullFinancialReport } from "@/connections/Entity";
-import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 
 import FinancialReportHeader from "./components/FinancialReportHeader";
-import FinancialReportStatusBar from "./components/FinancialReportStatusBar";
 import FinancialReportOverviewTab from "./tabs/Overview";
 
 const FinancialReportDetailPage = () => {
@@ -38,7 +37,7 @@ const FinancialReportDetailPage = () => {
         ]}
       />
       <FinancialReportHeader financialReport={financialReport} />
-      <FinancialReportStatusBar financialReport={financialReport as FinancialReportFullDto} />
+      <StatusBar entityName="financial-reports" entity={financialReport} />
       <SecondaryTabs
         tabItems={[
           { key: "overview", title: t("Overview"), body: <FinancialReportOverviewTab report={financialReport} /> }
