@@ -50,7 +50,7 @@ const OrganisationCreate: FC = () => {
   const level1ProposedChoices = useGadmChoices({ level: 1, parentCodes: level0Proposed });
 
   return (
-    <Create title="Create Organisation">
+    <Create title="Create Organisation" redirect="show">
       <SimpleForm validate={validateForm(yup.object(VALIDATION))}>
         <TextInput source="name" label="Organisation Name" fullWidth />
         <SelectInput source="type" label="Organisation Type" choices={ORG_TYPE_CHOICES} fullWidth />
