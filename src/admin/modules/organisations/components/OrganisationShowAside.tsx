@@ -23,9 +23,9 @@ import modules from "../..";
 export const OrganisationShowAside = ({ financialReportTab }: { financialReportTab?: boolean }) => {
   const refresh = useRefresh();
   const { record } = useShowContext<V2OrganisationRead & RaRecord>();
-  const hasOrganisationAttrib = !!record?.organisation;
-  const uuid = hasOrganisationAttrib ? record?.organisation?.uuid : (record?.uuid as string);
-  const status = hasOrganisationAttrib ? record?.organisation?.status : record?.status;
+  const hasOrganisationAttrib = !!record?.organisationUuid;
+  const uuid = hasOrganisationAttrib ? record?.organisationUuid : (record?.uuid as string);
+  const status = hasOrganisationAttrib ? record?.organisationStatus : record?.status;
   const createPath = useCreatePath();
 
   const { mutate: approve } = usePutV2AdminOrganisationsApprove({
@@ -45,13 +45,13 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
       <Grid container spacing={2} marginY={2}>
         <Grid item xs={6}>
           <Labeled>
-            <TextField source={hasOrganisationAttrib ? "organisation.name" : "name"} />
+            <TextField source={hasOrganisationAttrib ? "organisationName" : "name"} />
           </Labeled>
         </Grid>
         <Grid item xs={6}>
           <Labeled>
             <SelectField
-              source={hasOrganisationAttrib ? "organisation.type" : "type"}
+              source={hasOrganisationAttrib ? "organisationType" : "type"}
               choices={optionToChoices(getOrganisationTypeOptions())}
               emptyText="Not Provided"
             />
@@ -59,7 +59,7 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source={hasOrganisationAttrib ? "organisation.readable_status" : "readable_status"} />
+            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "readable_status"} />
           </Labeled>
         </Grid>
       </Grid>
