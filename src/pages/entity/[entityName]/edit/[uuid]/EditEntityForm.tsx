@@ -63,9 +63,8 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   );
 
   const sourceData = useMemo(
-    () =>
-      defaults(entityName === "financial-reports" ? {} : formData?.update_request?.content ?? {}, formData?.answers),
-    [entityName, formData?.answers, formData?.update_request?.content]
+    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
+    [formData?.answers, formData?.update_request?.content]
   );
   const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
