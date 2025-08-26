@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
+import { When } from "react-if";
 
-// import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
+import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-// import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-// import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 
 type FinancialReportHeaderProps = {
   financialReport?: FinancialReportFullDto;
@@ -17,11 +17,11 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
 
   if (!financialReport) return null;
 
-  // const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-  //   "financial-reports",
-  //   financialReport.uuid,
-  //   `${financialReport.organisationName} - Financial Report`
-  // );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
+    "financial-reports",
+    financialReport.uuid,
+    `${financialReport.organisationName} - Financial Report`
+  );
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "financial-reports",
@@ -39,13 +39,12 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
       hasBackButton={false}
     >
       <div className="flex gap-4">
-        {/* TODO: export button temporarily disabled*/}
-        {/* <When condition={!financialReport.nothingToReport}>
+        <When condition={!financialReport.nothingToReport}>
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
             <InlineLoader loading={exportLoader} />
           </Button>
-        </When> */}
+        </When>
         <Button onClick={handleEdit}>{t("Edit")}</Button>
       </div>
     </PageHeader>
