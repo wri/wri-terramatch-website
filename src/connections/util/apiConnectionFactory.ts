@@ -339,7 +339,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
   /**
    * Creates a connection that fetches multiple resources at once with an `ids` array query parameter.
    */
-  multipleResources: <DTO>(variablesFactory: VariablesFactory<TVariables, IdsProp> = () => ({} as TVariables)) =>
+  multipleResources: <DTO>(variablesFactory: VariablesFactory<TVariables, IdsProp>) =>
     new ApiConnectionFactory<TVariables, MapConnection<DTO>, IdsProp, THeaders>(endpoint, {
       resource,
       fetcher: requireEndpoint(endpoint).fetch.bind(endpoint),

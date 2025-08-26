@@ -2177,7 +2177,7 @@ export const entityAssociationIndex = new V3ApiEndpoint<
 >("/entities/v3/{entity}/{uuid}/{association}", "GET");
 
 export type OptionLabelsIndexQueryParams = {
-  slugs: string[];
+  ids: string[];
 };
 
 export type OptionLabelsIndexError = Fetcher.ErrorWrapper<

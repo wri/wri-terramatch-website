@@ -4,5 +4,7 @@ import { optionLabelsIndex } from "@/generated/v3/entityService/entityServiceCom
 import { OptionLabelDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export const useOptionLabels = connectionHook(
-  v3Resource("optionLabels", optionLabelsIndex).multipleResources<OptionLabelDto>().buildConnection()
+  v3Resource("optionLabels", optionLabelsIndex)
+    .multipleResources<OptionLabelDto>(({ ids }) => ({ queryParams: { ids: ids ?? [] } }))
+    .buildConnection()
 );
