@@ -338,7 +338,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
   create: <DTO, Props extends Record<string, unknown> = {}>(
     variablesFactory: VariablesFactory<Omit<TVariables, "body">, Props> = () => ({} as Omit<TVariables, "body">)
   ) => {
-    requireEndpoint(endpoint);
+    const createEndpoint = requireEndpoint(endpoint);
     return new ApiConnectionFactory<TVariables, CreateConnection<DTO, CreateAttributes<TVariables>>, Props, THeaders>(
       // This connection does not load data on mount; the endpoint being passed in is for creation of resources.
       undefined,
@@ -356,9 +356,9 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
 
             return createSelector(
               [
-                endpoint!.isFetchingSelector(variables),
-                endpoint!.fetchFailedSelector(variables),
-                endpoint!.completeSelector(variables),
+                createEndpoint.isFetchingSelector(variables),
+                createEndpoint.fetchFailedSelector(variables),
+                createEndpoint.completeSelector(variables),
                 resourceMapSelector<DTO>(resource)
               ],
               (isCreating, createFailure, createCompleted, resources) => {
@@ -370,9 +370,9 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
 
                 const create = (attributes: CreateAttributes<TVariables>) => {
                   if (createFailure != null || createCompleted != null) {
-                    ApiSlice.clearPending(resolveUrl(endpoint!.url, variables), endpoint!.method);
+                    ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
-                  endpoint!.fetch({ ...variables, body: { data: { type: resource, attributes } } });
+                  createEndpoint.fetch({ ...variables, body: { data: { type: resource, attributes } } });
                 };
 
                 return {
