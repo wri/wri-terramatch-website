@@ -1883,3 +1883,18 @@ export type StrataDto = {
    */
   extent: number | null;
 };
+
+export type OptionLabelDto = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option label text in English
+   */
+  imageUrl: Record<string, any> | null;
+};

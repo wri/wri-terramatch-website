@@ -28,6 +28,7 @@ const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
   entities: entityServiceUrl,
+  forms: entityServiceUrl,
   dashboard: dashboardServiceUrl,
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
@@ -63,8 +64,9 @@ export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets =
     if (queryParams[key] == null) delete queryParams[key];
   }
   // guarantee order of array query params.
-  for (const value of Object.values(queryParams)) {
-    if (Array.isArray(value)) value.sort();
+  for (const [key, value] of Object.entries(queryParams)) {
+    // Copy the array in case the original is read only.
+    if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
   }
 
   const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
