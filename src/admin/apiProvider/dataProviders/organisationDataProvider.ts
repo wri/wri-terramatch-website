@@ -1,6 +1,7 @@
 import lo from "lodash";
 import { DataProvider } from "react-admin";
 
+import { createOrg } from "@/connections/Organisation";
 import {
   DeleteV2AdminOrganisationsUUIDError,
   fetchDeleteV2AdminOrganisationsUUID,
@@ -18,7 +19,7 @@ import {
 import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
@@ -42,6 +43,16 @@ const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
 };
 
 export const organisationDataProvider: OrganisationDataProvider = {
+  // @ts-ignore
+  async create(__, params) {
+    try {
+      const { uuid } = await createOrg(params.data);
+      return { data: { id: uuid } };
+    } catch (createFailure) {
+      throw v3ErrorForRA("Organisation creation failed", createFailure);
+    }
+  },
+
   async getList(_, params) {
     try {
       const response = await fetchGetV2AdminOrganisations({

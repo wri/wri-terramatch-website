@@ -59,6 +59,7 @@ export type UserDto = {
 };
 
 export type OrganisationDto = {
+  uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
 };
@@ -127,4 +128,40 @@ export type VerificationUserResponseDto = {
 
 export type VerificationUserRequest = {
   token: string;
+};
+
+export type OrganisationCreateAttributes = {
+  name: string;
+  type: "non-profit-organization" | "for-profit-organization";
+  hqStreet1: string;
+  hqStreet2?: string;
+  hqCity: string;
+  hqState: string;
+  hqZipcode?: string;
+  hqCountry: string;
+  phone: string;
+  ["countries[]"]: string[];
+  fundingProgrammeUuid: string;
+  /**
+   * @default USD
+   */
+  currency?: string;
+  ["level0Proposed[]"]?: string[];
+  ["level1Proposed[]"]?: string[];
+  ["level0PastRestoration[]"]?: string[];
+  ["level1PastRestoration[]"]?: string[];
+  userFirstName: string;
+  userLastName: string;
+  userEmailAddress: string;
+  userRole: string;
+  userLocale: "en-US" | "es-MX" | "fr-FR" | "pt-BR";
+};
+
+export type OrganisationCreateData = {
+  type: "organisations";
+  attributes: OrganisationCreateAttributes;
+};
+
+export type OrganisationCreateBody = {
+  data: OrganisationCreateData;
 };

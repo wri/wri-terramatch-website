@@ -26,13 +26,14 @@ export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
+  boundingBoxes: researchServiceUrl,
   entities: entityServiceUrl,
+  dashboard: dashboardServiceUrl,
   jobs: jobServiceUrl,
+  organisations: userServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
-  users: userServiceUrl,
-  dashboard: dashboardServiceUrl,
-  boundingBoxes: researchServiceUrl
+  users: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
