@@ -2176,6 +2176,67 @@ export const entityAssociationIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/{association}", "GET");
 
+export type OptionLabelsIndexQueryParams = {
+  slugs: string[];
+};
+
+export type OptionLabelsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OptionLabelsIndexResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
+export type OptionLabelsIndexVariables = {
+  queryParams: OptionLabelsIndexQueryParams;
+};
+
+export const optionLabelsIndex = new V3ApiEndpoint<
+  OptionLabelsIndexResponse,
+  OptionLabelsIndexError,
+  OptionLabelsIndexVariables,
+  {}
+>("/forms/v3/optionLabels", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2185,5 +2246,6 @@ export const operationsByTag = {
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
-  entityAssociations: { entityAssociationIndex }
+  entityAssociations: { entityAssociationIndex },
+  optionLabels: { optionLabelsIndex }
 };

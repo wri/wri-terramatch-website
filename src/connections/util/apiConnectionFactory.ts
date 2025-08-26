@@ -1,4 +1,4 @@
-import { assign, isEmpty, merge } from "lodash";
+import { assign, Dictionary, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
@@ -18,8 +18,9 @@ import { selectorCache } from "@/utils/selectorCache";
 
 class ApiConnectionFactoryError extends Error {}
 
-export type DataConnection<DTO> = { data: DTO | undefined };
+export type DataConnection<DTO> = { data?: DTO };
 export type ListConnection<DTO> = { data?: DTO[] };
+export type MapConnection<DTO> = { data?: Dictionary<DTO> };
 export type IndexConnection<DTO> = ListConnection<DTO> & {
   indexTotal?: number;
 };
@@ -152,6 +153,26 @@ const indexDataSelector =
         }
 
         return { data, indexTotal: indexMeta.total };
+      }
+    );
+
+const multipleResourceSelector =
+  <DTO, Variables extends QueryVariables>(resource: ResourceType, indexMetaSelector: IndexMetaSelector<Variables>) =>
+  (props: IdsProp, variablesFactory: VariablesFactory<Variables, IdsProp>) =>
+    createSelector(
+      [indexMetaSelector(resource, variablesFactory(props) as Variables), resourceMapSelector<DTO>(resource)],
+      (indexMeta, resources): MapConnection<DTO> => {
+        // Start with the index meta ids - if we've queried this exact set of ids before, this will
+        // represent what the server actually sent, even if it doesn't fully match what was in the query.
+        // In the case where we haven't queried this exact set before and one or more of them is
+        // missing from the cache, return an empty map so that this exact set is queried.
+        const ids = indexMeta?.ids ?? props.ids ?? [];
+        const cacheData = ids.reduce((data, id) => {
+          if (resources[id] == null) return data;
+          return { ...data, [id]: resources[id].attributes as DTO };
+        }, {} as Dictionary<DTO>);
+
+        return Object.keys(cacheData ?? {}).length === ids.length ? { data: cacheData } : { data: undefined };
       }
     );
 
@@ -314,6 +335,21 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
     })
       .filter<FilterFields>()
       .loadFailure(),
+
+  /**
+   * Creates a connection that fetches multiple resources at once with an `ids` array query parameter.
+   */
+  multipleResources: <DTO>(variablesFactory: VariablesFactory<TVariables, IdsProp> = () => ({} as TVariables)) =>
+    new ApiConnectionFactory<TVariables, MapConnection<DTO>, IdsProp, THeaders>(endpoint, {
+      resource,
+      fetcher: requireEndpoint(endpoint).fetch.bind(endpoint),
+      isLoaded: ({ data }) => data != null,
+      variablesFactory,
+      selectors: [
+        multipleResourceSelector<DTO, TVariables>(resource, requireEndpoint(endpoint).indexMetaSelector.bind(endpoint))
+      ],
+      selectorCacheKeyFactory: queryParamCacheKeyFactory
+    }).loadFailure(),
 
   /**
    * Creates a connection that fetches a resource index from the backend.

@@ -28,6 +28,7 @@ const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
   entities: entityServiceUrl,
+  forms: entityServiceUrl,
   dashboard: dashboardServiceUrl,
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
