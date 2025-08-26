@@ -15068,60 +15068,6 @@ export const usePostAuthLogin = (
   );
 };
 
-export type GetV2FormsOptionLabelsQueryParams = {
-  /**
-   * the option keys you want to retrieve
-   */
-  keys?: string;
-  /**
-   * the language to use for the label translation
-   */
-  lang?: string;
-};
-
-export type GetV2FormsOptionLabelsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsOptionLabelsResponse = {
-  uuid?: string;
-  name?: string;
-  input_type?: string;
-  model_key?: string;
-  option_list_key?: string;
-  options?: string[];
-};
-
-export type GetV2FormsOptionLabelsVariables = {
-  queryParams?: GetV2FormsOptionLabelsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsOptionLabels = (variables: GetV2FormsOptionLabelsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FormsOptionLabelsResponse,
-    GetV2FormsOptionLabelsError,
-    undefined,
-    {},
-    GetV2FormsOptionLabelsQueryParams,
-    {}
-  >({ url: "/v2/forms/option-labels", method: "get", ...variables, signal });
-
-export const useGetV2FormsOptionLabels = <TData = GetV2FormsOptionLabelsResponse>(
-  variables: GetV2FormsOptionLabelsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsOptionLabelsResponse, GetV2FormsOptionLabelsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsOptionLabelsResponse, GetV2FormsOptionLabelsError, TData>(
-    queryKeyFn({ path: "/v2/forms/option-labels", operationId: "getV2FormsOptionLabels", variables }),
-    ({ signal }) => fetchGetV2FormsOptionLabels({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PatchAuthChangeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PatchAuthChangeVariables = {
@@ -23162,11 +23108,6 @@ export type QueryOperation =
       path: "/auth/me";
       operationId: "getAuthMe";
       variables: GetAuthMeVariables;
-    }
-  | {
-      path: "/v2/forms/option-labels";
-      operationId: "getV2FormsOptionLabels";
-      variables: GetV2FormsOptionLabelsVariables;
     }
   | {
       path: "/auth/mail";
