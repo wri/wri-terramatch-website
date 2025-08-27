@@ -140,16 +140,16 @@ export type OrganisationCreateAttributes = {
   hqZipcode?: string;
   hqCountry: string;
   phone: string;
-  ["countries[]"]: string[];
+  countries: string[];
   fundingProgrammeUuid: string;
   /**
    * @default USD
    */
   currency?: string;
-  ["level0Proposed[]"]?: string[];
-  ["level1Proposed[]"]?: string[];
-  ["level0PastRestoration[]"]?: string[];
-  ["level1PastRestoration[]"]?: string[];
+  level0Proposed?: string[];
+  level1Proposed?: string[];
+  level0PastRestoration?: string[];
+  level1PastRestoration?: string[];
   userFirstName: string;
   userLastName: string;
   userEmailAddress: string;
