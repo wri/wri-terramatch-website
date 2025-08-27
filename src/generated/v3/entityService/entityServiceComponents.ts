@@ -1266,7 +1266,6 @@ export type EntityIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
-  yearOfReport?: number;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -1984,7 +1983,6 @@ export type EntityAssociationIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
-  yearOfReport?: number;
   modelType?: string;
   /**
    * @default false

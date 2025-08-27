@@ -1655,6 +1655,15 @@ export type NurseryReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type FinancialReportUpdateData = {
+  type: "financialReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1662,7 +1671,8 @@ export type EntityUpdateBody = {
     | NurseryUpdateData
     | ProjectReportUpdateData
     | SiteReportUpdateData
-    | NurseryReportUpdateData;
+    | NurseryReportUpdateData
+    | FinancialReportUpdateData;
 };
 
 /**

@@ -921,7 +921,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         current_radio_data: currentRadioData,
         documentation_data: documentationData,
         currency: selectCurrency as string,
-        financial_year_start_month: selectFinancialMonth as number,
+        start_month: selectFinancialMonth as number,
         financial_report_id: id ?? router.query.uuid
       };
 
@@ -965,22 +965,19 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         setCurrentRadioData(formatted.currentRatioData ?? initialCurrentRadioData);
         setDocumentationData(formatted.documentationData ?? initialDocumentationData);
 
-        // ✅ ACTUALIZAR VALORES DESDE DATOS EXISTENTES
         if (value && Array.isArray(value) && value.length > 0) {
           const firstItem = value[0];
 
-          // Actualizar currency si existe en los datos
           if (firstItem.local_currency && firstItem.local_currency !== selectCurrency) {
             setSelectCurrency(firstItem.local_currency);
           }
 
-          // Actualizar start_month si existe en los datos
           if (
-            firstItem.financial_year_start_month !== null &&
-            firstItem.financial_year_start_month !== undefined &&
-            firstItem.financial_year_start_month !== selectFinancialMonth
+            firstItem.start_month !== null &&
+            firstItem.start_month !== undefined &&
+            firstItem.start_month !== selectFinancialMonth
           ) {
-            setSelectFinancialMonth(firstItem.financial_year_start_month);
+            setSelectFinancialMonth(firstItem.start_month);
           }
         }
 
