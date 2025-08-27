@@ -1,21 +1,18 @@
 import DownloadIcon from "@mui/icons-material/GetApp";
 import { Button, CreateButton, FilterButton, TopToolbar } from "react-admin";
-import { When } from "react-if";
 
 interface ListActionsCreateFilterProps {
-  canCreateUser?: boolean;
+  canCreate?: boolean;
   onExport?: () => void;
 }
 
-const ListActionsCreateFilter = ({ canCreateUser, onExport }: ListActionsCreateFilterProps) => (
+const ListActionsCreateFilter = ({ canCreate, onExport }: ListActionsCreateFilterProps) => (
   <TopToolbar>
-    <When condition={canCreateUser}>
-      <CreateButton className="filter-button-page-admin" />
-    </When>
+    {canCreate && <CreateButton className="filter-button-page-admin" />}
     <FilterButton className="filter-button-page-admin" />
-    <When condition={!!onExport}>
+    {onExport == null ? undefined : (
       <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={onExport} />
-    </When>
+    )}
   </TopToolbar>
 );
 

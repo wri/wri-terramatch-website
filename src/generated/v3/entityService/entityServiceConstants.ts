@@ -28,7 +28,8 @@ import {
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
-  StrataDto
+  StrataDto,
+  OptionLabelDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -51,7 +52,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "seedings",
   "treeSpecies",
   "invasives",
-  "stratas"
+  "stratas",
+  "optionLabels"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -75,6 +77,7 @@ export type EntityServiceApiResources = {
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
+  optionLabels: StoreResourceMap<OptionLabelDto>;
 };
 
 export const TreeEntityTypes = {
