@@ -1898,3 +1898,48 @@ export type OptionLabelDto = {
    */
   imageUrl: Record<string, any> | null;
 };
+
+export type LinkedFieldDto = {
+  /**
+   * Linked field id
+   */
+  id: string;
+  label: string;
+  name: string;
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  optionListKey: Record<string, any> | null;
+  multiChoice: Record<string, any> | null;
+  collection: Record<string, any> | null;
+};

@@ -824,6 +824,26 @@ export type TreeScientificNamesSearchResponse = {
      * @example treeSpeciesScientificNames
      */
     resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
   };
   data?: {
     /**
@@ -2044,6 +2064,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example demographics
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2063,6 +2103,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example seedings
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2082,6 +2142,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example treeSpecies
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2101,6 +2181,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example media
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2120,6 +2220,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example disturbances
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2139,6 +2259,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example invasives
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2158,6 +2298,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example stratas
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2215,6 +2375,26 @@ export type OptionLabelsIndexResponse = {
      * @example optionLabels
      */
     resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
   };
   data?: {
     /**
@@ -2237,6 +2417,60 @@ export const optionLabelsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/optionLabels", "GET");
 
+export type LinkedFieldsIndexQueryParams = {
+  formTypes: string[];
+};
+
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<undefined>;
+
+export type LinkedFieldsIndexResponse = {
+  meta?: {
+    /**
+     * @example linkedFields
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example linkedFields
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.LinkedFieldDto;
+  }[];
+};
+
+export type LinkedFieldsIndexVariables = {
+  queryParams: LinkedFieldsIndexQueryParams;
+};
+
+export const linkedFieldsIndex = new V3ApiEndpoint<
+  LinkedFieldsIndexResponse,
+  LinkedFieldsIndexError,
+  LinkedFieldsIndexVariables,
+  {}
+>("/forms/v3/linkedFields", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2247,5 +2481,6 @@ export const operationsByTag = {
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
-  optionLabels: { optionLabelsIndex }
+  optionLabels: { optionLabelsIndex },
+  linkedFields: { linkedFieldsIndex }
 };
