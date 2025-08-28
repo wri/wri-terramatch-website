@@ -77,19 +77,19 @@ export type ProjectPitchIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -249,19 +249,19 @@ export type ImpactStoryIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -408,19 +408,19 @@ export type TaskIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -1062,19 +1062,19 @@ export type DemographicsIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -1170,19 +1170,19 @@ export type DisturbanceIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -1304,19 +1304,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1347,19 +1347,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1390,19 +1390,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1433,19 +1433,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1476,19 +1476,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1519,19 +1519,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1562,19 +1562,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
