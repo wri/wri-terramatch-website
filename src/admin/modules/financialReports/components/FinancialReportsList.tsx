@@ -24,7 +24,11 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getFinancialReportStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import {
+  getChangeRequestStatusOptions,
+  getFinancialReportStatusOptions,
+  getReportStatusOptions
+} from "@/constants/options/status";
 import { fetchGetV2FinancialReportsExport, GetV2FinancialReportsExportError } from "@/generated/apiComponents";
 import { FinancialReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
@@ -58,6 +62,17 @@ const FinancialReportsDataGrid: FC = () => {
           const { title } =
             getFinancialReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
+        }}
+      />
+      <FunctionField
+        source="updateRequestStatus"
+        label="Change Request Status"
+        sortable={false}
+        render={(record: any) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record.updateRequestStatus
+          );
+          return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
       <TextField source="yearOfReport" label="Year of Report" />
@@ -106,6 +121,13 @@ export const FinancialReportsList: FC = () => {
       label="Status"
       source="status"
       choices={optionToChoices(getReportStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="updateRequestStatus"
+      label="Change Request Status"
+      source="updateRequestStatus"
+      choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />
   ];

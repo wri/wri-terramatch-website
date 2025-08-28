@@ -778,6 +778,7 @@ export type FinancialReportLightDto = {
   lightResource: boolean;
   uuid: string;
   status: string;
+  updateRequestStatus: string;
   /**
    * The associated organisation name
    */
@@ -1438,6 +1439,7 @@ export type FinancialReportFullDto = {
   lightResource: boolean;
   uuid: string;
   status: string;
+  updateRequestStatus: string;
   /**
    * The associated organisation name
    */
@@ -1465,7 +1467,6 @@ export type FinancialReportFullDto = {
    * @format date-time
    */
   dueAt: string | null;
-  updateRequestStatus: string;
   frameworkKey: string | null;
   nothingToReport: boolean | null;
   feedback: string | null;
