@@ -665,17 +665,6 @@ export type ProjectLightDto = {
   name: string | null;
   shortName: string | null;
   /**
-   * Planting status for this project
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
-  /**
    * @format date-time
    */
   plantingStartDate: string | null;
@@ -837,17 +826,6 @@ export type ProjectFullDto = {
   name: string | null;
   shortName: string | null;
   /**
-   * Planting status for this project
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
-  /**
    * @format date-time
    */
   plantingStartDate: string | null;
@@ -1006,17 +984,6 @@ export type SiteFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
-  /**
-   * Planting status for this site
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -1089,17 +1056,6 @@ export type NurseryFullDto = {
   seedlingGrown: number | null;
   plantingContribution: string | null;
   oldModel: string | null;
-  /**
-   * Planting status for this nursery
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
@@ -1655,6 +1611,15 @@ export type NurseryReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type FinancialReportUpdateData = {
+  type: "financialReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1662,7 +1627,8 @@ export type EntityUpdateBody = {
     | NurseryUpdateData
     | ProjectReportUpdateData
     | SiteReportUpdateData
-    | NurseryReportUpdateData;
+    | NurseryReportUpdateData
+    | FinancialReportUpdateData;
 };
 
 /**
