@@ -7672,33 +7672,6 @@ export const usePostV2AdminUsersCreate = (
   );
 };
 
-export type GetV2AdminUsersExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminUsersExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminUsersExport = (variables: GetV2AdminUsersExportVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, GetV2AdminUsersExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/users/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminUsersExport = <TData = undefined>(
-  variables: GetV2AdminUsersExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<undefined, GetV2AdminUsersExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2AdminUsersExportError, TData>(
-    queryKeyFn({ path: "/v2/admin/users/export", operationId: "getV2AdminUsersExport", variables }),
-    ({ signal }) => fetchGetV2AdminUsersExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PutV2AdminUsersResetPasswordUUIDPathParams = {
   uuid: string;
 };
@@ -22988,11 +22961,6 @@ export type QueryOperation =
       path: "/v2/admin/users/multi";
       operationId: "getV2AdminUsersMulti";
       variables: GetV2AdminUsersMultiVariables;
-    }
-  | {
-      path: "/v2/admin/users/export";
-      operationId: "getV2AdminUsersExport";
-      variables: GetV2AdminUsersExportVariables;
     }
   | {
       path: "/v2/{MODEL}/{UUID}/image/locations";

@@ -1,10 +1,8 @@
 import { Stack } from "@mui/material";
-import { FC, useState } from "react";
-import { Datagrid, EditButton, List, ShowButton, TextField, useDataProvider, WrapperField } from "react-admin";
+import { FC } from "react";
+import { Datagrid, EditButton, List, ShowButton, TextField, WrapperField } from "react-admin";
 
-import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
-import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
@@ -12,15 +10,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import modules from "../..";
-
 export const ReportingFrameworkList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
-  const userDataProvider = useDataProvider<UserDataProvider>();
-  const handleExport = () => {
-    setExporting(true);
-    userDataProvider.export(modules.user.ResourceName).finally(() => setExporting(false));
-  };
   const { isSuperAdmin } = useGetUserRole();
 
   const commonMenu = [
@@ -56,7 +46,7 @@ export const ReportingFrameworkList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActionsCreate onExport={handleExport} />}>
+      <List actions={<ListActionsCreate />}>
         <Datagrid bulkActionButtons={false} rowClick={"show"}>
           <TextField source="name" label="Framework" />
           <TextField source="access_code" label="Access Code" />
@@ -66,7 +56,6 @@ export const ReportingFrameworkList: FC = () => {
           </Menu>
         </Datagrid>
       </List>
-      <ExportProcessingAlert show={exporting} />
     </>
   );
 };
