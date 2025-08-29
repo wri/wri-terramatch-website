@@ -20,7 +20,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const [isLoaded, { data: impactStories }] = useImpactStories({
     filter: {
       ...(searchTerm != null ? { search: searchTerm } : {}),
-      ...(currentCategory != null ? { category: currentCategory, status: "published" } : {})
+      ...(currentCategory != null ? { category: [currentCategory], status: "published" } : {})
     }
   });
 

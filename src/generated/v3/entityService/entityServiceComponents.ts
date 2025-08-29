@@ -208,7 +208,7 @@ export type ImpactStoryIndexQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
-  category?: string;
+  category?: string[];
   title?: string;
   status?: string;
   /**

@@ -12384,7 +12384,6 @@ export type V2FinancialReportRead = {
   };
   currency?: string;
   fin_start_month?: number;
-  financial_collection?: Record<string, any>[][];
   funding_types?: {
     uuid?: string;
     organisation_id?: string;

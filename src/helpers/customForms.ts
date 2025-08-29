@@ -755,7 +755,6 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "checkboxes":
     case "dataTable":
     case "leaderships":
-    case "financialIndicators":
     case "ownershipStake":
     case "coreTeamLeaders":
     case "stratas":
