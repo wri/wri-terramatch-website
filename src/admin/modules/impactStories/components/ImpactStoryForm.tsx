@@ -47,11 +47,13 @@ export const IMPACT_CATEGORIES: ImpactCategory[] = [
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
   const { openModal } = useModalContext();
-  const { getValues, trigger } = useFormContext();
+  const { getValues, trigger, watch } = useFormContext();
   const { showLoader, hideLoader } = useLoading();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [organizationUuid, setOrganizationUuid] = useState(undefined);
+
+  const categoryValue = watch("category") ?? [];
 
   useEffect(() => {
     setTitle(initialValues.title);
@@ -168,7 +170,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
         <Dropdown
           label="Impact Category"
           options={IMPACT_CATEGORIES}
-          value={initialValues.categories}
+          value={categoryValue}
           onChange={e => handlers.handleImpactCategoryChange(e as string[])}
           labelClassName="capitalize text-14-bold"
           className="text-14-light"
