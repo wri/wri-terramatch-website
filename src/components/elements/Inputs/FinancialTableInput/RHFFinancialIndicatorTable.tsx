@@ -1105,7 +1105,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             payload.push({
               collection: "current-ratio",
-              amount: item.currentAssets / item.currentLiabilities,
+              amount: Number((item.currentAssets / item.currentLiabilities).toFixed(2)),
               year: year,
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
