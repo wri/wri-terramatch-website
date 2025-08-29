@@ -1,7 +1,7 @@
 import { Delete as DeleteIcon, ExpandMore, UploadFile } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
-import { get } from "lodash";
-import { useState } from "react";
+import { camelCase, get } from "lodash";
+import { useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 import { When } from "react-if";
@@ -20,12 +20,9 @@ import {
   QuestionArrayInput
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { maxFileSize } from "@/admin/utils/forms";
-import {
-  useDeleteV2AdminFormsQuestionUUID,
-  useDeleteV2AdminFormsSectionUUID,
-  useGetV2FormsLinkedFieldListing
-} from "@/generated/apiComponents";
-import { FormRead, FormSectionRead, V2GenericList } from "@/generated/apiSchemas";
+import { FormType, useLinkedFields } from "@/connections/util/Form";
+import { useDeleteV2AdminFormsQuestionUUID, useDeleteV2AdminFormsSectionUUID } from "@/generated/apiComponents";
+import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
 
 export const formTypeChoices = [
   { id: "application", name: "Application" },
@@ -38,27 +35,26 @@ export const formTypeChoices = [
   { id: "financial-report", name: "Financial Report" }
 ];
 
-export const getLinkedFieldListingQuery = (formType: string): string =>
-  formType
-    ?.replace("application", "organisation,project-pitch")
-    ?.split(",")
-    .map(type => `form_types[]=${type}`)
-    .join("&");
-
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormRead>();
-  const formType = watch("type");
+  const formTypeValue = watch("type");
+  const formTypes = useMemo(
+    () =>
+      formTypeValue
+        ?.replace("application", "organisation,project-pitch")
+        ?.split(",")
+        .map(formType => camelCase(formType)) as FormType[],
+    [formTypeValue]
+  );
 
   const { mutateAsync: deleteSection } = useDeleteV2AdminFormsSectionUUID();
   const { mutateAsync: deleteQuestion } = useDeleteV2AdminFormsQuestionUUID();
   const [previewSection, setPreviewSection] = useState<FormSectionRead>();
 
-  const { data: linkedFieldsData } = useGetV2FormsLinkedFieldListing<{ data: V2GenericList[] }>(
-    {
-      // @ts-ignore
-      queryParams: getLinkedFieldListingQuery(formType)
-    },
-    { enabled: !!formType }
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: formTypeValue != null, formTypes: formTypes });
+  const fullLinkedFields = useMemo(
+    () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
+    [linkedFieldsData]
   );
 
   const DeleteSection = async (index: number, source: string) => {
@@ -90,11 +86,11 @@ export const FormBuilderForm = () => {
         source="type"
         choices={formTypeChoices}
         fullWidth
-        disabled={!!formType}
+        disabled={!!formTypeValue}
         helperText="If you choose the incorrect form type and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
         sx={{ marginBottom: 6 }}
       />
-      <When condition={!!formType}>
+      <When condition={!!formTypeValue}>
         <>
           <div>
             <Accordion className="w-full">
@@ -201,7 +197,7 @@ export const FormBuilderForm = () => {
                 source="form_questions"
                 label="Form Questions"
                 title="Question"
-                linkedFieldsData={appendAdditionalFormQuestionFields(linkedFieldsData?.data || [])}
+                linkedFieldsData={fullLinkedFields}
                 onDeleteQuestion={DeleteQuestion}
                 validate={minLength(1, "At least one question is required")}
                 formTitle={getValues()?.title}
@@ -227,8 +223,7 @@ export const FormBuilderForm = () => {
 
           <FormSectionPreviewDialog
             open={!!previewSection}
-            //@ts-ignore
-            linkedFieldData={appendAdditionalFormQuestionFields(linkedFieldsData?.data || [])}
+            linkedFieldData={appendAdditionalFormQuestionFields(linkedFieldsData ?? [])}
             section={previewSection}
             onClose={() => setPreviewSection(undefined)}
           />

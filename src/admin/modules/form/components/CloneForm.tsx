@@ -7,8 +7,8 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import Input from "@/components/elements/Inputs/Input/Input";
+import { loadLinkedFields } from "@/connections/util/Form";
 import { apiBaseUrl } from "@/constants/environment";
-import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
 
 export const CloneForm = () => {
   const record: any = useRecordContext();
@@ -24,11 +24,11 @@ export const CloneForm = () => {
   const { register, handleSubmit, formState } = formHook;
 
   const cloneForm = async ({ title: formTitle }: any) => {
-    const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
+    const { data: linkedFieldsData } = await loadLinkedFields({});
     const formData = { ...record, title: formTitle };
     const formBody = JSON.parse(
       JSON.stringify(
-        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData.data) as any),
+        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData ?? [])),
         null,
         2
       )

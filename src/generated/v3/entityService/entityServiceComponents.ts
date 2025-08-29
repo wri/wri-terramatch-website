@@ -2417,11 +2417,68 @@ export const optionLabelsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/optionLabels", "GET");
 
-export type LinkedFieldsIndexQueryParams = {
-  formTypes: string[];
+export type OptionLabelsGetListPathParams = {
+  /**
+   * The list key
+   */
+  listKey: string;
 };
 
-export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<undefined>;
+export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type OptionLabelsGetListVariables = {
+  pathParams: OptionLabelsGetListPathParams;
+};
+
+/**
+ * Get a list of option labels by list key
+ */
+export const optionLabelsGetList = new V3ApiEndpoint<
+  undefined,
+  OptionLabelsGetListError,
+  OptionLabelsGetListVariables,
+  {}
+>("/forms/v3/optionLabels/{listKey}", "GET");
+
+export type LinkedFieldsIndexQueryParams = {
+  formTypes?: (
+    | "organisation"
+    | "financialReport"
+    | "nursery"
+    | "nurseryReport"
+    | "project"
+    | "projectPitch"
+    | "projectReport"
+    | "site"
+    | "siteReport"
+  )[];
+};
+
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
 
 export type LinkedFieldsIndexResponse = {
   meta?: {
@@ -2461,7 +2518,7 @@ export type LinkedFieldsIndexResponse = {
 };
 
 export type LinkedFieldsIndexVariables = {
-  queryParams: LinkedFieldsIndexQueryParams;
+  queryParams?: LinkedFieldsIndexQueryParams;
 };
 
 export const linkedFieldsIndex = new V3ApiEndpoint<
@@ -2481,6 +2538,6 @@ export const operationsByTag = {
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
-  optionLabels: { optionLabelsIndex },
+  optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex }
 };

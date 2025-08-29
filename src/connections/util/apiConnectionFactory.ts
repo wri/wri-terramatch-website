@@ -1,4 +1,5 @@
 import { assign, Dictionary, isEmpty, merge } from "lodash";
+import { Required } from "ra-ui-materialui/src/input/FileInput.stories";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
@@ -83,6 +84,12 @@ type PartialVariablesFactory<Variables extends QueryVariables, Props> = (
   props: Props
 ) => Partial<Variables> | undefined;
 type VariablesFactory<Variables extends QueryVariables, Props> = (props: Props) => Variables | undefined;
+
+type ResourceFilter<DTO, Props> = (
+  props: Props,
+  indexMeta: ApiFilteredIndexCache,
+  resources: StoreResourceMap<DTO>
+) => DTO[] | undefined;
 
 type ResourceSelector<Props, Variables extends QueryVariables> = (
   props: Props,
@@ -173,6 +180,23 @@ const multipleResourceSelector =
         }, {} as Dictionary<DTO>);
 
         return Object.keys(cacheData ?? {}).length === ids.length ? { data: cacheData } : { data: undefined };
+      }
+    );
+
+const filterResourceSelector =
+  <DTO, Variables extends QueryVariables, Props extends Record<string, unknown>>(
+    resource: ResourceType,
+    indexMetaSelector: IndexMetaSelector<Variables>,
+    resourceFilter: ResourceFilter<DTO, Props>
+  ) =>
+  (props: Props, variablesFactory: VariablesFactory<Variables, Props>) =>
+    createSelector(
+      [indexMetaSelector(resource, variablesFactory(props) as Variables), resourceMapSelector<DTO>(resource)],
+      (indexMeta, resources): ListConnection<DTO> => {
+        const filtered = resourceFilter(props, indexMeta, resources);
+        if ((filtered == null || filtered.length === 0) && indexMeta == null) return {};
+
+        return { data: filtered ?? [] };
       }
     );
 
@@ -347,6 +371,29 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
       variablesFactory,
       selectors: [
         multipleResourceSelector<DTO, TVariables>(resource, requireEndpoint(endpoint).indexMetaSelector.bind(endpoint))
+      ],
+      selectorCacheKeyFactory: queryParamCacheKeyFactory
+    }).loadFailure(),
+
+  /**
+   * Creates a connection that looks for resources that match the filter in the cached store, and if
+   * the filter is not satisfied, it returns undefined, allowing the request to execute.
+   */
+  filterResources: <DTO, Props extends Record<string, unknown>>(
+    variablesFactory: VariablesFactory<TVariables, Props>,
+    resourceFilter: ResourceFilter<DTO, Props>
+  ) =>
+    new ApiConnectionFactory<TVariables, ListConnection<DTO>, Props, THeaders>(endpoint, {
+      resource,
+      fetcher: requireEndpoint(endpoint).fetch.bind(endpoint),
+      isLoaded: ({ data }) => data != null,
+      variablesFactory,
+      selectors: [
+        filterResourceSelector<DTO, TVariables, Props>(
+          resource,
+          requireEndpoint(endpoint).indexMetaSelector.bind(endpoint),
+          resourceFilter
+        )
       ],
       selectorCacheKeyFactory: queryParamCacheKeyFactory
     }).loadFailure(),
