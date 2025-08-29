@@ -159,6 +159,17 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
+  /**
+   * Planting status for this site polygon
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
@@ -238,6 +249,17 @@ export type SitePolygonLightDto = {
    */
   siteName: string | null;
   versionName: string | null;
+  /**
+   * Planting status for this site polygon
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "disturbed"
+    | "replacement-planting"
+    | "completed"
+    | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
