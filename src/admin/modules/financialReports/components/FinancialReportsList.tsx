@@ -68,9 +68,9 @@ const FinancialReportsDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record: any) => {
+        render={(record?: FinancialReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.updateRequestStatus
+            (option: any) => option.value === record?.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
