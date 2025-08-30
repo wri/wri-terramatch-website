@@ -1,5 +1,4 @@
 import { assign, Dictionary, isEmpty, merge } from "lodash";
-import { Required } from "ra-ui-materialui/src/input/FileInput.stories";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
