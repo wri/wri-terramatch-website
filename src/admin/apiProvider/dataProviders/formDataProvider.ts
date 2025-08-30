@@ -7,11 +7,11 @@ import {
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { loadLinkedFields } from "@/connections/util/Form";
 import {
   DeleteV2AdminFormsUUIDError,
   fetchDeleteV2AdminFormsUUID,
   fetchGetV2AdminForms,
-  fetchGetV2FormsLinkedFieldListing,
   fetchGetV2FormsUUID,
   fetchPatchV2AdminFormsUUID,
   fetchPostV2AdminForms,
@@ -66,11 +66,12 @@ export const formDataProvider: FormDataProvider = {
     try {
       const uploadKeys = ["banner"];
       const body = omit(params.data, uploadKeys);
-      const linkedFieldsData = await fetchGetV2FormsLinkedFieldListing({});
+
+      const { data: linkedFieldsData } = await loadLinkedFields({});
 
       const response = await fetchPostV2AdminForms({
-        //@ts-expect-error
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData.data))
+        // @ts-expect-error the v2 post endpoint is not correctly defined.
+        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData))
       });
 
       //@ts-expect-error
@@ -94,13 +95,12 @@ export const formDataProvider: FormDataProvider = {
       const uploadKeys = ["banner"];
       const body = omitBy(omit(params.data, uploadKeys), isUndefined);
 
-      const linkedFieldsData = await fetchGetV2FormsLinkedFieldListing({});
+      const { data: linkedFieldsData } = await loadLinkedFields({});
 
       const response = await fetchPatchV2AdminFormsUUID({
-        //@ts-expect-error
+        // @ts-expect-error the v2 form update endpoint is not correctly defined.
         pathParams: { uuid: params.id },
-        //@ts-expect-error
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData.data))
+        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData ?? []))
       });
 
       //@ts-expect-error

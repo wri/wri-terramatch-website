@@ -314,19 +314,19 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -357,19 +357,19 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -400,19 +400,19 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -478,19 +478,19 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -521,19 +521,19 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -564,19 +564,19 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -607,19 +607,19 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {

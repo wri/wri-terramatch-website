@@ -3674,59 +3674,6 @@ export const usePatchV2AdminFormsUUID = (
   );
 };
 
-export type GetV2FormsLinkedFieldListingQueryParams = {
-  /**
-   * array of form types
-   */
-  form_types?: string[];
-};
-
-export type GetV2FormsLinkedFieldListingError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsLinkedFieldListingResponse = {
-  uuid?: string;
-  name?: string;
-  input_type?: string;
-  model_key?: string;
-  option_list_key?: string;
-  options?: string[];
-};
-
-export type GetV2FormsLinkedFieldListingVariables = {
-  queryParams?: GetV2FormsLinkedFieldListingQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsLinkedFieldListing = (
-  variables: GetV2FormsLinkedFieldListingVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2FormsLinkedFieldListingResponse,
-    GetV2FormsLinkedFieldListingError,
-    undefined,
-    {},
-    GetV2FormsLinkedFieldListingQueryParams,
-    {}
-  >({ url: "/v2/forms/linked-field-listing", method: "get", ...variables, signal });
-
-export const useGetV2FormsLinkedFieldListing = <TData = GetV2FormsLinkedFieldListingResponse>(
-  variables: GetV2FormsLinkedFieldListingVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsLinkedFieldListingResponse, GetV2FormsLinkedFieldListingError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsLinkedFieldListingResponse, GetV2FormsLinkedFieldListingError, TData>(
-    queryKeyFn({ path: "/v2/forms/linked-field-listing", operationId: "getV2FormsLinkedFieldListing", variables }),
-    ({ signal }) => fetchGetV2FormsLinkedFieldListing({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminOrganisationsQueryParams = {
   /**
    * search term to use on the collection
@@ -22896,11 +22843,6 @@ export type QueryOperation =
       path: "/v2/update-requests/{ENTITY}/{UUID}";
       operationId: "getV2UpdateRequestsENTITYUUID";
       variables: GetV2UpdateRequestsENTITYUUIDVariables;
-    }
-  | {
-      path: "/v2/forms/linked-field-listing";
-      operationId: "getV2FormsLinkedFieldListing";
-      variables: GetV2FormsLinkedFieldListingVariables;
     }
   | {
       path: "/v2/admin/organisations";

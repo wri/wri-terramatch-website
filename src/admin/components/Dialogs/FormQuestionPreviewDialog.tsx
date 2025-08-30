@@ -13,16 +13,17 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 import { normalizeQuestionCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
+import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import { FieldMapper } from "@/components/extensive/WizardForm/FieldMapper";
 import ModalProvider from "@/context/modal.provider";
-import { FormQuestionRead, V2GenericList } from "@/generated/apiSchemas";
+import { FormQuestionRead } from "@/generated/apiSchemas";
 import { apiFormQuestionToFormField } from "@/helpers/customForms";
 import Log from "@/utils/log";
 
 interface ConfirmationDialogProps extends DialogProps {
   question?: FormQuestionRead;
-  linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[];
+  linkedFieldData: FormQuestionField[];
   formTitle?: string;
 }
 
@@ -76,7 +77,7 @@ export const FormQuestionPreviewDialog = ({
   );
 };
 
-export const preparePreviewField = (_question: FormQuestionRead, linkedFieldData: any) => {
+export const preparePreviewField = (_question: FormQuestionRead, linkedFieldData: FormQuestionField[]) => {
   const question = questionPayloadToFormQuestionRead(
     normalizeQuestionCreatePayload(_question, linkedFieldData),
     linkedFieldData

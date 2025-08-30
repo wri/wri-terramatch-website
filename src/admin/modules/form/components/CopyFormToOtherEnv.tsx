@@ -7,7 +7,7 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { fetchGetV2FormsLinkedFieldListing } from "@/generated/apiComponents";
+import { loadLinkedFields } from "@/connections/util/Form";
 import Log from "@/utils/log";
 
 const envOptions = [
@@ -43,7 +43,7 @@ export const CopyFormToOtherEnv = () => {
   Log.info("Copy form values", { ...getValues(), formErrors: formState.errors });
 
   const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
-    const linkedFieldsData: any = await fetchGetV2FormsLinkedFieldListing({});
+    const { data: linkedFieldsData } = await loadLinkedFields({});
     const loginResp = await fetch(`${baseUrl}/api/auth/login`, {
       method: "POST",
       headers: {
@@ -61,7 +61,7 @@ export const CopyFormToOtherEnv = () => {
     const formData = { ...record, title: formTitle, framework_key };
     const formBody = JSON.parse(
       JSON.stringify(
-        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData.data) as any),
+        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData ?? [])),
         null,
         2
       )
