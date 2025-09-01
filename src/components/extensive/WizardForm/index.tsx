@@ -176,7 +176,7 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
     body: (
-      <div className="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]">
+      <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
         {index === 0 && step.title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="rounded-lg bg-tertiary-80 p-6">
@@ -232,7 +232,7 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && props.steps.length < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && props.steps.length > selectedStepIndex,
     body: (
-      <div className="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]">
+      <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
         <FormStep
           id="step"
           formHook={formHook}
@@ -288,7 +288,7 @@ function WizardForm(props: WizardFormProps) {
           selectedIndex={selectedStepIndex}
           tabItems={tebItems}
           rounded={props.roundedCorners}
-          tabListClassName="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]"
+          tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
           itemOption={{}}
           carouselOptions={{
             slidesPerView: 3
