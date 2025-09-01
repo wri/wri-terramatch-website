@@ -176,7 +176,7 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && index < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
     body: (
-      <div className="h-[calc(100vh-287px)] overflow-auto">
+      <div className="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]">
         {index === 0 && step.title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="rounded-lg bg-tertiary-80 p-6">
@@ -232,7 +232,7 @@ function WizardForm(props: WizardFormProps) {
     done: props.tabOptions?.markDone && props.steps.length < selectedStepIndex,
     disabled: props.tabOptions?.disableFutureTabs && props.steps.length > selectedStepIndex,
     body: (
-      <div className="h-[calc(100vh-287px)] overflow-auto">
+      <div className="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]">
         <FormStep
           id="step"
           formHook={formHook}
@@ -282,13 +282,13 @@ function WizardForm(props: WizardFormProps) {
           subtitle={props.subtitle}
         />
       </When>
-      <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-10 xl:px-0", props.className)}>
+      <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
         <Tabs
           onChangeSelected={setSelectedStepIndex}
           selectedIndex={selectedStepIndex}
           tabItems={tebItems}
           rounded={props.roundedCorners}
-          tabListClassName="h-[calc(100vh-285px)] overflow-auto"
+          tabListClassName="h-[calc(100vh-256px)] overflow-auto sm:h-[calc(100vh-218px)] lg:h-[calc(100vh-268px)]"
           itemOption={{}}
           carouselOptions={{
             slidesPerView: 3
