@@ -191,9 +191,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
       onSuccess(data, variables) {
-        //@ts-ignore
         const updatedFile = {
+          //@ts-ignore
           ...data.data,
+          //@ts-ignore
           rawFile: variables.file,
           uploadState: { isSuccess: true, isLoading: false }
         };
