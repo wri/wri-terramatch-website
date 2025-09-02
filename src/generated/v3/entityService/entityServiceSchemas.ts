@@ -863,6 +863,7 @@ export type ProjectFullDto = {
    * @format date-time
    */
   plantingEndDate: string | null;
+  description: string | null;
   budget: number | null;
   history: string | null;
   objectives: string | null;
@@ -888,6 +889,7 @@ export type ProjectFullDto = {
   sitingStrategyDescription: string | null;
   sitingStrategy: string | null;
   landholderCommEngage: string | null;
+  communityIncentives: string | null;
   projPartnerInfo: string | null;
   seedlingsSource: string | null;
   landTenureProjectArea: string[] | null;
