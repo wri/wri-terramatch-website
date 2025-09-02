@@ -70,12 +70,17 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   });
 
   return useMemo(() => {
+    // Special case: for projectReports with "replanting" collection, data comes within reportCounts
+    if (entity === "projectReports" && collection === "replanting") {
+      return sumBy(Object.values(reportCounts ?? {}), "amount");
+    }
+
     if (entity.endsWith("Reports")) {
       return sumBy(plants, "amount");
     } else {
       return sumBy(Object.values(reportCounts ?? {}), "amount");
     }
-  }, [entity, plants, reportCounts]);
+  }, [entity, plants, reportCounts, collection]);
 };
 
 export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: AggregateTreeHookProps) => {
