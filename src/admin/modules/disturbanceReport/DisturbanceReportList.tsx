@@ -23,9 +23,9 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getStatusOptions } from "@/constants/options/status";
+import { getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import Intensity, { IntensityEnum } from "./components/Intensity";
@@ -57,22 +57,22 @@ const DisturbanceReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: SiteLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={({ status }: DisturbanceReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
-      <DateField source="updatedAt" label="Date of Incident" locales="en-GB" />
+      <DateField source="dateOfIncident" label="Date of Incident" locales="en-GB" />
       <FunctionField
         source="intensity"
         label="Intensity"
-        render={(record: any) => {
-          return <Intensity intensity={Math.random() > 0.5 ? IntensityEnum.HIGH : IntensityEnum.LOW} />;
+        render={(record: DisturbanceReportLightDto) => {
+          return <Intensity intensity={record?.intensity as IntensityEnum} />;
         }}
         sortable={false}
       />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
-      <DateField source="updatedAt" label="Date Submitted" locales="en-GB" />
+      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
         <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
       </Menu>
@@ -88,7 +88,7 @@ export const DisturbanceReportList: FC = () => {
       key="status"
       label="Status"
       source="status"
-      choices={optionToChoices(getStatusOptions())}
+      choices={optionToChoices(getReportStatusOptions())}
       className="select-page-admin"
     />
   ];

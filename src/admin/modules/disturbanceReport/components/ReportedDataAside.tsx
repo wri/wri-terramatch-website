@@ -1,10 +1,13 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import React from "react";
+import { RaRecord, useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const ReportedDataAside = () => {
+  const { record } = useShowContext<DisturbanceReportLightDto & RaRecord>();
   return (
     <div className="user-aside max-w-[25rem] pl-4">
       <Box className="shadow-sm mb-4 rounded-lg bg-white">
@@ -19,21 +22,10 @@ const ReportedDataAside = () => {
           <Grid item xs={12}>
             <Box className="flex flex-col gap-2">
               <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-                Site
-              </Text>
-              <Text variant="text-14" className="leading-none text-blueCustom-900">
-                Antmursigh
-              </Text>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Box className="flex flex-col gap-2">
-              <Text variant="text-14-light" className="leading-none text-darkCustom-300">
                 Project
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                Greening Australia PPC Project
+                {record?.projectName}
               </Text>
             </Box>
           </Grid>
@@ -44,7 +36,7 @@ const ReportedDataAside = () => {
                 Organisation
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                Greening Australia
+                {record?.organisationName}
               </Text>
             </Box>
           </Grid>
@@ -55,7 +47,7 @@ const ReportedDataAside = () => {
                 Framework
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                PPC
+                {record?.frameworkKey}
               </Text>
             </Box>
           </Grid>
@@ -66,7 +58,7 @@ const ReportedDataAside = () => {
                 Status
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                Approved
+                {record?.status}
               </Text>
             </Box>
           </Grid>
@@ -77,7 +69,7 @@ const ReportedDataAside = () => {
                 Change Request Status
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                No Update
+                {record?.updateRequestStatus}
               </Text>
             </Box>
           </Grid>
@@ -88,7 +80,7 @@ const ReportedDataAside = () => {
                 Due Date
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                -
+                {record?.dueAt}
               </Text>
             </Box>
           </Grid>
