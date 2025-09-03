@@ -3,12 +3,13 @@ import { map, uniq } from "lodash";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
+  formGet,
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
   optionLabelsGetList,
   optionLabelsIndex
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { LinkedFieldDto, OptionLabelDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormDto, LinkedFieldDto, OptionLabelDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -48,3 +49,8 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
   .buildConnection();
 export const useLinkedFields = connectionHook(linkedFieldsConnection);
 export const loadLinkedFields = connectionLoader(linkedFieldsConnection);
+
+const formConnection = v3Resource("forms", formGet)
+  .singleResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .buildConnection();
+export const useForm = connectionHook(formConnection);

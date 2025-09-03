@@ -2528,6 +2528,98 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
+export type FormGetPathParams = {
+  /**
+   * Form uuid
+   */
+  uuid: string;
+};
+
+export type FormGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormGetResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormDto;
+  };
+  included?: (
+    | {
+        /**
+         * @example formSections
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormSectionDto;
+      }
+    | {
+        /**
+         * @example formQuestions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormQuestionDto;
+      }
+  )[];
+};
+
+export type FormGetVariables = {
+  pathParams: FormGetPathParams;
+};
+
+/**
+ * Get a form by uuid. Includes all sections and questions within the form.
+ */
+export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "GET"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2539,5 +2631,6 @@ export const operationsByTag = {
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
-  linkedFields: { linkedFieldsIndex }
+  linkedFields: { linkedFieldsIndex },
+  forms: { formGet }
 };
