@@ -926,7 +926,6 @@ export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePol
   indicators: [],
   siteName: sitePolygonData.site_name ?? null,
   versionName: sitePolygonData.version_name ?? null,
-  plantingStatus: null,
   practice: sitePolygonData.practice ?? null,
   targetSys: sitePolygonData.target_sys ?? null,
   distr: sitePolygonData.distr ?? null,

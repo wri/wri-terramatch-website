@@ -1,6 +1,9 @@
 import { createSelector } from "reselect";
 
 import { selectMe, useMyUser } from "@/connections/User";
+import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { resourceCreator } from "@/connections/util/resourceCreator";
+import { organisationCreation } from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
@@ -39,3 +42,9 @@ export const useMyOrg = (): Connected<MyOrganisationConnection> => {
   const [, orgShape] = useConnection(myOrganisationConnection);
   return loaded ? [true, orgShape] : [false, {}];
 };
+
+const orgCreationConnection = v3Resource("organisations", organisationCreation)
+  .create<OrganisationDto>()
+  .buildConnection();
+
+export const createOrg = resourceCreator(orgCreationConnection);

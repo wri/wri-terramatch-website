@@ -43,6 +43,7 @@ const App = () => {
               list={modules.organisation.List}
               show={modules.organisation.Show}
               edit={modules.organisation.Edit}
+              create={modules.organisation.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
               recordRepresentation={record => record?.name}
             />

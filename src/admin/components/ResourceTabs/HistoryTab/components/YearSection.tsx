@@ -16,7 +16,7 @@ const YearSection: FC<YearSectionProps> = ({ year, files }) => {
         {year}
       </Text>
       {files?.map((file: any) => (
-        <FileDownloadButton key={file?.file_name} file={file} />
+        <FileDownloadButton key={file?.file_name ?? file?.fileName} file={file} />
       ))}
       {files?.length === 0 && (
         <Text variant="text-16-light" className="text-blueCustom-900">

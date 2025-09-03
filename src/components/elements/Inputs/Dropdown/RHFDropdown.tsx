@@ -1,11 +1,10 @@
 import { difference } from "lodash";
-import { useRouter } from "next/router";
 import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import Loader from "@/components/generic/Loading/Loader";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useGetV2FormsOptionLabels } from "@/generated/apiComponents";
+import { useOptionLabels } from "@/connections/util/Form";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
@@ -59,7 +58,6 @@ const WithApiOptions: FC<WithApiOptionsProps> = props => {
 
 const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
   const { enableAdditionalOptions, ...displayProps } = props;
-  const { locale } = useRouter();
   const {
     field: { value }
   } = useController(props);
@@ -69,34 +67,24 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
       difference<OptionValue>(
         toArray(value),
         props.options.map(op => op.value)
-      ),
+      ) as string[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.options]
   );
 
   //To fetch additional option labels that are not included in original options list
-  const { data: optionsData } = useGetV2FormsOptionLabels(
-    {
-      queryParams: {
-        lang: locale,
-        keys: additionalOptionValue.join(",")
-      }
-    },
-    {
-      enabled: additionalOptionValue.length > 0
-    }
-  );
+  const [, { data: optionsData }] = useOptionLabels({ ids: additionalOptionValue });
 
   const additionalOptions = useMemo(
     () =>
       //@ts-ignore
-      (optionsData?.data?.map((option: any) => ({
+      Object.values(optionsData ?? {}).map(option => ({
         title: option.label,
         value: option.slug,
-        meta: { image_url: option.image_url }
-      })) || []) as Option[],
+        meta: { image_url: option.imageUrl }
+      })) as Option[],
     //@ts-ignore
-    [optionsData?.data]
+    [optionsData]
   );
 
   const notFoundOptions = useMemo(
