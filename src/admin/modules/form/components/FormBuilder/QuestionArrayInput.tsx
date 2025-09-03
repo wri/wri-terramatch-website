@@ -1,6 +1,5 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
-import { Fragment, ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useCallback, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -8,16 +7,9 @@ import {
   BooleanInput,
   FormDataConsumer,
   FormDataConsumerRenderParams,
-  maxValue,
-  minLength,
-  minValue,
-  NumberInput,
   required,
-  SelectArrayInput,
-  TextInput,
-  useInput
+  TextInput
 } from "react-admin";
-import { Else, If, Then } from "react-if";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import {
@@ -27,14 +19,14 @@ import {
 } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorButtons";
 import { FormQuestionPreviewDialog } from "@/admin/components/Dialogs/FormQuestionPreviewDialog";
 import { RichTextInput } from "@/admin/components/RichTextInput/RichTextInput";
-import { OptionArrayInput } from "@/admin/modules/form/components/FormBuilder/OptionArrayInput";
+import AdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions";
 import { AdditionalInputTypes, Choice } from "@/admin/types/common";
-import { noDuplication, noEmptyElement } from "@/admin/utils/forms";
-import { FormQuestionRead, V2GenericList } from "@/generated/apiSchemas";
+import { FormQuestionRead } from "@/generated/apiSchemas";
+import { LinkedFieldDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
+export interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
   title: string;
-  linkedFieldsData: V2GenericList[];
+  linkedFieldsData: FormQuestionField[];
   onDeleteQuestion?: (index: number, source: string) => Promise<void>;
   isChildQuestion?: boolean;
   hideDescriptionInput?: boolean;
@@ -42,13 +34,16 @@ interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
   formTitle?: string;
 }
 
-export const appendAdditionalFormQuestionFields = (originalList: V2GenericList[]): V2GenericList[] => {
-  return [
-    { name: "Table Input (Generic)", input_type: AdditionalInputTypes.TableInput, uuid: "table-input" },
-    { name: "Conditional Input (Generic)", input_type: AdditionalInputTypes.ConditionalInput, uuid: "conditional" },
-    ...originalList
-  ];
-};
+export type FormQuestionField = Pick<LinkedFieldDto, "name" | "id"> &
+  Partial<Omit<LinkedFieldDto, "name" | "inputType" | "id">> & {
+    inputType: LinkedFieldDto["inputType"] | AdditionalInputTypes.TableInput;
+  };
+
+export const appendAdditionalFormQuestionFields = (originalList: LinkedFieldDto[]): FormQuestionField[] => [
+  { name: "Table Input (Generic)", inputType: AdditionalInputTypes.TableInput, id: "table-input" },
+  { name: "Conditional Input (Generic)", inputType: AdditionalInputTypes.ConditionalInput, id: "conditional" },
+  ...originalList
+];
 
 export const QuestionArrayInput = ({
   title,
@@ -61,10 +56,13 @@ export const QuestionArrayInput = ({
   ...arrayInputProps
 }: QuestionArrayInputProps) => {
   const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
-  const linkedFieldChoices = linkedFieldsData?.map(item => ({ id: item.uuid, name: item.name } as Choice)) || [];
+  const linkedFieldChoices = linkedFieldsData?.map(({ id, name }) => ({ id, name } as Choice)) || [];
   const selectRef = useRef<HTMLDivElement | null>(null);
 
-  const getFieldByUUID = (fieldUUID: string) => linkedFieldsData.find(item => item.uuid === fieldUUID);
+  const getFieldById = useCallback(
+    (fieldId: string) => linkedFieldsData.find(({ id }) => id === fieldId),
+    [linkedFieldsData]
+  );
 
   return (
     <div ref={selectRef}>
@@ -102,70 +100,6 @@ export const QuestionArrayInput = ({
             validate={required()}
           />
 
-          <FormDataConsumer>
-            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-              if (!scopedFormData || !getSource) return null;
-              const field = getFieldByUUID(scopedFormData.linked_field_key);
-              return field?.input_type == "financialIndicators" ? (
-                <>
-                  <SelectArrayInput
-                    source={getSource("years")}
-                    label="Years multi-select"
-                    helperText="Select one or more years"
-                    choices={Array(6)
-                      .fill(0)
-                      .map((_, index) => {
-                        const year = new Date().getFullYear() - 5 + index;
-                        return { id: year, name: year };
-                      })}
-                    fullWidth
-                    validate={required()}
-                    options={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: {
-                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
-                          }
-                        }
-                      }
-                    }}
-                  />
-                  <SelectArrayInput
-                    source={getSource("collection")}
-                    label="Select Collections"
-                    helperText="Select one or more collections"
-                    choices={[
-                      { id: "profit", name: "Net Profit" },
-                      { id: "budget", name: "Budget" },
-                      { id: "current-ratio", name: "Ratio" }
-                    ]}
-                    fullWidth
-                    validate={required()}
-                    options={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: {
-                            width: selectRef.current?.offsetWidth ? selectRef.current?.offsetWidth - 50 : "100%"
-                          }
-                        }
-                      }
-                    }}
-                    parse={(value: string[] | undefined) => (value ? JSON.stringify(value) : "[]")}
-                    format={(value: string | undefined) => {
-                      try {
-                        return value ? JSON.parse(value) : [];
-                      } catch {
-                        return [];
-                      }
-                    }}
-                  />
-                </>
-              ) : (
-                <></>
-              );
-            }}
-          </FormDataConsumer>
-
           {!hideDescriptionInput && (
             <RichTextInput
               source="description"
@@ -179,44 +113,6 @@ export const QuestionArrayInput = ({
               height="75px"
             />
           )}
-          <FormDataConsumer>
-            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-              if (!scopedFormData || !getSource) return null;
-              const field = getFieldByUUID(scopedFormData.linked_field_key);
-              return field?.input_type == "long-text" ? (
-                <>
-                  <NumberInput
-                    source={getSource("min_character_limit")}
-                    label="Minimum Character Limit"
-                    defaultValue={0}
-                    validate={[minValue(0)]}
-                  />
-                  <NumberInput
-                    source={getSource("max_character_limit")}
-                    label="Maximum Character Limit"
-                    defaultValue={90000}
-                    validate={[maxValue(90000)]}
-                  />
-                </>
-              ) : (
-                <></>
-              );
-            }}
-          </FormDataConsumer>
-          <FormDataConsumer>
-            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-              if (!scopedFormData || !getSource) return null;
-              return scopedFormData.linked_field_key == "pro-pit-long-proposed" ||
-                scopedFormData.linked_field_key == "pro-pit-lat-proposed" ? (
-                <>
-                  <NumberInput source={getSource("min_number_limit")} label="Minimum Number Limit" />
-                  <NumberInput source={getSource("max_number_limit")} label="Maximum Number Limit" />
-                </>
-              ) : (
-                <></>
-              );
-            }}
-          </FormDataConsumer>
           <BooleanInput
             source="validation.required"
             label="Required"
@@ -225,212 +121,11 @@ export const QuestionArrayInput = ({
           />
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-              if (!scopedFormData || !getSource) return null;
-              const field = getFieldByUUID(scopedFormData.linked_field_key);
+              if (scopedFormData == null || getSource == null) return null;
+              const field = getFieldById(scopedFormData.linked_field_key);
+              if (field == null) return null;
 
-              const allowCreate =
-                //@ts-ignore
-                field?.option_list_key !== "countries" &&
-                field?.uuid !== "org-type" &&
-                //@ts-ignore
-                field?.option_list_key !== "months";
-
-              if (!field) return null;
-              const input_type = field?.input_type;
-              const [editOptions, setEditOptions] = useState(false);
-              const defaultOptions = field.options?.map((option: any) => ({
-                ...option,
-                label: option.label,
-                slug: option.alt_value || option.slug
-              }));
-
-              const {
-                field: { value: linked_field_key }
-              } = useInput({ source: getSource("linked_field_key") });
-
-              const {
-                field: { value: form_question_options, onChange: onChangeOptions }
-              } = useInput({ source: getSource("form_question_options") });
-
-              const {
-                field: { value: has_total }
-              } = useInput({ source: getSource("additional_props.with_numbers") });
-
-              useEffect(() => {
-                //To force update default value when linked_field_key changes
-
-                if (!form_question_options?.[0]?.uuid) {
-                  // to prevent this on edit page
-
-                  onChangeOptions(defaultOptions);
-                }
-                // eslint-disable-next-line react-hooks/exhaustive-deps
-              }, [linked_field_key]);
-
-              switch (input_type) {
-                case AdditionalInputTypes.TableInput:
-                  return (
-                    <Fragment key={field?.uuid}>
-                      <Box display="flex" width="100%" gap={2} marginTop={2}>
-                        <TextInput
-                          source={getSource("table_headers.0.label")}
-                          label="Table Header (Question)"
-                          helperText=""
-                          fullWidth
-                          validate={required()}
-                        />
-                        <TextInput
-                          source={getSource("table_headers.1.label")}
-                          label="Table Header (Answer)"
-                          helperText=""
-                          fullWidth
-                          validate={required()}
-                        />
-                      </Box>
-                      <BooleanInput
-                        source={getSource("additional_props.with_numbers")}
-                        label="Has Total"
-                        helperText="To append total value of answers at the end of 'Table Header (Answer)'. if turned on you'll only be able to select number inputs."
-                        defaultValue={false}
-                      />
-                      <QuestionArrayInput
-                        source={getSource("child_form_questions")}
-                        label="Table Questions"
-                        title="Child Question"
-                        linkedFieldsData={linkedFieldsData.filter(
-                          field => (!has_total && field.input_type === "text") || field.input_type?.includes("number")
-                        )}
-                        hideDescriptionInput
-                        isChildQuestion
-                        validate={minLength(1, "At least one child Question is required")}
-                      />
-                    </Fragment>
-                  );
-
-                case AdditionalInputTypes.ConditionalInput:
-                  return (
-                    <QuestionArrayInput
-                      source={getSource("child_form_questions")}
-                      label="Follow-up questions"
-                      title="Child Question"
-                      linkedFieldsData={linkedFieldsData.filter(
-                        field => field.input_type !== AdditionalInputTypes.ConditionalInput
-                      )}
-                      validate={minLength(1, "At least one Follow-up questions is required")}
-                      isChildQuestion
-                      onDeleteQuestion={onDeleteQuestion}
-                    >
-                      <BooleanInput
-                        source="show_on_parent_condition"
-                        label="If you want to ask this follow-up question when the user responds 'yes,' turn the toggle on. If you prefer to ask this question when the user responds 'no,' leave the toggle off."
-                        defaultValue={false}
-                      />
-                    </QuestionArrayInput>
-                  );
-
-                case "strategy-area":
-                case "select":
-                case "select-image":
-                case "workdays":
-                  if (field.uuid === "org-hq-state" || field.uuid === "org-states") {
-                    return null;
-                  }
-                  return (
-                    <Fragment key={field?.uuid}>
-                      <If condition={!editOptions}>
-                        <Then>
-                          <Button
-                            onClick={() => setEditOptions(true)}
-                            variant="contained"
-                            sx={{ marginX: "auto", marginY: 2 }}
-                          >
-                            {input_type === "workdays" ? "Edit ethnicity's options" : "Edit options"}
-                          </Button>
-                        </Then>
-                        <Else>
-                          <OptionArrayInput
-                            label="Options"
-                            source={getSource("form_question_options")}
-                            //@ts-ignore
-                            defaultValue={defaultOptions}
-                            dropDownOptions={
-                              defaultOptions?.map((option: any) => ({
-                                ...option,
-                                id: option.alt_value || option.slug,
-                                name: option.label
-                              })) as Choice[]
-                            }
-                            allowCreate={allowCreate}
-                            allowImages={field.input_type === "select-image"}
-                            validate={[
-                              noEmptyElement("label"),
-                              noDuplication("label"),
-                              minLength(1, "At least one Option is required")
-                            ]}
-                          />
-                        </Else>
-                      </If>
-                      {allowCreate && input_type === "select" && (
-                        <BooleanInput
-                          source={getSource("options_other")}
-                          label="Has Other"
-                          helperText="Enable this option to let users provide a response when they choose 'Other' as an option."
-                          defaultValue={false}
-                        />
-                      )}
-                    </Fragment>
-                  );
-
-                case "disturbances":
-                  return (
-                    <Fragment>
-                      <BooleanInput
-                        source={getSource("additional_props.with_intensity")}
-                        label="Has intensity"
-                        helperText="When enabled, this will prompt users to specify the intensity of the disturbance, which can be categorized as low, medium, or high."
-                        defaultValue={false}
-                      />
-                      <BooleanInput
-                        source={getSource("additional_props.with_extent")}
-                        label="Has extent (% of site affected)"
-                        helperText="When enabled, this will prompt users to indicate the extent of the disturbance. Users can choose from the following ranges: 0 - 20%, 21 - 40%, 41 - 60%, 61 - 80%, or 81 - 100%."
-                        defaultValue={false}
-                      />
-                    </Fragment>
-                  );
-
-                case "seedings":
-                  return (
-                    <BooleanInput
-                      source={getSource("additional_props.capture_count")}
-                      label="Capture Count"
-                      helperText="To allow users enter count instead of 'Number of seeds in sample' and 'Weight of sample(Kg)'"
-                      defaultValue={false}
-                    />
-                  );
-
-                case "treeSpecies":
-                  return (
-                    <BooleanInput
-                      source={getSource("additional_props.with_numbers")}
-                      label="Has Count"
-                      helperText="To allow users enter count for each tree species record."
-                      defaultValue={false}
-                    />
-                  );
-
-                case "file":
-                  return (
-                    <BooleanInput
-                      source={getSource("additional_props.with_private_checkbox")}
-                      label="Private or public checkbox"
-                      helperText="Enable this option to allow project developers to set this file as either private or public."
-                      defaultValue={false}
-                    />
-                  );
-                default:
-                  return null;
-              }
+              return <AdditionalOptions {...{ field, getSource, linkedFieldsData, onDeleteQuestion, selectRef }} />;
             }}
           </FormDataConsumer>
           {children}
