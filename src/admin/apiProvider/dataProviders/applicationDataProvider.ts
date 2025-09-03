@@ -20,6 +20,7 @@ import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { extractLocaleFromAdminPath } from "../utils/localeExtractor";
 
 export const applicationSortableList: string[] = [
   "organisation_name",
@@ -73,9 +74,11 @@ export const applicationDataProvider: ApplicationDataProvider = {
 
   // @ts-ignore
   async getOne(_, params) {
+    const locale = extractLocaleFromAdminPath();
     try {
       const response = await fetchGetV2AdminFormsApplicationsUUID({
-        pathParams: { uuid: params.id }
+        pathParams: { uuid: params.id },
+        queryParams: { ...(locale == null ? {} : { lang: locale }) }
       });
 
       // @ts-ignore
