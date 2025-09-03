@@ -2435,7 +2435,7 @@ export type GetV2FormsENTITYUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
   form_title?: string;
   feedback?: string;
@@ -2498,7 +2498,7 @@ export type PutV2FormsENTITYUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
   form_title?: string;
   feedback?: string;
@@ -2575,7 +2575,7 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
   form_title?: string;
   feedback?: string;
@@ -2647,7 +2647,7 @@ export type PostV2FormsENTITYResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
   form_title?: string;
   feedback?: string;
@@ -2707,7 +2707,7 @@ export type PostV2FormsProjectsUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
   form_title?: string;
   feedback?: string;
