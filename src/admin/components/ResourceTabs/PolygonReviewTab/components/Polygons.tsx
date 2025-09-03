@@ -1,5 +1,6 @@
 import { Box, LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
+import isEmpty from "lodash/isEmpty";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
@@ -24,6 +25,7 @@ import {
   fetchGetV2TerrafundGeojsonComplete,
   useGetV2TerrafundValidationSite
 } from "@/generated/apiComponents";
+import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -50,6 +52,7 @@ export interface IPolygonProps {
   refresh?: () => void;
   mapFunctions: any;
   totalPolygons?: number;
+  progress?: number;
   siteUuid?: string;
   isLoading?: boolean;
 }
@@ -62,6 +65,8 @@ const VALIDATION_STATUS_OPTIONS = [
   { title: "Passed", value: "passed" }
 ];
 
+const INVALID_STATUSES = ["undefined", "null", "notChecked"];
+
 const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
@@ -71,7 +76,7 @@ const Polygons = (props: IPolygonProps) => {
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false } = props;
+  const { polygonFromMap, setPolygonFromMap, mapFunctions, siteUuid, isLoading = false, progress } = props;
   const { map } = mapFunctions;
 
   const { openModal, closeModal } = useModalContext();
@@ -93,6 +98,29 @@ const Polygons = (props: IPolygonProps) => {
   } = contextMapArea;
 
   const polygonMenu = useMemo(() => props.menu || [], [props.menu]);
+
+  const filteredPolygons = useMemo(() => {
+    if (validFilter == null || validFilter === "all") {
+      return polygonMenu;
+    }
+    return polygonMenu.filter(polygon => {
+      const status = polygon.validationStatus;
+      if (validFilter === "not_checked") {
+        return isEmpty(status) || INVALID_STATUSES.includes(status as string);
+      }
+      return status === validFilter;
+    });
+  }, [polygonMenu, validFilter]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    startIndex,
+    endIndex,
+    currentPageItems: currentPagePolygons
+  } = usePolygonsPagination(filteredPolygons, [validFilter]);
+
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
@@ -352,13 +380,13 @@ const Polygons = (props: IPolygonProps) => {
           <div className="flex flex-col gap-1">
             <When condition={props.totalPolygons ?? 0 > 0}>
               <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
-                <span className="font-bold">{displayPolygonCount}</span> of{" "}
-                <span className="font-bold">{props.totalPolygons}</span> polygons loaded
+                <span className="font-bold">{(progress ?? displayPolygonCount).toLocaleString()}</span> of{" "}
+                <span className="font-bold">{(props.totalPolygons ?? 0).toLocaleString()}</span> polygons loaded
               </Text>
               <Box sx={{ width: "100%" }}>
                 <LinearProgress
-                  variant="determinate"
-                  value={(displayPolygonCount / (props.totalPolygons ?? 1)) * 100}
+                  variant={progress != null && progress < (props.totalPolygons ?? 0) ? "indeterminate" : "determinate"}
+                  value={((progress ?? displayPolygonCount) / (props.totalPolygons ?? 1)) * 100}
                   sx={{ borderRadius: 5 }}
                 />
               </Box>
@@ -366,6 +394,31 @@ const Polygons = (props: IPolygonProps) => {
           </div>
         </div>
       </div>
+
+      {filteredPolygons.length > 0 && (
+        <div className="mb-4 flex items-center justify-between">
+          <Text variant="text-12" className="text-gray-600">
+            Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredPolygons.length).toLocaleString()}{" "}
+            of {filteredPolygons.length.toLocaleString()} polygons
+          </Text>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="border-gray-300 hover:bg-gray-50 flex h-6 w-6 items-center justify-center rounded border disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_LEFT} className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              className="border-gray-300 hover:bg-gray-50 flex h-6 w-6 items-center justify-center rounded border disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="mb-4 flex items-center justify-between gap-2">
         <Dropdown
@@ -399,35 +452,51 @@ const Polygons = (props: IPolygonProps) => {
       </div>
 
       <div ref={containerRef} className="-m-2 flex max-h-[150vh] flex-col gap-2 overflow-auto p-2">
-        {polygonMenu.map(item => (
-          <div key={item.id}>
-            <PolygonItem
-              uuid={item.uuid}
-              title={item.label}
-              status={item.status}
-              validationStatus={item.validationStatus}
-              isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
-              onCheckboxChange={handleCheckboxChange}
-              menu={
-                <Menu
-                  className="ml-auto"
-                  container={containerRef.current}
-                  menu={polygonMenuItems(item)}
-                  placement={MENU_PLACEMENT_LEFT_BOTTOM}
-                >
-                  <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
-                </Menu>
-              }
-              isCollapsed={openCollapseAll}
-              siteId={siteUuid}
-            />
-          </div>
-        ))}
-
-        {!isLoading && polygonMenu.length === 0 && (
+        {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Text variant="text-14" className="text-gray-500">
+              Loading polygons...
+            </Text>
+          </div>
+        ) : currentPagePolygons.length > 0 ? (
+          currentPagePolygons.map(item => (
+            <div key={item.id}>
+              <PolygonItem
+                uuid={item.uuid}
+                title={item.label}
+                status={item.status}
+                validationStatus={item.validationStatus}
+                isChecked={selectedPolygonsInCheckbox.includes(item.uuid)}
+                onCheckboxChange={handleCheckboxChange}
+                menu={
+                  <Menu
+                    className="ml-auto"
+                    container={containerRef.current}
+                    menu={polygonMenuItems(item)}
+                    placement={MENU_PLACEMENT_LEFT_BOTTOM}
+                  >
+                    <Icon name={IconNames.ELIPSES} className="h-4 w-4" />
+                  </Menu>
+                }
+                isCollapsed={openCollapseAll}
+                siteId={siteUuid}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Text variant="text-14" className="text-gray-500 mb-2">
               No polygons found
+            </Text>
+            <Text variant="text-12" className="text-gray-400 text-center">
+              {filteredPolygons.length === 0 && polygonMenu.length > 0
+                ? `No polygons match the "${validFilter}" filter`
+                : polygonMenu.length === 0
+                ? "No polygons available"
+                : "No polygons on this page"}
+            </Text>
+            <Text variant="text-12" className="text-gray-400 mt-1">
+              Total: {polygonMenu.length} | Filtered: {filteredPolygons.length} | Page: {currentPage}/{totalPages}
             </Text>
           </div>
         )}

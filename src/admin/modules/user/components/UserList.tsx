@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-import { useState } from "react";
 import {
   BooleanField,
   Datagrid,
@@ -12,13 +11,10 @@ import {
   SelectField,
   SelectInput,
   ShowButton,
-  TextField,
-  useDataProvider
+  TextField
 } from "react-admin";
 
-import { UserDataProvider } from "@/admin/apiProvider/dataProviders/userDataProvider";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
-import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { userCanEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
@@ -104,15 +100,7 @@ const UserDataGrid = () => {
 };
 
 export const UserList = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const { isFrameworkAdmin } = useGetUserRole();
-
-  const userDataProvider = useDataProvider<UserDataProvider>();
-
-  const handleExport = () => {
-    setExporting(true);
-    userDataProvider.export(modules.user.ResourceName).finally(() => setExporting(false));
-  };
 
   return (
     <>
@@ -122,14 +110,9 @@ export const UserList = () => {
         </Text>
       </Stack>
 
-      <List
-        actions={<ListActionsCreateFilter canCreateUser={isFrameworkAdmin} onExport={handleExport} />}
-        filters={filters}
-      >
+      <List actions={<ListActionsCreateFilter canCreate={isFrameworkAdmin} />} filters={filters}>
         <UserDataGrid />
       </List>
-
-      <ExportProcessingAlert show={exporting} />
     </>
   );
 };

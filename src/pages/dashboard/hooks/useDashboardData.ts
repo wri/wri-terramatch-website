@@ -428,19 +428,21 @@ export const useDashboardData = (filters: any) => {
 
   const transformedStories = useMemo(
     () =>
-      impactStories?.map((story: any) => ({
-        uuid: story.uuid,
-        title: story.title,
-        date: story.date,
-        thumbnail: story.thumbnail ?? "",
-        organization: {
-          name: story.organisation?.name ?? "",
-          country:
-            story.organisation?.countries?.length > 0
-              ? story.organisation.countries.map((c: any) => c.label).join(", ")
-              : "No country"
-        }
-      })) || [],
+      impactStories
+        ?.map((story: any) => ({
+          uuid: story.uuid,
+          title: story.title,
+          date: story.date,
+          thumbnail: story.thumbnail ?? "",
+          organization: {
+            name: story.organisation?.name ?? "",
+            country:
+              story.organisation?.countries?.length > 0
+                ? story.organisation.countries.map((c: any) => c.label).join(", ")
+                : "No country"
+          }
+        }))
+        .reverse() || [],
     [impactStories]
   );
 

@@ -4,15 +4,15 @@ import { Else, If, Then } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
 
 export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: SitePolygonFullDto[];
-  onSelectItem: (item: SitePolygonFullDto) => void;
+  items: SitePolygonLightDto[];
+  onSelectItem: (item: SitePolygonLightDto) => void;
   onLoadMore: () => void;
   emptyText?: string;
   tabEditPolygon: string;
@@ -23,6 +23,9 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  sortField: string;
+  sortDirection: "ASC" | "DESC";
+  setSortDirection: React.Dispatch<React.SetStateAction<"ASC" | "DESC">>;
   type: string;
   recallEntityData?: () => void;
   polygonVersionData?: SitePolygonsDataResponse;
@@ -47,6 +50,9 @@ const MapPolygonPanel = ({
   checkedValues,
   onCheckboxChange,
   setSortOrder,
+  sortField,
+  sortDirection,
+  setSortDirection,
   type,
   recallEntityData,
   polygonVersionData,
@@ -84,6 +90,9 @@ const MapPolygonPanel = ({
             checkedValues={checkedValues}
             onCheckboxChange={onCheckboxChange}
             setSortOrder={setSortOrder}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
             type={type}
             recallEntityData={recallEntityData}
             entityUuid={entityUuid}

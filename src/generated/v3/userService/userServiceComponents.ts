@@ -474,9 +474,99 @@ export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError,
   "POST"
 );
 
+export type OrganisationCreationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationCreationResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  };
+  included?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  }[];
+};
+
+export type OrganisationCreationVariables = {
+  body: Schemas.OrganisationCreateBody;
+};
+
+/**
+ * Create a new organisation, and the first user for it.
+ */
+export const organisationCreation = new V3ApiEndpoint<
+  OrganisationCreationResponse,
+  OrganisationCreationError,
+  OrganisationCreationVariables,
+  {}
+>("/organisations/v3/organisations", "POST");
+
 export const operationsByTag = {
   login: { authLogin },
   users: { usersFind, userUpdate, userCreation },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser }
+  verificationUser: { verifyUser },
+  organisations: { organisationCreation }
 };

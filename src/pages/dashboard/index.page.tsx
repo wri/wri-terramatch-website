@@ -691,6 +691,7 @@ const Dashboard = () => {
         projectCounts={projectCounts}
         transformedStories={transformedStories}
         isLoading={isLoadingImpactStories}
+        hasAccess={singleDashboardProject?.hasAccess}
       />
     </div>
   );

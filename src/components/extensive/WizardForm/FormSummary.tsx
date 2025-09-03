@@ -9,6 +9,7 @@ export interface FormSummaryProps {
   steps: FormStepSchema[];
   onEdit?: (stepIndex: number) => void;
   entity?: Entity;
+  organisation?: any;
 }
 
 export type FormSummaryOptions = {

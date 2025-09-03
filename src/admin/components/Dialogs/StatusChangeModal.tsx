@@ -80,6 +80,9 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
       case "nurseryReport":
         name = record?.title ?? "Nursery Report";
         break;
+      case "financialReport":
+        name = record?.organisationName ?? "Financial Report";
+        break;
     }
 
     switch (status) {

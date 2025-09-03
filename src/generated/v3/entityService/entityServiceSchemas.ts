@@ -113,6 +113,7 @@ export type MediaDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -434,6 +435,7 @@ export type TreeEntityTypes = {
    * @example projectReports
    * @example siteReports
    * @example nurseryReports
+   * @example financialReports
    */
   ESTABLISHMENT_ENTITIES: string[];
   /**
@@ -514,6 +516,7 @@ export type DemographicDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -552,6 +555,7 @@ export type DisturbanceDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -602,6 +606,7 @@ export type EntitySideload = {
     | "projectReports"
     | "nurseryReports"
     | "siteReports"
+    | "financialReports"
     | "demographics"
     | "seedings"
     | "treeSpecies"
@@ -626,6 +631,7 @@ export type SupportedEntities = {
    * @example projectReports
    * @example siteReports
    * @example nurseryReports
+   * @example financialReports
    */
   ENTITY_TYPES: string[];
 };
@@ -658,17 +664,6 @@ export type ProjectLightDto = {
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   shortName: string | null;
-  /**
-   * Planting status for this project
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   /**
    * @format date-time
    */
@@ -776,6 +771,33 @@ export type NurseryLightDto = {
   updatedAt: string;
 };
 
+export type FinancialReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  yearOfReport: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -804,17 +826,6 @@ export type ProjectFullDto = {
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   name: string | null;
   shortName: string | null;
-  /**
-   * Planting status for this project
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   /**
    * @format date-time
    */
@@ -974,17 +985,6 @@ export type SiteFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
-  /**
-   * Planting status for this site
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
   file: MediaDto[];
@@ -1057,17 +1057,6 @@ export type NurseryFullDto = {
   seedlingGrown: number | null;
   plantingContribution: string | null;
   oldModel: string | null;
-  /**
-   * Planting status for this nursery
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
@@ -1379,6 +1368,128 @@ export type SiteReportFullDto = {
   soilWaterConservationPhotos: MediaDto[];
 };
 
+export type FinancialIndicatorDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  collection: string | null;
+  description: string | null;
+  amount: number | null;
+  exchangeRate: number | null;
+  year: number | null;
+  documentation: MediaDto[] | null;
+};
+
+export type FundingTypeDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  source: string | null;
+  amount: number | null;
+  year: number | null;
+  type: string | null;
+  organisationName: string | null;
+  organisationUuid: string | null;
+};
+
+export type FinancialReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  yearOfReport: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  title: string | null;
+  /**
+   * @format date-time
+   */
+  approvedAt: string | null;
+  completion: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  frameworkKey: string | null;
+  nothingToReport: boolean | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: string | null;
+  finStartMonth: number | null;
+  financialCollection: FinancialIndicatorDto[] | null;
+  currency: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
+  /**
+   * The associated organisation status
+   */
+  organisationStatus: string | null;
+  fundingTypes: FundingTypeDto[] | null;
+};
+
 export type ProjectUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
@@ -1501,6 +1612,15 @@ export type NurseryReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type FinancialReportUpdateData = {
+  type: "financialReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1508,7 +1628,8 @@ export type EntityUpdateBody = {
     | NurseryUpdateData
     | ProjectReportUpdateData
     | SiteReportUpdateData
-    | NurseryReportUpdateData;
+    | NurseryReportUpdateData
+    | FinancialReportUpdateData;
 };
 
 /**
@@ -1616,6 +1737,7 @@ export type SeedingDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1647,6 +1769,7 @@ export type TreeSpeciesDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1677,6 +1800,7 @@ export type InvasiveDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1704,6 +1828,7 @@ export type StrataDto = {
     | "projectReports"
     | "siteReports"
     | "nurseryReports"
+    | "financialReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1724,4 +1849,19 @@ export type StrataDto = {
    * The associated nursery name
    */
   extent: number | null;
+};
+
+export type OptionLabelDto = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option label text in English
+   */
+  imageUrl: Record<string, any> | null;
 };

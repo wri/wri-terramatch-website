@@ -76,6 +76,8 @@ const FinancialMetrics = ({ data, years }: { data: V2FinancialIndicatorsRead; ye
       : [])
   ];
 
+  const startMonth = fincialReportData?.fin_start_month ?? fincialReportData?.finStartMonth;
+
   return (
     <div className="rounded-lg bg-white px-6 py-6 shadow-all">
       <div className="mb-5 grid w-[70%] grid-cols-2 gap-6">
@@ -84,9 +86,7 @@ const FinancialMetrics = ({ data, years }: { data: V2FinancialIndicatorsRead; ye
             Start of financial year (month)
           </Text>
           <Text variant="text-14">
-            {fincialReportData?.fin_start_month
-              ? getMonthOptions(t).find(opt => opt.value == fincialReportData?.fin_start_month)?.title
-              : "Not Provided"}
+            {startMonth ? getMonthOptions(t).find(opt => opt.value == startMonth)?.title : "Not Provided"}
           </Text>
         </div>
         <div className="flex flex-col gap-0">

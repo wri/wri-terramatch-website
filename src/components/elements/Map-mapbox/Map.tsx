@@ -579,7 +579,6 @@ export const MapContainer = ({
                 body: { geometry: JSON.stringify(feature) as any },
                 pathParams: { uuid: polygonFromMap?.uuid }
               });
-              console.log("sitepolygons", sitePolygonData, "polygondfrommap", polygonFromMap);
               const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon?.primary_uuid as string }
@@ -694,8 +693,9 @@ export const MapContainer = ({
       const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const nameFile = record?.organisation?.name || "polygons";
       link.href = url;
-      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.download = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.geojson`;
       link.click();
       URL.revokeObjectURL(url);
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));

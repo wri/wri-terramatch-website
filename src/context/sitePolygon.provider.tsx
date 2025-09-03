@@ -1,20 +1,20 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export type SitePolygonData = {
-  data: SitePolygonFullDto[];
+  data: SitePolygonLightDto[];
 };
 
 type SitePolygonContextType = {
-  sitePolygonData: SitePolygonFullDto[] | undefined;
+  sitePolygonData: SitePolygonLightDto[] | undefined;
   reloadSiteData: () => void;
 };
 
 const SitePolygonDataContext = createContext<SitePolygonContextType | undefined>(undefined);
 
 export const SitePolygonDataProvider: React.FC<{
-  sitePolygonData: SitePolygonFullDto[] | undefined;
+  sitePolygonData: SitePolygonLightDto[] | undefined;
   reloadSiteData: () => void;
   children: ReactNode;
 }> = ({ sitePolygonData, reloadSiteData, children }) => {

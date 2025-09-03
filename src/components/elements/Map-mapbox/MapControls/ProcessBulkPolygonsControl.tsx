@@ -15,7 +15,7 @@ import {
   usePostV2TerrafundClipPolygonsPolygons,
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import JobsSlice from "@/store/jobsSlice";
 
 const ProcessBulkPolygonsControl = ({
@@ -48,7 +48,7 @@ const ProcessBulkPolygonsControl = ({
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
-  const sitePolygonData = context?.sitePolygonData as Array<SitePolygonFullDto>;
+  const sitePolygonData = context?.sitePolygonData as Array<SitePolygonLightDto>;
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
 
   const openFormModalHandlerProcessBulkPolygons = () => {
@@ -190,7 +190,7 @@ const ProcessBulkPolygonsControl = ({
     );
     const selectedUUIDs: string[] = sitePolygonData
       .filter((_, index) => initialSelection[index])
-      .map((polygon: SitePolygonFullDto) => polygon.polygonUuid ?? "");
+      .map((polygon: SitePolygonLightDto) => polygon.polygonUuid ?? "");
     if (type === "check") {
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Check Polygons");

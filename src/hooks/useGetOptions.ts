@@ -1,6 +1,4 @@
-import { useRouter } from "next/router";
-
-import { useGetV2FormsOptionLabels } from "@/generated/apiComponents";
+import { useOptionLabels } from "@/connections/util/Form";
 import { Option } from "@/types/common";
 import { toArray } from "@/utils/array";
 
@@ -10,24 +8,9 @@ import { toArray } from "@/utils/array";
  * @returns Option[]
  */
 export const useGetOptions = (keys?: string[] | null): Option[] => {
-  const { locale } = useRouter();
-  const _keys = toArray(keys);
+  const [, { data: optionsData }] = useOptionLabels({ ids: toArray(keys) });
 
-  const { data: optionsData } = useGetV2FormsOptionLabels(
-    {
-      queryParams: {
-        keys: _keys?.join(","),
-        lang: locale
-      }
-    },
-    {
-      enabled: _keys?.length > 0
-    }
-  );
-  return (
-    // @ts-ignore
-    optionsData?.data?.map(
-      (option: any) => ({ title: option.label, value: option.slug, meta: { image_url: option.image_url } } as Option)
-    ) || []
+  return Object.values(optionsData ?? {}).map(
+    option => ({ title: option.label, value: option.slug, meta: { image_url: option.imageUrl } } as Option)
   );
 };

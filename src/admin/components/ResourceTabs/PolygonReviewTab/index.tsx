@@ -45,7 +45,7 @@ import {
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
@@ -96,7 +96,19 @@ const PolygonReviewAside: FC<{
   totalPolygons?: number;
   siteUuid?: string;
   isLoading?: boolean;
-}> = ({ type, data, polygonFromMap, setPolygonFromMap, refresh, mapFunctions, totalPolygons, siteUuid, isLoading }) => {
+  progress?: number;
+}> = ({
+  type,
+  data,
+  polygonFromMap,
+  setPolygonFromMap,
+  refresh,
+  mapFunctions,
+  totalPolygons,
+  siteUuid,
+  isLoading,
+  progress
+}) => {
   switch (type) {
     case "sites":
       return (
@@ -107,6 +119,7 @@ const PolygonReviewAside: FC<{
           mapFunctions={mapFunctions}
           refresh={refresh}
           totalPolygons={totalPolygons}
+          progress={progress}
           siteUuid={siteUuid}
           isLoading={isLoading}
         />
@@ -171,8 +184,9 @@ const PolygonReviewTab: FC<IProps> = props => {
     data: sitePolygonData,
     refetch,
     loading,
-    total
-  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, undefined, validFilter);
+    total,
+    progress
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
@@ -200,7 +214,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   });
 
   // Simple transformation for MapContainer compatibility
-  const transformForMapContainer = (data: SitePolygonFullDto[]) => {
+  const transformForMapContainer = (data: SitePolygonLightDto[]) => {
     return data.map(polygon => ({
       id: undefined,
       uuid: polygon.polygonUuid ?? undefined,
@@ -232,7 +246,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index) => ({
+  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index) => ({
     "polygon-name": data?.name ?? `Unnamed Polygon`,
     "restoration-practice": data?.practice ?? "",
     "target-land-use-system": data?.targetSys ?? "",
@@ -240,10 +254,10 @@ const PolygonReviewTab: FC<IProps> = props => {
     "planting-start-date": data?.plantStart ?? "",
     source: data?.source ?? "",
     uuid: data?.polygonUuid,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygonFullDto[]).length - 1
+    ellipse: index === ((sitePolygonData ?? []) as SitePolygonLightDto[]).length - 1
   }));
 
-  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonFullDto, index: number) => ({
+  const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
     label: data.name ?? `Unnamed Polygon`,
@@ -815,6 +829,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               mapFunctions={mapFunctions}
               refresh={refetch}
               totalPolygons={total}
+              progress={progress}
               siteUuid={record?.uuid}
               isLoading={loading && sitePolygonData.length === 0}
             />

@@ -30,9 +30,9 @@ export const connectionLoader =
  * desirable. In almost every case, connectionHook or connectionLoader is what you really want.
  */
 export const connectionSelector =
-  <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
+  <TSelected, TProps extends OptionalProps>(connection: Connection<TSelected, TProps>) =>
   (...args: PropsParamType<TProps>) => {
-    const state = (connection.getState ?? ApiSlice.getState)(ApiSlice.redux.getState()) as State;
+    const state = (connection.getState ?? ApiSlice.getState)(ApiSlice.redux.getState());
     return connection.selector(state, args[0] as TProps);
   };
 

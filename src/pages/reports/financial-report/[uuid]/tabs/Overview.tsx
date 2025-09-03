@@ -46,20 +46,23 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
     );
   }
 
-  const financialData = report?.financial_collection as V2FinancialIndicatorsRead;
+  const financialCollection =
+    report?.financialCollection ?? (report?.financial_collection as V2FinancialIndicatorsRead);
+  const finStartMonth = report?.fin_start_month ?? report?.finStartMonth;
 
-  const financialRatioStats = calculateFinancialRatioStats(report?.financial_collection);
+  const financialRatioStats = calculateFinancialRatioStats(financialCollection);
 
   const hasNetProfitData =
-    Array.isArray(financialData) &&
-    financialData.some(
+    Array.isArray(financialCollection) &&
+    financialCollection.some(
       item =>
         (item.collection === "revenue" && item.amount) ||
         (item.collection === "expenses" && item.amount) ||
         (item.collection === "profit" && item.amount)
     );
   const hasCurrentRatioData =
-    Array.isArray(financialData) && financialData.some(item => item.collection === "current-ratio" && item.amount);
+    Array.isArray(financialCollection) &&
+    financialCollection.some(item => item.collection === "current-ratio" && item.amount);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -80,9 +83,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
               <Text variant="text-18-bold">
-                {report?.fin_start_month
-                  ? getMonthOptions(t).find(opt => opt.value == report?.fin_start_month)?.title
-                  : "Not Provided"}
+                {finStartMonth ? getMonthOptions(t).find(opt => opt.value == finStartMonth)?.title : "Not Provided"}
               </Text>
             </div>
           </div>
@@ -96,15 +97,15 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
-              <FinancialStackedBarChart data={report?.financial_collection} currency={report?.currency} />
+              <FinancialStackedBarChart data={financialCollection} currency={report?.currency} />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
-              {report?.financial_collection
+              {financialCollection
                 .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
                 .map((item: FinancialStackedBarChartProps) => (
                   <CardFinancial
                     key={item.uuid}
-                    title={t(item.year.toString())}
+                    title={t(item?.year?.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Net Profit")}
                     currency={report?.currency}
@@ -122,20 +123,20 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
               <Text variant="text-24-bold" className="mb-2">
                 {t("Current Ratio by Year")}
               </Text>
-              <FinancialCurrentRatioChart data={report?.financial_collection} />
+              <FinancialCurrentRatioChart data={financialCollection} currency={report?.currency} />
             </div>
             <div className="flex h-full flex-col justify-center">
               <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
                 <CardFinancial
                   title={t("Latest Ratio")}
-                  data={financialRatioStats.latestRatio.toString()}
-                  description={financialRatioStats.latestYear.toString()}
+                  data={financialRatioStats?.latestRatio?.toString()}
+                  description={financialRatioStats?.latestYear?.toString()}
                   currency={""}
                 />
                 <CardFinancial
                   title={t(`${financialRatioStats.yearCount}-Year Average`)}
-                  data={financialRatioStats.averageRatio.toString()}
-                  description={financialRatioStats.yearRange}
+                  data={financialRatioStats?.averageRatio?.toString()}
+                  description={financialRatioStats?.yearRange}
                   currency={""}
                 />
               </div>
@@ -149,26 +150,26 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
           <Text variant="text-24-bold" className="mb-2">
             {t("Financial Documents per Year")}
           </Text>
-          <FinancialDocumentsSection files={formatDocumentData(report?.financial_collection)} />
+          <FinancialDocumentsSection files={formatDocumentData(financialCollection)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Descriptions of Financials per Year")}
           </Text>
-          <FinancialDescriptionsSection items={formatDescriptionData(report?.financial_collection)} />
+          <FinancialDescriptionsSection items={formatDescriptionData(financialCollection)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Exchange Rate by Year")}
           </Text>
-          <FinancialExchangeSection items={formatExchangeData(report?.financial_collection)} />
+          <FinancialExchangeSection items={formatExchangeData(financialCollection)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection data={report?.funding_types} currency={report?.currency} />
+        <FundingSourcesSection data={report?.funding_types ?? report?.fundingTypes} currency={report?.currency} />
       </Container>
     </Container>
   );

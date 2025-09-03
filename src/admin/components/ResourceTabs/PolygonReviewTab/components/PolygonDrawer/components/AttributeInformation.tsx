@@ -19,8 +19,22 @@ import {
   usePostV2TerrafundNewSitePolygonUuidNewVersion
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
+
+interface AttributeInformationProps {
+  selectedPolygon: SitePolygonLightDto;
+  sitePolygonRefresh: () => void;
+  setSelectedPolygonData: any;
+  setStatusSelectedPolygon: any;
+  refetchPolygonVersions: () => void;
+  isLoadingVersions: boolean;
+  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
+  selectedPolygonIndex?: string;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
+  setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
+}
 
 const AttributeInformation = ({
   selectedPolygon,
@@ -34,19 +48,7 @@ const AttributeInformation = ({
   setPolygonFromMap,
   setIsLoadingDropdownVersions,
   setIsOpenPolygonDrawer
-}: {
-  selectedPolygon: SitePolygonFullDto;
-  sitePolygonRefresh: () => void;
-  setSelectedPolygonData: any;
-  setStatusSelectedPolygon: any;
-  refetchPolygonVersions: () => void;
-  isLoadingVersions: boolean;
-  setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
-  selectedPolygonIndex?: string;
-  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
-  setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
-  setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: AttributeInformationProps) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
@@ -130,7 +132,6 @@ const AttributeInformation = ({
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primaryUuid as string }
               })) as SitePolygonsDataResponse;
-              console.log("polygonVersionDataaaa", polygonVersionData);
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon.uuid) {
                 sitePolygonRefresh();

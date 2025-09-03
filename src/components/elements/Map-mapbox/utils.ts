@@ -17,7 +17,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -898,9 +898,9 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-// New utility functions for SitePolygonFullDto
-export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undefined) {
-  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonFullDto) => {
+// New utility functions for SitePolygonLightDto
+export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined) {
+  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
     if (data.status != null && data.polygonUuid != null) {
       if (acc[data.status] == null) {
         acc[data.status] = [];
@@ -911,38 +911,32 @@ export function parsePolygonDataV3(sitePolygonData: SitePolygonFullDto[] | undef
   }, {});
 }
 
-export function parseSitePolygonsDataResponseToFullDto(sitePolygonData: SitePolygon): SitePolygonFullDto {
-  return {
-    lightResource: false,
-    name: sitePolygonData.poly_name ?? null,
-    status: (sitePolygonData.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
-    siteId: sitePolygonData.site_id ?? null,
-    polygonUuid: sitePolygonData.poly_id ?? null,
-    projectId: sitePolygonData.project_id ?? null,
-    projectShortName: sitePolygonData.proj_name ?? null,
-    plantStart: sitePolygonData.plantstart ?? null,
-    calcArea: sitePolygonData.calc_area ?? null,
-    lat: null,
-    long: null,
-    indicators: [],
-    siteName: sitePolygonData.site_name ?? null,
-    versionName: sitePolygonData.version_name ?? null,
-    plantingStatus: null,
-    geometry: null,
-    practice: sitePolygonData.practice ?? null,
-    targetSys: sitePolygonData.target_sys ?? null,
-    distr: sitePolygonData.distr ?? null,
-    numTrees: sitePolygonData.num_trees ?? null,
-    source: sitePolygonData.source ?? null,
-    validationStatus: sitePolygonData.validation_status?.toString() ?? null,
-    establishmentTreeSpecies: [],
-    reportingPeriods: [],
-    primaryUuid: sitePolygonData.primary_uuid ?? null,
-    uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? ""
-  };
-}
+export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePolygon): SitePolygonLightDto => ({
+  lightResource: true,
+  name: sitePolygonData.poly_name ?? null,
+  status: (sitePolygonData.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
+  siteId: sitePolygonData.site_id ?? null,
+  polygonUuid: sitePolygonData.poly_id ?? null,
+  projectId: sitePolygonData.project_id ?? null,
+  projectShortName: sitePolygonData.proj_name ?? null,
+  plantStart: sitePolygonData.plantstart ?? null,
+  calcArea: sitePolygonData.calc_area ?? null,
+  lat: null,
+  long: null,
+  indicators: [],
+  siteName: sitePolygonData.site_name ?? null,
+  versionName: sitePolygonData.version_name ?? null,
+  practice: sitePolygonData.practice ?? null,
+  targetSys: sitePolygonData.target_sys ?? null,
+  distr: sitePolygonData.distr ?? null,
+  numTrees: sitePolygonData.num_trees ?? null,
+  source: sitePolygonData.source ?? null,
+  validationStatus: sitePolygonData.validation_status?.toString() ?? null,
+  primaryUuid: sitePolygonData.primary_uuid ?? null,
+  uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? ""
+});
 
-export const countStatusesV3 = (sitePolygonData: SitePolygonFullDto[]): DataPolygonOverview => {
+export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
   const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
 
   const statusCountMap: Record<string, number> = {};
@@ -1187,7 +1181,7 @@ export type ValidationRecordV3 = {
 };
 
 export function parseValidationDataV3(
-  sitePolygonData: SitePolygonFullDto[] | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   currentValidationSite: ValidationRecordV3[],
   validationLabels: Record<number, string>
 ) {

@@ -159,18 +159,6 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  /**
-   * Planting status for this site polygon
-   */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
-  geometry: Record<string, any> | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
@@ -186,14 +174,6 @@ export type SitePolygonFullDto = {
    */
   validationStatus: string | null;
   /**
-   * The tree species associated with the establishment of the site that this polygon relates to.
-   */
-  establishmentTreeSpecies: TreeSpeciesDto[];
-  /**
-   * Access to reported trees planted for each approved report on this site.
-   */
-  reportingPeriods: ReportingPeriodDto[];
-  /**
    * Primary UUID of the site polygon
    */
   primaryUuid: string | null;
@@ -201,6 +181,15 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  geometry: Record<string, any> | null;
+  /**
+   * The tree species associated with the establishment of the site that this polygon relates to.
+   */
+  establishmentTreeSpecies: TreeSpeciesDto[];
+  /**
+   * Access to reported trees planted for each approved report on this site.
+   */
+  reportingPeriods: ReportingPeriodDto[];
 };
 
 export type SitePolygonLightDto = {
@@ -249,17 +238,28 @@ export type SitePolygonLightDto = {
    */
   siteName: string | null;
   versionName: string | null;
+  practice: string | null;
+  targetSys: string | null;
+  distr: string | null;
+  numTrees: number | null;
   /**
-   * Planting status for this site polygon
+   * Source of the site polygon
    */
-  plantingStatus:
-    | "no-restoration-expected"
-    | "not-started"
-    | "in-progress"
-    | "disturbed"
-    | "replacement-planting"
-    | "completed"
-    | null;
+  source: string | null;
+  /**
+   * Validation status of the site polygon
+   *
+   * @maxLength 255
+   */
+  validationStatus: string | null;
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
 };
 
 export type SitePolygonUpdateAttributes = {

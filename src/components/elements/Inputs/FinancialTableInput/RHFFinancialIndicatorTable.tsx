@@ -111,8 +111,23 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const value = field?.value || [];
     const [files, setFiles] = useState<Partial<UploadedFile>[]>();
     const { years, formSubmissionOrg, model } = props;
-    const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency ?? "");
-    const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month ?? "");
+
+    const getValueFromData = (fieldName: string, fallbackValue: OptionValue): OptionValue => {
+      if (value && Array.isArray(value) && value.length > 0) {
+        const firstItem = value[0];
+        if (firstItem[fieldName] !== null && firstItem[fieldName] !== undefined) {
+          return firstItem[fieldName];
+        }
+      }
+      return fallbackValue;
+    };
+
+    const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
+      getValueFromData("currency", formSubmissionOrg?.currency ?? "")
+    );
+    const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(
+      getValueFromData("start_month", formSubmissionOrg?.start_month ?? "")
+    );
     const [resetTable, setResetTable] = useState(0);
     const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
     const { openNotification } = useNotificationContext();
@@ -220,9 +235,20 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
-        // @ts-ignore
-        const _tmp = data ?? [];
-        field.onChange(_tmp);
+        if (data && Array.isArray(data)) {
+          const currentData = value;
+
+          const newData = data.filter((responseItem: any) => {
+            const exists = currentData.some((currentItem: any) => currentItem.uuid === responseItem.uuid);
+
+            return !exists;
+          });
+
+          if (newData.length > 0) {
+            const updatedData = [...currentData, ...newData];
+            field.onChange(updatedData);
+          }
+        }
       }
     });
 
@@ -894,8 +920,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         non_profit_analysis_data: nonProfitAnalysisData,
         current_radio_data: currentRadioData,
         documentation_data: documentationData,
-        local_currency: selectCurrency as string,
-        financial_year_start_month: selectFinancialMonth as number,
+        currency: selectCurrency as string,
+        start_month: selectFinancialMonth as number,
         financial_report_id: id ?? router.query.uuid
       };
 
@@ -924,17 +950,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-      forProfitAnalysisData,
-      nonProfitAnalysisData,
-      currentRadioData,
-      documentationData,
-      selectCurrency,
-      selectFinancialMonth,
-      formSubmissionOrg?.uuid,
-      formSubmissionOrg?.type,
-      files
-    ]);
+    }, []);
 
     const initialized = useRef(false);
     const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
@@ -948,14 +964,203 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         setNonProfitAnalysisData(formatted.nonProfitAnalysisData ?? initialNonProfitAnalysisData);
         setCurrentRadioData(formatted.currentRatioData ?? initialCurrentRadioData);
         setDocumentationData(formatted.documentationData ?? initialDocumentationData);
+
+        if (value && Array.isArray(value) && value.length > 0) {
+          const firstItem = value[0];
+
+          if (firstItem.local_currency && firstItem.local_currency !== selectCurrency) {
+            setSelectCurrency(firstItem.local_currency);
+          }
+
+          if (
+            firstItem.start_month !== null &&
+            firstItem.start_month !== undefined &&
+            firstItem.start_month !== selectFinancialMonth
+          ) {
+            setSelectFinancialMonth(firstItem.start_month);
+          }
+        }
+
         initialized.current = true;
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
-    // Placeholder para sincronizar la tabla de documentación
+    useEffect(() => {
+      if (initialized.current) {
+        const payload: Array<{
+          collection: string;
+          amount: number | null;
+          year: number;
+          financial_report_id: string | string[] | undefined;
+          start_month: OptionValue;
+          currency: OptionValue;
+          organisation_id: string | undefined;
+          uuid: string | null;
+          description: string | null;
+          documentation: Partial<UploadedFile>[];
+          exchange_rate: number | null;
+        }> = [];
+
+        if (model?.includes("profit") && forProfitAnalysisData && forProfitAnalysisData.length > 0) {
+          forProfitAnalysisData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "revenue",
+              amount: item.revenue,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.revenueUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "expenses",
+              amount: item.expenses,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.expensesUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "profit",
+              amount: item.revenue - item.expenses,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.profitUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (model?.includes("budget") && nonProfitAnalysisData && nonProfitAnalysisData.length > 0) {
+          nonProfitAnalysisData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "budget",
+              amount: item.budget,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.budgetUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (model?.includes("current-ratio") && currentRadioData && currentRadioData.length > 0) {
+          currentRadioData.forEach((item, index) => {
+            const year = Number(item.year);
+            if (isNaN(year)) return;
+
+            payload.push({
+              collection: "current-assets",
+              amount: item.currentAssets,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentAssetsUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "current-liabilities",
+              amount: item.currentLiabilities,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentLiabilitiesUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "current-ratio",
+              amount: Number((item.currentAssets / item.currentLiabilities).toFixed(2)),
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentRatioUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (documentationData && documentationData.length > 0) {
+          documentationData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "description-documents",
+              amount: null,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.uuid ?? null,
+              description: item.description ?? null,
+              documentation: item.documentation ?? [],
+              exchange_rate: item.exchange_rate
+            });
+          });
+        }
+
+        field.onChange(payload);
+
+        props.formHook?.clearErrors(props.name);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+      forProfitAnalysisData,
+      nonProfitAnalysisData,
+      currentRadioData,
+      documentationData,
+      selectCurrency,
+      selectFinancialMonth,
+      props.formHook,
+      props.name,
+      initialized,
+      id,
+      router.query.uuid,
+      formSubmissionOrg?.uuid,
+      model
+    ]);
+
     const syncDocumentationTable = () => {
-      // Forzar blur en todos los inputs/textareas de la tabla de documentación
       const inputs = document.querySelectorAll('[data-sync-blur="documentation"]');
       inputs.forEach(input => {
         (input as HTMLElement).blur();

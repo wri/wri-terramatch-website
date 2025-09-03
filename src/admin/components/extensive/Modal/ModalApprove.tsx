@@ -86,7 +86,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
 
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const validationInfo = validationData?.[polygon.poly_id] || validationData?.[polygon.uuid];
+        const validationInfo = validationData?.[polygon.polygonUuid] ?? validationData?.[polygon.uuid];
 
         const excludedFromValidationCriterias = [
           ESTIMATED_AREA_CRITERIA_ID,
@@ -101,20 +101,20 @@ const ModalApprove: FC<ModalApproveProps> = ({
         }
 
         const checked =
-          polygon.validation_status === "passed" ||
-          polygon.validation_status === "partial" ||
-          polygon.validation_status === "failed";
+          polygon.validationStatus === "passed" ||
+          polygon.validationStatus === "partial" ||
+          polygon.validationStatus === "failed";
 
-        const canBeApproved = checkCriteriaCanBeApproved(polygon.validation_status, failingCriterias);
+        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, failingCriterias);
 
         return {
-          id: polygon.poly_id,
+          id: polygon.polygonUuid,
           checked,
-          name: polygon.poly_name ?? "Unnamed Polygon",
+          name: polygon.name ?? "Unnamed Polygon",
           canBeApproved,
           failingCriterias,
           status: polygon.status as StatusEnum,
-          validation_status: polygon.validation_status
+          validation_status: polygon.validationStatus
         };
       })
     );

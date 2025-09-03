@@ -2,6 +2,7 @@ import { EntityEdit } from "@/admin/components/EntityEdit/EntityEdit";
 import { FormCreate } from "@/admin/modules/form/components/FormCreate";
 import { FormEdit } from "@/admin/modules/form/components/FormEdit";
 import { FormList } from "@/admin/modules/form/components/FormList";
+import OrganisationCreate from "@/admin/modules/organisations/components/OrganisationCreate";
 import { ReportingFrameworkCreate } from "@/admin/modules/reportingFramework/components/ReportingFrameworkCreate";
 import { ReportingFrameworkEdit } from "@/admin/modules/reportingFramework/components/ReportingFrameworkEdit";
 import { ReportingFrameworkList } from "@/admin/modules/reportingFramework/components/ReportingFrameworkList";
@@ -60,7 +61,8 @@ const organisation = {
   ResourceName: "organisation",
   List: OrganisationsList,
   Show: OrganisationShow,
-  Edit: OrganisationEdit
+  Edit: OrganisationEdit,
+  Create: OrganisationCreate
 };
 
 const pitch = {

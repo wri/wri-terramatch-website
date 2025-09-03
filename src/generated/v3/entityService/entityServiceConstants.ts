@@ -23,10 +23,13 @@ import {
   SiteFullDto,
   NurseryLightDto,
   NurseryFullDto,
+  FinancialReportLightDto,
+  FinancialReportFullDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
-  StrataDto
+  StrataDto,
+  OptionLabelDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -45,10 +48,12 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projects",
   "sites",
   "nurseries",
+  "financialReports",
   "seedings",
   "treeSpecies",
   "invasives",
-  "stratas"
+  "stratas",
+  "optionLabels"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -67,19 +72,36 @@ export type EntityServiceApiResources = {
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
+  financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
+  optionLabels: StoreResourceMap<OptionLabelDto>;
 };
 
 export const TreeEntityTypes = {
-  ESTABLISHMENT_ENTITIES: ["sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const,
+  ESTABLISHMENT_ENTITIES: [
+    "sites",
+    "nurseries",
+    "projectReports",
+    "siteReports",
+    "nurseryReports",
+    "financialReports"
+  ] as const,
   REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;
 
 export const SupportedEntities = {
-  ENTITY_TYPES: ["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"] as const
+  ENTITY_TYPES: [
+    "projects",
+    "sites",
+    "nurseries",
+    "projectReports",
+    "siteReports",
+    "nurseryReports",
+    "financialReports"
+  ] as const
 } as const;
 
 export const DemographicCollections = {

@@ -6,7 +6,7 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import { parseSitePolygonsDataResponseToFullDto } from "@/components/elements/Map-mapbox/utils";
+import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/Map-mapbox/utils";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
@@ -26,7 +26,7 @@ import {
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -81,21 +81,21 @@ const PolygonDrawer = ({
   polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
   const [buttonToogle, setButtonToogle] = useState(true);
-  const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonFullDto>();
+  const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [validationStatus, setValidationStatus] = useState(false);
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
-  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonFullDto>();
+  const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
-  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygonFullDto>;
+  const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygonLightDto>;
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
-  const selectedPolygon = sitePolygonData?.find((item: SitePolygonFullDto) => item?.polygonUuid === polygonSelected);
+  const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, setPolygonCriteriaMap } =
     contextMapArea;
   const { showLoader, hideLoader } = useLoading();
@@ -176,16 +176,16 @@ const PolygonDrawer = ({
       const polygonActive = response?.find(item => item.is_active);
       sitePolygonRefresh?.();
       if (polygonActive) {
-        const polygonActiveFullDto = parseSitePolygonsDataResponseToFullDto(polygonActive);
-        setSelectedPolygonData(polygonActiveFullDto);
+        const polygonActiveLightDto = parseSitePolygonsDataResponseToLightDto(polygonActive);
+        setSelectedPolygonData(polygonActiveLightDto);
         setSelectedPolygonToDrawer?.({
           id: selectedPolygonIndex as string,
-          status: polygonActiveFullDto.status as string,
-          label: polygonActiveFullDto.name as string,
-          uuid: polygonActiveFullDto.polygonUuid as string
+          status: polygonActiveLightDto.status as string,
+          label: polygonActiveLightDto.name as string,
+          uuid: polygonActiveLightDto.polygonUuid as string
         });
-        setPolygonFromMap({ isOpen: true, uuid: polygonActiveFullDto.polygonUuid ?? "" });
-        setStatusSelectedPolygon(polygonActiveFullDto.status ?? "");
+        setPolygonFromMap({ isOpen: true, uuid: polygonActiveLightDto.polygonUuid ?? "" });
+        setStatusSelectedPolygon(polygonActiveLightDto.status ?? "");
       }
       setIsLoadingDropdown(false);
       hideLoader();
@@ -197,7 +197,6 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    console.log("polygonSelected", polygonSelected);
     if (checkPolygonValidation) {
       showLoader();
       getValidations({ queryParams: { uuid: polygonSelected } });
@@ -226,7 +225,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
-      const PolygonData = sitePolygonData.find((data: SitePolygonFullDto) => data.polygonUuid === polygonSelected);
+      const PolygonData = sitePolygonData.find((data: SitePolygonLightDto) => data.polygonUuid === polygonSelected);
       setSelectedPolygonData(PolygonData ?? undefined);
       setStatusSelectedPolygon(PolygonData?.status ?? "");
     } else {

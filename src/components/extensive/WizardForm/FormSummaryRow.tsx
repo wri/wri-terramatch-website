@@ -58,9 +58,10 @@ export interface FormEntry {
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
-  const { record } = useShowContext();
+  let { record } = useShowContext();
   const { type, entity } = props;
 
+  record = { organisation: props.organisation, ...record };
   const uuid = entity?.entityUUID || record?.uuid;
   const entityType = entity?.entityName || (type as EntityName);
 
@@ -107,7 +108,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   }, [props.step.fields, props.values]);
 
   return useMemo(
-    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions) : []),
+    () => (externalSourcesLoaded ? getFormEntries(props, t, entityPolygonData, bbox, mapFunctions, record) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
@@ -118,7 +119,8 @@ export const getFormEntries = (
   t: typeof useT,
   entityPolygonData?: any,
   bbox?: any,
-  mapFunctions?: any
+  mapFunctions?: any,
+  record?: any
 ) => {
   const outputArr: FormEntry[] = [];
 
@@ -187,6 +189,7 @@ export const getFormEntries = (
               showLegend={type === "sites"}
               mapFunctions={mapFunctions}
               showDownloadPolygons={true}
+              record={record}
             />
           )
         });

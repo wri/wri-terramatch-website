@@ -1,18 +1,17 @@
 import { useMemo, useState } from "react";
 
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { SitePolygonFullDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import Log from "@/utils/log";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 const VALID_ENTITY_TYPES = ["sites", "projects"] as const;
 const VALID_FILTER_ALL = "all" as const;
 
 interface LoadSitePolygonsDataHook {
-  data: SitePolygonFullDto[];
+  data: SitePolygonLightDto[];
   loading: boolean;
   total: number;
+  progress: number;
   refetch: () => void;
-  updateSingleSitePolygonData: (poly_id: string, updatedData: SitePolygonFullDto) => void;
   polygonCriteriaMap: Record<string, unknown>;
   setPolygonCriteriaMap: (polygonCriteriaMap: Record<string, unknown>) => void;
 }
@@ -21,7 +20,8 @@ const useLoadSitePolygonsData = (
   entityUuid: string,
   entityType: string,
   statuses: string | null = null,
-  sortOrder: string = "created_at",
+  sortField: string = "createdAt",
+  sortDirection: "ASC" | "DESC" = "ASC",
   validFilter: string = ""
 ): LoadSitePolygonsDataHook => {
   // Validate entity type
@@ -54,36 +54,27 @@ const useLoadSitePolygonsData = (
     data: sitePolygonsData,
     isLoading,
     total,
+    progress,
     refetch
   } = useAllSitePolygons({
     entityName,
     entityUuid,
     enabled: entityUuid != null,
-    filter
+    filter,
+    sortField,
+    sortDirection
   });
 
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
-
-  const updateSingleSitePolygonData = (old_id: string, updatedData: SitePolygonFullDto) => {
-    try {
-      // Since V3 handles updates automatically through resource-based caching,
-      // we just need to clear the connection cache and let it re-fetch
-      // This will trigger a re-render with the updated data
-      refetch();
-    } catch (error) {
-      Log.error("Failed to update single site polygon data", { old_id, error });
-      refetch();
-    }
-  };
 
   return {
     data: sitePolygonsData,
     loading: isLoading,
     total,
+    progress,
     refetch,
     polygonCriteriaMap,
-    setPolygonCriteriaMap,
-    updateSingleSitePolygonData
+    setPolygonCriteriaMap
   };
 };
 
