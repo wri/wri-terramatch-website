@@ -22,7 +22,7 @@ const ReportedDataAside = () => {
                 Site
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                Antmursigh
+                Arthursleigh, Greensboro, Perth, Santa Cruz
               </Text>
             </Box>
           </Grid>
@@ -78,17 +78,6 @@ const ReportedDataAside = () => {
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">
                 No Update
-              </Text>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Box className="flex flex-col gap-2">
-              <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-                Due Date
-              </Text>
-              <Text variant="text-14" className="leading-none text-blueCustom-900">
-                -
               </Text>
             </Box>
           </Grid>

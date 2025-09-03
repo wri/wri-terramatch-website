@@ -30,7 +30,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     },
     {
       accessorKey: "polygon_affected",
-      header: "Polygon Affected",
+      header: "Polygons Affected",
       enableSorting: false,
       meta: { width: "50%" }
     }
@@ -67,7 +67,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           </div>
           <div className="flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Extend
+              Extent
             </Text>
             <Text variant="text-14" className="leading-none text-blueCustom-900">
               0-20
@@ -83,7 +83,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           </div>
           <div className="col-span-3 flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Property affected
+              Property Affected
             </Text>
             <Text variant="text-14" className="leading-none text-blueCustom-900">
               Entity 1, Entity 2 Entity 5, Entity 4
@@ -94,7 +94,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
               Date of Disturbance
             </Text>
             <Text variant="text-14" className="leading-none text-blueCustom-900">
-              07/31/2025
+              31/07/2025
             </Text>
           </div>
           <div className="flex flex-col gap-2">
