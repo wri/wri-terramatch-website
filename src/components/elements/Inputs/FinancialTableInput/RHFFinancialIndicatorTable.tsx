@@ -191,8 +191,32 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
       onSuccess(data, variables) {
-        //@ts-ignore
-        addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+        const updatedFile = {
+          //@ts-ignore
+          ...data.data,
+          //@ts-ignore
+          rawFile: variables.file,
+          uploadState: { isSuccess: true, isLoading: false }
+        };
+        addFileToValue(updatedFile);
+        setDocumentationData((prev: any) => {
+          const updated = [...prev];
+
+          updated.forEach(row => {
+            if (row.documentation && Array.isArray(row.documentation)) {
+              row.documentation = row.documentation.map((file: any) => {
+                //@ts-ignore
+                if (file.file_name === variables.file.name && !file.uuid) {
+                  return { ...file, ...updatedFile };
+                }
+                return file;
+              });
+            }
+          });
+
+          return updated;
+        });
+
         onChangeCapture?.();
       },
       onError(err, variables: any) {
@@ -208,7 +232,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
         openNotification("error", t("Error uploading file"), t(errorMessage));
 
-        addFileToValue({
+        const errorFile = {
           collection_name: variables.pathParams.collection,
           size: file?.size,
           file_name: file?.name,
@@ -220,6 +244,24 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             isSuccess: false,
             error: errorMessage
           }
+        };
+
+        addFileToValue(errorFile);
+        setDocumentationData((prev: any) => {
+          const updated = [...prev];
+
+          updated.forEach(row => {
+            if (row.documentation && Array.isArray(row.documentation)) {
+              row.documentation = row.documentation.map((file: any) => {
+                if (file.file_name === variables.file.name && !file.uuid) {
+                  return { ...file, ...errorFile };
+                }
+                return file;
+              });
+            }
+          });
+
+          return updated;
         });
       }
     });
@@ -281,7 +323,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     };
 
     const onSelectFile = async (file: File, context: any) => {
-      addFileToValue({
+      const fileObject: Partial<UploadedFile> = {
         collection_name: "documentation",
         size: file.size,
         file_name: file.name,
@@ -291,6 +333,17 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         uploadState: {
           isLoading: true
         }
+      };
+
+      addFileToValue(fileObject);
+      setDocumentationData((prev: any) => {
+        const updated = [...prev];
+        const row = { ...updated[context.rowIndex] };
+        const prevFiles = row[context.field] ?? [];
+
+        row[context.field] = [...prevFiles, fileObject];
+        updated[context.rowIndex] = row;
+        return updated;
       });
 
       const body = new FormData();
@@ -356,39 +409,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
         row[context.field] = prevFiles.filter((file: Partial<UploadedFile>) => file.uuid !== fileToDelete.uuid);
 
-        updated[context.rowIndex] = row;
-        return updated;
-      });
-    };
-
-    const onSelectFileWithContext = async (
-      file: File,
-      context: {
-        collection: string;
-        year: string | number;
-        field: string;
-        rowIndex: number;
-      }
-    ) => {
-      const uploaded: Partial<UploadedFile> = {
-        collection_name: context.collection,
-        size: file.size,
-        file_name: file.name,
-        title: file.name,
-        mime_type: file.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: true
-        }
-      };
-
-      setDocumentationData((prev: any) => {
-        const updated = [...prev];
-        const row = { ...updated[context.rowIndex] };
-        const prevFiles = row[context.field] ?? [];
-
-        row[context.field] = [...prevFiles, uploaded];
         updated[context.rowIndex] = row;
         return updated;
       });
@@ -877,9 +897,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
           const handleSelectFile = async (file: File) => {
             await onSelectFile(file, {
-              uuid: row.id
-            });
-            await onSelectFileWithContext(file, {
+              uuid: row.id,
               collection: "documentation",
               year: row.original.year,
               field: columnKey,

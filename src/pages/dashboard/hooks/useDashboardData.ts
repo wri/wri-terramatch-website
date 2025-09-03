@@ -2,16 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import {
-  useDashboardImpactStories,
-  useDashboardProject,
-  useDashboardProjects,
-  useDashboardSitePolygons
-} from "@/connections/DashboardEntity";
+import { useDashboardProject, useDashboardProjects, useDashboardSitePolygons } from "@/connections/DashboardEntity";
 import { useHectareRestoration } from "@/connections/DashboardHectareRestoration";
 import { useJobsCreated } from "@/connections/DashboardJobsCreatedConnection";
 import { useTreeRestorationGoal } from "@/connections/DashboardTreeRestorationGoal";
 import { useMedia } from "@/connections/EntityAssociation";
+import { useImpactStories } from "@/connections/ImpactStory";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
@@ -416,31 +412,38 @@ export const useDashboardData = (filters: any) => {
     }
   }, [generalBbox, centroidsDataProjects]);
 
-  const [isLoaded, { data: impactStories }] = useDashboardImpactStories({
+  const [isLoaded, { data: impactStories }] = useImpactStories({
     filter: {
-      country: filters.country?.country_slug,
-      "organisationType[]": filters.organizations?.length ? filters.organizations : DEFAULT_ORGANIZATION_TYPES,
-      cohort: filters.cohort?.length ? filters.cohort : DEFAULT_COHORT,
-      "programmesType[]": filters.frameworks?.length ? filters.frameworks : DEFAULT_PROGRAMME_TYPES,
-      projectUuid: filters.uuid
+      ...(filters.country?.country_slug ? { country: filters.country.country_slug } : {}),
+      ...(filters.uuid ? { projectUuid: filters.uuid } : {}),
+      status: "published"
     }
   });
 
   const transformedStories = useMemo(
     () =>
-      impactStories?.map((story: any) => ({
-        uuid: story.uuid,
-        title: story.title,
-        date: story.date,
-        thumbnail: story.thumbnail ?? "",
-        organization: {
-          name: story.organisation?.name ?? "",
-          country:
-            story.organisation?.countries?.length > 0
-              ? story.organisation.countries.map((c: any) => c.label).join(", ")
-              : "No country"
-        }
-      })) || [],
+      impactStories
+        ?.map((story: any) => ({
+          uuid: story.attributes?.uuid || story.uuid,
+          title: story.attributes?.title || story.title,
+          date: story.attributes?.date || story.date,
+          thumbnail:
+            story.attributes?.thumbnail?.thumbUrl ||
+            story.thumbnail?.thumbUrl ||
+            story.attributes?.thumbnail ||
+            story.thumbnail ||
+            "",
+          organization: {
+            name: story.attributes?.organization?.name || story.organization?.name || "",
+            country:
+              story.attributes?.organization?.countries?.length > 0
+                ? story.attributes.organization.countries.map((c: any) => c.label).join(", ")
+                : story.organization?.countries?.length > 0
+                ? story.organization.countries.map((c: any) => c.label).join(", ")
+                : "No country"
+          }
+        }))
+        .reverse() || [],
     [impactStories]
   );
 

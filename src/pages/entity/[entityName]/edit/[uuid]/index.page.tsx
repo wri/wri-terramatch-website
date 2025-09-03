@@ -38,7 +38,6 @@ const EditEntityPage = () => {
         <LoadingContainer loading={isLoading || getEntityLoading}>
           <EditEntityForm {...{ entityName, entityUUID, entity, formData }} />
         </LoadingContainer>
-        <br />
         <PageFooter />
       </FrameworkProvider>
     </BackgroundLayout>
