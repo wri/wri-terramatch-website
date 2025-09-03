@@ -17,7 +17,7 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { FieldType } from "@/components/extensive/WizardForm/types";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -284,7 +284,7 @@ const InformationTab: FC<IProps> = props => {
                                 </div>
                               </When>
                               <When condition={props.type === "site-reports" || props.type === "project-reports"}>
-                                <ContextCondition frameworksShow={[Framework.TF, Framework.ENTERPRISES]}>
+                                <ContextCondition frameworksShow={ALL_TF}>
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-1 py-1">
                                       <Text variant="text-16-bold" className="capitalize">

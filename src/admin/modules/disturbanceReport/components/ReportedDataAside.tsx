@@ -22,6 +22,17 @@ const ReportedDataAside = () => {
           <Grid item xs={12}>
             <Box className="flex flex-col gap-2">
               <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+                Site
+              </Text>
+              <Text variant="text-14" className="leading-none text-blueCustom-900">
+                Arthursleigh, Greensboro, Perth, Santa Cruz
+              </Text>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Box className="flex flex-col gap-2">
+              <Text variant="text-14-light" className="leading-none text-darkCustom-300">
                 Project
               </Text>
               <Text variant="text-14" className="leading-none text-blueCustom-900">

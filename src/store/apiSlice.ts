@@ -114,7 +114,7 @@ export type JsonApiResource = {
 export type IndexData = {
   resource: ResourceType;
   requestPath: string;
-  ids: string[];
+  ids?: string[];
   total?: number;
   cursor?: string;
   pageNumber?: number;
@@ -322,10 +322,8 @@ export const apiSlice = createSlice({
           let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
           if (cache == null) cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath] = {};
 
-          cache[indexMeta.pageNumber ?? 1] = {
-            ids: indexMeta.ids,
-            total: indexMeta.total
-          };
+          const ids = indexMeta.ids ?? data.map(({ id }) => id);
+          cache[indexMeta.pageNumber ?? 1] = { ids, total: indexMeta.total };
         }
       }
 
