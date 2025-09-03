@@ -1858,6 +1858,7 @@ export type OptionLabelDto = {
    * Option label slug
    */
   slug: string;
+  altValue: string | null;
   /**
    * Option label text in requesting user's locale, if available
    */
@@ -1865,5 +1866,60 @@ export type OptionLabelDto = {
   /**
    * Option label text in English
    */
-  imageUrl: Record<string, any> | null;
+  imageUrl: string | null;
+};
+
+export type LinkedFieldDto = {
+  /**
+   * Linked field id
+   */
+  id: string;
+  formType:
+    | "organisation"
+    | "financialReport"
+    | "nursery"
+    | "nurseryReport"
+    | "project"
+    | "projectPitch"
+    | "projectReport"
+    | "site"
+    | "siteReport";
+  label: string;
+  name: string;
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  optionListKey: string | null;
+  multiChoice: string | null;
+  collection: string | null;
 };
