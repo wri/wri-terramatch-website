@@ -1,4 +1,5 @@
-import { map, uniq } from "lodash";
+import { map, sortBy, uniq } from "lodash";
+import { useMemo } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
@@ -9,7 +10,14 @@ import {
   optionLabelsGetList,
   optionLabelsIndex
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { FormDto, LinkedFieldDto, OptionLabelDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  FormDto,
+  FormQuestionDto,
+  FormSectionDto,
+  LinkedFieldDto,
+  OptionLabelDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -50,7 +58,23 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
 export const useLinkedFields = connectionHook(linkedFieldsConnection);
 export const loadLinkedFields = connectionLoader(linkedFieldsConnection);
 
-const formConnection = v3Resource("forms", formGet)
-  .singleResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
-  .buildConnection();
-export const useForm = connectionHook(formConnection);
+export const useForm = connectionHook(
+  v3Resource("forms", formGet)
+    .singleResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+    .buildConnection()
+);
+
+const sectionsConnection = v3Resource("formSections").listByParentId<FormSectionDto>("formId").buildConnection();
+const questionsConnection = v3Resource("formQuestions").listByParentId<FormQuestionDto>("sectionId").buildConnection();
+const useSortedUuids = (data: { uuid: string; order: number }[] | undefined) =>
+  useMemo(() => sortBy(data ?? [], "order").map(({ uuid }) => uuid), [data]);
+export const useFormSectionIds = (formId: string) =>
+  useSortedUuids(useConnection(sectionsConnection, { parentId: formId })[1]?.data);
+export const useFormQuestionIds = (sectionId: string) =>
+  useSortedUuids(useConnection(questionsConnection, { parentId: sectionId })[1]?.data);
+
+const sectionConnection = v3Resource("formSections").cachedSingleResource<FormSectionDto>().buildConnection();
+const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
+export const useFormSection = (sectionUuid: string) => useConnection(sectionConnection, { id: sectionUuid })[1]?.data;
+export const useFormQuestion = (questionUuid: string) =>
+  useConnection(questionConnection, { id: questionUuid })[1]?.data;
