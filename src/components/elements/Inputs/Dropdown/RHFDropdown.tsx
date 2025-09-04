@@ -12,8 +12,12 @@ import Dropdown, { DropdownProps } from "./Dropdown";
 
 type ApiOptionsSource = "gadm-level-0" | "gadm-level-1" | "gadm-level-2";
 
+// TODO:
+//  * get rid of options / apiOptionsSource, all option sources are API driven now
+//  * accept linkedFieldKey and reference (probably move to here) SELECT_FILTER_QUESTIONS from customForms.ts, get rid of optionsFilterFieldName
+//  * Get the current list of form questions from a new form context provided at the wizard form level.
 export interface RHFDropdownProps
-  extends Omit<DropdownProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
+  extends Omit<DropdownProps, "defaultValue" | "value" | "onChange" | "optionsFilter" | "options">,
     UseControllerProps<any> {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;

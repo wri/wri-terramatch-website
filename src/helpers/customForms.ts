@@ -1,18 +1,51 @@
-//@ts-nocheck Swagger type def is quite wrong!
 import { useT } from "@transifex/react";
-import { isNumber, omit, sortBy } from "lodash";
+import { Dictionary, flatten, isEmpty, isNumber, isObject, omit, sortBy } from "lodash";
 import * as yup from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { FieldType, FormField, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormQuestionRead, FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import { DemographicEntryDto, FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, Option } from "@/types/common";
 import { urlValidation } from "@/utils/yup";
 
-export function normalizedFormData<T = any>(values: T, steps: FormStepSchema[]): T {
+export const formDataNormalizer = (formUuid: string) => {
+  const sections = selectSections(formUuid);
+  const questions = flatten(sections.map(({ uuid }) => selectQuestions(uuid)));
+
+  return (values: Dictionary<any>) => {
+    const results: Dictionary<any> = {};
+
+    for (const question of questions) {
+      switch (question.inputType) {
+        case "number": {
+          const value = values[question.uuid];
+          results[question.uuid] = isEmpty(value) && (question.minNumberLimit ?? 0) < 0 ? value : Number(value);
+          break;
+        }
+
+        case "tableInput":
+          Object.assign(results, values[question.uuid]);
+          break;
+
+        case "mapInput":
+          results[question.uuid] = isObject(values[question.uuid]) ? JSON.stringify(values[question.uuid]) : "";
+          break;
+
+        default:
+          results[question.uuid] = values[question.uuid];
+      }
+    }
+
+    return results;
+  };
+};
+
+export function normalizedFormData(values: Dictionary<any>, steps: FormStepSchema[]): Dictionary<any> {
   for (const step of steps) {
     for (const field of step.fields) {
       values = normalizedFormFieldData(values, field);
@@ -64,6 +97,58 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
   return values;
 };
 
+/**
+ * Returns default values mounting WizardForm based on the values given from the current answers
+ * on the entity, and the formUUID.
+ *
+ * IMPORTANT: The form must already be cached in the Connection store via useForm for this function
+ * to return valid values.
+ */
+export function formDefaultValues(values: Dictionary<any>, formUuid: string) {
+  const sections = selectSections(formUuid);
+  const questions = flatten(sections.map(({ uuid }) => selectQuestions(uuid)));
+  return questions.reduce(
+    (results, question) => ({
+      ...results,
+      [question.uuid]: formDefaultValue(question, values)
+    }),
+    {} as Dictionary<any>
+  );
+}
+
+const formDefaultValue = (question: FormQuestionDto, values: Dictionary<any>) => {
+  switch (question.inputType) {
+    case "date":
+      return parseDateValues(values[question.uuid]);
+
+    case "tableInput":
+      return selectChildQuestions(question.uuid).reduce(
+        (acc, child) => ({
+          ...acc,
+          [child.uuid]: values[child.uuid]
+        }),
+        {} as Dictionary<any>
+      );
+
+    case "conditional":
+      return typeof values[question.uuid] === "boolean" ? values[question.uuid] : true;
+
+    case "mapInput": {
+      if (typeof values[question.uuid] === "string") {
+        try {
+          return JSON.parse(values[question.uuid]);
+        } catch (e) {
+          /* fall through to undefined return below */
+        }
+      }
+      return undefined;
+    }
+
+    default:
+      return values[question.uuid];
+  }
+};
+
 export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
   if (typeof values === "string") {
@@ -89,50 +174,50 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
   return values;
 }
 
-export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField): T {
-  switch (field.type) {
-    case FieldType.Input: {
-      if (field.fieldProps.type === "date") {
-        const parsedValue = parseDateValues(values[field.name]);
-        if (parsedValue) {
-          values[field.name] = parsedValue;
-        }
-      }
-      break;
-    }
-
-    case FieldType.InputTable: {
-      //Temp solution: This is to handle TableInput, Bed needs to handle this in the future.
-      let value: any = {};
-
-      field.fieldProps.rows.forEach(row => {
-        value[row.name] = values[row.name];
-      });
-
-      values[field.name] = value;
-      break;
-    }
-
-    case FieldType.Conditional: {
-      if (typeof values[field.name] !== "boolean") values[field.name] = true;
-      field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f));
-      break;
-    }
-
-    case FieldType.Map: {
-      if (typeof values[field.name] === "string") {
-        try {
-          values[field.name] = JSON.parse(values[field.name]);
-        } catch (e) {
-          values[field.name] = undefined;
-        }
-      }
-      break;
-    }
-  }
-
-  return values;
-}
+// export function normalizedFieldDefaultValue<T = any>(values?: T, field?: FormField): T {
+//   switch (field.type) {
+//     case FieldType.Input: {
+//       if (field.fieldProps.type === "date") {
+//         const parsedValue = parseDateValues(values[field.name]);
+//         if (parsedValue) {
+//           values[field.name] = parsedValue;
+//         }
+//       }
+//       break;
+//     }
+//
+//     case FieldType.InputTable: {
+//       //Temp solution: This is to handle TableInput, Bed needs to handle this in the future.
+//       let value: any = {};
+//
+//       field.fieldProps.rows.forEach(row => {
+//         value[row.name] = values[row.name];
+//       });
+//
+//       values[field.name] = value;
+//       break;
+//     }
+//
+//     case FieldType.Conditional: {
+//       if (typeof values[field.name] !== "boolean") values[field.name] = true;
+//       field?.fieldProps.fields.map(f => normalizedFieldDefaultValue(values, f));
+//       break;
+//     }
+//
+//     case FieldType.Map: {
+//       if (typeof values[field.name] === "string") {
+//         try {
+//           values[field.name] = JSON.parse(values[field.name]);
+//         } catch (e) {
+//           values[field.name] = undefined;
+//         }
+//       }
+//       break;
+//     }
+//   }
+//
+//   return values;
+// }
 
 export const getCustomFormSteps = (
   schema: FormRead,
@@ -185,7 +270,7 @@ export const apiQuestionsToFormFields = (
 
 // If a select field with the key's linked field shows up, use the value's linked field question
 // to filter the options.
-const SELECT_FILTER_QUESTION = {
+export const SELECT_FILTER_QUESTION: Dictionary<string> = {
   "org-hq-state": "org-hq-country",
   "org-states": "org-countries",
   "org-level-1-past-restoration": "org-level-0-past-restoration",
@@ -643,40 +728,31 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   return options;
 };
 
-const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framework: Framework): AnySchema | null => {
-  let validation;
+export const getFieldValidation = (question: FormQuestionDto, t: typeof useT, framework: Framework) => {
   const required = question.validation?.required || false;
   const max = question.validation?.max;
   const min = question.validation?.min;
-  const limitMin = question.min_character_limit;
-  const limitMax = question.max_character_limit;
-  const limitMinNumber = question.min_number_limit;
-  const limitMaxNumber = question.max_number_limit;
+  const limitMin = question.minCharacterLimit;
+  const limitMax = question.maxCharacterLimit;
+  const limitMinNumber = question.minNumberLimit;
+  const limitMaxNumber = question.maxNumberLimit;
+  const { inputType, linkedFieldKey, multiChoice, additionalProps } = question;
 
-  switch (question.input_type) {
+  switch (inputType) {
     case "text":
-    case "tel":
-    case "time":
-    case "week":
-    case "search":
-    case "month":
-    case "password":
-    case "color":
     case "date":
-    case "datetime-local":
-    case "email":
     case "long-text": {
-      validation = yup.string();
+      let validation = yup.string();
 
       if (isNumber(min)) validation = validation.min(min);
-      if (max) validation = validation.max(max);
+      if (isNumber(max)) validation = validation.max(max);
       if (required) validation = validation.required();
-      if (limitMin && question.input_type == "long-text")
+      if (limitMin != null && inputType == "long-text")
         validation = validation.min(
           limitMin,
           t(`Your answer does not meet the minimum required characters ${limitMin} for this field.`)
         );
-      if (limitMax && question.input_type == "long-text")
+      if (limitMax != null && inputType == "long-text")
         validation = validation.max(
           limitMax,
           t(
@@ -688,42 +764,39 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "number": {
-      validation = yup.number();
+      let validation = yup.number();
 
       if (isNumber(min)) validation = validation.min(min);
-      if (max) validation = validation.max(max);
+      if (isNumber(max)) validation = validation.max(max);
       if (required) validation = validation.required();
-      if (
-        question.linked_field_key === "pro-pit-lat-proposed" ||
-        question.linked_field_key === "pro-pit-long-proposed"
-      ) {
+      if (["pro-pit-lat-proposed", "pro-pit-long-proposed"].includes(linkedFieldKey ?? "")) {
         validation = yup
           .number()
           .transform((value, originalValue) => {
             return originalValue === "" || originalValue == null ? undefined : value;
           })
           .test("coordinates-validation", function (value) {
-            if (value === undefined || value === null || value === "") return true;
+            if (value == null) return true;
 
-            if (limitMinNumber !== undefined && value < limitMinNumber) {
+            if (limitMinNumber != null && value < limitMinNumber) {
               return this.createError({
                 message: `Must be greater than or equal to ${limitMinNumber}`
               });
             }
 
-            if (limitMaxNumber !== undefined && value > limitMaxNumber) {
+            if (limitMaxNumber != null && value > limitMaxNumber) {
               return this.createError({
                 message: `Must be less than or equal to ${limitMaxNumber}`
               });
             }
 
-            if (question.linked_field_key === "pro-pit-lat-proposed" && (value < -90 || value > 90)) {
+            if (linkedFieldKey === "pro-pit-lat-proposed" && (value < -90 || value > 90)) {
               return this.createError({
                 message: "Latitude must be between -90 and 90 degrees"
               });
             }
 
-            if (question.linked_field_key === "pro-pit-long-proposed" && (value < -180 || value > 180)) {
+            if (linkedFieldKey === "pro-pit-long-proposed" && (value < -180 || value > 180)) {
               return this.createError({
                 message: "Longitude must be between -180 and 180 degrees"
               });
@@ -743,28 +816,23 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "number-percentage": {
-      validation = yup.number().min(0).max(100);
-      if (required) validation = validation.required();
-
-      return validation;
+      let validation = yup.number().min(0).max(100);
+      return required ? validation.required() : validation;
     }
 
     case "url":
       return urlValidation(t);
 
-    case "checkboxes":
-    case "dataTable":
     case "leaderships":
     case "ownershipStake":
-    case "coreTeamLeaders":
     case "stratas":
     case "disturbances":
     case "invasive":
     case "seedings":
     case "fundingType": {
-      validation = yup.array();
+      let validation = yup.array();
 
-      if (max) validation = validation.max(max);
+      if (isNumber(max)) validation = validation.max(max);
       if (isNumber(min)) validation = validation.min(min);
 
       if (required) {
@@ -787,7 +855,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     case "trainingBeneficiaries":
     case "indirectBeneficiaries":
     case "associates": {
-      validation = yup
+      let validation = yup
         .array()
         .min(0)
         .max(1)
@@ -798,7 +866,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
               .array()
               .of(
                 yup.object({
-                  type: yup.string(),
+                  type: yup.string().required(),
                   subtype: yup.string().nullable(),
                   name: yup.string().nullable(),
                   amount: yup.number()
@@ -814,31 +882,28 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
               ? "At least one entry in gender is required"
               : "The totals for each demographic type do not match",
           value => {
-            const { demographics } = value?.length > 0 ? value[0] : {};
+            const { demographics } =
+              value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
             if (demographics == null) return true;
 
-            return calculateTotals(demographics, framework, question.input_type).complete;
+            return calculateTotals(demographics as DemographicEntryDto[], framework, inputType).complete;
           }
         );
 
-      if (required) validation = validation.required();
-
-      return validation;
+      return required ? validation.required() : validation;
     }
 
     case "radio": {
-      validation = yup.string();
-
-      if (required) validation = validation.required();
-
-      return validation;
+      let validation = yup.string();
+      return required ? validation.required() : validation;
     }
 
     case "select":
     case "select-image": {
-      if (question.multichoice) {
+      let validation;
+      if (multiChoice) {
         validation = yup.array(yup.string().required());
-        if (max) validation = validation.max(max);
+        if (isNumber(max)) validation = validation.max(max);
         if (isNumber(min)) validation = validation.min(min);
         if (required) {
           if (isNumber(min)) {
@@ -856,9 +921,10 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "file": {
-      if (question.multichoice) {
+      let validation;
+      if (multiChoice) {
         validation = yup.array();
-        if (max) validation = validation.max(max);
+        if (isNumber(max)) validation = validation.max(max);
         if (isNumber(min)) validation = validation.min(min);
         if (required) {
           if (isNumber(min)) {
@@ -876,58 +942,47 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
     }
 
     case "treeSpecies": {
-      const arrayItemShape = question.with_numbers
-        ? yup.object({
-            name: yup.string().required(),
-            amount: yup.number().min(0).required()
-          })
-        : yup.object({
-            name: yup.string().required()
-          });
+      const arrayItemShape =
+        additionalProps?.with_numbers === true
+          ? yup.object({
+              name: yup.string().required(),
+              amount: yup.number().min(0).required()
+            })
+          : yup.object({
+              name: yup.string().required()
+            });
 
       let validation = yup.array(arrayItemShape);
-
-      if (required) validation = validation.required();
-
-      return validation;
+      return required ? validation.required() : validation;
     }
 
     case "tableInput":
     case "mapInput": {
-      if (question.linked_field_key == "pro-pit-proj-boundary") return;
+      if (linkedFieldKey == "pro-pit-proj-boundary") return;
 
-      validation = yup.object();
-      if (required) validation = validation.required();
-
-      return validation;
+      let validation = yup.object();
+      return required ? validation.required() : validation;
     }
 
     case "conditional":
     case "boolean": {
-      validation = yup.boolean();
-      if (required) validation = validation.required();
-
-      return validation;
+      let validation = yup.boolean();
+      return required ? validation.required() : validation;
     }
 
     case "strategy-area": {
-      validation = yup.string().test("total-percentage", function (value) {
+      let validation = yup.string().test("total-percentage", function (value) {
         try {
-          const parsed = JSON.parse(value);
-
+          const parsed = JSON.parse(value ?? "[]");
           if (!Array.isArray(parsed)) return true;
 
-          const hasValues = parsed.some((item: { [key: string]: number }) => {
-            const percentage = Object.values(item)[0];
-            return percentage > 0;
-          });
-
+          const hasValues = parsed.some((item: { [key: string]: number }) => Object.values(item)[0] > 0);
           if (!hasValues) return true;
 
-          const total = parsed.reduce((sum: number, item: { [key: string]: number }) => {
-            const percentage = Object.values(item)[0];
-            return sum + percentage;
-          }, 0);
+          const total = parsed.reduce(
+            (sum: number, item: { [key: string]: number }) => sum + Object.values(item)[0],
+            0
+          );
 
           if (total > 100) {
             return this.createError({
@@ -947,11 +1002,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
         }
       });
 
-      if (required) {
-        validation = validation.required("This field is required");
-      }
-
-      return validation;
+      return required ? validation.required() : validation;
     }
 
     default:

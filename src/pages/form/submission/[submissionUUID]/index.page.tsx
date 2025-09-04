@@ -8,10 +8,7 @@ import FrameworkProvider, { useFramework } from "@/context/framework.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues, useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -35,7 +32,7 @@ const SubmissionPage = () => {
     framework
   );
   //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData?.data?.answers, formSteps);
+  const defaultValues = useFormDefaultValues(formData?.data?.answers, formSteps);
 
   return (
     <BackgroundLayout>

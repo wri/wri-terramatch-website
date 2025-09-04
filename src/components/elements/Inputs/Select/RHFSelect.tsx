@@ -5,6 +5,10 @@ import { OptionValue } from "@/types/common";
 
 import Select, { SelectProps } from "./Select";
 
+/**
+ * TODO:
+ *   * Remove options prop, get from Connection with new optionsList string prop
+ */
 export interface RHFSelectProps
   extends Omit<SelectProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
     UseControllerProps {
@@ -13,10 +17,6 @@ export interface RHFSelectProps
   formHook: UseFormReturn<FieldValues, any>;
 }
 
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns React Hook Form Ready Select Component
- */
 const RHFSelect = ({
   onChangeCapture,
   optionsFilterFieldName,

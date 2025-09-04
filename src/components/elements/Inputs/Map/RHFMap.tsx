@@ -16,6 +16,8 @@ import { Entity } from "@/types/common";
 import { useMap } from "../../Map-mapbox/hooks/useMap";
 import { storePolygonProject } from "../../Map-mapbox/utils";
 
+// TODO:
+//  * Get entity from the entity context
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
   formHook: UseFormReturn;

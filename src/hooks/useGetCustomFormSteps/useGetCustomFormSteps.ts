@@ -1,10 +1,12 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { useForm } from "@/connections/util/Form";
 import { Framework } from "@/context/framework.provider";
 import { FormRead } from "@/generated/apiSchemas";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { formDataNormalizer, formDefaultValues, getCustomFormSteps } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
 
 export const useGetCustomFormSteps = (
@@ -22,6 +24,18 @@ export const useGetCustomFormSteps = (
   );
 };
 
-export function useNormalizedFormDefaultValue<T = any>(values: T, schema?: FormStepSchema[]): T {
-  return useMemo(() => normalizedFormDefaultValue<T>(values, schema), [values, schema]);
+export function useFormDefaultValues(values: Dictionary<any>, formUuid?: string) {
+  const [formIsLoaded] = useForm({ id: formUuid, enabled: formUuid != null });
+  return useMemo(
+    () => (formIsLoaded && formUuid != null ? formDefaultValues(values, formUuid) : values),
+    [formIsLoaded, formUuid, values]
+  );
+}
+
+export function useNormalizer(formUuid?: string) {
+  const [formIsLoaded] = useForm({ id: formUuid, enabled: formUuid != null });
+  return useMemo(
+    () => (formIsLoaded && formUuid != null ? formDataNormalizer(formUuid) : (values: Dictionary<any>) => values),
+    [formIsLoaded, formUuid]
+  );
 }

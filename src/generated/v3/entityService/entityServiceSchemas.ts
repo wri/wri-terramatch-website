@@ -1889,6 +1889,7 @@ export type LinkedFieldDto = {
   inputType:
     | "boolean"
     | "conditional"
+    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2002,6 +2003,7 @@ export type FormQuestionDto = {
   inputType:
     | "boolean"
     | "conditional"
+    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2058,7 +2060,7 @@ export type FormQuestionDto = {
   maxCharacterLimit: number | null;
   minNumberLimit: number | null;
   maxNumberLimit: number | null;
-  years: string[] | null;
+  years: number[] | null;
   tableHeaders: FormTableHeaderDto[] | null;
   additionalProps: Record<string, any> | null;
 };

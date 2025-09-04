@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
-import { memo, useEffect, useLayoutEffect, useState } from "react";
+import { Dictionary } from "lodash";
+import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
@@ -9,6 +10,8 @@ import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { selectQuestions, useFormSectionIds } from "@/connections/util/Form";
+import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -22,10 +25,10 @@ import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndClose
 import { downloadAnswersCSV, getSchema } from "./utils";
 
 export interface WizardFormProps {
-  steps: FormStepSchema[];
+  formUuid: string;
   defaultValues?: any;
   onStepChange?: (values: any, step: FormStepSchema) => void;
-  onChange?: (values: any, isCloseAndSave?: boolean) => void;
+  onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
   onSubmit?: (values: any) => void;
   onBackFirstStep: () => void;
   onCloseForm?: () => void;
@@ -70,9 +73,14 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const selectedStep = props.steps?.[selectedStepIndex];
-  const selectedValidationSchema = selectedStep ? getSchema(selectedStep.fields) : undefined;
-  const lastIndex = props.summaryOptions ? props.steps.length : props.steps.length - 1;
+  const sectionIds = useFormSectionIds(props.formUuid);
+  const selectedStepId = sectionIds?.[selectedStepIndex];
+  const framework = useFramework();
+  const selectedValidationSchema = useMemo(
+    () => getSchema(selectQuestions(selectedStepId), t, framework),
+    [selectedStepId, t, framework]
+  );
+  const lastIndex = props.summaryOptions ? sectionIds.length : sectionIds.length - 1;
   const formHook = useForm(
     selectedValidationSchema
       ? {
@@ -87,7 +95,7 @@ function WizardForm(props: WizardFormProps) {
     // Force validation on all fields when the step changes
     formHook.trigger();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStep]);
+  }, [selectedStepId]);
 
   const formHasError = Object.values(formHook.formState.errors || {}).filter(item => !!item).length > 0;
 
@@ -169,7 +177,7 @@ function WizardForm(props: WizardFormProps) {
     document.getElementById("step")?.scrollTo({ top: 0 });
   }, [selectedStepIndex]);
 
-  const stepTabItems = props.steps.map((step, index) => ({
+  const stepTabItems = sectionIds.map((sectionId, index) => ({
     title:
       step.tabTitle ??
       t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title: step.title }),
@@ -191,9 +199,6 @@ function WizardForm(props: WizardFormProps) {
         <FormStep
           id="step"
           formHook={formHook}
-          fields={step.fields}
-          title={step.title}
-          subtitle={step.subtitle}
           onChange={onChange}
           formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
         ></FormStep>

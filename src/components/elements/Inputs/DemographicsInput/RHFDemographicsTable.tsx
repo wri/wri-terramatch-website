@@ -11,6 +11,8 @@ import { Entity } from "@/types/common";
 
 import { DataTableProps } from "../DataTable/DataTable";
 
+// TODO:
+//  * Get entity from the entity context
 export interface RHFDemographicsTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {

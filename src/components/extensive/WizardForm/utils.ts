@@ -1,4 +1,5 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
+import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import * as yup from "yup";
 
@@ -11,29 +12,31 @@ import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/R
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { findCachedGadmTitle, loadGadmCodes } from "@/connections/Gadm";
+import { Framework } from "@/context/framework.provider";
 import { FormRead } from "@/generated/apiSchemas";
+import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 import { FieldType, FormField, FormStepSchema } from "./types";
 
-export const getSchema = (fields: FormField[]) => {
-  return yup.object(getSchemaFields(fields));
+export const getSchema = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
+  return yup.object(getSchemaFields(questions, t, framework));
 };
 
-export const getSchemaFields = (fields: FormField[]) => {
+export const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
   let schema: any = {};
 
-  for (const field of fields) {
-    if (field.type === FieldType.InputTable) {
-      schema[field.name] = getSchema(field.fieldProps.rows);
-    } else if (field.type === FieldType.Conditional) {
-      schema[field.name] = field.validation.nullable().label(field.label);
+  for (const question of questions) {
+    if (question.type === FieldType.InputTable) {
+      schema[question.name] = getSchema(question.fieldProps.rows);
+    } else if (question.type === FieldType.Conditional) {
+      schema[question.name] = question.validation.nullable().label(question.label);
 
-      field.fieldProps.fields.forEach(child => {
+      question.fieldProps.fields.forEach(child => {
         schema[child.name] = child.validation
-          .when(field.name, {
+          .when(question.name, {
             is: !!child.condition,
             then: schema => schema,
             otherwise: () => yup.mixed().nullable()
@@ -46,18 +49,18 @@ export const getSchemaFields = (fields: FormField[]) => {
         }
       });
     } else {
-      if (!field.validation) {
-        schema[field.name] = yup
+      if (!question.validation) {
+        schema[question.name] = yup
           .mixed()
           .nullable()
-          .label(field.label ?? " ");
+          .label(question.label ?? " ");
       } else {
-        schema[field.name] = field.validation.nullable().label(field.label ?? " ");
+        schema[question.name] = question.validation.nullable().label(question.label ?? " ");
       }
     }
 
-    if (field.fieldProps.required && schema[field.name]) {
-      schema[field.name] = schema[field.name].required();
+    if (question.fieldProps.required && schema[question.name]) {
+      schema[question.name] = schema[question.name].required();
     }
   }
 

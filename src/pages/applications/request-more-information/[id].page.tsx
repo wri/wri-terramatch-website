@@ -14,7 +14,7 @@ import {
 } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
 import { getCustomFormSteps } from "@/helpers/customForms";
-import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { Entity } from "@/types/common";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
@@ -59,7 +59,7 @@ const RequestMoreInformationPage = () => {
   );
   const framework = useFramework(submission?.form?.framework_key);
   const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, currentPitchEntity, framework) : [];
-  const defaultValues = useNormalizedFormDefaultValue(submission?.answers, formSteps);
+  const defaultValues = useFormDefaultValues(submission?.answers, formSteps);
 
   return (
     <BackgroundLayout>

@@ -13,7 +13,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
-import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 
 import { getSteps } from "./getEditOrganisationSteps";
 
@@ -30,7 +30,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const countryOptions = useGadmOptions({ level: 0 });
 
   const formSteps = getSteps(t, uuid, countryOptions ?? []);
-  const defaultValues = useNormalizedFormDefaultValue(organization, formSteps);
+  const defaultValues = useFormDefaultValues(organization, formSteps);
   const { mutateAsync: updateOrganization, error } = usePutV2OrganisationsUUID({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["v2", "organisations"] });

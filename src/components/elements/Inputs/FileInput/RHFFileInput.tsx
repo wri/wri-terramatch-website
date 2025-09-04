@@ -17,6 +17,8 @@ import Log from "@/utils/log";
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
 
+// TODO:
+//  * Get model / uuid from the entity context, make sure entity context is in use everywhere it needs to be.
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
     UseControllerProps {
@@ -29,10 +31,6 @@ export interface RHFFileInputProps
   isPhotosAndVideo?: boolean;
 }
 
-/**
- * @param props RHFFileInputProps
- * @returns React Hook Form Ready File Input Component
- */
 const RHFFileInput = ({
   formHook,
   model,

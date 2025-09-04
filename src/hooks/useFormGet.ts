@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import { useForm } from "@/connections/util/Form";
 import {
   GetV2FormsENTITYUUIDResponse,
   useGetV2FormsENTITYUUID,
@@ -51,5 +52,12 @@ export const useEntityForm = (entity?: string, uuid?: string) => {
     }
   );
 
-  return formDataValid ? { isLoading: false, formData, loadError, refetch } : { isLoading: true };
+  const [formLoaded, { data: form, loadFailure: formLoadFailure }] = useForm({
+    id: formData?.data?.form_uuid,
+    enabled: formData?.data?.form_uuid != null
+  });
+
+  return formDataValid && formLoaded
+    ? { isLoading: false, formData, loadError, refetch, form, formLoadFailure }
+    : { isLoading: true };
 };

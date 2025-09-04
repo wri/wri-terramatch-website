@@ -3,6 +3,9 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import InputTable, { InputTableProps } from "./InputTable";
 
+// TODO:
+//  * Accept headers from the API response, use useMemo to get the labels, and sort on order
+//  * Accept question ID in order to pull children with a hook
 export interface RHFInputTableProps extends Omit<InputTableProps, "value" | "onChange" | "errors">, UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;

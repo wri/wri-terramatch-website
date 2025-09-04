@@ -17,7 +17,7 @@ import {
   usePutV2OrganisationsUUID
 } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
-import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 
@@ -59,7 +59,7 @@ const CreateOrganisationForm = () => {
   });
 
   const formSteps = getSteps(t, uuid, countryOptions ?? []);
-  const defaultValues = useNormalizedFormDefaultValue(orgData?.data, formSteps);
+  const defaultValues = useFormDefaultValues(orgData?.data, formSteps);
 
   const onBackFirstStep = () => {
     openModal(

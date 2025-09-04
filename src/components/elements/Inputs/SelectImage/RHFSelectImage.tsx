@@ -6,12 +6,10 @@ import { OptionValue } from "@/types/common";
 import { RHFSelectProps } from "../Select/RHFSelect";
 import SelectImage from "./SelectImage";
 
+// TODO:
+//  * Remove options prop, get from Connection with new optionsList string prop
 export interface RHFSelectImageProps extends RHFSelectProps {}
 
-/**
- * @param props PropsWithChildren<RHFSelectImageProps>
- * @returns React Hook Form Ready SelectImage Component
- */
 const RHFSelectImage = ({ onChangeCapture, ...props }: PropsWithChildren<RHFSelectImageProps>) => {
   const {
     field: { value, onChange }

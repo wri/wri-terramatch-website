@@ -10,6 +10,9 @@ import { FormField } from "@/components/extensive/WizardForm/types";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValueWithBoolean } from "@/types/common";
 
+// TODO:
+//  * Remove `fields` prop and instead accept questionId and get children from hook
+//  * Replace use of FieldMapper with FormQuestion
 export interface ConditionalInputProps extends Omit<InputProps, "defaultValue">, UseControllerProps {
   fields: FormField[];
   formHook: UseFormReturn;

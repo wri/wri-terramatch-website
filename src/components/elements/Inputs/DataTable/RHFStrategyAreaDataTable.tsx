@@ -5,6 +5,9 @@ import { FieldValues, useController, UseControllerProps, UseFormReturn } from "r
 
 import { StrategyAreaInput, StrategyAreaInputProps } from "../StrategyAreaInput/StrategyAreaInput";
 
+// TODO:
+//  * get rid of options / apiOptionsSource, all option sources are API driven now
+//  * accept linkedFieldKey and reference (probably move to here) SELECT_FILTER_QUESTIONS from customForms.ts, get rid of optionsFilterFieldName
 export interface RHFStrategyAreaDataTableProps
   extends Omit<StrategyAreaInputProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
     UseControllerProps {

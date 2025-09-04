@@ -12,10 +12,7 @@ import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/g
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, pluralEntityNameToSingular } from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues, useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName } from "@/types/common";
 
@@ -66,7 +63,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
     [formData?.answers, formData?.update_request?.content]
   );
-  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
+  const defaultValues = useFormDefaultValues(sourceData, formSteps);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
   const formTitle =
