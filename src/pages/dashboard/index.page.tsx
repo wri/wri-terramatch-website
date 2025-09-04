@@ -38,7 +38,7 @@ export const ACTIVE_PROJECTS_TOOLTIP =
 export const JOBS_CREATED_BY_AGE_TOOLTIP =
   "Total number of employees broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
 export const JOBS_CREATED_BY_GENDER_TOOLTIP =
-  "Total number of employees broken down by gender. 'Unkown' refers to number of people whose gender has not been specified.";
+  "Total number of employees broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 export const NEW_FULL_TIME_JOBS_TOOLTIP =
   "Number of full-time jobs created to date. TerraFund defines a full-time employee as people that are regularly paid for their work on the project and are working more than 35 hours per week throughout the year.";
 export const NEW_PART_TIME_JOBS_TOOLTIP =
