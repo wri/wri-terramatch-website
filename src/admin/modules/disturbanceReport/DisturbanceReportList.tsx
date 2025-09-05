@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -15,19 +15,20 @@ import {
   WrapperField
 } from "react-admin";
 
+import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
-import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { fetchGetV2DisturbanceReportsExport, GetV2DisturbanceReportsExportError } from "@/generated/apiComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "..";
@@ -95,7 +96,20 @@ const DisturbanceReportDataGrid: FC = () => {
 };
 
 export const DisturbanceReportList: FC = () => {
-  const frameworkInputChoices = useUserFrameworkChoices();
+  const [exporting, setExporting] = useState<boolean>(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const response = (await fetchGetV2DisturbanceReportsExport({})) as Blob;
+      await downloadFileBlob(response, "DisturbanceReports.csv");
+    } catch (e) {
+      throw getFormattedErrorForRA(e as GetV2DisturbanceReportsExportError);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
@@ -132,8 +146,6 @@ export const DisturbanceReportList: FC = () => {
     />
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport("sites", frameworkInputChoices);
-
   return (
     <>
       <Stack gap={1} className="pb-6">
@@ -142,11 +154,9 @@ export const DisturbanceReportList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
         <DisturbanceReportDataGrid />
       </List>
-
-      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>

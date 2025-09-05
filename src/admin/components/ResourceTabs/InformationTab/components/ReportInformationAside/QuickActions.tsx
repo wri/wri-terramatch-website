@@ -38,17 +38,19 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          <Button
-            variant="outlined"
-            component={Link}
-            to={createPath({
-              resource: modules.task.ResourceName,
-              type: "show",
-              id: record?.taskUuid! ?? record?.task_uuid!
-            })}
-            fullWidth
-            label="View Task"
-          />
+          <When condition={type !== "disturbance-reports"}>
+            <Button
+              variant="outlined"
+              component={Link}
+              to={createPath({
+                resource: modules.task.ResourceName,
+                type: "show",
+                id: record?.taskUuid! ?? record?.task_uuid!
+              })}
+              fullWidth
+              label="View Task"
+            />
+          </When>
           <Button
             variant="outlined"
             component={Link}
