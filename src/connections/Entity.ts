@@ -15,6 +15,7 @@ import { SupportedEntities } from "@/generated/v3/entityService/entityServiceCon
 import {
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
+  DisturbanceReportUpdateData,
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
@@ -30,7 +31,6 @@ import {
   ProjectReportLightDto,
   ProjectReportUpdateData,
   ProjectUpdateData,
-  ReportUpdateAttributes,
   SiteFullDto,
   SiteLightDto,
   SiteReportFullDto,
@@ -61,15 +61,6 @@ export type EntityLightDto =
   | FinancialReportLightDto
   | DisturbanceReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
-/**
- * TODO: This type will be removed once the approval flow is implemented.
- * Currently using ReportUpdateAttributes as a temporary solution.
- */
-export type DisturbanceReportUpdateData = {
-  type: "disturbanceReports";
-  id: string;
-  attributes: ReportUpdateAttributes;
-};
 
 export type EntityUpdateData =
   | ProjectUpdateData

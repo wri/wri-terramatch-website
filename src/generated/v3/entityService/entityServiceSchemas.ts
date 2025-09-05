@@ -811,6 +811,7 @@ export type DisturbanceReportLightDto = {
   lightResource: boolean;
   uuid: string;
   status: string;
+  updateRequestStatus: string;
   /**
    * The associated project name
    */
@@ -903,7 +904,6 @@ export type ProjectFullDto = {
    * @format date-time
    */
   plantingEndDate: string | null;
-  description: string | null;
   budget: number | null;
   history: string | null;
   objectives: string | null;
@@ -929,7 +929,6 @@ export type ProjectFullDto = {
   sitingStrategyDescription: string | null;
   sitingStrategy: string | null;
   landholderCommEngage: string | null;
-  communityIncentives: string | null;
   projPartnerInfo: string | null;
   seedlingsSource: string | null;
   landTenureProjectArea: string[] | null;
@@ -1541,6 +1540,7 @@ export type DisturbanceReportFullDto = {
   lightResource: boolean;
   uuid: string;
   status: string;
+  updateRequestStatus: string | null;
   /**
    * The associated project name
    */
@@ -1566,7 +1566,6 @@ export type DisturbanceReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  updateRequestStatus: string | null;
   title: string | null;
   /**
    * @format date-time
@@ -1719,6 +1718,15 @@ export type FinancialReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type DisturbanceReportUpdateData = {
+  type: "disturbanceReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1727,7 +1735,8 @@ export type EntityUpdateBody = {
     | ProjectReportUpdateData
     | SiteReportUpdateData
     | NurseryReportUpdateData
-    | FinancialReportUpdateData;
+    | FinancialReportUpdateData
+    | DisturbanceReportUpdateData;
 };
 
 /**
@@ -1958,7 +1967,6 @@ export type OptionLabelDto = {
    * Option label slug
    */
   slug: string;
-  altValue: string | null;
   /**
    * Option label text in requesting user's locale, if available
    */
@@ -1966,60 +1974,5 @@ export type OptionLabelDto = {
   /**
    * Option label text in English
    */
-  imageUrl: string | null;
-};
-
-export type LinkedFieldDto = {
-  /**
-   * Linked field id
-   */
-  id: string;
-  formType:
-    | "organisation"
-    | "financialReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport";
-  label: string;
-  name: string;
-  inputType:
-    | "boolean"
-    | "conditional"
-    | "date"
-    | "long-text"
-    | "mapInput"
-    | "number"
-    | "number-percentage"
-    | "radio"
-    | "select"
-    | "select-image"
-    | "strategy-area"
-    | "text"
-    | "url"
-    | "file"
-    | "allBeneficiaries"
-    | "associates"
-    | "disturbances"
-    | "employees"
-    | "financialIndicators"
-    | "fundingType"
-    | "indirectBeneficiaries"
-    | "invasive"
-    | "jobs"
-    | "leaderships"
-    | "ownershipStake"
-    | "restorationPartners"
-    | "seedings"
-    | "stratas"
-    | "trainingBeneficiaries"
-    | "treeSpecies"
-    | "volunteers"
-    | "workdays";
-  optionListKey: string | null;
-  multiChoice: string | null;
-  collection: string | null;
+  imageUrl: Record<string, any> | null;
 };

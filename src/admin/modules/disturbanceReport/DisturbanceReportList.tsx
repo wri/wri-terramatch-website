@@ -1,11 +1,13 @@
 import { Stack } from "@mui/material";
 import { FC } from "react";
 import {
+  AutocompleteInput,
   Datagrid,
   DateField,
   EditButton,
   FunctionField,
   List,
+  ReferenceInput,
   SearchInput,
   SelectInput,
   ShowButton,
@@ -23,11 +25,12 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getReportStatusOptions } from "@/constants/options/status";
+import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
+import modules from "..";
 import Intensity, { IntensityEnum } from "./components/Intensity";
 
 const tableMenu = [
@@ -62,6 +65,17 @@ const DisturbanceReportDataGrid: FC = () => {
           return <CustomChipField label={title} />;
         }}
       />
+      <FunctionField
+        source="updateRequestStatus"
+        label="Change Request Status"
+        sortable={false}
+        render={(record?: DisturbanceReportLightDto) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record?.updateRequestStatus
+          );
+          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        }}
+      />
       <DateField source="dateOfIncident" label="Date of Incident" locales="en-GB" />
       <FunctionField
         source="intensity"
@@ -84,11 +98,36 @@ export const DisturbanceReportList: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
+    <ReferenceInput
+      key="project"
+      source="projectUuid"
+      reference={modules.project.ResourceName}
+      label="Project"
+      sort={{
+        field: "name",
+        order: "ASC"
+      }}
+      perPage={100}
+    >
+      <AutocompleteInput
+        optionText="name"
+        label="Project"
+        className="select-page-admin"
+        filterToQuery={(searchText: string) => ({ searchFilter: searchText })}
+      />
+    </ReferenceInput>,
     <SelectInput
       key="status"
       label="Status"
       source="status"
       choices={optionToChoices(getReportStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="updateRequestStatus"
+      label="Change Request Status"
+      source="updateRequestStatus"
+      choices={optionToChoices(getChangeRequestStatusOptions())}
       className="select-page-admin"
     />
   ];
