@@ -8,6 +8,7 @@ import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
+import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
@@ -53,6 +54,10 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
       return <ReportInformationAside type={type} parent={{ label: "Nursery", source: "nurseryName" }} />;
     case "financial-reports":
       return <ReportInformationAside type={type} parent={{ label: "Financial Report", source: "organisationName" }} />;
+    case "disturbance-reports":
+      return (
+        <ReportInformationAside type={type} parent={{ label: "Disturbance Report", source: "organisationName" }} />
+      );
     default:
       return null;
   }
@@ -94,6 +99,8 @@ const InformationTab: FC<IProps> = props => {
         return "Reported Data";
       case "financial-reports":
         return "Financial History";
+      case "disturbance-reports":
+        return "Disturbance Report";
       default:
         return "Information";
     }
@@ -117,202 +124,203 @@ const InformationTab: FC<IProps> = props => {
                 </Card>
               </Then>
               <Else>
-                <If condition={props.type === "financial-reports"}>
-                  <Then>
-                    <div className="flex flex-col gap-8 p-2">
-                      {formSteps.map(step =>
-                        step?.fields?.map(field =>
-                          field.type === FieldType.FinancialTableInput ? (
-                            <>
-                              <FinancialMetrics data={values[field.name]} years={field?.fieldProps?.years} />
-                              <Accordion
-                                title="Financial Documents per Year"
-                                variant="drawer"
-                                className="rounded-lg bg-white px-6 py-4 shadow-all"
-                              >
-                                <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
-                              </Accordion>
-                              <Accordion
-                                title="Descriptions of Financials per Year"
-                                variant="drawer"
-                                className="rounded-lg bg-white px-6 py-4 shadow-all"
-                              >
-                                <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
-                              </Accordion>
-                            </>
-                          ) : field.type === FieldType.FundingTypeDataTable ? (
+                <When condition={props.type === "disturbance-reports"}>
+                  <DisturbanceReport id={record.uuid} index={0} />
+                </When>
+                <When condition={props.type === "financial-reports"}>
+                  <div className="flex flex-col gap-8 p-2">
+                    {formSteps.map(step =>
+                      step?.fields?.map(field =>
+                        field.type === FieldType.FinancialTableInput ? (
+                          <>
+                            <FinancialMetrics data={values[field.name]} years={field?.fieldProps?.years} />
                             <Accordion
-                              title="Major Funding Sources by Year"
+                              title="Financial Documents per Year"
                               variant="drawer"
                               className="rounded-lg bg-white px-6 py-4 shadow-all"
                             >
-                              <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                              <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
                             </Accordion>
-                          ) : (
-                            <></>
-                          )
-                        )
-                      )}
-                    </div>
-                  </Then>
-                  <Else>
-                    <Stack gap={4}>
-                      <Card sx={{ padding: 4 }} className="!shadow-none">
-                        <List
-                          className={classNames("space-y-12", {
-                            "map-span-3": props.type === "sites"
-                          })}
-                          items={formSteps}
-                          render={(step, index) => (
-                            <InformationTabRow
-                              index={index}
-                              step={step}
-                              values={values}
-                              steps={formSteps}
-                              type={props.type}
-                            />
-                          )}
-                        />
-                      </Card>
-                      <When condition={record}>
-                        <div className="pl-8">
-                          <When
-                            condition={
-                              props.type === "projects" ||
-                              props.type === "sites" ||
-                              props.type === "site-reports" ||
-                              props.type === "project-reports" ||
-                              props.type === "nursery-reports"
-                            }
+                            <Accordion
+                              title="Descriptions of Financials per Year"
+                              variant="drawer"
+                              className="rounded-lg bg-white px-6 py-4 shadow-all"
+                            >
+                              <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
+                            </Accordion>
+                          </>
+                        ) : field.type === FieldType.FundingTypeDataTable ? (
+                          <Accordion
+                            title="Major Funding Sources by Year"
+                            variant="drawer"
+                            className="rounded-lg bg-white px-6 py-4 shadow-all"
                           >
-                            <div className="flex flex-col gap-10">
-                              <ContextCondition frameworksHide={[Framework.PPC]}>
-                                <When condition={props.type !== "nursery-reports"}>
-                                  <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-1 py-1">
-                                      <Text variant="text-16-bold" className="capitalize">
-                                        Non-Trees Planted:
-                                      </Text>
-                                      <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                        {totalCountNonTree.toLocaleString() ?? 0}
-                                      </Text>
-                                    </div>
-                                    <TreeSpeciesTable
-                                      {...{ entity, entityUuid }}
-                                      collection="non-tree"
-                                      secondColumnWidth="45%"
-                                    />
-                                  </div>
-                                </When>
-                              </ContextCondition>
-                              <When
-                                condition={
-                                  props.type === "projects" ||
-                                  props.type === "project-reports" ||
-                                  props.type === "nursery-reports"
-                                }
-                              >
-                                <ContextCondition
-                                  frameworksShow={[
-                                    Framework.PPC,
-                                    Framework.TF,
-                                    Framework.TF_LANDSCAPES,
-                                    Framework.ENTERPRISES
-                                  ]}
-                                >
-                                  <When
-                                    condition={
-                                      (props.type != "nursery-reports" && framework == Framework.PPC) ||
-                                      (props.type == "nursery-reports" &&
-                                        [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES].includes(
-                                          framework
-                                        ))
-                                    }
-                                  >
-                                    <div className="flex flex-col gap-1">
-                                      <div className="flex items-center gap-1 py-1">
-                                        <Text variant="text-16-bold" className="capitalize">
-                                          Saplings Grown in Nurseries:
-                                        </Text>
-                                        <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                          {totalCountNurserySeedling.toLocaleString() ?? 0}
-                                        </Text>
-                                      </div>
-                                      <TreeSpeciesTable
-                                        {...{ entity, entityUuid }}
-                                        collection="nursery-seedling"
-                                        secondColumnWidth="45%"
-                                      />
-                                    </div>
-                                  </When>
-                                </ContextCondition>
-                              </When>
-                              <ContextCondition frameworksShow={[Framework.PPC]}>
-                                <When condition={props.type !== "nursery-reports"}>
-                                  <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-1 py-1">
-                                      <Text variant="text-16-bold" className="capitalize">
-                                        Seeds Planted:
-                                      </Text>
-                                      <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                        {totalCountSeeds.toLocaleString()}
-                                      </Text>
-                                    </div>
-                                    <TreeSpeciesTable
-                                      {...{ entity, entityUuid }}
-                                      collection="seeds"
-                                      secondColumnWidth="45%"
-                                    />
-                                  </div>
-                                </When>
-                              </ContextCondition>
+                            <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                          </Accordion>
+                        ) : (
+                          <></>
+                        )
+                      )
+                    )}
+                  </div>
+                </When>
+                <When condition={props.type !== "financial-reports" && props.type !== "disturbance-reports"}>
+                  <Stack gap={4}>
+                    <Card sx={{ padding: 4 }} className="!shadow-none">
+                      <List
+                        className={classNames("space-y-12", {
+                          "map-span-3": props.type === "sites"
+                        })}
+                        items={formSteps}
+                        render={(step, index) => (
+                          <InformationTabRow
+                            index={index}
+                            step={step}
+                            values={values}
+                            steps={formSteps}
+                            type={props.type}
+                          />
+                        )}
+                      />
+                    </Card>
+                    <When condition={record}>
+                      <div className="pl-8">
+                        <When
+                          condition={
+                            props.type === "projects" ||
+                            props.type === "sites" ||
+                            props.type === "site-reports" ||
+                            props.type === "project-reports" ||
+                            props.type === "nursery-reports"
+                          }
+                        >
+                          <div className="flex flex-col gap-10">
+                            <ContextCondition frameworksHide={[Framework.PPC]}>
                               <When condition={props.type !== "nursery-reports"}>
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-1 py-1">
                                     <Text variant="text-16-bold" className="capitalize">
-                                      Trees Planted:
+                                      Non-Trees Planted:
                                     </Text>
                                     <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                      {totalCountTreePlanted.toLocaleString() ?? 0}
+                                      {totalCountNonTree.toLocaleString() ?? 0}
                                     </Text>
                                   </div>
                                   <TreeSpeciesTable
                                     {...{ entity, entityUuid }}
-                                    collection="tree-planted"
+                                    collection="non-tree"
                                     secondColumnWidth="45%"
                                   />
                                 </div>
                               </When>
-                              <When condition={props.type === "site-reports" || props.type === "project-reports"}>
-                                <ContextCondition frameworksShow={ALL_TF}>
+                            </ContextCondition>
+                            <When
+                              condition={
+                                props.type === "projects" ||
+                                props.type === "project-reports" ||
+                                props.type === "nursery-reports"
+                              }
+                            >
+                              <ContextCondition
+                                frameworksShow={[
+                                  Framework.PPC,
+                                  Framework.TF,
+                                  Framework.TF_LANDSCAPES,
+                                  Framework.ENTERPRISES
+                                ]}
+                              >
+                                <When
+                                  condition={
+                                    (props.type != "nursery-reports" && framework == Framework.PPC) ||
+                                    (props.type == "nursery-reports" &&
+                                      [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES].includes(
+                                        framework
+                                      ))
+                                  }
+                                >
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-1 py-1">
                                       <Text variant="text-16-bold" className="capitalize">
-                                        Replanting:
+                                        Saplings Grown in Nurseries:
                                       </Text>
                                       <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                        {totalCountReplanting?.toLocaleString() ?? 0}
+                                        {totalCountNurserySeedling.toLocaleString() ?? 0}
                                       </Text>
                                     </div>
                                     <TreeSpeciesTable
                                       {...{ entity, entityUuid }}
-                                      collection="replanting"
+                                      collection="nursery-seedling"
                                       secondColumnWidth="45%"
                                     />
                                   </div>
-                                </ContextCondition>
+                                </When>
+                              </ContextCondition>
+                            </When>
+                            <ContextCondition frameworksShow={[Framework.PPC]}>
+                              <When condition={props.type !== "nursery-reports"}>
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-1 py-1">
+                                    <Text variant="text-16-bold" className="capitalize">
+                                      Seeds Planted:
+                                    </Text>
+                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                      {totalCountSeeds.toLocaleString()}
+                                    </Text>
+                                  </div>
+                                  <TreeSpeciesTable
+                                    {...{ entity, entityUuid }}
+                                    collection="seeds"
+                                    secondColumnWidth="45%"
+                                  />
+                                </div>
                               </When>
-                            </div>
-                          </When>
-                        </div>
-                      </When>
-                      <When condition={props.type === "projects"}>
-                        <MonitoringPartnersTable project={record} />
-                        <ProjectManagersTable project={record} />
-                      </When>
-                    </Stack>
-                  </Else>
-                </If>
+                            </ContextCondition>
+                            <When condition={props.type !== "nursery-reports"}>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1 py-1">
+                                  <Text variant="text-16-bold" className="capitalize">
+                                    Trees Planted:
+                                  </Text>
+                                  <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                    {totalCountTreePlanted.toLocaleString() ?? 0}
+                                  </Text>
+                                </div>
+                                <TreeSpeciesTable
+                                  {...{ entity, entityUuid }}
+                                  collection="tree-planted"
+                                  secondColumnWidth="45%"
+                                />
+                              </div>
+                            </When>
+                            <When condition={props.type === "site-reports" || props.type === "project-reports"}>
+                              <ContextCondition frameworksShow={ALL_TF}>
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-1 py-1">
+                                    <Text variant="text-16-bold" className="capitalize">
+                                      Replanting:
+                                    </Text>
+                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                      {totalCountReplanting?.toLocaleString() ?? 0}
+                                    </Text>
+                                  </div>
+                                  <TreeSpeciesTable
+                                    {...{ entity, entityUuid }}
+                                    collection="replanting"
+                                    secondColumnWidth="45%"
+                                  />
+                                </div>
+                              </ContextCondition>
+                            </When>
+                          </div>
+                        </When>
+                      </div>
+                    </When>
+                    <When condition={props.type === "projects"}>
+                      <MonitoringPartnersTable project={record} />
+                      <ProjectManagersTable project={record} />
+                    </When>
+                  </Stack>
+                </When>
               </Else>
             </If>
           </Grid>

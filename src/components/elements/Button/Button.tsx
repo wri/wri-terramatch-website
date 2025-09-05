@@ -32,7 +32,8 @@ export interface IButtonProps extends Omit<HTMLProps<HTMLElement>, "as"> {
     | "about-us"
     | "transparent-toggle"
     | "purple"
-    | "white-button-map";
+    | "white-button-map"
+    | "outlined";
   fullWidth?: boolean;
   shallow?: boolean;
 }
@@ -170,6 +171,15 @@ const Button: FC<IButtonProps> = props => {
         return {
           container: "h-fit rounded-lg bg-green-200 px-5 py-[18px] hover:bg-green-60 text-white",
           span: "flex items-center text-16-bold !leading-[normal]"
+        };
+      case "outlined":
+        return {
+          container: tw(
+            nonTextClasses,
+            "bg-white rounded-lg border border-blueCustom-900 py-2 text-dark hover:bg-blueCustom-900 hover:text-white",
+            "disabled:bg-[#E7E8E9] disabled:text-[#BCBEBF] disabled:border-transparent"
+          ),
+          span: nonTextSpanClasses
         };
       default:
         return { container: "", span: "" };

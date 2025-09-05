@@ -15,9 +15,11 @@ const ShowTitle = (props: IProps) => {
   const resource = useResourceContext();
   const titleGetter = useGetRecordRepresentation(resource);
 
+  const displayTitle = resource === "disturbanceReport" ? "View all Disturbance Reports" : titleGetter(record);
+
   const title = (
     <>
-      {titleGetter(record)}
+      {displayTitle}
       {(record?.is_test || record?.isTest) && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
     </>
   );
@@ -33,7 +35,11 @@ const ShowTitle = (props: IProps) => {
         <When condition={!!title}>
           <If
             condition={
-              resource === "site" || resource === "project" || resource === "projectReport" || resource === "nursery"
+              resource === "site" ||
+              resource === "project" ||
+              resource === "projectReport" ||
+              resource === "nursery" ||
+              resource === "disturbanceReport"
             }
           >
             <Then>
