@@ -35,7 +35,8 @@ export const EntityEdit = () => {
     [modules.projectReport.ResourceName]: "project-reports",
     [modules.siteReport.ResourceName]: "site-reports",
     [modules.nurseryReport.ResourceName]: "nursery-reports",
-    [modules.financialReport.ResourceName]: "financial-reports"
+    [modules.financialReport.ResourceName]: "financial-reports",
+    [modules.disturbanceReport.ResourceName]: "disturbance-reports"
   };
 
   const entityName = ResourceEntityMapping[resource] as EntityName;

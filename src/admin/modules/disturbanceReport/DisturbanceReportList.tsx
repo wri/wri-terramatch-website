@@ -11,15 +11,13 @@ import {
   SearchInput,
   SelectInput,
   ShowButton,
-  TextField,
-  WrapperField
+  TextField
 } from "react-admin";
 
 import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -42,14 +40,6 @@ const tableMenu = [
   {
     id: "2",
     render: () => <EditButton />
-  },
-  {
-    id: "3",
-    render: () => (
-      <WrapperField>
-        <CustomDeleteWithConfirmButton source="name" />
-      </WrapperField>
-    )
   }
 ];
 
