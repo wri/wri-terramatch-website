@@ -31,7 +31,6 @@ const SubmissionPage = () => {
     { entityName: "project-pitch", entityUUID: formData?.data?.project_pitch_uuid ?? "" },
     framework
   );
-  //@ts-ignore
   const defaultValues = useFormDefaultValues(formData?.data?.answers, formSteps);
 
   return (
@@ -69,7 +68,6 @@ const SubmissionPage = () => {
               downloadButtonText: t("Download Application")
             }}
             roundedCorners
-            //@ts-ignore
             formSubmissionOrg={formData?.data?.organisation_attributes}
           />
         </FrameworkProvider>

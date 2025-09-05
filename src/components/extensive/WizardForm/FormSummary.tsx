@@ -1,12 +1,12 @@
 import FormSummaryRow from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useFormSectionIds } from "@/connections/util/Form";
 import { Entity } from "@/types/common";
 
 import List from "../List/List";
-import { FormStepSchema } from "./types";
 
 export interface FormSummaryProps {
   values: any;
-  steps: FormStepSchema[];
+  formUuid: string;
   onEdit?: (stepIndex: number) => void;
   entity?: Entity;
   organisation?: any;
@@ -17,14 +17,12 @@ export type FormSummaryOptions = {
   subtitle?: string;
 };
 
-const FormSummary = (props: FormSummaryProps) => {
-  return (
-    <List
-      className="space-y-8"
-      items={props.steps}
-      render={(step, index) => <FormSummaryRow index={index} step={step} {...props} />}
-    />
-  );
-};
+const FormSummary = (props: FormSummaryProps) => (
+  <List
+    className="space-y-8"
+    items={useFormSectionIds(props.formUuid)}
+    render={(sectionId, index) => <FormSummaryRow index={index} sectionId={sectionId} {...props} />}
+  />
+);
 
 export default FormSummary;

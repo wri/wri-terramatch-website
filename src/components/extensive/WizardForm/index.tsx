@@ -1,33 +1,35 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
-import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { When } from "react-if";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
+import { FormQuestionsProvider } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
-import { FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { selectQuestions, useFormSectionIds } from "@/connections/util/Form";
+import { selectQuestions, selectSection, selectSections, useForm as useApiForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useOnMount } from "@/hooks/useOnMount";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
 import { FormFooter } from "./FormFooter";
 import { WizardFormHeader } from "./FormHeader";
-import FormSummary, { FormSummaryOptions } from "./FormSummary";
+import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
-import { downloadAnswersCSV, getSchema } from "./utils";
+import SummaryItem from "./SummaryItem";
+import { getSchema } from "./utils";
 
 export interface WizardFormProps {
   formUuid: string;
   defaultValues?: any;
-  onStepChange?: (values: any, step: FormStepSchema) => void;
+  onStepChange?: (values: any) => void;
   onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
   onSubmit?: (values: any) => void;
   onBackFirstStep: () => void;
@@ -72,60 +74,77 @@ export interface WizardFormProps {
 function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
-  const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const sectionIds = useFormSectionIds(props.formUuid);
-  const selectedStepId = sectionIds?.[selectedStepIndex];
   const framework = useFramework();
-  const selectedValidationSchema = useMemo(
-    () => getSchema(selectQuestions(selectedStepId), t, framework),
-    [selectedStepId, t, framework]
-  );
-  const lastIndex = props.summaryOptions ? sectionIds.length : sectionIds.length - 1;
-  const formHook = useForm(
-    selectedValidationSchema
-      ? {
-          resolver: yupResolver(selectedValidationSchema),
-          defaultValues: props.defaultValues,
-          mode: "onTouched"
-        }
-      : { mode: "onTouched" }
+  // In most cases, we should expect the form already to be loaded by our parent, but this simply ensures
+  // that it's cached correctly. Without the form already loaded in the connection cache, all the section / question
+  // selectors in use won't work correctly.
+  const [, { data: form }] = useApiForm({ id: props.formUuid, enabled: props.formUuid != null });
+  const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
+  const { sections, questions } = useMemo(() => {
+    const sections =
+      form?.uuid == null
+        ? []
+        : selectSections(form?.uuid).map(({ uuid }) => ({
+            sectionId: uuid,
+            title: selectSection(uuid)?.title,
+            validation: getSchema(selectQuestions(uuid), t, framework)
+          }));
+    const questions = sections.flatMap(({ sectionId }) => selectQuestions(sectionId));
+    return { sections, questions };
+  }, [form?.uuid, framework, t]);
+  const selectedSection = sections[selectedStepIndex];
+
+  const lastIndex = props.summaryOptions ? sections.length : sections.length - 1;
+  const formHook: UseFormReturn = useForm(
+    useMemo(
+      () =>
+        selectedSection?.validation != null
+          ? {
+              resolver: yupResolver(selectedSection?.validation),
+              defaultValues: props.defaultValues,
+              mode: "onTouched"
+            }
+          : { mode: "onTouched" },
+      [props.defaultValues, selectedSection?.validation]
+    )
   );
 
-  useEffect(() => {
+  useValueChanged(selectedStepIndex, () => {
     // Force validation on all fields when the step changes
     formHook.trigger();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStepId]);
+  });
 
-  const formHasError = Object.values(formHook.formState.errors || {}).filter(item => !!item).length > 0;
+  const formHasError = Object.values(formHook.formState.errors ?? {}).length > 0;
 
-  Log.debug("Form Steps", props.steps);
   Log.debug("Form Values", formHook.watch());
   Log.debug("Form Errors", formHook.formState.errors);
 
   const onChange = useDebounce(() => !formHasError && props.onChange?.(formHook.getValues()));
 
-  const onSubmitStep = (data: any) => {
-    if (selectedStepIndex < lastIndex) {
-      //Step changes through 0 - last step
-      if (!props.disableAutoProgress) {
-        //Disable auto step progress if disableAutoProgress was passed
-        setSelectedStepIndex(n => n + 1);
+  const onSubmitStep = useCallback(
+    (data: any) => {
+      if (selectedStepIndex < lastIndex) {
+        //Step changes through 0 - last step
+        if (!props.disableAutoProgress) {
+          //Disable auto step progress if disableAutoProgress was passed
+          setSelectedStepIndex(n => n + 1);
+        }
+        let values = formHook.getValues();
+        values = { ...values };
+        props.onChange?.(values, true);
+        props.onStepChange?.(data);
+        formHook.reset(values);
+        formHook.clearErrors();
+      } else {
+        //Step changes on last step
+        if (!props.onSubmit) return props.onStepChange?.(data);
+        props.onSubmit?.(data);
       }
-      let values = formHook.getValues();
-      values = { ...values };
-      props.onChange?.(values, true);
-      props.onStepChange?.(data, selectedStep);
-      formHook.reset(values);
-      formHook.clearErrors();
-    } else {
-      //Step changes on last step
-      if (!props.onSubmit) return props.onStepChange?.(data, selectedStep);
-      props.onSubmit?.(data);
-    }
-  };
+    },
+    [formHook, lastIndex, props, selectedStepIndex]
+  );
 
-  const onClickSaveAndClose = () => {
+  const onClickSaveAndClose = useCallback(() => {
     let values = formHook.getValues();
     values = { ...values };
 
@@ -138,10 +157,10 @@ function WizardForm(props: WizardFormProps) {
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
       />
     );
-  };
+  }, [formHook, modal, props]);
 
   useEffect(() => {
-    if (props.errors) {
+    if (props.errors != null) {
       formHook.clearErrors();
       props.errors.errors?.forEach(error => {
         formHook.setError(error.source, {
@@ -153,39 +172,30 @@ function WizardForm(props: WizardFormProps) {
     formHook.reset(formHook.getValues());
   }, [formHook, props.errors]);
 
-  useEffect(() => {
+  useOnMount(() => {
     if (props.disableAutoProgress || props.disableInitialAutoProgress) return;
 
-    const stepIndex = props.steps.findIndex(step => !getSchema(step.fields).isValidSync(props.defaultValues));
-
     // If none of the steps has an invalid field, use the last step
+    const stepIndex = sections.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
+  });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (props.defaultValues) {
+  useValueChanged(props.defaultValues, () => {
+    if (props.defaultValues != null) {
       for (const [key, value] of Object.entries(props.defaultValues)) {
         formHook.setValue(key, value);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.defaultValues]);
+  });
 
   useLayoutEffect(() => {
     document.getElementById("step")?.scrollTo({ top: 0 });
   }, [selectedStepIndex]);
 
-  const stepTabItems = sectionIds.map((sectionId, index) => ({
-    title:
-      step.tabTitle ??
-      t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title: step.title }),
-    done: props.tabOptions?.markDone && index < selectedStepIndex,
-    disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
-    body: (
+  const renderStep = useCallback(
+    (sectionId: string, title: string | null, index: number) => (
       <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
-        {index === 0 && step.title === "Site Overview" && (
+        {index === 0 && title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="rounded-lg bg-tertiary-80 p-6">
               <Text variant="text-16-bold" className="text-white">
@@ -198,10 +208,11 @@ function WizardForm(props: WizardFormProps) {
         )}
         <FormStep
           id="step"
+          sectionId={sectionId}
           formHook={formHook}
           onChange={onChange}
           formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
-        ></FormStep>
+        />
         <FormFooter
           variant="sticky"
           backButtonProps={
@@ -229,79 +240,88 @@ function WizardForm(props: WizardFormProps) {
           }}
         />
       </div>
-    )
-  }));
+    ),
+    [formHasError, formHook, lastIndex, onChange, onSubmitStep, props, selectedStepIndex, t]
+  );
 
-  const summaryItem = {
-    title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
-    done: props.tabOptions?.markDone && props.steps.length < selectedStepIndex,
-    disabled: props.tabOptions?.disableFutureTabs && props.steps.length > selectedStepIndex,
-    body: (
-      <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
-        <FormStep
-          id="step"
-          formHook={formHook}
+  const stepTabItems = useMemo(
+    () =>
+      sections.map(({ sectionId, title }, index) => ({
+        title: t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title }),
+        done: props.tabOptions?.markDone && index < selectedStepIndex,
+        disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
+        renderBody: () => renderStep(sectionId, title ?? null, index)
+      })),
+    [props.tabOptions?.disableFutureTabs, props.tabOptions?.markDone, renderStep, sections, selectedStepIndex, t]
+  );
+
+  const summaryItem = useMemo(
+    () => ({
+      title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
+      done: props.tabOptions?.markDone && sections.length < selectedStepIndex,
+      disabled: props.tabOptions?.disableFutureTabs && sections.length > selectedStepIndex,
+      renderBody: () => (
+        <SummaryItem
+          formUuid={props.formUuid}
           title={props.summaryOptions?.title!}
           subtitle={props.summaryOptions?.subtitle}
-          onChange={onChange}
-          actionButtonProps={
-            props.summaryOptions?.downloadButtonText
-              ? {
-                  children: props.summaryOptions?.downloadButtonText,
-                  onClick: () => downloadAnswersCSV(props.steps, formHook.getValues())
-                }
-              : undefined
-          }
-        >
-          <FormSummary values={formHook.getValues()} steps={props.steps} onEdit={setSelectedStepIndex} />
-        </FormStep>
-        <FormFooter
-          variant="sticky"
-          backButtonProps={{
-            children: t("Back"),
-            onClick: () => setSelectedStepIndex(n => n - 1)
-          }}
-          submitButtonProps={{
-            children: t("Submit"),
-            onClick: formHook.handleSubmit(onSubmitStep),
-            disabled: props.submitButtonDisable,
-            className: "py-3"
-          }}
+          formHook={formHook}
+          downloadButtonText={props.summaryOptions?.downloadButtonText}
+          setSelectedStepIndex={setSelectedStepIndex}
+          onSubmitStep={onSubmitStep}
+          submitButtonDisable={props.submitButtonDisable}
         />
-      </div>
-    )
-  };
+      )
+    }),
+    [
+      formHook,
+      lastIndex,
+      onSubmitStep,
+      props.formUuid,
+      props.submitButtonDisable,
+      props.summaryOptions?.downloadButtonText,
+      props.summaryOptions?.subtitle,
+      props.summaryOptions?.title,
+      props.tabOptions?.disableFutureTabs,
+      props.tabOptions?.markDone,
+      sections.length,
+      selectedStepIndex,
+      t
+    ]
+  );
 
-  const tebItems: TabItem[] = props.summaryOptions ? [...stepTabItems, summaryItem] : stepTabItems;
+  const tabItems: TabItem[] = props.summaryOptions == null ? stepTabItems : [...stepTabItems, summaryItem];
 
   return (
     <div>
-      <When condition={!props.header?.hide}>
-        <WizardFormHeader
-          currentStep={selectedStepIndex + 1}
-          numberOfSteps={tebItems.length}
-          formStatus={props.formStatus}
-          errorMessage={props.errors && t("Something went wrong")}
-          onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
-          title={props.title}
-          subtitle={props.subtitle}
-        />
-      </When>
-      <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
-        <Tabs
-          onChangeSelected={setSelectedStepIndex}
-          selectedIndex={selectedStepIndex}
-          tabItems={tebItems}
-          rounded={props.roundedCorners}
-          tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
-          itemOption={{}}
-          carouselOptions={{
-            slidesPerView: 3
-          }}
-        />
-      </div>
+      <FormQuestionsProvider questions={questions}>
+        {!props.header?.hide && (
+          <WizardFormHeader
+            currentStep={selectedStepIndex + 1}
+            numberOfSteps={tabItems.length}
+            formStatus={props.formStatus}
+            errorMessage={props.errors && t("Something went wrong")}
+            onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
+            title={props.title}
+            subtitle={props.subtitle}
+          />
+        )}
+        <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
+          <Tabs
+            onChangeSelected={setSelectedStepIndex}
+            selectedIndex={selectedStepIndex}
+            tabItems={tabItems}
+            rounded={props.roundedCorners}
+            tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
+            itemOption={{}}
+            carouselOptions={{
+              slidesPerView: 3
+            }}
+          />
+        </div>
+      </FormQuestionsProvider>
     </div>
   );
 }
 
-export default memo(WizardForm);
+export default WizardForm;

@@ -7,7 +7,6 @@ import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
 import ConfirmationModal from "@/components/extensive/WizardForm/modals/ConfirmationModal";
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
-import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useModalContext } from "@/context/modal.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
@@ -38,7 +37,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     }
   });
 
-  const handleSave = async (data: any, step: FormStepSchema) => {
+  const handleSave = async (data: any) => {
     // @ts-ignore
     const res: { data: V2OrganisationRead } = await updateOrganization({
       body: normalizedFormData(data, formSteps),

@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { Dictionary, flatten, isEmpty, isNumber, isObject, omit, sortBy } from "lodash";
 import * as yup from "yup";
+import { AnySchema } from "yup";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
@@ -728,8 +729,12 @@ const getOptions = (question: FormQuestionRead, t: typeof useT) => {
   return options;
 };
 
-export const getFieldValidation = (question: FormQuestionDto, t: typeof useT, framework: Framework) => {
-  const required = question.validation?.required || false;
+export const getFieldValidation = (
+  question: FormQuestionDto,
+  t: typeof useT,
+  framework: Framework
+): AnySchema | null => {
+  const required = question.validation?.required === true;
   const max = question.validation?.max;
   const min = question.validation?.min;
   const limitMin = question.minCharacterLimit;
@@ -958,7 +963,7 @@ export const getFieldValidation = (question: FormQuestionDto, t: typeof useT, fr
 
     case "tableInput":
     case "mapInput": {
-      if (linkedFieldKey == "pro-pit-proj-boundary") return;
+      if (linkedFieldKey == "pro-pit-proj-boundary") return null;
 
       let validation = yup.object();
       return required ? validation.required() : validation;

@@ -1,5 +1,4 @@
-import { map, sortBy, uniq } from "lodash";
-import { useMemo } from "react";
+import { map, uniq } from "lodash";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, connectionSelector } from "@/connections/util/connectionShortcuts";
@@ -66,18 +65,17 @@ export const useForm = connectionHook(formConnection);
 const formSelector = connectionSelector(formConnection);
 export const selectForm = (id: string) => formSelector({ id }).data;
 
-export const sectionsConnection = v3Resource("formSections").listByParentId<FormSectionDto>("formId").buildConnection();
-export const questionsConnection = v3Resource("formQuestions")
-  .listByParentId<FormQuestionDto>("sectionId")
+export const sectionsConnection = v3Resource("formSections")
+  .listByParentId<FormSectionDto>("formId", { sortProp: "order" })
   .buildConnection();
-const useSortedUuids = (data: { uuid: string; order: number }[] | undefined) =>
-  useMemo(() => sortBy(data ?? [], "order").map(({ uuid }) => uuid), [data]);
-export const useFormSectionIds = (formId: string) =>
-  useSortedUuids(useConnection(sectionsConnection, { parentId: formId })[1]?.data);
+export const questionsConnection = v3Resource("formQuestions")
+  .listByParentId<FormQuestionDto>("sectionId", { sortProp: "order" })
+  .buildConnection();
+export const useFormSectionIds = (formId: string) => useConnection(sectionsConnection, { parentId: formId })[1]?.data;
 const sectionsSelector = connectionSelector(sectionsConnection);
 export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
 export const useFormQuestionIds = (sectionId: string) =>
-  useSortedUuids(useConnection(questionsConnection, { parentId: sectionId })[1]?.data);
+  useConnection(questionsConnection, { parentId: sectionId })[1]?.data;
 const questionsSelector = connectionSelector(questionsConnection);
 export const selectQuestions = (sectionId: string) => questionsSelector({ parentId: sectionId }).data ?? [];
 

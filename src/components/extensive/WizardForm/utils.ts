@@ -1,7 +1,8 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { isEmpty } from "lodash";
+import { Dictionary, isEmpty } from "lodash";
 import * as yup from "yup";
+import { AnySchema } from "yup";
 
 import { getDisturbanceTableColumns } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { getFundingTypeTableColumns } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
@@ -11,56 +12,53 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { FormQuestionContextType } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { findCachedGadmTitle, loadGadmCodes } from "@/connections/Gadm";
+import { selectChildQuestions } from "@/connections/util/Form";
 import { Framework } from "@/context/framework.provider";
 import { FormRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getFieldValidation, SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
-
-import { FieldType, FormField, FormStepSchema } from "./types";
 
 export const getSchema = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
   return yup.object(getSchemaFields(questions, t, framework));
 };
 
-export const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
-  let schema: any = {};
+const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
+  let schema: Dictionary<AnySchema> = {};
 
   for (const question of questions) {
-    if (question.type === FieldType.InputTable) {
-      schema[question.name] = getSchema(question.fieldProps.rows);
-    } else if (question.type === FieldType.Conditional) {
-      schema[question.name] = question.validation.nullable().label(question.label);
+    if (question.inputType === "tableInput") {
+      schema[question.uuid] = getSchema(selectChildQuestions(question.uuid), t, framework);
+    } else if (question.inputType === "conditional") {
+      schema[question.uuid] = getFieldValidation(question, t, framework)!.nullable().label(question.label);
+      for (const child of selectChildQuestions(question.uuid)) {
+        const childValidation = getFieldValidation(child, t, framework);
+        if (childValidation != null) {
+          schema[child.uuid] = childValidation
+            .when(question.uuid, {
+              is: child.showOnParentCondition === true,
+              then: schema => schema,
+              otherwise: () => yup.mixed().nullable()
+            })
+            .nullable()
+            .lable(child.label ?? "");
 
-      question.fieldProps.fields.forEach(child => {
-        schema[child.name] = child.validation
-          .when(question.name, {
-            is: !!child.condition,
-            then: schema => schema,
-            otherwise: () => yup.mixed().nullable()
-          })
-          .nullable()
-          .label(child.label || "");
-
-        if (child.fieldProps.required) {
-          schema[child.name] = schema[child.name].required();
+          if (child.validation?.required === true) {
+            schema[child.uuid] = schema[child.uuid].required();
+          }
         }
-      });
-    } else {
-      if (!question.validation) {
-        schema[question.name] = yup
-          .mixed()
-          .nullable()
-          .label(question.label ?? " ");
-      } else {
-        schema[question.name] = question.validation.nullable().label(question.label ?? " ");
       }
+    } else {
+      const validation = getFieldValidation(question, t, framework) ?? yup.mixed();
+      schema[question.uuid] = validation.nullable().label(question.label ?? "");
     }
 
-    if (question.fieldProps.required && schema[question.name]) {
-      schema[question.name] = schema[question.name].required();
+    if (question.validation?.required === true && schema[question.uuid] != null) {
+      schema[question.uuid] = schema[question.uuid].required();
     }
   }
 
@@ -72,24 +70,34 @@ export const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, fr
  * with the value in the form field (currently just GADM codes). This method goes through the given
  * set of form fields and caches all data that will be needed by synchronous methods like getAnswer()
  */
-export const loadExternalAnswerSources = async (fields: FormField[], values: any) => {
+export const loadExternalAnswerSources = async (
+  questions: FormQuestionDto[],
+  values: Dictionary<any>,
+  formQuestionContext: FormQuestionContextType
+) => {
   const promises: Promise<unknown>[] = [];
 
-  for (const field of fields) {
-    if (field.type === FieldType.Conditional) {
-      const children = field.fieldProps.fields.filter(child => child.condition === values[field.name]);
-      promises.push(loadExternalAnswerSources(children, values));
-    } else if (field.type === FieldType.Dropdown) {
-      const { options, apiOptionsSource, optionsFilterFieldName } = field.fieldProps;
-      if (options != null || !apiOptionsSource?.startsWith("gadm-level-")) continue;
+  for (const question of questions) {
+    if (question.inputType === "conditional") {
+      const children = formQuestionContext
+        .childQuestions(question.uuid)
+        .filter(({ showOnParentCondition }) => showOnParentCondition === values[question.uuid]);
+      promises.push(loadExternalAnswerSources(children, values, formQuestionContext));
+    } else if (question.inputType === "select") {
+      if (!question.optionsList?.startsWith("gadm-level-")) continue;
 
-      const level = Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2;
+      const level = Number(question.optionsList.slice(-1)) as 0 | 1 | 2;
       if (level === 0) {
         promises.push(loadGadmCodes({ level }));
-      } else if (optionsFilterFieldName != null) {
-        const parentCodes = toArray(values?.[optionsFilterFieldName] ?? []) as string[];
-        if (!isEmpty(parentCodes)) {
-          promises.push(loadGadmCodes({ level, parentCodes }));
+      } else {
+        const filterField = SELECT_FILTER_QUESTION[question.linkedFieldKey ?? ""];
+        if (filterField != null) {
+          const parentCodes = toArray(
+            values?.[formQuestionContext.linkedFieldQuestion(filterField)?.uuid ?? ""] ?? []
+          ) as string[];
+          if (!isEmpty(parentCodes)) {
+            promises.push(loadGadmCodes({ level, parentCodes }));
+          }
         }
       }
     }
@@ -100,21 +108,26 @@ export const loadExternalAnswerSources = async (fields: FormField[], values: any
 
 type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;
 
-export const getAnswer = (field: FormField, values: any): Answer => {
-  const value = values?.[field.name];
+export const getAnswer = (question: FormQuestionDto, values: any): Answer => {
+  const value = values?.[question.uuid];
 
-  switch (field.type) {
-    case FieldType.Input:
-    case FieldType.TextArea:
-    case FieldType.TreeSpecies:
-    case FieldType.Conditional:
-    case FieldType.SeedingsTableInput:
+  switch (question.inputType) {
+    case "text":
+    case "url":
+    case "number":
+    case "number-percentage":
+    case "date":
+    case "long-text":
+    case "treeSpecies":
+    case "conditional":
+    case "boolean":
+    case "seedings":
       return value;
 
-    case FieldType.FileUpload:
+    case "file":
       return toArray(value);
 
-    case FieldType.Dropdown: {
+    case "select": {
       const { options, apiOptionsSource, optionsFilterFieldName } = field.fieldProps;
       if (options == null) {
         if (!apiOptionsSource?.startsWith("gadm-level-")) return value;
@@ -135,17 +148,18 @@ export const getAnswer = (field: FormField, values: any): Answer => {
       // Fall through to the default case.
     }
     // eslint-disable-next-line no-fallthrough
-    case FieldType.Select:
-    case FieldType.SelectImage: {
+    case "radio":
+    case "select-image": {
       const { options } = field.fieldProps;
 
       if (Array.isArray(value)) {
-        return (value.map(v => options.find(o => o.value === v)?.title).filter(title => !!title) as string[]) || value;
+        return (value.map(v => options.find(o => o.value === v)?.title).filter(title => !!title) as string[]) ?? value;
       } else {
-        return options.find(o => o.value === value)?.title || value;
+        return options.find(o => o.value === value)?.title ?? value;
       }
     }
-    case FieldType.StrategyAreaInput: {
+
+    case "strategy-area": {
       const { options } = field.fieldProps;
       const parsedValue: { [key: string]: number }[] = JSON.parse(value);
 
@@ -169,18 +183,16 @@ export const getAnswer = (field: FormField, values: any): Answer => {
 
       return value;
     }
-    case FieldType.Boolean:
-      return value;
 
     default:
       return undefined;
   }
 };
 
-export const getFormattedAnswer = (field: FormField, values: any): string | undefined => {
-  const answer = getAnswer(field, values);
+export const getFormattedAnswer = (question: FormQuestionDto, values: Dictionary<any>): string | undefined => {
+  const answer = getAnswer(question, values);
 
-  if (Array.isArray(answer) && field.type === FieldType.FileUpload) {
+  if (Array.isArray(answer) && question.inputType === "file") {
     return (answer as UploadedFile[])
       .filter(file => !!file)
       ?.map(file => `<a href="${file.url}" target="_blank">${file.file_name}</a>`)
@@ -194,29 +206,27 @@ export const getFormattedAnswer = (field: FormField, values: any): string | unde
   }
 };
 
-export const downloadAnswersCSV = (steps: FormStepSchema[], values: any) => {
+export const downloadAnswersCSV = (questions: FormQuestionDto[], values: Dictionary<any>) => {
   const csv = new CSVGenerator();
   csv.pushRow(["Question", "Answer"]);
-  for (let step of steps) {
-    for (let field of step.fields) {
-      appendAnswersAsCSVRow(csv, field, values);
-    }
+  for (const question of questions) {
+    appendAnswersAsCSVRow(csv, question, values);
   }
   csv.download("answers.csv");
 };
 
-const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any) => {
-  switch (field.type) {
-    case FieldType.TreeSpecies: {
-      const value = ((getAnswer(field, values) || []) as TreeSpeciesValue[]).filter(v => !!v);
+const appendAnswersAsCSVRow = (csv: CSVGenerator, question: FormQuestionDto, values: Dictionary<any>) => {
+  switch (question.inputType) {
+    case "treeSpecies": {
+      const value = ((getAnswer(question, values) ?? []) as TreeSpeciesValue[]).filter(v => !!v);
       if (value.length > 0) {
-        if (field.fieldProps.withNumbers) {
-          csv.pushRow([field.label, "Species name", "Total Trees"]);
+        if (question.additionalProps?.with_numbers === true) {
+          csv.pushRow([question.label, "Species name", "Total Trees"]);
           value.forEach(v => {
             csv.pushRow(["", v.name, v.amount]);
           });
         } else {
-          csv.pushRow([field.label, "Species name"]);
+          csv.pushRow([question.label, "Species name"]);
           value.forEach(v => {
             csv.pushRow(["", v.name]);
           });
@@ -224,10 +234,10 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       }
       break;
     }
-    case FieldType.FileUpload: {
-      const value = ((getAnswer(field, values) || []) as UploadedFile[]).filter(v => !!v);
+    case "file": {
+      const value = ((getAnswer(question, values) || []) as UploadedFile[]).filter(v => !!v);
       if (value.length > 0) {
-        csv.pushRow([field.label, "FileName", "File Url"]);
+        csv.pushRow([question.label, "FileName", "File Url"]);
 
         value.forEach(v => {
           csv.pushRow(["", v?.title || v?.file_name || "", v.url]);
@@ -235,8 +245,12 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       }
       break;
     }
-    case FieldType.InputTable: {
-      csv.pushRow([field.label, field.fieldProps.headers[0], field.fieldProps.headers[1]]);
+    case "tableInput": {
+      csv.pushRow([
+        question.label,
+        question.tableHeaders?.[0]?.label ?? undefined,
+        question.tableHeaders?.[1]?.label ?? undefined
+      ]);
 
       field.fieldProps.rows.forEach(row => {
         csv.pushRow(["", row.label, values[row.name]]);
@@ -244,36 +258,36 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       break;
     }
 
-    case FieldType.LeadershipsDataTable:
-    case FieldType.OwnershipStakeDataTable:
-    case FieldType.FundingTypeDataTable:
-    case FieldType.StrataDataTable:
-    case FieldType.DisturbanceDataTable:
-    case FieldType.InvasiveDataTable:
-    case FieldType.WorkdaysTable:
-    case FieldType.RestorationPartnersTable:
-    case FieldType.JobsTable:
-    case FieldType.VolunteersTable:
-    case FieldType.AllBeneficiariesTable:
-    case FieldType.TrainingBeneficiariesTable:
-    case FieldType.IndirectBeneficiariesTable:
-    case FieldType.EmployeesTable:
-    case FieldType.AssociatesTable:
-    case FieldType.SeedingsDataTable: {
+    case "leaderships":
+    case "ownershipStake":
+    case "fundingType":
+    case "stratas":
+    case "disturbances":
+    case "invasive":
+    case "workdays":
+    case "restorationPartners":
+    case "jobs":
+    case "volunteers":
+    case "allBeneficiaries":
+    case "trainingBeneficiaries":
+    case "indirectBeneficiaries":
+    case "employees":
+    case "associates":
+    case "seedings": {
       let headers: AccessorKeyColumnDef<any>[] = [];
 
-      if (field.type === FieldType.LeadershipsDataTable) headers = getLeadershipsTableColumns();
-      else if (field.type === FieldType.OwnershipStakeDataTable) headers = getOwnershipTableColumns();
-      else if (field.type === FieldType.FundingTypeDataTable) headers = getFundingTypeTableColumns();
-      else if (field.type === FieldType.StrataDataTable) headers = getStrataTableColumns();
-      else if (field.type === FieldType.DisturbanceDataTable) headers = getDisturbanceTableColumns(field.fieldProps);
-      else if (field.type === FieldType.InvasiveDataTable) headers = getInvasiveTableColumns();
-      else if (field.type === FieldType.SeedingsDataTable)
+      if (question.inputType === "leaderships") headers = getLeadershipsTableColumns();
+      else if (question.inputType === "ownershipStake") headers = getOwnershipTableColumns();
+      else if (question.inputType === "fundingType") headers = getFundingTypeTableColumns();
+      else if (question.inputType === "stratas") headers = getStrataTableColumns();
+      else if (question.inputType === "disturbances") headers = getDisturbanceTableColumns(field.fieldProps);
+      else if (question.inputType === "invasive") headers = getInvasiveTableColumns();
+      else if (question.inputType === "seedings")
         headers = getSeedingTableColumns(undefined, field.fieldProps.captureCount);
 
-      csv.pushRow([field.label, ...headers.map(h => h.header! as string)]);
+      csv.pushRow([question.label, ...headers.map(h => h.header! as string)]);
 
-      values[field.name].forEach((entry: any) => {
+      values[question.uuid].forEach((entry: any) => {
         const row: (string | undefined)[] = [""];
         Object.values(headers).forEach(h => {
           const value = entry[h.accessorKey];
@@ -286,16 +300,16 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
       break;
     }
 
-    case FieldType.Conditional: {
-      csv.pushRow([field.label, getFormattedAnswer(field, values)]);
-      field.fieldProps.fields
-        .filter(child => child.condition === values[field.name])
+    case "conditional": {
+      csv.pushRow([question.label, getFormattedAnswer(question, values)]);
+      question.fieldProps.fields
+        .filter(child => child.condition === values[question.uuid])
         .forEach(field => appendAnswersAsCSVRow(csv, field, values));
       break;
     }
 
     default: {
-      csv.pushRow([field.label, getFormattedAnswer(field, values)]);
+      csv.pushRow([question.label, getFormattedAnswer(question, values)]);
     }
   }
 

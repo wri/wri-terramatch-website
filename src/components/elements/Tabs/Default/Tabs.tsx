@@ -33,7 +33,7 @@ export interface TabsProps {
 
 export interface TabItem {
   title: string;
-  body: ReactElement;
+  renderBody: () => ReactElement;
   done?: boolean;
   disabled?: boolean;
   key?: string;
@@ -96,7 +96,7 @@ const Tabs = (props: TabsProps) => {
           props.rounded && "rounded-r-lg"
         )}
       >
-        {props.tabItems?.[selectedIndex]?.body}
+        {props.tabItems?.[selectedIndex]?.renderBody()}
       </HTab.Panels>
     </HTab.Group>
   );

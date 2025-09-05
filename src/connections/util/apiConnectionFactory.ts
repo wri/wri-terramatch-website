@@ -1,4 +1,4 @@
-import { assign, Dictionary, isEmpty, merge } from "lodash";
+import { assign, Dictionary, isEmpty, merge, sortBy } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
@@ -96,6 +96,10 @@ type ResourceSelector<Props, Variables extends QueryVariables> = (
   variablesFactory: VariablesFactory<Variables, Props>,
   resource: ResourceType
 ) => (store: ApiDataStore) => StoreResource<unknown> | undefined;
+
+type ListConnectionFactoryOptions<DTO> = {
+  sortProp?: keyof DTO;
+};
 
 const resourceSelectorById =
   ({ id }: IdProp, _: unknown, resource: ResourceType) =>
@@ -512,17 +516,19 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
   /**
    * Creates a connection that does no fetching; it pulls a list of resources by parent ID / property from the cache.
    */
-  listByParentId: <DTO>(parentProp: keyof DTO) =>
+  listByParentId: <DTO>(parentProp: keyof DTO, { sortProp }: ListConnectionFactoryOptions<DTO> = {}) =>
     new ApiConnectionFactory<never, ListConnection<DTO>, ParentIdProp, never>(undefined, {
       resource,
       selectors: [
         ({ parentId }, _, resource) => {
           if (parentId == null) return () => ({ data: undefined });
-          return createSelector([resourceMapSelector<DTO>(resource)], resources => ({
-            data: Object.values(resources)
-              .filter(resource => resource.attributes[parentProp] === parentId)
-              .map(({ attributes }) => attributes)
-          }));
+          return createSelector([resourceMapSelector<DTO>(resource)], resources => {
+            let data = Object.values(resources).filter(resource => resource.attributes[parentProp] === parentId);
+            if (sortProp != null) {
+              data = sortBy(data, sortProp);
+            }
+            return { data: data.map(({ attributes }) => attributes) };
+          });
         }
       ],
       selectorCacheKeyFactory:

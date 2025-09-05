@@ -28,7 +28,7 @@ const ApplicationOverview = ({ submissions, organisation }: ApplicationOverviewP
         onChangeSelected={() => {}}
         tabItems={
           submissions?.map(sub => ({
-            body: <Item submission={sub} organisation={organisation} />,
+            renderBody: () => <Item submission={sub} organisation={organisation} />,
             title: sub.form?.title ?? ""
           })) || []
         }

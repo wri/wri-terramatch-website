@@ -37,18 +37,18 @@ import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
-import { FieldType, FormStepSchema } from "./types";
+import { FieldType } from "./types";
 import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
-  step: FormStepSchema;
+  sectionId: string;
   index: number;
   nullText?: string;
   entity?: Entity;
 }
 
-type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "steps" | "onEdit">;
+type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit">;
 
 export interface FormEntry {
   title?: string;
@@ -57,13 +57,14 @@ export interface FormEntry {
 }
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
+  // TODO get section questions based on props sectionId. Use in place of props.set below.
   const t = useT();
   let { record } = useShowContext();
   const { type, entity } = props;
 
   record = { organisation: props.organisation, ...record };
-  const uuid = entity?.entityUUID || record?.uuid;
-  const entityType = entity?.entityName || (type as EntityName);
+  const uuid = entity?.entityUUID ?? record?.uuid;
+  const entityType = entity?.entityName ?? (type as EntityName);
 
   const { data: sitePolygonData } = useGetV2SitesSitePolygon(
     {
@@ -84,7 +85,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
       }
     },
     {
-      enabled: (entityType === "projects" || entityType === "project-pitches") && !!uuid
+      enabled: (entityType === "projects" || entityType === "project-pitches") && uuid != null
     }
   );
   const bboxParams =

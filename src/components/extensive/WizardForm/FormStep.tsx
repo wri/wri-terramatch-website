@@ -1,16 +1,15 @@
 import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect } from "react";
-import { FieldValues, UseFormReturn } from "react-hook-form";
-import { twMerge } from "tailwind-merge";
+import { UseFormReturn } from "react-hook-form";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
-import Text from "@/components/elements/Text/Text";
+import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
 import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
+import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import { useFormQuestionIds, useFormSection } from "@/connections/util/Form";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   sectionId: string;
-  formHook: UseFormReturn<FieldValues, any>;
+  formHook: UseFormReturn;
   onChange: () => void;
   actionButtonProps?: IButtonProps;
   formSubmissionOrg?: any;
@@ -22,7 +21,6 @@ export const FormStep = ({
   onChange,
   actionButtonProps,
   children,
-  className,
   formSubmissionOrg,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
@@ -36,16 +34,7 @@ export const FormStep = ({
   if (section == null) return null;
 
   return (
-    <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-11", className)}>
-      <div className="flex items-center justify-between">
-        <Text variant="text-heading-700">{section.title}</Text>
-        {actionButtonProps == null ? null : <Button {...actionButtonProps!} />}
-      </div>
-      <Text variant="text-body-600" className="mt-8" containHtml>
-        {section.description}
-      </Text>
-      <div className="my-8 h-[2px] w-full bg-neutral-200" />
-
+    <FormStepHeader {...divProps} title={section.title ?? undefined} subtitle={section.description ?? undefined}>
       {questionIds.length === 0 ? null : (
         <List
           items={questionIds}
@@ -63,6 +52,6 @@ export const FormStep = ({
         />
       )}
       {children}
-    </div>
+    </FormStepHeader>
   );
 };
