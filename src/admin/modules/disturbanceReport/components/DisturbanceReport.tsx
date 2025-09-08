@@ -50,7 +50,7 @@ const TextEntry = ({
 };
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
-  const { index, values = {}, formSteps = [] } = props;
+  const { values = {}, formSteps = [] } = props;
 
   const FIELD_KEYS = {
     DISTURBANCE_TYPE: "dis-rep-disturbance-type",
@@ -121,9 +121,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <Text variant="text-20-bold" className="leading-none">
-          Disturbance Report {index + 1}
-        </Text>
+        <Text variant="text-20-bold" className="leading-none" />
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
           <TextEntry value={disturbanceType} label="Disturbance Type" />
           <TextEntry
