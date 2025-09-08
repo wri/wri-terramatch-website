@@ -1587,6 +1587,8 @@ export type DisturbanceReportFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
+  disturbanceSubtype: string[] | null;
+  disturbanceType: string | null;
 };
 
 export type ProjectUpdateAttributes = {
