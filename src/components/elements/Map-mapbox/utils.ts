@@ -864,13 +864,37 @@ export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) =
   }
 };
 
+const isValidGeographicBBox = (bbox: BBox): boolean => {
+  const [minLng, minLat, maxLng, maxLat] = bbox;
+
+  const isValidLng = minLng >= -180 && minLng <= 180 && maxLng >= -180 && maxLng <= 180;
+  const isValidLat = minLat >= -90 && minLat <= 90 && maxLat >= -90 && maxLat <= 90;
+  const isOrdered = minLng < maxLng && minLat < maxLat;
+  return isValidLng && isValidLat && isOrdered;
+};
+
 export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, currentStyle = MapStyle.Satellite) => {
-  if (map && bbox) {
+  if (!map || !bbox) {
+    return;
+  }
+
+  if (!isValidGeographicBBox(bbox)) {
+    console.warn(
+      "zoomToBbox: Invalid geographic coordinates detected. Expected longitude between -180/180 and latitude between -90/90, but received:",
+      bbox
+    );
+    return;
+  }
+
+  try {
     map.fitBounds(bbox, {
       padding: hasControls ? 100 : 30,
       linear: false,
       animate: true
     });
+  } catch (error) {
+    console.warn("zoomToBbox: Error occurred while fitting bounds:", error);
+    return;
   }
 };
 
