@@ -72,7 +72,7 @@ const DisturbanceReportDataGrid: FC = () => {
         source="intensity"
         label="Intensity"
         render={(record: DisturbanceReportLightDto) => {
-          return <Intensity intensity={record?.intensity as IntensityEnum} />;
+          return <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />;
         }}
         sortable={false}
       />

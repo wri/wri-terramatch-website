@@ -1,10 +1,12 @@
 import { useT } from "@transifex/react";
+import { useMemo } from "react";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { TextVariants } from "@/types/common";
 
 import DownloadMediaItem from "./DownloadMediaItem";
@@ -35,33 +37,20 @@ const TextEntry = ({
   classNameContainer?: string;
   label?: string;
 }) => {
-  const t = useT();
   return (
     <div className={classNameContainer}>
       <Text variant={variantLabel} className={classNameLabel}>
-        {t(label)}
+        {label}
       </Text>
       {Array.isArray(value) ? (
-        value.length === 0 ? (
-          <Text variant={variant} className={className}>
-            {t("Answer Not Provided")}
-          </Text>
-        ) : (
-          <Text variant={variant} className={className}>
-            {value.join(", ")}
-          </Text>
-        )
-      ) : value ? (
-        typeof value === "string" || typeof value === "number" ? (
-          <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
-        ) : (
-          <Text variant={variant} className={className}>
-            {formatEntryValue(value)}
-          </Text>
-        )
+        <Text variant={variant} className={className}>
+          {value.join(", ")}
+        </Text>
+      ) : typeof value === "string" || typeof value === "number" ? (
+        <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
       ) : (
         <Text variant={variant} className={className}>
-          {t("Answer Not Provided")}
+          {formatEntryValue(value)}
         </Text>
       )}
     </div>
@@ -71,11 +60,36 @@ const TextEntry = ({
 const DisturbanceReport = (props: DisturbanceReportProps) => {
   const { values = {}, formSteps = [] } = props;
   const t = useT();
+  const entries = useGetFormEntries({
+    step: {
+      title: "Disturbance Report",
+      fields: formSteps.flatMap(step => step.fields ?? [])
+    },
+    values,
+    type: "disturbance-reports"
+  });
+
+  const entriesMap = useMemo(() => {
+    const map = new Map();
+    formSteps.forEach(step => {
+      step.fields?.forEach((field: any) => {
+        if (field?.linked_field_key) {
+          const entry = entries.find(e => e.title === field.label);
+          if (entry) {
+            map.set(field.linked_field_key, entry.value);
+          }
+        }
+      });
+    });
+    return map;
+  }, [entries, formSteps]);
+
   const FIELD_KEYS = {
     DISTURBANCE_TYPE: "dis-rep-disturbance-type",
     DISTURBANCE_SUBTYPE: "dis-rep-disturbance-subtype",
     INTENSITY: "dis-rep-intensity",
     EXTENT: "dis-rep-extent",
+    PROPERTY_AFFECTED: "dis-rep-property-affected",
     PEOPLE_AFFECTED: "dis-rep-people-affected",
     DATE_OF_DISTURBANCE: "dis-rep-date-of-disturbance",
     MONETARY_DAMAGE: "dis-rep-monetary-damage",
@@ -84,28 +98,33 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     MEDIA_ASSETS: "dis-rep-media-assets"
   };
 
-  const getFieldValue = (linkedFieldKey: string) => {
-    const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
-    if (!field) return null;
-    return values[field.name] || null;
-  };
-
   // TODO: Uncomment this when we have the labels
   // const getFieldLabel = (linkedFieldKey: string) => {
   //   const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
   //   return field?.label || linkedFieldKey;
   // };
 
-  const disturbanceType = getFieldValue(FIELD_KEYS.DISTURBANCE_TYPE);
-  const disturbanceSubtype = getFieldValue(FIELD_KEYS.DISTURBANCE_SUBTYPE);
-  const intensity = getFieldValue(FIELD_KEYS.INTENSITY);
-  const extent = getFieldValue(FIELD_KEYS.EXTENT);
-  const peopleAffected = getFieldValue(FIELD_KEYS.PEOPLE_AFFECTED);
-  const dateOfDisturbance = getFieldValue(FIELD_KEYS.DATE_OF_DISTURBANCE);
-  const monetaryDamage = getFieldValue(FIELD_KEYS.MONETARY_DAMAGE);
-  const description = getFieldValue(FIELD_KEYS.DESCRIPTION);
-  const actionDescription = getFieldValue(FIELD_KEYS.ACTION_DESCRIPTION);
-  const mediaAssets = getFieldValue(FIELD_KEYS.MEDIA_ASSETS);
+  const disturbanceType = entriesMap.get(FIELD_KEYS.DISTURBANCE_TYPE);
+  const disturbanceSubtype = entriesMap.get(FIELD_KEYS.DISTURBANCE_SUBTYPE);
+  const intensity = entriesMap.get(FIELD_KEYS.INTENSITY);
+  const extent = entriesMap.get(FIELD_KEYS.EXTENT);
+  const propertyAffected = entriesMap.get(FIELD_KEYS.PROPERTY_AFFECTED);
+  const peopleAffected = entriesMap.get(FIELD_KEYS.PEOPLE_AFFECTED);
+  const dateOfDisturbance = entriesMap.get(FIELD_KEYS.DATE_OF_DISTURBANCE);
+  const monetaryDamage = entriesMap.get(FIELD_KEYS.MONETARY_DAMAGE);
+  const description = entriesMap.get(FIELD_KEYS.DESCRIPTION);
+  const actionDescription = entriesMap.get(FIELD_KEYS.ACTION_DESCRIPTION);
+
+  const getMediaAssets = () => {
+    for (const step of formSteps) {
+      const field = step?.fields?.find((f: any) => f?.linked_field_key === FIELD_KEYS.MEDIA_ASSETS);
+      if (field) {
+        return values[field.name] ?? null;
+      }
+    }
+    return null;
+  };
+  const mediaAssets = getMediaAssets();
 
   const columns = [
     {
@@ -133,10 +152,10 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       <div className="flex flex-col gap-4">
         <Text variant="text-20-bold" className="leading-none" />
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
-          <TextEntry value={disturbanceType} label="Disturbance Type" />
+          <TextEntry value={disturbanceType} label={t("Disturbance Type")} />
           <TextEntry
             value={disturbanceSubtype}
-            label="Disturbance Subtype"
+            label={t("Disturbance Subtype")}
             classNameContainer="col-span-2 flex flex-col gap-2"
           />
           <div className="flex flex-col gap-2">
@@ -144,25 +163,22 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
               {t("Intensity")}
             </Text>
             {intensity ? (
-              <Intensity className="text-blueCustom-900" intensity={intensity} />
+              <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
             ) : (
               <Text variant="text-14" className="leading-none text-blueCustom-900">
                 {t("Answer Not Provided")}
               </Text>
             )}
           </div>
-          <TextEntry value={extent} label="Extent" />
-          <TextEntry value={peopleAffected} label="People Affected" />
-          <div className="col-span-3 flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              {t("Property Affected")}
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              Entity 1, Entity 2 Entity 5, Entity 4
-            </Text>
-          </div>
-          <TextEntry value={dateOfDisturbance} label="Date of Disturbance" />
-          <TextEntry value={monetaryDamage} label="Monetary Damage" />
+          <TextEntry value={extent} label={t("Extent")} />
+          <TextEntry value={peopleAffected} label={t("People Affected")} />
+          <TextEntry
+            value={propertyAffected}
+            label={t("Property Affected")}
+            classNameContainer="col-span-3 flex flex-col gap-2"
+          />
+          <TextEntry value={dateOfDisturbance} label={t("Date of Disturbance")} />
+          <TextEntry value={monetaryDamage} label={t("Monetary Damage")} />
         </div>
       </div>
       <Table
@@ -172,8 +188,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
         invertSelectPagination={false}
         variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
       />
-      <TextEntry value={actionDescription} label="Action Description" className="text-blueCustom-900" />
-      <TextEntry value={description} label="Description" className="text-blueCustom-900" />
+      <TextEntry value={actionDescription} label={t("Action Description")} className="text-blueCustom-900" />
+      <TextEntry value={description} label={t("Description")} className="text-blueCustom-900" />
 
       <div className="flex flex-col gap-4">
         <Text variant="text-14-light" className="leading-none text-darkCustom-300">
